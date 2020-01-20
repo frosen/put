@@ -564,17 +564,13 @@
     "_id": "1b69QCENVBWI++2voXxSvS"
   },
   {
-    "__type__": "e1b90/rohdEk4SdmmEZANaD",
+    "__type__": "fb129pTaFRDYIDK1iKXvM+l",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 2
     },
     "_enabled": true,
-    "label": {
-      "__id__": 11
-    },
-    "text": "hello",
-    "_id": "fa298saQhEw74Vb7nNO92n"
+    "_id": "dekQNw0SRGE7rhjA+Wohir"
   }
 ]
