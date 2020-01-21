@@ -101,8 +101,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 960,
-      "height": 640
+      "width": 1080,
+      "height": 1920
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -113,8 +113,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        480,
-        320,
+        540,
+        960,
         0,
         0,
         0,
@@ -264,8 +264,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 960,
-      "height": 640
+      "width": 1080,
+      "height": 1920
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -398,14 +398,14 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        50,
+        100,
         0,
         0,
         0,
         0,
         1,
-        1,
-        1,
+        2,
+        2,
         1
       ]
     },
@@ -479,8 +479,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 342.33,
-      "height": 75.6
+      "width": 684.67,
+      "height": 151.2
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -492,7 +492,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -180,
+        -360,
         0,
         0,
         0,
@@ -532,8 +532,8 @@
     "_useOriginalSize": false,
     "_string": "Hello, World!",
     "_N$string": "Hello, World!",
-    "_fontSize": 60,
-    "_lineHeight": 60,
+    "_fontSize": 120,
+    "_lineHeight": 120,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -556,11 +556,11 @@
     "_enabled": true,
     "_designResolution": {
       "__type__": "cc.Size",
-      "width": 960,
-      "height": 640
+      "width": 1080,
+      "height": 1920
     },
-    "_fitWidth": false,
-    "_fitHeight": true,
+    "_fitWidth": true,
+    "_fitHeight": false,
     "_id": "1b69QCENVBWI++2voXxSvS"
   },
   {
