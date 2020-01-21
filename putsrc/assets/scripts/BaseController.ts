@@ -16,9 +16,13 @@ if (customEngineInfo) {
 
 @ccclass
 export default class BaseController extends cc.Component {
-    // onLoad () {}
+    onLoad() {
+        let rect = cc.sys.getSafeAreaRect();
+        cc.log('STORM cc ^_^ size ', JSON.stringify(rect));
+        this.node.width = rect.width;
+        this.node.height = rect.height;
 
-    start() {}
-
-    // update (dt) {}
+        let parent = this.node.parent;
+        this.node.y = (this.node.height - parent.height) * 0.5 + rect.y;
+    }
 }
