@@ -40,9 +40,17 @@ class TreeNode {
     others: { [key: string]: TreeNode } = {};
 }
 
+export enum PageSwitchMethod {
+    none,
+    fromTop,
+    fromBottom,
+    fromLeft,
+    fromRight
+}
+
 @ccclass
 @executeInEditMode
-export default class BaseController extends cc.Component {
+export class BaseController extends cc.Component {
     @property(cc.Node)
     pageBed: cc.Node = null;
 
@@ -84,6 +92,7 @@ export default class BaseController extends cc.Component {
         this.setCorrectRootRect();
         this.setPagePrefabDict();
         this.setTabBtns();
+        this.setTree();
     }
 
     /**
@@ -106,6 +115,7 @@ export default class BaseController extends cc.Component {
     }
 
     setPagePrefabDict() {
+        if (CC_EDITOR) this.prefabDict = {};
         for (const prefab of this.pagePrefabList) {
             let name = prefab.name;
             cc.assert(!this.prefabDict.hasOwnProperty(name), `prefab list中有重复：${name}`);
@@ -123,13 +133,24 @@ export default class BaseController extends cc.Component {
         });
     }
 
+    setTree() {
+        this.pageTree = new TreeNode();
+    }
+
+    start() {
+        this.actTBData.btn.node.emit('click', this.actTBData.btn);
+    }
+
     // 页面管理 ========================================================
 
-    pushPage() {}
+    pushPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {
+        let pageName = this.getPageName(page);
+        let curTreeNode = this.getTreeLeaf(this.pageTree);
+    }
 
-    popPage() {}
+    popPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {}
 
-    switchCurPage() {}
+    switchCurPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }, method: PageSwitchMethod) {}
 
     switchRootPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {
         let pageName = this.getPageName(page);

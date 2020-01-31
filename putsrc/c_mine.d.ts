@@ -15,4 +15,9 @@ declare module cc {
             asset: cc.Asset;
         };
     }
+
+    export interface Component {
+        /** 自定义d.ts */
+        __proto__: any;
+    }
 }
