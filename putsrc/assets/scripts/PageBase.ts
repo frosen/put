@@ -13,8 +13,20 @@ import { BaseController } from './BaseController';
 export default class PageBase extends cc.Component {
     ctrlr: BaseController = null;
 
+    init(ctrlr: BaseController) {
+        this.ctrlr = ctrlr;
+        this.node.height = ctrlr.pageBed.height;
+    }
+
     onLoad() {
-        if (CC_EDITOR) this.check();
+        if (CC_EDITOR) {
+            this.check();
+            return;
+        }
+        cc.log('PUT page onLoad: ', this.name);
+
+        let widgets = this.getComponentsInChildren(cc.Widget);
+        for (const widget of widgets) widget.updateAlignment();
     }
 
     check() {
@@ -30,10 +42,5 @@ export default class PageBase extends cc.Component {
         this.node.height = 1920;
         this.node.x = 0;
         this.node.y = 0;
-    }
-
-    init(ctrlr: BaseController) {
-        this.ctrlr = ctrlr;
-        this.node.height = ctrlr.pageBed.height;
     }
 }

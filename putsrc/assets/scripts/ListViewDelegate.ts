@@ -12,7 +12,9 @@ import ListViewCell from './ListViewCell';
 @ccclass
 export default abstract class ListViewDelegate extends cc.Component {
     abstract numberOfRows(listView: ListView): number;
-    abstract heightForRow(listView: ListView, rowIdx: number): number;
+    heightForRow(listView: ListView, rowIdx: number): number {
+        return 0;
+    }
 
     abstract cellIdForRow(listView: ListView, rowIdx: number): string;
     abstract createCellForRow(listView: ListView, rowIdx: number): ListViewCell;

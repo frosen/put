@@ -9,11 +9,6 @@ const { ccclass, property, requireComponent } = cc._decorator;
 import ListViewDelegate from './ListViewDelegate';
 import ListViewCell from './ListViewCell';
 
-class CellReuseData {
-    using: boolean = false;
-    cell: ListViewCell = null;
-}
-
 @ccclass
 @requireComponent(cc.ScrollView)
 export default class ListView extends cc.Component {
@@ -36,7 +31,7 @@ export default class ListView extends cc.Component {
     disTopRowPos: number = 0;
     disBtmRowPos: number = 0;
 
-    reuseCells: { [key: string]: CellReuseData[] } = {};
+    reuseCells: { [key: string]: ListViewCell[] } = {};
 
     onLoad() {
         cc.assert(this.delegate, '未指定代理');
@@ -45,6 +40,8 @@ export default class ListView extends cc.Component {
         this.content = this.scrollView.content;
 
         this.createContent();
+
+        this.node.on('scrolling', this.onScrolling.bind(this));
     }
 
     createContent() {
@@ -64,15 +61,14 @@ export default class ListView extends cc.Component {
 
         // 显示cell
         let { disTop, disBtm } = this.calcDisplayArea();
-
         if (this.fixedHeight > 0) {
-            this.disTopRowIdx = Math.floor(disTop / this.fixedHeight);
-            this.disBtmRowIdx = Math.floor(disBtm / this.fixedHeight);
+            this.disTopRowIdx = Math.max(Math.floor(disTop / this.fixedHeight), 0);
+            this.disBtmRowIdx = Math.min(Math.floor(disBtm / this.fixedHeight), this.rowCount - 1);
             this.disTopRowPos = this.disTopRowIdx * this.fixedHeight;
-            this.disTopRowPos = this.disBtmRowIdx * this.fixedHeight;
-
+            this.disBtmRowPos = this.disBtmRowIdx * this.fixedHeight;
             for (let rowIdx = this.disTopRowIdx; rowIdx <= this.disBtmRowIdx; rowIdx++) {
-                let cell = this.createCell(rowIdx);
+                let cell = this.getUnusedCell(rowIdx);
+                this.setCellPos(cell, rowIdx * this.fixedHeight);
             }
         } else {
             this.disTopRowIdx = 0;
@@ -80,47 +76,24 @@ export default class ListView extends cc.Component {
             let topDone = false;
             let curPos = 0;
             for (let rowIdx = 0; rowIdx < this.rowCount; rowIdx++) {
-                curPos += this.delegate.heightForRow(this, rowIdx);
-                if (curPos > disTop && !topDone) {
+                let thisH = this.delegate.heightForRow(this, rowIdx);
+                let nextPos = curPos + thisH;
+                if (nextPos > disTop && !topDone) {
                     this.disTopRowIdx = rowIdx;
+                    this.disTopRowPos = curPos;
                     topDone = true;
                 }
-                if (curPos >= disBtm) {
+                if (topDone) {
+                    let cell = this.getUnusedCell(rowIdx);
+                    this.setCellPos(cell, curPos);
+                }
+                if (nextPos >= disBtm) {
                     this.disBtmRowIdx = rowIdx;
+                    this.disBtmRowPos = curPos;
                     break;
                 }
+                curPos = nextPos;
             }
-        }
-
-        let curPos = this.disTopRowPos;
-        for (let rowIdx = this.disTopRowIdx; rowIdx <= this.disBtmRowIdx; rowIdx++) {
-            let cellId = this.delegate.cellIdForRow(this, rowIdx);
-
-            if (!this.reuseCells.hasOwnProperty(cellId)) {
-                this.reuseCells[cellId] = [];
-            }
-
-            let reuseList = this.reuseCells[cellId];
-            let noUseData = null;
-            for (let cellReuseIdx = 0; cellReuseIdx < reuseList.length; cellReuseIdx++) {
-                const cellReuseData = reuseList[cellReuseIdx];
-                if (cellReuseData.using == false) {
-                    noUseData = cellReuseData;
-                    break;
-                }
-            }
-
-            if (!noUseData) {
-                let newData = new CellReuseData();
-                newData.cell = this.delegate.createCellForRow(this, rowIdx);
-                reuseList.push(newData);
-                noUseData = newData;
-            }
-
-            noUseData.using = true;
-
-            let cell = noUseData.cell;
-            this.delegate.setCellForRow(this, rowIdx, cell);
         }
     }
 
@@ -137,7 +110,7 @@ export default class ListView extends cc.Component {
         };
     }
 
-    createCell(rowIdx: number): ListViewCell {
+    getUnusedCell(rowIdx: number): ListViewCell {
         let cellId = this.delegate.cellIdForRow(this, rowIdx);
 
         if (!this.reuseCells.hasOwnProperty(cellId)) {
@@ -145,29 +118,28 @@ export default class ListView extends cc.Component {
         }
 
         let reuseList = this.reuseCells[cellId];
-        let noUseData = null;
-        for (let cellReuseIdx = 0; cellReuseIdx < reuseList.length; cellReuseIdx++) {
-            const cellReuseData = reuseList[cellReuseIdx];
-            if (cellReuseData.using == false) {
-                noUseData = cellReuseData;
-                break;
-            }
+
+        let unusedCell = null;
+        if (reuseList.length == 0) {
+            unusedCell = this.delegate.createCellForRow(this, rowIdx);
+            unusedCell.node.parent = this.content;
+        } else {
+            unusedCell = reuseList.pop();
         }
 
-        if (!noUseData) {
-            let newData = new CellReuseData();
-            let newCell = this.delegate.createCellForRow(this, rowIdx);
-            newCell.node.parent = this.content;
-            newData.cell = newCell;
-            reuseList.push(newData);
-            noUseData = newData;
-        }
+        this.delegate.setCellForRow(this, rowIdx, unusedCell);
 
-        noUseData.using = true;
+        return unusedCell;
+    }
 
-        let cell = noUseData.cell;
-        this.delegate.setCellForRow(this, rowIdx, cell);
+    /**
+     * 区域为正数值，与实际position相反
+     */
+    setCellPos(cell: ListViewCell, pos: number) {
+        cell.node.y = -pos;
+    }
 
-        return cell;
+    onScrolling() {
+        cc.log('^_^!scrolling');
     }
 }

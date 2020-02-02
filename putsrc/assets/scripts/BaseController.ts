@@ -73,7 +73,7 @@ export class BaseController extends cc.Component {
     petTBData: TabBtnData = null;
 
     @property(TabBtnData)
-    itemTBData: TabBtnData = null;
+    pkgTBData: TabBtnData = null;
 
     @property(TabBtnData)
     selfTBData: TabBtnData = null;
@@ -125,6 +125,10 @@ export class BaseController extends cc.Component {
 
     setTabBtns() {
         this.setTabBtn(this.actTBData);
+        this.setTabBtn(this.msgTBData);
+        this.setTabBtn(this.petTBData);
+        this.setTabBtn(this.pkgTBData);
+        this.setTabBtn(this.selfTBData);
     }
 
     setTabBtn(tBData: TabBtnData) {
@@ -154,6 +158,7 @@ export class BaseController extends cc.Component {
 
     switchRootPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {
         let pageName = this.getPageName(page);
+        cc.log('PUT switch root page to ', pageName);
 
         let tree = this.pageTree;
         let lastTreeNode = null;
@@ -193,14 +198,16 @@ export class BaseController extends cc.Component {
         }
 
         let prefab = this.prefabDict[pageName];
+        cc.assert(prefab, `${pageName}并没有加入pagePrefabList中`);
+
         let newNode = cc.instantiate(prefab);
-        newNode.parent = this.pageBed;
 
         this.pageNodeDict[pageName] = newNode;
 
         let pageComp = newNode.getComponent(PageBase);
         pageComp.init(this);
 
+        newNode.parent = this.pageBed;
         return newNode;
     }
 
