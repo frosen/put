@@ -43,4 +43,11 @@ export default class PageBase extends cc.Component {
         this.node.x = 0;
         this.node.y = 0;
     }
+
+    /**
+     * show和hide不一定谁在前
+     */
+    onPageShow() {}
+
+    onPageHide() {}
 }
