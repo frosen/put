@@ -111,9 +111,8 @@ export default class ListView extends cc.Component {
     resetContent() {}
 
     onScrolling() {
-        cc.log('^_^!scrolling', this.content.y);
         let scrollPos = this.content.y;
-        if (scrollPos <= 0) return; // 差超过底边时return
+        if (scrollPos <= 0 || this.content.height - this.node.height <= scrollPos) return;
 
         let { disTop, disBtm } = this.calcDisplayArea();
         this.updateDisTopRowData(disTop);
@@ -150,19 +149,19 @@ export default class ListView extends cc.Component {
 
     updateDisBtmRowData(disBtm: number) {
         if (disBtm <= this.disBtmRowPos) {
-            if (this.disTopRowIdx > 0) {
+            if (this.disBtmRowIdx > 0) {
                 let cell = this.disCellDict[this.disBtmRowIdx];
                 this.reclaimCell(cell, this.disBtmRowIdx);
                 delete this.disCellDict[this.disBtmRowIdx];
 
                 this.disBtmRowIdx--;
                 this.disBtmRowH = this.getRowHeightOnScrolling(this.disBtmRowIdx);
-                this.disTopRowPos -= this.disTopRowH;
+                this.disBtmRowPos -= this.disBtmRowH;
 
                 return this.updateDisBtmRowData(disBtm);
             }
         } else if (this.disBtmRowPos + this.disBtmRowH < disBtm) {
-            if (this.disTopRowIdx < this.rowCount - 1) {
+            if (this.disBtmRowIdx < this.rowCount - 1) {
                 this.disBtmRowIdx++;
                 this.disBtmRowPos += this.disBtmRowH;
                 this.disBtmRowH = this.getRowHeightOnScrolling(this.disBtmRowIdx);
