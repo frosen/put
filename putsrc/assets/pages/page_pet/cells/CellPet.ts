@@ -6,7 +6,9 @@
 
 const { ccclass, property, executeInEditMode } = cc._decorator;
 
-import ListViewCell from '../../../scripts/ListViewCell';
+import ListViewCell from 'scripts/ListViewCell';
+import PagePetDetail from 'pages/page_pet_detail/scripts/PagePetDetail';
+import { BaseController } from 'scripts/BaseController';
 
 @ccclass
 @executeInEditMode
@@ -18,7 +20,8 @@ export default class CellPet extends ListViewCell {
         this.petNameLbl.string = name;
     }
 
-    onClick() {
-        cc.log('^_^! name: ', this.petNameLbl.string);
+    onClickBtn() {
+        let baseCtrlr = cc.director.getScene().getComponentInChildren(BaseController);
+        baseCtrlr.pushPage(PagePetDetail);
     }
 }

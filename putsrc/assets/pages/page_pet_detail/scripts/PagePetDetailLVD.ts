@@ -11,7 +11,7 @@ import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
 
 @ccclass
-export default class PagePetLVD extends ListViewDelegate {
+export default class PagePetDetailLVD extends ListViewDelegate {
     @property(cc.Prefab)
     cellPetPrefab: cc.Prefab = null;
 

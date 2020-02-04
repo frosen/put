@@ -21,3 +21,22 @@ declare module cc {
         __proto__: any;
     }
 }
+
+/** 自定义d.ts */
+declare function require(path: string): any;
+
+/** 自定义d.ts */
+declare let Editor: {
+    Project: any;
+    assetdb: any;
+    Panel: any;
+    Selection: any;
+    Utils: any;
+    Ipc: any;
+    UI: any;
+};
+
+/** 自定义d.ts */
+declare let _Scene: {
+    Undo: any;
+};

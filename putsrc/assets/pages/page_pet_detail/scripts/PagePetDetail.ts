@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import PageBase from '../../../scripts/PageBase';
+import PageBase from 'scripts/PageBase';
 
 @ccclass
 export default class PagePetDetail extends PageBase {}

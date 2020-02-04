@@ -89,6 +89,7 @@ export class BaseController extends cc.Component {
 
     onLoad() {
         if (CC_EDITOR) {
+            this.setPagePrefabList();
             this.setPagePrefabDict();
             return;
         }
@@ -116,6 +117,33 @@ export class BaseController extends cc.Component {
 
         this.pageBed.height = pageH;
         this.pageBed.y = this.node.height * 0.5 - navH;
+    }
+
+    setPagePrefabList() {
+        this.pagePrefabList = [];
+        let baseCtrlr = this;
+        let pageDir = Editor.Project.path + '/assets/pages';
+        let Fs = require('fs');
+        let files = Fs.readdirSync(pageDir);
+        for (const file of files) {
+            if (Fs.statSync(pageDir + '/' + file).isDirectory()) {
+                let editorDir = 'db://assets/pages/' + file + '/*';
+                Editor.assetdb.queryAssets(editorDir, null, function(err, results) {
+                    for (const res of results) {
+                        if (res.type == 'prefab') {
+                            cc.loader.load(
+                                { type: 'uuid', uuid: res.uuid },
+                                () => {},
+                                function(err, asset) {
+                                    if (err || !asset) return;
+                                    baseCtrlr.pagePrefabList.push(asset);
+                                }
+                            );
+                        }
+                    }
+                });
+            }
+        }
     }
 
     setPagePrefabDict() {
@@ -167,6 +195,7 @@ export class BaseController extends cc.Component {
         let nextTreeNode = new TreeNode();
         nextTreeNode.name = nextPageName;
         nextTreeNode.parent = curTreeNode;
+        curTreeNode.child = nextTreeNode;
 
         let nextNode = this.getPageNode(nextPageName);
         let curPageName = curTreeNode.name;
@@ -189,12 +218,12 @@ export class BaseController extends cc.Component {
         curNode.y = 0;
 
         cc.tween(nextNode)
-            .to(0.1, { x: 0 }, { easing: 'sineInOut' })
+            .to(0.2, { x: 0 }, { easing: 'sineInOut' })
             .call(callback)
             .start();
 
         cc.tween(curNode)
-            .to(0.1, { x: this.pageBed.width * -0.25 }, { easing: 'sineInOut' })
+            .to(0.2, { x: this.pageBed.width * -0.25 }, { easing: 'sineInOut' })
             .start();
     }
 
@@ -209,7 +238,7 @@ export class BaseController extends cc.Component {
             return;
         }
 
-        nextTreeNode.parent = null;
+        nextTreeNode.child = null;
 
         let nextPageName = nextTreeNode.name;
         let nextNode = this.getPageNode(nextPageName);
@@ -232,12 +261,12 @@ export class BaseController extends cc.Component {
         curNode.y = 0;
 
         cc.tween(curNode)
-            .to(0.1, { x: this.pageBed.width }, { easing: 'sineInOut' })
+            .to(0.2, { x: this.pageBed.width }, { easing: 'sineInOut' })
             .call(callback)
             .start();
 
         cc.tween(nextNode)
-            .to(0.1, { x: 0 }, { easing: 'sineInOut' })
+            .to(0.2, { x: 0 }, { easing: 'sineInOut' })
             .start();
     }
 
