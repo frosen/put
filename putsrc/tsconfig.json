@@ -5,7 +5,8 @@
         "target": "es5",
         "allowJs": true,
         "experimentalDecorators": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "baseUrl": "./assets"
     },
     "exclude": ["node_modules", "library", "local", "temp", "build", "settings"]
 }
