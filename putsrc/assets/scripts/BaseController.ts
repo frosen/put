@@ -6,6 +6,7 @@
 
 const { ccclass, property, executeInEditMode } = cc._decorator;
 import PageBase from './PageBase';
+import { Memory } from './Memory';
 
 // @ts-ignore
 let customEngineInfo = cc.director.customEngineInfo;
@@ -84,6 +85,8 @@ export class BaseController extends cc.Component {
     @property(TabBtnData)
     selfTBData: TabBtnData = null;
 
+    memory: Memory = null;
+
     prefabDict: { [key: string]: cc.Prefab } = {};
 
     pageNodeDict: { [key: string]: cc.Node } = {};
@@ -96,7 +99,11 @@ export class BaseController extends cc.Component {
             this.setPagePrefabDict();
             return;
         }
+
         this.setCorrectRootRect();
+
+        this.initMemory();
+
         this.setPagePrefabDict();
         this.setTabBtns();
         this.setTree();
@@ -120,6 +127,11 @@ export class BaseController extends cc.Component {
 
         this.pageBed.height = pageH;
         this.pageBed.y = this.node.height * 0.5 - navH;
+    }
+
+    initMemory() {
+        this.memory = new Memory();
+        this.memory.init();
     }
 
     setPagePrefabList() {
@@ -178,12 +190,12 @@ export class BaseController extends cc.Component {
 
     setNav() {
         this.navBed.getChildByName('back').on('click', this.popPage.bind(this));
-        this.setBackBtnEnabled(false);
-        this.setTitle('');
-        this.setSubTitle('');
     }
 
     start() {
+        this.setBackBtnEnabled(false);
+        this.setTitle('');
+        this.setSubTitle('');
         this.actTBData.btn.node.emit('click', this.actTBData.btn);
     }
 
