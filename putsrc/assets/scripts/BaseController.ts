@@ -58,6 +58,9 @@ export class BaseController extends cc.Component {
     pageBed: cc.Node = null;
 
     @property(cc.Node)
+    touchLayer: cc.Node = null;
+
+    @property(cc.Node)
     navBed: cc.Node = null;
 
     @property(cc.Node)
@@ -67,7 +70,7 @@ export class BaseController extends cc.Component {
     pagePrefabList: cc.Prefab[] = [];
 
     @property(TabBtnData)
-    mapTBData: TabBtnData = null;
+    actTBData: TabBtnData = null;
 
     @property(TabBtnData)
     msgTBData: TabBtnData = null;
@@ -156,7 +159,7 @@ export class BaseController extends cc.Component {
     }
 
     setTabBtns() {
-        this.setTabBtn(this.mapTBData);
+        this.setTabBtn(this.actTBData);
         this.setTabBtn(this.msgTBData);
         this.setTabBtn(this.petTBData);
         this.setTabBtn(this.pkgTBData);
@@ -175,10 +178,13 @@ export class BaseController extends cc.Component {
 
     setNav() {
         this.navBed.getChildByName('back').on('click', this.popPage.bind(this));
+        this.setBackBtnEnabled(false);
+        this.setTitle('');
+        this.setSubTitle('');
     }
 
     start() {
-        this.mapTBData.btn.node.emit('click', this.mapTBData.btn);
+        this.actTBData.btn.node.emit('click', this.actTBData.btn);
     }
 
     // 页面管理 ========================================================
@@ -352,7 +358,17 @@ export class BaseController extends cc.Component {
     // 导航栏控制 -----------------------------------------------------------------
 
     setTitle(title: string) {
-        this.navBed.getChildByName('title').getComponent(cc.Label).string = title;
+        let lbl = this.navBed.getChildByName('title').getComponent(cc.Label);
+        lbl.string = title;
+        let subLbl = this.navBed.getChildByName('sub_title').getComponent(cc.Label);
+        // @ts-ignore
+        lbl._assembler.updateRenderData(lbl);
+        subLbl.node.x = lbl.node.width * 0.5 + 20;
+    }
+
+    setSubTitle(title: string) {
+        let subLbl = this.navBed.getChildByName('sub_title').getComponent(cc.Label);
+        subLbl.string = title;
     }
 
     setBackBtnEnabled(e: boolean = true) {
