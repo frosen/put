@@ -28,14 +28,28 @@ export default class ListViewCell extends cc.Component {
         this.node.y = 0;
     }
 
-    touchStartTime: number = 0;
+    // 触摸事件 -----------------------------------------------------------------
+
+    touchTime: number = 0;
 
     onTouchStart() {
-        this.touchStartTime = new Date().getTime();
+        this.touchTime = 0;
     }
 
     onTouchEnd() {
-        let touchEndTime = new Date().getTime();
-        console.log('STORM ^_^ >>> ', touchEndTime - this.touchStartTime);
+        this.touchTime = -10;
+        this.onClick();
     }
+
+    update(dt: number) {
+        if (this.touchTime < -1) return;
+        this.touchTime += dt;
+        if (this.touchTime > 0.5) {
+            this.touchTime = -10;
+            this.onLongPressed();
+        }
+    }
+
+    onClick() {}
+    onLongPressed() {}
 }

@@ -1,6 +1,6 @@
 /*
- * TempLabel.ts
- * 文本模板
+ * TempSubLabel.ts
+ * 次级文本模板
  * luleyan
  */
 
@@ -10,6 +10,6 @@ import TempBase from 'scripts/TempBase';
 @ccclass
 export default class TempLabel extends TempBase {
     handleTemp() {
-        this.node.color = cc.Color.BLACK;
+        this.node.color = cc.color(255, 102, 0);
     }
 }

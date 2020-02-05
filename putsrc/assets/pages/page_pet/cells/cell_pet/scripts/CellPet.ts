@@ -4,14 +4,13 @@
  * luleyan
  */
 
-const { ccclass, property, executeInEditMode } = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
 import ListViewCell from 'scripts/ListViewCell';
 import PagePetDetail from 'pages/page_pet_detail/scripts/PagePetDetail';
 import { BaseController } from 'scripts/BaseController';
 
 @ccclass
-@executeInEditMode
 export default class CellPet extends ListViewCell {
     @property(cc.Label)
     petNameLbl: cc.Label = null;

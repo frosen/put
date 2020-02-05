@@ -1,31 +1,34 @@
-// Learn TypeScript:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+/*
+ * CellAttri2.ts
+ * 属性项目
+ * luleyan
+ */
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
+
+import ListViewCell from 'scripts/ListViewCell';
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class CellAttri2 extends ListViewCell {
+    @property(cc.Label)
+    key1: cc.Label = null;
 
     @property(cc.Label)
-    label: cc.Label = null;
+    key2: cc.Label = null;
 
-    @property
-    text: string = 'hello';
+    @property(cc.Label)
+    value1: cc.Label = null;
 
-    // LIFE-CYCLE CALLBACKS:
+    @property(cc.Label)
+    value2: cc.Label = null;
 
-    // onLoad () {}
-
-    start () {
-
+    setData1(key: string, value: string) {
+        this.key1.string = key;
+        this.value1.string = value;
     }
 
-    // update (dt) {}
+    setData2(key: string, value: string) {
+        this.key2.string = key;
+        this.value2.string = value;
+    }
 }

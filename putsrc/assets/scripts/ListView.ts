@@ -205,10 +205,9 @@ export default class ListView extends cc.Component {
         }
 
         let reuseList = this.reuseCells[cellId];
-
         let unusedCell: ListViewCell = null;
         if (reuseList.length == 0) {
-            unusedCell = this.delegate.createCellForRow(this, rowIdx);
+            unusedCell = this.delegate.createCellForRow(this, rowIdx, cellId);
             unusedCell.node.parent = this.content;
         } else {
             unusedCell = reuseList.pop();
@@ -216,7 +215,6 @@ export default class ListView extends cc.Component {
         }
 
         this.delegate.setCellForRow(this, rowIdx, unusedCell);
-
         return unusedCell;
     }
 

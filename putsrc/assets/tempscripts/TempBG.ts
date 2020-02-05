@@ -4,12 +4,23 @@
  * luleyan
  */
 
-const { ccclass, property, executeInEditMode } = cc._decorator;
+const { ccclass, property } = cc._decorator;
+
+import TempBase from 'scripts/TempBase';
+
+enum BGType {
+    cell = 1,
+    page
+}
 
 @ccclass
-@executeInEditMode
-export default class TempBG extends cc.Component {
-    onLoad() {
-        this.node.color = cc.Color.WHITE;
+export default class TempBG extends TempBase {
+    @property({
+        type: cc.Enum(BGType)
+    })
+    type: BGType = BGType.cell;
+
+    handleTemp() {
+        this.node.color = this.type == BGType.cell ? cc.Color.WHITE : cc.color(230, 230, 230);
     }
 }

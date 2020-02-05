@@ -8,6 +8,7 @@ const { ccclass, property, executeInEditMode } = cc._decorator;
 import PageBase from './PageBase';
 import { Memory } from './Memory';
 import DebugTool from './DebugTool';
+import TouchLayer from './TouchLayer';
 
 // @ts-ignore
 let customEngineInfo = cc.director.customEngineInfo;
@@ -102,6 +103,8 @@ export class BaseController extends cc.Component {
         }
 
         this.setCorrectRootRect();
+
+        this.touchLayer.getComponent(TouchLayer).init(this);
 
         this.memory = new Memory();
         this.memory.init();
@@ -205,7 +208,7 @@ export class BaseController extends cc.Component {
         this.actTBData.btn.node.emit('click', this.actTBData.btn);
     }
 
-    // 页面管理 ========================================================
+    // 页面管理 -----------------------------------------------------------------
 
     pageChanging: boolean = false;
 
@@ -389,7 +392,10 @@ export class BaseController extends cc.Component {
         subLbl.string = title;
     }
 
+    backBtnActive: boolean = true;
+
     setBackBtnEnabled(e: boolean = true) {
+        this.backBtnActive = e;
         this.navBed.getChildByName('back').active = e;
     }
 

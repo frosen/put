@@ -19,7 +19,12 @@ export default class TouchLayer extends cc.Component {
     touchBeginX: number = 0;
 
     readyX: number = 0;
-    popReady: boolean = false;
+
+    ctrlr: BaseController = null;
+
+    init(ctrlr: BaseController) {
+        this.ctrlr = ctrlr;
+    }
 
     onLoad() {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onGestureStarted.bind(this));
@@ -32,7 +37,7 @@ export default class TouchLayer extends cc.Component {
     }
 
     onGestureStarted(event: cc.Event.EventTouch) {
-        if (this.mark.getNumberOfRunningActions() > 0) return;
+        if (!this.ctrlr.backBtnActive || this.mark.getNumberOfRunningActions() > 0) return;
         this.touchId = event.getID();
         this.touchBeginX = event.getLocationX();
         this.mark.x = 0;
@@ -40,22 +45,16 @@ export default class TouchLayer extends cc.Component {
     }
 
     onGestureMoved(event: cc.Event.EventTouch) {
-        if (this.mark.getNumberOfRunningActions() > 0) return;
+        if (!this.ctrlr.backBtnActive || this.mark.getNumberOfRunningActions() > 0) return;
         if (this.touchId === null || event.getID() != this.touchId) return;
         let curX = event.getLocationX();
-        let curDis = curX - this.touchBeginX;
-        this.mark.x = curDis;
-        if (curDis >= this.readyX) {
-            this.mark.x = this.readyX;
-            this.popReady = true;
-        }
+        this.mark.x = Math.min(curX - this.touchBeginX, this.readyX);
     }
 
     onGestureEnd(event: cc.Event.EventTouch) {
-        if (this.mark.getNumberOfRunningActions() > 0) return;
+        if (!this.ctrlr.backBtnActive || this.mark.getNumberOfRunningActions() > 0) return;
         this.touchId = null;
-        if (this.popReady) {
-            this.popReady = false;
+        if (this.mark.x >= this.readyX - 1) {
             this.gotoPop();
         }
         if (this.mark.x > 0) {
@@ -66,9 +65,6 @@ export default class TouchLayer extends cc.Component {
     }
 
     gotoPop() {
-        cc.director
-            .getScene()
-            .getComponentInChildren(BaseController)
-            .popPage();
+        this.ctrlr.popPage();
     }
 }

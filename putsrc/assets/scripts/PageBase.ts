@@ -16,7 +16,14 @@ export default class PageBase extends cc.Component {
     init(ctrlr: BaseController) {
         this.ctrlr = ctrlr;
         this.node.height = ctrlr.pageBed.height;
+
+        let widgets = this.getComponentsInChildren(cc.Widget);
+        for (const widget of widgets) widget.updateAlignment();
+
+        this.onInit();
     }
+
+    onInit() {}
 
     onLoad() {
         if (CC_EDITOR) {
@@ -24,9 +31,6 @@ export default class PageBase extends cc.Component {
             return;
         }
         cc.log('PUT page onLoad: ', this.name);
-
-        let widgets = this.getComponentsInChildren(cc.Widget);
-        for (const widget of widgets) widget.updateAlignment();
     }
 
     check() {

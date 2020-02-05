@@ -17,6 +17,6 @@ export default abstract class ListViewDelegate extends cc.Component {
     }
 
     abstract cellIdForRow(listView: ListView, rowIdx: number): string;
-    abstract createCellForRow(listView: ListView, rowIdx: number): ListViewCell;
+    abstract createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell;
     abstract setCellForRow(listView: ListView, rowIdx: number, cell: ListViewCell);
 }
