@@ -7,6 +7,7 @@
 const { ccclass, property, executeInEditMode } = cc._decorator;
 import PageBase from './PageBase';
 import { Memory } from './Memory';
+import DebugTool from './DebugTool';
 
 // @ts-ignore
 let customEngineInfo = cc.director.customEngineInfo;
@@ -102,7 +103,11 @@ export class BaseController extends cc.Component {
 
         this.setCorrectRootRect();
 
-        this.initMemory();
+        this.memory = new Memory();
+        this.memory.init();
+
+        let debugTool = new DebugTool();
+        debugTool.init();
 
         this.setPagePrefabDict();
         this.setTabBtns();
@@ -193,6 +198,7 @@ export class BaseController extends cc.Component {
     }
 
     start() {
+        if (CC_EDITOR) return;
         this.setBackBtnEnabled(false);
         this.setTitle('');
         this.setSubTitle('');
