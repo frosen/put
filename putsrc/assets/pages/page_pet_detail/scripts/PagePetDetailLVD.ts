@@ -13,6 +13,7 @@ import { GameData } from 'scripts/Memory';
 import { BaseController } from 'scripts/BaseController';
 import CellAttri from 'pubcells/cell_attri/scripts/CellAttri';
 import CellAttri2 from 'pubcells/cell_attri2/scripts/CellAttri2';
+import CellPetName from '../cells/cell_pet_name/scripts/CellPetName';
 
 @ccclass
 export default class PagePetDetailLVD extends ListViewDelegate {
@@ -22,6 +23,9 @@ export default class PagePetDetailLVD extends ListViewDelegate {
     @property(cc.Prefab)
     attri2Prefab: cc.Prefab = null;
 
+    @property(cc.Prefab)
+    petNamePrefab: cc.Prefab = null;
+
     gameData: GameData = null;
 
     init(ctrlr: BaseController) {
@@ -29,26 +33,38 @@ export default class PagePetDetailLVD extends ListViewDelegate {
     }
 
     numberOfRows(listView: ListView): number {
-        return 6;
+        return 11;
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
         switch (rowIdx) {
             case 0:
+                return 206;
             case 1:
             case 2:
                 return 106;
             case 3:
                 return 126;
             case 4:
-            case 5:
                 return 106;
+            case 5:
+                return 126;
+            case 6:
+            case 7:
+                return 106;
+            case 8:
+                return 126;
+            case 9:
+                return 106;
+            case 10:
+                return 126;
         }
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
         switch (rowIdx) {
             case 0:
+                return 'petName';
             case 1:
             case 2:
                 return 'attri2';
@@ -56,12 +72,19 @@ export default class PagePetDetailLVD extends ListViewDelegate {
                 return 'attri';
             case 4:
             case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
                 return 'attri2';
         }
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
         switch (cellId) {
+            case 'petName':
+                return cc.instantiate(this.petNamePrefab).getComponent(ListViewCell);
             case 'attri':
                 return cc.instantiate(this.attriPrefab).getComponent(ListViewCell);
             case 'attri2':
@@ -69,11 +92,10 @@ export default class PagePetDetailLVD extends ListViewDelegate {
         }
     }
 
-    setCellForRow(listView: ListView, rowIdx: number, cell: CellAttri & CellAttri2) {
+    setCellForRow(listView: ListView, rowIdx: number, cell: CellPetName & CellAttri & CellAttri2) {
         switch (rowIdx) {
             case 0:
-                cell.setData1('宠物', 'aaa');
-                cell.setData2('主人', 'Me');
+                cell.setData('发条机器人', 'aaa');
                 break;
             case 1:
                 cell.setData1('等级', 'aaa');
@@ -93,6 +115,26 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             case 5:
                 cell.setData1('战斗类型', 'aaa');
                 cell.setData2('速度', 'Me');
+                break;
+            case 6:
+                cell.setData1('强壮', 'aaa');
+                cell.setData2('专注', 'Me');
+                break;
+            case 7:
+                cell.setData1('灵敏', 'aaa');
+                cell.setData2('耐久', 'Me');
+                break;
+            case 8:
+                cell.setData1('细腻', 'aaa');
+                cell.setData2('优雅', 'Me');
+                break;
+            case 9:
+                cell.setData1('HP', 'aaa');
+                cell.setData2('MP', 'Me');
+                break;
+            case 10:
+                cell.setData1('攻击伤害', 'aaa');
+                cell.setData2('技能伤害', 'Me');
                 break;
         }
     }

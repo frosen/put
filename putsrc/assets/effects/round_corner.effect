@@ -13,24 +13,12 @@ CCEffect %{
       properties:
         texture: { value: white }
         alphaThreshold: { value: 0.5 }
-        angle: 
-          displayName: '角度'
-          value: 45.0
-        offset:
-          displayName: '偏移'
-          value: 0.0
-        uvRatio:
-          displayName: '比例'
-          value: 1.0
-        beginColor: 
-          inspector: { type: color }
-          displayName: '起始颜色'
-          value: [0, 0.5, 1, 1]
-        endColor: 
-          inspector: { type: color }
-          displayName: '结束颜色'
-          value: [1, 0, 0, 1]
-    
+        u_edge:
+          displayName: '范围0~0.5'
+          value: 0.5
+        edge_blur: 
+          displayName: '边缘羽化(0.01~0.1)'
+          value: 0.01   
 }%
 
 
@@ -81,12 +69,9 @@ CCProgram fs %{
   uniform sampler2D texture;
   #endif
 
-  uniform COLOR_FRAG { 
-    vec4 beginColor;
-    vec4 endColor;
-    float angle;
-    float offset;
-    float uvRatio;
+  uniform CORNER_FRAG { 
+    float u_edge;
+    float edge_blur;
   }
 
   void main () {
@@ -101,18 +86,41 @@ CCProgram fs %{
 
     o *= v_color;
 
-    float angleInRadians = radians(angle); 
-      float ratio = clamp((v_uv0.y * cos(angleInRadians) + v_uv0.x * sin(angleInRadians) + offset) * uvRatio, 0.0, 1.0);
-    float beginRatio = 1.0 - ratio;
-      float endRatio = ratio;
-
     ALPHA_TEST(o);
 
-    gl_FragColor = vec4(
-          o.r * (beginColor.r * beginRatio + endColor.r * endRatio),
-          o.g * (beginColor.g * beginRatio + endColor.g * endRatio),
-          o.b * (beginColor.b * beginRatio + endColor.b * endRatio),
-          o.a * (beginColor.a * beginRatio + endColor.a * endRatio)
-      );
+    float edge = u_edge;
+    float dis = 0.0;
+
+    vec2 uv = v_uv0;
+         
+    if (uv.x < edge) {
+      #if LEFT_TOP
+      if (uv.y < edge) dis = distance(uv, vec2(edge, edge));
+      #endif
+      #if LEFT_BOTTOM
+      if (uv.y > 1.0 - edge) dis = distance(uv, vec2(edge, 1.0 - edge));
+      #endif
+      
+    } else if (uv.x > 1.0 - edge) {
+      #if RIGHT_TOP
+      if (uv.y < edge) dis = distance(uv, vec2(1.0 - edge, edge));
+      #endif
+      #if RIGHT_BOTTOM
+      if (uv.y > 1.0 - edge) dis = distance(uv, vec2(1.0 - edge, 1.0 - edge));
+      #endif
+    }
+
+    float gap = edge * edge_blur;
+    if (dis > 0.001) {
+      if(dis <= edge) {
+        // 平滑过渡: ret smoothstep(a, b, x) 可以用来生成0到1的平滑过渡.
+        o.a *= smoothstep(0.0, gap, edge - dis);;
+      } else {
+        // 隐藏不要的部分
+        o.a = 0.0; 
+      }
+    }
+
+    gl_FragColor = o;
   }
 }%
