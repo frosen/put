@@ -204,6 +204,7 @@ export default class ListView extends cc.Component {
 
     getUnusedCell(rowIdx: number): ListViewCell {
         let cellId = this.delegate.cellIdForRow(this, rowIdx);
+        cc.assert(cellId, `cellIdForRow获取cell id不成功：${rowIdx}`);
 
         if (!this.reuseCells.hasOwnProperty(cellId)) {
             this.reuseCells[cellId] = [];

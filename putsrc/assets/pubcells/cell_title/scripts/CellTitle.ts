@@ -1,31 +1,19 @@
-// Learn TypeScript:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+/*
+ * CellTitle.ts
+ * 标题项目
+ * luleyan
+ */
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
+
+import ListViewCell from 'scripts/ListViewCell';
 
 @ccclass
-export default class NewClass extends cc.Component {
-
+export default class CellTitle extends ListViewCell {
     @property(cc.Label)
-    label: cc.Label = null;
+    title: cc.Label = null;
 
-    @property
-    text: string = 'hello';
-
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {}
-
-    start () {
-
+    setData(title: string) {
+        this.title.string = title;
     }
-
-    // update (dt) {}
 }

@@ -915,6 +915,9 @@
     "petNamePrefab": {
       "__uuid__": "f56c8bc9-03fb-4e4b-84c5-3f0b6cca728f"
     },
+    "titlePrefab": {
+      "__uuid__": "83f672e1-42ff-4268-9693-0760c8abcaa7"
+    },
     "_id": ""
   },
   {
