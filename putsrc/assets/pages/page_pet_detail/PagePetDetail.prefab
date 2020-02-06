@@ -895,6 +895,7 @@
       "__id__": 25
     },
     "fixedHeight": 0,
+    "createOnLoad": true,
     "_id": ""
   },
   {

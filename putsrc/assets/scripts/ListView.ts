@@ -20,6 +20,9 @@ export default class ListView extends cc.Component {
     })
     fixedHeight: number = 0;
 
+    @property
+    createOnLoad: boolean = true;
+
     scrollView: cc.ScrollView = null;
     content: cc.Node = null;
 
@@ -44,9 +47,11 @@ export default class ListView extends cc.Component {
         this.scrollView = this.getComponent(cc.ScrollView);
         this.content = this.scrollView.content;
 
-        this.createContent();
-
         this.node.on('scrolling', this.onScrolling.bind(this));
+
+        if (this.createOnLoad) {
+            this.createContent();
+        }
     }
 
     createContent() {
@@ -108,7 +113,7 @@ export default class ListView extends cc.Component {
         }
     }
 
-    resetContent() {}
+    clearContent() {}
 
     onScrolling() {
         let scrollPos = this.content.y;

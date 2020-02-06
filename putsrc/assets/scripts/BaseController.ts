@@ -41,6 +41,7 @@ const FUNC_BTN_POS_BASE = 481;
 
 class TreeNode {
     name: string = '';
+    page: PageBase = null;
     parent: TreeNode = null;
     child: TreeNode = null;
     others: { [key: string]: TreeNode } = {};
@@ -90,8 +91,6 @@ export class BaseController extends cc.Component {
     memory: Memory = null;
 
     prefabDict: { [key: string]: cc.Prefab } = {};
-
-    pageNodeDict: { [key: string]: cc.Node } = {};
 
     pageTree: TreeNode = null;
 
@@ -218,21 +217,24 @@ export class BaseController extends cc.Component {
 
         let nextPageName = this.getPageName(page);
         let curTreeNode = this.getTreeLeaf(this.pageTree);
+        let curPageName = curTreeNode.name;
+
+        cc.log(`PUT push from ${curPageName} to ${nextPageName}`);
 
         let nextTreeNode = new TreeNode();
         nextTreeNode.name = nextPageName;
+        nextTreeNode.page = this.createPage(nextPageName);
         nextTreeNode.parent = curTreeNode;
         curTreeNode.child = nextTreeNode;
 
-        let nextNode = this.getPageNode(nextPageName);
-        let curPageName = curTreeNode.name;
-        let curNode = this.getPageNode(curPageName);
+        let nextPage = nextTreeNode.page;
+        let curPage = curTreeNode.page;
 
-        nextNode.zIndex = curNode.zIndex + 1;
+        nextPage.node.zIndex = curPage.node.zIndex + 1;
 
-        this.showTreeNode(nextTreeNode);
-        this.doPushPageAnim(curNode, nextNode, () => {
-            this.hideTreeNode(curTreeNode);
+        this.showPage(nextPage);
+        this.doPushPageAnim(curPage.node, nextPage.node, () => {
+            this.hidePage(curPage);
             this.pageChanging = false;
         });
     }
@@ -265,17 +267,20 @@ export class BaseController extends cc.Component {
             return;
         }
 
-        nextTreeNode.child = null;
-
         let nextPageName = nextTreeNode.name;
-        let nextNode = this.getPageNode(nextPageName);
-
         let curPageName = curTreeNode.name;
-        let curNode = this.getPageNode(curPageName);
 
-        this.showTreeNode(nextTreeNode);
-        this.doPopPageAnim(curNode, nextNode, () => {
-            this.hideTreeNode(curTreeNode);
+        cc.log(`PUT push from ${curPageName} to ${nextPageName}`);
+
+        nextTreeNode.child = null;
+        curTreeNode.parent = null;
+
+        let nextPage = nextTreeNode.page;
+        let curPage = curTreeNode.page;
+
+        this.showPage(nextPage);
+        this.doPopPageAnim(curPage.node, nextPage.node, () => {
+            this.deletePage(curPage);
             this.pageChanging = false;
         });
     }
@@ -306,25 +311,28 @@ export class BaseController extends cc.Component {
         cc.log('PUT switch root page to ', pageName);
 
         let tree = this.pageTree;
-        let lastTreeNode = null;
+        let curTreeNode = null;
         let curChild = null;
         if (tree.child) {
-            lastTreeNode = this.getTreeLeaf(tree.child);
+            curTreeNode = this.getTreeLeaf(tree.child);
             curChild = tree.child;
         }
 
-        let newTreeNode = tree.others[pageName];
-        if (!newTreeNode) {
-            newTreeNode = new TreeNode();
-            newTreeNode.name = pageName;
-            newTreeNode.parent = tree;
+        let nextTreeNode = tree.others[pageName];
+        if (!nextTreeNode) {
+            nextTreeNode = new TreeNode();
+            nextTreeNode.name = pageName;
+            nextTreeNode.page = this.createPage(pageName);
+            nextTreeNode.parent = tree;
         }
 
-        if (lastTreeNode) this.hideTreeNode(lastTreeNode);
-        this.showTreeNode(newTreeNode);
+        nextTreeNode.page.node.zIndex = curTreeNode ? curTreeNode.page.node.zIndex : 0;
+
+        if (curTreeNode) this.hidePage(curTreeNode.page);
+        this.showPage(nextTreeNode.page);
 
         if (curChild) tree.others[curChild.name] = curChild;
-        tree.child = newTreeNode;
+        tree.child = nextTreeNode;
     }
 
     getPageName<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {
@@ -337,43 +345,35 @@ export class BaseController extends cc.Component {
         }
     }
 
-    getPageNode(pageName: string) {
-        if (this.pageNodeDict.hasOwnProperty(pageName)) {
-            return this.pageNodeDict[pageName];
-        }
-
+    createPage(pageName: string): PageBase {
         let prefab = this.prefabDict[pageName];
         cc.assert(prefab, `${pageName}并没有加入pagePrefabList中`);
 
         let newNode = cc.instantiate(prefab);
-
-        this.pageNodeDict[pageName] = newNode;
-
         let pageComp = newNode.getComponent(PageBase);
         pageComp.init(this);
-
         newNode.parent = this.pageBed;
-        return newNode;
+
+        return pageComp;
+    }
+
+    deletePage(page: PageBase) {
+        page.node.removeFromParent();
+        page.node.destroy();
     }
 
     getTreeLeaf(treeNode: TreeNode): TreeNode {
         return treeNode.child ? this.getTreeLeaf(treeNode.child) : treeNode;
     }
 
-    hideTreeNode(treeNode: TreeNode) {
-        let pageName = treeNode.name;
-        let node = this.getPageNode(pageName);
-        let pageComp = node.getComponent(PageBase);
-        pageComp.onPageHide();
-        node.active = false;
+    hidePage(page: PageBase) {
+        page.onPageHide();
+        page.node.active = false;
     }
 
-    showTreeNode(treeNode: TreeNode) {
-        let pageName = treeNode.name;
-        let node = this.getPageNode(pageName);
-        node.active = true;
-        let pageComp = node.getComponent(PageBase);
-        pageComp.onPageShow();
+    showPage(page: PageBase) {
+        page.node.active = true;
+        page.onPageShow();
     }
 
     // 导航栏控制 -----------------------------------------------------------------
