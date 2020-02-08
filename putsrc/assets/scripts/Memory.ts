@@ -113,52 +113,50 @@ export class Pet {
     /** 当前经验 */
     exp: number = 0;
 
-    // 战斗
-    // /** 额外生物类型 */
-    // exBiotype: Biotype = Biotype.none;
-    // /** 额外元素类型 */
-    // exEletype: Eletype = Eletype.none;
-    // /** 额外战斗类型 */
-    // exBattletype: Battletype = Battletype.none;
-    // /** 额外速度 */
-    // exSpeed: number = 0;
-
-    get strength(): number {
-        return 0;
-    }
-    get concentration(): number {
-        return 0;
-    }
-    get agility(): number {
-        return 0;
-    }
-    get durability(): number {
-        return 0;
-    }
-    get sensitivity(): number {
-        return 0;
-    }
-    get elegant(): number {
-        return 0;
-    }
-
-    get hpMax(): number {
-        return 100 + this.durability * 25;
-    }
-    get mpMax(): number {
-        return 100;
-    }
-    get atkDmg(): number {
-        return 5;
-    }
-    get sklDmg(): number {
-        return 15;
-    }
-
     /** 随机自带特性 */
     raFeatures: string[] = [];
     /** 学习了的特性 */
     learnedFeatures: string[] = [];
+
+    /** 装备 */
+    equips: string[] = [];
+}
+
+export class Pet2 {
+    /** 力量 */
+    strength: number = 0;
+    /** 专注 */
+    concentration: number = 0;
+    /** 灵敏 */
+    agility: number = 0;
+    /** 耐久 */
+    durability: number = 0;
+    /** 细腻 */
+    sensitivity: number = 0;
+    /** 优雅 */
+    elegant: number = 0;
+
+    hpMax: number = 0;
+    mpMax: number = 0;
+
+    atkDmgFrom: number = 0;
+    atkDmgTo: number = 0;
+
+    sklDmgFrom: number = 0;
+    sklDmgTo: number = 0;
+}
+
+export class PetBattle {
+    hp: number = 0;
+
+    /** 额外生物类型 */
+    exBiotype: Biotype = Biotype.none;
+    /** 额外元素类型 */
+    exEletype: Eletype = Eletype.none;
+    /** 额外战斗类型 */
+    exBattletype: Battletype = Battletype.none;
+    /** 额外速度 */
+    exSpeed: number = 0;
 }
 
 export class Item {
@@ -172,8 +170,12 @@ export class GameData {
     id: number = 0;
 }
 
+export class GameData2 {
+    pets: Pet2[] = [];
+}
+
 export class Memory {
     gameData: GameData = newWithChecker(GameData);
-
+    gameData2: GameData2 = new GameData2();
     init() {}
 }

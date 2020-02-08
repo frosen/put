@@ -47,7 +47,7 @@ class TreeNode {
     others: { [key: string]: TreeNode } = {};
 }
 
-export enum PageSwitchMethod {
+export enum PageSwitchAnim {
     none,
     fromTop,
     fromBottom,
@@ -211,7 +211,7 @@ export class BaseController extends cc.Component {
 
     pageChanging: boolean = false;
 
-    pushPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {
+    pushPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }, withAnim: boolean = true) {
         if (this.pageChanging) return;
         this.pageChanging = true;
 
@@ -233,10 +233,12 @@ export class BaseController extends cc.Component {
         nextPage.node.zIndex = curPage.node.zIndex + 1;
 
         this.showPage(nextPage);
-        this.doPushPageAnim(curPage.node, nextPage.node, () => {
+        let afterAnim = () => {
             this.hidePage(curPage);
             this.pageChanging = false;
-        });
+        };
+        if (withAnim) this.doPushPageAnim(curPage.node, nextPage.node, afterAnim);
+        else afterAnim();
     }
 
     doPushPageAnim(curNode: cc.Node, nextNode: cc.Node, callback: () => void) {
@@ -256,7 +258,7 @@ export class BaseController extends cc.Component {
             .start();
     }
 
-    popPage() {
+    popPage(withAnim: boolean = true) {
         if (this.pageChanging) return;
         this.pageChanging = true;
 
@@ -279,10 +281,12 @@ export class BaseController extends cc.Component {
         let curPage = curTreeNode.page;
 
         this.showPage(nextPage);
-        this.doPopPageAnim(curPage.node, nextPage.node, () => {
+        let afterAnim = () => {
             this.deletePage(curPage);
             this.pageChanging = false;
-        });
+        };
+        if (withAnim) this.doPopPageAnim(curPage.node, nextPage.node, afterAnim);
+        else afterAnim();
     }
 
     doPopPageAnim(curNode: cc.Node, nextNode: cc.Node, callback: () => void) {
@@ -302,37 +306,54 @@ export class BaseController extends cc.Component {
             .start();
     }
 
-    switchCurPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }, method: PageSwitchMethod) {}
-
-    switchRootPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {
+    switchCurPage<T extends PageBase>(
+        page: cc.Prefab | string | { new (): T },
+        method: PageSwitchAnim = PageSwitchAnim.none
+    ) {
         if (this.pageChanging) return;
+        let nextPageName = this.getPageName(page);
+        this._switchPage(nextPageName, this.getTreeLeaf(this.pageTree).parent, method);
+    }
 
-        let pageName = this.getPageName(page);
-        cc.log('PUT switch root page to ', pageName);
+    switchRootPage<T extends PageBase>(
+        page: cc.Prefab | string | { new (): T },
+        method: PageSwitchAnim = PageSwitchAnim.none
+    ) {
+        if (this.pageChanging) return;
+        let nextPageName = this.getPageName(page);
+        this._switchPage(nextPageName, this.pageTree, method);
+    }
 
-        let tree = this.pageTree;
+    _switchPage(nextPageName: string, parentTreeNode: TreeNode, method: PageSwitchAnim) {
         let curTreeNode = null;
-        let curChild = null;
-        if (tree.child) {
-            curTreeNode = this.getTreeLeaf(tree.child);
-            curChild = tree.child;
+        let curDisTreeNode = null;
+        if (parentTreeNode.child) {
+            curTreeNode = parentTreeNode.child;
+            curDisTreeNode = this.getTreeLeaf(parentTreeNode.child);
+            cc.log(`PUT switch page from ${curTreeNode.name}[display:${curDisTreeNode.name}]`);
         }
 
-        let nextTreeNode = tree.others[pageName];
-        if (!nextTreeNode) {
+        let nextTreeNode = parentTreeNode.others[nextPageName];
+        let nextDisTreeNode: TreeNode = null;
+        if (nextTreeNode) {
+            nextDisTreeNode = this.getTreeLeaf(nextTreeNode);
+        } else {
             nextTreeNode = new TreeNode();
-            nextTreeNode.name = pageName;
-            nextTreeNode.page = this.createPage(pageName);
-            nextTreeNode.parent = tree;
+            nextTreeNode.name = nextPageName;
+            nextTreeNode.page = this.createPage(nextPageName);
+            nextTreeNode.parent = parentTreeNode;
+            nextDisTreeNode = nextTreeNode;
         }
+
+        cc.log(`PUT switch page to ${nextTreeNode.name}[display:${nextDisTreeNode.name}]`);
 
         nextTreeNode.page.node.zIndex = curTreeNode ? curTreeNode.page.node.zIndex : 0;
 
-        if (curTreeNode) this.hidePage(curTreeNode.page);
-        this.showPage(nextTreeNode.page);
+        if (curDisTreeNode) this.hidePage(curDisTreeNode.page);
+        this.showPage(nextDisTreeNode.page);
 
-        if (curChild) tree.others[curChild.name] = curChild;
-        tree.child = nextTreeNode;
+        if (curTreeNode) parentTreeNode.others[curTreeNode.name] = curTreeNode;
+        parentTreeNode.child = nextTreeNode;
     }
 
     getPageName<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {
