@@ -5,13 +5,24 @@
  */
 
 const { ccclass, property, executeInEditMode } = cc._decorator;
+import { BaseController } from './BaseController';
 
 @ccclass
 @executeInEditMode
 export default class ListViewCell extends cc.Component {
+    get ctrlr(): BaseController {
+        // @ts-ignore
+        if (!this._ctrlr) this._ctrlr = window.baseCtrlr;
+        return this._ctrlr;
+    }
+    _ctrlr: BaseController = null;
+
     onLoad() {
-        if (CC_EDITOR) this.check();
-        this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart.bind(this));
+        if (CC_EDITOR) {
+            this.check();
+            return;
+        }
+
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd.bind(this));
     }
 
@@ -68,26 +79,9 @@ export default class ListViewCell extends cc.Component {
 
     // 触摸事件 -----------------------------------------------------------------
 
-    touchTime: number = 0;
-
-    onTouchStart() {
-        this.touchTime = 0;
-    }
-
     onTouchEnd() {
-        this.touchTime = -10;
         this.onClick();
     }
 
-    update(dt: number) {
-        if (this.touchTime < -1) return;
-        this.touchTime += dt;
-        if (this.touchTime > 0.5) {
-            this.touchTime = -10;
-            this.onLongPressed();
-        }
-    }
-
     onClick() {}
-    onLongPressed() {}
 }

@@ -113,7 +113,28 @@ export default class ListView extends cc.Component {
         }
     }
 
-    clearContent() {}
+    clearContent() {
+        for (const rowIdx in this.disCellDict) {
+            if (this.disCellDict.hasOwnProperty(rowIdx)) {
+                const cell = this.disCellDict[rowIdx];
+                // @ts-ignore
+                this.reclaimCell(cell, rowIdx);
+            }
+        }
+        this.disCellDict = {};
+
+        this.rowCount = 0;
+        this.content.height = 0;
+
+        this.disTopRowIdx = 0;
+        this.disBtmRowIdx = 0;
+
+        this.disTopRowPos = 0;
+        this.disBtmRowPos = 0;
+
+        this.disTopRowH = 0;
+        this.disBtmRowH = 0;
+    }
 
     onScrolling() {
         let scrollPos = this.content.y;

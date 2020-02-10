@@ -10,7 +10,6 @@ import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
 import { GameData } from 'scripts/Memory';
-import { BaseController } from 'scripts/BaseController';
 import CellAttri from 'pubcells/cell_attri/scripts/CellAttri';
 import CellAttri2 from 'pubcells/cell_attri2/scripts/CellAttri2';
 import CellPetName from '../cells/cell_pet_name/scripts/CellPetName';
@@ -31,10 +30,6 @@ export default class PagePetDetailLVD extends ListViewDelegate {
     titlePrefab: cc.Prefab = null;
 
     gameData: GameData = null;
-
-    init(ctrlr: BaseController) {
-        this.gameData = ctrlr.memory.gameData;
-    }
 
     numberOfRows(listView: ListView): number {
         return 13;

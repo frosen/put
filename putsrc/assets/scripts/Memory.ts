@@ -28,6 +28,34 @@ function newWithChecker<T extends Object>(cls: { new (): T }): T {
 
 // -----------------------------------------------------------------
 
+import * as actPosTypeDict from 'configs/ActPosType';
+
+export class ActPosType {
+    cnName: string = '-';
+    lvFrom: number = 0;
+    lvTo: number = 0;
+    acts: string[] = [];
+    evts: string[] = [];
+    movs: string[] = [];
+    loc: cc.Vec2 = null;
+}
+
+export class ActPos {
+    token: string = 'apToken';
+
+    key: string = '';
+
+    init(key: string, actPosType: ActPosType) {
+        this.key = key;
+    }
+
+    resetToken() {
+        this.token = 'T' + String(new Date().getTime());
+    }
+}
+
+// -----------------------------------------------------------------
+
 export class Feature {}
 
 export enum Biotype {
@@ -164,10 +192,10 @@ export class Item {
 }
 
 export class GameData {
+    curPosKey: string = '';
+    posDataDict: { [key: string]: ActPos } = {};
     pets: Pet[] = [];
     items: Item[] = [];
-
-    id: number = 0;
 }
 
 export class GameData2 {
@@ -175,7 +203,28 @@ export class GameData2 {
 }
 
 export class Memory {
+    actPosTypeDict: { [key: string]: ActPosType } = {};
+
     gameData: GameData = newWithChecker(GameData);
     gameData2: GameData2 = new GameData2();
-    init() {}
+
+    init() {
+        // 读取
+        this.actPosTypeDict = <any>actPosTypeDict;
+
+        this.test();
+    }
+
+    test() {
+        this.gameData.curPosKey = 'yizhuang';
+    }
+
+    addActPos(posKey: string): ActPos {
+        let actPos = newWithChecker(ActPos);
+        let curActPosType = this.actPosTypeDict[posKey];
+        actPos.init(posKey, curActPosType);
+        actPos.resetToken();
+        this.gameData.posDataDict[posKey] = actPos;
+        return actPos;
+    }
 }

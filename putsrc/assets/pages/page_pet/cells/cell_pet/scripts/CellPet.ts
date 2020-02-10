@@ -8,7 +8,6 @@ const { ccclass, property } = cc._decorator;
 
 import ListViewCell from 'scripts/ListViewCell';
 import PagePetDetail from 'pages/page_pet_detail/scripts/PagePetDetail';
-import { BaseController } from 'scripts/BaseController';
 
 @ccclass
 export default class CellPet extends ListViewCell {
@@ -20,7 +19,6 @@ export default class CellPet extends ListViewCell {
     }
 
     onClickBtn() {
-        let baseCtrlr = cc.director.getScene().getComponentInChildren(BaseController);
-        baseCtrlr.pushPage(PagePetDetail);
+        this.ctrlr.pushPage(PagePetDetail);
     }
 }

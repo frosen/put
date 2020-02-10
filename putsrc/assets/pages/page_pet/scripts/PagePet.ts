@@ -12,7 +12,5 @@ import PageBase from 'scripts/PageBase';
 export default class PagePet extends PageBase {
     onPageShow() {
         this.ctrlr.setTitle('宠物');
-        this.ctrlr.setBackBtnEnabled(false);
-        this.ctrlr.clearFuncBtns();
     }
 }

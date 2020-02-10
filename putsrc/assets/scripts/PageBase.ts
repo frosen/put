@@ -11,11 +11,15 @@ import { BaseController } from './BaseController';
 @ccclass
 @executeInEditMode
 export default class PageBase extends cc.Component {
-    ctrlr: BaseController = null;
+    get ctrlr(): BaseController {
+        // @ts-ignore
+        if (!this._ctrlr) this._ctrlr = window.baseCtrlr;
+        return this._ctrlr;
+    }
+    _ctrlr: BaseController = null;
 
-    init(ctrlr: BaseController) {
-        this.ctrlr = ctrlr;
-        this.node.height = ctrlr.pageBed.height;
+    init() {
+        this.node.height = this.ctrlr.pageBed.height;
 
         let widgets = this.getComponentsInChildren(cc.Widget);
         for (const widget of widgets) widget.updateAlignment();
@@ -90,4 +94,8 @@ export default class PageBase extends cc.Component {
     onPageShow() {}
 
     onPageHide() {}
+
+    beforePageHide() {}
+
+    afterPageShow() {}
 }

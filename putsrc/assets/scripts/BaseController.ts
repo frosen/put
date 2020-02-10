@@ -101,6 +101,8 @@ export class BaseController extends cc.Component {
             return;
         }
 
+        // @ts-ignore
+        window.baseCtrlr = this;
         this.setCorrectRootRect();
 
         this.touchLayer.getComponent(TouchLayer).init(this);
@@ -201,9 +203,6 @@ export class BaseController extends cc.Component {
 
     start() {
         if (CC_EDITOR) return;
-        this.setBackBtnEnabled(false);
-        this.setTitle('');
-        this.setSubTitle('');
         this.actTBData.btn.node.emit('click', this.actTBData.btn);
     }
 
@@ -232,29 +231,34 @@ export class BaseController extends cc.Component {
 
         nextPage.node.zIndex = curPage.node.zIndex + 1;
 
+        this.clearNavBar();
         this.showPage(nextPage);
+        this.willHidePage(curPage);
         let afterAnim = () => {
             this.hidePage(curPage);
             this.pageChanging = false;
+            this.didShowPage(nextPage);
         };
         if (withAnim) this.doPushPageAnim(curPage.node, nextPage.node, afterAnim);
         else afterAnim();
     }
 
     doPushPageAnim(curNode: cc.Node, nextNode: cc.Node, callback: () => void) {
-        nextNode.x = this.pageBed.width;
-        nextNode.y = 0;
-
         curNode.x = 0;
         curNode.y = 0;
-
-        cc.tween(nextNode)
-            .to(0.2, { x: 0 }, { easing: 'sineInOut' })
-            .call(callback)
-            .start();
-
         cc.tween(curNode)
             .to(0.2, { x: this.pageBed.width * -0.25 }, { easing: 'sineInOut' })
+            .start();
+
+        nextNode.x = this.pageBed.width;
+        nextNode.y = 0;
+        cc.tween(nextNode)
+            .to(0.2, { x: 0 }, { easing: 'sineInOut' })
+            .call(() => {
+                setTimeout(() => {
+                    callback();
+                });
+            })
             .start();
     }
 
@@ -280,53 +284,55 @@ export class BaseController extends cc.Component {
         let nextPage = nextTreeNode.page;
         let curPage = curTreeNode.page;
 
+        this.clearNavBar();
         this.showPage(nextPage);
+        this.willHidePage(curPage);
         let afterAnim = () => {
-            this.deletePage(curPage);
+            this.deleteTreeNode(curTreeNode);
             this.pageChanging = false;
+            this.didShowPage(nextPage);
         };
         if (withAnim) this.doPopPageAnim(curPage.node, nextPage.node, afterAnim);
         else afterAnim();
     }
 
     doPopPageAnim(curNode: cc.Node, nextNode: cc.Node, callback: () => void) {
-        nextNode.x = this.pageBed.width * -0.25;
-        nextNode.y = 0;
-
         curNode.x = 0;
         curNode.y = 0;
-
         cc.tween(curNode)
             .to(0.2, { x: this.pageBed.width }, { easing: 'sineInOut' })
-            .call(callback)
             .start();
 
+        nextNode.x = this.pageBed.width * -0.25;
+        nextNode.y = 0;
         cc.tween(nextNode)
             .to(0.2, { x: 0 }, { easing: 'sineInOut' })
+            .call(() => {
+                setTimeout(() => {
+                    callback();
+                });
+            })
             .start();
     }
 
-    switchCurPage<T extends PageBase>(
-        page: cc.Prefab | string | { new (): T },
-        method: PageSwitchAnim = PageSwitchAnim.none
-    ) {
-        if (this.pageChanging) return;
+    switchCurPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }, anim: PageSwitchAnim = PageSwitchAnim.none) {
         let nextPageName = this.getPageName(page);
-        this._switchPage(nextPageName, this.getTreeLeaf(this.pageTree).parent, method);
+        this.switchPage(nextPageName, this.getTreeLeaf(this.pageTree).parent, anim);
     }
 
     switchRootPage<T extends PageBase>(
         page: cc.Prefab | string | { new (): T },
-        method: PageSwitchAnim = PageSwitchAnim.none
+        anim: PageSwitchAnim = PageSwitchAnim.none
     ) {
-        if (this.pageChanging) return;
         let nextPageName = this.getPageName(page);
-        this._switchPage(nextPageName, this.pageTree, method);
+        this.switchPage(nextPageName, this.pageTree, anim);
     }
 
-    _switchPage(nextPageName: string, parentTreeNode: TreeNode, method: PageSwitchAnim) {
-        let curTreeNode = null;
-        let curDisTreeNode = null;
+    switchPage(nextPageName: string, parentTreeNode: TreeNode, anim: PageSwitchAnim) {
+        if (this.pageChanging) return;
+        this.pageChanging = true;
+        let curTreeNode: TreeNode = null;
+        let curDisTreeNode: TreeNode = null;
         if (parentTreeNode.child) {
             curTreeNode = parentTreeNode.child;
             curDisTreeNode = this.getTreeLeaf(parentTreeNode.child);
@@ -341,19 +347,88 @@ export class BaseController extends cc.Component {
             nextTreeNode = new TreeNode();
             nextTreeNode.name = nextPageName;
             nextTreeNode.page = this.createPage(nextPageName);
+            nextTreeNode.page.node.zIndex = curTreeNode ? curTreeNode.page.node.zIndex : 0;
             nextTreeNode.parent = parentTreeNode;
             nextDisTreeNode = nextTreeNode;
         }
 
         cc.log(`PUT switch page to ${nextTreeNode.name}[display:${nextDisTreeNode.name}]`);
 
-        nextTreeNode.page.node.zIndex = curTreeNode ? curTreeNode.page.node.zIndex : 0;
-
-        if (curDisTreeNode) this.hidePage(curDisTreeNode.page);
-        this.showPage(nextDisTreeNode.page);
-
         if (curTreeNode) parentTreeNode.others[curTreeNode.name] = curTreeNode;
         parentTreeNode.child = nextTreeNode;
+
+        this.clearNavBar();
+        this.showPage(nextDisTreeNode.page);
+        if (curDisTreeNode) this.willHidePage(curDisTreeNode.page);
+        this.doSwitchPageAnim(curDisTreeNode ? curDisTreeNode.page.node : null, nextDisTreeNode.page.node, anim, () => {
+            if (curDisTreeNode) this.hidePage(curDisTreeNode.page);
+            this.pageChanging = false;
+            this.didShowPage(nextDisTreeNode.page);
+        });
+    }
+
+    doSwitchPageAnim(curNode: cc.Node, nextNode: cc.Node, anim: PageSwitchAnim, callback: () => void) {
+        if (anim == PageSwitchAnim.none) {
+            return callback();
+        }
+
+        if (curNode) {
+            curNode.x = 0;
+            curNode.y = 0;
+
+            let curToX = 0;
+            let curToY = 0;
+            switch (anim) {
+                case PageSwitchAnim.fromTop:
+                    curToY = -this.pageBed.height;
+                    break;
+                case PageSwitchAnim.fromBottom:
+                    curToY = this.pageBed.height;
+                    break;
+                case PageSwitchAnim.fromLeft:
+                    curToX = this.pageBed.width;
+                    break;
+                case PageSwitchAnim.fromRight:
+                    curToX = -this.pageBed.width;
+                    break;
+                default:
+                    break;
+            }
+
+            cc.tween(curNode)
+                .to(0.2, { x: curToX, y: curToY }, { easing: 'sineInOut' })
+                .start();
+        }
+
+        let nextToX = 0;
+        let nextToY = 0;
+        switch (anim) {
+            case PageSwitchAnim.fromTop:
+                nextToY = this.pageBed.height;
+                break;
+            case PageSwitchAnim.fromBottom:
+                nextToY = -this.pageBed.height;
+                break;
+            case PageSwitchAnim.fromLeft:
+                nextToX = -this.pageBed.width;
+                break;
+            case PageSwitchAnim.fromRight:
+                nextToX = this.pageBed.width;
+                break;
+            default:
+                break;
+        }
+
+        nextNode.x = nextToX;
+        nextNode.y = nextToY;
+        cc.tween(nextNode)
+            .to(0.2, { x: 0, y: 0 }, { easing: 'sineInOut' })
+            .call(() => {
+                setTimeout(() => {
+                    callback();
+                });
+            })
+            .start();
     }
 
     getPageName<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {
@@ -372,10 +447,23 @@ export class BaseController extends cc.Component {
 
         let newNode = cc.instantiate(prefab);
         let pageComp = newNode.getComponent(PageBase);
-        pageComp.init(this);
+        pageComp.init();
         newNode.parent = this.pageBed;
 
         return pageComp;
+    }
+
+    deleteTreeNode(treeNode: TreeNode) {
+        let child = treeNode.child;
+        let others = treeNode.others;
+        this.deletePage(treeNode.page);
+        if (child) this.deleteTreeNode(child);
+        for (const key in others) {
+            if (others.hasOwnProperty(key)) {
+                const otherTreeNode = others[key];
+                this.deleteTreeNode(otherTreeNode);
+            }
+        }
     }
 
     deletePage(page: PageBase) {
@@ -395,6 +483,14 @@ export class BaseController extends cc.Component {
     showPage(page: PageBase) {
         page.node.active = true;
         page.onPageShow();
+    }
+
+    willHidePage(page: PageBase) {
+        page.beforePageHide();
+    }
+
+    didShowPage(page: PageBase) {
+        page.afterPageShow();
     }
 
     // 导航栏控制 -----------------------------------------------------------------
@@ -453,5 +549,12 @@ export class BaseController extends cc.Component {
             }
         }
         this.btnX = FUNC_BTN_POS_BASE;
+    }
+
+    clearNavBar() {
+        this.setBackBtnEnabled(false);
+        this.setTitle('');
+        this.setSubTitle('');
+        this.clearFuncBtns();
     }
 }
