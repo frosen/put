@@ -31,14 +31,15 @@ function newWithChecker<T extends Object>(cls: { new (): T }): T {
 export class MovCondition {}
 
 export class MovType {
-    key: string = '';
+    id: string = '';
     price: number = 0;
     condition: MovCondition = null;
 }
 
-import * as actPosTypeDict from 'configs/ActPosType';
+import * as actPosTypeList from 'configs/ActPosType';
 
 export class ActPosType {
+    id: string = '';
     cnName: string = '-';
     lvFrom: number = 0;
     lvTo: number = 0;
@@ -51,10 +52,10 @@ export class ActPosType {
 export class ActPos {
     token: string = 'apToken';
 
-    key: string = '';
+    id: string = '';
 
-    init(key: string, actPosType: ActPosType) {
-        this.key = key;
+    init(id: string, actPosType: ActPosType) {
+        this.id = id;
     }
 
     resetToken() {
@@ -200,7 +201,7 @@ export class Item {
 }
 
 export class GameData {
-    curPosKey: string = '';
+    curPosId: string = '';
     posDataDict: { [key: string]: ActPos } = {};
     pets: Pet[] = [];
     items: Item[] = [];
@@ -218,21 +219,23 @@ export class Memory {
 
     init() {
         // 读取
-        this.actPosTypeDict = <any>actPosTypeDict;
+        for (const actPosType of actPosTypeList) {
+            this.actPosTypeDict[actPosType.id] = <any>actPosType;
+        }
 
         this.test();
     }
 
     test() {
-        this.gameData.curPosKey = 'yizhuang';
+        this.gameData.curPosId = 'yizhuang';
     }
 
-    addActPos(posKey: string): ActPos {
+    addActPos(posId: string): ActPos {
         let actPos = newWithChecker(ActPos);
-        let curActPosType = this.actPosTypeDict[posKey];
-        actPos.init(posKey, curActPosType);
+        let curActPosType = this.actPosTypeDict[posId];
+        actPos.init(posId, curActPosType);
         actPos.resetToken();
-        this.gameData.posDataDict[posKey] = actPos;
+        this.gameData.posDataDict[posId] = actPos;
         return actPos;
     }
 }

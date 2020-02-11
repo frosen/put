@@ -23,13 +23,13 @@ export default class PageActPos extends PageBase {
 
     onPageShow() {
         let gameData = this.ctrlr.memory.gameData;
-        let posKey = gameData.curPosKey;
+        let posId = gameData.curPosId;
 
         let actPos = null;
-        if (!gameData.posDataDict.hasOwnProperty(posKey)) {
-            actPos = this.ctrlr.memory.addActPos(posKey);
+        if (!gameData.posDataDict.hasOwnProperty(posId)) {
+            actPos = this.ctrlr.memory.addActPos(posId);
         } else {
-            actPos = gameData.posDataDict[posKey];
+            actPos = gameData.posDataDict[posId];
         }
         let curPosToken = actPos.token;
 

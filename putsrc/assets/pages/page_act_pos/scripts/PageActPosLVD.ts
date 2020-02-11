@@ -38,28 +38,28 @@ export default class PageActPosLVD extends ListViewDelegate {
     @property(cc.Prefab)
     movPrefab: cc.Prefab = null;
 
-    get curPosKey(): string {
-        if (!this._curPosKey) this._curPosKey = this.ctrlr.memory.gameData.curPosKey;
-        return this._curPosKey;
+    get curPosId(): string {
+        if (!this._curPosId) this._curPosId = this.ctrlr.memory.gameData.curPosId;
+        return this._curPosId;
     }
-    _curPosKey: string = null;
+    _curPosId: string = null;
 
     get curActPos(): ActPos {
         // @ts-ignore
-        if (!this._curActPos) this._curActPos = this.ctrlr.memory.gameData.posDataDict[this.curPosKey];
+        if (!this._curActPos) this._curActPos = this.ctrlr.memory.gameData.posDataDict[this.curPosId];
         return this._curActPos;
     }
     _curActPos: ActPos = null;
 
     get curActPosType(): ActPosType {
         // @ts-ignore
-        if (!this._curActPosType) this._curActPosType = this.ctrlr.memory.actPosTypeDict[this.curPosKey];
+        if (!this._curActPosType) this._curActPosType = this.ctrlr.memory.actPosTypeDict[this.curPosId];
         return this._curActPosType;
     }
     _curActPosType: ActPosType = null;
 
     clearData() {
-        this._curPosKey = null;
+        this._curPosId = null;
         this._curActPos = null;
         this._curActPosType = null;
     }
@@ -115,13 +115,13 @@ export default class PageActPosLVD extends ListViewDelegate {
             cell.setData(this.curActPosType.cnName);
         } else if (rowIdx <= this.actCellLength) {
             let actIdx = (rowIdx - 1) * 2;
-            let actKey1 = this.curActPosType.acts[actIdx];
-            let actInfo1 = CellActInfo[actKey1];
+            let actId1 = this.curActPosType.acts[actIdx];
+            let actInfo1 = CellActInfo[actId1];
             cell.setBtn1(actInfo1.cnName, () => {});
 
             if (actIdx + 1 < this.curActPosType.acts.length) {
-                let actKey2 = this.curActPosType.acts[actIdx + 1];
-                let actInfo2 = CellActInfo[actKey2];
+                let actId2 = this.curActPosType.acts[actIdx + 1];
+                let actInfo2 = CellActInfo[actId2];
                 cell.setBtn2(actInfo2.cnName, () => {});
             } else {
                 cell.hideBtn2();
@@ -131,24 +131,24 @@ export default class PageActPosLVD extends ListViewDelegate {
         } else {
             let movIdx = rowIdx - 1 - this.actCellLength - this.evtCellLength;
             let moveType = this.curActPosType.movs[movIdx];
-            let posKey = moveType.key;
-            let movPosType = this.ctrlr.memory.actPosTypeDict[posKey];
+            let posId = moveType.id;
+            let movPosType = this.ctrlr.memory.actPosTypeDict[posId];
             cell.setData('前往：' + movPosType.cnName, '花费：' + String(moveType.price), () => {
                 if (moveType.price == 0) {
-                    this.gotoNextPos(posKey);
+                    this.gotoNextPos(posId);
                 } else {
                     let txt = `决定花费${moveType.price}前往${movPosType.cnName}？`;
                     this.ctrlr.popAlert(txt, (key: number) => {
-                        if (key == 1) this.gotoNextPos(posKey);
+                        if (key == 1) this.gotoNextPos(posId);
                     });
                 }
             });
         }
     }
 
-    gotoNextPos(nextPosKey: string) {
+    gotoNextPos(nextPosId: string) {
         let curLoc = this.curActPosType.loc;
-        let nextLoc = this.ctrlr.memory.actPosTypeDict[nextPosKey].loc;
+        let nextLoc = this.ctrlr.memory.actPosTypeDict[nextPosId].loc;
         let disX = nextLoc.x - curLoc.x;
         let disY = nextLoc.y - curLoc.y;
         let switchAnim: PageSwitchAnim = null;
@@ -158,7 +158,7 @@ export default class PageActPosLVD extends ListViewDelegate {
             switchAnim = disY > 0 ? PageSwitchAnim.fromTop : PageSwitchAnim.fromBottom;
         }
 
-        this.ctrlr.memory.gameData.curPosKey = nextPosKey;
+        this.ctrlr.memory.gameData.curPosId = nextPosId;
         this.ctrlr.switchCurPage(PageActPos, switchAnim);
     }
 }
