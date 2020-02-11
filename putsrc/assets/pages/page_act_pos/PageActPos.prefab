@@ -180,9 +180,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 230,
-      "g": 230,
-      "b": 230,
+      "r": 240,
+      "g": 240,
+      "b": 240,
       "a": 255
     },
     "_contentSize": {
@@ -915,7 +915,9 @@
     "btnPrefab": {
       "__uuid__": "d647cc1b-7960-427f-a6cd-e2ef74ae4335"
     },
-    "movPrefab": null,
+    "movPrefab": {
+      "__uuid__": "08d4f31d-e494-4a17-9ce9-afd4cb6a0123"
+    },
     "_id": ""
   },
   {

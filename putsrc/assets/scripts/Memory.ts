@@ -28,6 +28,14 @@ function newWithChecker<T extends Object>(cls: { new (): T }): T {
 
 // -----------------------------------------------------------------
 
+export class MovCondition {}
+
+export class MovType {
+    key: string = '';
+    price: number = 0;
+    condition: MovCondition = null;
+}
+
 import * as actPosTypeDict from 'configs/ActPosType';
 
 export class ActPosType {
@@ -36,7 +44,7 @@ export class ActPosType {
     lvTo: number = 0;
     acts: string[] = [];
     evts: string[] = [];
-    movs: string[] = [];
+    movs: MovType[] = [];
     loc: cc.Vec2 = null;
 }
 

@@ -21,6 +21,6 @@ export default class TempBG extends TempBase {
     type: BGType = BGType.cell;
 
     handleTemp() {
-        this.node.color = this.type == BGType.cell ? cc.Color.WHITE : cc.color(230, 230, 230);
+        this.node.color = this.type == BGType.cell ? cc.Color.WHITE : cc.color(240, 240, 240);
     }
 }

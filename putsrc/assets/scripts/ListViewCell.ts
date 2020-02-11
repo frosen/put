@@ -23,7 +23,7 @@ export default class ListViewCell extends cc.Component {
             return;
         }
 
-        this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd.bind(this));
+        this.node.on('click', this.onClick, this);
     }
 
     check() {
@@ -75,12 +75,6 @@ export default class ListViewCell extends cc.Component {
                 cc.error('cell根节点下只能有root和bake');
             }
         }
-    }
-
-    // 触摸事件 -----------------------------------------------------------------
-
-    onTouchEnd() {
-        this.onClick();
     }
 
     onClick() {}

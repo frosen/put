@@ -30,6 +30,7 @@ export default class TouchLayer extends cc.Component {
         this.node.on(cc.Node.EventType.TOUCH_START, this.onGestureStarted.bind(this));
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onGestureMoved.bind(this));
         this.node.on(cc.Node.EventType.TOUCH_END, this.onGestureEnd.bind(this));
+        this.node.on(cc.Node.EventType.TOUCH_CANCEL, this.onGestureCancel.bind(this));
         // @ts-ignore
         this.node._touchListener.setSwallowTouches(false);
 
@@ -57,14 +58,24 @@ export default class TouchLayer extends cc.Component {
         if (this.mark.x >= this.readyX - 1) {
             this.gotoPop();
         }
+        this.moveBack();
+    }
+
+    onGestureCancel(event: cc.Event.EventTouch) {
+        if (!this.ctrlr.backBtnActive || this.mark.getNumberOfRunningActions() > 0) return;
+        this.touchId = null;
+        this.moveBack();
+    }
+
+    gotoPop() {
+        this.ctrlr.popPage();
+    }
+
+    moveBack() {
         if (this.mark.x > 0) {
             cc.tween(this.mark)
                 .to(0.25, { x: 0 }, { easing: 'quadOut' })
                 .start();
         }
-    }
-
-    gotoPop() {
-        this.ctrlr.popPage();
     }
 }

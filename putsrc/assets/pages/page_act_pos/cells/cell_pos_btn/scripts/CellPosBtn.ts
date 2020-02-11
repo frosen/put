@@ -36,7 +36,12 @@ export default class CellPosBtn extends ListViewCell {
     }
 
     setBtn2(name: string, callback: () => void) {
+        this.btn2.node.active = true;
         this.btn2.getComponentInChildren(cc.Label).string = name;
         this.callback2 = callback;
+    }
+
+    hideBtn2() {
+        this.btn2.node.active = false;
     }
 }

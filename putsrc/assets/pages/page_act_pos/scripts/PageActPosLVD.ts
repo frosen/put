@@ -11,6 +11,7 @@ import { ActPos, ActPosType } from 'scripts/Memory';
 import ListViewCell from 'scripts/ListViewCell';
 import CellPosInfo from '../cells/cell_pos_info/scripts/CellPosInfo';
 import CellPosBtn from '../cells/cell_pos_btn/scripts/CellPosBtn';
+import CellPosMov from '../cells/cell_pos_mov/scripts/CellPosMov';
 
 const CellActInfo = {
     work: { cnName: '工作介绍所' },
@@ -75,13 +76,13 @@ export default class PageActPosLVD extends ListViewDelegate {
         if (rowIdx == 0) {
             return 380;
         } else if (rowIdx == this.actCellLength) {
-            return 159;
+            return 179;
         } else if (rowIdx == this.actCellLength + this.evtCellLength) {
-            return 159;
-        } else if (this.actCellLength + this.evtCellLength < rowIdx) {
+            return 179;
+        } else if (rowIdx < this.actCellLength + this.evtCellLength) {
             return 139;
         } else {
-            return 139;
+            return 176;
         }
     }
 
@@ -96,20 +97,17 @@ export default class PageActPosLVD extends ListViewDelegate {
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        cc.log('STORM cc ^_^ createCellForRow ', rowIdx, cellId);
         switch (cellId) {
             case 'posInfo':
                 return cc.instantiate(this.infoPrefab).getComponent(ListViewCell);
             case 'posBtn':
-                cc.log('STORM cc ^_^ here ');
                 return cc.instantiate(this.btnPrefab).getComponent(ListViewCell);
             case 'posMov':
                 return cc.instantiate(this.movPrefab).getComponent(ListViewCell);
         }
     }
 
-    setCellForRow(listView: ListView, rowIdx: number, cell: CellPosInfo & CellPosBtn) {
-        cc.log('STORM cc ^_^ cell set ', rowIdx, cell.node.name);
+    setCellForRow(listView: ListView, rowIdx: number, cell: CellPosInfo & CellPosBtn & CellPosMov) {
         if (rowIdx == 0) {
             cell.setData(this.curActPosType.cnName);
         } else if (rowIdx <= this.actCellLength) {
@@ -118,13 +116,21 @@ export default class PageActPosLVD extends ListViewDelegate {
             let actInfo1 = CellActInfo[actKey1];
             cell.setBtn1(actInfo1.cnName, () => {});
 
-            let actKey2 = this.curActPosType.acts[actIdx + 1];
-            let actInfo2 = CellActInfo[actKey2];
-            cell.setBtn2(actInfo2.cnName, () => {});
+            if (actIdx + 1 < this.curActPosType.acts.length) {
+                let actKey2 = this.curActPosType.acts[actIdx + 1];
+                let actInfo2 = CellActInfo[actKey2];
+                cell.setBtn2(actInfo2.cnName, () => {});
+            } else {
+                cell.hideBtn2();
+            }
         } else if (rowIdx <= this.actCellLength + this.evtCellLength) {
             //
         } else {
-            //
+            let movIdx = rowIdx - 1 - this.actCellLength - this.evtCellLength;
+            let moveType = this.curActPosType.movs[movIdx];
+            let posKey = moveType.key;
+            let movPosType = this.ctrlr.memory.actPosTypeDict[posKey];
+            cell.setData('前往：' + movPosType.cnName, '花费：' + moveType.price, () => {});
         }
     }
 }
