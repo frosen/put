@@ -12,6 +12,8 @@ import ListViewCell from 'scripts/ListViewCell';
 import CellPosInfo from '../cells/cell_pos_info/scripts/CellPosInfo';
 import CellPosBtn from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import CellPosMov from '../cells/cell_pos_mov/scripts/CellPosMov';
+import PageActPos from './PageActPos';
+import { PageSwitchAnim } from 'scripts/BaseController';
 
 const CellActInfo = {
     work: { cnName: '工作介绍所' },
@@ -21,7 +23,8 @@ const CellActInfo = {
     petMarket: { cnName: '宠物市场' },
     recycler: { cnName: '回收站' },
     store: { cnName: '仓库' },
-    awardsCenter: { cnName: '奖励中心' }
+    awardsCenter: { cnName: '奖励中心' },
+    exploration: { cnName: '探索' }
 };
 
 @ccclass
@@ -130,7 +133,32 @@ export default class PageActPosLVD extends ListViewDelegate {
             let moveType = this.curActPosType.movs[movIdx];
             let posKey = moveType.key;
             let movPosType = this.ctrlr.memory.actPosTypeDict[posKey];
-            cell.setData('前往：' + movPosType.cnName, '花费：' + moveType.price, () => {});
+            cell.setData('前往：' + movPosType.cnName, '花费：' + String(moveType.price), () => {
+                if (moveType.price == 0) {
+                    this.gotoNextPos(posKey);
+                } else {
+                    let txt = `决定花费${moveType.price}前往${movPosType.cnName}？`;
+                    this.ctrlr.popAlert(txt, (key: number) => {
+                        if (key == 1) this.gotoNextPos(posKey);
+                    });
+                }
+            });
         }
+    }
+
+    gotoNextPos(nextPosKey: string) {
+        let curLoc = this.curActPosType.loc;
+        let nextLoc = this.ctrlr.memory.actPosTypeDict[nextPosKey].loc;
+        let disX = nextLoc.x - curLoc.x;
+        let disY = nextLoc.y - curLoc.y;
+        let switchAnim: PageSwitchAnim = null;
+        if (Math.abs(disX) >= Math.abs(disY)) {
+            switchAnim = disX > 0 ? PageSwitchAnim.fromRight : PageSwitchAnim.fromLeft;
+        } else {
+            switchAnim = disY > 0 ? PageSwitchAnim.fromTop : PageSwitchAnim.fromBottom;
+        }
+
+        this.ctrlr.memory.gameData.curPosKey = nextPosKey;
+        this.ctrlr.switchCurPage(PageActPos, switchAnim);
     }
 }

@@ -117,6 +117,7 @@ export class BaseController extends cc.Component {
         this.setTabBtns();
         this.setTree();
         this.setNav();
+        this.initPops();
     }
 
     /**
@@ -556,5 +557,100 @@ export class BaseController extends cc.Component {
         this.setTitle('');
         this.setSubTitle('');
         this.clearFuncBtns();
+    }
+
+    // pop -----------------------------------------------------------------
+
+    @property(cc.Node)
+    toastNode: cc.Node = null;
+
+    @property(cc.Node)
+    alertNode: cc.Node = null;
+
+    @property(cc.Node)
+    maskNode: cc.Node = null;
+
+    alertCallback: (key: number) => void = null;
+
+    initPops() {
+        this.toastNode.opacity = 0;
+
+        let btns = this.alertNode.getChildByName('btns');
+        btns.getChildByName('btn1').on('click', () => {
+            if (this.alertCallback) this.alertCallback(1);
+            this.closeAlert();
+        });
+        btns.getChildByName('btn2').on('click', () => {
+            if (this.alertCallback) this.alertCallback(2);
+            this.closeAlert();
+        });
+        this.alertNode.opacity = 0;
+        this.alertNode.scale = 0;
+
+        this.maskNode.scale = 0;
+    }
+
+    popToast(str: string) {
+        this.toastNode.getComponentInChildren(cc.Label).string = str;
+        this.toastNode.stopAllActions();
+        cc.tween(this.toastNode)
+            .to(0.3, { opacity: 255 })
+            .delay(3)
+            .to(0.3, { opacity: 0 })
+            .start();
+    }
+
+    popAlert(txt: string, callback: (key: number) => void, btn1: string = '确认', btn2: string = '取消') {
+        this.alertNode.getChildByName('text').getComponent(cc.Label).string = txt;
+        this.alertCallback = callback;
+
+        let btns = this.alertNode.getChildByName('btns');
+        btns.getChildByName('btn1').getComponentInChildren(cc.Label).string = btn1;
+        btns.getChildByName('btn2').getComponentInChildren(cc.Label).string = btn2;
+
+        this.alertNode.opacity = 0;
+        this.alertNode.y = 0;
+        this.alertNode.scale = 0.7;
+
+        this.alertNode.stopAllActions();
+        cc.tween(this.alertNode)
+            .to(0.1, { opacity: 255, scale: 1 })
+            .start();
+
+        this.popMask();
+    }
+
+    closeAlert() {
+        this.alertNode.stopAllActions();
+        cc.tween(this.alertNode)
+            .to(0.1, { opacity: 0, scale: 0.7 })
+            .call(() => {
+                setTimeout(() => {
+                    this.alertNode.scale = 0;
+                });
+            })
+            .start();
+
+        this.closeMask();
+    }
+
+    popMask() {
+        this.maskNode.scale = 1;
+        this.maskNode.stopAllActions();
+        cc.tween(this.maskNode)
+            .to(0.1, { opacity: 100 })
+            .start();
+    }
+
+    closeMask() {
+        this.maskNode.stopAllActions();
+        cc.tween(this.maskNode)
+            .to(0.1, { opacity: 0 })
+            .call(() => {
+                setTimeout(() => {
+                    this.maskNode.scale = 0;
+                });
+            })
+            .start();
     }
 }
