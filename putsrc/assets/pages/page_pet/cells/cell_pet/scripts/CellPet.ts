@@ -14,11 +14,24 @@ export default class CellPet extends ListViewCell {
     @property(cc.Label)
     petNameLbl: cc.Label = null;
 
+    @property(cc.Button)
+    funcBtn: cc.Button = null;
+
+    onLoad() {
+        super.onLoad();
+        if (CC_EDITOR) return;
+        this.funcBtn.node.on('click', this.onClickFunc, this);
+    }
+
     setData(name: string) {
         this.petNameLbl.string = name;
     }
 
-    onClickBtn() {
+    onClick() {
         this.ctrlr.pushPage(PagePetDetail);
+    }
+
+    onClickFunc() {
+        cc.log('PUT show pet cell func: ', this.petNameLbl.string);
     }
 }
