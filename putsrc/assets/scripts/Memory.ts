@@ -97,7 +97,8 @@ export enum Battletype {
 }
 
 class PetType {
-    name: string = '';
+    id: string = '';
+    cnName: string = '';
 
     /** 额外生物类型 */
     biotype: Biotype = Biotype.none;
@@ -131,7 +132,8 @@ class PetType {
 
 export class Pet {
     /** 类型 */
-    type: string = '';
+    typeId: string = '';
+
     master: string = '';
     state: string = '';
 
