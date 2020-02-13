@@ -32,11 +32,11 @@ convert('../put.xls', '../../putsrc/assets/configs/PetType.js', 'pet', function(
         let baseConcentration = Number(rowData[8]);
         let addConcentration = Number(rowData[9]);
 
-        let baseAgility = Number(rowData[10]);
-        let addAgility = Number(rowData[11]);
-
         let baseDurability = Number(rowData[12]);
         let addDurability = Number(rowData[13]);
+
+        let baseAgility = Number(rowData[10]);
+        let addAgility = Number(rowData[11]);
 
         let baseSensitivity = Number(rowData[14]);
         let addSensitivity = Number(rowData[15]);
@@ -49,6 +49,7 @@ convert('../put.xls', '../../putsrc/assets/configs/PetType.js', 'pet', function(
         let petData = {
             id,
             cnName,
+            rarity,
             biotype,
             eletype,
             battletype,
@@ -57,15 +58,14 @@ convert('../put.xls', '../../putsrc/assets/configs/PetType.js', 'pet', function(
             addStrength,
             baseConcentration,
             addConcentration,
-            baseAgility,
-            addAgility,
             baseDurability,
             addDurability,
+            baseAgility,
+            addAgility,
             baseSensitivity,
             addSensitivity,
             baseElegant,
-            addElegant,
-            rarity
+            addElegant
         };
         petJson.push(petData);
     }

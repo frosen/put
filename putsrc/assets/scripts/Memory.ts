@@ -125,11 +125,11 @@ class PetType {
     baseConcentration: number = 0;
     addConcentration: number = 0;
 
-    baseAgility: number = 0;
-    addAgility: number = 0;
-
     baseDurability: number = 0;
     addDurability: number = 0;
+
+    baseAgility: number = 0;
+    addAgility: number = 0;
 
     baseSensitivity: number = 0;
     addSensitivity: number = 0;
@@ -179,10 +179,10 @@ export class Pet2 {
     strength: number = 0;
     /** 专注 */
     concentration: number = 0;
-    /** 灵敏 */
-    agility: number = 0;
     /** 耐久 */
     durability: number = 0;
+    /** 灵敏 */
+    agility: number = 0;
     /** 细腻 */
     sensitivity: number = 0;
     /** 优雅 */
@@ -203,8 +203,8 @@ export class Pet2 {
 
         this.strength = (petType.baseStrength + petType.addStrength * lv) * rankRatio;
         this.concentration = (petType.baseConcentration + petType.addConcentration * lv) * rankRatio;
-        this.agility = (petType.baseAgility + petType.addAgility * lv) * rankRatio;
         this.durability = (petType.baseDurability + petType.addDurability * lv) * rankRatio;
+        this.agility = (petType.baseAgility + petType.addAgility * lv) * rankRatio;
         this.sensitivity = (petType.baseSensitivity + petType.addSensitivity * lv) * rankRatio;
         this.elegant = (petType.baseElegant + petType.addElegant * lv) * rankRatio;
 
