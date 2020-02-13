@@ -28,6 +28,15 @@ function newWithChecker<T extends Object>(cls: { new (): T }): T {
 
 // -----------------------------------------------------------------
 
+export enum Rarity {
+    none,
+    N,
+    R,
+    SR
+}
+
+// -----------------------------------------------------------------
+
 export class MovCondition {}
 
 export class MovType {
@@ -35,8 +44,6 @@ export class MovType {
     price: number = 0;
     condition: MovCondition = null;
 }
-
-import * as actPosTypeList from 'configs/ActPosType';
 
 export class ActPosType {
     id: string = '';
@@ -92,6 +99,7 @@ export enum Battletype {
     shoot,
     charge,
     assassinate,
+    combo,
     stay,
     chaos
 }
@@ -100,13 +108,15 @@ class PetType {
     id: string = '';
     cnName: string = '';
 
-    /** 额外生物类型 */
+    rarity: Rarity = Rarity.none;
+
+    /** 生物类型 */
     biotype: Biotype = Biotype.none;
-    /** 额外元素类型 */
+    /** 元素类型 */
     eletype: Eletype = Eletype.none;
-    /** 额外战斗类型 */
+    /** 战斗类型 */
     battletype: Battletype = Battletype.none;
-    /** 额外速度 */
+    /** 速度 */
     speed: number = 0;
 
     baseStrength: number = 0;
@@ -132,7 +142,7 @@ class PetType {
 
 export class Pet {
     /** 类型 */
-    typeId: string = '';
+    id: string = '';
 
     master: string = '';
     state: string = '';
@@ -161,6 +171,9 @@ export class Pet {
     equips: string[] = [];
 }
 
+const RankToAttriRatio = [0, 1, 1.15, 1.32, 1.52, 1.75, 2.01, 2.31, 3.06, 3.52, 4.04, 4.65];
+const BioToFromToRatio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
+
 export class Pet2 {
     /** 力量 */
     strength: number = 0;
@@ -183,6 +196,29 @@ export class Pet2 {
 
     sklDmgFrom: number = 0;
     sklDmgTo: number = 0;
+
+    constructor(pet: Pet, petType: PetType) {
+        let lv = pet.level;
+        let rankRatio = RankToAttriRatio[pet.rank];
+
+        this.strength = (petType.baseStrength + petType.addStrength * lv) * rankRatio;
+        this.concentration = (petType.baseConcentration + petType.addConcentration * lv) * rankRatio;
+        this.agility = (petType.baseAgility + petType.addAgility * lv) * rankRatio;
+        this.durability = (petType.baseDurability + petType.addDurability * lv) * rankRatio;
+        this.sensitivity = (petType.baseSensitivity + petType.addSensitivity * lv) * rankRatio;
+        this.elegant = (petType.baseElegant + petType.addElegant * lv) * rankRatio;
+
+        this.hpMax = this.durability * 25;
+        this.mpMax = 100;
+
+        let fromToRatio = BioToFromToRatio[petType.biotype];
+
+        this.atkDmgFrom = this.strength * fromToRatio[0] + 5;
+        this.atkDmgTo = this.strength * fromToRatio[1] + 15;
+
+        this.sklDmgFrom = this.concentration * fromToRatio[0] + 15;
+        this.sklDmgTo = this.concentration * fromToRatio[1] + 30;
+    }
 }
 
 export class PetBattle {
@@ -198,9 +234,13 @@ export class PetBattle {
     exSpeed: number = 0;
 }
 
+// -----------------------------------------------------------------
+
 export class Item {
     type: number = 0;
 }
+
+// -----------------------------------------------------------------
 
 export class GameData {
     curPosId: string = '';
@@ -210,11 +250,17 @@ export class GameData {
 }
 
 export class GameData2 {
-    pets: Pet2[] = [];
+    pet2s: Pet2[] = [];
 }
+
+// -----------------------------------------------------------------
+
+import * as actPosTypeList from 'configs/ActPosType';
+import * as petTypeList from 'configs/PetType';
 
 export class Memory {
     actPosTypeDict: { [key: string]: ActPosType } = {};
+    petTypeDict: { [key: string]: PetType } = {};
 
     gameData: GameData = newWithChecker(GameData);
     gameData2: GameData2 = new GameData2();
@@ -223,6 +269,9 @@ export class Memory {
         // 读取
         for (const actPosType of actPosTypeList) {
             this.actPosTypeDict[actPosType.id] = <any>actPosType;
+        }
+        for (const petType of petTypeList) {
+            this.petTypeDict[petType.id] = <any>petType;
         }
 
         this.test();
@@ -239,5 +288,14 @@ export class Memory {
         actPos.resetToken();
         this.gameData.posDataDict[posId] = actPos;
         return actPos;
+    }
+
+    resetGameData2() {
+        let gd2 = this.gameData2;
+        gd2.pet2s.length = 0;
+        for (const pet of this.gameData.pets) {
+            let petType = this.petTypeDict[pet.id];
+            gd2.pet2s.push(new Pet2(pet, petType));
+        }
     }
 }
