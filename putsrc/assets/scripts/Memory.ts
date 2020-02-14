@@ -6,12 +6,17 @@
 
 const MagicNum = Math.floor(Math.random() * 10000);
 
-function newWithChecker<T extends Object>(cls: { new (): T }): T {
+let memoryDirty: boolean = false;
+
+function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
     let ins = new cls();
     let checkIns = new cls();
     return new Proxy(ins, {
         set: function(target, key, value, receiver) {
-            checkIns[key] = MagicNum - value;
+            if (typeof value == 'number') {
+                checkIns[key] = MagicNum - value;
+            }
+            memoryDirty = true;
             return Reflect.set(target, key, value, receiver);
         },
         get: function(target, key) {
@@ -22,6 +27,24 @@ function newWithChecker<T extends Object>(cls: { new (): T }): T {
                 }
             }
             return v;
+        }
+    });
+}
+
+function newList(list = null) {
+    return new Proxy(list || [], {
+        set: function(target, key, value, receiver) {
+            memoryDirty = true;
+            return Reflect.set(target, key, value, receiver);
+        }
+    });
+}
+
+function newDict(dict = null) {
+    return new Proxy(dict || {}, {
+        set: function(target, key, value, receiver) {
+            memoryDirty = true;
+            return Reflect.set(target, key, value, receiver);
         }
     });
 }
@@ -244,9 +267,9 @@ export class Item {
 
 export class GameData {
     curPosId: string = '';
-    posDataDict: { [key: string]: ActPos } = {};
-    pets: Pet[] = [];
-    items: Item[] = [];
+    posDataDict: { [key: string]: ActPos } = newDict();
+    pets: Pet[] = newList();
+    items: Item[] = newList();
 }
 
 export class GameData2 {
@@ -262,7 +285,7 @@ export class Memory {
     actPosTypeDict: { [key: string]: ActPosType } = {};
     petTypeDict: { [key: string]: PetType } = {};
 
-    gameData: GameData = newWithChecker(GameData);
+    gameData: GameData = newInsWithChecker(GameData);
     gameData2: GameData2 = new GameData2();
 
     init() {
@@ -282,12 +305,22 @@ export class Memory {
     }
 
     addActPos(posId: string): ActPos {
-        let actPos = newWithChecker(ActPos);
+        let actPos = newInsWithChecker(ActPos);
         let curActPosType = this.actPosTypeDict[posId];
         actPos.init(posId, curActPosType);
         actPos.resetToken();
         this.gameData.posDataDict[posId] = actPos;
         return actPos;
+    }
+
+    update() {
+        if (memoryDirty == true) {
+            memoryDirty = false;
+            this.resetGameData2();
+            for (const listener of this.dataListeners) {
+                listener.onMemoryDataChange(this);
+            }
+        }
     }
 
     resetGameData2() {
@@ -296,6 +329,23 @@ export class Memory {
         for (const pet of this.gameData.pets) {
             let petType = this.petTypeDict[pet.id];
             gd2.pet2s.push(new Pet2(pet, petType));
+        }
+    }
+
+    dataListeners: any[] = [];
+
+    addDataListener(listener: any) {
+        cc.assert(listener.hasOwnProperty('onMemoryDataChange'), 'Memory的观察者必须有onMemoryDataChange这个函数');
+        this.dataListeners.push(listener);
+    }
+
+    removeDataListener(listener: any) {
+        this.dataListeners.length;
+        for (let index = 0; index < this.dataListeners.length; index++) {
+            const element = this.dataListeners[index];
+            if (element == listener) {
+                this.dataListeners.splice(index, 1);
+            }
         }
     }
 }

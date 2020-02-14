@@ -487,11 +487,11 @@ export class BaseController extends cc.Component {
     }
 
     willHidePage(page: PageBase) {
-        page.beforePageHide();
+        page.beforePageHideAnim();
     }
 
     didShowPage(page: PageBase) {
-        page.afterPageShow();
+        page.afterPageShowAnim();
     }
 
     // 导航栏控制 -----------------------------------------------------------------

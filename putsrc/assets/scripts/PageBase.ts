@@ -95,7 +95,7 @@ export default class PageBase extends cc.Component {
 
     onPageHide() {}
 
-    beforePageHide() {}
+    beforePageHideAnim() {}
 
-    afterPageShow() {}
+    afterPageShowAnim() {}
 }

@@ -11,7 +11,7 @@ import PageActPos from 'pages/page_act_pos/scripts/PageActPos';
 
 @ccclass
 export default class PageAct extends PageBase {
-    afterPageShow() {
+    afterPageShowAnim() {
         this.ctrlr.pushPage(PageActPos, false);
     }
 }
