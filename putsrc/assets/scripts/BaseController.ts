@@ -207,6 +207,11 @@ export class BaseController extends cc.Component {
         this.actTBData.btn.node.emit('click', this.actTBData.btn);
     }
 
+    update() {
+        if (CC_EDITOR) return;
+        this.memory.update();
+    }
+
     // 页面管理 -----------------------------------------------------------------
 
     pageChanging: boolean = false;

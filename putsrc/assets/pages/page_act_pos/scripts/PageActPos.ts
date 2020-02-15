@@ -8,38 +8,44 @@ const { ccclass, property } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import PageActPosLVD from './PageActPosLVD';
 import ListView from 'scripts/ListView';
+import { ActPos } from 'scripts/Memory';
 
 @ccclass
 export default class PageActPos extends PageBase {
     lvd: PageActPosLVD = null;
-    listview: ListView = null;
+    listView: ListView = null;
 
-    posToken: string = '';
+    curPosId: string = '';
+    dirtyToken: number = 0;
 
     onInit() {
         this.lvd = this.getComponent(PageActPosLVD);
-        this.listview = this.getComponentInChildren(ListView);
+        this.listView = this.getComponentInChildren(ListView);
     }
 
     onPageShow() {
+        this.ctrlr.setTitle('位置');
+
         let gameData = this.ctrlr.memory.gameData;
         let posId = gameData.curPosId;
 
-        let actPos = null;
+        let actPos: ActPos = null;
         if (!gameData.posDataDict.hasOwnProperty(posId)) {
             actPos = this.ctrlr.memory.addActPos(posId);
         } else {
             actPos = gameData.posDataDict[posId];
         }
-        let curPosToken = actPos.token;
 
-        if (curPosToken != this.posToken) {
-            this.posToken = curPosToken;
-            this.lvd.clearData();
-            this.listview.clearContent();
-            this.listview.createContent();
+        let curDirtyToken = this.ctrlr.memory.dirtyToken;
+        if (this.curPosId != actPos.id || this.dirtyToken != curDirtyToken) {
+            this.curPosId = actPos.id;
+            this.dirtyToken = curDirtyToken;
+            this.resetListview();
         }
+    }
 
-        this.ctrlr.setTitle('位置');
+    resetListview() {
+        this.lvd.clearData();
+        this.listView.resetContent();
     }
 }

@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
-import { ActPos, ActPosType } from 'scripts/Memory';
+import { ActPos, ActPosModel } from 'scripts/Memory';
 import ListViewCell from 'scripts/ListViewCell';
 import CellPosInfo from '../cells/cell_pos_info/scripts/CellPosInfo';
 import CellPosBtn from '../cells/cell_pos_btn/scripts/CellPosBtn';
@@ -51,17 +51,17 @@ export default class PageActPosLVD extends ListViewDelegate {
     }
     _curActPos: ActPos = null;
 
-    get curActPosType(): ActPosType {
+    get curActPosModel(): ActPosModel {
         // @ts-ignore
-        if (!this._curActPosType) this._curActPosType = this.ctrlr.memory.actPosTypeDict[this.curPosId];
-        return this._curActPosType;
+        if (!this._curActPosModel) this._curActPosModel = this.ctrlr.memory.actPosModelDict[this.curPosId];
+        return this._curActPosModel;
     }
-    _curActPosType: ActPosType = null;
+    _curActPosModel: ActPosModel = null;
 
     clearData() {
         this._curPosId = null;
         this._curActPos = null;
-        this._curActPosType = null;
+        this._curActPosModel = null;
     }
 
     actCellLength: number = 0;
@@ -69,9 +69,9 @@ export default class PageActPosLVD extends ListViewDelegate {
     movCellLength: number = 0;
 
     numberOfRows(listView: ListView): number {
-        this.actCellLength = Math.ceil(this.curActPosType.acts.length * 0.5);
-        this.evtCellLength = Math.ceil(this.curActPosType.evts.length * 0.5);
-        this.movCellLength = this.curActPosType.movs.length;
+        this.actCellLength = Math.ceil(this.curActPosModel.acts.length * 0.5);
+        this.evtCellLength = Math.ceil(this.curActPosModel.evts.length * 0.5);
+        this.movCellLength = this.curActPosModel.movs.length;
         return 1 + this.actCellLength + this.evtCellLength + this.movCellLength;
     }
 
@@ -112,15 +112,15 @@ export default class PageActPosLVD extends ListViewDelegate {
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPosInfo & CellPosBtn & CellPosMov) {
         if (rowIdx == 0) {
-            cell.setData(this.curActPosType.cnName);
+            cell.setData(this.curActPosModel.cnName);
         } else if (rowIdx <= this.actCellLength) {
             let actIdx = (rowIdx - 1) * 2;
-            let actId1 = this.curActPosType.acts[actIdx];
+            let actId1 = this.curActPosModel.acts[actIdx];
             let actInfo1 = CellActInfo[actId1];
             cell.setBtn1(actInfo1.cnName, () => {});
 
-            if (actIdx + 1 < this.curActPosType.acts.length) {
-                let actId2 = this.curActPosType.acts[actIdx + 1];
+            if (actIdx + 1 < this.curActPosModel.acts.length) {
+                let actId2 = this.curActPosModel.acts[actIdx + 1];
                 let actInfo2 = CellActInfo[actId2];
                 cell.setBtn2(actInfo2.cnName, () => {});
             } else {
@@ -130,14 +130,14 @@ export default class PageActPosLVD extends ListViewDelegate {
             //
         } else {
             let movIdx = rowIdx - 1 - this.actCellLength - this.evtCellLength;
-            let moveType = this.curActPosType.movs[movIdx];
+            let moveType = this.curActPosModel.movs[movIdx];
             let posId = moveType.id;
-            let movPosType = this.ctrlr.memory.actPosTypeDict[posId];
-            cell.setData('前往：' + movPosType.cnName, '花费：' + String(moveType.price), () => {
+            let movPosModel = this.ctrlr.memory.actPosModelDict[posId];
+            cell.setData('前往：' + movPosModel.cnName, '花费：' + String(moveType.price), () => {
                 if (moveType.price == 0) {
                     this.gotoNextPos(posId);
                 } else {
-                    let txt = `决定花费${moveType.price}前往${movPosType.cnName}？`;
+                    let txt = `决定花费${moveType.price}前往${movPosModel.cnName}？`;
                     this.ctrlr.popAlert(txt, (key: number) => {
                         if (key == 1) this.gotoNextPos(posId);
                     });
@@ -147,8 +147,8 @@ export default class PageActPosLVD extends ListViewDelegate {
     }
 
     gotoNextPos(nextPosId: string) {
-        let curLoc = this.curActPosType.loc;
-        let nextLoc = this.ctrlr.memory.actPosTypeDict[nextPosId].loc;
+        let curLoc = this.curActPosModel.loc;
+        let nextLoc = this.ctrlr.memory.actPosModelDict[nextPosId].loc;
         let disX = nextLoc.x - curLoc.x;
         let disY = nextLoc.y - curLoc.y;
         let switchAnim: PageSwitchAnim = null;

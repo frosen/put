@@ -20,9 +20,6 @@ export default class ListView extends cc.Component {
     })
     fixedHeight: number = 0;
 
-    @property
-    createOnLoad: boolean = true;
-
     scrollView: cc.ScrollView = null;
     content: cc.Node = null;
 
@@ -48,13 +45,9 @@ export default class ListView extends cc.Component {
         this.content = this.scrollView.content;
 
         this.node.on('scrolling', this.onScrolling.bind(this));
-
-        if (this.createOnLoad) {
-            this.createContent();
-        }
     }
 
-    createContent() {
+    createContent(pos: number = 0) {
         // 计算content高度
         this.rowCount = this.delegate.numberOfRows(this);
 
@@ -134,6 +127,11 @@ export default class ListView extends cc.Component {
 
         this.disTopRowH = 0;
         this.disBtmRowH = 0;
+    }
+
+    resetContent(samePos: boolean = false) {
+        this.clearContent();
+        this.createContent(samePos ? this.content.y : 0);
     }
 
     onScrolling() {

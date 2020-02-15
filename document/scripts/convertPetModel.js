@@ -1,25 +1,25 @@
 /**
- * 转换pet type
+ * 转换pet model
  */
 
 let convert = require('./xlsToJs');
 
-convert('../put.xls', '../../putsrc/assets/configs/PetType.js', 'pet', function(data) {
+convert('../put.xls', '../../putsrc/assets/configs/PetModels.js', 'pet', function(data) {
     let petJson = [];
     for (let rowIdx = 1; rowIdx < data.length; rowIdx++) {
         const rowData = data[rowIdx];
 
         let id = rowData[0];
         let cnName = rowData[1];
-        let biotypeX = rowData[2];
+        let bioTypeX = rowData[2];
 
-        if (!biotypeX) {
+        if (!bioTypeX) {
             console.log(`${cnName}没有固定属性，所以停止`);
             break;
         }
-        let biotype = Number(rowData[2].substr(0, 1));
-        let eletype = Number(rowData[3].substr(0, 1));
-        let battletype = Number(rowData[4].substr(0, 1));
+        let bioType = Number(rowData[2].substr(0, 1));
+        let eleType = Number(rowData[3].substr(0, 1));
+        let battleType = Number(rowData[4].substr(0, 1));
         let speed = Number(rowData[5]);
 
         let baseStrength = Number(rowData[6]);
@@ -50,9 +50,9 @@ convert('../put.xls', '../../putsrc/assets/configs/PetType.js', 'pet', function(
             id,
             cnName,
             rarity,
-            biotype,
-            eletype,
-            battletype,
+            bioType,
+            eleType,
+            battleType,
             speed,
             baseStrength,
             addStrength,
