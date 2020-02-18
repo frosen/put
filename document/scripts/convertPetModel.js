@@ -44,12 +44,9 @@ convert('../put.xls', '../../putsrc/assets/configs/PetModels.js', 'pet', functio
         let baseElegant = Number(rowData[16]);
         let addElegant = Number(rowData[17]);
 
-        let rarity = Number(rowData[18]);
-
         let petData = {
             id,
             cnName,
-            rarity,
             bioType,
             eleType,
             battleType,

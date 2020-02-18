@@ -14,9 +14,10 @@ import CellPosBtn from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import CellPosMov from '../cells/cell_pos_mov/scripts/CellPosMov';
 import PageActPos from './PageActPos';
 import { PageSwitchAnim } from 'scripts/BaseController';
+import PageActExploration from 'pages/page_act_exploration/scripts/PageActExploration';
 
 const CellActInfo = {
-    work: { cnName: '工作介绍所' },
+    work: { cnName: '工作介绍所', page: PageActExploration },
     quest: { cnName: '任务发布栏' },
     shop: { cnName: '物资商店' },
     equipMarket: { cnName: '装备市场' },
@@ -24,7 +25,7 @@ const CellActInfo = {
     recycler: { cnName: '回收站' },
     store: { cnName: '仓库' },
     awardsCenter: { cnName: '奖励中心' },
-    exploration: { cnName: '探索' }
+    exploration: { cnName: '探索', page: PageActExploration }
 };
 
 @ccclass
@@ -117,12 +118,16 @@ export default class PageActPosLVD extends ListViewDelegate {
             let actIdx = (rowIdx - 1) * 2;
             let actId1 = this.curActPosModel.acts[actIdx];
             let actInfo1 = CellActInfo[actId1];
-            cell.setBtn1(actInfo1.cnName, () => {});
+            cell.setBtn1(actInfo1.cnName, () => {
+                this.ctrlr.pushPage(actInfo1.page);
+            });
 
             if (actIdx + 1 < this.curActPosModel.acts.length) {
                 let actId2 = this.curActPosModel.acts[actIdx + 1];
                 let actInfo2 = CellActInfo[actId2];
-                cell.setBtn2(actInfo2.cnName, () => {});
+                cell.setBtn2(actInfo2.cnName, () => {
+                    this.ctrlr.pushPage(actInfo2.page);
+                });
             } else {
                 cell.hideBtn2();
             }

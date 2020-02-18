@@ -5,40 +5,61 @@
  */
 
 import PageActExploration from './PageActExploration';
-import Battle from './Battle';
+import { Memory } from 'scripts/Memory';
+import BattleController from './BattleController';
 
 enum ExplorationState {
+    none,
     explore,
     battle,
-    recover,
-    revive
+    recover
 }
 
-enum ExploreResult {
+enum ExplorationResult {
     none,
     battle
 }
 
 export default class ExplorationUpdater {
     page: PageActExploration = null;
+    memory: Memory = null;
+    battleCtrlr: BattleController = null;
 
-    state: ExplorationState = ExplorationState.explore;
-
-    executingTimes: number = 5;
-
-    battle: Battle = null;
+    state: ExplorationState = ExplorationState.none;
 
     init(page: PageActExploration) {
         this.page = page;
-        cc.director.getScheduler().scheduleUpdate(this, 0, false);
-        this.restoreData();
+        this.memory = this.page.ctrlr.memory;
+        this.battleCtrlr = new BattleController();
+        this.battleCtrlr.init(this.page, this.memory);
+
+        this.lastTime = new Date().getTime();
+
+        this.memory.addDataListener(this);
+
+        if (!this.memory.gameData.curExploration) {
+            this.createExploration();
+        } else {
+            this.restoreLastExploration();
+        }
     }
+
+    createExploration() {
+        this.memory.createExploration();
+        this.battleCtrlr.resetOurTeam();
+    }
+
+    restoreLastExploration() {}
 
     destroy() {
-        cc.director.getScheduler().unscheduleUpdate(this);
+        this.memory.deleteExploration();
     }
 
-    restoreData() {}
+    dataChangedFlag: boolean = false;
+
+    onMemoryDataChanged() {
+        if (this.battleCtrlr.checkIfOurTeamChanged()) this.dataChangedFlag = true;
+    }
 
     lastTime: number = 0;
     updateCount: number = 0;
@@ -53,34 +74,50 @@ export default class ExplorationUpdater {
     }
 
     onUpdate() {
-        if (this.state == ExplorationState.explore) this.updateExplore();
+        if (this.state == ExplorationState.explore) this.updateExploration();
         else if (this.state == ExplorationState.battle) this.updateBattle();
     }
 
     // -----------------------------------------------------------------
 
-    updateExplore() {
-        let result = this.getExploreResult();
-        if (result == ExploreResult.none) this.updateExploreNone();
-        else if (result == ExploreResult.battle) this.updateExploreStartBattle();
+    explorationTime: number = 0;
+
+    startExploration() {
+        this.explorationTime = 5 + Math.floor(Math.random() * 5);
+        this.page.log('开始探索');
     }
 
-    getExploreResult(): ExploreResult {
-        if (this.executingTimes > 0) {
-            this.executingTimes--;
-            return ExploreResult.none;
+    updateExploration() {
+        if (this.dataChangedFlag) {
+            this.battleCtrlr.resetOurTeam();
+            this.page.log('队伍变更');
         } else {
-            return ExploreResult.none;
+            let result = this.getExplorationResult();
+            if (result == ExplorationResult.none) this.exploreNothing();
+            else if (result == ExplorationResult.battle) this.startBattle();
         }
     }
 
-    updateExploreNone() {
+    getExplorationResult(): ExplorationResult {
+        if (this.explorationTime > 0) {
+            this.explorationTime--;
+            return ExplorationResult.none;
+        } else {
+            return ExplorationResult.none;
+        }
+    }
+
+    exploreNothing() {
         this.page.log('探索中......');
     }
 
-    updateExploreStartBattle() {}
+    startBattle() {
+        this.battleCtrlr.start();
+    }
 
     // -----------------------------------------------------------------
 
-    updateBattle() {}
+    updateBattle() {
+        this.battleCtrlr.update();
+    }
 }

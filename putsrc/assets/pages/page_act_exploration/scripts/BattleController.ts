@@ -4,9 +4,57 @@
  * luleyan
  */
 
-import { BioType, EleType, BattleType } from 'scripts/Memory';
+import { BioType, EleType, BattleType, Memory, PetState, Pet, ExplorationModel, EnemyPet, Pet2 } from 'scripts/Memory';
+import PageActExploration from './PageActExploration';
 
-export class PetBattle {
+// random with seed -----------------------------------------------------------------
+
+let seed = 5;
+function srand(s: number) {
+    seed = s;
+}
+
+function rand() {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280.0;
+}
+
+function randInt(min: number, max: number) {
+    return Math.floor(min + rand() * (max - min));
+}
+
+// random -----------------------------------------------------------------
+
+function random(c: number): number {
+    return Math.floor(Math.random() * c);
+}
+
+function getRandomOneInList(list) {
+    return list[random(list.length)];
+}
+
+function normalRandom(c) {
+    let r = Math.random();
+    if (r <= 0.5) {
+        r = 0.5 - r;
+        r = 0.5 - r * r * 2;
+    } else {
+        r = r - 0.5;
+        r = 1 - r * r * 2;
+    }
+    return Math.floor(r * c);
+}
+
+// -----------------------------------------------------------------
+
+export class BattlePet {
+    idx: number = 0;
+    /** 用于标识当前位置宠物是否变化 */
+    token: string = '';
+
+    pet: Pet = null;
+    pet2: Pet2 = null;
+
     hp: number = 0;
 
     /** 额外生物类型 */
@@ -17,8 +65,155 @@ export class PetBattle {
     exBattleType: BattleType = BattleType.none;
     /** 额外速度 */
     exSpeed: number = 0;
+
+    init(idx: number, pet: Pet, pet2: Pet2) {
+        this.idx = idx;
+        this.pet = pet;
+        this.pet2 = pet2;
+
+        this.token = BattlePet.getPetToken(pet);
+
+        this.hp = pet2.hpMax;
+    }
+
+    static getPetToken(pet: Pet): string {
+        let token = String(pet.catchIdx) + '&';
+        for (const equip of pet.equips) {
+            token += equip.id + '!';
+            for (const extra of equip.extras) {
+                token += extra + '$';
+            }
+        }
+        return token;
+    }
+}
+
+export class RealBattle {
+    selfPets: BattlePet[] = [];
+    mpMax: number = 0;
+    mp: number = 0;
+    rage: number = 0;
+
+    enemyPets: BattlePet[] = [];
+    enemyPetDatas: Pet[] = [];
+    enemyPet2Datas: Pet2[] = [];
+
+    battleRound: number = 0;
 }
 
 export default class BattleController {
-    init() {}
+    page: PageActExploration = null;
+    memory: Memory = null;
+
+    realBattle: RealBattle = null;
+
+    init(page: PageActExploration, memory: Memory) {
+        this.page = page;
+        this.memory = memory;
+        this.realBattle = new RealBattle();
+    }
+
+    resetOurTeam() {
+        this.realBattle.selfPets.length = 0;
+
+        let pets = this.memory.gameData.pets;
+        let pet2s = this.memory.gameData2.pet2s;
+
+        let mpMax = 0;
+        for (let petIdx = 0; petIdx < pets.length; petIdx++) {
+            const pet = pets[petIdx];
+            if (pet.state != PetState.ready) continue;
+            let pet2 = pet2s[petIdx];
+
+            let battlePet = new BattlePet();
+            battlePet.init(petIdx, pet, pet2);
+
+            this.realBattle.selfPets.push(battlePet);
+
+            mpMax += pet2.mpMax;
+        }
+
+        this.realBattle.mpMax = mpMax;
+        this.realBattle.mp = mpMax;
+    }
+
+    checkIfOurTeamChanged(): boolean {
+        let pets = this.memory.gameData.pets;
+        let selfPets = this.realBattle.selfPets;
+        for (let petIdx = 0; petIdx < selfPets.length; petIdx++) {
+            const battlePet = selfPets[petIdx];
+            let pet = pets[battlePet.idx];
+            let newToekn = BattlePet.getPetToken(pet);
+            if (newToekn != battlePet.token) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    start() {
+        let seed = new Date().getTime() % 999999;
+        srand(seed);
+
+        // 更新memory
+        this.memory.createBattle(seed);
+
+        let gameData = this.memory.gameData;
+        let posId = gameData.curPosId;
+        let curPosModel = this.memory.actPosModelDict[posId];
+        let explModel: ExplorationModel = <ExplorationModel>curPosModel.actDict['exploration'];
+
+        let petCountMax = Math.min(5, this.realBattle.selfPets.length + 2);
+        let petCount = random(petCountMax) + 1;
+        let step = gameData.curExploration.curStep;
+
+        let enmeyPetType1 = getRandomOneInList(explModel.petIds);
+        let enmeyPetType2 = getRandomOneInList(explModel.petIds);
+
+        for (let index = 0; index < petCount; index++) {
+            let id = Math.random() > 0.5 ? enmeyPetType1 : enmeyPetType2;
+            let level = Math.max(1, explModel.lv - 2 + normalRandom(5));
+            let rank = normalRandom(step * 2) + 1;
+            this.memory.createEnemyPet(id, level, rank);
+        }
+
+        // 更新battle
+        this.realBattle.enemyPetDatas.length = 0;
+        this.realBattle.enemyPet2Datas.length = 0;
+        this.realBattle.enemyPets.length = 0;
+        let enemys = gameData.curExploration.curBattleField.enemys;
+        for (let index = 0; index < enemys.length; index++) {
+            const enemyPet = enemys[index];
+
+            let petData = new Pet();
+            petData.id = enemyPet.id;
+            petData.level = enemyPet.level;
+            petData.rank = enemyPet.rank;
+            this.realBattle.enemyPetDatas.push(petData);
+
+            let pet2Data = new Pet2();
+            let petModel = this.memory.petModelDict[enemyPet.id];
+            pet2Data.setData(petData, petModel);
+            this.realBattle.enemyPet2Datas.push(pet2Data);
+
+            let battlePet = new BattlePet();
+            battlePet.init(index, petData, pet2Data);
+
+            this.realBattle.selfPets.push(battlePet);
+        }
+
+        this.realBattle.battleRound = 1;
+
+        // 日志
+        let petModelDict = this.memory.petModelDict;
+        let petNames = '';
+        for (const ePet of this.realBattle.enemyPets) {
+            let petId = ePet.pet.id;
+            let cnName = petModelDict[petId].cnName;
+            petNames += cnName + ' ';
+        }
+        this.page.log('进入战斗：' + petNames);
+    }
+
+    update() {}
 }

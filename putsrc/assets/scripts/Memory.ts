@@ -51,14 +51,12 @@ function newDict(dict = null) {
 
 // -----------------------------------------------------------------
 
-export enum Rarity {
-    none,
-    N,
-    R,
-    SR
-}
+export class ActModel {}
 
-// -----------------------------------------------------------------
+export class ExplorationModel extends ActModel {
+    lv: number = 0;
+    petIds: string[] = [];
+}
 
 export class MovCondition {}
 
@@ -74,6 +72,7 @@ export class ActPosModel {
     lvFrom: number = 0;
     lvTo: number = 0;
     acts: string[] = [];
+    actDict: { [key: string]: ActModel } = {};
     evts: string[] = [];
     movs: Mov[] = [];
     loc: cc.Vec2 = null;
@@ -91,16 +90,20 @@ export class ActPos {
 
 export class EnemyPet {
     id: string = '';
-
-    /** 等级 */
     level: number = 0;
-    /** 品阶 */
     rank: number = 0;
 }
 
-export class BattleFieldData {
+export class BattleField {
+    startTime: number = 0;
     seed: number = 0;
-    enemy: EnemyPet[] = newList();
+    enemys: EnemyPet[] = newList();
+}
+
+export class Exploration {
+    startTime: number = 0;
+    curStep: number = 0;
+    curBattleField: BattleField = null;
 }
 
 // -----------------------------------------------------------------
@@ -141,8 +144,6 @@ class PetModel {
     id: string = '';
     cnName: string = '';
 
-    rarity: Rarity = Rarity.none;
-
     /** 生物类型 */
     bioType: BioType = BioType.none;
     /** 元素类型 */
@@ -173,12 +174,23 @@ class PetModel {
     selfFeatures: string[] = [];
 }
 
+export enum PetState {
+    rest,
+    ready
+}
+
 export class Pet {
     /** 类型 */
     id: string = '';
 
     master: string = '';
-    state: string = '';
+
+    catchTime: number = 0;
+    catchIdx: number = 0;
+    catchLv: number = 0;
+    catchRank: number = 0;
+
+    state: PetState = PetState.rest;
 
     /** 等级 */
     level: number = 0;
@@ -187,6 +199,8 @@ export class Pet {
 
     /** 默契值 */
     privity: number = 0;
+    privityChangedTime: number = 0;
+
     /** 学习类型 */
     learningType: string = '';
     /** 学习值 */
@@ -201,7 +215,7 @@ export class Pet {
     learnedFeatures: string[] = [];
 
     /** 装备 */
-    equips: string[] = [];
+    equips: Item[] = [];
 }
 
 const RankToAttriRatio = [0, 1, 1.15, 1.32, 1.52, 1.75, 2.01, 2.31, 3.06, 3.52, 4.04, 4.65];
@@ -256,22 +270,22 @@ export class Pet2 {
 
 // -----------------------------------------------------------------
 
-export enum ItemType {
-    equip
-}
-
 export class Item {
-    id: number = 0;
-    type: ItemType = ItemType.equip;
+    id: string = '';
+    extras: string[] = newList();
 }
 
 // -----------------------------------------------------------------
 
 export class GameData {
     curPosId: string = '';
+
     posDataDict: { [key: string]: ActPos } = newDict();
-    curBattle: BattleFieldData = null;
+    curExploration: Exploration = null;
+
     pets: Pet[] = newList();
+    totalPetCount: number = 0;
+
     items: Item[] = newList();
 }
 
@@ -327,7 +341,7 @@ export class Memory {
             memoryDirtyToken = memoryDirtyToken * -1 + 1;
             this.resetGameData2();
             for (const listener of this.dataListeners) {
-                listener.onMemoryDataChange(this);
+                listener.onMemoryDataChanged();
             }
         }
     }
@@ -347,7 +361,7 @@ export class Memory {
     dataListeners: any[] = [];
 
     addDataListener(listener: any) {
-        cc.assert(listener.hasOwnProperty('onMemoryDataChange'), 'Memory的观察者必须有onMemoryDataChange这个函数');
+        cc.assert(listener.hasOwnProperty('onMemoryDataChanged'), 'Memory的观察者必须有onMemoryDataChanged这个函数');
         this.dataListeners.push(listener);
     }
 
@@ -359,5 +373,43 @@ export class Memory {
                 this.dataListeners.splice(index, 1);
             }
         }
+    }
+
+    createExploration() {
+        if (this.gameData.curExploration) return;
+        let exploration = newInsWithChecker(Exploration);
+        exploration.startTime = new Date().getTime();
+        this.gameData.curExploration = exploration;
+    }
+
+    deleteExploration() {
+        if (this.gameData.curExploration) {
+            this.gameData.curExploration = null;
+        }
+    }
+
+    createBattle(seed: number) {
+        cc.assert(this.gameData.curExploration, '创建battle前必有Exploration');
+        let curExploration = this.gameData.curExploration;
+        if (curExploration.curBattleField) return;
+        let battle = newInsWithChecker(BattleField);
+        battle.startTime = new Date().getTime();
+        battle.seed = seed;
+
+        curExploration.curBattleField = battle;
+    }
+
+    createEnemyPet(id: string, lv: number, rank: number) {
+        let p = newInsWithChecker(EnemyPet);
+        p.id = id;
+        p.level = lv;
+        p.rank = rank;
+
+        this.gameData.curExploration.curBattleField.enemys.push(p);
+    }
+
+    deleteBattle() {
+        cc.assert(this.gameData.curExploration, '删除battle前必有Exploration');
+        this.gameData.curExploration.curBattleField = null;
     }
 }
