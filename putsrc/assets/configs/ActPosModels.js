@@ -14,7 +14,7 @@ let models = [
             awardsCenter: null
         },
         evts: [],
-        movs: [{ id: 'guangjidiandadao', price: 0, condition: {} }],
+        movs: [{ id: 'GuangJiDianDaDao', price: 0, condition: {} }],
         loc: { x: 1000, y: 100 }
     },
     {
@@ -25,7 +25,7 @@ let models = [
             exploration: null
         },
         evts: [],
-        movs: [{ id: 'yizhuang', price: 0, condition: {} }],
+        movs: [{ id: 'YiZhuang', price: 0, condition: {} }],
         loc: { x: 1100, y: 100 }
     }
 ];

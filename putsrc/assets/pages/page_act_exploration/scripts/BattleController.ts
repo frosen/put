@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { BioType, EleType, BattleType, Memory, PetState, Pet, ExplorationModel, EnemyPet, Pet2 } from 'scripts/Memory';
+import { Memory, PetState, Pet, ExplorationModel, Pet2 } from 'scripts/Memory';
 import PageActExploration from './PageActExploration';
 
 // random with seed -----------------------------------------------------------------
@@ -52,22 +52,16 @@ export class BattlePet {
     /** 用于标识当前位置宠物是否变化 */
     token: string = '';
 
+    liveIdx: number = 0;
+
     pet: Pet = null;
     pet2: Pet2 = null;
 
     hp: number = 0;
 
-    /** 额外生物类型 */
-    exBioType: BioType = BioType.none;
-    /** 额外元素类型 */
-    exEleType: EleType = EleType.none;
-    /** 额外战斗类型 */
-    exBattleType: BattleType = BattleType.none;
-    /** 额外速度 */
-    exSpeed: number = 0;
-
     init(idx: number, pet: Pet, pet2: Pet2) {
         this.idx = idx;
+        this.liveIdx = idx;
         this.pet = pet;
         this.pet2 = pet2;
 
@@ -90,15 +84,19 @@ export class BattlePet {
 
 export class RealBattle {
     selfPets: BattlePet[] = [];
+    selfPetCount: number = 0;
     mpMax: number = 0;
     mp: number = 0;
     rage: number = 0;
 
     enemyPets: BattlePet[] = [];
+    enemyPetCount: number = 0;
     enemyPetDatas: Pet[] = [];
     enemyPet2Datas: Pet2[] = [];
 
     battleRound: number = 0;
+    order: BattlePet[] = [];
+    curIdx: number = 0;
 }
 
 export default class BattleController {
@@ -132,9 +130,12 @@ export default class BattleController {
 
             mpMax += pet2.mpMax;
         }
+        this.realBattle.selfPetCount = pets.length;
 
         this.realBattle.mpMax = mpMax;
         this.realBattle.mp = mpMax;
+
+        this.page.setUIofSelfPet(-1);
     }
 
     checkIfOurTeamChanged(): boolean {
@@ -163,8 +164,7 @@ export default class BattleController {
         let curPosModel = this.memory.actPosModelDict[posId];
         let explModel: ExplorationModel = <ExplorationModel>curPosModel.actDict['exploration'];
 
-        let petCountMax = Math.min(5, this.realBattle.selfPets.length + 2);
-        let petCount = random(petCountMax) + 1;
+        let petCount = random(5) + 1;
         let step = gameData.curExploration.curStep;
 
         let enmeyPetType1 = getRandomOneInList(explModel.petIds);
@@ -178,9 +178,10 @@ export default class BattleController {
         }
 
         // 更新battle
-        this.realBattle.enemyPetDatas.length = 0;
-        this.realBattle.enemyPet2Datas.length = 0;
-        this.realBattle.enemyPets.length = 0;
+        let rb = this.realBattle;
+        rb.enemyPetDatas.length = 0;
+        rb.enemyPet2Datas.length = 0;
+        rb.enemyPets.length = 0;
         let enemys = gameData.curExploration.curBattleField.enemys;
         for (let index = 0; index < enemys.length; index++) {
             const enemyPet = enemys[index];
@@ -189,20 +190,24 @@ export default class BattleController {
             petData.id = enemyPet.id;
             petData.level = enemyPet.level;
             petData.rank = enemyPet.rank;
-            this.realBattle.enemyPetDatas.push(petData);
+            rb.enemyPetDatas.push(petData);
 
             let pet2Data = new Pet2();
             let petModel = this.memory.petModelDict[enemyPet.id];
             pet2Data.setData(petData, petModel);
-            this.realBattle.enemyPet2Datas.push(pet2Data);
+            rb.enemyPet2Datas.push(pet2Data);
 
             let battlePet = new BattlePet();
             battlePet.init(index, petData, pet2Data);
 
-            this.realBattle.selfPets.push(battlePet);
+            rb.enemyPets.push(battlePet);
         }
+        rb.enemyPetCount = enemys.length;
 
-        this.realBattle.battleRound = 1;
+        rb.battleRound = 0;
+        rb.order.length = 0;
+        for (const pet of rb.selfPets) rb.order.push(pet);
+        for (const pet of rb.enemyPets) rb.order.push(pet);
 
         // 日志
         let petModelDict = this.memory.petModelDict;
@@ -213,7 +218,28 @@ export default class BattleController {
             petNames += cnName + ' ';
         }
         this.page.log('进入战斗：' + petNames);
+
+        this.gotoNextRound();
     }
 
     update() {}
+
+    gotoNextRound() {
+        let rb = this.realBattle;
+
+        // 处理buff
+
+        // 处理速度列表
+        let petModelDict = this.memory.petModelDict;
+        rb.order.sort((a: BattlePet, b: BattlePet): number => {
+            let sa = a.pet2.exSpeed || petModelDict[a.pet.id].speed;
+            let sb = b.pet2.exSpeed || petModelDict[b.pet.id].speed;
+            return sb - sa;
+        });
+
+        rb.curIdx = 0;
+        rb.battleRound++;
+
+        this.page.log(`第${rb.battleRound}回合`);
+    }
 }

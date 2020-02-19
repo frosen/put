@@ -179,6 +179,8 @@ export enum PetState {
     ready
 }
 
+export const PetRankNames = ['?', 'D', 'C', 'B', 'B+', 'A', 'A+', 'S', 'SS', 'N', 'T', 'Z'];
+
 export class Pet {
     /** 类型 */
     id: string = '';
@@ -218,7 +220,7 @@ export class Pet {
     equips: Item[] = [];
 }
 
-const RankToAttriRatio = [0, 1, 1.15, 1.32, 1.52, 1.75, 2.01, 2.31, 3.06, 3.52, 4.04, 4.65];
+const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
 const BioToFromToRatio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
 
 export class Pet2 {
@@ -243,6 +245,15 @@ export class Pet2 {
 
     sklDmgFrom: number = 0;
     sklDmgTo: number = 0;
+
+    /** 额外生物类型 */
+    exBioType: BioType = BioType.none;
+    /** 额外元素类型 */
+    exEleType: EleType = EleType.none;
+    /** 额外战斗类型 */
+    exBattleType: BattleType = BattleType.none;
+    /** 额外速度 */
+    exSpeed: number = 0;
 
     setData(pet: Pet, petModel: PetModel) {
         let lv = pet.level;
@@ -324,10 +335,6 @@ export class Memory {
         this.test();
     }
 
-    test() {
-        this.gameData.curPosId = 'yizhuang';
-    }
-
     addActPos(posId: string): ActPos {
         let actPos = newInsWithChecker(ActPos);
         let curActPosModel = this.actPosModelDict[posId];
@@ -361,7 +368,7 @@ export class Memory {
     dataListeners: any[] = [];
 
     addDataListener(listener: any) {
-        cc.assert(listener.hasOwnProperty('onMemoryDataChanged'), 'Memory的观察者必须有onMemoryDataChanged这个函数');
+        cc.assert('onMemoryDataChanged' in listener, 'Memory的观察者必须有onMemoryDataChanged这个函数');
         this.dataListeners.push(listener);
     }
 
@@ -411,5 +418,11 @@ export class Memory {
     deleteBattle() {
         cc.assert(this.gameData.curExploration, '删除battle前必有Exploration');
         this.gameData.curExploration.curBattleField = null;
+    }
+
+    // -----------------------------------------------------------------
+
+    test() {
+        this.gameData.curPosId = 'YiZhuang';
     }
 }
