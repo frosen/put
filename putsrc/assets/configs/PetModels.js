@@ -20,8 +20,8 @@ module.exports = [
         addElegant: 9
     },
     {
-        id: 'ZiDongWuShi',
-        cnName: '自动武士',
+        id: 'NeiRanJiShou',
+        cnName: '内燃机兽',
         bioType: 3,
         eleType: 1,
         battleType: 1,
@@ -60,10 +60,10 @@ module.exports = [
         addElegant: 13
     },
     {
-        id: 'WuZhuangPiKa',
-        cnName: '武装皮卡',
+        id: 'YaHuHanJuRen',
+        cnName: '氩弧焊巨人',
         bioType: 3,
-        eleType: 4,
+        eleType: 1,
         battleType: 2,
         speed: 75,
         baseStrength: 160,
@@ -80,10 +80,10 @@ module.exports = [
         addElegant: 18
     },
     {
-        id: 'ZiZouPaoC3',
-        cnName: '自走炮C3',
+        id: 'ZiJingMieHuoQi',
+        cnName: '自警灭火器',
         bioType: 3,
-        eleType: 1,
+        eleType: 2,
         battleType: 2,
         speed: 13,
         baseStrength: 220,
@@ -100,8 +100,8 @@ module.exports = [
         addElegant: 12
     },
     {
-        id: 'GangTieLangRen',
-        cnName: '钢铁浪人',
+        id: 'ShuiLengJiQiRen',
+        cnName: '水冷机器人',
         bioType: 3,
         eleType: 2,
         battleType: 3,
@@ -141,7 +141,7 @@ module.exports = [
     },
     {
         id: 'HeiFengWuRenJi',
-        cnName: '黑锋无人机',
+        cnName: '黑蜂无人机',
         bioType: 3,
         eleType: 3,
         battleType: 4,
@@ -160,7 +160,7 @@ module.exports = [
         addElegant: 13
     },
     {
-        id: 'CiLiYouLing',
+        id: 'CiHuaYouLing',
         cnName: '磁化幽灵',
         bioType: 3,
         eleType: 5,
@@ -180,8 +180,8 @@ module.exports = [
         addElegant: 11
     },
     {
-        id: 'QingTongHuWei',
-        cnName: '金属守卫',
+        id: 'DianZiShouWei',
+        cnName: '电子守卫',
         bioType: 3,
         eleType: 5,
         battleType: 1,
@@ -198,5 +198,25 @@ module.exports = [
         addSensitivity: 12,
         baseElegant: 80,
         addElegant: 12
+    },
+    {
+        id: 'CaoPingShouGeZhe',
+        cnName: '草坪收割者',
+        bioType: 3,
+        eleType: 4,
+        battleType: 3,
+        speed: 60,
+        baseStrength: 200,
+        addStrength: 26,
+        baseConcentration: 190,
+        addConcentration: 24,
+        baseDurability: 100,
+        addDurability: 17,
+        baseAgility: 210,
+        addAgility: 30,
+        baseSensitivity: 90,
+        addSensitivity: 20,
+        baseElegant: 90,
+        addElegant: 10
     }
 ];

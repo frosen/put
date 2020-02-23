@@ -16,7 +16,7 @@ function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
             if (typeof value == 'number') {
                 checkIns[key] = MagicNum - value;
             }
-            memoryDirtyToken *= -1;
+            memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
             return Reflect.set(target, key, value, receiver);
         },
         get: function(target, key) {
@@ -34,7 +34,7 @@ function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
 function newList(list = null) {
     return new Proxy(list || [], {
         set: function(target, key, value, receiver) {
-            memoryDirtyToken *= -1;
+            memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
             return Reflect.set(target, key, value, receiver);
         }
     });
@@ -43,7 +43,7 @@ function newList(list = null) {
 function newDict(dict = null) {
     return new Proxy(dict || {}, {
         set: function(target, key, value, receiver) {
-            memoryDirtyToken *= -1;
+            memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
             return Reflect.set(target, key, value, receiver);
         }
     });
@@ -53,9 +53,12 @@ function newDict(dict = null) {
 
 export class ActModel {}
 
-export class ExplorationModel extends ActModel {
-    lv: number = 0;
+export class StepModel {
     petIds: string[] = [];
+}
+
+export class ExplorationModel extends ActModel {
+    stepModels: StepModel[] = [];
 }
 
 export class MovCondition {}
@@ -69,8 +72,7 @@ export class Mov {
 export class ActPosModel {
     id: string = '';
     cnName: string = '-';
-    lvFrom: number = 0;
-    lvTo: number = 0;
+    lv: number = 0;
     acts: string[] = [];
     actDict: { [key: string]: ActModel } = {};
     evts: string[] = [];
@@ -90,7 +92,7 @@ export class ActPos {
 
 export class EnemyPet {
     id: string = '';
-    level: number = 0;
+    lv: number = 0;
     rank: number = 0;
 }
 
@@ -119,6 +121,8 @@ export enum BioType {
     unknown
 }
 
+export const BioTypeName = ['', '人形生物', '魔法生物', '机械生物', '自然生物', '未知生物'];
+
 export enum EleType {
     none,
     fire = 1,
@@ -128,6 +132,8 @@ export enum EleType {
     light,
     dark
 }
+
+export const EleTypeName = ['', '火', '水', '空', '地', '光', '暗'];
 
 export enum BattleType {
     none,
@@ -139,6 +145,8 @@ export enum BattleType {
     stay,
     chaos
 }
+
+export const BattleTypeName = ['', '近战', '射击', '冲锋', '刺杀', '连段', '停止', '混乱'];
 
 class PetModel {
     id: string = '';
@@ -195,7 +203,7 @@ export class Pet {
     state: PetState = PetState.rest;
 
     /** 等级 */
-    level: number = 0;
+    lv: number = 0;
     /** 品阶 */
     rank: number = 0;
 
@@ -218,6 +226,8 @@ export class Pet {
 
     /** 装备 */
     equips: Item[] = [];
+
+    addExp(exp: number) {}
 }
 
 const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
@@ -255,8 +265,14 @@ export class Pet2 {
     /** 额外速度 */
     exSpeed: number = 0;
 
+    critRate: number = 0;
+    critDmgRate: number = 0;
+    evdRate: number = 0;
+    hitRate: number = 0;
+    dfsRate: number = 0;
+
     setData(pet: Pet, petModel: PetModel) {
-        let lv = pet.level;
+        let lv = pet.lv;
         let rankRatio = RankToAttriRatio[pet.rank];
 
         this.strength = (petModel.baseStrength + petModel.addStrength * lv) * rankRatio;
@@ -276,6 +292,13 @@ export class Pet2 {
 
         this.sklDmgFrom = this.concentration * fromToRatio[0] + 15;
         this.sklDmgTo = this.concentration * fromToRatio[1] + 30;
+
+        let privityPercent = pet.privity * 0.01;
+        this.critRate = privityPercent * 0.1;
+        this.critDmgRate = 0.5 + privityPercent * 0.5;
+        this.evdRate = 0.05 + privityPercent * 0.05;
+        this.hitRate = 0.8 + privityPercent * 0.2;
+        this.dfsRate = 0;
     }
 }
 
@@ -295,6 +318,7 @@ export class GameData {
     curExploration: Exploration = null;
 
     pets: Pet[] = newList();
+    /** 一共抓取过的宠物的总量，用于pet的索引 */
     totalPetCount: number = 0;
 
     items: Item[] = newList();
@@ -409,7 +433,7 @@ export class Memory {
     createEnemyPet(id: string, lv: number, rank: number) {
         let p = newInsWithChecker(EnemyPet);
         p.id = id;
-        p.level = lv;
+        p.lv = lv;
         p.rank = rank;
 
         this.gameData.curExploration.curBattleField.enemys.push(p);
@@ -424,5 +448,39 @@ export class Memory {
 
     test() {
         this.gameData.curPosId = 'YiZhuang';
+
+        let pet = newInsWithChecker(Pet);
+        pet.id = 'FaTiaoWa';
+        pet.state = PetState.ready;
+
+        pet.catchTime = new Date().getTime();
+        pet.catchIdx = 1;
+        pet.catchLv = 1;
+        pet.catchRank = 1;
+
+        pet.lv = 1;
+        pet.rank = 4;
+
+        pet.privity = 100;
+        pet.privityChangedTime = new Date().getTime();
+
+        this.gameData.pets.push(pet);
+
+        pet = newInsWithChecker(Pet);
+        pet.id = 'FangShengJiXieBi';
+        pet.state = PetState.ready;
+
+        pet.catchTime = new Date().getTime();
+        pet.catchIdx = 1;
+        pet.catchLv = 1;
+        pet.catchRank = 1;
+
+        pet.lv = 1;
+        pet.rank = 1;
+
+        pet.privity = 0;
+        pet.privityChangedTime = new Date().getTime();
+
+        this.gameData.pets.push(pet);
     }
 }

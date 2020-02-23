@@ -2635,6 +2635,9 @@
     "buffPrefab": {
       "__uuid__": "7525847d-5d8c-4fde-b6cc-98f946ff33fa"
     },
+    "dmgPrefab": {
+      "__uuid__": "c896dc52-2d51-438a-b512-2f4ad1ce8468"
+    },
     "_id": ""
   },
   {

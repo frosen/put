@@ -9,6 +9,7 @@ import PageBase from './PageBase';
 import { Memory } from './Memory';
 import DebugTool from './DebugTool';
 import TouchLayer from './TouchLayer';
+import checkConfigs from './ConfigsChecker';
 
 // @ts-ignore
 let customEngineInfo = cc.director.customEngineInfo;
@@ -98,6 +99,7 @@ export class BaseController extends cc.Component {
         if (CC_EDITOR) {
             this.setPagePrefabList();
             this.setPagePrefabDict();
+            checkConfigs();
             return;
         }
 
