@@ -9,6 +9,7 @@ import PageBase from 'scripts/PageBase';
 import ExplorationUpdater from './ExplorationUpdater';
 import PetUI from './PetUI';
 import { PetRankNames } from 'scripts/Memory';
+import * as petModelDict from 'configs/PetModelDict';
 import { BattlePet } from './BattleController';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
@@ -119,7 +120,7 @@ export default class PageActExploration extends PageBase {
     setUIofPet(battlePet: BattlePet, ui: PetUI) {
         ui.node.active = true;
         let pet = battlePet.pet;
-        let petModel = this.ctrlr.memory.petModelDict[pet.id];
+        let petModel = petModelDict[pet.id];
         ui.petName.string = petModel.cnName;
         ui.petLv.string = `L${pet.lv}${PetRankNames[pet.rank]}`;
         ui.bar.progress = battlePet.hp / battlePet.hpMax;

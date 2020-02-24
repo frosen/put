@@ -8,6 +8,8 @@ import { Memory, PetState, Pet, ExplorationModel, Pet2, BattleType } from 'scrip
 import PageActExploration from './PageActExploration';
 
 import * as expModels from 'configs/ExpModels';
+import * as actPosModelDict from 'configs/ActPosModelDict';
+import * as petModelDict from 'configs/PetModelDict';
 
 // random with seed -----------------------------------------------------------------
 
@@ -197,7 +199,7 @@ export default class BattleController {
 
         let gameData = this.memory.gameData;
         let posId = gameData.curPosId;
-        let curPosModel = this.memory.actPosModelDict[posId];
+        let curPosModel = actPosModelDict[posId];
         let explModel: ExplorationModel = <ExplorationModel>curPosModel.actDict['exploration'];
 
         let petCount = random(5) + 1;
@@ -231,7 +233,7 @@ export default class BattleController {
             rb.enemyPetDatas.push(petData);
 
             let pet2Data = new Pet2();
-            let petModel = this.memory.petModelDict[enemyPet.id];
+            let petModel = petModelDict[enemyPet.id];
             pet2Data.setData(petData, petModel);
             rb.enemyPet2Datas.push(pet2Data);
 
@@ -256,7 +258,6 @@ export default class BattleController {
         rb.start = true;
 
         // 日志
-        let petModelDict = this.memory.petModelDict;
         let petNames = '';
         for (const ePet of this.realBattle.enemyPets) {
             let petId = ePet.pet.id;
@@ -324,7 +325,6 @@ export default class BattleController {
         // 处理buff
 
         // 处理速度列表
-        let petModelDict = this.memory.petModelDict;
         rb.order.sort((a: BattlePet, b: BattlePet): number => {
             let sa = a.pet2.exSpeed || petModelDict[a.pet.id].speed;
             let sb = b.pet2.exSpeed || petModelDict[b.pet.id].speed;
@@ -371,7 +371,6 @@ export default class BattleController {
 
         this.page.doAttack(battlePet.beEnemy, battlePet.idx, this.realBattle.combo);
         this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, atkDmg, hitResult > 1, this.realBattle.combo);
-        let petModelDict = this.memory.petModelDict;
         let logStr = `${petModelDict[battlePet.pet.id].cnName}对${petModelDict[aim.pet.id].cnName}使用普攻`;
         if (this.realBattle.combo > 1) logStr += '连击';
         logStr += `，造成${atkDmg}点伤害`;
@@ -381,7 +380,6 @@ export default class BattleController {
     }
 
     dead(battlePet: BattlePet) {
-        let petModelDict = this.memory.petModelDict;
         this.page.log(`${petModelDict[battlePet.pet.id].cnName}被击败`);
 
         let rb = this.realBattle;
@@ -452,7 +450,6 @@ export default class BattleController {
             if (nextExp >= curExpMax) {
                 selfPet.lv++;
                 selfPet.exp = 0;
-                let petModelDict = this.memory.petModelDict;
                 this.page.log(`${petModelDict[selfPet.id].cnName}升到了${selfPet.lv}级`);
             } else {
                 selfPet.exp = nextExp;
@@ -462,7 +459,7 @@ export default class BattleController {
 
     getAim(battlePet: BattlePet): BattlePet {
         let rb = this.realBattle;
-        let petModel = this.memory.petModelDict[battlePet.pet.id];
+        let petModel = petModelDict[battlePet.pet.id];
         let battleType = battlePet.pet2.exBattleType || petModel.battleType;
         let otherPets = battlePet.beEnemy ? rb.enemyPets : rb.selfPets;
         let aimPets = battlePet.beEnemy ? rb.selfPets : rb.enemyPets;

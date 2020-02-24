@@ -1,5 +1,5 @@
-module.exports = [
-    {
+module.exports = {
+    FaTiaoWa: {
         id: 'FaTiaoWa',
         cnName: '发条蛙',
         bioType: 3,
@@ -19,7 +19,7 @@ module.exports = [
         baseElegant: 100,
         addElegant: 9
     },
-    {
+    NeiRanJiShou: {
         id: 'NeiRanJiShou',
         cnName: '内燃机兽',
         bioType: 3,
@@ -39,7 +39,7 @@ module.exports = [
         baseElegant: 100,
         addElegant: 15
     },
-    {
+    FangShengJiXieBi: {
         id: 'FangShengJiXieBi',
         cnName: '仿生机械臂',
         bioType: 3,
@@ -59,7 +59,7 @@ module.exports = [
         baseElegant: 120,
         addElegant: 13
     },
-    {
+    YaHuHanJuRen: {
         id: 'YaHuHanJuRen',
         cnName: '氩弧焊巨人',
         bioType: 3,
@@ -79,7 +79,7 @@ module.exports = [
         baseElegant: 50,
         addElegant: 18
     },
-    {
+    ZiJingMieHuoQi: {
         id: 'ZiJingMieHuoQi',
         cnName: '自警灭火器',
         bioType: 3,
@@ -99,7 +99,7 @@ module.exports = [
         baseElegant: 90,
         addElegant: 12
     },
-    {
+    ShuiLengJiQiRen: {
         id: 'ShuiLengJiQiRen',
         cnName: '水冷机器人',
         bioType: 3,
@@ -119,7 +119,7 @@ module.exports = [
         baseElegant: 80,
         addElegant: 16
     },
-    {
+    JiXieMaoMi: {
         id: 'JiXieMaoMi',
         cnName: '机械猫咪',
         bioType: 3,
@@ -139,7 +139,7 @@ module.exports = [
         baseElegant: 150,
         addElegant: 21
     },
-    {
+    HeiFengWuRenJi: {
         id: 'HeiFengWuRenJi',
         cnName: '黑蜂无人机',
         bioType: 3,
@@ -159,7 +159,7 @@ module.exports = [
         baseElegant: 100,
         addElegant: 13
     },
-    {
+    CiHuaYouLing: {
         id: 'CiHuaYouLing',
         cnName: '磁化幽灵',
         bioType: 3,
@@ -179,7 +179,7 @@ module.exports = [
         baseElegant: 130,
         addElegant: 11
     },
-    {
+    DianZiShouWei: {
         id: 'DianZiShouWei',
         cnName: '电子守卫',
         bioType: 3,
@@ -199,7 +199,7 @@ module.exports = [
         baseElegant: 80,
         addElegant: 12
     },
-    {
+    CaoPingShouGeZhe: {
         id: 'CaoPingShouGeZhe',
         cnName: '草坪收割者',
         bioType: 3,
@@ -219,4 +219,4 @@ module.exports = [
         baseElegant: 90,
         addElegant: 10
     }
-];
+};

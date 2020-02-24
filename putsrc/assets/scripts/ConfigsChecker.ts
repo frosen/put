@@ -4,8 +4,8 @@
  * luleyan
  */
 
-import * as actPosModels from 'configs/ActPosModels';
-import * as petModels from 'configs/PetModels';
+import * as petModelDict from 'configs/PetModelDict';
+import * as actPosModelDict from 'configs/ActPosModelDict';
 
 const ActPosChecker = {
     data: {
@@ -29,9 +29,7 @@ const ActPosChecker = {
                             data: [
                                 {
                                     data: {
-                                        petIds: petModels.map(model => {
-                                            return model.id;
-                                        })
+                                        petIds: Object.keys(petModelDict)
                                     },
                                     type: 'all'
                                 }
@@ -59,11 +57,7 @@ const ActPosChecker = {
             {
                 data: {
                     id: function(key, obj, base) {
-                        return actPosModels
-                            .map(model => {
-                                return model.id;
-                            })
-                            .includes(obj[key]);
+                        return Object.keys(actPosModelDict).includes(obj[key]);
                     },
                     price: 'number',
                     condition: {
@@ -161,8 +155,9 @@ function checkDict(obj: any, checker: any, path: string, base: any) {
 }
 
 export default function checkConfigs() {
-    for (let index = 0; index < actPosModels.length; index++) {
-        const model = actPosModels[index];
-        checkDict(model, ActPosChecker, '::' + String(index), model);
+    for (const key in actPosModelDict) {
+        const model = actPosModelDict[key];
+        if (model.id != key) cc.error('id与dict的key不符', key, model.id);
+        checkDict(model, ActPosChecker, '::' + String(key), model);
     }
 }

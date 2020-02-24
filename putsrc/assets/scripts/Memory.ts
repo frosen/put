@@ -330,13 +330,10 @@ export class GameData2 {
 
 // -----------------------------------------------------------------
 
-import * as actPosModels from 'configs/ActPosModels';
-import * as petModels from 'configs/PetModels';
+import * as petModelDict from 'configs/PetModelDict';
+import * as actPosModelDict from 'configs/ActPosModelDict';
 
 export class Memory {
-    actPosModelDict: { [key: string]: ActPosModel } = {};
-    petModelDict: { [key: string]: PetModel } = {};
-
     gameData: GameData = newInsWithChecker(GameData);
     gameData2: GameData2 = new GameData2();
 
@@ -348,20 +345,12 @@ export class Memory {
     }
 
     init() {
-        // 读取
-        for (const actPosModel of actPosModels) {
-            this.actPosModelDict[actPosModel.id] = <any>actPosModel;
-        }
-        for (const petModel of petModels) {
-            this.petModelDict[petModel.id] = <any>petModel;
-        }
-
         this.test();
     }
 
     addActPos(posId: string): ActPos {
         let actPos = newInsWithChecker(ActPos);
-        let curActPosModel = this.actPosModelDict[posId];
+        let curActPosModel: ActPosModel = actPosModelDict[posId];
         actPos.init(posId, curActPosModel);
         this.gameData.posDataDict[posId] = actPos;
         return actPos;
@@ -384,7 +373,7 @@ export class Memory {
         for (let index = 0; index < this.gameData.pets.length; index++) {
             const pet = this.gameData.pets[index];
             if (!pet2s[index]) pet2s[index] = new Pet2();
-            let petModel = this.petModelDict[pet.id];
+            let petModel: PetModel = petModelDict[pet.id];
             pet2s[index].setData(pet, petModel);
         }
     }

@@ -1,5 +1,5 @@
-module.exports = [
-    {
+module.exports = {
+    YiZhuang: {
         id: 'YiZhuang',
         cnName: '易庄',
         lv: 1,
@@ -18,7 +18,7 @@ module.exports = [
         movs: [{ id: 'GuangJiDianDaDao', price: 0, condition: {} }],
         loc: { x: 1000, y: 100 }
     },
-    {
+    GuangJiDianDaDao: {
         id: 'GuangJiDianDaDao',
         cnName: '光机电大道',
         lv: 1,
@@ -47,4 +47,4 @@ module.exports = [
         movs: [{ id: 'YiZhuang', price: 0, condition: {} }],
         loc: { x: 1100, y: 100 }
     }
-];
+};

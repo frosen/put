@@ -8,6 +8,7 @@ const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import { ActPos, ActPosModel } from 'scripts/Memory';
+import * as actPosModelDict from 'configs/ActPosModelDict';
 import ListViewCell from 'scripts/ListViewCell';
 import CellPosInfo from '../cells/cell_pos_info/scripts/CellPosInfo';
 import CellPosBtn from '../cells/cell_pos_btn/scripts/CellPosBtn';
@@ -54,7 +55,7 @@ export default class PageActPosLVD extends ListViewDelegate {
 
     get curActPosModel(): ActPosModel {
         // @ts-ignore
-        if (!this._curActPosModel) this._curActPosModel = this.ctrlr.memory.actPosModelDict[this.curPosId];
+        if (!this._curActPosModel) this._curActPosModel = actPosModelDict[this.curPosId];
         return this._curActPosModel;
     }
     _curActPosModel: ActPosModel = null;
@@ -137,7 +138,7 @@ export default class PageActPosLVD extends ListViewDelegate {
             let movIdx = rowIdx - 1 - this.actCellLength - this.evtCellLength;
             let moveType = this.curActPosModel.movs[movIdx];
             let posId = moveType.id;
-            let movPosModel = this.ctrlr.memory.actPosModelDict[posId];
+            let movPosModel = actPosModelDict[posId];
             cell.setData('前往：' + movPosModel.cnName, '花费：' + String(moveType.price), () => {
                 if (moveType.price == 0) {
                     this.gotoNextPos(posId);
@@ -153,7 +154,7 @@ export default class PageActPosLVD extends ListViewDelegate {
 
     gotoNextPos(nextPosId: string) {
         let curLoc = this.curActPosModel.loc;
-        let nextLoc = this.ctrlr.memory.actPosModelDict[nextPosId].loc;
+        let nextLoc = actPosModelDict[nextPosId].loc;
         let disX = nextLoc.x - curLoc.x;
         let disY = nextLoc.y - curLoc.y;
         let switchAnim: PageSwitchAnim = null;
