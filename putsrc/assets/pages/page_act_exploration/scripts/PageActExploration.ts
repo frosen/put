@@ -89,10 +89,6 @@ export default class PageActExploration extends PageBase {
         if (!CC_EDITOR) this.updater.destroy();
     }
 
-    update() {
-        if (!CC_EDITOR) this.updater.update();
-    }
-
     onPageShow() {
         this.ctrlr.setBackBtnEnabled(true);
         this.ctrlr.setTitle('探索');

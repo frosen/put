@@ -27,6 +27,8 @@ export default class ExplorationUpdater {
 
     state: ExplorationState = ExplorationState.none;
 
+    _id: string = 'idforupdater';
+
     init(page: PageActExploration) {
         this.page = page;
         this.memory = this.page.ctrlr.memory;
@@ -44,6 +46,8 @@ export default class ExplorationUpdater {
         } else {
             this.restoreLastExploration();
         }
+
+        cc.director.getScheduler().scheduleUpdate(this, 0, false);
     }
 
     createExploration() {
@@ -55,6 +59,7 @@ export default class ExplorationUpdater {
     restoreLastExploration() {}
 
     destroy() {
+        cc.director.getScheduler().unscheduleUpdate(this);
         this.memory.deleteExploration();
     }
 
