@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import { ActPos, ActPosModel } from 'scripts/Memory';
-import * as actPosModelDict from 'configs/ActPosModelDict';
+import actPosModelDict from 'configs/ActPosModelDict';
 import ListViewCell from 'scripts/ListViewCell';
 import CellPosInfo from '../cells/cell_pos_info/scripts/CellPosInfo';
 import CellPosBtn from '../cells/cell_pos_btn/scripts/CellPosBtn';

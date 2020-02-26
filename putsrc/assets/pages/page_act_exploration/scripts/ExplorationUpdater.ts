@@ -7,6 +7,7 @@
 import PageActExploration from './PageActExploration';
 import { Memory } from 'scripts/Memory';
 import BattleController from './BattleController';
+import { random } from 'scripts/Random';
 
 enum ExplorationState {
     none,
@@ -111,7 +112,7 @@ export default class ExplorationUpdater {
     startExploration() {
         this.checkChange();
         this.state = ExplorationState.explore;
-        // this.explorationTime = 5 + Math.floor(Math.random() * 5);
+        // this.explorationTime = 5 + random(5);
         this.explorationTime = 2; // llytest
         this.page.log('开始探索');
     }

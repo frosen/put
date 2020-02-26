@@ -8,48 +8,9 @@ import { Memory, PetState, Pet, ExplorationModel, Pet2, BattleType } from 'scrip
 import PageActExploration from './PageActExploration';
 
 import * as expModels from 'configs/ExpModels';
-import * as actPosModelDict from 'configs/ActPosModelDict';
+import actPosModelDict from 'configs/ActPosModelDict';
 import * as petModelDict from 'configs/PetModelDict';
-
-// random with seed -----------------------------------------------------------------
-
-let seed = 5;
-function setSeed(s: number) {
-    seed = s;
-}
-
-function ranWithSeed() {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / 233280.0;
-}
-
-function ranWithSeedInt(c: number) {
-    return Math.floor(ranWithSeed() * c);
-}
-
-// random -----------------------------------------------------------------
-
-function random(c: number): number {
-    return Math.floor(Math.random() * c);
-}
-
-function getRandomOneInList(list) {
-    return list[random(list.length)];
-}
-
-function normalRandom(c) {
-    let r = Math.random();
-    if (r <= 0.5) {
-        r = 0.5 - r;
-        r = 0.5 - r * r * 2;
-    } else {
-        r = r - 0.5;
-        r = 1 - r * r * 2;
-    }
-    return Math.floor(r * c);
-}
-
-// -----------------------------------------------------------------
+import { normalRandom, getRandomOneInList, random, setSeed, ranWithSeed, ranWithSeedInt, randomRate } from 'scripts/Random';
 
 const ExpRateByPetCount = [0, 1, 0.53, 0.37, 0.29, 0.23];
 
@@ -123,7 +84,7 @@ export class RealBattle {
 const ComboHitRate = [0, 1, 1.1, 1.2]; // combo从1开始
 const FormationHitRate = [1, 0.95, 0.9, 0.9, 0.85]; // 阵型顺序从0开始
 
-export default class BattleController {
+export class BattleController {
     page: PageActExploration = null;
     memory: Memory = null;
     endCallback: () => void = null;
@@ -209,10 +170,31 @@ export default class BattleController {
         let enmeyPetType1 = getRandomOneInList(curStepModel.petIds);
         let enmeyPetType2 = getRandomOneInList(curStepModel.petIds);
 
+        let enemyPetDatas = [];
         for (let index = 0; index < petCount; index++) {
-            let id = Math.random() > 0.5 ? enmeyPetType1 : enmeyPetType2;
+            let id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
             let lv = Math.max(1, curPosModel.lv - 2 + normalRandom(5));
             let rank = normalRandom(step * 2) + 1;
+            enemyPetDatas.push({ id, lv, rank });
+        }
+
+        // 按照HP排序
+        if (randomRate(0.5)) {
+            let pet2 = new Pet2();
+            enemyPetDatas.sort((a, b) => {
+                pet2.setData1(a.lv, a.rank, petModelDict[a.id]);
+                pet2.setData2();
+                let aHPMax = pet2.hpMax;
+
+                pet2.setData1(b.lv, b.rank, petModelDict[b.id]);
+                pet2.setData2();
+                let bHPMax = pet2.hpMax;
+
+                return aHPMax - bHPMax;
+            });
+        }
+
+        for (const { id, lv, rank } of enemyPetDatas) {
             this.memory.createEnemyPet(id, lv, rank);
         }
 
@@ -356,7 +338,7 @@ export default class BattleController {
         // 放技能
 
         // 普攻
-        let atkDmg = pet2.atkDmgFrom + ranWithSeedInt(1 + pet2.atkDmgTo - pet2.atkDmgFrom);
+        let atkDmg = pet2.getAtkDmg();
         cc.log(
             'STORM cc ^_^ hit ',
             `攻击${atkDmg} 连击${ComboHitRate[this.realBattle.combo]} 位置${

@@ -1,4 +1,12 @@
-module.exports = {
+/*
+ * ActPosModelDict.ts
+ * 位置信息
+ * luleyan
+ */
+
+import { ActPosModel } from 'scripts/Memory';
+
+const ActPosModelDict: { [key: string]: ActPosModel } = {
     YiZhuang: {
         id: 'YiZhuang',
         cnName: '易庄',
@@ -48,3 +56,5 @@ module.exports = {
         loc: { x: 1100, y: 100 }
     }
 };
+
+export default ActPosModelDict;

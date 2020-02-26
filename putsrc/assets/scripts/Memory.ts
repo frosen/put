@@ -4,6 +4,11 @@
  * luleyan
  */
 
+import * as petModelDict from 'configs/PetModelDict';
+import actPosModelDict from 'configs/ActPosModelDict';
+import { ranWithSeedInt } from './Random';
+import { BattleController, BattlePet } from 'pages/page_act_exploration/scripts/BattleController';
+
 const MagicNum = Math.floor(Math.random() * 10000);
 
 let memoryDirtyToken: number = -1;
@@ -51,15 +56,19 @@ function newDict(dict = null) {
 
 // -----------------------------------------------------------------
 
-export class ActModel {}
+export class WorkModel {
+    stepModels: StepModel[] = [];
+}
 
 export class StepModel {
     petIds: string[] = [];
 }
 
-export class ExplorationModel extends ActModel {
+export class ExplorationModel {
     stepModels: StepModel[] = [];
 }
+
+type AllActType = WorkModel | ExplorationModel;
 
 export class MovCondition {}
 
@@ -74,10 +83,10 @@ export class ActPosModel {
     cnName: string = '-';
     lv: number = 0;
     acts: string[] = [];
-    actDict: { [key: string]: ActModel } = {};
+    actDict: { [key: string]: AllActType } = {};
     evts: string[] = [];
     movs: Mov[] = [];
-    loc: cc.Vec2 = null;
+    loc: Partial<cc.Vec2> = null;
 }
 
 export class ActPos {
@@ -109,6 +118,15 @@ export class Exploration {
 }
 
 // -----------------------------------------------------------------
+
+export abstract class Buff {
+    abstract id: string;
+    abstract cnName: string;
+    abstract brief: string;
+    abstract onBegan(thisPet: BattlePet, caster: BattlePet, ctrlr: BattleController);
+    abstract onEnd(thisPet: BattlePet, caster: BattlePet, ctrlr: BattleController);
+    abstract onTurnEnd(thisPet: BattlePet, caster: BattlePet, ctrlr: BattleController);
+}
 
 export class Feature {}
 
@@ -272,8 +290,14 @@ export class Pet2 {
     dfsRate: number = 0;
 
     setData(pet: Pet, petModel: PetModel) {
-        let lv = pet.lv;
-        let rankRatio = RankToAttriRatio[pet.rank];
+        this.setData1(pet.lv, pet.rank, petModel);
+        this.setData2();
+        this.setData3(petModel.bioType);
+        this.setData4(pet.privity);
+    }
+
+    setData1(lv: number, rank: number, petModel: PetModel) {
+        let rankRatio = RankToAttriRatio[rank];
 
         this.strength = (petModel.baseStrength + petModel.addStrength * lv) * rankRatio;
         this.concentration = (petModel.baseConcentration + petModel.addConcentration * lv) * rankRatio;
@@ -281,24 +305,38 @@ export class Pet2 {
         this.agility = (petModel.baseAgility + petModel.addAgility * lv) * rankRatio;
         this.sensitivity = (petModel.baseSensitivity + petModel.addSensitivity * lv) * rankRatio;
         this.elegant = (petModel.baseElegant + petModel.addElegant * lv) * rankRatio;
+    }
 
+    setData2() {
         this.hpMax = this.durability * 25;
         this.mpMax = 100;
+    }
 
-        let fromToRatio = BioToFromToRatio[petModel.bioType];
+    setData3(bioType: BioType) {
+        let fromToRatio = BioToFromToRatio[bioType];
 
         this.atkDmgFrom = this.strength * fromToRatio[0] + 5;
         this.atkDmgTo = this.strength * fromToRatio[1] + 15;
 
         this.sklDmgFrom = this.concentration * fromToRatio[0] + 15;
         this.sklDmgTo = this.concentration * fromToRatio[1] + 30;
+    }
 
-        let privityPercent = pet.privity * 0.01;
+    setData4(privity: number) {
+        let privityPercent = privity * 0.01;
         this.critRate = privityPercent * 0.1;
         this.critDmgRate = 0.5 + privityPercent * 0.5;
         this.evdRate = 0.05 + privityPercent * 0.05;
         this.hitRate = 0.8 + privityPercent * 0.2;
         this.dfsRate = 0;
+    }
+
+    getAtkDmg() {
+        return this.atkDmgFrom + ranWithSeedInt(1 + this.atkDmgTo - this.atkDmgFrom);
+    }
+
+    getSklDmg() {
+        return this.sklDmgFrom + ranWithSeedInt(1 + this.sklDmgTo - this.sklDmgFrom);
     }
 }
 
@@ -329,9 +367,6 @@ export class GameData2 {
 }
 
 // -----------------------------------------------------------------
-
-import * as petModelDict from 'configs/PetModelDict';
-import * as actPosModelDict from 'configs/ActPosModelDict';
 
 export class Memory {
     gameData: GameData = newInsWithChecker(GameData);
