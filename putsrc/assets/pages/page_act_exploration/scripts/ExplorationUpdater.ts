@@ -151,7 +151,8 @@ export default class ExplorationUpdater {
 
     updateRecover() {
         let done = true;
-        let battlePets = this.battleCtrlr.realBattle.selfPets;
+        let selfTeam = this.battleCtrlr.realBattle.selfTeam;
+        let battlePets = selfTeam.pets;
         for (let index = 0; index < battlePets.length; index++) {
             const battlePet = battlePets[index];
             let hpMax = battlePet.hpMax;
@@ -162,6 +163,21 @@ export default class ExplorationUpdater {
                 this.page.setUIofSelfPet(index);
             }
         }
+
+        if (selfTeam.mp < selfTeam.mpMax || selfTeam.rage > 0) {
+            if (selfTeam.mp < selfTeam.mpMax) {
+                done = false;
+                selfTeam.mp += Math.floor(selfTeam.mpMax * 0.2);
+                selfTeam.mp = Math.min(selfTeam.mpMax, selfTeam.mp);
+            }
+            if (selfTeam.rage > 0) {
+                done = false;
+                selfTeam.rage -= 30;
+                selfTeam.mp = Math.max(0, selfTeam.rage);
+            }
+            this.page.resetCenterBar(selfTeam.mp, selfTeam.mpMax, selfTeam.rage);
+        }
+
         if (done) {
             this.startExploration();
         } else {

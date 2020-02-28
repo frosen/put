@@ -154,7 +154,7 @@ export enum SkillAimtype {
     oneAndOthers
 }
 
-export class Skill {
+export class SkillModel {
     id: string;
     cnName: string;
     skillType: SkillType;
@@ -186,7 +186,7 @@ export enum BioType {
     unknown
 }
 
-export const BioTypeName = ['', '人形生物', '魔法生物', '机械生物', '自然生物', '未知生物'];
+export const BioTypeNames = ['', '人形生物', '魔法生物', '机械生物', '自然生物', '未知生物'];
 
 export enum EleType {
     none,
@@ -198,7 +198,7 @@ export enum EleType {
     dark
 }
 
-export const EleTypeName = ['', '火', '水', '空', '地', '光', '暗'];
+export const EleTypeNames = ['', '火系', '水系', '空系', '地系', '光系', '暗系'];
 
 export enum BattleType {
     none,
@@ -211,9 +211,9 @@ export enum BattleType {
     chaos
 }
 
-export const BattleTypeName = ['', '近战', '射击', '冲锋', '刺杀', '连段', '停止', '混乱'];
+export const BattleTypeNames = ['', '近战', '射击', '冲锋', '刺杀', '连段', '停止', '混乱'];
 
-class PetModel {
+export class PetModel {
     id: string = '';
     cnName: string = '';
 

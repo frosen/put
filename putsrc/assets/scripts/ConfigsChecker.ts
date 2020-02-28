@@ -6,7 +6,7 @@
 
 import * as petModelDict from 'configs/PetModelDict';
 import actPosModelDict from 'configs/ActPosModelDict';
-import * as skillModelDict from 'configs/SkillModels';
+import * as skillModelDict from 'configs/SkillModelDict';
 import buffModelDict from 'configs/BuffModelDict';
 
 function checkActPosModelDict() {

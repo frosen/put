@@ -55,6 +55,15 @@ export default class PageActExploration extends PageBase {
     dmgLbls: cc.Label[] = [];
     dmgIdx: number = 0;
 
+    @property(cc.ProgressBar)
+    mpProgress: cc.ProgressBar = null;
+    @property(cc.Label)
+    mpLbl: cc.Label = null;
+    @property(cc.ProgressBar)
+    rageProgress: cc.ProgressBar = null;
+    @property(cc.Label)
+    rageLbl: cc.Label = null;
+
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
@@ -98,7 +107,7 @@ export default class PageActExploration extends PageBase {
     // ui -----------------------------------------------------------------
 
     setUIofSelfPet(index: number) {
-        let pets = this.updater.battleCtrlr.realBattle.selfPets;
+        let pets = this.updater.battleCtrlr.realBattle.selfTeam.pets;
         if (index == -1) {
             let petIdx = 0;
             for (; petIdx < pets.length; petIdx++) this.setUIofSelfPet(petIdx);
@@ -109,7 +118,7 @@ export default class PageActExploration extends PageBase {
     }
 
     setUIofEnemyPet(index: number) {
-        let pets = this.updater.battleCtrlr.realBattle.enemyPets;
+        let pets = this.updater.battleCtrlr.realBattle.enemyTeam.pets;
         if (index == -1) {
             for (let petIdx = 0; petIdx < pets.length; petIdx++) this.setUIofEnemyPet(petIdx);
         } else {
@@ -156,18 +165,22 @@ export default class PageActExploration extends PageBase {
         ui.bar.progress = hp / hpMax;
         ui.petHP.string = `${Math.ceil(hp * 0.1)} / ${Math.ceil(hpMax * 0.1)}`;
 
+        let dmgStr = String(Math.floor(dmg * 0.1 * -1));
+        if (crit) dmgStr += '!';
+        this.showLbl(dmgStr, beEnemy, idx, crit, combo);
+    }
+
+    doMiss(beEnemy: boolean, idx: number, combo: number) {
+        this.showLbl('miss', beEnemy, idx, false, combo);
+    }
+
+    showLbl(str: string, beEnemy: boolean, idx: number, crit: boolean, combo: number) {
         let dmgLbl = this.dmgLbls[this.dmgIdx];
         let params = DmgLblActParams[this.dmgIdx % 10];
         this.dmgIdx++;
         if (this.dmgIdx >= this.dmgLbls.length) this.dmgIdx = 0;
 
-        if (dmg > 0) {
-            let dmgStr = '-' + String(Math.floor(dmg * 0.1));
-            if (crit) dmgStr += '!';
-            dmgLbl.string = dmgStr;
-        } else {
-            dmgLbl.string = 'miss';
-        }
+        dmgLbl.string = str;
 
         let node = dmgLbl.node;
         node.x = beEnemy ? 1080 - 25 - 435 : 25 + 435;
@@ -181,6 +194,14 @@ export default class PageActExploration extends PageBase {
         node.stopAllActions();
         node.runAction(cc.sequence(cc.delayTime(0.1 * (combo - 1)), cc.jumpBy(1, p, h, 1).easing(cc.easeSineOut())));
         node.runAction(cc.sequence(cc.delayTime(0.1 * (combo - 1)), cc.fadeIn(0.01), cc.delayTime(0.7), cc.fadeOut(0.1)));
+    }
+
+    resetCenterBar(mp: number, mpMax: number, rage: number) {
+        this.mpProgress.progress = mp / mpMax;
+        this.mpLbl.string = `${mp} / ${mpMax}`;
+
+        this.rageProgress.progress = rage / 100;
+        this.rageLbl.string = `${rage} / 100`;
     }
 
     log(str: string) {

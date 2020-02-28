@@ -4,12 +4,26 @@
  * luleyan
  */
 
-import { Memory, PetState, Pet, ExplorationModel, Pet2, BattleType } from 'scripts/Memory';
+import {
+    Memory,
+    PetState,
+    Pet,
+    ExplorationModel,
+    Pet2,
+    BattleType,
+    SkillModel,
+    SkillType,
+    SkillAimtype,
+    SkillDirType,
+    EleType,
+    EleTypeNames
+} from 'scripts/Memory';
 import PageActExploration from './PageActExploration';
 
 import * as expModels from 'configs/ExpModels';
 import actPosModelDict from 'configs/ActPosModelDict';
 import * as petModelDict from 'configs/PetModelDict';
+import * as skillModelDict from 'configs/SkillModelDict';
 import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
 
 // random with seed -----------------------------------------------------------------
@@ -29,6 +43,11 @@ function ranWithSeedInt(c: number) {
 }
 
 // -----------------------------------------------------------------
+
+export class BattleSkill {
+    id: string;
+    cd: number;
+}
 
 const ExpRateByPetCount = [0, 1, 0.53, 0.37, 0.29, 0.23];
 
@@ -52,6 +71,8 @@ export class BattlePet {
     hp: number = 0;
     hpMax: number = 0;
 
+    skillDatas: BattleSkill[] = [];
+
     init(idx: number, fromationIdx: number, pet: Pet, pet2: Pet2, beEnemy: boolean) {
         this.idx = idx;
         this.fromationIdx = fromationIdx;
@@ -63,6 +84,16 @@ export class BattlePet {
 
         this.hp = pet2.hpMax;
         this.hpMax = pet2.hpMax;
+
+        // 技能列表
+        this.skillDatas.length = 0;
+        for (let index = pet.equips.length - 1; index >= 0; index--) {}
+        let skillIds = petModelDict[pet.id].selfSkillIds;
+        for (let index = skillIds.length - 1; index >= 0; index--) {
+            let skillData = new BattleSkill();
+            skillData.id = skillIds[index];
+            this.skillDatas.push(skillData);
+        }
     }
 
     static getPetToken(pet: Pet): { petToken: number; lvToken: number; eqpToken: string } {
@@ -89,17 +120,19 @@ export class BattlePet {
     }
 }
 
-export class RealBattle {
-    start: boolean = false;
+export class BattleTeam {
+    pets: BattlePet[] = [];
 
-    selfPets: BattlePet[] = [];
     mpMax: number = 0;
     mp: number = 0;
     rage: number = 0;
+}
 
-    enemyPets: BattlePet[] = [];
-    enemyPetDatas: Pet[] = [];
-    enemyPet2Datas: Pet2[] = [];
+export class RealBattle {
+    start: boolean = false;
+
+    selfTeam: BattleTeam = null;
+    enemyTeam: BattleTeam = null;
 
     battleRound: number = 0;
     order: BattlePet[] = [];
@@ -111,6 +144,7 @@ export class RealBattle {
 
 const ComboHitRate = [0, 1, 1.1, 1.2]; // combo从1开始
 const FormationHitRate = [1, 0.95, 0.9, 0.9, 0.85]; // 阵型顺序从0开始
+const EleReinforceRelation = [0, 3, 1, 4, 2, 6, 5]; // 元素相克表
 
 export class BattleController {
     page: PageActExploration = null;
@@ -128,7 +162,7 @@ export class BattleController {
     }
 
     resetOurTeam() {
-        this.realBattle.selfPets.length = 0;
+        this.realBattle.selfTeam = new BattleTeam();
 
         let pets = this.memory.gameData.pets;
         let pet2s = this.memory.gameData2.pet2s;
@@ -148,22 +182,23 @@ export class BattleController {
             }
             last = battlePet;
 
-            this.realBattle.selfPets.push(battlePet);
+            this.realBattle.selfTeam.pets.push(battlePet);
 
             mpMax += pet2.mpMax;
 
-            if (this.realBattle.selfPets.length == 5) break;
+            if (this.realBattle.selfTeam.pets.length == 5) break;
         }
 
-        this.realBattle.mpMax = mpMax;
-        this.realBattle.mp = mpMax;
+        this.realBattle.selfTeam.mpMax = mpMax;
+        this.realBattle.selfTeam.mp = mpMax;
 
         this.page.setUIofSelfPet(-1);
+        this.page.resetCenterBar(mpMax, mpMax, 0);
     }
 
     checkIfOurTeamChanged(): { petChange: boolean; lvChange: boolean; eqpChange: boolean } {
         let pets = this.memory.gameData.pets;
-        let selfPets = this.realBattle.selfPets;
+        let selfPets = this.realBattle.selfTeam.pets;
         let petChange = false;
         let lvChange = false;
         let eqpChange = false;
@@ -228,10 +263,9 @@ export class BattleController {
 
         // 更新battle
         let rb = this.realBattle;
-        rb.enemyPetDatas.length = 0;
-        rb.enemyPet2Datas.length = 0;
-        rb.enemyPets.length = 0;
+        rb.enemyTeam = new BattleTeam();
         let enemys = gameData.curExploration.curBattleField.enemys;
+        let mpMax = 0;
         let last = null;
         for (let index = 0; index < enemys.length; index++) {
             const enemyPet = enemys[index];
@@ -240,12 +274,10 @@ export class BattleController {
             petData.id = enemyPet.id;
             petData.lv = enemyPet.lv;
             petData.rank = enemyPet.rank;
-            rb.enemyPetDatas.push(petData);
 
             let pet2Data = new Pet2();
             let petModel = petModelDict[enemyPet.id];
             pet2Data.setData(petData, petModel);
-            rb.enemyPet2Datas.push(pet2Data);
 
             let battlePet = new BattlePet();
             battlePet.init(index, 5 - enemys.length + index, petData, pet2Data, true);
@@ -255,13 +287,17 @@ export class BattleController {
             }
             last = battlePet;
 
-            rb.enemyPets.push(battlePet);
+            mpMax += pet2Data.mpMax;
+
+            rb.enemyTeam.pets.push(battlePet);
         }
+        rb.enemyTeam.mp = mpMax;
+        rb.enemyTeam.mpMax = mpMax;
 
         rb.battleRound = 0;
         rb.order.length = 0;
-        for (const pet of rb.selfPets) rb.order.push(pet);
-        for (const pet of rb.enemyPets) rb.order.push(pet);
+        for (const pet of rb.selfTeam.pets) rb.order.push(pet);
+        for (const pet of rb.enemyTeam.pets) rb.order.push(pet);
 
         this.page.setUIofEnemyPet(-1);
 
@@ -269,7 +305,7 @@ export class BattleController {
 
         // 日志
         let petNames = '';
-        for (const ePet of this.realBattle.enemyPets) {
+        for (const ePet of this.realBattle.enemyTeam.pets) {
             let petId = ePet.pet.id;
             let cnName = petModelDict[petId].cnName;
             petNames += cnName + ' ';
@@ -349,51 +385,180 @@ export class BattleController {
     }
 
     attack(battlePet: BattlePet) {
-        let pet2 = battlePet.pet2;
-        let aim: BattlePet = this.getAim(battlePet);
+        let aim: BattlePet = this.getAim(battlePet, false);
+        if (!aim) return;
 
-        let hitResult: number = 0;
-        if (ranWithSeed() < pet2.hitRate - aim.pet2.evdRate) {
-            if (ranWithSeed() < pet2.critRate) {
-                hitResult = 1 + pet2.critDmgRate * (1 - aim.pet2.dfsRate);
-            } else {
-                hitResult = 1 * (1 - aim.pet2.dfsRate);
-            }
+        this.page.doAttack(battlePet.beEnemy, battlePet.idx, this.realBattle.combo);
+
+        do {
+            let done;
+            done = this.castUltimateSkill(battlePet, aim);
+            if (done) break;
+
+            done = this.castNormalSkill(battlePet, aim);
+            if (done) break;
+
+            this.castNormalAttack(battlePet, aim);
+        } while (false);
+
+        if (aim.hp == 0) this.dead(aim);
+    }
+
+    castUltimateSkill(battlePet: BattlePet, aim: BattlePet): boolean {
+        let done = false;
+        for (const skillData of battlePet.skillDatas) {
+            if (skillData.cd > 0) continue;
+            let skillModel: SkillModel = skillModelDict[skillData.id];
+            if (skillModel.skillType != SkillType.ultimate) continue;
+
+            let rageNeed = skillModel.rage;
+            let team = battlePet.beEnemy ? this.realBattle.enemyTeam : this.realBattle.selfTeam;
+            if (team.rage < rageNeed) continue;
+            team.rage -= rageNeed;
+
+            this.cast(battlePet, aim, skillModel);
+            if (!battlePet.beEnemy) this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
+
+            done = true;
+            break;
         }
 
-        // 放大招
+        return done;
+    }
 
-        // 放技能
+    castNormalSkill(battlePet: BattlePet, aim: BattlePet): boolean {
+        let done = false;
+        for (const skillData of battlePet.skillDatas) {
+            if (skillData.cd > 0) continue;
+            let skillModel: SkillModel = skillModelDict[skillData.id];
+            if (skillModel.skillType == SkillType.ultimate) continue;
 
-        // 普攻
+            let mpNeed = skillModel.mp;
+            let team = battlePet.beEnemy ? this.realBattle.enemyTeam : this.realBattle.selfTeam;
+            if (team.mp < mpNeed) continue;
+            team.mp -= mpNeed;
+
+            this.cast(battlePet, aim, skillModel);
+            if (!battlePet.beEnemy) this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
+
+            if (skillModel.skillType == SkillType.normal) done = true; // fast时done为false
+            break;
+        }
+
+        return done;
+    }
+
+    cast(battlePet: BattlePet, aim: BattlePet, skillModel: SkillModel) {
+        let realAim: BattlePet;
+        if (skillModel.dirType == SkillDirType.self) {
+            realAim = this.getAim(battlePet, true);
+        } else {
+            realAim = aim;
+        }
+
+        if (skillModel.mainDmg > 0) {
+            this.castDmg(battlePet, realAim, skillModel.mainDmg, skillModel);
+        }
+        if (skillModel.mainBuffId && realAim.hp > 0) {
+            this.castBuff(battlePet, realAim);
+        }
+        if (skillModel.subDmg > 0) {
+            if (skillModel.aimType == SkillAimtype.oneAndNext) {
+                let nextAim = realAim.next;
+                if (nextAim.hp > 0) {
+                    this.castDmg(battlePet, nextAim, skillModel.subDmg, skillModel);
+                }
+                if (nextAim.hp > 0) {
+                    this.castBuff(battlePet, nextAim);
+                }
+            } else if (skillModel.aimType == SkillAimtype.oneAndOthers) {
+                let aimPets = realAim.beEnemy ? this.realBattle.enemyTeam.pets : this.realBattle.selfTeam.pets;
+                for (const aimInAll of aimPets) {
+                    if (aimInAll == realAim || aimInAll.hp == 0) continue;
+                    this.castDmg(battlePet, aimInAll, skillModel.subDmg, skillModel);
+                    if (aimInAll.hp > 0) {
+                        this.castBuff(battlePet, aimInAll);
+                    }
+                }
+            }
+        }
+    }
+
+    castDmg(battlePet: BattlePet, aim: BattlePet, dmgRate: number, skillModel: SkillModel) {
+        let hitResult = this.getHitResult(battlePet, aim);
+        if (hitResult == 0) {
+            this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
+            this.logMiss(battlePet, aim, skillModel.cnName);
+        }
+
         let atkDmg = battlePet.getAtkDmg();
-        cc.log(
-            'STORM cc ^_^ hit ',
-            `攻击${atkDmg} 连击${ComboHitRate[this.realBattle.combo]} 位置${
-                FormationHitRate[aim.fromationIdx]
-            } 结果${hitResult}`
-        );
+        let sklDmg = battlePet.getSklDmg();
+        let finalDmg = dmgRate * sklDmg + atkDmg;
+
+        finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
+        finalDmg *= EleReinforceRelation[skillModel.eleType] == petModelDict[aim.pet.id].eleType ? 1.15 : 1;
+        finalDmg = Math.floor(atkDmg);
+        aim.hp -= finalDmg;
+        if (aim.hp <= 0) aim.hp = 0;
+
+        this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
+        this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
+
+        this.addRageToAim(battlePet, aim);
+        if (!aim.beEnemy) {
+            let team = this.realBattle.selfTeam;
+            this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
+        }
+    }
+
+    castBuff(battlePet: BattlePet, aim: BattlePet) {}
+
+    castNormalAttack(battlePet: BattlePet, aim: BattlePet) {
+        let hitResult = this.getHitResult(battlePet, aim);
+        if (hitResult == 0) {
+            this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
+            this.logMiss(battlePet, aim, '普攻');
+            return;
+        }
+
+        let atkDmg = battlePet.getAtkDmg();
         atkDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         atkDmg = Math.floor(atkDmg);
         aim.hp -= atkDmg;
-        cc.log('STORM cc ^_^ final ', atkDmg, 'hp:', aim.hp);
         if (aim.hp <= 0) aim.hp = 0;
 
-        this.page.doAttack(battlePet.beEnemy, battlePet.idx, this.realBattle.combo);
         this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, atkDmg, hitResult > 1, this.realBattle.combo);
-        let logStr = `${petModelDict[battlePet.pet.id].cnName}对${petModelDict[aim.pet.id].cnName}使用普攻`;
-        if (this.realBattle.combo > 1) logStr += '连击';
-        logStr += `，造成${atkDmg}点伤害`;
-        this.page.log(logStr);
+        this.logAtk(battlePet, aim, atkDmg, this.realBattle.combo > 1, '普攻');
 
-        if (aim.hp == 0) this.dead(aim);
+        this.addRageToAim(battlePet, aim);
+        this.addMp(battlePet, aim);
+        if (!aim.beEnemy) {
+            let team = this.realBattle.selfTeam;
+            this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
+        }
+    }
+
+    addRageToAim(battlePet: BattlePet, aim: BattlePet) {
+        let rage = 3 + (aim.pet.lv < battlePet.pet.lv ? 1 : 0) + (aim.pet.rank < battlePet.pet.rank ? 1 : 0);
+
+        let team = aim.beEnemy ? this.realBattle.enemyTeam : this.realBattle.selfTeam;
+        team.rage += rage;
+        if (team.rage > 100) rage = 100;
+    }
+
+    addMp(battlePet: BattlePet, aim: BattlePet) {
+        let mp = 5 + (aim.pet.lv > battlePet.pet.lv ? 1 : 0) + (aim.pet.rank > battlePet.pet.rank ? 1 : 0);
+
+        let team = battlePet.beEnemy ? this.realBattle.enemyTeam : this.realBattle.selfTeam;
+        team.mp += mp;
+        if (team.mp > team.mpMax) team.mp = team.mpMax;
     }
 
     dead(battlePet: BattlePet) {
         this.page.log(`${petModelDict[battlePet.pet.id].cnName}被击败`);
 
         let rb = this.realBattle;
-        let curPets = battlePet.beEnemy ? rb.enemyPets : rb.selfPets;
+        let curPets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
         let alive = false;
         for (const pet of curPets) {
             if (pet.hp > 0) {
@@ -436,12 +601,12 @@ export class BattleController {
 
     receiveExp() {
         let rb = this.realBattle;
-        let expRatebyPetCount = ExpRateByPetCount[rb.selfPets.length];
-        for (const selfBPet of rb.selfPets) {
+        let expRatebyPetCount = ExpRateByPetCount[rb.selfTeam.pets.length];
+        for (const selfBPet of rb.selfTeam.pets) {
             let selfPet = selfBPet.pet;
             if (selfPet.lv >= expModels.length) return;
             let expTotal = 0;
-            for (const eBPet of rb.enemyPets) {
+            for (const eBPet of rb.enemyTeam.pets) {
                 let ePet = eBPet.pet;
                 let exp = (ePet.lv * 5 + 45) * (1 + ePet.rank * 0.05);
                 exp *= expRatebyPetCount;
@@ -467,12 +632,20 @@ export class BattleController {
         }
     }
 
-    getAim(battlePet: BattlePet): BattlePet {
+    getAim(battlePet: BattlePet, toSelf: boolean): BattlePet {
         let rb = this.realBattle;
         let petModel = petModelDict[battlePet.pet.id];
         let battleType = battlePet.pet2.exBattleType || petModel.battleType;
-        let otherPets = battlePet.beEnemy ? rb.enemyPets : rb.selfPets;
-        let aimPets = battlePet.beEnemy ? rb.selfPets : rb.enemyPets;
+
+        let aimPets;
+        let anotherSidePets;
+        if (toSelf) {
+            aimPets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
+            anotherSidePets = battlePet.beEnemy ? rb.selfTeam.pets : rb.enemyTeam.pets;
+        } else {
+            aimPets = battlePet.beEnemy ? rb.selfTeam.pets : rb.enemyTeam.pets;
+            anotherSidePets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
+        }
 
         let aim: BattlePet = null;
         switch (battleType) {
@@ -499,7 +672,7 @@ export class BattleController {
                 break;
             case BattleType.chaos:
                 {
-                    let pets = ranWithSeed() > 0.5 ? aimPets : otherPets;
+                    let pets = ranWithSeed() > 0.5 ? aimPets : anotherSidePets;
                     aim = this.getPetAlive(pets[ranWithSeedInt(pets.length)]);
                 }
                 break;
@@ -522,5 +695,30 @@ export class BattleController {
                 curPet = curPet.last;
             }
         }
+    }
+
+    getHitResult(battlePet: BattlePet, aim: BattlePet): number {
+        let hitResult: number = 0;
+        let pet2 = battlePet.pet2;
+        if (ranWithSeed() < pet2.hitRate - aim.pet2.evdRate) {
+            if (ranWithSeed() < pet2.critRate) {
+                hitResult = 1 + pet2.critDmgRate * (1 - aim.pet2.dfsRate);
+            } else {
+                hitResult = 1 * (1 - aim.pet2.dfsRate);
+            }
+        }
+        return hitResult;
+    }
+
+    logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, beCombo: boolean, skillName: string, eleType: EleType = null) {
+        let logStr = `${petModelDict[battlePet.pet.id].cnName}对${petModelDict[aim.pet.id].cnName}使用${skillName}`;
+        if (beCombo) logStr += '连击';
+        logStr += `，造成${dmg}点${eleType ? EleTypeNames[eleType] : '物理'}伤害`;
+        this.page.log(logStr);
+    }
+
+    logMiss(battlePet: BattlePet, aim: BattlePet, skillName: string) {
+        let logStr = `${petModelDict[aim.pet.id].cnName}避开了${petModelDict[battlePet.pet.id].cnName}的${skillName}`;
+        this.page.log(logStr);
     }
 }
