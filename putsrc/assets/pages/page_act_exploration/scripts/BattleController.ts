@@ -10,7 +10,25 @@ import PageActExploration from './PageActExploration';
 import * as expModels from 'configs/ExpModels';
 import actPosModelDict from 'configs/ActPosModelDict';
 import * as petModelDict from 'configs/PetModelDict';
-import { normalRandom, getRandomOneInList, random, setSeed, ranWithSeed, ranWithSeedInt, randomRate } from 'scripts/Random';
+import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
+
+// random with seed -----------------------------------------------------------------
+
+let seed = 5;
+function setSeed(s: number) {
+    seed = s;
+}
+
+function ranWithSeed() {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280.0;
+}
+
+function ranWithSeedInt(c: number) {
+    return Math.floor(ranWithSeed() * c);
+}
+
+// -----------------------------------------------------------------
 
 const ExpRateByPetCount = [0, 1, 0.53, 0.37, 0.29, 0.23];
 
@@ -58,6 +76,16 @@ export class BattlePet {
             }
         }
         return { petToken, lvToken, eqpToken };
+    }
+
+    getAtkDmg() {
+        let pet2 = this.pet2;
+        return pet2.atkDmgFrom + ranWithSeedInt(1 + pet2.atkDmgTo - pet2.atkDmgFrom);
+    }
+
+    getSklDmg() {
+        let pet2 = this.pet2;
+        return pet2.sklDmgFrom + ranWithSeedInt(1 + pet2.sklDmgTo - pet2.sklDmgFrom);
     }
 }
 
@@ -338,7 +366,7 @@ export class BattleController {
         // 放技能
 
         // 普攻
-        let atkDmg = pet2.getAtkDmg();
+        let atkDmg = battlePet.getAtkDmg();
         cc.log(
             'STORM cc ^_^ hit ',
             `攻击${atkDmg} 连击${ComboHitRate[this.realBattle.combo]} 位置${

@@ -17,7 +17,10 @@ module.exports = {
         baseSensitivity: 120,
         addSensitivity: 16,
         baseElegant: 100,
-        addElegant: 9
+        addElegant: 9,
+        selfSkillIds: [
+            'FangHuZhao'
+        ]
     },
     NeiRanJiShou: {
         id: 'NeiRanJiShou',
@@ -37,7 +40,10 @@ module.exports = {
         baseSensitivity: 100,
         addSensitivity: 15,
         baseElegant: 100,
-        addElegant: 15
+        addElegant: 15,
+        selfSkillIds: [
+            'HuoYanDan'
+        ]
     },
     FangShengJiXieBi: {
         id: 'FangShengJiXieBi',
@@ -57,7 +63,10 @@ module.exports = {
         baseSensitivity: 50,
         addSensitivity: 8,
         baseElegant: 120,
-        addElegant: 13
+        addElegant: 13,
+        selfSkillIds: [
+            'ChaoZhongJi'
+        ]
     },
     YaHuHanJuRen: {
         id: 'YaHuHanJuRen',
@@ -77,7 +86,10 @@ module.exports = {
         baseSensitivity: 80,
         addSensitivity: 14,
         baseElegant: 50,
-        addElegant: 18
+        addElegant: 18,
+        selfSkillIds: [
+            'ZhuoShao'
+        ]
     },
     ZiJingMieHuoQi: {
         id: 'ZiJingMieHuoQi',
@@ -97,7 +109,11 @@ module.exports = {
         baseSensitivity: 110,
         addSensitivity: 21,
         baseElegant: 90,
-        addElegant: 12
+        addElegant: 12,
+        selfSkillIds: [
+            'JingJie',
+            'JingZhongChangMing'
+        ]
     },
     ShuiLengJiQiRen: {
         id: 'ShuiLengJiQiRen',
@@ -117,7 +133,10 @@ module.exports = {
         baseSensitivity: 70,
         addSensitivity: 11,
         baseElegant: 80,
-        addElegant: 16
+        addElegant: 16,
+        selfSkillIds: [
+            'ShuiLengDan'
+        ]
     },
     JiXieMaoMi: {
         id: 'JiXieMaoMi',
@@ -137,7 +156,10 @@ module.exports = {
         baseSensitivity: 90,
         addSensitivity: 19,
         baseElegant: 150,
-        addElegant: 21
+        addElegant: 21,
+        selfSkillIds: [
+            'ReLi'
+        ]
     },
     HeiFengWuRenJi: {
         id: 'HeiFengWuRenJi',
@@ -157,7 +179,10 @@ module.exports = {
         baseSensitivity: 60,
         addSensitivity: 7,
         baseElegant: 100,
-        addElegant: 13
+        addElegant: 13,
+        selfSkillIds: [
+            'JiFengRen'
+        ]
     },
     CiHuaYouLing: {
         id: 'CiHuaYouLing',
@@ -177,7 +202,10 @@ module.exports = {
         baseSensitivity: 100,
         addSensitivity: 13,
         baseElegant: 130,
-        addElegant: 11
+        addElegant: 11,
+        selfSkillIds: [
+            'DianZiMaiChong'
+        ]
     },
     DianZiShouWei: {
         id: 'DianZiShouWei',
@@ -197,13 +225,16 @@ module.exports = {
         baseSensitivity: 80,
         addSensitivity: 12,
         baseElegant: 80,
-        addElegant: 12
+        addElegant: 12,
+        selfSkillIds: [
+            'MieShi'
+        ]
     },
     CaoPingShouGeZhe: {
         id: 'CaoPingShouGeZhe',
         cnName: '草坪收割者',
         bioType: 3,
-        eleType: 4,
+        eleType: 3,
         battleType: 3,
         speed: 60,
         baseStrength: 200,
@@ -217,6 +248,9 @@ module.exports = {
         baseSensitivity: 90,
         addSensitivity: 20,
         baseElegant: 90,
-        addElegant: 10
+        addElegant: 10,
+        selfSkillIds: [
+            'JiFengRen'
+        ]
     }
 };

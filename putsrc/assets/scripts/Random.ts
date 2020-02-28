@@ -4,24 +4,6 @@
  * luleyan
  */
 
-// random with seed -----------------------------------------------------------------
-
-let seed = 5;
-export function setSeed(s: number) {
-    seed = s;
-}
-
-export function ranWithSeed() {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / 233280.0;
-}
-
-export function ranWithSeedInt(c: number) {
-    return Math.floor(ranWithSeed() * c);
-}
-
-// random -----------------------------------------------------------------
-
 export function random(c: number): number {
     return Math.floor(Math.random() * c);
 }
@@ -45,5 +27,3 @@ export function normalRandom(c) {
 export function randomRate(r: number) {
     return Math.random() < r;
 }
-
-// -----------------------------------------------------------------

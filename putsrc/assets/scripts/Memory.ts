@@ -6,8 +6,7 @@
 
 import * as petModelDict from 'configs/PetModelDict';
 import actPosModelDict from 'configs/ActPosModelDict';
-import { ranWithSeedInt } from './Random';
-import { BattleController, BattlePet } from 'pages/page_act_exploration/scripts/BattleController';
+import { BattlePet } from 'pages/page_act_exploration/scripts/BattleController';
 
 const MagicNum = Math.floor(Math.random() * 10000);
 
@@ -119,13 +118,61 @@ export class Exploration {
 
 // -----------------------------------------------------------------
 
+export class BuffOutput {
+    hp?: number;
+    eleType?: EleType;
+    mp?: number;
+    rage?: number;
+}
+
 export abstract class Buff {
     abstract id: string;
     abstract cnName: string;
     abstract brief: string;
-    abstract onBegan(thisPet: BattlePet, caster: BattlePet, ctrlr: BattleController);
-    abstract onEnd(thisPet: BattlePet, caster: BattlePet, ctrlr: BattleController);
-    abstract onTurnEnd(thisPet: BattlePet, caster: BattlePet, ctrlr: BattleController);
+    abstract onSetting(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>);
+    abstract onTurnEnd(thisPet: BattlePet, caster: BattlePet): BuffOutput | void;
+    abstract getInfo(caster: Readonly<BattlePet>): string;
+}
+
+export enum SkillType {
+    none,
+    normal = 1,
+    fast,
+    ultimate
+}
+
+export enum SkillDirType {
+    none,
+    enemy,
+    self
+}
+
+export enum SkillAimtype {
+    none,
+    one,
+    oneAndNext,
+    oneAndOthers
+}
+
+export class Skill {
+    id: string;
+    cnName: string;
+    skillType: SkillType;
+    dirType: SkillDirType;
+    aimType: SkillAimtype;
+    eleType: EleType;
+
+    mainDmg: number;
+    mainBuffId: string;
+    mainBuffTime: number;
+
+    subDmg: number;
+    subBuffId: string;
+    subBuffTime: number;
+
+    cd: number;
+    mp: number;
+    rage: number;
 }
 
 export class Feature {}
@@ -197,7 +244,9 @@ class PetModel {
     baseElegant: number = 0;
     addElegant: number = 0;
 
-    selfFeatures: string[] = [];
+    selfFeatureIds: string[] = [];
+
+    selfSkillIds: string[] = [];
 }
 
 export enum PetState {
@@ -329,14 +378,6 @@ export class Pet2 {
         this.evdRate = 0.05 + privityPercent * 0.05;
         this.hitRate = 0.8 + privityPercent * 0.2;
         this.dfsRate = 0;
-    }
-
-    getAtkDmg() {
-        return this.atkDmgFrom + ranWithSeedInt(1 + this.atkDmgTo - this.atkDmgFrom);
-    }
-
-    getSklDmg() {
-        return this.sklDmgFrom + ranWithSeedInt(1 + this.sklDmgTo - this.sklDmgFrom);
     }
 }
 
