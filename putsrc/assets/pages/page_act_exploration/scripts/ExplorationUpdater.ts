@@ -6,7 +6,7 @@
 
 import PageActExploration from './PageActExploration';
 import { Memory } from 'scripts/Memory';
-import BattleController from './BattleController';
+import { BattleController } from './BattleController';
 import { random } from 'scripts/Random';
 
 enum ExplorationState {
