@@ -173,7 +173,7 @@ export default class ExplorationUpdater {
             if (selfTeam.rage > 0) {
                 done = false;
                 selfTeam.rage -= 30;
-                selfTeam.mp = Math.max(0, selfTeam.rage);
+                selfTeam.rage = Math.max(0, selfTeam.rage);
             }
             this.page.resetCenterBar(selfTeam.mp, selfTeam.mpMax, selfTeam.rage);
         }

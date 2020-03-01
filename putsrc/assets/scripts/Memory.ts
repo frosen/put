@@ -161,6 +161,7 @@ export class SkillModel {
     dirType: SkillDirType;
     aimType: SkillAimtype;
     eleType: EleType;
+    spBattleType: BattleType;
 
     mainDmg: number;
     mainBuffId: string;

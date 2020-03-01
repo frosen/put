@@ -23,18 +23,19 @@ convert('../put.xls', '../../putsrc/assets/configs/SkillModelDict.js', 'skill', 
             break;
         }
         let eleType = getEnum(rowData[3]);
+        let spBattleType = getEnum(rowData[6]);
 
-        let mainDmg = Number(rowData[6]) || 0;
-        let mainBuffId = rowData[7] || '';
-        let mainBuffTime = Number(rowData[8]) || 0;
+        let mainDmg = Number(rowData[7]) || 0;
+        let mainBuffId = rowData[8] || '';
+        let mainBuffTime = Number(rowData[9]) || 0;
 
-        let subDmg = Number(rowData[9]) || 0;
-        let subBuffId = rowData[10] || '';
-        let subBuffTime = Number(rowData[11]) || 0;
+        let subDmg = Number(rowData[10]) || 0;
+        let subBuffId = rowData[11] || '';
+        let subBuffTime = Number(rowData[12]) || 0;
 
-        let cd = Number(rowData[12]) || 0;
-        let mp = Number(rowData[13]) || 0;
-        let rage = Number(rowData[14]) || 0;
+        let cd = Number(rowData[13]) || 0;
+        let mp = Number(rowData[14]) || 0;
+        let rage = Number(rowData[15]) || 0;
 
         sklJson[id] = {
             id,
@@ -43,6 +44,7 @@ convert('../put.xls', '../../putsrc/assets/configs/SkillModelDict.js', 'skill', 
             dirType,
             aimType,
             eleType,
+            spBattleType,
             mainDmg,
             mainBuffId,
             mainBuffTime,
