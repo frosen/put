@@ -125,11 +125,12 @@ export class BuffOutput {
     rage?: number;
 }
 
-export abstract class Buff {
+export abstract class BuffModel {
     abstract id: string;
     abstract cnName: string;
     abstract brief: string;
-    abstract onSetting(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>);
+    abstract onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any;
+    abstract onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any);
     abstract onTurnEnd(thisPet: BattlePet, caster: BattlePet): BuffOutput | void;
     abstract getInfo(caster: Readonly<BattlePet>): string;
 }
@@ -301,6 +302,22 @@ export class Pet {
 const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
 const BioToFromToRatio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
 
+// @ts-ignore
+Array.prototype.removeIndex = function(ridx) {
+    this[ridx] = undefined;
+    for (let index = this.length - 1; index >= 0; index--) {
+        if (this[index] === undefined) continue;
+        this.length = index + 1;
+        return;
+    }
+    this.length = 0;
+};
+
+// @ts-ignore
+Array.prototype.getLast = function() {
+    return this.length > 0 ? this[this.lenth - 1] : null;
+};
+
 export class Pet2 {
     /** 力量 */
     strength: number = 0;
@@ -325,11 +342,11 @@ export class Pet2 {
     sklDmgTo: number = 0;
 
     /** 额外生物类型 */
-    exBioType: BioType = BioType.none;
+    exBioTypes: BioType[] = [];
     /** 额外元素类型 */
-    exEleType: EleType = EleType.none;
+    exEleTypes: EleType[] = [];
     /** 额外战斗类型 */
-    exBattleType: BattleType = BattleType.none;
+    exBattleTypes: BattleType[] = [];
     /** 额外速度 */
     exSpeed: number = 0;
 
@@ -380,6 +397,10 @@ export class Pet2 {
         this.hitRate = 0.8 + privityPercent * 0.2;
         this.dfsRate = 0;
     }
+
+    addExBattleType(battleType: BattleType): number {}
+
+    removeExBattleType(index: number) {}
 }
 
 // -----------------------------------------------------------------
@@ -542,7 +563,7 @@ export class Memory {
         pet.catchRank = 1;
 
         pet.lv = 1;
-        pet.rank = 1;
+        pet.rank = 2;
 
         pet.privity = 0;
         pet.privityChangedTime = new Date().getTime();

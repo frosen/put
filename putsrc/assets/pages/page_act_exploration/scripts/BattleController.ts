@@ -16,7 +16,8 @@ import {
     SkillAimtype,
     SkillDirType,
     EleType,
-    EleTypeNames
+    EleTypeNames,
+    BuffModel
 } from 'scripts/Memory';
 import PageActExploration from './PageActExploration';
 
@@ -25,6 +26,7 @@ import actPosModelDict from 'configs/ActPosModelDict';
 import * as petModelDict from 'configs/PetModelDict';
 import * as skillModelDict from 'configs/SkillModelDict';
 import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
+import BuffModelDict from 'configs/BuffModelDict';
 
 // random with seed -----------------------------------------------------------------
 
@@ -47,6 +49,13 @@ function ranWithSeedInt(c: number) {
 export class BattleSkill {
     id: string;
     cd: number;
+}
+
+export class BattleBuff {
+    id: string;
+    time: number;
+    caster: BattlePet;
+    data: any;
 }
 
 const ExpRateByPetCount = [0, 1, 0.53, 0.37, 0.29, 0.23];
@@ -72,6 +81,8 @@ export class BattlePet {
     hpMax: number = 0;
 
     skillDatas: BattleSkill[] = [];
+
+    buffDatas: BattleBuff[] = [];
 
     init(idx: number, fromationIdx: number, pet: Pet, pet2: Pet2, beEnemy: boolean) {
         this.idx = idx;
@@ -401,6 +412,22 @@ export class BattleController {
         }
     }
 
+    handleBuff(team: BattleTeam) {
+        for (const pet of team.pets) {
+            for (const buffData of pet.buffDatas) {
+                let buffModel = BuffModelDict[buffData.id];
+                let buffOutput = buffModel.onTurnEnd(pet, buffData.caster);
+                if (buffOutput) {
+                    if (buffOutput.hp) {
+                    }
+                }
+                buffData.time--;
+                if (buffData.time == 0) {
+                }
+            }
+        }
+    }
+
     attack(battlePet: BattlePet) {
         this.page.doAttack(battlePet.beEnemy, battlePet.idx, this.realBattle.combo);
 
@@ -470,7 +497,7 @@ export class BattleController {
             this.castDmg(battlePet, aim, skillModel.mainDmg, skillModel);
         }
         if (skillModel.mainBuffId && aim.hp > 0) {
-            this.castBuff(battlePet, aim);
+            this.castBuff(battlePet, aim, skillModel, true);
         }
 
         if (skillModel.aimType == SkillAimtype.oneAndNext) {
@@ -479,7 +506,7 @@ export class BattleController {
                 this.castDmg(battlePet, nextAim, skillModel.subDmg, skillModel);
             }
             if (skillModel.subBuffId && nextAim.hp > 0) {
-                this.castBuff(battlePet, nextAim);
+                this.castBuff(battlePet, nextAim, skillModel, false);
             }
         } else if (skillModel.aimType == SkillAimtype.oneAndOthers) {
             let aimPets = aim.beEnemy ? this.realBattle.enemyTeam.pets : this.realBattle.selfTeam.pets;
@@ -487,7 +514,7 @@ export class BattleController {
                 if (aimInAll == aim || aimInAll.hp == 0) continue;
                 if (skillModel.subDmg > 0) this.castDmg(battlePet, aimInAll, skillModel.subDmg, skillModel);
                 if (skillModel.subBuffId && aimInAll.hp > 0) {
-                    this.castBuff(battlePet, aimInAll);
+                    this.castBuff(battlePet, aimInAll, skillModel, false);
                 }
             }
         }
@@ -505,8 +532,9 @@ export class BattleController {
         let sklDmg = battlePet.getSklDmg();
         let finalDmg = dmgRate * 0.01 * sklDmg + atkDmg;
 
+        let eleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
+        finalDmg *= EleReinforceRelation[skillModel.eleType] == eleType ? 1.15 : 1;
         finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
-        finalDmg *= EleReinforceRelation[skillModel.eleType] == petModelDict[aim.pet.id].eleType ? 1.15 : 1;
         finalDmg = Math.floor(finalDmg);
         cc.log(
             `STORM cc ^_^ cast dmg atk ${atkDmg}, skl ${sklDmg}, rate ${dmgRate}, `,
@@ -530,7 +558,28 @@ export class BattleController {
         if (aim.hp == 0) this.dead(aim);
     }
 
-    castBuff(battlePet: BattlePet, aim: BattlePet) {}
+    castBuff(battlePet: BattlePet, aim: BattlePet, skillModel: SkillModel, beMain: boolean) {
+        let buffId = beMain ? skillModel.mainBuffId : skillModel.subBuffId;
+        let buffTime = beMain ? skillModel.mainBuffTime : skillModel.subBuffTime;
+        let buffModel: BuffModel = BuffModelDict[buffId];
+
+        for (let index = 0; index < aim.buffDatas.length; index++) {
+            const buffData = aim.buffDatas[index];
+            if (buffData.id == buffId) {
+                buffModel.onEnd(aim, buffData.caster, buffData.data);
+                aim.buffDatas.splice(index, 1);
+                break;
+            }
+        }
+
+        let buffData = new BattleBuff();
+        buffData.id = buffId;
+        buffData.time = buffTime;
+        buffData.caster = battlePet;
+        buffData.data = buffModel.onStarted(aim, battlePet);
+
+        aim.buffDatas.push(buffData);
+    }
 
     castNormalAttack(battlePet: BattlePet) {
         let aim: BattlePet = this.getAim(battlePet, false);
@@ -665,7 +714,7 @@ export class BattleController {
     getAim(battlePet: BattlePet, toSelf: boolean, spBattleType: BattleType = null): BattlePet {
         let rb = this.realBattle;
         let petModel = petModelDict[battlePet.pet.id];
-        let battleType = spBattleType || battlePet.pet2.exBattleType || petModel.battleType;
+        let battleType = spBattleType || battlePet.pet2.exBattleTypes.getLast() || petModel.battleType;
 
         let aimPets;
         let anotherSidePets;
@@ -680,7 +729,7 @@ export class BattleController {
         let aim: BattlePet = null;
         switch (battleType) {
             case BattleType.melee:
-                aim = this.getPetAlive(aimPets[battlePet.idx] || aimPets[aimPets.length - 1]);
+                aim = this.getPetAlive(aimPets[battlePet.idx] || aimPets.getLast());
                 break;
             case BattleType.shoot:
                 aim = this.getPetAlive(aimPets[ranWithSeedInt(aimPets.length)]);

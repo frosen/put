@@ -4,15 +4,16 @@
  * luleyan
  */
 
-import { Buff, BuffOutput, EleType, BattleType } from 'scripts/Memory';
+import { BuffModel, BuffOutput, EleType, BattleType } from 'scripts/Memory';
 import { BattlePet } from 'pages/page_act_exploration/scripts/BattleController';
 
-const BuffModelDict: { [key: string]: Buff } = {
+const BuffModelDict: { [key: string]: BuffModel } = {
     RanShao: {
         id: 'RanShao',
         cnName: '燃烧',
         brief: '燃',
-        onSetting(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>) {},
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {},
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {},
         onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {
             return { hp: -Math.floor(caster.getSklDmg() * 0.7), eleType: EleType.fire };
         },
@@ -24,9 +25,13 @@ const BuffModelDict: { [key: string]: Buff } = {
         id: 'JingJie',
         cnName: '警戒',
         brief: '警',
-        onSetting(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>) {
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
             thisPet.pet2.hitRate += 10;
             thisPet.pet2.critRate += 10;
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            thisPet.pet2.hitRate -= 10;
+            thisPet.pet2.critRate -= 10;
         },
         onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {},
         getInfo(caster: Readonly<BattlePet>): string {
@@ -37,9 +42,17 @@ const BuffModelDict: { [key: string]: Buff } = {
         id: 'ReLi',
         cnName: '热力',
         brief: '热',
-        onSetting(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>) {
-            thisPet.pet2.atkDmgFrom += caster.pet2.sklDmgFrom * 0.15 + thisPet.pet2.atkDmgFrom * 0.15;
-            thisPet.pet2.atkDmgTo += caster.pet2.sklDmgTo * 0.15 + thisPet.pet2.atkDmgTo * 0.15;
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
+            let from = caster.pet2.sklDmgFrom * 0.15 + thisPet.pet2.atkDmgFrom * 0.15;
+            let to = caster.pet2.sklDmgTo * 0.15 + thisPet.pet2.atkDmgTo * 0.15;
+            thisPet.pet2.atkDmgFrom += from;
+            thisPet.pet2.atkDmgTo += to;
+            return { from, to };
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            let { from, to } = data;
+            thisPet.pet2.atkDmgFrom += from;
+            thisPet.pet2.atkDmgTo += to;
         },
         onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {},
         getInfo(caster: Readonly<BattlePet>): string {
@@ -50,7 +63,8 @@ const BuffModelDict: { [key: string]: Buff } = {
         id: 'GeShang',
         cnName: '割伤',
         brief: '割',
-        onSetting(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>) {},
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {},
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {},
         onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {
             return { hp: -Math.floor(thisPet.hpMax * 0.05), eleType: EleType.air };
         },
@@ -62,8 +76,13 @@ const BuffModelDict: { [key: string]: Buff } = {
         id: 'ChaoFeng',
         cnName: '嘲讽',
         brief: '嘲',
-        onSetting(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>) {
-            thisPet.pet2.exBattleType = BattleType.melee;
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
+            thisPet.pet2.exBattleTypes.push(BattleType.melee);
+            return thisPet.pet2.exBattleTypes.length - 1;
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            let idx: number = data;
+            thisPet.pet2.exBattleTypes.removeIndex(idx);
         },
         onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {},
         getInfo(caster: Readonly<BattlePet>): string {
@@ -74,8 +93,11 @@ const BuffModelDict: { [key: string]: Buff } = {
         id: 'FangHu',
         cnName: '防护',
         brief: '防',
-        onSetting(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>) {
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
             thisPet.pet2.dfsRate += 0.2;
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            thisPet.pet2.dfsRate -= 0.2;
         },
         onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {},
         getInfo(caster: Readonly<BattlePet>): string {

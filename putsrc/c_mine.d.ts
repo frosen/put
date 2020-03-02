@@ -40,3 +40,8 @@ declare let Editor: {
 declare let _Scene: {
     Undo: any;
 };
+
+interface Array<T> {
+    removeIndex(idx: number);
+    getLast(): any;
+}
