@@ -66,7 +66,7 @@ const BuffModelDict: { [key: string]: BuffModel } = {
         onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {},
         onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {},
         onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {
-            return { hp: -Math.floor(thisPet.hpMax * 0.05), eleType: EleType.air };
+            return { hp: Math.floor(thisPet.hpMax * 0.05), eleType: EleType.air };
         },
         getInfo(caster: Readonly<BattlePet>): string {
             return `每回合对目标造成最大生命5%的空系伤害`;

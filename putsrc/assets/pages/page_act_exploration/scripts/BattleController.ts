@@ -414,15 +414,46 @@ export class BattleController {
 
     handleBuff(team: BattleTeam) {
         for (const pet of team.pets) {
-            for (const buffData of pet.buffDatas) {
+            for (let index = 0; index < pet.buffDatas.length; index++) {
+                const buffData = pet.buffDatas[index];
                 let buffModel = BuffModelDict[buffData.id];
                 let buffOutput = buffModel.onTurnEnd(pet, buffData.caster);
                 if (buffOutput) {
                     if (buffOutput.hp) {
+                        let dmg = buffOutput.hp;
+                        if (dmg > 0) {
+                            let eleType = pet.pet2.exEleTypes.getLast() || petModelDict[pet.pet.id].eleType;
+                            dmg *= EleReinforceRelation[buffOutput.eleType] == eleType ? 1.15 : 1;
+                            dmg *= FormationHitRate[pet.fromationIdx];
+                        }
+                        dmg = Math.floor(dmg);
+                        pet.hp -= dmg;
+                        if (pet.hp < 1) pet.hp = 1;
+                        if (pet.hp > pet.hpMax) pet.hp = pet.hpMax;
+                        this.page.doHurt(pet.beEnemy, pet.idx, pet.hp, pet.hpMax, dmg, false, 0);
+                    }
+                    if (buffOutput.mp || buffOutput.rage) {
+                        if (buffOutput.mp) {
+                            team.mp -= buffOutput.mp;
+                            if (team.mp < 0) team.mp = 0;
+                            if (team.mp > team.mpMax) team.mp = team.mpMax;
+                        }
+                        if (buffOutput.rage) {
+                            team.rage -= buffOutput.rage;
+                            if (team.rage < 0) team.rage = 0;
+                            if (team.rage > 100) team.rage = 100;
+                        }
+                        if (!pet.beEnemy) this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
                     }
                 }
                 buffData.time--;
                 if (buffData.time == 0) {
+                    buffModel.onEnd(pet, buffData.caster, buffData.data);
+                    this.page.removeBuff(pet.beEnemy, pet.idx, buffData.id);
+                    pet.buffDatas.splice(index, 1);
+                    index--;
+                } else {
+                    this.page.resetBuffTime(pet.beEnemy, pet.idx, buffData.id, buffData.time);
                 }
             }
         }
@@ -521,33 +552,38 @@ export class BattleController {
     }
 
     castDmg(battlePet: BattlePet, aim: BattlePet, dmgRate: number, skillModel: SkillModel) {
-        let hitResult = this.getHitResult(battlePet, aim);
-        if (hitResult == 0) {
-            this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
-            this.logMiss(battlePet, aim, skillModel.cnName);
-            return;
+        let sklDmg = battlePet.getSklDmg() * dmgRate * 0.01;
+        let hitResult = 1;
+        if (sklDmg > 0) {
+            hitResult = this.getHitResult(battlePet, aim);
+            if (hitResult == 0) {
+                this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
+                this.logMiss(battlePet, aim, skillModel.cnName);
+                return;
+            }
+            sklDmg += battlePet.getAtkDmg();
+
+            let eleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
+            sklDmg *= EleReinforceRelation[skillModel.eleType] == eleType ? 1.15 : 1;
+            sklDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
+
+            cc.log(
+                `STORM cc ^_^ cast dmg atk skl ${sklDmg}, rate ${dmgRate}, `,
+                `combo ${ComboHitRate[this.realBattle.combo]}, format ${
+                    FormationHitRate[aim.fromationIdx]
+                }, rzt ${hitResult}`,
+                `ele ${EleReinforceRelation[skillModel.eleType] == petModelDict[aim.pet.id].eleType ? 1.15 : 1}, `,
+                `skill ele ${skillModel.eleType}, aim ele ${petModelDict[aim.pet.id].eleType}`
+            );
         }
 
-        let atkDmg = battlePet.getAtkDmg();
-        let sklDmg = battlePet.getSklDmg();
-        let finalDmg = dmgRate * 0.01 * sklDmg + atkDmg;
+        sklDmg = Math.floor(sklDmg);
+        aim.hp -= sklDmg;
+        if (aim.hp < 0) aim.hp = 0;
+        if (aim.hp > aim.hpMax) aim.hp = aim.hpMax;
 
-        let eleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
-        finalDmg *= EleReinforceRelation[skillModel.eleType] == eleType ? 1.15 : 1;
-        finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
-        finalDmg = Math.floor(finalDmg);
-        cc.log(
-            `STORM cc ^_^ cast dmg atk ${atkDmg}, skl ${sklDmg}, rate ${dmgRate}, `,
-            `combo ${ComboHitRate[this.realBattle.combo]}, format ${FormationHitRate[aim.fromationIdx]}, rzt ${hitResult}`,
-            `ele ${EleReinforceRelation[skillModel.eleType] == petModelDict[aim.pet.id].eleType ? 1.15 : 1}, `,
-            `skill ele ${skillModel.eleType}, aim ele ${petModelDict[aim.pet.id].eleType}`,
-            `dmg ${finalDmg}`
-        );
-        aim.hp -= finalDmg;
-        if (aim.hp <= 0) aim.hp = 0;
-
-        this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
-        this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
+        this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, sklDmg, hitResult > 1, this.realBattle.combo);
+        this.logAtk(battlePet, aim, sklDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
 
         this.addRageToAim(battlePet, aim);
         if (!aim.beEnemy) {
@@ -568,6 +604,7 @@ export class BattleController {
             if (buffData.id == buffId) {
                 buffModel.onEnd(aim, buffData.caster, buffData.data);
                 aim.buffDatas.splice(index, 1);
+                this.page.removeBuff(aim.beEnemy, aim.idx, buffId);
                 break;
             }
         }
@@ -577,6 +614,7 @@ export class BattleController {
         buffData.time = buffTime;
         buffData.caster = battlePet;
         buffData.data = buffModel.onStarted(aim, battlePet);
+        this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime);
 
         aim.buffDatas.push(buffData);
     }
@@ -595,9 +633,10 @@ export class BattleController {
         let atkDmg = battlePet.getAtkDmg();
         cc.log('STORM cc ^_^ ori dmg', atkDmg);
         atkDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
+        if (this.realBattle.atkRound > 100) atkDmg *= 1.5; // 时间太长时增加伤害快速结束
         atkDmg = Math.floor(atkDmg);
         aim.hp -= atkDmg;
-        if (aim.hp <= 0) aim.hp = 0;
+        if (aim.hp < 0) aim.hp = 0;
 
         cc.log(
             `STORM cc ^_^ cast dmg atk ${atkDmg},`,
@@ -647,8 +686,10 @@ export class BattleController {
         }
 
         if (alive) {
-            let curPetIdx = battlePet.idx;
-            for (let index = curPetIdx + 1; index < curPets.length; index++) {
+            battlePet.buffDatas.length = 0;
+            this.page.removeBuff(battlePet.beEnemy, battlePet.idx, null);
+
+            for (let index = battlePet.idx + 1; index < curPets.length; index++) {
                 const pet = curPets[index];
                 pet.fromationIdx -= 1;
             }
@@ -674,6 +715,10 @@ export class BattleController {
         }
 
         // 清理战斗buff
+        for (const selfPet of rb.selfTeam.pets) {
+            selfPet.buffDatas.length = 0;
+            this.page.removeBuff(selfPet.beEnemy, selfPet.idx, null);
+        }
 
         this.endCallback();
     }
@@ -795,8 +840,13 @@ export class BattleController {
 
     logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, beCombo: boolean, skillName: string, eleType: EleType = null) {
         let logStr = `${petModelDict[battlePet.pet.id].cnName}对${petModelDict[aim.pet.id].cnName}使用${skillName}`;
-        if (beCombo) logStr += '连击';
-        logStr += `，造成${Math.floor(dmg * 0.1)}点${eleType ? EleTypeNames[eleType] : '物理'}伤害`;
+        if (dmg > 0) {
+            if (beCombo) logStr += '连击';
+            logStr += `，造成${Math.floor(dmg * 0.1)}点${eleType ? EleTypeNames[eleType] : '物理'}伤害`;
+        } else {
+            logStr += `，恢复血量${Math.floor(dmg * -0.1)}点`;
+        }
+
         this.page.log(logStr);
     }
 

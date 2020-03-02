@@ -8,9 +8,10 @@ const { ccclass, property } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import ExplorationUpdater from './ExplorationUpdater';
 import PetUI from './PetUI';
-import { PetRankNames } from 'scripts/Memory';
+import { PetRankNames, BuffModel } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
 import { BattlePet } from './BattleController';
+import BuffModelDict from 'configs/BuffModelDict';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -165,16 +166,18 @@ export default class PageActExploration extends PageBase {
         ui.bar.progress = hp / hpMax;
         ui.petHP.string = `${Math.ceil(hp * 0.1)} / ${Math.ceil(hpMax * 0.1)}`;
 
-        let dmgStr = String(Math.floor(dmg * 0.1 * -1));
-        if (crit) dmgStr += '!';
-        this.showLbl(dmgStr, beEnemy, idx, crit, combo);
+        if (combo > 0) {
+            let dmgStr = String(Math.floor(dmg * 0.1 * -1));
+            if (crit) dmgStr += '!';
+            this.showLbl(dmgStr, beEnemy, idx, crit, 0.1 * (combo - 1), dmg > 0 ? cc.Color.RED : cc.Color.GREEN);
+        }
     }
 
     doMiss(beEnemy: boolean, idx: number, combo: number) {
-        this.showLbl('miss', beEnemy, idx, false, combo);
+        this.showLbl('miss', beEnemy, idx, false, 0.1 * (combo - 1), cc.Color.RED);
     }
 
-    showLbl(str: string, beEnemy: boolean, idx: number, crit: boolean, combo: number) {
+    showLbl(str: string, beEnemy: boolean, idx: number, big: boolean, delay: number, color: cc.Color) {
         let dmgLbl = this.dmgLbls[this.dmgIdx];
         let params = DmgLblActParams[this.dmgIdx % 10];
         this.dmgIdx++;
@@ -185,15 +188,62 @@ export default class PageActExploration extends PageBase {
         let node = dmgLbl.node;
         node.x = beEnemy ? 1080 - 25 - 435 : 25 + 435;
         node.y = BattleUnitYs[idx] - 68;
-        node.scale = crit ? 1.2 : 1;
+        node.scale = big ? 1.2 : 1;
+        node.color = color;
 
         let dir = beEnemy ? 1 : -1;
         let p = cc.v2(params[0] * dir, 0);
         let h = 35 + params[1];
 
         node.stopAllActions();
-        node.runAction(cc.sequence(cc.delayTime(0.1 * (combo - 1)), cc.jumpBy(1, p, h, 1).easing(cc.easeSineOut())));
-        node.runAction(cc.sequence(cc.delayTime(0.1 * (combo - 1)), cc.fadeIn(0.01), cc.delayTime(0.7), cc.fadeOut(0.1)));
+        node.runAction(cc.sequence(cc.delayTime(delay), cc.jumpBy(1, p, h, 1).easing(cc.easeSineOut())));
+        node.runAction(cc.sequence(cc.delayTime(delay), cc.fadeIn(0.01), cc.delayTime(0.7), cc.fadeOut(0.1)));
+    }
+
+    addBuff(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
+        let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        let ui = uis[idx];
+        let buffBrief = (BuffModelDict[buffId] as BuffModel).brief;
+        let buffStr = '[' + buffBrief + String(buffTime) + ']';
+        let buffNode = cc.instantiate(this.buffPrefab);
+        buffNode.getComponent(cc.Label).string = buffStr;
+        buffNode.parent = ui.buffNode;
+        // llytodo 超过几个要隐藏
+    }
+
+    resetBuffTime(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
+        let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        let ui = uis[idx];
+        let buffBrief = (BuffModelDict[buffId] as BuffModel).brief;
+        let buffStrTest = new RegExp('\\[' + buffBrief + '[0-9]*\\]');
+        for (const child of ui.buffNode.children) {
+            if (buffStrTest.test(child.getComponent(cc.Label).string)) {
+                let newBuffStr = '[' + buffBrief + String(buffTime) + ']';
+                child.getComponent(cc.Label).string = newBuffStr;
+                break;
+            }
+        }
+    }
+
+    removeBuff(beEnemy: boolean, idx: number, buffId: string) {
+        let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        let ui = uis[idx];
+        if (buffId) {
+            let buffBrief = (BuffModelDict[buffId] as BuffModel).brief;
+            let buffStrTest = new RegExp('\\[' + buffBrief + '[0-9]*\\]');
+            for (const child of ui.buffNode.children) {
+                if (buffStrTest.test(child.getComponent(cc.Label).string)) {
+                    child.removeFromParent();
+                    child.destroy();
+                    break;
+                }
+            }
+        } else {
+            for (const child of ui.buffNode.children) {
+                child.removeFromParent();
+                child.destroy();
+            }
+        }
     }
 
     resetCenterBar(mp: number, mpMax: number, rage: number) {
