@@ -315,7 +315,7 @@ Array.prototype.removeIndex = function(ridx) {
 
 // @ts-ignore
 Array.prototype.getLast = function() {
-    return this.length > 0 ? this[this.lenth - 1] : null;
+    return this.length > 0 ? this[this.length - 1] : null;
 };
 
 export class Pet2 {

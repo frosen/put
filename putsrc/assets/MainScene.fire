@@ -177,7 +177,7 @@
       "array": [
         0,
         0,
-        461.59154021710583,
+        457.2614131981836,
         0,
         0,
         0,
@@ -4521,7 +4521,7 @@
     "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_batchAsBitmap": false,
-    "_N$horizontalAlign": 1,
+    "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
     "_N$overflow": 0,
