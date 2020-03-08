@@ -91,6 +91,8 @@ export class BaseController extends cc.Component {
 
     memory: Memory = null;
 
+    debugTool: DebugTool = null;
+
     prefabDict: { [key: string]: cc.Prefab } = {};
 
     pageTree: TreeNode = null;
@@ -112,8 +114,8 @@ export class BaseController extends cc.Component {
         this.memory = new Memory();
         this.memory.init();
 
-        let debugTool = new DebugTool();
-        debugTool.init();
+        this.debugTool = new DebugTool();
+        this.debugTool.init();
 
         this.setPagePrefabDict();
         this.setTabBtns();

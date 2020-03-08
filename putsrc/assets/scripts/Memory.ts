@@ -382,6 +382,8 @@ export class Pet2 {
     hitRate: number = 0;
     dfsRate: number = 0;
 
+    armor: number = 0;
+
     setData(pet: Pet, exEquipTokens: string[] = null, exPrivity: number = null) {
         let petModel: PetModel = petModelDict[pet.id];
 

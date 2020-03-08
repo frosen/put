@@ -30,6 +30,8 @@ export default class ExplorationUpdater {
 
     _id: string = 'idforupdater';
 
+    pausing: boolean = false;
+
     init(page: PageActExploration) {
         this.page = page;
         this.memory = this.page.ctrlr.memory;
@@ -47,6 +49,12 @@ export default class ExplorationUpdater {
         this.memory.addDataListener(this);
         cc.director.getScheduler().scheduleUpdate(this, 0, false);
         this.lastTime = new Date().getTime();
+
+        this.page.ctrlr.debugTool.setShortCut('ww', () => {
+            this.pausing = !this.pausing;
+            if (this.pausing) cc.log('PUT 暂停探索更新');
+            else cc.log('PUT 重新开始探索更新');
+        });
     }
 
     createExploration() {
@@ -60,6 +68,7 @@ export default class ExplorationUpdater {
         cc.director.getScheduler().unscheduleUpdate(this);
         this.memory.deleteExploration();
         this.memory.removeDataListener(this);
+        this.page.ctrlr.debugTool.removeShortCut('ww');
     }
 
     selfPetsChangedFlag: boolean = false;
@@ -73,6 +82,7 @@ export default class ExplorationUpdater {
     updateCount: number = 0;
 
     update() {
+        if (this.pausing) return;
         let curTime = new Date().getTime();
         if (curTime - this.lastTime > 600) {
             this.lastTime = curTime;

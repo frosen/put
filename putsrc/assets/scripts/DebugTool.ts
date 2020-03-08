@@ -11,11 +11,11 @@ export default class DebugTool {
     shortCutKey: string = '';
 
     /** 自定义的快捷键 */
-    shortCutDict: { [key: string]: (() => void)[] } = {};
+    shortCutDict: { [key: string]: () => void } = {};
 
     init() {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyboardPress, this);
-        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyboardInput, this);
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyboardRelease, this);
         this.setShortCut('sd', this.showDebugInfo.bind(this));
     }
 
@@ -27,7 +27,7 @@ export default class DebugTool {
         }
     }
 
-    onKeyboardInput(event: cc.Event.EventKeyboard) {
+    onKeyboardRelease(event: cc.Event.EventKeyboard) {
         if (CC_BUILD) return;
 
         if (event.keyCode == cc.macro.KEY.ctrl) {
@@ -91,8 +91,8 @@ export default class DebugTool {
         for (const key in this.shortCutDict) {
             if (!this.shortCutDict.hasOwnProperty(key)) continue;
             if (this.shortCutKey == key) {
-                const callbacks = this.shortCutDict[key];
-                if (callbacks) for (const callback of callbacks) callback();
+                const callback = this.shortCutDict[key];
+                callback();
                 this.shortCutKey = '';
                 break;
             }
@@ -100,10 +100,14 @@ export default class DebugTool {
     }
 
     setShortCut(key: string, callback: () => void) {
-        if (!this.shortCutDict.hasOwnProperty(key)) {
-            this.shortCutDict[key] = [];
+        if (this.shortCutDict.hasOwnProperty(key)) {
+            cc.warn('PUT 覆盖了已有的快捷键');
         }
-        this.shortCutDict[key].push(callback);
+        this.shortCutDict[key] = callback;
+    }
+
+    removeShortCut(key: string) {
+        delete this.shortCutDict[key];
     }
 
     // -----------------------------------------------------------------

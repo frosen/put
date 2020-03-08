@@ -250,6 +250,7 @@ export class BattleController {
             const enemyPet = enemyPetDatas[index];
 
             let petData = new Pet();
+            petData.catchIdx = index;
             petData.id = enemyPet.id;
             petData.lv = enemyPet.lv;
             petData.rank = enemyPet.rank;
@@ -268,8 +269,15 @@ export class BattleController {
         }
 
         // 按照HP排序
-        if (randomRate(0.5)) {
-            rb.enemyTeam.pets.sort((a, b) => b.hpMax - a.hpMax);
+        if (randomRate(1)) {
+            let ePets = rb.enemyTeam.pets;
+            ePets.sort((a, b) => b.hpMax - a.hpMax);
+            // 重置索引
+            for (let index = 0; index < ePets.length; index++) {
+                const pet = ePets[index];
+                pet.idx = index;
+                pet.fromationIdx = 5 - ePets.length + index;
+            }
         }
 
         rb.enemyTeam.mp = mpMax;
@@ -401,7 +409,7 @@ export class BattleController {
                         if (dmg > 0) {
                             let eleType = pet.pet2.exEleTypes.getLast() || petModelDict[pet.pet.id].eleType;
                             dmg *= EleReinforceRelation[buffModel.eleType] == eleType ? 1.15 : 1;
-                            dmg *= FormationHitRate[pet.fromationIdx];
+                            dmg *= (1 - pet.pet2.dfsRate) * FormationHitRate[pet.fromationIdx];
                         }
                         dmg = Math.floor(dmg);
                         pet.hp -= dmg;
@@ -535,29 +543,33 @@ export class BattleController {
     }
 
     castDmg(battlePet: BattlePet, aim: BattlePet, dmgRate: number, skillModel: SkillModel): boolean {
-        let sklDmg = battlePet.getSklDmg() * dmgRate * 0.01;
+        let finalDmg: number;
         let hitResult = 1;
-        if (sklDmg > 0) {
+        if (dmgRate > 0) {
             hitResult = this.getHitResult(battlePet, aim);
             if (hitResult == 0) {
                 this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
                 this.logMiss(battlePet, aim, skillModel.cnName);
                 return false;
             }
-            sklDmg += battlePet.getAtkDmg();
+
+            finalDmg = Math.max(battlePet.getSklDmg() - aim.pet2.armor, 1) * dmgRate * 0.01;
+            finalDmg += Math.max(battlePet.getAtkDmg() - aim.pet2.armor, 1);
 
             let eleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
-            sklDmg *= EleReinforceRelation[skillModel.eleType] == eleType ? 1.15 : 1;
-            sklDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
+            finalDmg *= EleReinforceRelation[skillModel.eleType] == eleType ? 1.15 : 1;
+            finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
+        } else {
+            finalDmg = battlePet.getSklDmg() * dmgRate * 0.01;
         }
 
-        sklDmg = Math.floor(sklDmg);
-        aim.hp -= sklDmg;
+        finalDmg = Math.floor(finalDmg);
+        aim.hp -= finalDmg;
         if (aim.hp < 0) aim.hp = 0;
         if (aim.hp > aim.hpMax) aim.hp = aim.hpMax;
 
-        this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, sklDmg, hitResult > 1, this.realBattle.combo);
-        this.logAtk(battlePet, aim, sklDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
+        this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
+        this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
 
         this.addRageToAim(battlePet, aim);
         if (!aim.beEnemy) {
@@ -609,7 +621,7 @@ export class BattleController {
             return;
         }
 
-        let atkDmg = battlePet.getAtkDmg();
+        let atkDmg = Math.max(battlePet.getAtkDmg() - aim.pet2.armor, 1);
         atkDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         if (this.realBattle.atkRound > 100) atkDmg *= 1.5; // 时间太长时增加伤害快速结束
         atkDmg = Math.floor(atkDmg);
