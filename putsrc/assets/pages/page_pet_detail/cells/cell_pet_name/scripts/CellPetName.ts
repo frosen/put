@@ -18,6 +18,6 @@ export default class CellPetName extends ListViewCell {
 
     setData(petName: string, masterName: string) {
         this.petName.string = petName;
-        this.masterName.string = '主人：' + masterName;
+        this.masterName.string = '状态：' + masterName;
     }
 }

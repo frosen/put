@@ -252,5 +252,74 @@ module.exports = {
         selfSkillIds: [
             'JiFengRen'
         ]
+    },
+    JiXieXiuLiShi: {
+        id: 'JiXieXiuLiShi',
+        cnName: '机械修理师',
+        bioType: 3,
+        eleType: 1,
+        battleType: 1,
+        speed: 38,
+        baseStrength: 150,
+        addStrength: 21,
+        baseConcentration: 260,
+        addConcentration: 40,
+        baseDurability: 125,
+        addDurability: 16,
+        baseAgility: 200,
+        addAgility: 25,
+        baseSensitivity: 130,
+        addSensitivity: 15,
+        baseElegant: 60,
+        addElegant: 8,
+        selfSkillIds: [
+            'JiSuHanJie'
+        ]
+    },
+    HuoHuoTu: {
+        id: 'HuoHuoTu',
+        cnName: '火火兔',
+        bioType: 4,
+        eleType: 1,
+        battleType: 1,
+        speed: 50,
+        baseStrength: 230,
+        addStrength: 31,
+        baseConcentration: 220,
+        addConcentration: 32,
+        baseDurability: 100,
+        addDurability: 16,
+        baseAgility: 150,
+        addAgility: 27,
+        baseSensitivity: 100,
+        addSensitivity: 10,
+        baseElegant: 100,
+        addElegant: 17,
+        selfSkillIds: [
+            'BaoZha'
+        ]
+    },
+    BaiLanYuYan: {
+        id: 'BaiLanYuYan',
+        cnName: '白蓝雨燕',
+        bioType: 4,
+        eleType: 3,
+        battleType: 5,
+        speed: 90,
+        baseStrength: 120,
+        addStrength: 10,
+        baseConcentration: 320,
+        addConcentration: 45,
+        baseDurability: 125,
+        addDurability: 22,
+        baseAgility: 160,
+        addAgility: 21,
+        baseSensitivity: 130,
+        addSensitivity: 17,
+        baseElegant: 60,
+        addElegant: 18,
+        selfSkillIds: [
+            'HuiChunShu'
+        ]
     }
 };

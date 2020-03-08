@@ -29,6 +29,8 @@ export default class PageBase extends cc.Component {
 
     onInit() {}
 
+    setData(data: any) {}
+
     onLoad() {
         if (CC_EDITOR) {
             this.check();

@@ -38,22 +38,19 @@ export default class ExplorationUpdater {
             this.state = ExplorationState.recover;
         });
 
-        this.lastTime = new Date().getTime();
-
-        this.memory.addDataListener(this);
-
         if (!this.memory.gameData.curExploration) {
             this.createExploration();
         } else {
             this.restoreLastExploration();
         }
 
+        this.memory.addDataListener(this);
         cc.director.getScheduler().scheduleUpdate(this, 0, false);
+        this.lastTime = new Date().getTime();
     }
 
     createExploration() {
         this.memory.createExploration();
-        this.battleCtrlr.resetOurTeam();
         this.startExploration();
     }
 
@@ -62,17 +59,14 @@ export default class ExplorationUpdater {
     destroy() {
         cc.director.getScheduler().unscheduleUpdate(this);
         this.memory.deleteExploration();
+        this.memory.removeDataListener(this);
     }
 
-    petChangedFlag: boolean = false;
-    lvChangeFlag: boolean = false;
-    eqpChangeFlag: boolean = false;
+    selfPetsChangedFlag: boolean = false;
 
     onMemoryDataChanged() {
-        let { petChange, lvChange, eqpChange } = this.battleCtrlr.checkIfOurTeamChanged();
-        if (petChange) this.petChangedFlag = true;
-        if (lvChange) this.lvChangeFlag = true;
-        if (eqpChange) this.eqpChangeFlag = true;
+        let change = this.battleCtrlr.checkIfSelfTeamChanged();
+        if (change) this.selfPetsChangedFlag = true;
     }
 
     lastTime: number = 0;
@@ -96,13 +90,9 @@ export default class ExplorationUpdater {
     // -----------------------------------------------------------------
 
     checkChange(): boolean {
-        if (this.petChangedFlag || this.lvChangeFlag || this.eqpChangeFlag) {
-            this.battleCtrlr.resetOurTeam();
-            if (this.petChangedFlag) this.page.log('队伍变更');
-            if (this.eqpChangeFlag) this.page.log('装备变更');
-            this.petChangedFlag = false;
-            this.lvChangeFlag = false;
-            this.eqpChangeFlag = false;
+        if (this.selfPetsChangedFlag) {
+            this.battleCtrlr.resetSelfTeam();
+            this.selfPetsChangedFlag = false;
             return true;
         }
     }
@@ -110,7 +100,9 @@ export default class ExplorationUpdater {
     explorationTime: number = 0;
 
     startExploration() {
-        this.checkChange();
+        this.battleCtrlr.resetSelfTeam();
+        this.selfPetsChangedFlag = false;
+
         this.state = ExplorationState.explore;
         // this.explorationTime = 5 + random(5);
         this.explorationTime = 2; // llytest

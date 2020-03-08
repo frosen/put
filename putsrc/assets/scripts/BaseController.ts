@@ -141,11 +141,6 @@ export class BaseController extends cc.Component {
         this.pageBed.y = this.node.height * 0.5 - navH;
     }
 
-    initMemory() {
-        this.memory = new Memory();
-        this.memory.init();
-    }
-
     setPagePrefabList() {
         this.pagePrefabList = [];
         let baseCtrlr = this;
@@ -218,7 +213,7 @@ export class BaseController extends cc.Component {
 
     pageChanging: boolean = false;
 
-    pushPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }, withAnim: boolean = true) {
+    pushPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }, data: any = null, withAnim: boolean = true) {
         if (this.pageChanging) return;
         this.pageChanging = true;
 
@@ -230,7 +225,7 @@ export class BaseController extends cc.Component {
 
         let nextTreeNode = new TreeNode();
         nextTreeNode.name = nextPageName;
-        nextTreeNode.page = this.createPage(nextPageName);
+        nextTreeNode.page = this.createPage(nextPageName, data);
         nextTreeNode.parent = curTreeNode;
         curTreeNode.child = nextTreeNode;
 
@@ -323,20 +318,25 @@ export class BaseController extends cc.Component {
             .start();
     }
 
-    switchCurPage<T extends PageBase>(page: cc.Prefab | string | { new (): T }, anim: PageSwitchAnim = PageSwitchAnim.none) {
+    switchCurPage<T extends PageBase>(
+        page: cc.Prefab | string | { new (): T },
+        data: any = null,
+        anim: PageSwitchAnim = PageSwitchAnim.none
+    ) {
         let nextPageName = this.getPageName(page);
-        this.switchPage(nextPageName, this.getTreeLeaf(this.pageTree).parent, anim);
+        this.switchPage(nextPageName, this.getTreeLeaf(this.pageTree).parent, data, anim);
     }
 
     switchRootPage<T extends PageBase>(
         page: cc.Prefab | string | { new (): T },
+        data: any = null,
         anim: PageSwitchAnim = PageSwitchAnim.none
     ) {
         let nextPageName = this.getPageName(page);
-        this.switchPage(nextPageName, this.pageTree, anim);
+        this.switchPage(nextPageName, this.pageTree, data, anim);
     }
 
-    switchPage(nextPageName: string, parentTreeNode: TreeNode, anim: PageSwitchAnim) {
+    switchPage(nextPageName: string, parentTreeNode: TreeNode, data: any, anim: PageSwitchAnim) {
         if (this.pageChanging) return;
         this.pageChanging = true;
         let curTreeNode: TreeNode = null;
@@ -354,7 +354,7 @@ export class BaseController extends cc.Component {
         } else {
             nextTreeNode = new TreeNode();
             nextTreeNode.name = nextPageName;
-            nextTreeNode.page = this.createPage(nextPageName);
+            nextTreeNode.page = this.createPage(nextPageName, data);
             nextTreeNode.page.node.zIndex = curTreeNode ? curTreeNode.page.node.zIndex : 0;
             nextTreeNode.parent = parentTreeNode;
             nextDisTreeNode = nextTreeNode;
@@ -449,13 +449,14 @@ export class BaseController extends cc.Component {
         }
     }
 
-    createPage(pageName: string): PageBase {
+    createPage(pageName: string, data: any): PageBase {
         let prefab = this.prefabDict[pageName];
         cc.assert(prefab, `${pageName}并没有加入pagePrefabList中`);
 
         let newNode = cc.instantiate(prefab);
         let pageComp = newNode.getComponent(PageBase);
         pageComp.init();
+        pageComp.setData(data);
         newNode.parent = this.pageBed;
 
         return pageComp;

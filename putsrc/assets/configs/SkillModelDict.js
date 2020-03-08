@@ -15,7 +15,8 @@ module.exports = {
         subBuffTime: 0,
         cd: 4,
         mp: 35,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
     },
     BaoZha: {
         id: 'BaoZha',
@@ -33,7 +34,8 @@ module.exports = {
         subBuffTime: 0,
         cd: 5,
         mp: 55,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
     },
     ZhuoShao: {
         id: 'ZhuoShao',
@@ -51,7 +53,8 @@ module.exports = {
         subBuffTime: 0,
         cd: 3,
         mp: 25,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
     },
     ReLi: {
         id: 'ReLi',
@@ -69,7 +72,8 @@ module.exports = {
         subBuffTime: 0,
         cd: 4,
         mp: 18,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
     },
     ShuiLengDan: {
         id: 'ShuiLengDan',
@@ -87,7 +91,8 @@ module.exports = {
         subBuffTime: 0,
         cd: 2,
         mp: 25,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
     },
     JingJie: {
         id: 'JingJie',
@@ -103,9 +108,10 @@ module.exports = {
         subDmg: 0,
         subBuffId: '',
         subBuffTime: 0,
-        cd: 0,
-        mp: 0,
-        rage: 0
+        cd: 2,
+        mp: 20,
+        rage: 0,
+        hpLimit: 0
     },
     JingZhongChangMing: {
         id: 'JingZhongChangMing',
@@ -123,7 +129,8 @@ module.exports = {
         subBuffTime: 2,
         cd: 0,
         mp: 0,
-        rage: 60
+        rage: 60,
+        hpLimit: 0
     },
     YinSuQiLiu: {
         id: 'YinSuQiLiu',
@@ -141,7 +148,8 @@ module.exports = {
         subBuffTime: 0,
         cd: 3,
         mp: 30,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
     },
     JiFengRen: {
         id: 'JiFengRen',
@@ -159,7 +167,8 @@ module.exports = {
         subBuffTime: 0,
         cd: 5,
         mp: 40,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
     },
     ChaoZhongJi: {
         id: 'ChaoZhongJi',
@@ -177,7 +186,8 @@ module.exports = {
         subBuffTime: 0,
         cd: 2,
         mp: 15,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
     },
     FangHuZhao: {
         id: 'FangHuZhao',
@@ -195,7 +205,8 @@ module.exports = {
         subBuffTime: 0,
         cd: 3,
         mp: 13,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
     },
     DianZiMaiChong: {
         id: 'DianZiMaiChong',
@@ -213,7 +224,8 @@ module.exports = {
         subBuffTime: 0,
         cd: 4,
         mp: 33,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
     },
     MieShi: {
         id: 'MieShi',
@@ -222,7 +234,7 @@ module.exports = {
         dirType: 1,
         aimType: 1,
         eleType: 5,
-        spBattleType: 0,
+        spBattleType: 1,
         mainDmg: 0,
         mainBuffId: 'ChaoFeng',
         mainBuffTime: 2,
@@ -231,6 +243,45 @@ module.exports = {
         subBuffTime: 0,
         cd: 4,
         mp: 10,
-        rage: 0
+        rage: 0,
+        hpLimit: 0
+    },
+    JiSuHanJie: {
+        id: 'JiSuHanJie',
+        cnName: '急速焊接',
+        skillType: 1,
+        dirType: 2,
+        aimType: 1,
+        eleType: 1,
+        spBattleType: 4,
+        mainDmg: -350,
+        mainBuffId: '',
+        mainBuffTime: 0,
+        subDmg: 0,
+        subBuffId: '',
+        subBuffTime: 0,
+        cd: 4,
+        mp: 25,
+        rage: 0,
+        hpLimit: 70
+    },
+    HuiChunShu: {
+        id: 'HuiChunShu',
+        cnName: '回春术',
+        skillType: 1,
+        dirType: 2,
+        aimType: 1,
+        eleType: 3,
+        spBattleType: 2,
+        mainDmg: 0,
+        mainBuffId: 'HuiChun',
+        mainBuffTime: 3,
+        subDmg: 0,
+        subBuffId: '',
+        subBuffTime: 0,
+        cd: 1,
+        mp: 15,
+        rage: 0,
+        hpLimit: 90
     }
 };

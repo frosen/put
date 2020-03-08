@@ -9,11 +9,22 @@ const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
-import { GameData } from 'scripts/Memory';
 import CellAttri from 'pubcells/cell_attri/scripts/CellAttri';
 import CellAttri2 from 'pubcells/cell_attri2/scripts/CellAttri2';
 import CellPetName from '../cells/cell_pet_name/scripts/CellPetName';
 import CellTitle from 'pubcells/cell_title/scripts/CellTitle';
+import {
+    Pet,
+    Pet2,
+    PetModel,
+    PetStateNames,
+    PetRankNames,
+    BioTypeNames,
+    EleTypeNames,
+    BattleTypeNames
+} from 'scripts/Memory';
+import * as petModelDict from 'configs/PetModelDict';
+import * as expModels from 'configs/ExpModels';
 
 @ccclass
 export default class PagePetDetailLVD extends ListViewDelegate {
@@ -29,10 +40,11 @@ export default class PagePetDetailLVD extends ListViewDelegate {
     @property(cc.Prefab)
     titlePrefab: cc.Prefab = null;
 
-    gameData: GameData = null;
+    curPet: Pet = null;
+    curPet2: Pet2 = null;
 
     numberOfRows(listView: ListView): number {
-        return 13;
+        return 16;
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
@@ -45,14 +57,14 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             case 3:
                 return 126;
             case 4:
-                return 106;
+                return 66;
             case 5:
-                return 126;
-            case 6:
-            case 7:
                 return 106;
-            case 8:
+            case 6:
                 return 126;
+            case 7:
+                return 66;
+            case 8:
             case 9:
                 return 106;
             case 10:
@@ -60,6 +72,12 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             case 11:
                 return 66;
             case 12:
+                return 106;
+            case 13:
+                return 126;
+            case 14:
+                return 66;
+            case 15:
                 return 106;
         }
     }
@@ -74,9 +92,12 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             case 3:
                 return 'attri';
             case 4:
+                return 'title';
             case 5:
             case 6:
+                return 'attri2';
             case 7:
+                return 'title';
             case 8:
             case 9:
             case 10:
@@ -84,6 +105,11 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             case 11:
                 return 'title';
             case 12:
+            case 13:
+                return 'attri2';
+            case 14:
+                return 'title';
+            case 15:
                 return 'attri2';
         }
     }
@@ -102,53 +128,81 @@ export default class PagePetDetailLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPetName & CellAttri & CellAttri2 & CellTitle) {
+        let pet = this.curPet;
+        let petModel: PetModel = petModelDict[pet.id];
+
         switch (rowIdx) {
             case 0:
-                cell.setData('发条机器人', 'aaa');
+                cell.setData(petModel.cnName, PetStateNames[pet.state]);
                 break;
             case 1:
-                cell.setData1('等级', 'aaa');
-                cell.setData2('品阶', 'Me');
+                cell.setData1('等级', String(pet.lv));
+                cell.setData2('品阶', PetRankNames[pet.rank]);
                 break;
             case 2:
-                cell.setData1('默契值', 'aaa');
+                cell.setData1('默契值', String(pet.privity));
                 cell.setData2('学习值', 'Me');
                 break;
             case 3:
-                cell.setData('当前经验', '357 / 777', 357 / 777);
+                {
+                    let exp, expMax;
+                    if (pet.lv >= expModels.length) {
+                        exp = 0;
+                        expMax = 0;
+                    } else {
+                        exp = pet.exp;
+                        expMax = expModels[pet.lv];
+                    }
+                    cell.setData('当前经验', `${exp} / ${expMax}`, exp / expMax);
+                }
                 break;
             case 4:
-                cell.setData1('生物类型', 'aaa');
-                cell.setData2('元素类型', 'Me');
+                cell.setData('基础类型');
                 break;
             case 5:
-                cell.setData1('战斗类型', 'aaa');
-                cell.setData2('速度', 'Me');
+                cell.setData1('生物类型', BioTypeNames[this.curPet2.exBioTypes.getLast() || petModel.bioType]);
+                cell.setData2('元素类型', EleTypeNames[this.curPet2.exEleTypes.getLast() || petModel.eleType]);
                 break;
             case 6:
-                cell.setData1('强壮', 'aaa');
-                cell.setData2('专注', 'Me');
+                cell.setData1('战斗类型', BattleTypeNames[this.curPet2.exBattleTypes.getLast() || petModel.battleType]);
+                cell.setData2('速度', String(this.curPet2.exSpeed || petModel.speed));
                 break;
             case 7:
-                cell.setData1('灵敏', 'aaa');
-                cell.setData2('耐久', 'Me');
+                cell.setData('一级属性');
                 break;
             case 8:
-                cell.setData1('细腻', 'aaa');
-                cell.setData2('优雅', 'Me');
+                cell.setData1('强壮', String((this.curPet2.strength * 0.1).toFixed(1)));
+                cell.setData2('专注', String((this.curPet2.concentration * 0.1).toFixed(1)));
                 break;
             case 9:
-                cell.setData1('HP', 'aaa');
-                cell.setData2('MP', 'Me');
+                cell.setData1('耐久', String((this.curPet2.durability * 0.1).toFixed(1)));
+                cell.setData2('灵敏', String((this.curPet2.agility * 0.1).toFixed(1)));
                 break;
             case 10:
-                cell.setData1('攻击伤害', 'aaa');
-                cell.setData2('技能伤害', 'Me');
+                cell.setData1('细腻', String((this.curPet2.sensitivity * 0.1).toFixed(1)));
+                cell.setData2('优雅', String((this.curPet2.elegant * 0.1).toFixed(1)));
                 break;
             case 11:
-                cell.setData('宠物特性');
+                cell.setData('二级属性');
                 break;
             case 12:
+                cell.setData1('HP', String(Math.floor(this.curPet2.hpMax * 0.1)));
+                cell.setData2('MP', String(this.curPet2.mpMax));
+                break;
+            case 13:
+                cell.setData1(
+                    '攻击伤害',
+                    `${(this.curPet2.atkDmgFrom * 0.1).toFixed(1)} ~ ${(this.curPet2.atkDmgTo * 0.1).toFixed(1)}`
+                );
+                cell.setData2(
+                    '技能伤害',
+                    `${(this.curPet2.sklDmgFrom * 0.1).toFixed(1)} ~ ${(this.curPet2.sklDmgTo * 0.1).toFixed(1)}`
+                );
+                break;
+            case 14:
+                cell.setData('宠物特性');
+                break;
+            case 15:
                 cell.setData1('攻击伤害', 'aaa');
                 cell.setData2('技能伤害', 'Me');
                 break;

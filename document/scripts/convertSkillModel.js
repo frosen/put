@@ -37,6 +37,8 @@ convert('../put.xls', '../../putsrc/assets/configs/SkillModelDict.js', 'skill', 
         let mp = Number(rowData[14]) || 0;
         let rage = Number(rowData[15]) || 0;
 
+        let hpLimit = Number(rowData[16]) || 0;
+
         sklJson[id] = {
             id,
             cnName,
@@ -53,7 +55,8 @@ convert('../put.xls', '../../putsrc/assets/configs/SkillModelDict.js', 'skill', 
             subBuffTime,
             cd,
             mp,
-            rage
+            rage,
+            hpLimit
         };
     }
     return sklJson;

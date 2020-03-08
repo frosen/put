@@ -8,12 +8,27 @@ const { ccclass, property } = cc._decorator;
 
 import PageBase from 'scripts/PageBase';
 import ListView from 'scripts/ListView';
+import { Pet, Pet2 } from 'scripts/Memory';
+import PagePetDetailLVD from './PagePetDetailLVD';
 
 @ccclass
 export default class PagePetDetail extends PageBase {
+    curPet: Pet = null;
+
+    setData(data: Pet) {
+        this.curPet = data;
+    }
+
     onPageShow() {
         this.ctrlr.setTitle('宠物详情');
         this.ctrlr.setBackBtnEnabled(true);
+
+        let lvd = this.getComponent(PagePetDetailLVD);
+        lvd.curPet = this.curPet;
+
+        let pet2 = new Pet2();
+        pet2.setData(this.curPet);
+        lvd.curPet2 = pet2;
 
         this.getComponentInChildren(ListView).resetContent();
     }

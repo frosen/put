@@ -47,14 +47,12 @@ export default class PageActPosLVD extends ListViewDelegate {
     _curPosId: string = null;
 
     get curActPos(): ActPos {
-        // @ts-ignore
         if (!this._curActPos) this._curActPos = this.ctrlr.memory.gameData.posDataDict[this.curPosId];
         return this._curActPos;
     }
     _curActPos: ActPos = null;
 
     get curActPosModel(): ActPosModel {
-        // @ts-ignore
         if (!this._curActPosModel) this._curActPosModel = actPosModelDict[this.curPosId];
         return this._curActPosModel;
     }
@@ -165,6 +163,6 @@ export default class PageActPosLVD extends ListViewDelegate {
         }
 
         this.ctrlr.memory.gameData.curPosId = nextPosId;
-        this.ctrlr.switchCurPage(PageActPos, switchAnim);
+        this.ctrlr.switchCurPage(PageActPos, null, switchAnim);
     }
 }

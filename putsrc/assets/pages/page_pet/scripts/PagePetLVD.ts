@@ -10,14 +10,21 @@ import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
 import CellPet from '../cells/cell_pet/scripts/CellPet';
+import { Pet } from 'scripts/Memory';
 
 @ccclass
 export default class PagePetLVD extends ListViewDelegate {
     @property(cc.Prefab)
     cellPetPrefab: cc.Prefab = null;
 
+    get curPets(): Pet[] {
+        if (!this._curPets) this._curPets = this.ctrlr.memory.gameData.pets;
+        return this._curPets;
+    }
+    _curPets: Pet[] = null;
+
     numberOfRows(listView: ListView): number {
-        return 20;
+        return this.curPets.length;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
@@ -31,6 +38,7 @@ export default class PagePetLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPet) {
-        cell.setData('xxx' + String(rowIdx));
+        let pet: Pet = this.curPets[rowIdx];
+        cell.setData(pet);
     }
 }

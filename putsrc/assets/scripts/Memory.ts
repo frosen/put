@@ -98,39 +98,53 @@ export class ActPos {
 
 // -----------------------------------------------------------------
 
-export class EnemyPet {
+export class SelfPetMmr {
+    catchIdx: number = 0;
+    eqpTokens: string[] = [];
+    privity: number = 0;
+}
+
+export class EnemyPetMmr {
     id: string = '';
     lv: number = 0;
     rank: number = 0;
 }
 
-export class BattleField {
+export class BattleMmr {
     startTime: number = 0;
     seed: number = 0;
-    enemys: EnemyPet[] = newList();
+    enemys: EnemyPetMmr[] = newList();
 }
 
-export class Exploration {
+export class ExplorationMmr {
     startTime: number = 0;
     curStep: number = 0;
-    curBattleField: BattleField = null;
+    selfs: SelfPetMmr[] = newList();
+    curBattle: BattleMmr = null;
 }
 
 // -----------------------------------------------------------------
 
 export class BuffOutput {
     hp?: number;
-    eleType?: EleType;
     mp?: number;
     rage?: number;
+}
+
+export enum BuffType {
+    none,
+    buff,
+    debuff
 }
 
 export abstract class BuffModel {
     abstract id: string;
     abstract cnName: string;
     abstract brief: string;
+    abstract buffType: BuffType;
+    abstract eleType: EleType;
     abstract onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any;
-    abstract onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any);
+    abstract onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any): void;
     abstract onTurnEnd(thisPet: BattlePet, caster: BattlePet): BuffOutput | void;
     abstract getInfo(caster: Readonly<BattlePet>): string;
 }
@@ -175,9 +189,19 @@ export class SkillModel {
     cd: number;
     mp: number;
     rage: number;
+
+    hpLimit: number;
 }
 
-export class Feature {}
+export abstract class Feature {
+    abstract id: string;
+    abstract cnName: string;
+    abstract onSetting(pet: Readonly<Pet2>): void;
+    abstract onStartedBattle(pet: Readonly<Pet2>): void;
+    abstract onAttacked(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any): void;
+    abstract onHurt(thisPet: BattlePet, caster: BattlePet): BuffOutput | void;
+    abstract getInfo(caster: Readonly<BattlePet>): string;
+}
 
 export enum BioType {
     none,
@@ -255,6 +279,8 @@ export enum PetState {
     rest,
     ready
 }
+
+export const PetStateNames = ['休息中', '备战中'];
 
 export const PetRankNames = ['?', 'D', 'C', 'B', 'B+', 'A', 'A+', 'S', 'SS', 'N', 'T', 'Z'];
 
@@ -356,30 +382,27 @@ export class Pet2 {
     hitRate: number = 0;
     dfsRate: number = 0;
 
-    setData(pet: Pet, petModel: PetModel) {
-        this.setData1(pet.lv, pet.rank, petModel);
-        this.setData2();
-        this.setData3(petModel.bioType);
-        this.setData4(pet.privity);
-    }
+    setData(pet: Pet, exEquipTokens: string[] = null, exPrivity: number = null) {
+        let petModel: PetModel = petModelDict[pet.id];
 
-    setData1(lv: number, rank: number, petModel: PetModel) {
+        let lv = pet.lv;
+        let rank = pet.rank;
+        let bioType = petModel.bioType;
+        let privity = exPrivity || pet.privity;
+
+        // 一级属性
         let rankRatio = RankToAttriRatio[rank];
-
         this.strength = (petModel.baseStrength + petModel.addStrength * lv) * rankRatio;
         this.concentration = (petModel.baseConcentration + petModel.addConcentration * lv) * rankRatio;
         this.durability = (petModel.baseDurability + petModel.addDurability * lv) * rankRatio;
         this.agility = (petModel.baseAgility + petModel.addAgility * lv) * rankRatio;
         this.sensitivity = (petModel.baseSensitivity + petModel.addSensitivity * lv) * rankRatio;
         this.elegant = (petModel.baseElegant + petModel.addElegant * lv) * rankRatio;
-    }
 
-    setData2() {
+        // 二级属性
         this.hpMax = this.durability * 25;
         this.mpMax = 100;
-    }
 
-    setData3(bioType: BioType) {
         let fromToRatio = BioToFromToRatio[bioType];
 
         this.atkDmgFrom = this.strength * fromToRatio[0] + 5;
@@ -387,9 +410,8 @@ export class Pet2 {
 
         this.sklDmgFrom = this.concentration * fromToRatio[0] + 15;
         this.sklDmgTo = this.concentration * fromToRatio[1] + 30;
-    }
 
-    setData4(privity: number) {
+        // 其他属性
         let privityPercent = privity * 0.01;
         this.critRate = privityPercent * 0.1;
         this.critDmgRate = 0.5 + privityPercent * 0.5;
@@ -397,10 +419,6 @@ export class Pet2 {
         this.hitRate = 0.8 + privityPercent * 0.2;
         this.dfsRate = 0;
     }
-
-    addExBattleType(battleType: BattleType): number {}
-
-    removeExBattleType(index: number) {}
 }
 
 // -----------------------------------------------------------------
@@ -408,6 +426,10 @@ export class Pet2 {
 export class Item {
     id: string = '';
     extras: string[] = newList();
+
+    getToken(): string {
+        return '';
+    }
 }
 
 // -----------------------------------------------------------------
@@ -416,7 +438,7 @@ export class GameData {
     curPosId: string = '';
 
     posDataDict: { [key: string]: ActPos } = newDict();
-    curExploration: Exploration = null;
+    curExploration: ExplorationMmr = null;
 
     pets: Pet[] = newList();
     /** 一共抓取过的宠物的总量，用于pet的索引 */
@@ -425,15 +447,10 @@ export class GameData {
     items: Item[] = newList();
 }
 
-export class GameData2 {
-    pet2s: Pet2[] = [];
-}
-
 // -----------------------------------------------------------------
 
 export class Memory {
     gameData: GameData = newInsWithChecker(GameData);
-    gameData2: GameData2 = new GameData2();
 
     set dirtyToken(t: number) {
         memoryDirtyToken = t;
@@ -457,22 +474,9 @@ export class Memory {
     update() {
         if (memoryDirtyToken < 0) {
             memoryDirtyToken = memoryDirtyToken * -1 + 1;
-            this.resetGameData2();
             for (const listener of this.dataListeners) {
                 listener.onMemoryDataChanged();
             }
-        }
-    }
-
-    resetGameData2() {
-        let gd2 = this.gameData2;
-        let pet2s = gd2.pet2s;
-        pet2s.length = this.gameData.pets.length;
-        for (let index = 0; index < this.gameData.pets.length; index++) {
-            const pet = this.gameData.pets[index];
-            if (!pet2s[index]) pet2s[index] = new Pet2();
-            let petModel: PetModel = petModelDict[pet.id];
-            pet2s[index].setData(pet, petModel);
         }
     }
 
@@ -495,8 +499,19 @@ export class Memory {
 
     createExploration() {
         if (this.gameData.curExploration) return;
-        let exploration = newInsWithChecker(Exploration);
+        let exploration = newInsWithChecker(ExplorationMmr);
         exploration.startTime = new Date().getTime();
+        for (const pet of this.gameData.pets) {
+            if (pet.state != PetState.ready) break; // 备战的pet一定在最上切不会超过5个
+            let selfPetMmr = newInsWithChecker(SelfPetMmr);
+            selfPetMmr.catchIdx = pet.catchIdx;
+            selfPetMmr.privity = pet.privity;
+            for (const equip of pet.equips) {
+                selfPetMmr.eqpTokens.push(equip.getToken());
+            }
+            exploration.selfs.push(selfPetMmr);
+        }
+
         this.gameData.curExploration = exploration;
     }
 
@@ -509,26 +524,26 @@ export class Memory {
     createBattle(seed: number) {
         cc.assert(this.gameData.curExploration, '创建battle前必有Exploration');
         let curExploration = this.gameData.curExploration;
-        if (curExploration.curBattleField) return;
-        let battle = newInsWithChecker(BattleField);
+        if (curExploration.curBattle) return;
+        let battle = newInsWithChecker(BattleMmr);
         battle.startTime = new Date().getTime();
         battle.seed = seed;
 
-        curExploration.curBattleField = battle;
+        curExploration.curBattle = battle;
     }
 
     createEnemyPet(id: string, lv: number, rank: number) {
-        let p = newInsWithChecker(EnemyPet);
+        let p = newInsWithChecker(EnemyPetMmr);
         p.id = id;
         p.lv = lv;
         p.rank = rank;
 
-        this.gameData.curExploration.curBattleField.enemys.push(p);
+        this.gameData.curExploration.curBattle.enemys.push(p);
     }
 
     deleteBattle() {
         cc.assert(this.gameData.curExploration, '删除battle前必有Exploration');
-        this.gameData.curExploration.curBattleField = null;
+        this.gameData.curExploration.curBattle = null;
     }
 
     // -----------------------------------------------------------------
@@ -554,11 +569,28 @@ export class Memory {
         this.gameData.pets.push(pet);
 
         pet = newInsWithChecker(Pet);
-        pet.id = 'FangShengJiXieBi';
+        pet.id = 'YaHuHanJuRen';
         pet.state = PetState.ready;
 
         pet.catchTime = new Date().getTime();
-        pet.catchIdx = 1;
+        pet.catchIdx = 2;
+        pet.catchLv = 1;
+        pet.catchRank = 1;
+
+        pet.lv = 1;
+        pet.rank = 2;
+
+        pet.privity = 0;
+        pet.privityChangedTime = new Date().getTime();
+
+        this.gameData.pets.push(pet);
+
+        pet = newInsWithChecker(Pet);
+        pet.id = 'BaiLanYuYan';
+        pet.state = PetState.ready;
+
+        pet.catchTime = new Date().getTime();
+        pet.catchIdx = 3;
         pet.catchLv = 1;
         pet.catchRank = 1;
 
