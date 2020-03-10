@@ -7,15 +7,13 @@
 import { BuffModel, BuffOutput, EleType, BattleType, BuffType } from 'scripts/Memory';
 import { BattlePet } from 'pages/page_act_exploration/scripts/BattleController';
 
-const BuffModelDict: { [key: string]: BuffModel } = {
+const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
     RanShao: {
         id: 'RanShao',
         cnName: '燃烧',
         brief: '燃',
         buffType: BuffType.debuff,
         eleType: EleType.fire,
-        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {},
-        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {},
         onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {
             return { hp: caster.getSklDmg() * 0.7 };
         },
@@ -37,7 +35,6 @@ const BuffModelDict: { [key: string]: BuffModel } = {
             thisPet.pet2.hitRate -= 10;
             thisPet.pet2.critRate -= 10;
         },
-        onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {},
         getInfo(caster: Readonly<BattlePet>): string {
             return '下次攻击必命中，必暴击';
         }
@@ -60,7 +57,6 @@ const BuffModelDict: { [key: string]: BuffModel } = {
             thisPet.pet2.atkDmgFrom += from;
             thisPet.pet2.atkDmgTo += to;
         },
-        onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {},
         getInfo(caster: Readonly<BattlePet>): string {
             return `普攻提高${Math.floor(caster.getSklDmg() * 0.15)}(15%)点外加自身15%伤害`;
         }
@@ -71,8 +67,6 @@ const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '割',
         buffType: BuffType.debuff,
         eleType: EleType.air,
-        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {},
-        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {},
         onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {
             return { hp: Math.floor(thisPet.hpMax * 0.05) };
         },
@@ -94,7 +88,6 @@ const BuffModelDict: { [key: string]: BuffModel } = {
             let idx: number = data;
             thisPet.pet2.exBattleTypes.removeIndex(idx);
         },
-        onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {},
         getInfo(caster: Readonly<BattlePet>): string {
             return `战斗方式变成近战`;
         }
@@ -111,7 +104,6 @@ const BuffModelDict: { [key: string]: BuffModel } = {
         onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
             thisPet.pet2.dfsRate -= 0.2;
         },
-        onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {},
         getInfo(caster: Readonly<BattlePet>): string {
             return `增加20%免伤`;
         }
@@ -122,8 +114,6 @@ const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '春',
         buffType: BuffType.buff,
         eleType: EleType.air,
-        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {},
-        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {},
         onTurnEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): BuffOutput | void {
             return { hp: caster.getSklDmg() * 0.8 * -1 };
         },

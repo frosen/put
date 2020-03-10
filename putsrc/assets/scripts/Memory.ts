@@ -6,7 +6,7 @@
 
 import * as petModelDict from 'configs/PetModelDict';
 import actPosModelDict from 'configs/ActPosModelDict';
-import { BattlePet } from 'pages/page_act_exploration/scripts/BattleController';
+import { BattlePet, BattleController } from 'pages/page_act_exploration/scripts/BattleController';
 
 const MagicNum = Math.floor(Math.random() * 10000);
 
@@ -193,14 +193,26 @@ export class SkillModel {
     hpLimit: number;
 }
 
-export abstract class Feature {
+export type BattleDataForFeature = { ctrlr: BattleController; finalDmg: number; skillModel: SkillModel };
+
+export abstract class FeatureModel {
     abstract id: string;
-    abstract cnName: string;
-    abstract onSetting(pet: Readonly<Pet2>): void;
-    abstract onStartedBattle(pet: Readonly<Pet2>): void;
-    abstract onAttacked(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any): void;
-    abstract onHurt(thisPet: BattlePet, caster: BattlePet): BuffOutput | void;
-    abstract getInfo(caster: Readonly<BattlePet>): string;
+    abstract dataAreas: number[][];
+    abstract onBaseSetting(pet: Pet2, datas: number[]): void;
+    abstract onSetting(pet: Pet2, datas: number[]): void;
+    abstract onStartingBattle(pet: BattlePet, ctrlr: BattleController, datas: number[]): void;
+    abstract onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void;
+    abstract onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void;
+    abstract onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void;
+    abstract onKillingEnemy(pet: BattlePet, aim: BattlePet, ctrlr: BattleController, datas: number[]): void;
+    abstract onDead(pet: BattlePet, caster: BattlePet, ctrlr: BattleController, datas: number[]): void;
+    abstract onTurnEnd(pet: BattlePet, ctrlr: BattleController, datas: number[]): void;
+    abstract getInfo(datas: number[]): string;
+}
+
+export class Feature {
+    id: string;
+    datas: number[];
 }
 
 export enum BioType {
@@ -270,7 +282,7 @@ export class PetModel {
     baseElegant: number = 0;
     addElegant: number = 0;
 
-    selfFeatureIds: string[] = [];
+    selfFeatures: Feature[] = [];
 
     selfSkillIds: string[] = [];
 }
@@ -283,6 +295,7 @@ export enum PetState {
 export const PetStateNames = ['休息中', '备战中'];
 
 export const PetRankNames = ['?', 'D', 'C', 'B', 'B+', 'A', 'A+', 'S', 'SS', 'N', 'T', 'Z'];
+export const PetRankToFeatureCount = [0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 5, 6];
 
 export class Pet {
     /** 类型 */
@@ -315,14 +328,19 @@ export class Pet {
     exp: number = 0;
 
     /** 随机自带特性 */
-    raFeatures: string[] = [];
+    raFeatures: Feature[] = [];
     /** 学习了的特性 */
-    learnedFeatures: string[] = [];
+    learnedFeatures: Feature[] = [];
 
     /** 装备 */
     equips: Item[] = [];
 
-    addExp(exp: number) {}
+    eachFeatures(callback: (featureModel: FeatureModel, datas: number[]) => void) {
+        for (const feature of this.raFeatures) callback(FeatureModel[feature.id], feature.datas);
+        let selfFeatures = PetModel[this.id].selfFeatures.slice(0, PetRankToFeatureCount[this.rank]);
+        for (const feature of selfFeatures) callback(FeatureModel[feature.id], feature.datas);
+        for (const feature of this.learnedFeatures) callback(FeatureModel[feature.id], feature.datas);
+    }
 }
 
 const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
@@ -345,17 +363,30 @@ Array.prototype.getLast = function() {
 };
 
 export class Pet2 {
-    /** 力量 */
+    // 原始值 -----------------------------------------------------------------
+    strengthOri: number = 0;
+    concentrationOri: number = 0;
+    durabilityOri: number = 0;
+    agilityOri: number = 0;
+    sensitivityOri: number = 0;
+    elegantOri: number = 0;
+
+    hpMaxOri: number = 0;
+    mpMaxOri: number = 0;
+
+    atkDmgFromOri: number = 0;
+    atkDmgToOri: number = 0;
+
+    sklDmgFromOri: number = 0;
+    sklDmgToOri: number = 0;
+
+    // 终值 -----------------------------------------------------------------
+
     strength: number = 0;
-    /** 专注 */
     concentration: number = 0;
-    /** 耐久 */
     durability: number = 0;
-    /** 灵敏 */
     agility: number = 0;
-    /** 细腻 */
     sensitivity: number = 0;
-    /** 优雅 */
     elegant: number = 0;
 
     hpMax: number = 0;
@@ -384,6 +415,8 @@ export class Pet2 {
 
     armor: number = 0;
 
+    load: number = 0;
+
     setData(pet: Pet, exEquipTokens: string[] = null, exPrivity: number = null) {
         let petModel: PetModel = petModelDict[pet.id];
 
@@ -392,26 +425,47 @@ export class Pet2 {
         let bioType = petModel.bioType;
         let privity = exPrivity || pet.privity;
 
-        // 一级属性
         let rankRatio = RankToAttriRatio[rank];
-        this.strength = (petModel.baseStrength + petModel.addStrength * lv) * rankRatio;
-        this.concentration = (petModel.baseConcentration + petModel.addConcentration * lv) * rankRatio;
-        this.durability = (petModel.baseDurability + petModel.addDurability * lv) * rankRatio;
-        this.agility = (petModel.baseAgility + petModel.addAgility * lv) * rankRatio;
-        this.sensitivity = (petModel.baseSensitivity + petModel.addSensitivity * lv) * rankRatio;
-        this.elegant = (petModel.baseElegant + petModel.addElegant * lv) * rankRatio;
-
-        // 二级属性
-        this.hpMax = this.durability * 25;
-        this.mpMax = 100;
-
         let fromToRatio = BioToFromToRatio[bioType];
 
-        this.atkDmgFrom = this.strength * fromToRatio[0] + 5;
-        this.atkDmgTo = this.strength * fromToRatio[1] + 15;
+        // 一级原始属性
+        this.strengthOri = (petModel.baseStrength + petModel.addStrength * lv) * rankRatio;
+        this.concentrationOri = (petModel.baseConcentration + petModel.addConcentration * lv) * rankRatio;
+        this.durabilityOri = (petModel.baseDurability + petModel.addDurability * lv) * rankRatio;
+        this.agilityOri = (petModel.baseAgility + petModel.addAgility * lv) * rankRatio;
+        this.sensitivityOri = (petModel.baseSensitivity + petModel.addSensitivity * lv) * rankRatio;
+        this.elegantOri = (petModel.baseElegant + petModel.addElegant * lv) * rankRatio;
 
-        this.sklDmgFrom = this.concentration * fromToRatio[0] + 15;
-        this.sklDmgTo = this.concentration * fromToRatio[1] + 30;
+        // 一级属性
+        this.strength = this.strengthOri;
+        this.concentration = this.concentrationOri;
+        this.durability = this.durabilityOri;
+        this.agility = this.agilityOri;
+        this.sensitivity = this.sensitivityOri;
+        this.elegant = this.elegantOri;
+
+        // 特性加成
+        pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+            if (model.hasOwnProperty('onBaseSetting')) model.onBaseSetting(this, datas);
+        });
+
+        // 装备加成
+
+        // 二级原始属性
+        this.hpMaxOri = this.durability * 25;
+        this.mpMaxOri = 100 + Math.floor(this.concentration / 30);
+        this.atkDmgFromOri = this.strength * fromToRatio[0] + 5;
+        this.atkDmgToOri = this.strength * fromToRatio[1] + 15;
+        this.sklDmgFromOri = this.concentration * fromToRatio[0] + 15;
+        this.sklDmgToOri = this.concentration * fromToRatio[1] + 30;
+
+        // 二级属性
+        this.hpMax = this.hpMaxOri;
+        this.mpMax = this.mpMaxOri;
+        this.atkDmgFrom = this.atkDmgFromOri;
+        this.atkDmgTo = this.atkDmgToOri;
+        this.sklDmgFrom = this.sklDmgFromOri;
+        this.sklDmgTo = this.sklDmgToOri;
 
         // 其他属性
         let privityPercent = privity * 0.01;
@@ -420,6 +474,22 @@ export class Pet2 {
         this.evdRate = 0.05 + privityPercent * 0.05;
         this.hitRate = 0.8 + privityPercent * 0.2;
         this.dfsRate = 0;
+
+        this.load = Math.floor(this.durability / 10);
+
+        // 特性加成
+        pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+            if (model.hasOwnProperty('onSetting')) model.onSetting(this, datas);
+        });
+
+        // 装备加成
+
+        this.hpMax = Math.max(this.hpMax, 1);
+        this.mpMax = Math.max(this.mpMax, 1);
+        this.atkDmgFrom = Math.max(this.atkDmgFrom, 1);
+        this.atkDmgTo = Math.max(this.atkDmgTo, 1);
+        this.sklDmgFrom = Math.max(this.sklDmgFrom, 1);
+        this.sklDmgTo = Math.max(this.sklDmgTo, 1);
     }
 }
 

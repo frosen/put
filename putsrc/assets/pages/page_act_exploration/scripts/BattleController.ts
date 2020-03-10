@@ -16,7 +16,7 @@ import {
     SkillDirType,
     EleType,
     EleTypeNames,
-    BuffModel
+    FeatureModel
 } from 'scripts/Memory';
 import PageActExploration from './PageActExploration';
 
@@ -402,35 +402,38 @@ export class BattleController {
             for (let index = 0; index < pet.buffDatas.length; index++) {
                 const buffData = pet.buffDatas[index];
                 let buffModel = BuffModelDict[buffData.id];
-                let buffOutput = buffModel.onTurnEnd(pet, buffData.caster);
-                if (buffOutput) {
-                    if (buffOutput.hp) {
-                        let dmg = buffOutput.hp;
-                        if (dmg > 0) {
-                            let eleType = pet.pet2.exEleTypes.getLast() || petModelDict[pet.pet.id].eleType;
-                            dmg *= EleReinforceRelation[buffModel.eleType] == eleType ? 1.15 : 1;
-                            dmg *= (1 - pet.pet2.dfsRate) * FormationHitRate[pet.fromationIdx];
+                if (buffModel.hasOwnProperty('onTurnEnd')) {
+                    let buffOutput = buffModel.onTurnEnd(pet, buffData.caster);
+                    if (buffOutput) {
+                        if (buffOutput.hp) {
+                            let dmg = buffOutput.hp;
+                            if (dmg > 0) {
+                                let eleType = pet.pet2.exEleTypes.getLast() || petModelDict[pet.pet.id].eleType;
+                                dmg *= EleReinforceRelation[buffModel.eleType] == eleType ? 1.15 : 1;
+                                dmg *= (1 - pet.pet2.dfsRate) * FormationHitRate[pet.fromationIdx];
+                            }
+                            dmg = Math.floor(dmg);
+                            pet.hp -= dmg;
+                            if (pet.hp < 1) pet.hp = 1;
+                            if (pet.hp > pet.hpMax) pet.hp = pet.hpMax;
+                            this.page.doHurt(pet.beEnemy, pet.idx, pet.hp, pet.hpMax, dmg, false, 0);
                         }
-                        dmg = Math.floor(dmg);
-                        pet.hp -= dmg;
-                        if (pet.hp < 1) pet.hp = 1;
-                        if (pet.hp > pet.hpMax) pet.hp = pet.hpMax;
-                        this.page.doHurt(pet.beEnemy, pet.idx, pet.hp, pet.hpMax, dmg, false, 0);
-                    }
-                    if (buffOutput.mp || buffOutput.rage) {
-                        if (buffOutput.mp) {
-                            team.mp -= buffOutput.mp;
-                            if (team.mp < 0) team.mp = 0;
-                            if (team.mp > team.mpMax) team.mp = team.mpMax;
+                        if (buffOutput.mp || buffOutput.rage) {
+                            if (buffOutput.mp) {
+                                team.mp -= buffOutput.mp;
+                                if (team.mp < 0) team.mp = 0;
+                                if (team.mp > team.mpMax) team.mp = team.mpMax;
+                            }
+                            if (buffOutput.rage) {
+                                team.rage -= buffOutput.rage;
+                                if (team.rage < 0) team.rage = 0;
+                                if (team.rage > 100) team.rage = 100;
+                            }
+                            if (!pet.beEnemy) this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
                         }
-                        if (buffOutput.rage) {
-                            team.rage -= buffOutput.rage;
-                            if (team.rage < 0) team.rage = 0;
-                            if (team.rage > 100) team.rage = 100;
-                        }
-                        if (!pet.beEnemy) this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
                     }
                 }
+
                 buffData.time--;
                 if (buffData.time == 0) {
                     buffModel.onEnd(pet, buffData.caster, buffData.data);
@@ -467,7 +470,7 @@ export class BattleController {
             if (skillModel.skillType != SkillType.ultimate) continue;
 
             let rageNeed = skillModel.rage;
-            let team = battlePet.beEnemy ? this.realBattle.enemyTeam : this.realBattle.selfTeam;
+            let team = this.getTeam(battlePet);
             if (team.rage < rageNeed) continue;
 
             let castSuc = this.cast(battlePet, skillModel);
@@ -491,7 +494,7 @@ export class BattleController {
             if (skillModel.skillType == SkillType.ultimate) continue;
 
             let mpNeed = skillModel.mp;
-            let team = battlePet.beEnemy ? this.realBattle.enemyTeam : this.realBattle.selfTeam;
+            let team = this.getTeam(battlePet);
             if (team.mp < mpNeed) continue;
 
             let castSuc = this.cast(battlePet, skillModel);
@@ -529,7 +532,7 @@ export class BattleController {
                 this.castBuff(battlePet, nextAim, skillModel, false);
             }
         } else if (skillModel.aimType == SkillAimtype.oneAndOthers) {
-            let aimPets = aim.beEnemy ? this.realBattle.enemyTeam.pets : this.realBattle.selfTeam.pets;
+            let aimPets = this.getTeam(aim).pets;
             for (const aimInAll of aimPets) {
                 if (aimInAll == aim || aimInAll.hp == 0) continue;
                 if (skillModel.subDmg > 0) this.castDmg(battlePet, aimInAll, skillModel.subDmg, skillModel);
@@ -540,6 +543,10 @@ export class BattleController {
         }
 
         return true;
+    }
+
+    getTeam(pet: BattlePet): BattleTeam {
+        return pet.beEnemy ? this.realBattle.enemyTeam : this.realBattle.selfTeam;
     }
 
     castDmg(battlePet: BattlePet, aim: BattlePet, dmgRate: number, skillModel: SkillModel): boolean {
@@ -556,8 +563,7 @@ export class BattleController {
             finalDmg = Math.max(battlePet.getSklDmg() - aim.pet2.armor, 1) * dmgRate * 0.01;
             finalDmg += Math.max(battlePet.getAtkDmg() - aim.pet2.armor, 1);
 
-            let eleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
-            finalDmg *= EleReinforceRelation[skillModel.eleType] == eleType ? 1.15 : 1;
+            finalDmg *= this.getEleDmgRate(skillModel.eleType, aim);
             finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         } else {
             finalDmg = battlePet.getSklDmg() * dmgRate * 0.01;
@@ -565,6 +571,26 @@ export class BattleController {
 
         finalDmg = Math.floor(finalDmg);
         aim.hp -= finalDmg;
+
+        if (dmgRate > 0) {
+            battlePet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+                if (model.hasOwnProperty('onAttacking')) {
+                    model.onAttacking(battlePet, aim, datas, { ctrlr: this, finalDmg, skillModel });
+                }
+            });
+            aim.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+                if (model.hasOwnProperty('onHurt')) {
+                    model.onHurt(aim, battlePet, datas, { ctrlr: this, finalDmg, skillModel });
+                }
+            });
+        } else {
+            aim.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+                if (model.hasOwnProperty('onHealed')) {
+                    model.onHealed(aim, battlePet, datas, { ctrlr: this, finalDmg, skillModel });
+                }
+            });
+        }
+
         if (aim.hp < 0) aim.hp = 0;
         if (aim.hp > aim.hpMax) aim.hp = aim.hpMax;
 
@@ -585,15 +611,20 @@ export class BattleController {
         }
     }
 
+    getEleDmgRate(skillEleType: EleType, aim: BattlePet) {
+        let eleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
+        return EleReinforceRelation[skillEleType] == eleType ? 1.15 : 1;
+    }
+
     castBuff(battlePet: BattlePet, aim: BattlePet, skillModel: SkillModel, beMain: boolean) {
         let buffId = beMain ? skillModel.mainBuffId : skillModel.subBuffId;
         let buffTime = beMain ? skillModel.mainBuffTime : skillModel.subBuffTime;
-        let buffModel: BuffModel = BuffModelDict[buffId];
+        let buffModel = BuffModelDict[buffId];
 
         for (let index = 0; index < aim.buffDatas.length; index++) {
             const buffData = aim.buffDatas[index];
             if (buffData.id == buffId) {
-                buffModel.onEnd(aim, buffData.caster, buffData.data);
+                if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(aim, buffData.caster, buffData.data);
                 aim.buffDatas.splice(index, 1);
                 this.page.removeBuff(aim.beEnemy, aim.idx, buffId);
                 break;
@@ -604,7 +635,7 @@ export class BattleController {
         buffData.id = buffId;
         buffData.time = buffTime;
         buffData.caster = battlePet;
-        buffData.data = buffModel.onStarted(aim, battlePet);
+        if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted(aim, battlePet);
         this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime);
         this.logBuff(aim, buffModel.cnName);
         aim.buffDatas.push(buffData);
@@ -621,15 +652,27 @@ export class BattleController {
             return;
         }
 
-        let atkDmg = Math.max(battlePet.getAtkDmg() - aim.pet2.armor, 1);
-        atkDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
-        if (this.realBattle.atkRound > 100) atkDmg *= 1.5; // 时间太长时增加伤害快速结束
-        atkDmg = Math.floor(atkDmg);
-        aim.hp -= atkDmg;
+        let finalDmg = Math.max(battlePet.getAtkDmg() - aim.pet2.armor, 1);
+        finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
+        if (this.realBattle.atkRound > 100) finalDmg *= 1.5; // 时间太长时增加伤害快速结束
+        finalDmg = Math.floor(finalDmg);
+        aim.hp -= finalDmg;
+
+        battlePet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+            if (model.hasOwnProperty('onAttacked')) {
+                model.onAttacking(battlePet, aim, datas, { ctrlr: this, finalDmg, skillModel: null });
+            }
+        });
+        aim.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+            if (model.hasOwnProperty('onHurt')) {
+                model.onHurt(aim, battlePet, datas, { ctrlr: this, finalDmg, skillModel: null });
+            }
+        });
+
         if (aim.hp < 0) aim.hp = 0;
 
-        this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, atkDmg, hitResult > 1, this.realBattle.combo);
-        this.logAtk(battlePet, aim, atkDmg, this.realBattle.combo > 1, '普攻');
+        this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
+        this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, '普攻');
 
         this.addRageToAim(battlePet, aim);
         this.addMp(battlePet, aim);
@@ -644,7 +687,7 @@ export class BattleController {
     addRageToAim(battlePet: BattlePet, aim: BattlePet) {
         let rage = 3 + (aim.pet.lv < battlePet.pet.lv ? 1 : 0) + (aim.pet.rank < battlePet.pet.rank ? 1 : 0);
 
-        let team = aim.beEnemy ? this.realBattle.enemyTeam : this.realBattle.selfTeam;
+        let team = this.getTeam(aim);
         team.rage += rage;
         if (team.rage > 100) team.rage = 100;
     }
@@ -652,7 +695,7 @@ export class BattleController {
     addMp(battlePet: BattlePet, aim: BattlePet) {
         let mp = 5 + (aim.pet.lv > battlePet.pet.lv ? 1 : 0) + (aim.pet.rank > battlePet.pet.rank ? 1 : 0);
 
-        let team = battlePet.beEnemy ? this.realBattle.enemyTeam : this.realBattle.selfTeam;
+        let team = this.getTeam(battlePet);
         team.mp += mp;
         if (team.mp > team.mpMax) team.mp = team.mpMax;
     }
@@ -660,8 +703,7 @@ export class BattleController {
     dead(battlePet: BattlePet) {
         this.page.log(`${petModelDict[battlePet.pet.id].cnName}被击败`);
 
-        let rb = this.realBattle;
-        let curPets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
+        let curPets = this.getTeam(battlePet).pets;
         let alive = false;
         for (const pet of curPets) {
             if (pet.hp > 0) {

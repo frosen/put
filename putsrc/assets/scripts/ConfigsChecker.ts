@@ -63,6 +63,22 @@ function checkBuffModelDict() {
     for (const key in buffModelDict) {
         const model = buffModelDict[key];
         if (model.id != key) cc.error('buffModelDict中，id与dict的key不符', key, model.id);
+        if (
+            model.hasOwnProperty('id') &&
+            model.hasOwnProperty('cnName') &&
+            model.hasOwnProperty('brief') &&
+            model.hasOwnProperty('buffType') &&
+            model.hasOwnProperty('eleType') &&
+            model.hasOwnProperty('getInfo')
+        ) {
+        } else {
+            cc.error('buffModelDict中，缺少一个必要项目', key);
+        }
+
+        if (model.hasOwnProperty('onStarted') || model.hasOwnProperty('onEnd') || model.hasOwnProperty('onTurnEnd')) {
+        } else {
+            cc.error('buffModelDict中，onStarted onEnd onTurnEnd 必有其一', key);
+        }
     }
 }
 
