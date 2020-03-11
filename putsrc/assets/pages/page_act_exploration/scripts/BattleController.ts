@@ -30,17 +30,28 @@ import BuffModelDict from 'configs/BuffModelDict';
 // random with seed -----------------------------------------------------------------
 
 let seed = 5;
+let seed2 = 10;
+let baseSeed = 5;
+
 function setSeed(s: number) {
-    seed = s;
+    seed = Math.abs(Math.floor(s)) % 199999;
+    baseSeed = seed;
+    seed2 = seed % 173;
 }
 
 function ranWithSeed() {
+    if (seed % 173 != seed2) throw new Error('seed check wrong!');
     seed = (seed * 9301 + 49297) % 233280;
+    seed2 = seed % 173;
     return seed / 233280.0;
 }
 
 function ranWithSeedInt(c: number) {
     return Math.floor(ranWithSeed() * c);
+}
+
+function getCurSeed() {
+    return baseSeed;
 }
 
 // -----------------------------------------------------------------
@@ -216,7 +227,7 @@ export class BattleController {
     }
 
     start() {
-        let seed = new Date().getTime() % 999999;
+        let seed = new Date().getTime();
         setSeed(seed);
 
         // 生成敌人
