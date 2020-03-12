@@ -8,6 +8,7 @@ import * as petModelDict from 'configs/PetModelDict';
 import actPosModelDict from 'configs/ActPosModelDict';
 import * as skillModelDict from 'configs/SkillModelDict';
 import buffModelDict from 'configs/BuffModelDict';
+import featureModelDict from 'configs/FeatureModelDict';
 
 function checkActPosModelDict() {
     for (const key in actPosModelDict) {
@@ -82,9 +83,21 @@ function checkBuffModelDict() {
     }
 }
 
+function checkFeatureModelDict() {
+    for (const key in featureModelDict) {
+        const model = featureModelDict[key];
+        if (model.id != key) cc.error('featureModelDict中，id与dict的key不符', key, model.id);
+        if (model.hasOwnProperty('id') && model.hasOwnProperty('dataAreas') && model.hasOwnProperty('getInfo')) {
+        } else {
+            cc.error('featureModelDict中，缺少一个必要项目', key);
+        }
+    }
+}
+
 export default function checkConfigs() {
     checkActPosModelDict();
     checkPetModelDict();
     checkSkillModelDict();
     checkBuffModelDict();
+    checkFeatureModelDict();
 }

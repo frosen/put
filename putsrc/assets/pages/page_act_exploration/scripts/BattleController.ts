@@ -362,6 +362,14 @@ export class BattleController {
         }
         this.page.log('进入战斗：' + petNames);
 
+        for (const pet of rb.order) {
+            pet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+                if (model.hasOwnProperty('onStartingBattle')) {
+                    model.onStartingBattle(pet, datas, this);
+                }
+            });
+        }
+
         this.gotoNextRound();
     }
 
@@ -371,6 +379,13 @@ export class BattleController {
         let nextOrderIdx = this.getNextOrderIndex();
         cc.log('STORM cc ^_^ update ---------------------------------------------------', nextOrderIdx);
         if (nextOrderIdx == -1) {
+            for (const pet of rb.order) {
+                pet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+                    if (model.hasOwnProperty('onTurnEnd')) {
+                        model.onTurnEnd(pet, datas, this);
+                    }
+                });
+            }
             this.gotoNextRound();
             nextOrderIdx = this.getNextOrderIndex();
             if (nextOrderIdx == -1) {
@@ -622,6 +637,8 @@ export class BattleController {
         }
 
         finalDmg = Math.floor(finalDmg);
+
+        let lastHp = aim.hp;
         aim.hp -= finalDmg;
 
         if (dmgRate > 0) {
@@ -635,16 +652,18 @@ export class BattleController {
                     model.onHurt(aim, battlePet, datas, { ctrlr: this, finalDmg, skillModel });
                 }
             });
+            if (aim.hp < 0) aim.hp = 0;
+            if (aim.hp > lastHp - 1) aim.hp = lastHp - 1;
         } else {
             aim.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
                 if (model.hasOwnProperty('onHealed')) {
                     model.onHealed(aim, battlePet, datas, { ctrlr: this, finalDmg, skillModel });
                 }
             });
+            if (aim.hp > aim.hpMax) aim.hp = aim.hpMax;
         }
 
-        if (aim.hp < 0) aim.hp = 0;
-        if (aim.hp > aim.hpMax) aim.hp = aim.hpMax;
+        finalDmg = lastHp - aim.hp;
 
         this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
         this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
@@ -656,7 +675,7 @@ export class BattleController {
         }
 
         if (aim.hp == 0) {
-            this.dead(aim);
+            this.dead(aim, battlePet);
             return false;
         } else {
             return true;
@@ -671,8 +690,11 @@ export class BattleController {
     castBuff(battlePet: BattlePet, aim: BattlePet, skillModel: SkillModel, beMain: boolean) {
         let buffId = beMain ? skillModel.mainBuffId : skillModel.subBuffId;
         let buffTime = beMain ? skillModel.mainBuffTime : skillModel.subBuffTime;
-        let buffModel = BuffModelDict[buffId];
+        this.addBuff(aim, battlePet, buffId, buffTime);
+    }
 
+    addBuff(aim: BattlePet, caster: BattlePet, buffId: string, buffTime: number) {
+        let buffModel = BuffModelDict[buffId];
         for (let index = 0; index < aim.buffDatas.length; index++) {
             const buffData = aim.buffDatas[index];
             if (buffData.id == buffId) {
@@ -686,8 +708,8 @@ export class BattleController {
         let buffData = newInsWithChecker(BattleBuff);
         buffData.id = buffId;
         buffData.time = buffTime;
-        buffData.caster = battlePet;
-        if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted(aim, battlePet);
+        buffData.caster = caster;
+        if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted(aim, caster);
         this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime);
         this.logBuff(aim, buffModel.cnName);
         aim.buffDatas.push(buffData);
@@ -733,7 +755,7 @@ export class BattleController {
             this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
         }
 
-        if (aim.hp == 0) this.dead(aim);
+        if (aim.hp == 0) this.dead(aim, battlePet);
     }
 
     addRageToAim(battlePet: BattlePet, aim: BattlePet) {
@@ -752,7 +774,7 @@ export class BattleController {
         if (team.mp > team.mpMax) team.mp = team.mpMax;
     }
 
-    dead(battlePet: BattlePet) {
+    dead(battlePet: BattlePet, caster: BattlePet) {
         this.page.log(`${petModelDict[battlePet.pet.id].cnName}被击败`);
 
         let curPets = this.getTeam(battlePet).pets;
@@ -765,6 +787,17 @@ export class BattleController {
         }
 
         if (alive) {
+            battlePet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+                if (model.hasOwnProperty('onDead')) {
+                    model.onDead(battlePet, caster, datas, this);
+                }
+            });
+            caster.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+                if (model.hasOwnProperty('onKillingEnemy')) {
+                    model.onKillingEnemy(caster, battlePet, datas, this);
+                }
+            });
+
             battlePet.buffDatas.length = 0;
             this.page.removeBuff(battlePet.beEnemy, battlePet.idx, null);
 
@@ -945,5 +978,9 @@ export class BattleController {
     logBuff(aim: BattlePet, name: string) {
         let logStr = `${petModelDict[aim.pet.id].cnName}受到${name}效果`;
         this.page.log(logStr);
+    }
+
+    random() {
+        return ranWithSeed();
     }
 }

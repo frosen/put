@@ -208,13 +208,13 @@ export abstract class FeatureModel {
     abstract dataAreas: number[][];
     abstract onBaseSetting(pet: Pet2, datas: number[]): void;
     abstract onSetting(pet: Pet2, datas: number[]): void;
-    abstract onStartingBattle(pet: BattlePet, ctrlr: BattleController, datas: number[]): void;
+    abstract onStartingBattle(pet: BattlePet, datas: number[], ctrlr: BattleController): void;
     abstract onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void;
     abstract onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void;
     abstract onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void;
-    abstract onKillingEnemy(pet: BattlePet, aim: BattlePet, ctrlr: BattleController, datas: number[]): void;
-    abstract onDead(pet: BattlePet, caster: BattlePet, ctrlr: BattleController, datas: number[]): void;
-    abstract onTurnEnd(pet: BattlePet, ctrlr: BattleController, datas: number[]): void;
+    abstract onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void;
+    abstract onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void;
+    abstract onTurnEnd(pet: BattlePet, datas: number[], ctrlr: BattleController): void;
     abstract getInfo(datas: number[]): string;
 }
 

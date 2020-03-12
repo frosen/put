@@ -489,7 +489,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.ctrlr.getTeam(pet).rage > datas[0]) aim.hp -= bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
-            return `如果你的怒气大于${datas[0]}点，则伤害提高${datas[1] * 100}%`;
+            return `如果怒气大于${datas[0]}点，则伤害提高${datas[1] * 100}%`;
         }
     },
     hitByHp: {
@@ -502,7 +502,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (pet.hp < pet.hpMax * datas[0]) aim.hp -= bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
-            return `如果你的怒气大于${datas[0]}点，则伤害提高${datas[1] * 100}%`;
+            return `如果血量小于${datas[0] * 100}%，则伤害提高${datas[1] * 100}%`;
         }
     },
     hitByCombo: {
@@ -519,7 +519,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hitByPetCountDiff',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            if (bData.ctrlr.getTeam(pet).pets.length < bData.ctrlr.getTeam(aim).pets.length) aim.hp -= bData.finalDmg * datas[0];
+            if (bData.ctrlr.getTeam(pet).pets.length < bData.ctrlr.getTeam(aim).pets.length)
+                aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `如果战场己方人数小于敌方，则伤害提高${datas[0] * 100}%`;
@@ -594,24 +595,184 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         getInfo(datas: number[]): string {
             return `刺杀伤害减少${datas[0] * 100}%`;
         }
+    },
+    hurtByHp: {
+        id: 'hurtByHp',
+        dataAreas: [
+            [0.8, -0.02],
+            [0.02, 0.02]
+        ],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (pet.hp > pet.hpMax * datas[0]) pet.hp += bData.finalDmg * datas[1];
+        },
+        getInfo(datas: number[]): string {
+            return `如果当前血量大于等于${datas[0] * 100}%，则伤害减少${datas[1] * 100}%`;
+        }
+    },
+    hurt: {
+        id: 'hurt',
+        dataAreas: [[0.01, 0.01]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            pet.hp += bData.finalDmg * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `伤害减少${datas[0] * 100}%`;
+        }
+    },
+    hurtWithAtk: {
+        id: 'hurtWithAtk',
+        dataAreas: [[0.02, 0.02]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (!bData.skillModel) pet.hp += bData.finalDmg * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `普攻伤害减少${datas[0] * 100}%`;
+        }
+    },
+    hurtWithCast: {
+        id: 'hurtWithCast',
+        dataAreas: [[0.02, 0.02]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (bData.skillModel) pet.hp += bData.finalDmg * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `技能伤害减少${datas[0] * 100}%`;
+        }
+    },
+    hurtFullRage: {
+        id: 'hurtFullRage',
+        dataAreas: [[40, -1]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (bData.ctrlr.getTeam(pet).rage == 100) {
+                pet.hp += bData.finalDmg;
+                bData.ctrlr.getTeam(pet).rage -= datas[0];
+            }
+        },
+        getInfo(datas: number[]): string {
+            return `当怒气满槽时，消耗${datas[0]}点怒气，抵消所有伤害`;
+        }
+    },
+    hurtOthers: {
+        id: 'hurtOthers',
+        dataAreas: [[0.3, 0.04]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            let dmg = bData.finalDmg * datas[0];
+            pet.hp += dmg;
+            let petsAlive = bData.ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value != pet);
+            dmg /= petsAlive.length;
+            for (const petAlive of petsAlive) petAlive.hp = Math.max(petAlive.hp - dmg, 1);
+        },
+        getInfo(datas: number[]): string {
+            return `伤害的${datas[0] * 100}%由其他己方宠物承担`;
+        }
+    },
+    heal: {
+        id: 'heal',
+        dataAreas: [[0.02, 0.02]],
+        onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            pet.hp += Math.abs(bData.finalDmg) * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `治疗效果提高${datas[0] * 100}%`;
+        }
+    },
+    healByHp: {
+        id: 'healByHp',
+        dataAreas: [[0.1, 0.1]],
+        onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (pet.hp < pet.hpMax * 0.25) pet.hp += Math.abs(bData.finalDmg) * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `如果血量低于25%，治疗效果提高${datas[0] * 100}%`;
+        }
+    },
+    beginAddRage: {
+        id: 'beginAddRage',
+        dataAreas: [[5, 5]],
+        onStartingBattle(pet: BattlePet, datas: number[], ctrlr: BattleController): void {
+            ctrlr.getTeam(pet).rage = Math.min(ctrlr.getTeam(pet).rage + datas[0], 100);
+        },
+        getInfo(datas: number[]): string {
+            return `战斗开始时，直接获取${datas[0]}点怒气`;
+        }
+    },
+    killAddHp: {
+        id: 'killAddHp',
+        dataAreas: [[0.05, 0.05]],
+        onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
+            pet.hp = Math.min(pet.hp + aim.hpMax * datas[0], pet.hpMax);
+        },
+        getInfo(datas: number[]): string {
+            return `消灭敌人时，血量恢复目标最大血量的${datas[0] * 100}%`;
+        }
+    },
+    killAddAllHp: {
+        id: 'killAddAllHp',
+        dataAreas: [[0.02, 0.01]],
+        onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
+            let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0);
+            for (const petAlive of petsAlive) petAlive.hp = Math.min(petAlive.hp + aim.hpMax * datas[0], petAlive.hpMax);
+        },
+        getInfo(datas: number[]): string {
+            return `消灭敌人时，所有己方血量恢复目标最大血量的${datas[0] * 100}%`;
+        }
+    },
+    killAddMp: {
+        id: 'killAddMp',
+        dataAreas: [[20, 8]],
+        onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
+            let team = ctrlr.getTeam(pet);
+            team.mp = Math.min(team.mp + datas[0], team.mpMax);
+        },
+        getInfo(datas: number[]): string {
+            return `消灭敌人时，精神恢复${datas[0]}点`;
+        }
+    },
+    killRdcCD: {
+        id: 'killRdcCD',
+        dataAreas: [[0.08, 0.08]],
+        onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
+            let cd = ctrlr.random() < datas[0] ? 2 : 1;
+            for (const skilllData of pet.skillDatas) skilllData.cd = Math.max(skilllData.cd - cd, 0);
+        },
+        getInfo(datas: number[]): string {
+            return `消灭敌人时，所有冷却直接减少1回合，${datas[0] * 100}概率减少2回合`;
+        }
+    },
+    deadHurt: {
+        id: 'deadHurt',
+        dataAreas: [[0.05, 0.05]],
+        onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
+            caster.hp = Math.min(caster.hp - pet.hpMax * datas[0], 1);
+        },
+        getInfo(datas: number[]): string {
+            return `被击杀时，对敌人造成自己最大生命${datas[0] * 100}%的伤害`;
+        }
+    },
+    deadFangHu: {
+        id: 'deadFangHu',
+        dataAreas: [[0.08, 0.08]],
+        onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
+            let cd = ctrlr.random() < datas[0] ? 4 : 2;
+            let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value != pet);
+            for (const petAlive of petsAlive) ctrlr.addBuff(petAlive, pet, 'FangHu', cd);
+        },
+        getInfo(datas: number[]): string {
+            return `被击杀时，对己方其他宠物释放防护罩持续2回合，${datas[0] * 100}概率持续4回合`;
+        }
+    },
+    deadHuiChun: {
+        id: 'deadHuiChun',
+        dataAreas: [[0.08, 0.08]],
+        onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
+            let cd = ctrlr.random() < datas[0] ? 4 : 2;
+            let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value != pet);
+            for (const petAlive of petsAlive) ctrlr.addBuff(petAlive, pet, 'HuiChun', cd);
+        },
+        getInfo(datas: number[]): string {
+            return `被击杀时，对己方其他宠物释放回春术持续2回合，${datas[0] * 100}概率持续4回合`;
+        }
     }
 };
-
-// 被击中时，如果当前血量大于等于N%，则伤害减少P%
-// 被击中时，伤害减少N%
-// 被击中时，如果是普攻，则伤害减少N%
-// 被击中时，如果是技能，则伤害减少N%
-// 被击中时，如果敌人的元素刚好与你相同，则伤害减少N%
-// 被击中时，伤害的N%，由其他己方宠物承担
-// 被治疗时，治疗效果提高N%
-// 被治疗时，如果血量低于N%，则治疗效果提高P%
-// 战斗开始时，直接获取N点怒气
-// 消灭敌人时，血量增加N%
-// 消灭敌人时，所有己方宠物血量提高N%
-// 消灭敌人时，精神增加N点
-// 消灭敌人时，所有冷却直接减少1回合
-// 被消灭时，对敌人造成自己最大生命的N%的暗系伤害
-// 被消灭时，对己方其他宠物释放防护罩持续2回合
-// 被消灭时，对己方其他宠物释放回春术持续2回合 (n + 156) * 2654435769) >> 19
 
 export default FeatureModelDict;
