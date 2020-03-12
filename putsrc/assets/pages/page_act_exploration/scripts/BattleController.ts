@@ -799,8 +799,7 @@ export class BattleController {
 
     getAim(battlePet: BattlePet, toSelf: boolean, spBattleType: BattleType = null): BattlePet {
         let rb = this.realBattle;
-        let petModel = petModelDict[battlePet.pet.id];
-        let battleType = spBattleType || battlePet.pet2.exBattleTypes.getLast() || petModel.battleType;
+        let battleType = spBattleType || this.getBattleType(battlePet);
 
         let aimPets;
         let anotherSidePets;
@@ -846,6 +845,10 @@ export class BattleController {
         }
         rb.lastAim = aim;
         return aim;
+    }
+
+    getBattleType(battlePet: BattlePet) {
+        return battlePet.pet2.exBattleTypes.getLast() || petModelDict[battlePet.pet.id].battleType;
     }
 
     getPetAlive(battlePet: BattlePet) {

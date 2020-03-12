@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { FeatureModel, Pet2, BattleDataForFeature, SkillModel, EleType } from 'scripts/Memory';
+import { FeatureModel, Pet2, BattleDataForFeature, SkillModel, EleType, SkillType, BattleType } from 'scripts/Memory';
 import { BattlePet, BattleController } from 'pages/page_act_exploration/scripts/BattleController';
 
 const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
@@ -85,7 +85,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.mpMax += datas[0];
         },
         getInfo(datas: number[]): string {
-            return `魔法上限增加${datas[0]}点`;
+            return `精神上限增加${datas[0]}点`;
         }
     },
     addAtkDmg: {
@@ -281,7 +281,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (!bData.skillModel) bData.ctrlr.getTeam(aim).mp = Math.min(bData.ctrlr.getTeam(aim).mp - datas[0], 0);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人减少${datas[0]}点魔法`;
+            return `普攻击中时，敌人减少${datas[0]}点精神`;
         }
     },
     hitRdcRg: {
@@ -304,7 +304,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，额外获得${datas[0]}点魔法`;
+            return `普攻击中时，额外获得${datas[0]}点精神`;
         }
     },
     hitAddRg: {
@@ -331,7 +331,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，偷取${datas[0]}点魔法`;
+            return `普攻击中时，偷取${datas[0]}点精神`;
         }
     },
     hitStlRg: {
@@ -359,7 +359,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
                 aim.hp -= bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
-            return `如果魔法大于总量的${datas[0] * 100}%，则技能伤害提高${datas[1] * 100}%`;
+            return `如果精神大于总量的${datas[0] * 100}%，则技能伤害提高${datas[1] * 100}%`;
         }
     },
     castConDmg: {
@@ -431,7 +431,187 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         getInfo(datas: number[]): string {
             return `暗系伤害提高${datas[0] * 100}%`;
         }
+    },
+    castEleRein: {
+        id: 'castEleRein',
+        dataAreas: [[0.03, 0.01]],
+        onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (bData.skillModel && bData.ctrlr.getEleDmgRate(bData.skillModel.eleType, aim) > 1)
+                aim.hp -= bData.finalDmg * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `对被属性克制的敌人伤害提高${datas[0] * 100}%`;
+        }
+    },
+    castHurtMe: {
+        id: 'castHurtMe',
+        dataAreas: [[0.03, 0.03]],
+        onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (bData.skillModel) {
+                aim.hp -= bData.finalDmg * datas[0];
+                pet.hp = Math.max(pet.hp - bData.finalDmg * datas[0], 1);
+            }
+        },
+        getInfo(datas: number[]): string {
+            return `技能伤害提高${datas[0] * 100}%，但自己也会被反噬（不会致死）`;
+        }
+    },
+    castUlti: {
+        id: 'castUlti',
+        dataAreas: [[0.02, 0.02]],
+        onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (bData.skillModel && bData.skillModel.skillType == SkillType.ultimate) aim.hp -= bData.finalDmg * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `必杀技伤害提高${datas[0] * 100}%`;
+        }
+    },
+    hitKill: {
+        id: 'hitKill',
+        dataAreas: [
+            [0.2, 0.01],
+            [0.05, 0.02]
+        ],
+        onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (aim.hp < aim.hpMax * datas[0]) aim.hp -= bData.finalDmg * datas[1];
+        },
+        getInfo(datas: number[]): string {
+            return `如果敌人生命少于${datas[0] * 100}%，则伤害提高${datas[1] * 100}%`;
+        }
+    },
+    hitByRage: {
+        id: 'hitByRage',
+        dataAreas: [
+            [60, -1],
+            [0.03, 0.01]
+        ],
+        onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (bData.ctrlr.getTeam(pet).rage > datas[0]) aim.hp -= bData.finalDmg * datas[1];
+        },
+        getInfo(datas: number[]): string {
+            return `如果你的怒气大于${datas[0]}点，则伤害提高${datas[1] * 100}%`;
+        }
+    },
+    hitByHp: {
+        id: 'hitByHp',
+        dataAreas: [
+            [0.1, 0.01],
+            [0.8, 0.03]
+        ],
+        onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (pet.hp < pet.hpMax * datas[0]) aim.hp -= bData.finalDmg * datas[1];
+        },
+        getInfo(datas: number[]): string {
+            return `如果你的怒气大于${datas[0]}点，则伤害提高${datas[1] * 100}%`;
+        }
+    },
+    hitByCombo: {
+        id: 'hitByCombo',
+        dataAreas: [[0.01, 0.01]],
+        onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (bData.ctrlr.realBattle.combo > 1) aim.hp -= bData.finalDmg * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `连击伤害提高${datas[0] * 100}%`;
+        }
+    },
+    hitByPetCountDiff: {
+        id: 'hitByPetCountDiff',
+        dataAreas: [[0.01, 0.01]],
+        onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (bData.ctrlr.getTeam(pet).pets.length < bData.ctrlr.getTeam(aim).pets.length) aim.hp -= bData.finalDmg * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `如果战场己方人数小于敌方，则伤害提高${datas[0] * 100}%`;
+        }
+    },
+    hurtAndHurt: {
+        id: 'hurtAndHurt',
+        dataAreas: [[0.01, 0.01]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            caster.hp = Math.max(caster.hp - bData.finalDmg * datas[0], 1);
+        },
+        getInfo(datas: number[]): string {
+            return `受伤时，敌人受到伤害总量${datas[0] * 100}%的物理伤害（不会致死）`;
+        }
+    },
+    hurtGotMp: {
+        id: 'hurtGotMp',
+        dataAreas: [[1, 1]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            let team = bData.ctrlr.getTeam(pet);
+            team.mp = Math.min(team.mp + datas[0], team.mpMax);
+        },
+        getInfo(datas: number[]): string {
+            return `受伤时，额外获得${datas[0]}点精神`;
+        }
+    },
+    hurtGotRage: {
+        id: 'hurtGotRage',
+        dataAreas: [[1, 1]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            bData.ctrlr.getTeam(pet).rage = Math.min(bData.ctrlr.getTeam(pet).rage + datas[0], 100);
+        },
+        getInfo(datas: number[]): string {
+            return `受伤时，额外获得${datas[0]}点怒气`;
+        }
+    },
+    hurtRdcMp: {
+        id: 'hurtRdcMp',
+        dataAreas: [
+            [8, 8],
+            [0.08, 0.08]
+        ],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            let team = bData.ctrlr.getTeam(pet);
+            if (team.mp > datas[0]) {
+                team.mp -= datas[1];
+                pet.hp += bData.finalDmg * datas[0];
+            }
+        },
+        getInfo(datas: number[]): string {
+            return `受伤时，如果精神大于${datas[0]}点，则消耗${datas[0]}点精神，伤害减少${datas[1] * 100}%`;
+        }
+    },
+    hurtWithShoot: {
+        id: 'hurtWithShoot',
+        dataAreas: [[0.02, 0.02]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            let battleType = bData.skillModel.spBattleType || bData.ctrlr.getBattleType(caster);
+            if (battleType == BattleType.shoot) pet.hp += bData.finalDmg * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `射击伤害减少${datas[0] * 100}%`;
+        }
+    },
+    hurtWithAss: {
+        id: 'hurtWithAss',
+        dataAreas: [[0.02, 0.02]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            let battleType = bData.skillModel.spBattleType || bData.ctrlr.getBattleType(caster);
+            if (battleType == BattleType.assassinate) pet.hp += bData.finalDmg * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `刺杀伤害减少${datas[0] * 100}%`;
+        }
     }
 };
+
+// 被击中时，如果当前血量大于等于N%，则伤害减少P%
+// 被击中时，伤害减少N%
+// 被击中时，如果是普攻，则伤害减少N%
+// 被击中时，如果是技能，则伤害减少N%
+// 被击中时，如果敌人的元素刚好与你相同，则伤害减少N%
+// 被击中时，伤害的N%，由其他己方宠物承担
+// 被治疗时，治疗效果提高N%
+// 被治疗时，如果血量低于N%，则治疗效果提高P%
+// 战斗开始时，直接获取N点怒气
+// 消灭敌人时，血量增加N%
+// 消灭敌人时，所有己方宠物血量提高N%
+// 消灭敌人时，精神增加N点
+// 消灭敌人时，所有冷却直接减少1回合
+// 被消灭时，对敌人造成自己最大生命的N%的暗系伤害
+// 被消灭时，对己方其他宠物释放防护罩持续2回合
+// 被消灭时，对己方其他宠物释放回春术持续2回合 (n + 156) * 2654435769) >> 19
 
 export default FeatureModelDict;
