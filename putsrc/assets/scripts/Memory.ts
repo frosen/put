@@ -8,17 +8,25 @@ import * as petModelDict from 'configs/PetModelDict';
 import actPosModelDict from 'configs/ActPosModelDict';
 import { BattlePet, BattleController } from 'pages/page_act_exploration/scripts/BattleController';
 
-const MagicNum = Math.floor(Math.random() * 10000);
-
 let memoryDirtyToken: number = -1;
+
+const MagicNum = 1654435769 + Math.floor(Math.random() * 1000000000);
+function getCheckedNumber(s: number): number {
+    return (s * MagicNum) >> 19;
+}
 
 function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
     let ins = new cls();
     let checkIns = new cls();
+    for (const key in checkIns) {
+        if (!checkIns.hasOwnProperty(key)) continue;
+        let cNum = checkIns[key];
+        if (typeof cNum == 'number') checkIns[key] = getCheckedNumber(cNum) as any;
+    }
     return new Proxy(ins, {
         set: function(target, key, value, receiver) {
             if (typeof value == 'number') {
-                checkIns[key] = MagicNum - value;
+                checkIns[key] = getCheckedNumber(value);
             }
             memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
             return Reflect.set(target, key, value, receiver);
@@ -26,7 +34,7 @@ function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
         get: function(target, key) {
             let v = target[key];
             if (typeof v == 'number') {
-                if (MagicNum - v != checkIns[key] && v != checkIns[key]) {
+                if (getCheckedNumber(v) != checkIns[key]) {
                     throw new Error('number check wrong!');
                 }
             }

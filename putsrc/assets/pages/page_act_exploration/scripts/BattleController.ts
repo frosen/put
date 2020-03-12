@@ -27,6 +27,38 @@ import * as skillModelDict from 'configs/SkillModelDict';
 import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
 import BuffModelDict from 'configs/BuffModelDict';
 
+const MagicNum = 1654435769 + Math.floor(Math.random() * 1000000000);
+function getCheckedNumber(s: number): number {
+    return (s * MagicNum) >> 19;
+}
+
+function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
+    let ins = new cls();
+    let checkIns = new cls();
+    for (const key in checkIns) {
+        if (!checkIns.hasOwnProperty(key)) continue;
+        let cNum = checkIns[key];
+        if (typeof cNum == 'number') checkIns[key] = getCheckedNumber(cNum) as any;
+    }
+    return new Proxy(ins, {
+        set: function(target, key, value, receiver) {
+            if (typeof value == 'number') {
+                checkIns[key] = getCheckedNumber(value);
+            }
+            return Reflect.set(target, key, value, receiver);
+        },
+        get: function(target, key) {
+            let v = target[key];
+            if (typeof v == 'number') {
+                if (getCheckedNumber(v) != checkIns[key]) {
+                    throw new Error('number check wrong!');
+                }
+            }
+            return v;
+        }
+    });
+}
+
 // random with seed -----------------------------------------------------------------
 
 let seed = 5;
@@ -35,14 +67,15 @@ let baseSeed = 5;
 
 function setSeed(s: number) {
     seed = Math.abs(Math.floor(s)) % 199999;
+    seed2 = getCheckedNumber(seed);
+
     baseSeed = seed;
-    seed2 = seed % 173;
 }
 
 function ranWithSeed() {
-    if (seed % 173 != seed2) throw new Error('seed check wrong!');
+    if (getCheckedNumber(seed) != seed2) throw new Error('seed check wrong!');
     seed = (seed * 9301 + 49297) % 233280;
-    seed2 = seed % 173;
+    seed2 = getCheckedNumber(seed);
     return seed / 233280.0;
 }
 
@@ -50,19 +83,11 @@ function ranWithSeedInt(c: number) {
     return Math.floor(ranWithSeed() * c);
 }
 
-function getCurSeed() {
-    return baseSeed;
-}
-
 // -----------------------------------------------------------------
 
 export class BattleSkill {
-    constructor(id: string) {
-        this.id = id;
-        this.cd = 0;
-    }
     id: string;
-    cd: number;
+    cd: number = 0;
 }
 
 export class BattleBuff {
@@ -97,7 +122,7 @@ export class BattlePet {
         this.idx = idx;
         this.fromationIdx = fromationIdx;
         this.pet = pet;
-        this.pet2 = new Pet2();
+        this.pet2 = newInsWithChecker(Pet2);
         this.pet2.setData(pet);
         this.beEnemy = beEnemy;
 
@@ -108,11 +133,27 @@ export class BattlePet {
         this.skillDatas.length = 0;
         for (let index = pet.equips.length - 1; index >= 0; index--) {}
         let skillIds = petModelDict[pet.id].selfSkillIds;
-        // if (pet.rank >= 8 && skillIds.length >= 2) this.skillDatas.push(new BattleSkill(skillIds[1]));
-        // if (pet.rank >= 5 && skillIds.length >= 1) this.skillDatas.push(new BattleSkill(skillIds[0]));
+        // if (pet.rank >= 8 && skillIds.length >= 2) {
+        //     let skill = newInsWithChecker(BattleSkill);
+        //     skill.id = skillIds[1];
+        //     this.skillDatas.push(skill);
+        // }
+        // if (pet.rank >= 5 && skillIds.length >= 1){
+        //     let skill = newInsWithChecker(BattleSkill);
+        //     skill.id = skillIds[0];
+        //     this.skillDatas.push(skill);
+        // }
 
-        if (skillIds.length >= 2) this.skillDatas.push(new BattleSkill(skillIds[1])); // llytest
-        if (skillIds.length >= 1) this.skillDatas.push(new BattleSkill(skillIds[0])); // llytest
+        if (skillIds.length >= 2) {
+            let skill = newInsWithChecker(BattleSkill);
+            skill.id = skillIds[1];
+            this.skillDatas.push(skill); // llytest
+        }
+        if (skillIds.length >= 1) {
+            let skill = newInsWithChecker(BattleSkill);
+            skill.id = skillIds[0];
+            this.skillDatas.push(skill); // llytest
+        }
     }
 
     getAtkDmg() {
@@ -166,11 +207,11 @@ export class BattleController {
         this.memory = memory;
         this.endCallback = endCallback;
 
-        this.realBattle = new RealBattle();
+        this.realBattle = newInsWithChecker(RealBattle);
     }
 
     resetSelfTeam() {
-        this.realBattle.selfTeam = new BattleTeam();
+        this.realBattle.selfTeam = newInsWithChecker(BattleTeam);
 
         let selfPetsMmr = this.memory.gameData.curExploration.selfs;
 
@@ -187,7 +228,7 @@ export class BattleController {
                 }
             }
 
-            let battlePet = new BattlePet();
+            let battlePet = newInsWithChecker(BattlePet);
             battlePet.init(petIdx, 5 - selfPetsMmr.length + petIdx, pet, false);
             if (last) {
                 battlePet.last = last;
@@ -253,20 +294,20 @@ export class BattleController {
 
         // 更新battle
         let rb = this.realBattle;
-        rb.enemyTeam = new BattleTeam();
+        rb.enemyTeam = newInsWithChecker(BattleTeam);
 
         let mpMax = 0;
         let last = null;
         for (let index = 0; index < enemyPetDatas.length; index++) {
             const enemyPet = enemyPetDatas[index];
 
-            let petData = new Pet();
+            let petData = newInsWithChecker(Pet);
             petData.catchIdx = index;
             petData.id = enemyPet.id;
             petData.lv = enemyPet.lv;
             petData.rank = enemyPet.rank;
 
-            let battlePet = new BattlePet();
+            let battlePet = newInsWithChecker(BattlePet);
             battlePet.init(index, 5 - enemyPetDatas.length + index, petData, true);
             if (last) {
                 battlePet.last = last;
@@ -642,7 +683,7 @@ export class BattleController {
             }
         }
 
-        let buffData = new BattleBuff();
+        let buffData = newInsWithChecker(BattleBuff);
         buffData.id = buffId;
         buffData.time = buffTime;
         buffData.caster = battlePet;
