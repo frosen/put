@@ -123,4 +123,4 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
     }
 };
 
-export default BuffModelDict;
+export default <{ [key: string]: BuffModel }>BuffModelDict;

@@ -522,7 +522,7 @@ export class BaseController extends cc.Component {
 
     backBtnActive: boolean = true;
 
-    setBackBtnEnabled(e: boolean = true) {
+    setBackBtnEnabled(e: boolean) {
         this.backBtnActive = e;
         this.navBed.getChildByName('back').active = e;
     }

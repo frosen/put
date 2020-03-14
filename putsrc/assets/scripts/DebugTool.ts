@@ -4,6 +4,9 @@
  * luleyan
  */
 
+import { BaseController } from './BaseController';
+import PageTest from 'pages/page_test/scripts/PageTest';
+
 export default class DebugTool {
     ctrling: boolean = false;
 
@@ -17,6 +20,7 @@ export default class DebugTool {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyboardPress, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyboardRelease, this);
         this.setShortCut('sd', this.showDebugInfo.bind(this));
+        this.setShortCut('tt', this.enterTestPage.bind(this));
     }
 
     onKeyboardPress(event: cc.Event.EventKeyboard) {
@@ -123,5 +127,11 @@ export default class DebugTool {
             for (const child of debugNode.children) child.color = newColor;
         }
         cc.debug.setDisplayStats(!cc.debug.isDisplayStats());
+    }
+
+    enterTestPage() {
+        // @ts-ignore
+        let ctrlr: BaseController = window.baseCtrlr;
+        ctrlr.pushPage(PageTest);
     }
 }

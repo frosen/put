@@ -48,6 +48,14 @@ convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.js', 'pet', func
         if (rowData[18]) selfSkillIds.push(rowData[18]);
         if (rowData[19]) selfSkillIds.push(rowData[19]);
 
+        let selfFeatures = [];
+        if (rowData[20]) selfSkillIds.push(rowData[20]);
+        if (rowData[21]) selfSkillIds.push(rowData[21]);
+        if (rowData[22]) selfSkillIds.push(rowData[22]);
+        if (rowData[23]) selfSkillIds.push(rowData[23]);
+        if (rowData[24]) selfSkillIds.push(rowData[24]);
+        if (rowData[25]) selfSkillIds.push(rowData[25]);
+
         let petData = {
             id,
             cnName,
@@ -67,7 +75,8 @@ convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.js', 'pet', func
             addSensitivity,
             baseElegant,
             addElegant,
-            selfSkillIds
+            selfSkillIds,
+            selfFeatures
         };
         petJson[id] = petData;
     }

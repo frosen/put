@@ -503,7 +503,7 @@ export class BattleController {
 
                 buffData.time--;
                 if (buffData.time == 0) {
-                    buffModel.onEnd(pet, buffData.caster, buffData.data);
+                    if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(pet, buffData.caster, buffData.data);
                     this.page.removeBuff(pet.beEnemy, pet.idx, buffData.id);
                     pet.buffDatas.splice(index, 1);
                     index--;

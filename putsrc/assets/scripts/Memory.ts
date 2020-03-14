@@ -4,9 +4,10 @@
  * luleyan
  */
 
+import { BattlePet, BattleController } from 'pages/page_act_exploration/scripts/BattleController';
 import * as petModelDict from 'configs/PetModelDict';
 import actPosModelDict from 'configs/ActPosModelDict';
-import { BattlePet, BattleController } from 'pages/page_act_exploration/scripts/BattleController';
+import featureModelDict from 'configs/FeatureModelDict';
 
 let memoryDirtyToken: number = -1;
 
@@ -221,6 +222,16 @@ export abstract class FeatureModel {
 export class Feature {
     id: string;
     datas: number[];
+
+    setDatas(lv: number) {
+        let featureModel = featureModelDict[this.id];
+        let datas = [];
+        for (const dataArea of featureModel.dataAreas) {
+            let data = dataArea[0] + (lv - 1) * dataArea[1];
+            datas.push(data);
+        }
+        this.datas = datas;
+    }
 }
 
 export enum BioType {
@@ -344,10 +355,10 @@ export class Pet {
     equips: Item[] = [];
 
     eachFeatures(callback: (featureModel: FeatureModel, datas: number[]) => void) {
-        for (const feature of this.raFeatures) callback(FeatureModel[feature.id], feature.datas);
-        let selfFeatures = PetModel[this.id].selfFeatures.slice(0, PetRankToFeatureCount[this.rank]);
-        for (const feature of selfFeatures) callback(FeatureModel[feature.id], feature.datas);
-        for (const feature of this.learnedFeatures) callback(FeatureModel[feature.id], feature.datas);
+        for (const feature of this.raFeatures) callback(featureModelDict[feature.id], feature.datas);
+        let selfFeatures = petModelDict[this.id].selfFeatures.slice(0, PetRankToFeatureCount[this.rank]);
+        for (const feature of selfFeatures) callback(featureModelDict[feature.id], feature.datas);
+        for (const feature of this.learnedFeatures) callback(featureModelDict[feature.id], feature.datas);
     }
 }
 
