@@ -4,8 +4,8 @@
  * luleyan
  */
 
-import { BaseController } from './BaseController';
-import PageTest from 'pages/page_test/scripts/PageTest';
+import featureModelDict from 'configs/FeatureModelDict';
+import { Feature } from './Memory';
 
 export default class DebugTool {
     ctrling: boolean = false;
@@ -20,7 +20,7 @@ export default class DebugTool {
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyboardPress, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyboardRelease, this);
         this.setShortCut('sd', this.showDebugInfo.bind(this));
-        this.setShortCut('tt', this.enterTestPage.bind(this));
+        this.setShortCut('tt', this.testFeatures.bind(this));
     }
 
     onKeyboardPress(event: cc.Event.EventKeyboard) {
@@ -129,9 +129,35 @@ export default class DebugTool {
         cc.debug.setDisplayStats(!cc.debug.isDisplayStats());
     }
 
-    enterTestPage() {
-        // @ts-ignore
-        let ctrlr: BaseController = window.baseCtrlr;
-        ctrlr.pushPage(PageTest);
+    testFeatures() {
+        for (const key in featureModelDict) {
+            if (!featureModelDict.hasOwnProperty(key)) continue;
+            const featureModel = featureModelDict[key];
+            let newFeature = new Feature();
+            newFeature.id = featureModel.id;
+            newFeature.setDatas(1);
+            cc.log(
+                'feature  1 ',
+                key,
+                featureModel.getInfo(newFeature.datas),
+                newFeature.datas,
+                JSON.stringify(featureModel.dataAreas)
+            );
+        }
+
+        for (const key in featureModelDict) {
+            if (!featureModelDict.hasOwnProperty(key)) continue;
+            const featureModel = featureModelDict[key];
+            let newFeature = new Feature();
+            newFeature.id = featureModel.id;
+            newFeature.setDatas(10);
+            cc.log(
+                'feature 10 ',
+                key,
+                featureModel.getInfo(newFeature.datas),
+                newFeature.datas,
+                JSON.stringify(featureModel.dataAreas)
+            );
+        }
     }
 }
