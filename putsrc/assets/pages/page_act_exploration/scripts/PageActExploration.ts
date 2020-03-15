@@ -208,7 +208,12 @@ export default class PageActExploration extends PageBase {
         let buffNode = cc.instantiate(this.buffPrefab);
         buffNode.getComponent(cc.Label).string = buffStr;
         buffNode.parent = ui.buffNode;
-        // llytodo 超过几个要隐藏
+
+        // 多于7个后面不显示
+        for (let index = 0; index < ui.buffNode.childrenCount; index++) {
+            const buff = ui.buffNode.children[index];
+            buff.scale = index < 7 ? 1 : 0;
+        }
     }
 
     resetBuffTime(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
@@ -237,6 +242,12 @@ export default class PageActExploration extends PageBase {
                     child.destroy();
                     break;
                 }
+            }
+
+            // 多于7个后面不显示
+            for (let index = 0; index < ui.buffNode.childrenCount; index++) {
+                const buff = ui.buffNode.children[index];
+                buff.scale = index < 7 ? 1 : 0;
             }
         } else {
             for (const child of ui.buffNode.children) child.destroy();

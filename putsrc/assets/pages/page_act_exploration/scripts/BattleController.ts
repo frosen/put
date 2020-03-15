@@ -847,10 +847,8 @@ export class BattleController {
         for (let index = 0; index < aim.buffDatas.length; index++) {
             const buffData = aim.buffDatas[index];
             if (buffData.id == buffId) {
-                if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(aim, buffData.caster, buffData.data);
-                aim.buffDatas.splice(index, 1);
-                this.page.removeBuff(aim.beEnemy, aim.idx, buffId);
-                break;
+                buffData.time += buffTime;
+                return;
             }
         }
 
