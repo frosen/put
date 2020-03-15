@@ -9,16 +9,17 @@ export function deepCopy(o: object): object {
     if (o instanceof Array) {
         //先判断Array
         let n = [];
-        for (let i = 0; i < o.length; ++i) {
-            n[i] = deepCopy(o[i]);
-        }
+        for (let i = 0; i < o.length; ++i) n[i] = deepCopy(o[i]);
         return n;
     } else if (o instanceof Object) {
-        let n = {};
-        for (let i in o) {
-            n[i] = deepCopy(o[i]);
+        if ('clone' in o) {
+            // @ts-ignore
+            return o.clone();
+        } else {
+            let n = {};
+            for (let i in o) n[i] = deepCopy(o[i]);
+            return n;
         }
-        return n;
     } else {
         return o;
     }

@@ -26,6 +26,7 @@ import * as petModelDict from 'configs/PetModelDict';
 import * as skillModelDict from 'configs/SkillModelDict';
 import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
 import BuffModelDict from 'configs/BuffModelDict';
+import { deepCopy } from 'scripts/Utils';
 
 const MagicNum = 1654435769 + Math.floor(Math.random() * 1000000000);
 function getCheckedNumber(s: number): number {
@@ -81,6 +82,10 @@ function ranWithSeed() {
 
 function ranWithSeedInt(c: number) {
     return Math.floor(ranWithSeed() * c);
+}
+
+function getCurSeed(): number {
+    return seed;
 }
 
 // -----------------------------------------------------------------
@@ -165,6 +170,40 @@ export class BattlePet {
         let pet2 = this.pet2;
         return pet2.sklDmgFrom + ranWithSeedInt(1 + pet2.sklDmgTo - pet2.sklDmgFrom);
     }
+
+    clone() {
+        let newBPet = new BattlePet();
+        newBPet.idx = this.idx;
+        newBPet.fromationIdx = this.fromationIdx;
+        newBPet.beEnemy = this.beEnemy;
+
+        newBPet.last = this.last; // 暂时指向旧数据，在RealBattle的clone中更新
+        newBPet.next = this.next; // 暂时指向旧数据，在RealBattle的clone中更新
+
+        newBPet.pet = this.pet;
+        newBPet.pet2 = this.pet2;
+
+        newBPet.hp = this.hp;
+        newBPet.hpMax = this.hpMax;
+
+        for (const skill of this.skillDatas) {
+            let newSkill = new BattleSkill();
+            newSkill.cd = skill.cd;
+            newSkill.id = skill.id;
+            newBPet.skillDatas.push(newSkill);
+        }
+
+        for (const buff of this.buffDatas) {
+            let newBuff = new BattleBuff();
+            newBuff.id = buff.id;
+            newBuff.caster = buff.caster;
+            newBuff.time = buff.time;
+            newBuff.data = buff.data;
+            newBPet.buffDatas.push(newBuff);
+        }
+
+        return newBPet;
+    }
 }
 
 export class BattleTeam {
@@ -189,6 +228,40 @@ export class RealBattle {
 
     lastAim: BattlePet = null;
     combo: number = 1;
+
+    clone() {
+        let newRB = new RealBattle();
+        newRB.start = this.start;
+        newRB.selfTeam = <BattleTeam>deepCopy(this.selfTeam);
+        newRB.enemyTeam = <BattleTeam>deepCopy(this.enemyTeam);
+        newRB.battleRound = this.battleRound;
+        newRB.atkRound = this.atkRound;
+        newRB.curOrderIdx = this.curOrderIdx;
+        newRB.combo = this.combo;
+
+        for (const bPet of this.order) {
+            newRB.order.push(this.copyAim(bPet, newRB));
+        }
+        newRB.lastAim = this.copyAim(this.lastAim, newRB);
+
+        for (const pet of newRB.selfTeam.pets) {
+            pet.last = this.copyAim(pet.last, newRB);
+            pet.next = this.copyAim(pet.next, newRB);
+        }
+
+        for (const pet of newRB.enemyTeam.pets) {
+            pet.last = this.copyAim(pet.last, newRB);
+            pet.next = this.copyAim(pet.next, newRB);
+        }
+
+        return newRB;
+    }
+
+    copyAim(aim: BattlePet, to: RealBattle) {
+        if (!aim) return null;
+        let team = aim.beEnemy ? to.enemyTeam : to.selfTeam;
+        return team.pets[aim.idx];
+    }
 }
 
 const ComboHitRate = [0, 1, 1.1, 1.2]; // combo从1开始
@@ -202,12 +275,78 @@ export class BattleController {
 
     realBattle: RealBattle = null;
 
+    debugMode: boolean = false;
+    realBattleCopys: { seed: number; rb: RealBattle }[] = []; // 用于战斗重置
+
     init(page: PageActExploration, memory: Memory, endCallback: () => void) {
         this.page = page;
         this.memory = memory;
         this.endCallback = endCallback;
 
         this.realBattle = newInsWithChecker(RealBattle);
+
+        // 快捷键
+        this.page.ctrlr.debugTool.setShortCut('rr', () => {
+            if (!this.realBattle.start) {
+                cc.log('PUT 没有战斗');
+                return;
+            }
+            cc.log('PUT 重新开始当前战斗');
+            this.resetBattleDataToBegin();
+        });
+
+        this.page.ctrlr.debugTool.setShortCut('bb', () => {
+            if (!this.realBattle.start) {
+                cc.log('PUT 没有战斗');
+                return;
+            }
+            cc.log('PUT 回到上次回合开始');
+            this.resetBattleDataToTurnBegin();
+        });
+
+        if (CC_DEBUG) this.debugMode = true;
+
+        // @ts-ignore
+        if (this.debugMode) window.battleCtrlr = this; // 便于测试
+    }
+
+    resetBattleDataToBegin() {
+        this.realBattle = <RealBattle>deepCopy(this.realBattleCopys[0].rb);
+        setSeed(this.realBattleCopys[0].seed);
+        this.realBattleCopys.length = 1;
+        this.resetAllUI();
+        this.gotoNextRound();
+    }
+
+    resetBattleDataToTurnBegin() {
+        if (this.realBattleCopys.length <= 1) {
+            this.resetBattleDataToBegin();
+        } else {
+            let last = this.realBattleCopys.pop();
+            this.realBattle = <RealBattle>deepCopy(last.rb);
+            setSeed(last.seed);
+            this.resetAllUI();
+        }
+    }
+
+    resetAllUI() {
+        this.page.setUIofSelfPet(-1);
+        this.page.setUIofEnemyPet(-1);
+        let team = this.realBattle.selfTeam;
+        this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
+        for (const pet of team.pets) {
+            this.page.removeBuff(pet.beEnemy, pet.idx, null);
+            for (const { id, time } of pet.buffDatas) this.page.addBuff(pet.beEnemy, pet.idx, id, time);
+        }
+        for (const pet of this.realBattle.enemyTeam.pets) {
+            this.page.removeBuff(pet.beEnemy, pet.idx, null);
+            for (const { id, time } of pet.buffDatas) this.page.addBuff(pet.beEnemy, pet.idx, id, time);
+        }
+    }
+
+    destroy() {
+        this.page.ctrlr.debugTool.removeShortCut('rr');
+        this.page.ctrlr.debugTool.removeShortCut('bb');
     }
 
     resetSelfTeam() {
@@ -344,6 +483,11 @@ export class BattleController {
 
         rb.start = true;
 
+        if (this.debugMode) {
+            this.realBattleCopys.length = 0;
+            this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(rb) });
+        }
+
         // 更新memory
         this.memory.createBattle(seed);
         for (const { pet } of rb.selfTeam.pets) {
@@ -379,6 +523,10 @@ export class BattleController {
         let nextOrderIdx = this.getNextOrderIndex();
         cc.log('STORM cc ^_^ update ---------------------------------------------------', nextOrderIdx);
         if (nextOrderIdx == -1) {
+            if (this.debugMode) {
+                this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(rb) });
+            }
+
             for (const pet of rb.order) {
                 pet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
                     if (model.hasOwnProperty('onTurnEnd')) {
@@ -386,6 +534,7 @@ export class BattleController {
                     }
                 });
             }
+
             this.gotoNextRound();
             nextOrderIdx = this.getNextOrderIndex();
             if (nextOrderIdx == -1) {

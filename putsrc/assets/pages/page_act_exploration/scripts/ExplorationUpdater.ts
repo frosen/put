@@ -55,6 +55,18 @@ export default class ExplorationUpdater {
             if (this.pausing) cc.log('PUT 暂停探索更新');
             else cc.log('PUT 重新开始探索更新');
         });
+
+        this.page.ctrlr.debugTool.setShortCut('gg', () => {
+            if (!this.pausing) {
+                cc.log('PUT 暂停期间才可以使用下一步功能');
+                return;
+            }
+
+            cc.log('PUT 下一步');
+            this.lastTime = new Date().getTime();
+            this.updateCount += 1;
+            this.onUpdate();
+        });
     }
 
     createExploration() {
@@ -69,6 +81,8 @@ export default class ExplorationUpdater {
         this.memory.deleteExploration();
         this.memory.removeDataListener(this);
         this.page.ctrlr.debugTool.removeShortCut('ww');
+        this.page.ctrlr.debugTool.removeShortCut('gg');
+        this.battleCtrlr.destroy();
     }
 
     selfPetsChangedFlag: boolean = false;

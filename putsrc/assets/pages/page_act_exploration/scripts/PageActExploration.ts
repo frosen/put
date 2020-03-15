@@ -239,10 +239,8 @@ export default class PageActExploration extends PageBase {
                 }
             }
         } else {
-            for (const child of ui.buffNode.children) {
-                child.removeFromParent();
-                child.destroy();
-            }
+            for (const child of ui.buffNode.children) child.destroy();
+            ui.buffNode.removeAllChildren();
         }
     }
 
