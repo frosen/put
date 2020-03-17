@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 import PageBase from 'scripts/PageBase';
-import ExplorationUpdater from './ExplorationUpdater';
+import { ExplorationUpdater, ExplorationState } from './ExplorationUpdater';
 import PetUI from './PetUI';
 import { PetRankNames, BuffModel } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
@@ -56,18 +56,31 @@ export default class PageActExploration extends PageBase {
     dmgLbls: cc.Label[] = [];
     dmgIdx: number = 0;
 
-    @property(cc.ProgressBar)
-    mpProgress: cc.ProgressBar = null;
-    @property(cc.Label)
-    mpLbl: cc.Label = null;
-    @property(cc.ProgressBar)
-    rageProgress: cc.ProgressBar = null;
-    @property(cc.Label)
-    rageLbl: cc.Label = null;
+    @property(cc.ProgressBar) mpProgress: cc.ProgressBar = null;
+    @property(cc.Label) mpLbl: cc.Label = null;
+
+    @property(cc.ProgressBar) rageProgress: cc.ProgressBar = null;
+    @property(cc.Label) rageLbl: cc.Label = null;
+
+    @property(cc.Button) btnCatch: cc.Button = null;
+    @property(cc.Button) btnEscape: cc.Button = null;
+    @property(cc.Button) btnHide: cc.Button = null;
+
+    lblBtnCatch: cc.Label = null;
+    lblBtnEscape: cc.Label = null;
+    lblBtnHide: cc.Label = null;
 
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
+
+        this.lblBtnCatch = this.btnCatch.getComponentInChildren(cc.Label);
+        this.lblBtnEscape = this.btnEscape.getComponentInChildren(cc.Label);
+        this.lblBtnHide = this.btnHide.getComponentInChildren(cc.Label);
+
+        this.btnCatch.node.on('click', this.onClickCatch, this);
+        this.btnEscape.node.on('click', this.onClickEscape, this);
+        this.btnHide.node.on('click', this.onClickHide, this);
 
         for (let index = 0; index < 5; index++) {
             let y = BattleUnitYs[index];
@@ -266,4 +279,43 @@ export default class PageActExploration extends PageBase {
     log(str: string) {
         cc.log('PUT EXPL: ', str);
     }
+
+    // button -----------------------------------------------------------------
+
+    onClickCatch() {
+        this.updater.executeCatch((result: boolean) => {
+            this.setCatchActive(result);
+        });
+    }
+
+    onClickEscape() {
+        this.updater.executeEscape();
+    }
+
+    onClickHide() {
+        this.updater.executeHide((result: boolean) => {
+            this.setHideActive(result);
+        });
+    }
+
+    setCatchActive(b: boolean) {
+        this.lblBtnCatch.string = b ? '捕捉中' : '捕捉';
+    }
+
+    setHideActive(b: boolean) {
+        this.lblBtnHide.string = b ? '潜行中' : '潜行';
+    }
+
+    enterState(state: ExplorationState) {
+        if (state == ExplorationState.battle) {
+            this.btnCatch.interactable = true;
+            this.btnEscape.interactable = true;
+        } else {
+            this.btnCatch.interactable = false;
+            this.btnEscape.interactable = false;
+            this.setCatchActive(false);
+        }
+    }
+
+    // list -----------------------------------------------------------------
 }

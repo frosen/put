@@ -959,7 +959,15 @@ export class BattleController {
 
     endBattle(selfWin: boolean) {
         this.page.log(selfWin ? '战斗胜利' : '战斗失败');
+        this.exitBattle(selfWin);
+    }
 
+    escape() {
+        this.page.log('撤退');
+        this.exitBattle(false);
+    }
+
+    exitBattle(selfWin: boolean) {
         let rb = this.realBattle;
 
         if (selfWin) {

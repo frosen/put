@@ -130,6 +130,7 @@ export class ExplorationMmr {
     curStep: number = 0;
     selfs: SelfPetMmr[] = newList();
     curBattle: BattleMmr = null;
+    hiding: boolean = false;
 }
 
 // -----------------------------------------------------------------
@@ -543,6 +544,9 @@ export class GameData {
 export class Memory {
     gameData: GameData = newInsWithChecker(GameData);
 
+    saveToken: boolean = false;
+    saveInterval: number = 0;
+
     set dirtyToken(t: number) {
         memoryDirtyToken = t;
     }
@@ -562,12 +566,22 @@ export class Memory {
         return actPos;
     }
 
-    update() {
+    update(dt: number) {
         if (memoryDirtyToken < 0) {
             memoryDirtyToken = memoryDirtyToken * -1 + 1;
             for (const listener of this.dataListeners) {
                 listener.onMemoryDataChanged();
             }
+
+            this.saveToken = true;
+        }
+
+        if (this.saveInterval > 0) {
+            this.saveInterval -= dt;
+        } else if (this.saveToken) {
+            this.saveToken = false;
+            this.saveInterval = 2.5;
+            this.saveMemory();
         }
     }
 
@@ -587,6 +601,12 @@ export class Memory {
             }
         }
     }
+
+    saveMemory() {
+        cc.log('STORM cc ^_^ 保存 ');
+    }
+
+    // -----------------------------------------------------------------
 
     createExploration() {
         if (this.gameData.curExploration) return;

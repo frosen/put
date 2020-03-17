@@ -7,9 +7,8 @@
 import PageActExploration from './PageActExploration';
 import { Memory } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { random } from 'scripts/Random';
 
-enum ExplorationState {
+export enum ExplorationState {
     none,
     explore,
     battle,
@@ -21,7 +20,7 @@ enum ExplorationResult {
     battle
 }
 
-export default class ExplorationUpdater {
+export class ExplorationUpdater {
     page: PageActExploration = null;
     memory: Memory = null;
     battleCtrlr: BattleController = null;
@@ -37,7 +36,7 @@ export default class ExplorationUpdater {
         this.memory = this.page.ctrlr.memory;
         this.battleCtrlr = new BattleController();
         this.battleCtrlr.init(this.page, this.memory, () => {
-            this.state = ExplorationState.recover;
+            this.startRecover();
         });
 
         if (!this.memory.gameData.curExploration) {
@@ -131,6 +130,8 @@ export default class ExplorationUpdater {
         // this.explorationTime = 5 + random(5);
         this.explorationTime = 2; // llytest
         this.page.log('开始探索');
+
+        this.page.enterState(this.state);
     }
 
     updateExploration() {
@@ -157,6 +158,8 @@ export default class ExplorationUpdater {
     startBattle() {
         this.state = ExplorationState.battle;
         this.battleCtrlr.start();
+
+        this.page.enterState(this.state);
     }
 
     // -----------------------------------------------------------------
@@ -199,5 +202,26 @@ export default class ExplorationUpdater {
         } else {
             this.page.log('休息中');
         }
+    }
+
+    startRecover() {
+        this.state = ExplorationState.recover;
+        this.page.enterState(this.state);
+    }
+
+    // -----------------------------------------------------------------
+
+    executeCatch(callback: (result: boolean) => void) {
+        callback(true);
+    }
+
+    executeEscape() {
+        this.battleCtrlr.escape();
+    }
+
+    executeHide(callback: (result: boolean) => void) {
+        let cur = !this.memory.gameData.curExploration.hiding;
+        this.memory.gameData.curExploration.hiding = cur;
+        callback(cur);
     }
 }

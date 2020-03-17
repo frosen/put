@@ -206,9 +206,9 @@ export class BaseController extends cc.Component {
         this.actTBData.btn.node.emit('click', this.actTBData.btn);
     }
 
-    update() {
+    update(dt: number) {
         if (CC_EDITOR) return;
-        this.memory.update();
+        this.memory.update(dt);
     }
 
     // 页面管理 -----------------------------------------------------------------
