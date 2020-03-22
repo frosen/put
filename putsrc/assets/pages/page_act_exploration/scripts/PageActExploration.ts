@@ -4,7 +4,7 @@
  * luleyan
  */
 
-const { ccclass, property } = cc._decorator;
+const { ccclass, property, executionOrder } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import { ExplorationUpdater, ExplorationState } from './ExplorationUpdater';
 import PetUI from './PetUI';
@@ -12,6 +12,8 @@ import { PetRankNames, BuffModel } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
 import { BattlePet } from './BattleController';
 import BuffModelDict from 'configs/BuffModelDict';
+import PageActExplorationLVD from './PageActExplorationLVD';
+import ListView from 'scripts/ListView';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -29,6 +31,7 @@ const DmgLblActParams: number[][] = [
 ];
 
 @ccclass
+@executionOrder(1) // 为了start在scrollview的start之后进行，保证对scrollview的content.y设置正确
 export default class PageActExploration extends PageBase {
     updater: ExplorationUpdater = null;
 
@@ -70,6 +73,9 @@ export default class PageActExploration extends PageBase {
     lblBtnEscape: cc.Label = null;
     lblBtnHide: cc.Label = null;
 
+    listView: ListView = null;
+    lvd: PageActExplorationLVD = null;
+
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
@@ -81,6 +87,10 @@ export default class PageActExploration extends PageBase {
         this.btnCatch.node.on('click', this.onClickCatch, this);
         this.btnEscape.node.on('click', this.onClickEscape, this);
         this.btnHide.node.on('click', this.onClickHide, this);
+
+        this.listView = this.getComponentInChildren(ListView);
+        this.lvd = this.getComponent(PageActExplorationLVD);
+        this.lvd.page = this;
 
         for (let index = 0; index < 5; index++) {
             let y = BattleUnitYs[index];
@@ -106,7 +116,16 @@ export default class PageActExploration extends PageBase {
         }
 
         this.updater = new ExplorationUpdater();
+    }
+
+    start() {
+        if (CC_EDITOR) return;
         this.updater.init(this);
+    }
+
+    update() {
+        if (CC_EDITOR) return;
+        this.updateLogListView();
     }
 
     onDestroy() {
@@ -276,10 +295,6 @@ export default class PageActExploration extends PageBase {
         this.rageLbl.string = `${rage} / 100`;
     }
 
-    log(str: string) {
-        cc.log('PUT EXPL: ', str);
-    }
-
     // button -----------------------------------------------------------------
 
     onClickCatch() {
@@ -318,4 +333,57 @@ export default class PageActExploration extends PageBase {
     }
 
     // list -----------------------------------------------------------------
+
+    logList: string[] = [];
+    newLogCount: number = 0;
+
+    autoShowLog: boolean = true;
+    autoMoveDis: number = 0;
+
+    log(str: string) {
+        cc.log('PUT EXPL: ', str);
+        this.logList.push(str);
+        if (this.logList.length > 200) this.logList = this.logList.slice(100);
+        this.newLogCount++;
+    }
+
+    handleLog() {
+        if (this.newLogCount == 0) return;
+        if (this.autoShowLog) {
+            let logCount = Math.min(this.newLogCount, 10);
+            this.listView.clearContent();
+            this.listView.createContent(logCount * 70);
+            this.autoMoveDis = logCount * 6;
+            this.newLogCount = 0;
+            this.setNewLogTip(0);
+        } else {
+            this.setNewLogTip(this.newLogCount);
+        }
+    }
+
+    updateLogListView() {
+        if (this.autoShowLog) {
+            if (this.listView.touching) {
+                this.autoShowLog = false;
+                this.autoMoveDis = 0;
+            }
+        } else {
+            if (!this.listView.touching && this.listView.content.y <= 1) this.autoShowLog = true;
+        }
+
+        if (this.autoShowLog && this.autoMoveDis > 0) {
+            let newPos = this.listView.content.y - this.autoMoveDis;
+            if (newPos > 0) {
+                this.listView.content.y = newPos;
+            } else {
+                this.listView.content.y = 0;
+                this.autoMoveDis = 0;
+            }
+            this.listView.onScrolling();
+        }
+    }
+
+    setNewLogTip(tipCount: number) {
+        cc.log('PUT new log count: ', tipCount);
+    }
 }

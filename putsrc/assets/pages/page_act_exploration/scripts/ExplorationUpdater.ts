@@ -71,6 +71,7 @@ export class ExplorationUpdater {
     createExploration() {
         this.memory.createExploration();
         this.startExploration();
+        this.page.handleLog();
     }
 
     restoreLastExploration() {}
@@ -108,6 +109,8 @@ export class ExplorationUpdater {
         if (this.state == ExplorationState.explore) this.updateExploration();
         else if (this.state == ExplorationState.battle) this.updateBattle();
         else if (this.state == ExplorationState.recover) this.updateRecover();
+
+        this.page.handleLog();
     }
 
     // -----------------------------------------------------------------

@@ -61,10 +61,7 @@ let refactorCompDict = {
                             'scene:query-node-functions',
                             e,
                             (e, t) => {
-                                (this._dump = t),
-                                    (this._requestID = null),
-                                    this._updateComponents(),
-                                    this._updateHandlers();
+                                (this._dump = t), (this._requestID = null), this._updateComponents(), this._updateHandlers();
                             },
                             -1
                         );
@@ -140,7 +137,7 @@ let refactorCompDict = {
                 methods: {
                     arraySizeChanged(e) {
                         if (e.detail && e.detail.confirmByEnter === false) {
-                            Editor.log('STORM 为了避免误操作，屏蔽了鼠标滚轮改变编辑器上数组的大小');
+                            Editor.log('PUT 为了避免误操作，屏蔽了鼠标滚轮改变编辑器上数组的大小');
                             return;
                         }
                         if (e.detail.value < this.target.value.length) {
@@ -154,7 +151,7 @@ let refactorCompDict = {
                         });
                     },
                     confirmCommandStr(e) {
-                        cc.log('STORM 确定了命令字符串的值为：', e.detail.value);
+                        cc.log('PUT 确定了命令字符串的值为：', e.detail.value);
                         this.commandStr = e.detail.value;
                     },
                     changeCommandStr() {
@@ -173,13 +170,13 @@ let refactorCompDict = {
                             3 < commandDatas.length ||
                             ['a', 'd', 'mv'].indexOf(commandDatas[0]) == -1
                         ) {
-                            cc.warn('STORM 数组调整命令有误，请把鼠标hover到输入框上看详情：', this.commandStr);
+                            cc.warn('PUT 数组调整命令有误，请把鼠标hover到输入框上看详情：', this.commandStr);
                             this.resetCommandStr();
                             return;
                         }
 
                         if (this.target.value.length == 0) {
-                            cc.warn('STORM 空数组就不要使用命令行了吧', this.commandStr);
+                            cc.warn('PUT 空数组就不要使用命令行了吧', this.commandStr);
                             this.resetCommandStr();
                             return;
                         }
@@ -188,21 +185,21 @@ let refactorCompDict = {
                         let modifyIndex = Number(commandDatas[1]);
 
                         if (isNaN(modifyIndex) || modifyIndex < 0 || modifyIndex >= this.target.value.length) {
-                            cc.warn('STORM 数组调整值有误，请把鼠标hover到输入框上看详情：', this.commandStr);
+                            cc.warn('PUT 数组调整值有误，请把鼠标hover到输入框上看详情：', this.commandStr);
                             this.resetCommandStr();
                             return;
                         }
 
                         let compSection = this.getCompSection(this);
                         if (!compSection) {
-                            cc.error('STORM 没有compSection');
+                            cc.error('PUT 没有compSection');
                             return;
                         }
 
                         let nodeUuid = compSection.target.node.value.uuid;
                         let node = getNodeByUuid(nodeUuid);
                         if (!node) {
-                            cc.error('STORM 没有Node', nodeUuid);
+                            cc.error('PUT 没有Node', nodeUuid);
                             return;
                         }
 
@@ -214,13 +211,13 @@ let refactorCompDict = {
                             const pathKey = paths[index];
                             prop = prop[pathKey];
                             if (!prop) {
-                                cc.error('STORM 没有pathKey：', pathKey, fullpath);
+                                cc.error('PUT 没有pathKey：', pathKey, fullpath);
                                 return;
                             }
                         }
 
                         if (!(prop instanceof Array)) {
-                            cc.error('STORM prop竟然不是数组：', fullpath);
+                            cc.error('PUT prop竟然不是数组：', fullpath);
                             return;
                         }
 
@@ -235,20 +232,14 @@ let refactorCompDict = {
                                 {
                                     let modifyIndex2 = Number(commandDatas[2]);
                                     if (isNaN(modifyIndex2) || modifyIndex2 == modifyIndex) {
-                                        cc.warn(
-                                            'STORM 数组调整值有误，请把鼠标hover到输入框上看详情：',
-                                            this.commandStr
-                                        );
+                                        cc.warn('PUT 数组调整值有误，请把鼠标hover到输入框上看详情：', this.commandStr);
                                         this.resetCommandStr();
                                         return;
                                     }
 
                                     if (modifyIndex2 > modifyIndex) modifyIndex2 -= 1;
                                     if (modifyIndex2 < 0 || modifyIndex2 >= this.target.value.length) {
-                                        cc.warn(
-                                            'STORM 数组调整值有误，请把鼠标hover到输入框上看详情：',
-                                            this.commandStr
-                                        );
+                                        cc.warn('STORM 数组调整值有误，请把鼠标hover到输入框上看详情：', this.commandStr);
                                         this.resetCommandStr();
                                         return;
                                     }

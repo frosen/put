@@ -38,6 +38,11 @@ export default class ListView extends cc.Component {
 
     reuseCells: { [key: string]: ListViewCell[] } = {};
 
+    _touching: boolean = false;
+    get touching() {
+        return this._touching;
+    }
+
     onLoad() {
         cc.assert(this.delegate, '未指定代理');
 
@@ -45,6 +50,35 @@ export default class ListView extends cc.Component {
         this.content = this.scrollView.content;
 
         this.node.on('scrolling', this.onScrolling.bind(this));
+
+        // 解决scrollview在奇怪的时候显示bar的问题 ------------------------------------------------
+
+        let self = this;
+
+        // @ts-ignore
+        let oldFunc = this.scrollView.verticalScrollBar._setOpacity;
+        // @ts-ignore
+        this.scrollView.verticalScrollBar._setOpacity = function(opacity) {
+            if (this.node)
+                if (self._touching || opacity <= this.node.opacity) {
+                    oldFunc.call(this, opacity);
+                }
+        };
+
+        // @ts-ignore
+        let oldPressFunc = this.scrollView._handlePressLogic;
+        // @ts-ignore
+        let oldReleaseFunc = this.scrollView._handleReleaseLogic;
+        // @ts-ignore
+        this.scrollView._handlePressLogic = function(touch) {
+            oldPressFunc.call(this, touch);
+            self._touching = true;
+        };
+        // @ts-ignore
+        this.scrollView._handleReleaseLogic = function(touch) {
+            oldReleaseFunc.call(this, touch);
+            self._touching = false;
+        };
     }
 
     createContent(pos: number = 0) {
@@ -61,6 +95,7 @@ export default class ListView extends cc.Component {
         }
 
         this.content.height = contentH;
+        this.content.y = pos;
 
         // 显示cell
         let { disTop, disBtm } = this.calcDisplayArea();
@@ -107,6 +142,8 @@ export default class ListView extends cc.Component {
     }
 
     clearContent() {
+        this.scrollView.stopAutoScroll();
+
         for (const rowIdx in this.disCellDict) {
             if (this.disCellDict.hasOwnProperty(rowIdx)) {
                 const cell = this.disCellDict[rowIdx];
@@ -117,6 +154,8 @@ export default class ListView extends cc.Component {
         this.disCellDict = {};
 
         this.rowCount = 0;
+
+        this.content.y = 0;
         this.content.height = 0;
 
         this.disTopRowIdx = 0;
@@ -135,9 +174,6 @@ export default class ListView extends cc.Component {
     }
 
     onScrolling() {
-        let scrollPos = this.content.y;
-        if (scrollPos <= 0 || this.content.height - this.node.height <= scrollPos) return;
-
         let { disTop, disBtm } = this.calcDisplayArea();
         this.updateDisTopRowData(disTop);
         this.updateDisBtmRowData(disBtm);
