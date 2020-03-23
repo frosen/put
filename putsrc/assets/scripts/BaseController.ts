@@ -14,9 +14,9 @@ import checkConfigs from './ConfigsChecker';
 // @ts-ignore
 let customEngineInfo = cc.director.customEngineInfo;
 if (customEngineInfo) {
-    cc.log('Custom engine info: ' + customEngineInfo);
+    cc.log('PUT Custom engine info: ' + customEngineInfo);
 } else {
-    cc.error('Need custom engine!!!!!');
+    cc.error('PUT Need custom engine!!!!!');
 }
 
 const TabBtnData = cc.Class({

@@ -12,6 +12,7 @@ const rd = Math.round;
 const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     baseStrength: {
         id: 'baseStrength',
+        cnBrief: '强',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
             pet.strength += pet.strengthOri * datas[0];
@@ -22,6 +23,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     baseConcentration: {
         id: 'baseConcentration',
+        cnBrief: '专',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
             pet.concentration += pet.concentrationOri * datas[0];
@@ -32,6 +34,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     baseDurability: {
         id: 'baseDurability',
+        cnBrief: '耐',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
             pet.durability += pet.durabilityOri * datas[0];
@@ -42,6 +45,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     baseAgility: {
         id: 'baseAgility',
+        cnBrief: '敏',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
             pet.agility += pet.agilityOri * datas[0];
@@ -52,6 +56,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     baseSensitivity: {
         id: 'baseSensitivity',
+        cnBrief: '微',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
             pet.sensitivity += pet.sensitivityOri * datas[0];
@@ -62,6 +67,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     baseElegant: {
         id: 'baseElegant',
+        cnBrief: '雅',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
             pet.elegant += pet.elegantOri * datas[0];
@@ -72,6 +78,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addHpMax: {
         id: 'addHpMax',
+        cnBrief: '坚',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.hpMax += pet.hpMaxOri * datas[0];
@@ -82,6 +89,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addMpMax: {
         id: 'addMpMax',
+        cnBrief: '思',
         dataAreas: [[10, 10]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.mpMax += datas[0];
@@ -92,6 +100,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addAtkDmg: {
         id: 'addAtkDmg',
+        cnBrief: '武',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.atkDmgFrom += pet.atkDmgFromOri * datas[0];
@@ -103,6 +112,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addSklDmg: {
         id: 'addSklDmg',
+        cnBrief: '技',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.sklDmgFrom += pet.sklDmgFromOri * datas[0];
@@ -114,6 +124,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addAtkMax: {
         id: 'addAtkMax',
+        cnBrief: '极',
         dataAreas: [[0.02, 0.02]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.atkDmgTo += pet.atkDmgToOri * datas[0];
@@ -124,6 +135,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addSklMax: {
         id: 'addSklMax',
+        cnBrief: '超',
         dataAreas: [[0.02, 0.02]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.sklDmgTo += pet.sklDmgToOri * datas[0];
@@ -134,6 +146,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addCritRate: {
         id: 'addCritRate',
+        cnBrief: '暴',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.critRate += datas[0];
@@ -144,6 +157,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addCritDmgRate: {
         id: 'addCritDmgRate',
+        cnBrief: '伤',
         dataAreas: [[0.1, 0.1]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.critDmgRate += datas[0];
@@ -154,6 +168,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addEvdRate: {
         id: 'addEvdRate',
+        cnBrief: '闪',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.evdRate += datas[0];
@@ -164,6 +179,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addHitRate: {
         id: 'addHitRate',
+        cnBrief: '锐',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.hitRate += datas[0];
@@ -174,6 +190,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addDfsRate: {
         id: 'addDfsRate',
+        cnBrief: '硬',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.dfsRate += datas[0];
@@ -524,7 +541,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hitByPetCountDiff',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            if (bData.ctrlr.getTeam(pet).pets.length < bData.ctrlr.getTeam(aim).pets.length) aim.hp -= bData.finalDmg * datas[0];
+            if (bData.ctrlr.getTeam(pet).pets.length < bData.ctrlr.getTeam(aim).pets.length)
+                aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `如果战场己方人数小于敌方，则伤害提高${rd(datas[0] * 100)}%`;

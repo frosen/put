@@ -207,6 +207,7 @@ export type BattleDataForFeature = { ctrlr: BattleController; finalDmg: number; 
 
 export abstract class FeatureModel {
     abstract id: string;
+    abstract cnBrief: string;
     abstract dataAreas: number[][];
     abstract onBaseSetting(pet: Pet2, datas: number[]): void;
     abstract onSetting(pet: Pet2, datas: number[]): void;
