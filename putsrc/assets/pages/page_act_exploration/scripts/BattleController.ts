@@ -498,14 +498,30 @@ export class BattleController {
         this.page.setUIofEnemyPet(-1);
 
         // 日志
-        let petNames = '';
+        let hiding = this.memory.gameData.curExploration.hiding;
+        let petNameDict = {};
         for (const ePet of this.realBattle.enemyTeam.pets) {
             let petId = ePet.pet.id;
             let cnName = petModelDict[petId].cnName;
-            petNames += cnName + ' ';
+            petNameDict[cnName] = true;
         }
-        this.page.log('进入战斗：' + petNames);
+        let petNames = Object.keys(petNameDict);
+        this.page.log((hiding ? '伏击：' : '进入战斗：') + petNames.join(', '));
 
+        // 偷袭
+        if (hiding) {
+            for (let index = 0; index < 5; index++) {
+                if (index >= rb.selfTeam.pets.length || index >= rb.enemyTeam.pets.length) break;
+                let selfPet = rb.selfTeam.pets[index];
+                let enemyPet = rb.enemyTeam.pets[index];
+
+                let agiRate = selfPet.pet2.agility / enemyPet.pet2.agility;
+                let times = Math.ceil(agiRate); // 敏捷每大于敌人100%，会让敌人多静止1回合
+                this.addBuff(enemyPet, selfPet, 'JingZhi', times);
+            }
+        }
+
+        // 触发进入战斗特性
         for (const pet of rb.order) {
             pet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
                 if (model.hasOwnProperty('onStartingBattle')) {
@@ -561,7 +577,8 @@ export class BattleController {
             rb.curOrderIdx = nextNextId;
             rb.combo++;
             cc.log('STORM cc ^_^ 连段 ', rb.combo);
-            this.attack(nextPet);
+            let suc = this.attack(nextPet);
+            if (!suc) rb.combo--; // 未成功攻击则不算连击
             if (rb.combo >= 3) break; // 最多三连
         }
         cc.log('STORM cc ^_^ end -----------------------------------------------------------');
@@ -663,9 +680,7 @@ export class BattleController {
         }
     }
 
-    attack(battlePet: BattlePet) {
-        this.page.doAttack(battlePet.beEnemy, battlePet.idx, this.realBattle.combo);
-
+    attack(battlePet: BattlePet): boolean {
         do {
             let done: boolean;
             done = this.castUltimateSkill(battlePet);
@@ -674,8 +689,15 @@ export class BattleController {
             done = this.castNormalSkill(battlePet);
             if (done) break;
 
-            this.castNormalAttack(battlePet);
+            done = this.castNormalAttack(battlePet);
+            if (done) break;
+
+            this.logStop(battlePet);
+            return false; // 未成功攻击
         } while (false);
+
+        this.page.doAttack(battlePet.beEnemy, battlePet.idx, this.realBattle.combo);
+        return true; // 成功进行攻击
     }
 
     castUltimateSkill(battlePet: BattlePet): boolean {
@@ -862,15 +884,15 @@ export class BattleController {
         aim.buffDatas.push(buffData);
     }
 
-    castNormalAttack(battlePet: BattlePet) {
+    castNormalAttack(battlePet: BattlePet): boolean {
         let aim: BattlePet = this.getAim(battlePet, false);
-        if (!aim) return;
+        if (!aim) return false;
 
         let hitResult = this.getHitResult(battlePet, aim);
         if (hitResult == 0) {
             this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
             this.logMiss(battlePet, aim, '普攻');
-            return;
+            return true;
         }
 
         let finalDmg = Math.max(battlePet.getAtkDmg() - aim.pet2.armor, 1);
@@ -903,6 +925,8 @@ export class BattleController {
         }
 
         if (aim.hp == 0) this.dead(aim, battlePet);
+
+        return true;
     }
 
     addRageToAim(battlePet: BattlePet, aim: BattlePet) {
@@ -1132,6 +1156,11 @@ export class BattleController {
 
     logBuff(aim: BattlePet, name: string) {
         let logStr = `${petModelDict[aim.pet.id].cnName}受到${name}效果`;
+        this.page.log(logStr);
+    }
+
+    logStop(battlePet: BattlePet) {
+        let logStr = `${petModelDict[battlePet.pet.id].cnName}无法行动`;
         this.page.log(logStr);
     }
 

@@ -120,6 +120,23 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         getInfo(caster: Readonly<BattlePet>): string {
             return `每回合恢复目标${Math.floor(caster.getSklDmg() * 0.8)}(80%)点血量`;
         }
+    },
+    JingZhi: {
+        id: 'JingZhi',
+        cnName: '静止',
+        brief: '静',
+        buffType: BuffType.debuff,
+        eleType: EleType.air,
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
+            thisPet.pet2.exBattleTypes.push(BattleType.stay);
+            return thisPet.pet2.exBattleTypes.length - 1;
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            thisPet.pet2.exBattleTypes.removeIndex(data);
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `目标停止一切行动`;
+        }
     }
 };
 
