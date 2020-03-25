@@ -8,12 +8,13 @@ const { ccclass, property, executionOrder } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import { ExplUpdater, ExplState } from './ExplUpdater';
 import PetUI from './PetUI';
-import { PetRankNames, BuffModel } from 'scripts/Memory';
+import { PetRankNames, BuffModel, BuffType, EleType } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
 import { BattlePet } from './BattleController';
 import BuffModelDict from 'configs/BuffModelDict';
 import PageActExplLVD from './PageActExplLVD';
 import ListView from 'scripts/ListView';
+import PageActExplCatch from 'pages/page_act_expl_catch/scripts/PageActExplCatch';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -233,12 +234,38 @@ export default class PageActExpl extends PageBase {
     }
 
     addBuff(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
+        let buffModel = BuffModelDict[buffId] as BuffModel;
+        let buffBrief = buffModel.brief;
+        let buffStr = buffBrief + String(buffTime);
+        this.addBuffByStr(beEnemy, idx, buffStr, this.getBuffColor(buffModel));
+    }
+
+    getBuffColor(buffModel: BuffModel): cc.Color {
+        let de = buffModel.buffType == BuffType.debuff;
+        switch (buffModel.eleType) {
+            case EleType.fire:
+                return de ? cc.color(200, 0, 0) : cc.color(255, 100, 100);
+            case EleType.water:
+                return de ? cc.color(0, 0, 200) : cc.color(100, 100, 255);
+            case EleType.air:
+                return de ? cc.color(0, 175, 0) : cc.color(50, 230, 50);
+            case EleType.earth:
+                return de ? cc.color(100, 90, 50) : cc.color(168, 150, 85);
+            case EleType.light:
+                return de ? cc.color(239, 115, 0) : cc.color(239, 200, 0);
+            case EleType.dark:
+                return de ? cc.color(125, 0, 195) : cc.color(185, 78, 255);
+        }
+    }
+
+    addBuffByStr(beEnemy: boolean, idx: number, buffStr: string, color: cc.Color) {
         let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
         let ui = uis[idx];
-        let buffBrief = (BuffModelDict[buffId] as BuffModel).brief;
-        let buffStr = '[' + buffBrief + String(buffTime) + ']';
+
+        let realBuffStr = '[' + buffStr + ']';
         let buffNode = cc.instantiate(this.buffPrefab);
-        buffNode.getComponent(cc.Label).string = buffStr;
+        buffNode.getComponent(cc.Label).string = realBuffStr;
+        buffNode.color = color;
         buffNode.parent = ui.buffNode;
 
         // 多于7个后面不显示
@@ -287,6 +314,19 @@ export default class PageActExpl extends PageBase {
         }
     }
 
+    removeBuffByStr(beEnemy: boolean, idx: number, str: string) {
+        cc.log('STORM cc ^_^ remove buff str ', idx, str);
+        let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        let ui = uis[idx];
+        for (const child of ui.buffNode.children) {
+            if (child.getComponent(cc.Label).string == str) {
+                child.removeFromParent();
+                child.destroy();
+                break;
+            }
+        }
+    }
+
     resetCenterBar(mp: number, mpMax: number, rage: number) {
         this.mpProgress.progress = mp / mpMax;
         this.mpLbl.string = `${mp} / ${mpMax}`;
@@ -298,9 +338,9 @@ export default class PageActExpl extends PageBase {
     // button -----------------------------------------------------------------
 
     onClickCatch() {
-        this.updater.executeCatch((result: boolean) => {
-            this.setCatchActive(result);
-        });
+        let ctrlr = this.updater.battleCtrlr;
+        let id = this.ctrlr.memory.gameData.curExpl.curBattle.startTime;
+        this.ctrlr.pushPage(PageActExplCatch, { ctrlr, pets: ctrlr.realBattle.enemyTeam.pets, id });
     }
 
     onClickEscape() {

@@ -869,7 +869,7 @@ export class BattleController {
         for (let index = 0; index < aim.buffDatas.length; index++) {
             const buffData = aim.buffDatas[index];
             if (buffData.id == buffId) {
-                buffData.time += buffTime;
+                if (buffTime > buffData.time) buffData.time = buffTime;
                 return;
             }
         }
@@ -972,6 +972,10 @@ export class BattleController {
             battlePet.buffDatas.length = 0;
             this.page.removeBuff(battlePet.beEnemy, battlePet.idx, null);
 
+            if (battlePet.beEnemy && battlePet.idx == this.memory.gameData.curExpl.curBattle.catchPetIdx) {
+                this.addCatchBuff(battlePet.idx);
+            }
+
             for (let index = battlePet.idx + 1; index < curPets.length; index++) {
                 const pet = curPets[index];
                 pet.fromationIdx -= 1;
@@ -994,10 +998,7 @@ export class BattleController {
     exitBattle(selfWin: boolean) {
         let rb = this.realBattle;
 
-        if (selfWin) {
-            // 计算获得的exp
-            this.receiveExp();
-        }
+        if (selfWin) this.receiveExp(); // 计算获得的exp
 
         rb.start = false;
         this.memory.deleteBattle();
@@ -1162,6 +1163,25 @@ export class BattleController {
     logStop(battlePet: BattlePet) {
         let logStr = `${petModelDict[battlePet.pet.id].cnName}无法行动`;
         this.page.log(logStr);
+    }
+
+    setCatchPetIndex(battleId: number, index: number) {
+        if (!this.realBattle.start) return;
+
+        let curBattleId = this.memory.gameData.curExpl.curBattle.startTime;
+        if (curBattleId != battleId) return;
+
+        let curCatchPetIdx = this.memory.gameData.curExpl.curBattle.catchPetIdx;
+        if (index == curCatchPetIdx) return;
+
+        if (curCatchPetIdx >= 0) this.page.removeBuffByStr(true, curCatchPetIdx, '捕');
+        this.memory.gameData.curExpl.curBattle.catchPetIdx = index;
+        this.addCatchBuff(index);
+        this.page.setCatchActive(true);
+    }
+
+    addCatchBuff(index: number) {
+        this.page.addBuffByStr(true, index, '捕', cc.color(63, 180, 170));
     }
 
     random() {

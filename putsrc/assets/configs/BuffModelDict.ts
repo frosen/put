@@ -5,7 +5,7 @@
  */
 
 import { BuffModel, BuffOutput, EleType, BattleType, BuffType } from 'scripts/Memory';
-import { BattlePet } from 'pages/page_act_exploration/scripts/BattleController';
+import { BattlePet } from 'pages/page_act_expl/scripts/BattleController';
 
 const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
     RanShao: {

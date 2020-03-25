@@ -42,26 +42,23 @@ export default class CellPet extends ListViewCell {
         this.petNameLbl.string = petModel.cnName;
         this.subLbl.string = `等级：${pet.lv}   品阶：${PetRankNames[pet.rank]}   默契值：${pet.privity}`;
         this.stateLbl.string = PetStateNames[pet.state];
+        this.petSp.node.color = CellPet.getPetHeadUI(petModel).color;
+    }
 
+    static getPetHeadUI(petModel: PetModel): { color: cc.Color } {
         switch (petModel.eleType) {
             case EleType.fire:
-                this.petSp.node.color = cc.Color.RED;
-                break;
+                return { color: cc.Color.RED };
             case EleType.water:
-                this.petSp.node.color = cc.Color.BLUE;
-                break;
+                return { color: cc.Color.BLUE };
             case EleType.air:
-                this.petSp.node.color = cc.Color.CYAN;
-                break;
+                return { color: cc.Color.CYAN };
             case EleType.earth:
-                this.petSp.node.color = cc.Color.GREEN;
-                break;
+                return { color: cc.Color.GREEN };
             case EleType.light:
-                this.petSp.node.color = cc.Color.YELLOW;
-                break;
+                return { color: cc.Color.YELLOW };
             case EleType.dark:
-                this.petSp.node.color = cc.Color.BLACK;
-                break;
+                return { color: cc.Color.BLACK };
             default:
                 break;
         }

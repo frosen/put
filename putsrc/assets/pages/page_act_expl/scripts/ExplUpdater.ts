@@ -158,8 +158,12 @@ export class ExplUpdater {
         this.page.log('探索中......');
     }
 
+    battleCount: number = 0;
+
     startBattle() {
         this.state = ExplState.battle;
+        this.battleCount++;
+
         this.battleCtrlr.start();
 
         this.page.enterState(this.state);
@@ -213,10 +217,6 @@ export class ExplUpdater {
     }
 
     // -----------------------------------------------------------------
-
-    executeCatch(callback: (result: boolean) => void) {
-        callback(true);
-    }
 
     executeEscape() {
         this.battleCtrlr.escape();

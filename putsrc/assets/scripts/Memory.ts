@@ -123,6 +123,7 @@ export class BattleMmr {
     startTime: number = 0;
     seed: number = 0;
     enemys: EnemyPetMmr[] = newList();
+    catchPetIdx: number = -1;
 }
 
 export class ExplMmr {
