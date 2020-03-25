@@ -134,7 +134,12 @@ export default class PageActExpl extends PageBase {
     }
 
     onPageShow() {
-        this.ctrlr.setBackBtnEnabled(true);
+        this.ctrlr.setBackBtnEnabled(true, (): boolean => {
+            this.ctrlr.popAlert('确定退出探索？', (key: number) => {
+                if (key == 1) this.ctrlr.popPage();
+            });
+            return false;
+        });
         this.ctrlr.setTitle('探索');
     }
 
@@ -315,11 +320,11 @@ export default class PageActExpl extends PageBase {
     }
 
     removeBuffByStr(beEnemy: boolean, idx: number, str: string) {
-        cc.log('STORM cc ^_^ remove buff str ', idx, str);
         let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
         let ui = uis[idx];
+        let buffStr = '[' + str + ']';
         for (const child of ui.buffNode.children) {
-            if (child.getComponent(cc.Label).string == str) {
+            if (child.getComponent(cc.Label).string == buffStr) {
                 child.removeFromParent();
                 child.destroy();
                 break;

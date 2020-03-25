@@ -198,7 +198,7 @@ export class BaseController extends cc.Component {
     }
 
     setNav() {
-        this.navBed.getChildByName('back').on('click', this.popPage.bind(this));
+        this.navBed.getChildByName('back').on('click', this.onClickBack.bind(this));
     }
 
     start() {
@@ -488,11 +488,13 @@ export class BaseController extends cc.Component {
 
     hidePage(page: PageBase) {
         page.onPageHide();
-        page.node.active = false;
+        page.node.opacity = 0;
+        page.node.scale = 0;
     }
 
     showPage(page: PageBase) {
-        page.node.active = true;
+        page.node.opacity = 255;
+        page.node.scale = 1;
         page.onPageShow();
     }
 
@@ -521,10 +523,21 @@ export class BaseController extends cc.Component {
     }
 
     backBtnActive: boolean = true;
+    backBtnCallback: () => boolean = null;
 
-    setBackBtnEnabled(e: boolean) {
+    setBackBtnEnabled(e: boolean, callback: () => boolean = null) {
         this.backBtnActive = e;
         this.navBed.getChildByName('back').active = e;
+        this.backBtnCallback = e ? callback : null;
+    }
+
+    onClickBack() {
+        if (this.backBtnCallback) {
+            let rzt = this.backBtnCallback();
+            if (rzt) this.popPage();
+        } else {
+            this.popPage();
+        }
     }
 
     @property(cc.Prefab)
