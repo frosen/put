@@ -12,6 +12,7 @@ import * as petModelDict from 'configs/PetModelDict';
 import CellPet from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 import { BattlePet } from 'pages/page_act_expl/scripts/BattleController';
 import PageActExplCatch from 'pages/page_act_expl_catch/scripts/PageActExplCatch';
+import featureModelDict from 'configs/FeatureModelDict';
 
 @ccclass
 export default class CellCatch extends ListViewCell {
@@ -39,7 +40,21 @@ export default class CellCatch extends ListViewCell {
         let petModel: PetModel = petModelDict[pet.id];
         this.petNameLbl.string = petModel.cnName;
         this.subLbl.string = `等级：${pet.lv}   品阶：${PetRankNames[pet.rank]}`;
-        this.featureLbl.string = `天赋特性 x ${pet.raFeatures.length}`;
+
+        let len = pet.raFeatures.length;
+        if (len == 0) {
+            this.featureLbl.string = '无天赋特性';
+        } else {
+            let featureStrs = [];
+            for (let index = 0; index < pet.raFeatures.length; index++) {
+                let feature = pet.raFeatures[index];
+                let featureModel = featureModelDict[feature.id];
+
+                featureStrs.push('天赋' + String(index + 1) + '：' + featureModel.getInfo(feature.datas));
+            }
+            this.featureLbl.string = featureStrs.join('\n');
+        }
+
         this.petSp.node.color = CellPet.getPetHeadUI(petModel).color;
     }
 

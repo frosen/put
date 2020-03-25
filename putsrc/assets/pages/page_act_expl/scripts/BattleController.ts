@@ -416,7 +416,8 @@ export class BattleController {
         let curPosModel = actPosModelDict[posId];
         let explModel: ExplModel = <ExplModel>curPosModel.actDict['exploration'];
 
-        let petCount = random(5) + 1;
+        let petCountMax = curPosModel.lv < 10 ? 4 : 5;
+        let petCount = random(petCountMax) + 1;
         let step = gameData.curExpl.curStep;
         let curStepModel = explModel.stepModels[step];
 
