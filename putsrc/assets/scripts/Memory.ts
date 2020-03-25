@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { BattlePet, BattleController } from 'pages/page_act_exploration/scripts/BattleController';
+import { BattlePet, BattleController } from 'pages/page_act_expl/scripts/BattleController';
 import * as petModelDict from 'configs/PetModelDict';
 import actPosModelDict from 'configs/ActPosModelDict';
 import featureModelDict from 'configs/FeatureModelDict';
@@ -72,11 +72,11 @@ export class StepModel {
     petIds: string[] = [];
 }
 
-export class ExplorationModel {
+export class ExplModel {
     stepModels: StepModel[] = [];
 }
 
-type AllActType = WorkModel | ExplorationModel;
+type AllActType = WorkModel | ExplModel;
 
 export class MovCondition {}
 
@@ -125,7 +125,7 @@ export class BattleMmr {
     enemys: EnemyPetMmr[] = newList();
 }
 
-export class ExplorationMmr {
+export class ExplMmr {
     startTime: number = 0;
     curStep: number = 0;
     selfs: SelfPetMmr[] = newList();
@@ -531,7 +531,7 @@ export class GameData {
     curPosId: string = '';
 
     posDataDict: { [key: string]: ActPos } = newDict();
-    curExploration: ExplorationMmr = null;
+    curExpl: ExplMmr = null;
 
     pets: Pet[] = newList();
     /** 一共抓取过的宠物的总量，用于pet的索引 */
@@ -609,10 +609,10 @@ export class Memory {
 
     // -----------------------------------------------------------------
 
-    createExploration() {
-        if (this.gameData.curExploration) return;
-        let exploration = newInsWithChecker(ExplorationMmr);
-        exploration.startTime = new Date().getTime();
+    createExpl() {
+        if (this.gameData.curExpl) return;
+        let expl = newInsWithChecker(ExplMmr);
+        expl.startTime = new Date().getTime();
         for (const pet of this.gameData.pets) {
             if (pet.state != PetState.ready) break; // 备战的pet一定在最上切不会超过5个
             let selfPetMmr = newInsWithChecker(SelfPetMmr);
@@ -621,27 +621,27 @@ export class Memory {
             for (const equip of pet.equips) {
                 selfPetMmr.eqpTokens.push(equip.getToken());
             }
-            exploration.selfs.push(selfPetMmr);
+            expl.selfs.push(selfPetMmr);
         }
 
-        this.gameData.curExploration = exploration;
+        this.gameData.curExpl = expl;
     }
 
-    deleteExploration() {
-        if (this.gameData.curExploration) {
-            this.gameData.curExploration = null;
+    deleteExpl() {
+        if (this.gameData.curExpl) {
+            this.gameData.curExpl = null;
         }
     }
 
     createBattle(seed: number) {
-        cc.assert(this.gameData.curExploration, '创建battle前必有Exploration');
-        let curExploration = this.gameData.curExploration;
-        if (curExploration.curBattle) return;
+        cc.assert(this.gameData.curExpl, '创建battle前必有Expl');
+        let curExpl = this.gameData.curExpl;
+        if (curExpl.curBattle) return;
         let battle = newInsWithChecker(BattleMmr);
         battle.startTime = new Date().getTime();
         battle.seed = seed;
 
-        curExploration.curBattle = battle;
+        curExpl.curBattle = battle;
     }
 
     createEnemyPet(id: string, lv: number, rank: number) {
@@ -650,12 +650,12 @@ export class Memory {
         p.lv = lv;
         p.rank = rank;
 
-        this.gameData.curExploration.curBattle.enemys.push(p);
+        this.gameData.curExpl.curBattle.enemys.push(p);
     }
 
     deleteBattle() {
-        cc.assert(this.gameData.curExploration, '删除battle前必有Exploration');
-        this.gameData.curExploration.curBattle = null;
+        cc.assert(this.gameData.curExpl, '删除battle前必有Expl');
+        this.gameData.curExpl.curBattle = null;
     }
 
     // -----------------------------------------------------------------

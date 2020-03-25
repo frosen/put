@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "CellExplorationLog",
+    "_name": "CellExplLog",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -326,7 +326,7 @@
     "asset": {
       "__uuid__": "94a982c6-b186-49bb-b509-c4e6d0715e22"
     },
-    "fileId": "fdwt5+5k1NDaE9F2Q06FsH",
+    "fileId": "7c3XG6KTpPzZmEctwXWq/e",
     "sync": false
   },
   {
@@ -433,7 +433,7 @@
     "asset": {
       "__uuid__": "94a982c6-b186-49bb-b509-c4e6d0715e22"
     },
-    "fileId": "3d4I3HMAdIu6xiuU+8AqLC",
+    "fileId": "91Q4Bn1vRDYI9FayoI94RO",
     "sync": false
   },
   {
@@ -540,7 +540,7 @@
     "asset": {
       "__uuid__": "94a982c6-b186-49bb-b509-c4e6d0715e22"
     },
-    "fileId": "d5ASsoRxpKXYavPHIfkM3J",
+    "fileId": "2bXASiRq5L1J3f0nMqJHms",
     "sync": false
   },
   {

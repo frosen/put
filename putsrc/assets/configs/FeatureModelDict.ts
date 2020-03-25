@@ -5,7 +5,7 @@
  */
 
 import { FeatureModel, Pet2, BattleDataForFeature, SkillModel, EleType, SkillType, BattleType } from 'scripts/Memory';
-import { BattlePet, BattleController } from 'pages/page_act_exploration/scripts/BattleController';
+import { BattlePet, BattleController } from 'pages/page_act_expl/scripts/BattleController';
 
 const rd = Math.round;
 

@@ -1,18 +1,18 @@
 /*
- * PageActExploration.ts
+ * PageActExpl.ts
  * 探索页面
  * luleyan
  */
 
 const { ccclass, property, executionOrder } = cc._decorator;
 import PageBase from 'scripts/PageBase';
-import { ExplorationUpdater, ExplorationState } from './ExplorationUpdater';
+import { ExplUpdater, ExplState } from './ExplUpdater';
 import PetUI from './PetUI';
 import { PetRankNames, BuffModel } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
 import { BattlePet } from './BattleController';
 import BuffModelDict from 'configs/BuffModelDict';
-import PageActExplorationLVD from './PageActExplorationLVD';
+import PageActExplLVD from './PageActExplLVD';
 import ListView from 'scripts/ListView';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
@@ -32,8 +32,8 @@ const DmgLblActParams: number[][] = [
 
 @ccclass
 @executionOrder(1) // 为了start在scrollview的start之后进行，保证对scrollview的content.y设置正确
-export default class PageActExploration extends PageBase {
-    updater: ExplorationUpdater = null;
+export default class PageActExpl extends PageBase {
+    updater: ExplUpdater = null;
 
     @property(cc.Node)
     selfPetsLayer: cc.Node = null;
@@ -74,7 +74,7 @@ export default class PageActExploration extends PageBase {
     lblBtnHide: cc.Label = null;
 
     listView: ListView = null;
-    lvd: PageActExplorationLVD = null;
+    lvd: PageActExplLVD = null;
 
     onLoad() {
         super.onLoad();
@@ -89,7 +89,7 @@ export default class PageActExploration extends PageBase {
         this.btnHide.node.on('click', this.onClickHide, this);
 
         this.listView = this.getComponentInChildren(ListView);
-        this.lvd = this.getComponent(PageActExplorationLVD);
+        this.lvd = this.getComponent(PageActExplLVD);
         this.lvd.page = this;
 
         for (let index = 0; index < 5; index++) {
@@ -115,7 +115,7 @@ export default class PageActExploration extends PageBase {
             this.dmgLbls.push(dmgLblNode.getComponent(cc.Label));
         }
 
-        this.updater = new ExplorationUpdater();
+        this.updater = new ExplUpdater();
     }
 
     start() {
@@ -321,8 +321,8 @@ export default class PageActExploration extends PageBase {
         this.lblBtnHide.string = b ? '潜行中' : '潜行';
     }
 
-    enterState(state: ExplorationState) {
-        if (state == ExplorationState.battle) {
+    enterState(state: ExplState) {
+        if (state == ExplState.battle) {
             this.btnCatch.interactable = true;
             this.btnEscape.interactable = true;
         } else {

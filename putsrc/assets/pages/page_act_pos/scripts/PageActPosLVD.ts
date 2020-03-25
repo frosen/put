@@ -15,10 +15,10 @@ import CellPosBtn from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import CellPosMov from '../cells/cell_pos_mov/scripts/CellPosMov';
 import PageActPos from './PageActPos';
 import { PageSwitchAnim } from 'scripts/BaseController';
-import PageActExploration from 'pages/page_act_exploration/scripts/PageActExploration';
+import PageActExpl from 'pages/page_act_expl/scripts/PageActExpl';
 
 const CellActInfo = {
-    work: { cnName: '工作介绍所', page: PageActExploration },
+    work: { cnName: '工作介绍所' },
     quest: { cnName: '任务发布栏' },
     shop: { cnName: '物资商店' },
     equipMarket: { cnName: '装备市场' },
@@ -26,7 +26,7 @@ const CellActInfo = {
     recycler: { cnName: '回收站' },
     store: { cnName: '仓库' },
     awardsCenter: { cnName: '奖励中心' },
-    exploration: { cnName: '探索', page: PageActExploration }
+    exploration: { cnName: '探索', page: PageActExpl }
 };
 
 @ccclass

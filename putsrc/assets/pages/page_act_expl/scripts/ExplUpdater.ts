@@ -1,37 +1,37 @@
 /*
- * ExplorationUpdater.ts
+ * ExplUpdater.ts
  * 探索更新器
  * luleyan
  */
 
-import PageActExploration from './PageActExploration';
+import PageActExpl from './PageActExpl';
 import { Memory } from 'scripts/Memory';
 import { BattleController } from './BattleController';
 
-export enum ExplorationState {
+export enum ExplState {
     none,
     explore,
     battle,
     recover
 }
 
-enum ExplorationResult {
+enum ExplResult {
     none,
     battle
 }
 
-export class ExplorationUpdater {
-    page: PageActExploration = null;
+export class ExplUpdater {
+    page: PageActExpl = null;
     memory: Memory = null;
     battleCtrlr: BattleController = null;
 
-    state: ExplorationState = ExplorationState.none;
+    state: ExplState = ExplState.none;
 
     _id: string = 'idforupdater';
 
     pausing: boolean = false;
 
-    init(page: PageActExploration) {
+    init(page: PageActExpl) {
         this.page = page;
         this.memory = this.page.ctrlr.memory;
         this.battleCtrlr = new BattleController();
@@ -39,10 +39,10 @@ export class ExplorationUpdater {
             this.startRecover();
         });
 
-        if (!this.memory.gameData.curExploration) {
-            this.createExploration();
+        if (!this.memory.gameData.curExpl) {
+            this.createExpl();
         } else {
-            this.restoreLastExploration();
+            this.restoreLastExpl();
         }
 
         this.memory.addDataListener(this);
@@ -68,17 +68,17 @@ export class ExplorationUpdater {
         });
     }
 
-    createExploration() {
-        this.memory.createExploration();
-        this.startExploration();
+    createExpl() {
+        this.memory.createExpl();
+        this.startExpl();
         this.page.handleLog();
     }
 
-    restoreLastExploration() {}
+    restoreLastExpl() {}
 
     destroy() {
         cc.director.getScheduler().unscheduleUpdate(this);
-        this.memory.deleteExploration();
+        this.memory.deleteExpl();
         this.memory.removeDataListener(this);
         this.page.ctrlr.debugTool.removeShortCut('ww');
         this.page.ctrlr.debugTool.removeShortCut('gg');
@@ -106,9 +106,9 @@ export class ExplorationUpdater {
     }
 
     onUpdate() {
-        if (this.state == ExplorationState.explore) this.updateExploration();
-        else if (this.state == ExplorationState.battle) this.updateBattle();
-        else if (this.state == ExplorationState.recover) this.updateRecover();
+        if (this.state == ExplState.explore) this.updateExpl();
+        else if (this.state == ExplState.battle) this.updateBattle();
+        else if (this.state == ExplState.recover) this.updateRecover();
 
         this.page.handleLog();
     }
@@ -123,34 +123,34 @@ export class ExplorationUpdater {
         }
     }
 
-    explorationTime: number = 0;
+    explTime: number = 0;
 
-    startExploration() {
+    startExpl() {
         this.battleCtrlr.resetSelfTeam();
         this.selfPetsChangedFlag = false;
 
-        this.state = ExplorationState.explore;
-        // this.explorationTime = 5 + random(5);
-        this.explorationTime = 2; // llytest
+        this.state = ExplState.explore;
+        // this.explTime = 5 + random(5);
+        this.explTime = 2; // llytest
         this.page.log('开始探索');
 
         this.page.enterState(this.state);
     }
 
-    updateExploration() {
+    updateExpl() {
         let change = this.checkChange();
         if (change) return;
-        let result = this.getExplorationResult();
-        if (result == ExplorationResult.none) this.exploreNothing();
-        else if (result == ExplorationResult.battle) this.startBattle();
+        let result = this.getExplResult();
+        if (result == ExplResult.none) this.exploreNothing();
+        else if (result == ExplResult.battle) this.startBattle();
     }
 
-    getExplorationResult(): ExplorationResult {
-        if (this.explorationTime > 0) {
-            this.explorationTime--;
-            return ExplorationResult.none;
+    getExplResult(): ExplResult {
+        if (this.explTime > 0) {
+            this.explTime--;
+            return ExplResult.none;
         } else {
-            return ExplorationResult.battle;
+            return ExplResult.battle;
         }
     }
 
@@ -159,7 +159,7 @@ export class ExplorationUpdater {
     }
 
     startBattle() {
-        this.state = ExplorationState.battle;
+        this.state = ExplState.battle;
         this.battleCtrlr.start();
 
         this.page.enterState(this.state);
@@ -201,14 +201,14 @@ export class ExplorationUpdater {
         }
 
         if (done) {
-            this.startExploration();
+            this.startExpl();
         } else {
             this.page.log('休息中');
         }
     }
 
     startRecover() {
-        this.state = ExplorationState.recover;
+        this.state = ExplState.recover;
         this.page.enterState(this.state);
     }
 
@@ -223,8 +223,8 @@ export class ExplorationUpdater {
     }
 
     executeHide(callback: (result: boolean) => void) {
-        let cur = !this.memory.gameData.curExploration.hiding;
-        this.memory.gameData.curExploration.hiding = cur;
+        let cur = !this.memory.gameData.curExpl.hiding;
+        this.memory.gameData.curExpl.hiding = cur;
         callback(cur);
     }
 }

@@ -7,7 +7,7 @@
 import {
     Memory,
     Pet,
-    ExplorationModel,
+    ExplModel,
     Pet2,
     BattleType,
     SkillModel,
@@ -18,7 +18,7 @@ import {
     EleTypeNames,
     FeatureModel
 } from 'scripts/Memory';
-import PageActExploration from './PageActExploration';
+import PageActExpl from './PageActExpl';
 
 import * as expModels from 'configs/ExpModels';
 import actPosModelDict from 'configs/ActPosModelDict';
@@ -269,7 +269,7 @@ const FormationHitRate = [1, 0.95, 0.9, 0.9, 0.85]; // 阵型顺序从0开始
 const EleReinforceRelation = [0, 3, 1, 4, 2, 6, 5]; // 元素相克表
 
 export class BattleController {
-    page: PageActExploration = null;
+    page: PageActExpl = null;
     memory: Memory = null;
     endCallback: () => void = null;
 
@@ -278,7 +278,7 @@ export class BattleController {
     debugMode: boolean = false;
     realBattleCopys: { seed: number; rb: RealBattle }[] = []; // 用于战斗重置
 
-    init(page: PageActExploration, memory: Memory, endCallback: () => void) {
+    init(page: PageActExpl, memory: Memory, endCallback: () => void) {
         this.page = page;
         this.memory = memory;
         this.endCallback = endCallback;
@@ -352,7 +352,7 @@ export class BattleController {
     resetSelfTeam() {
         this.realBattle.selfTeam = newInsWithChecker(BattleTeam);
 
-        let selfPetsMmr = this.memory.gameData.curExploration.selfs;
+        let selfPetsMmr = this.memory.gameData.curExpl.selfs;
 
         let mpMax = 0;
         let last = null;
@@ -391,7 +391,7 @@ export class BattleController {
 
     checkIfSelfTeamChanged(): boolean {
         let pets = this.memory.gameData.pets;
-        let selfPetsMmr = this.memory.gameData.curExploration.selfs;
+        let selfPetsMmr = this.memory.gameData.curExpl.selfs;
         for (let petIdx = 0; petIdx < selfPetsMmr.length; petIdx++) {
             const selfPetMmr = selfPetsMmr[petIdx];
             let pet = pets[petIdx];
@@ -414,10 +414,10 @@ export class BattleController {
         let gameData = this.memory.gameData;
         let posId = gameData.curPosId;
         let curPosModel = actPosModelDict[posId];
-        let explModel: ExplorationModel = <ExplorationModel>curPosModel.actDict['exploration'];
+        let explModel: ExplModel = <ExplModel>curPosModel.actDict['exploration'];
 
         let petCount = random(5) + 1;
-        let step = gameData.curExploration.curStep;
+        let step = gameData.curExpl.curStep;
         let curStepModel = explModel.stepModels[step];
 
         let enmeyPetType1 = getRandomOneInList(curStepModel.petIds);
@@ -498,7 +498,7 @@ export class BattleController {
         this.page.setUIofEnemyPet(-1);
 
         // 日志
-        let hiding = this.memory.gameData.curExploration.hiding;
+        let hiding = this.memory.gameData.curExpl.hiding;
         let petNameDict = {};
         for (const ePet of this.realBattle.enemyTeam.pets) {
             let petId = ePet.pet.id;
