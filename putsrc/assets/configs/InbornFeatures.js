@@ -1,0 +1,21 @@
+module.exports = [
+    'baseStrength',
+    'baseConcentration',
+    'baseDurability',
+    'baseAgility',
+    'baseSensitivity',
+    'baseElegant',
+    'addHpMax',
+    'addMpMax',
+    'addAtkDmg',
+    'addSklDmg',
+    'addAtkMax',
+    'addSklMax',
+    'addCritRate',
+    'addCritDmgRate',
+    'addEvdRate',
+    'addHitRate',
+    'addDfsRate',
+    'addDmgRdcHP',
+    'addLoad'
+];

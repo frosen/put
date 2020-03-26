@@ -41,13 +41,13 @@ export default class CellCatch extends ListViewCell {
         this.petNameLbl.string = petModel.cnName;
         this.subLbl.string = `等级：${pet.lv}   品阶：${PetRankNames[pet.rank]}`;
 
-        let len = pet.raFeatures.length;
+        let len = pet.inbornFeatures.length;
         if (len == 0) {
             this.featureLbl.string = '无天赋特性';
         } else {
             let featureStrs = [];
-            for (let index = 0; index < pet.raFeatures.length; index++) {
-                let feature = pet.raFeatures[index];
+            for (let index = 0; index < pet.inbornFeatures.length; index++) {
+                let feature = pet.inbornFeatures[index];
                 let featureModel = featureModelDict[feature.id];
 
                 featureStrs.push('天赋' + String(index + 1) + '：' + featureModel.getInfo(feature.datas));

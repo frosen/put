@@ -124,7 +124,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
     JingZhi: {
         id: 'JingZhi',
         cnName: '静止',
-        brief: '静',
+        brief: '止',
         buffType: BuffType.debuff,
         eleType: EleType.air,
         onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {

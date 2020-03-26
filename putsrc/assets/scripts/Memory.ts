@@ -349,8 +349,8 @@ export class Pet {
     /** 当前经验 */
     exp: number = 0;
 
-    /** 随机自带特性 */
-    raFeatures: Feature[] = [];
+    /** 天赋特性 */
+    inbornFeatures: Feature[] = [];
     /** 学习了的特性 */
     learnedFeatures: Feature[] = [];
 
@@ -358,7 +358,7 @@ export class Pet {
     equips: Item[] = [];
 
     eachFeatures(callback: (featureModel: FeatureModel, datas: number[]) => void) {
-        for (const feature of this.raFeatures) callback(featureModelDict[feature.id], feature.datas);
+        for (const feature of this.inbornFeatures) callback(featureModelDict[feature.id], feature.datas);
         let selfFeatures = petModelDict[this.id].selfFeatures.slice(0, PetRankToFeatureCount[this.rank]);
         for (const feature of selfFeatures) callback(featureModelDict[feature.id], feature.datas);
         for (const feature of this.learnedFeatures) callback(featureModelDict[feature.id], feature.datas);

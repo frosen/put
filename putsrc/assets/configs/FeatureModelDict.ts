@@ -201,6 +201,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addDmgRdcHP: {
         id: 'addDmgRdcHP',
+        cnBrief: '蛛',
         dataAreas: [
             [0.02, 0.02],
             [0.01, 0.01]
@@ -218,6 +219,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     addLoad: {
         id: 'addLoad',
+        cnBrief: '猿',
         dataAreas: [[30, 30]],
         onSetting(pet: Pet2, datas: number[]): void {
             pet.load += datas[0];
@@ -228,6 +230,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitWithFire: {
         id: 'hitWithFire',
+        cnBrief: '焰',
         dataAreas: [[0.1, 0.1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) aim.hp -= pet.getSklDmg() * datas[0] * bData.ctrlr.getEleDmgRate(EleType.fire, aim);
@@ -238,6 +241,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitWithWater: {
         id: 'hitWithWater',
+        cnBrief: '川',
         dataAreas: [[0.1, 0.1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) aim.hp -= pet.getSklDmg() * datas[0] * bData.ctrlr.getEleDmgRate(EleType.water, aim);
@@ -248,6 +252,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitWithAir: {
         id: 'hitWithAir',
+        cnBrief: '风',
         dataAreas: [[0.1, 0.1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) aim.hp -= pet.getSklDmg() * datas[0] * bData.ctrlr.getEleDmgRate(EleType.air, aim);
@@ -258,6 +263,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitWithEarth: {
         id: 'hitWithEarth',
+        cnBrief: '渊',
         dataAreas: [[0.1, 0.1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) aim.hp -= pet.getSklDmg() * datas[0] * bData.ctrlr.getEleDmgRate(EleType.earth, aim);
@@ -268,6 +274,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitWithLight: {
         id: 'hitWithLight',
+        cnBrief: '耀',
         dataAreas: [[0.1, 0.1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) aim.hp -= pet.getSklDmg() * datas[0] * bData.ctrlr.getEleDmgRate(EleType.light, aim);
@@ -278,6 +285,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitWithDark: {
         id: 'hitWithDark',
+        cnBrief: '影',
         dataAreas: [[0.1, 0.1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) aim.hp -= pet.getSklDmg() * datas[0] * bData.ctrlr.getEleDmgRate(EleType.dark, aim);
@@ -288,6 +296,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitStlHP: {
         id: 'hitStlHP',
+        cnBrief: '蝠',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) pet.hp = Math.min(pet.hp + bData[0] * bData.finalDmg, pet.hpMax);
@@ -298,6 +307,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitRdcMp: {
         id: 'hitRdcMp',
+        cnBrief: '惊',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) bData.ctrlr.getTeam(aim).mp = Math.min(bData.ctrlr.getTeam(aim).mp - datas[0], 0);
@@ -308,6 +318,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitRdcRg: {
         id: 'hitRdcRg',
+        cnBrief: '静',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) bData.ctrlr.getTeam(aim).rage = Math.min(bData.ctrlr.getTeam(aim).rage - datas[0], 0);
@@ -331,6 +342,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitAddRg: {
         id: 'hitAddRg',
+        cnBrief: '狂',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) {
@@ -344,6 +356,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitStlMp: {
         id: 'hitStlMp',
+        cnBrief: '魂',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) {
@@ -358,6 +371,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitStlRg: {
         id: 'hitStlRg',
+        cnBrief: '妄',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) {

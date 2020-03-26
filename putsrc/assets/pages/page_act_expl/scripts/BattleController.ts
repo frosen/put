@@ -999,7 +999,10 @@ export class BattleController {
     exitBattle(selfWin: boolean) {
         let rb = this.realBattle;
 
-        if (selfWin) this.receiveExp(); // 计算获得的exp
+        if (selfWin) {
+            this.receiveExp(); // 计算获得的exp
+            this.executePetCatch();
+        }
 
         rb.start = false;
         this.memory.deleteBattle();
@@ -1050,6 +1053,11 @@ export class BattleController {
                 selfPet.exp = nextExp;
             }
         }
+    }
+
+    executePetCatch() {
+        let catchIdx = this.memory.gameData.curExpl.curBattle.catchPetIdx;
+        if (catchIdx == -1) return;
     }
 
     getAim(battlePet: BattlePet, toSelf: boolean, spBattleType: BattleType = null): BattlePet {
