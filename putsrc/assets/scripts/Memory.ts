@@ -117,6 +117,7 @@ export class EnemyPetMmr {
     id: string = '';
     lv: number = 0;
     rank: number = 0;
+    features: Feature[] = [];
 }
 
 export class BattleMmr {
@@ -132,6 +133,13 @@ export class ExplMmr {
     selfs: SelfPetMmr[] = newList();
     curBattle: BattleMmr = null;
     hiding: boolean = false;
+}
+
+// -----------------------------------------------------------------
+
+export class ProfTitleModel {
+    id: string;
+    cnName: string;
 }
 
 // -----------------------------------------------------------------
@@ -228,12 +236,22 @@ export class Feature {
 
     setDatas(lv: number) {
         let featureModel = featureModelDict[this.id];
-        let datas = [];
+        let datas = newList();
         for (const dataArea of featureModel.dataAreas) {
             let data = dataArea[0] + (lv - 1) * dataArea[1];
             datas.push(data);
         }
         this.datas = datas;
+    }
+
+    clone(): Feature {
+        let feature = newInsWithChecker(Feature);
+        feature.id = this.id;
+        feature.datas = newList();
+        for (const data of this.datas) {
+            feature.datas.push(data);
+        }
+        return feature;
     }
 }
 
@@ -530,9 +548,11 @@ export class Item {
 
 export class GameData {
     curPosId: string = '';
-
     posDataDict: { [key: string]: ActPos } = newDict();
+
     curExpl: ExplMmr = null;
+
+    profTitleIds: string[] = [];
 
     pets: Pet[] = newList();
     /** 一共抓取过的宠物的总量，用于pet的索引 */
@@ -541,10 +561,15 @@ export class GameData {
     items: Item[] = newList();
 }
 
+export class GameData2 {
+    petLenMax: number = 10;
+}
+
 // -----------------------------------------------------------------
 
 export class Memory {
     gameData: GameData = newInsWithChecker(GameData);
+    gameData2: GameData2 = new GameData2();
 
     saveToken: boolean = false;
     saveInterval: number = 0;
@@ -634,7 +659,7 @@ export class Memory {
         }
     }
 
-    createBattle(seed: number) {
+    createBattle(seed: number, pets: Pet[]) {
         cc.assert(this.gameData.curExpl, '创建battle前必有Expl');
         let curExpl = this.gameData.curExpl;
         if (curExpl.curBattle) return;
@@ -643,13 +668,19 @@ export class Memory {
         battle.seed = seed;
 
         curExpl.curBattle = battle;
+
+        for (const pet of pets) {
+            this.createEnemyPet(pet.id, pet.lv, pet.rank, pet.inbornFeatures);
+        }
     }
 
-    createEnemyPet(id: string, lv: number, rank: number) {
+    createEnemyPet(id: string, lv: number, rank: number, features: Feature[]) {
         let p = newInsWithChecker(EnemyPetMmr);
         p.id = id;
         p.lv = lv;
         p.rank = rank;
+        p.features = newList();
+        for (const feature of features) p.features.push(feature.clone());
 
         this.gameData.curExpl.curBattle.enemys.push(p);
     }
@@ -657,6 +688,32 @@ export class Memory {
     deleteBattle() {
         cc.assert(this.gameData.curExpl, '删除battle前必有Expl');
         this.gameData.curExpl.curBattle = null;
+    }
+
+    // -----------------------------------------------------------------
+
+    addPet(id: string, lv: number, rank: number, features: Feature[]) {
+        this.gameData.totalPetCount++;
+
+        let pet = newInsWithChecker(Pet);
+        pet.id = id;
+        pet.state = PetState.rest;
+
+        pet.catchTime = new Date().getTime();
+        pet.catchIdx = this.gameData.totalPetCount;
+        pet.catchLv = lv;
+        pet.catchRank = rank;
+
+        pet.lv = lv;
+        pet.rank = rank;
+
+        pet.privity = 0;
+        pet.privityChangedTime = pet.catchTime;
+
+        pet.inbornFeatures = newList();
+        for (const feature of features) pet.inbornFeatures.push(feature.clone());
+
+        this.gameData.pets.push(pet);
     }
 
     // -----------------------------------------------------------------

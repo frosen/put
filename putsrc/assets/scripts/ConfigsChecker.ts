@@ -61,6 +61,7 @@ function checkSkillModelDict() {
 }
 
 function checkBuffModelDict() {
+    let buffBriefDict = {};
     for (const key in buffModelDict) {
         const model = buffModelDict[key];
         if (model.id != key) cc.error('buffModelDict中，id与dict的key不符', key, model.id);
@@ -80,17 +81,24 @@ function checkBuffModelDict() {
         } else {
             cc.error('buffModelDict中，onStarted onEnd onTurnEnd 必有其一', key);
         }
+
+        if (buffBriefDict[model.brief] == true) cc.error('buffModelDict中，brief重复了', key);
+        buffBriefDict[model.brief] = true;
     }
 }
 
 function checkFeatureModelDict() {
+    let briefDict = {};
+
     for (const key in featureModelDict) {
         const model = featureModelDict[key];
         if (model.id != key) cc.error('featureModelDict中，id与dict的key不符', key, model.id);
-        if (model.hasOwnProperty('id') && model.hasOwnProperty('dataAreas') && model.hasOwnProperty('getInfo')) {
-        } else {
-            cc.error('featureModelDict中，缺少一个必要项目', key);
-        }
+        if (!model.hasOwnProperty('id')) cc.error('featureModelDict中，缺少id', key);
+        if (!model.hasOwnProperty('dataAreas')) cc.error('featureModelDict中，缺少dataAreas', key);
+        if (!model.hasOwnProperty('getInfo')) cc.error('featureModelDict中，缺少getInfo', key);
+        if (!model.hasOwnProperty('cnBrief')) cc.error('featureModelDict中，缺少cnBrief', key);
+        if (briefDict[model.cnBrief] == true) cc.error('featureModelDict中，cnBrief重复了', key);
+        briefDict[model.cnBrief] = true;
     }
 }
 

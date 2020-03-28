@@ -16,16 +16,19 @@ import {
     SkillDirType,
     EleType,
     EleTypeNames,
-    FeatureModel
+    FeatureModel,
+    Feature
 } from 'scripts/Memory';
 import PageActExpl from './PageActExpl';
+import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
 
 import * as expModels from 'configs/ExpModels';
 import actPosModelDict from 'configs/ActPosModelDict';
 import * as petModelDict from 'configs/PetModelDict';
 import * as skillModelDict from 'configs/SkillModelDict';
-import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
+import * as inbornFeatures from 'configs/InbornFeatures';
 import BuffModelDict from 'configs/BuffModelDict';
+
 import { deepCopy } from 'scripts/Utils';
 
 const MagicNum = 1654435769 + Math.floor(Math.random() * 1000000000);
@@ -410,79 +413,9 @@ export class BattleController {
         let seed = new Date().getTime();
         setSeed(seed);
 
-        // 生成敌人
-        let gameData = this.memory.gameData;
-        let posId = gameData.curPosId;
-        let curPosModel = actPosModelDict[posId];
-        let explModel: ExplModel = <ExplModel>curPosModel.actDict['exploration'];
-
-        let petCountMax = curPosModel.lv < 10 ? 4 : 5;
-        let petCount = random(petCountMax) + 1;
-        let step = gameData.curExpl.curStep;
-        let curStepModel = explModel.stepModels[step];
-
-        let enmeyPetType1 = getRandomOneInList(curStepModel.petIds);
-        let enmeyPetType2 = getRandomOneInList(curStepModel.petIds);
-
-        let enemyPetDatas = [];
-        for (let index = 0; index < petCount; index++) {
-            let id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
-            let lv = Math.max(1, curPosModel.lv - 2 + normalRandom(5));
-            let rank = normalRandom(step * 2) + 1;
-            enemyPetDatas.push({ id, lv, rank });
-        }
-
         // 更新battle
+        this.resetRealBattle();
         let rb = this.realBattle;
-        rb.enemyTeam = newInsWithChecker(BattleTeam);
-
-        let mpMax = 0;
-        let last = null;
-        for (let index = 0; index < enemyPetDatas.length; index++) {
-            const enemyPet = enemyPetDatas[index];
-
-            let petData = newInsWithChecker(Pet);
-            petData.catchIdx = index;
-            petData.id = enemyPet.id;
-            petData.lv = enemyPet.lv;
-            petData.rank = enemyPet.rank;
-
-            let battlePet = newInsWithChecker(BattlePet);
-            battlePet.init(index, 5 - enemyPetDatas.length + index, petData, true);
-            if (last) {
-                battlePet.last = last;
-                last.next = battlePet;
-            }
-            last = battlePet;
-
-            mpMax += battlePet.pet2.mpMax;
-
-            rb.enemyTeam.pets.push(battlePet);
-        }
-
-        // 按照HP排序
-        if (randomRate(1)) {
-            let ePets = rb.enemyTeam.pets;
-            ePets.sort((a, b) => b.hpMax - a.hpMax);
-            // 重置索引
-            for (let index = 0; index < ePets.length; index++) {
-                const pet = ePets[index];
-                pet.idx = index;
-                pet.fromationIdx = 5 - ePets.length + index;
-            }
-        }
-
-        rb.enemyTeam.mp = mpMax;
-        rb.enemyTeam.mpMax = mpMax;
-
-        rb.battleRound = 0;
-        rb.atkRound = 0;
-
-        rb.order.length = 0;
-        for (const pet of rb.selfTeam.pets) rb.order.push(pet);
-        for (const pet of rb.enemyTeam.pets) rb.order.push(pet);
-
-        rb.start = true;
 
         if (this.debugMode) {
             this.realBattleCopys.length = 0;
@@ -490,10 +423,14 @@ export class BattleController {
         }
 
         // 更新memory
-        this.memory.createBattle(seed);
-        for (const { pet } of rb.selfTeam.pets) {
-            this.memory.createEnemyPet(pet.id, pet.lv, pet.rank);
-        }
+        this.memory.createBattle(
+            seed,
+            rb.enemyTeam.pets.map<Pet>(
+                (value: BattlePet): Pet => {
+                    return value.pet;
+                }
+            )
+        );
 
         // 更新UI
         this.page.setUIofEnemyPet(-1);
@@ -532,6 +469,99 @@ export class BattleController {
         }
 
         this.gotoNextRound();
+    }
+
+    resetRealBattle() {
+        let enemyPetDatas = this.createEnemyData();
+
+        let rb = this.realBattle;
+        rb.enemyTeam = newInsWithChecker(BattleTeam);
+
+        let mpMax = 0;
+        let last = null;
+        for (let index = 0; index < enemyPetDatas.length; index++) {
+            const enemyPet = enemyPetDatas[index];
+
+            let petData = newInsWithChecker(Pet);
+            petData.catchIdx = index;
+            petData.id = enemyPet.id;
+            petData.lv = enemyPet.lv;
+            petData.rank = enemyPet.rank;
+            petData.inbornFeatures = enemyPet.features;
+
+            let battlePet = newInsWithChecker(BattlePet);
+            battlePet.init(index, 5 - enemyPetDatas.length + index, petData, true);
+            if (last) {
+                battlePet.last = last;
+                last.next = battlePet;
+            }
+            last = battlePet;
+
+            mpMax += battlePet.pet2.mpMax;
+
+            rb.enemyTeam.pets.push(battlePet);
+        }
+
+        // 按照HP排序
+        if (randomRate(1)) {
+            let ePets = rb.enemyTeam.pets;
+            ePets.sort((a, b) => b.hpMax - a.hpMax);
+            // 重置索引
+            for (let index = 0; index < ePets.length; index++) {
+                const pet = ePets[index];
+                pet.idx = index;
+                pet.fromationIdx = 5 - ePets.length + index;
+            }
+        }
+
+        rb.enemyTeam.mp = mpMax;
+        rb.enemyTeam.mpMax = mpMax;
+
+        rb.battleRound = 0;
+        rb.atkRound = 0;
+
+        rb.order.length = 0;
+        for (const pet of rb.selfTeam.pets) rb.order.push(pet);
+        for (const pet of rb.enemyTeam.pets) rb.order.push(pet);
+
+        rb.start = true;
+    }
+
+    createEnemyData(): { id: string; lv: number; rank: number; features: Feature[] }[] {
+        let gameData = this.memory.gameData;
+        let posId = gameData.curPosId;
+        let curPosModel = actPosModelDict[posId];
+        let explModel: ExplModel = <ExplModel>curPosModel.actDict['exploration'];
+
+        let petCountMax = curPosModel.lv < 10 ? 4 : 5;
+        let petCount = random(petCountMax) + 1;
+        let step = gameData.curExpl.curStep;
+        let curStepModel = explModel.stepModels[step];
+
+        let enmeyPetType1 = getRandomOneInList(curStepModel.petIds);
+        let enmeyPetType2 = getRandomOneInList(curStepModel.petIds);
+
+        let enemyPetDatas: { id: string; lv: number; rank: number; features: Feature[] }[] = [];
+        for (let index = 0; index < petCount; index++) {
+            let id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
+            let lv = Math.max(1, curPosModel.lv - 2 + normalRandom(5));
+            let rank = normalRandom(step * 2) + 1;
+            let features = [];
+
+            let featureR = Math.random();
+            if (featureR > 0.3) features.push(this.createInbornFeature());
+            if (featureR > 0.8) features.push(this.createInbornFeature());
+
+            enemyPetDatas.push({ id, lv, rank, features });
+        }
+        return enemyPetDatas;
+    }
+
+    createInbornFeature(): Feature {
+        let feature = new Feature();
+        feature.id = getRandomOneInList(inbornFeatures);
+        feature.setDatas(1 + Math.floor(Math.pow(Math.random(), 3))); // 使用3次方，使随机结果更小
+        return feature;
     }
 
     update() {
@@ -1056,8 +1086,36 @@ export class BattleController {
     }
 
     executePetCatch() {
-        let catchIdx = this.memory.gameData.curExpl.curBattle.catchPetIdx;
+        let gameData = this.memory.gameData;
+        let catchIdx = gameData.curExpl.curBattle.catchPetIdx;
         if (catchIdx == -1) return;
+
+        let battlePet = this.realBattle.enemyTeam.pets[catchIdx];
+
+        // 计算空间是否允许
+        let gameData2 = this.memory.gameData2;
+        if (gameData.pets.length >= gameData2.petLenMax) return;
+
+        // 计算是否成功捕捉
+        let pet = battlePet.pet;
+        let curLvCatcherHaving = false; // llytodo
+        let highLvCatcherHaving = false;
+        let suc = false;
+
+        if (curLvCatcherHaving) {
+            suc = 1 - ((pet.lv - 1) % 10) * 0.04 > ranWithSeed();
+        } else if (highLvCatcherHaving) {
+            suc = true;
+        } else {
+            suc = Math.max(1 - (pet.lv - 5) * 0.05, 0.1) > ranWithSeed();
+        }
+
+        if (suc) {
+            this.page.log(`成功捕获${petModelDict[pet.id].cnName}`);
+            this.memory.addPet(pet.id, pet.lv, pet.rank, pet.inbornFeatures);
+        } else {
+            this.page.log(`捕获${petModelDict[pet.id].cnName}失败`);
+        }
     }
 
     getAim(battlePet: BattlePet, toSelf: boolean, spBattleType: BattleType = null): BattlePet {
@@ -1098,10 +1156,8 @@ export class BattleController {
                 }
                 break;
             case BattleType.chaos:
-                {
-                    let pets = ranWithSeed() > 0.5 ? aimPets : anotherSidePets;
-                    aim = this.getPetAlive(pets[ranWithSeedInt(pets.length)]);
-                }
+                let pets = ranWithSeed() > 0.5 ? aimPets : anotherSidePets;
+                aim = this.getPetAlive(pets[ranWithSeedInt(pets.length)]);
                 break;
             default:
                 break;

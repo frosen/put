@@ -7,7 +7,10 @@
 import { FeatureModel, Pet2, BattleDataForFeature, SkillModel, EleType, SkillType, BattleType } from 'scripts/Memory';
 import { BattlePet, BattleController } from 'pages/page_act_expl/scripts/BattleController';
 
-const rd = Math.round;
+function rd(n: number) {
+    if (Math.round(n) * 10 == Math.round(n * 10)) return String(Math.round(n));
+    else return n.toFixed(1);
+}
 
 const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     baseStrength: {
@@ -211,10 +214,41 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.atkDmgTo += pet.atkDmgToOri * datas[0];
             pet.sklDmgFrom += pet.sklDmgFromOri * datas[0];
             pet.sklDmgTo += pet.sklDmgToOri * datas[0];
-            pet.hpMax -= pet.hpMaxOri * datas[1];
+            pet.hpMax = Math.max(pet.hpMax - pet.hpMaxOri * datas[1], 1);
         },
         getInfo(datas: number[]): string {
-            return `所有伤害提高${rd(datas[0] * 100)}%，但血量降低${rd(datas[1] * 100)}%`;
+            return `所有伤害提高${rd(datas[0] * 100)}%，但血量上限降低${rd(datas[1] * 100)}%`;
+        }
+    },
+    addHPRdcMP: {
+        id: 'addHPRdcMP',
+        cnBrief: '蛹',
+        dataAreas: [
+            [0.02, 0.02],
+            [10, 10]
+        ],
+        onSetting(pet: Pet2, datas: number[]): void {
+            pet.hpMax += pet.hpMaxOri * datas[0];
+            pet.mpMax = Math.max(pet.mpMax - datas[1], 0);
+        },
+        getInfo(datas: number[]): string {
+            return `血量上限提高${rd(datas[0] * 100)}%，但精神上限降低${datas[1]}点`;
+        }
+    },
+    addByLuck: {
+        id: 'addByLuck',
+        cnBrief: '吉',
+        dataAreas: [[0.01, 0.01]],
+        onSetting(pet: Pet2, datas: number[]): void {
+            if (pet.strengthOri % 3 == 0) pet.strength += pet.strengthOri * datas[0];
+            if (pet.concentrationOri % 3 == 0) pet.concentration += pet.concentrationOri * datas[0];
+            if (pet.durabilityOri % 3 == 0) pet.durability += pet.durabilityOri * datas[0];
+            if (pet.agilityOri % 3 == 0) pet.agility += pet.agilityOri * datas[0];
+            if (pet.sensitivityOri % 3 == 0) pet.sensitivity += pet.sensitivityOri * datas[0];
+            if (pet.elegantOri % 3 == 0) pet.elegant += pet.elegantOri * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `任意基础属性如果为3的倍数，则提高${rd(datas[0] * 100)}%`;
         }
     },
     addLoad: {
@@ -241,7 +275,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitWithWater: {
         id: 'hitWithWater',
-        cnBrief: '川',
+        cnBrief: '湍',
         dataAreas: [[0.1, 0.1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) aim.hp -= pet.getSklDmg() * datas[0] * bData.ctrlr.getEleDmgRate(EleType.water, aim);
@@ -252,7 +286,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitWithAir: {
         id: 'hitWithAir',
-        cnBrief: '风',
+        cnBrief: '穹',
         dataAreas: [[0.1, 0.1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) aim.hp -= pet.getSklDmg() * datas[0] * bData.ctrlr.getEleDmgRate(EleType.air, aim);
@@ -274,7 +308,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitWithLight: {
         id: 'hitWithLight',
-        cnBrief: '耀',
+        cnBrief: '烁',
         dataAreas: [[0.1, 0.1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) aim.hp -= pet.getSklDmg() * datas[0] * bData.ctrlr.getEleDmgRate(EleType.light, aim);
@@ -318,7 +352,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitRdcRg: {
         id: 'hitRdcRg',
-        cnBrief: '静',
+        cnBrief: '凝',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) bData.ctrlr.getTeam(aim).rage = Math.min(bData.ctrlr.getTeam(aim).rage - datas[0], 0);
@@ -329,6 +363,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitAddMp: {
         id: 'hitAddMp',
+        cnBrief: '灵',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) {
@@ -342,7 +377,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitAddRg: {
         id: 'hitAddRg',
-        cnBrief: '狂',
+        cnBrief: '吼',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) {
@@ -386,6 +421,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     castMpDmg: {
         id: 'castMpDmg',
+        cnBrief: '信',
         dataAreas: [
             [0.8, -0.02],
             [0.01, 0.01]
@@ -400,6 +436,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     castConDmg: {
         id: 'castConDmg',
+        cnBrief: '智',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && pet.pet2.concentration > aim.pet2.concentration) aim.hp -= bData.finalDmg * datas[0];
@@ -410,66 +447,73 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     castFire: {
         id: 'castFire',
+        cnBrief: '焚',
         dataAreas: [[0.01, 0.009]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.fire) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `火系伤害提高${(datas[0] * 100).toFixed(1)}%`;
+            return `火系伤害提高${rd(datas[0] * 100)}%`;
         }
     },
     castWater: {
         id: 'castWater',
+        cnBrief: '寒',
         dataAreas: [[0.01, 0.009]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.water) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `水系伤害提高${(datas[0] * 100).toFixed(1)}%`;
+            return `水系伤害提高${rd(datas[0] * 100)}%`;
         }
     },
     castAir: {
         id: 'castAir',
+        cnBrief: '苍',
         dataAreas: [[0.01, 0.009]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.air) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `空系伤害提高${(datas[0] * 100).toFixed(1)}%`;
+            return `空系伤害提高${rd(datas[0] * 100)}%`;
         }
     },
     castEarth: {
         id: 'castEarth',
+        cnBrief: '势',
         dataAreas: [[0.01, 0.009]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.earth) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `地系伤害提高${(datas[0] * 100).toFixed(1)}%`;
+            return `地系伤害提高${rd(datas[0] * 100)}%`;
         }
     },
     castLight: {
         id: 'castLight',
+        cnBrief: '耀',
         dataAreas: [[0.01, 0.009]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.light) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `光系伤害提高${(datas[0] * 100).toFixed(1)}%`;
+            return `光系伤害提高${rd(datas[0] * 100)}%`;
         }
     },
     castDark: {
         id: 'castDark',
+        cnBrief: '邪',
         dataAreas: [[0.01, 0.009]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.dark) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `暗系伤害提高${(datas[0] * 100).toFixed(1)}%`;
+            return `暗系伤害提高${rd(datas[0] * 100)}%`;
         }
     },
     castEleRein: {
         id: 'castEleRein',
+        cnBrief: '猎',
         dataAreas: [[0.03, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.ctrlr.getEleDmgRate(bData.skillModel.eleType, aim) > 1)
@@ -481,6 +525,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     castHurtMe: {
         id: 'castHurtMe',
+        cnBrief: '命',
         dataAreas: [[0.03, 0.03]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel) {
@@ -494,6 +539,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     castUlti: {
         id: 'castUlti',
+        cnBrief: '绝',
         dataAreas: [[0.08, 0.08]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.skillType == SkillType.ultimate) aim.hp -= bData.finalDmg * datas[0];
@@ -504,6 +550,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitKill: {
         id: 'hitKill',
+        cnBrief: '灭',
         dataAreas: [
             [0.2, 0.01],
             [0.05, 0.02]
@@ -517,6 +564,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitByRage: {
         id: 'hitByRage',
+        cnBrief: '狂',
         dataAreas: [
             [60, -1],
             [0.03, 0.01]
@@ -530,6 +578,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitByHp: {
         id: 'hitByHp',
+        cnBrief: '末',
         dataAreas: [
             [0.1, 0.01],
             [0.8, 0.03]
@@ -543,16 +592,18 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitByCombo: {
         id: 'hitByCombo',
+        cnBrief: '狼',
         dataAreas: [[0.01, 0.008]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.ctrlr.realBattle.combo > 1) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `连击伤害提高${(datas[0] * 100).toFixed(1)}%`;
+            return `连击伤害提高${rd(datas[0] * 100)}%`;
         }
     },
     hitByPetCountDiff: {
         id: 'hitByPetCountDiff',
+        cnBrief: '蚁',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.ctrlr.getTeam(pet).pets.length < bData.ctrlr.getTeam(aim).pets.length)
@@ -564,6 +615,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtAndHurt: {
         id: 'hurtAndHurt',
+        cnBrief: '荆',
         dataAreas: [[0.01, 0.01]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             caster.hp = Math.max(caster.hp - bData.finalDmg * datas[0], 1);
@@ -574,6 +626,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtGotMp: {
         id: 'hurtGotMp',
+        cnBrief: '妖',
         dataAreas: [[1, 1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             let team = bData.ctrlr.getTeam(pet);
@@ -585,6 +638,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtGotRage: {
         id: 'hurtGotRage',
+        cnBrief: '熊',
         dataAreas: [[1, 1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             bData.ctrlr.getTeam(pet).rage = Math.min(bData.ctrlr.getTeam(pet).rage + datas[0], 100);
@@ -595,6 +649,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtRdcMp: {
         id: 'hurtRdcMp',
+        cnBrief: '橡',
         dataAreas: [[0.1, 0.09]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             let team = bData.ctrlr.getTeam(pet);
@@ -611,6 +666,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtWithShoot: {
         id: 'hurtWithShoot',
+        cnBrief: '雀',
         dataAreas: [[0.02, 0.02]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             let battleType = bData.skillModel.spBattleType || bData.ctrlr.getBattleType(caster);
@@ -622,6 +678,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtWithAss: {
         id: 'hurtWithAss',
+        cnBrief: '松',
         dataAreas: [[0.02, 0.02]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             let battleType = bData.skillModel.spBattleType || bData.ctrlr.getBattleType(caster);
@@ -633,6 +690,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtByHp: {
         id: 'hurtByHp',
+        cnBrief: '慑',
         dataAreas: [
             [0.8, -0.02],
             [0.02, 0.02]
@@ -646,6 +704,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurt: {
         id: 'hurt',
+        cnBrief: '盾',
         dataAreas: [[0.01, 0.01]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             pet.hp += bData.finalDmg * datas[0];
@@ -656,6 +715,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtWithAtk: {
         id: 'hurtWithAtk',
+        cnBrief: '甲',
         dataAreas: [[0.02, 0.02]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (!bData.skillModel) pet.hp += bData.finalDmg * datas[0];
@@ -666,6 +726,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtWithCast: {
         id: 'hurtWithCast',
+        cnBrief: '屏',
         dataAreas: [[0.02, 0.02]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel) pet.hp += bData.finalDmg * datas[0];
@@ -676,6 +737,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtFullRage: {
         id: 'hurtFullRage',
+        cnBrief: '消',
         dataAreas: [[40, -1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.ctrlr.getTeam(pet).rage == 100) {
@@ -689,6 +751,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtOthers: {
         id: 'hurtOthers',
+        cnBrief: '链',
         dataAreas: [[0.3, 0.04]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             let dmg = bData.finalDmg * datas[0];
@@ -703,6 +766,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     heal: {
         id: 'heal',
+        cnBrief: '医',
         dataAreas: [[0.02, 0.02]],
         onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             pet.hp += Math.abs(bData.finalDmg) * datas[0];
@@ -713,6 +777,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     healByHp: {
         id: 'healByHp',
+        cnBrief: '恩',
         dataAreas: [[0.1, 0.1]],
         onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (pet.hp < pet.hpMax * 0.25) pet.hp += Math.abs(bData.finalDmg) * datas[0];
@@ -723,6 +788,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     beginAddRage: {
         id: 'beginAddRage',
+        cnBrief: '阳',
         dataAreas: [[5, 5]],
         onStartingBattle(pet: BattlePet, datas: number[], ctrlr: BattleController): void {
             ctrlr.getTeam(pet).rage = Math.min(ctrlr.getTeam(pet).rage + datas[0], 100);
@@ -733,6 +799,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     killAddHp: {
         id: 'killAddHp',
+        cnBrief: '恶',
         dataAreas: [[0.05, 0.05]],
         onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
             pet.hp = Math.min(pet.hp + aim.hpMax * datas[0], pet.hpMax);
@@ -743,6 +810,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     killAddAllHp: {
         id: 'killAddAllHp',
+        cnBrief: '噬',
         dataAreas: [[0.02, 0.01]],
         onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
             let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0);
@@ -754,6 +822,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     killAddMp: {
         id: 'killAddMp',
+        cnBrief: '神',
         dataAreas: [[20, 8]],
         onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
             let team = ctrlr.getTeam(pet);
@@ -765,6 +834,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     killRdcCD: {
         id: 'killRdcCD',
+        cnBrief: '梦',
         dataAreas: [[0.08, 0.08]],
         onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
             let cd = ctrlr.random() < datas[0] ? 2 : 1;
@@ -776,6 +846,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     deadHurt: {
         id: 'deadHurt',
+        cnBrief: '炸',
         dataAreas: [[0.05, 0.05]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
             caster.hp = Math.min(caster.hp - pet.hpMax * datas[0], 1);
@@ -786,6 +857,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     deadFangHu: {
         id: 'deadFangHu',
+        cnBrief: '防',
         dataAreas: [[0.08, 0.08]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
             let cd = ctrlr.random() < datas[0] ? 4 : 2;
@@ -798,6 +870,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     deadHuiChun: {
         id: 'deadHuiChun',
+        cnBrief: '春',
         dataAreas: [[0.08, 0.08]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
             let cd = ctrlr.random() < datas[0] ? 4 : 2;
