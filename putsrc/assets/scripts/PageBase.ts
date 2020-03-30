@@ -68,25 +68,8 @@ export default class PageBase extends cc.Component {
             widegt.right = 0;
         }
 
-        let bake = this.node.getChildByName('bake');
-        if (!bake) {
-            bake = new cc.Node('bake');
-            bake.parent = this.node;
-            let widegt = bake.addComponent(cc.Widget);
-            widegt.isAlignTop = true;
-            widegt.isAlignBottom = true;
-            widegt.isAlignLeft = true;
-            widegt.isAlignRight = true;
-            widegt.top = 0;
-            widegt.bottom = 0;
-            widegt.left = 0;
-            widegt.right = 0;
-        }
-
         for (const child of this.node.children) {
-            if (child != root && child != bake) {
-                cc.error('Page根节点下只能有root和bake');
-            }
+            if (child != root) cc.error('Page根节点下只能有root');
         }
     }
 

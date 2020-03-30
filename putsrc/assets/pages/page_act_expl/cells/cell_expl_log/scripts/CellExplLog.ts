@@ -13,6 +13,8 @@ export default class CellExplLog extends ListViewCell {
     @property(cc.RichText)
     logLbl: cc.RichText = null;
 
+    checkBake() {}
+
     setData(str: string) {
         this.logLbl.string = str;
     }

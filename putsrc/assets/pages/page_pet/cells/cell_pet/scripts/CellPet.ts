@@ -10,6 +10,7 @@ import ListViewCell from 'scripts/ListViewCell';
 import PagePetDetail from 'pages/page_pet_detail/scripts/PagePetDetail';
 import { EleType, PetRankNames, PetStateNames, Pet, PetModel } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
+import PagePet from 'pages/page_pet/scripts/PagePet';
 
 @ccclass
 export default class CellPet extends ListViewCell {
@@ -28,7 +29,10 @@ export default class CellPet extends ListViewCell {
     @property(cc.Button)
     funcBtn: cc.Button = null;
 
+    curIdx: number = -1;
     curPet: Pet = null;
+
+    page: PagePet = null;
 
     onLoad() {
         super.onLoad();
@@ -36,7 +40,8 @@ export default class CellPet extends ListViewCell {
         this.funcBtn.node.on('click', this.onClickFunc, this);
     }
 
-    setData(pet: Pet) {
+    setData(idx: number, pet: Pet) {
+        this.curIdx = idx;
         this.curPet = pet;
         let petModel: PetModel = petModelDict[pet.id];
         this.petNameLbl.string = petModel.cnName;
@@ -69,6 +74,7 @@ export default class CellPet extends ListViewCell {
     }
 
     onClickFunc() {
-        cc.log('PUT show pet cell func: ', this.petNameLbl.string);
+        cc.log('PUT show pet cell func: ', this.petNameLbl.string, this.curIdx);
+        this.page.showFuncBar(this.curIdx, this.node);
     }
 }

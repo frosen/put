@@ -40,6 +40,10 @@ export default class ListViewCell extends cc.Component {
         this.node.x = 0;
         this.node.y = 0;
 
+        this.checkBake();
+    }
+
+    checkBake() {
         let root = this.node.getChildByName('root');
         if (!root) {
             root = new cc.Node('root');

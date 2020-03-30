@@ -11,6 +11,7 @@ import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
 import CellPet from '../cells/cell_pet/scripts/CellPet';
 import { Pet } from 'scripts/Memory';
+import PagePet from './PagePet';
 
 @ccclass
 export default class PagePetLVD extends ListViewDelegate {
@@ -23,6 +24,8 @@ export default class PagePetLVD extends ListViewDelegate {
     }
     _curPets: Pet[] = null;
 
+    page: PagePet = null;
+
     numberOfRows(listView: ListView): number {
         return this.curPets.length;
     }
@@ -32,13 +35,13 @@ export default class PagePetLVD extends ListViewDelegate {
     }
 
     createCellForRow(listView: ListView, rowIdx: number): ListViewCell {
-        let node = cc.instantiate(this.cellPetPrefab);
-        let cell = node.getComponent(ListViewCell);
+        let cell = cc.instantiate(this.cellPetPrefab).getComponent(CellPet);
+        cell.page = this.page;
         return cell;
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPet) {
         let pet: Pet = this.curPets[rowIdx];
-        cell.setData(pet);
+        cell.setData(rowIdx, pet);
     }
 }
