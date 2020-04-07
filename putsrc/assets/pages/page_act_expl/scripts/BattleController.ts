@@ -45,13 +45,13 @@ function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
         if (typeof cNum == 'number') checkIns[key] = getCheckedNumber(cNum) as any;
     }
     return new Proxy(ins, {
-        set: function(target, key, value, receiver) {
+        set: function (target, key, value, receiver) {
             if (typeof value == 'number') {
                 checkIns[key] = getCheckedNumber(value);
             }
             return Reflect.set(target, key, value, receiver);
         },
-        get: function(target, key) {
+        get: function (target, key) {
             let v = target[key];
             if (typeof v == 'number') {
                 if (getCheckedNumber(v) != checkIns[key]) {
@@ -672,8 +672,7 @@ export class BattleController {
                         if (buffOutput.hp) {
                             let dmg = buffOutput.hp;
                             if (dmg > 0) {
-                                let eleType = pet.pet2.exEleTypes.getLast() || petModelDict[pet.pet.id].eleType;
-                                dmg *= EleReinforceRelation[buffModel.eleType] == eleType ? 1.15 : 1;
+                                dmg *= this.getEleDmgRate(buffModel.eleType, pet, buffData.caster);
                                 dmg *= (1 - pet.pet2.dfsRate) * FormationHitRate[pet.fromationIdx];
                             }
                             dmg = Math.floor(dmg);
@@ -832,7 +831,7 @@ export class BattleController {
             finalDmg = Math.max(battlePet.getSklDmg() - aim.pet2.armor, 1) * dmgRate * 0.01;
             finalDmg += Math.max(battlePet.getAtkDmg() - aim.pet2.armor, 1);
 
-            finalDmg *= this.getEleDmgRate(skillModel.eleType, aim);
+            finalDmg *= this.getEleDmgRate(skillModel.eleType, aim, battlePet);
             finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         } else {
             finalDmg = battlePet.getSklDmg() * dmgRate * 0.01;
@@ -884,9 +883,11 @@ export class BattleController {
         }
     }
 
-    getEleDmgRate(skillEleType: EleType, aim: BattlePet) {
+    getEleDmgRate(skillEleType: EleType, aim: BattlePet, caster: BattlePet) {
         let eleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
-        return EleReinforceRelation[skillEleType] == eleType ? 1.15 : 1;
+        let dmgGain = caster && petModelDict[caster.pet.id].eleType == skillEleType ? 1.1 : 1;
+        let dmgRestricts = EleReinforceRelation[skillEleType] == eleType ? 1.15 : 1;
+        return dmgGain * dmgRestricts;
     }
 
     castBuff(battlePet: BattlePet, aim: BattlePet, skillModel: SkillModel, beMain: boolean) {

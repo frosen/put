@@ -49,9 +49,9 @@ export default class PagePet extends PageBase {
         let wp = cellNode.convertToWorldSpaceAR(cc.v2(0, 0));
         let realY = cc.v2(this.node.convertToNodeSpaceAR(wp)).y;
 
-        realY += 85;
+        realY -= 85;
 
-        let changeBar = function() {
+        let changeBar = () => {
             this.funcBarNode.y = realY;
         };
 
