@@ -58,7 +58,7 @@ export default class ListView extends cc.Component {
         // @ts-ignore
         let oldFunc = this.scrollView.verticalScrollBar._setOpacity;
         // @ts-ignore
-        this.scrollView.verticalScrollBar._setOpacity = function(opacity) {
+        this.scrollView.verticalScrollBar._setOpacity = function (opacity) {
             if (this.node)
                 if (self._touching || opacity <= this.node.opacity) {
                     oldFunc.call(this, opacity);
@@ -70,12 +70,12 @@ export default class ListView extends cc.Component {
         // @ts-ignore
         let oldReleaseFunc = this.scrollView._handleReleaseLogic;
         // @ts-ignore
-        this.scrollView._handlePressLogic = function(touch) {
+        this.scrollView._handlePressLogic = function (touch) {
             oldPressFunc.call(this, touch);
             self._touching = true;
         };
         // @ts-ignore
-        this.scrollView._handleReleaseLogic = function(touch) {
+        this.scrollView._handleReleaseLogic = function (touch) {
             oldReleaseFunc.call(this, touch);
             self._touching = false;
         };

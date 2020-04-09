@@ -96,6 +96,7 @@ function getCurSeed(): number {
 export class BattleSkill {
     id: string;
     cd: number = 0;
+    mpUsing: number = 0;
 }
 
 export class BattleBuff {
@@ -137,29 +138,42 @@ export class BattlePet {
         this.hp = this.pet2.hpMax;
         this.hpMax = this.pet2.hpMax;
 
-        // 技能列表
+        let getMpUsing = (skillId: string) => {
+            let skillModel: SkillModel = skillModelDict[skillId];
+            let mpUsing = skillModel.mp;
+            if (petModelDict[pet.id].eleType == skillModel.eleType) mpUsing -= Math.floor(mpUsing * 0.1);
+            return mpUsing;
+        };
+
+        // 装备技能（装备等级低于宠物等级，则蓝耗减少）
+
+        // 自带技能
         this.skillDatas.length = 0;
         for (let index = pet.equips.length - 1; index >= 0; index--) {}
         let skillIds = petModelDict[pet.id].selfSkillIds;
         // if (pet.rank >= 8 && skillIds.length >= 2) {
         //     let skill = newInsWithChecker(BattleSkill);
         //     skill.id = skillIds[1];
+        //     skill.mpUsing = getMpUsing(skill.id);
         //     this.skillDatas.push(skill);
         // }
-        // if (pet.rank >= 5 && skillIds.length >= 1){
+        // if (pet.rank >= 5 && skillIds.length >= 1) {
         //     let skill = newInsWithChecker(BattleSkill);
         //     skill.id = skillIds[0];
+        //     skill.mpUsing = getMpUsing(skill.id);
         //     this.skillDatas.push(skill);
         // }
 
         if (skillIds.length >= 2) {
             let skill = newInsWithChecker(BattleSkill);
             skill.id = skillIds[1];
+            skill.mpUsing = getMpUsing(skill.id);
             this.skillDatas.push(skill); // llytest
         }
         if (skillIds.length >= 1) {
             let skill = newInsWithChecker(BattleSkill);
             skill.id = skillIds[0];
+            skill.mpUsing = getMpUsing(skill.id);
             this.skillDatas.push(skill); // llytest
         }
     }
@@ -356,7 +370,6 @@ export class BattleController {
         this.realBattle.selfTeam = newInsWithChecker(BattleTeam);
 
         let selfPetsMmr = this.memory.gameData.curExpl.selfs;
-
         let mpMax = 0;
         let last = null;
         for (let petIdx = 0; petIdx < selfPetsMmr.length; petIdx++) {
@@ -761,7 +774,7 @@ export class BattleController {
             let skillModel: SkillModel = skillModelDict[skillData.id];
             if (skillModel.skillType == SkillType.ultimate) continue;
 
-            let mpNeed = skillModel.mp;
+            let mpNeed = skillData.mpUsing;
             let team = this.getTeam(battlePet);
             if (team.mp < mpNeed) continue;
 
@@ -885,7 +898,7 @@ export class BattleController {
 
     getEleDmgRate(skillEleType: EleType, aim: BattlePet, caster: BattlePet) {
         let eleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
-        let dmgGain = caster && petModelDict[caster.pet.id].eleType == skillEleType ? 1.1 : 1;
+        let dmgGain = caster && petModelDict[caster.pet.id].eleType == skillEleType ? 1.05 : 1;
         let dmgRestricts = EleReinforceRelation[skillEleType] == eleType ? 1.15 : 1;
         return dmgGain * dmgRestricts;
     }

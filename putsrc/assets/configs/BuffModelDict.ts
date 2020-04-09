@@ -137,6 +137,22 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         getInfo(caster: Readonly<BattlePet>): string {
             return `目标停止一切行动`;
         }
+    },
+    MangMu: {
+        id: 'MangMu',
+        cnName: '盲目',
+        brief: '盲',
+        buffType: BuffType.debuff,
+        eleType: EleType.light,
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
+            thisPet.pet2.hitRate -= 0.3;
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            thisPet.pet2.hitRate += 0.3;
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `目标命中率降低30%`;
+        }
     }
 };
 

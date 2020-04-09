@@ -68,14 +68,12 @@ export default class TouchLayer extends cc.Component {
     }
 
     gotoPop() {
-        this.ctrlr.popPage();
+        this.ctrlr.onClickBack();
     }
 
     moveBack() {
         if (this.mark.x > 0) {
-            cc.tween(this.mark)
-                .to(0.25, { x: 0 }, { easing: 'quadOut' })
-                .start();
+            cc.tween(this.mark).to(0.25, { x: 0 }, { easing: 'quadOut' }).start();
         }
     }
 }

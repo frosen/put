@@ -74,7 +74,7 @@ let refactorCompDict = {
                         if (!this._dump) return (this.handlers = []), void 0;
                         let e = this._dump[this.target.value._componentName.value];
                         e &&
-                            e.sort(function(e, t) {
+                            e.sort(function (e, t) {
                                 return e.localeCompare(t);
                             }),
                             (this.handlers = e || []);
@@ -280,7 +280,7 @@ let refactorCompDict = {
 if (CC_EDITOR && window.hasOwnProperty('Vue')) {
     // 重载Vue.component，使其在加载一个默认的组件时，有一个回调，在这个回调里面进行vue组件的重载
     let oldVueComponent = Vue.component;
-    Vue.component = function(name, dict) {
+    Vue.component = function (name, dict) {
         oldVueComponent.call(this, name, dict);
         if (refactorCompDict.hasOwnProperty(name) && refactorCompDict[name].using === false) {
             refactorCompDict[name].using = true;
@@ -335,7 +335,7 @@ if (CC_EDITOR && window.hasOwnProperty('Vue')) {
     // buildNode里面会处理各个class的compType
     let inspectorUtils = Editor.require('packages://inspector/utils/utils');
     let oldFunc = inspectorUtils.buildNode;
-    inspectorUtils.buildNode = function(e, r, a) {
+    inspectorUtils.buildNode = function (e, r, a) {
         oldFunc(e, r, a);
         handleCompType(r);
     };

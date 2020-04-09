@@ -152,13 +152,13 @@ export class BaseController extends cc.Component {
         for (const file of files) {
             if (Fs.statSync(pageDir + '/' + file).isDirectory()) {
                 let editorDir = 'db://assets/pages/' + file + '/*';
-                Editor.assetdb.queryAssets(editorDir, null, function(err, results) {
+                Editor.assetdb.queryAssets(editorDir, null, function (err, results) {
                     for (const res of results) {
                         if (res.type == 'prefab') {
                             cc.loader.load(
                                 { type: 'uuid', uuid: res.uuid },
                                 () => {},
-                                function(err, asset) {
+                                function (err, asset) {
                                     if (err || !asset) return;
                                     baseCtrlr.pagePrefabList.push(asset);
                                 }
@@ -304,9 +304,7 @@ export class BaseController extends cc.Component {
     doPopPageAnim(curNode: cc.Node, nextNode: cc.Node, callback: () => void) {
         curNode.x = 0;
         curNode.y = 0;
-        cc.tween(curNode)
-            .to(0.2, { x: this.pageBed.width }, { easing: 'sineInOut' })
-            .start();
+        cc.tween(curNode).to(0.2, { x: this.pageBed.width }, { easing: 'sineInOut' }).start();
 
         nextNode.x = this.pageBed.width * -0.25;
         nextNode.y = 0;
@@ -405,9 +403,7 @@ export class BaseController extends cc.Component {
                     break;
             }
 
-            cc.tween(curNode)
-                .to(0.2, { x: curToX, y: curToY }, { easing: 'sineInOut' })
-                .start();
+            cc.tween(curNode).to(0.2, { x: curToX, y: curToY }, { easing: 'sineInOut' }).start();
         }
 
         let nextToX = 0;
@@ -616,11 +612,7 @@ export class BaseController extends cc.Component {
     popToast(str: string) {
         this.toastNode.getComponentInChildren(cc.Label).string = str;
         this.toastNode.stopAllActions();
-        cc.tween(this.toastNode)
-            .to(0.3, { opacity: 255 })
-            .delay(3)
-            .to(0.3, { opacity: 0 })
-            .start();
+        cc.tween(this.toastNode).to(0.3, { opacity: 255 }).delay(3).to(0.3, { opacity: 0 }).start();
     }
 
     popAlert(txt: string, callback: (key: number) => void, btn1: string = '确认', btn2: string = '取消') {
@@ -636,9 +628,7 @@ export class BaseController extends cc.Component {
         this.alertNode.scale = 0.7;
 
         this.alertNode.stopAllActions();
-        cc.tween(this.alertNode)
-            .to(0.1, { opacity: 255, scale: 1 })
-            .start();
+        cc.tween(this.alertNode).to(0.1, { opacity: 255, scale: 1 }).start();
 
         this.popMask();
     }
@@ -660,9 +650,7 @@ export class BaseController extends cc.Component {
     popMask() {
         this.maskNode.scale = 1;
         this.maskNode.stopAllActions();
-        cc.tween(this.maskNode)
-            .to(0.1, { opacity: 100 })
-            .start();
+        cc.tween(this.maskNode).to(0.1, { opacity: 100 }).start();
     }
 
     closeMask() {

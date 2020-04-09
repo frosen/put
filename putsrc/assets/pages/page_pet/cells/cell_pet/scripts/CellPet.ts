@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import ListViewCell from 'scripts/ListViewCell';
 import PagePetDetail from 'pages/page_pet_detail/scripts/PagePetDetail';
-import { EleType, PetRankNames, PetStateNames, Pet, PetModel } from 'scripts/Memory';
+import { EleType, PetRankNames, PetStateNames, Pet, PetModel, PetState } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
 import PagePet from 'pages/page_pet/scripts/PagePet';
 
@@ -27,6 +27,9 @@ export default class CellPet extends ListViewCell {
     petSp: cc.Sprite = null;
 
     @property(cc.Button)
+    stateBtn: cc.Button = null;
+
+    @property(cc.Button)
     funcBtn: cc.Button = null;
 
     curIdx: number = -1;
@@ -37,7 +40,8 @@ export default class CellPet extends ListViewCell {
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
-        this.funcBtn.node.on('click', this.onClickFunc, this);
+        this.stateBtn.node.on('click', this.onClickStateBtn, this);
+        this.funcBtn.node.on('click', this.onClickFuncBtn, this);
     }
 
     setData(idx: number, pet: Pet) {
@@ -47,6 +51,7 @@ export default class CellPet extends ListViewCell {
         this.petNameLbl.string = petModel.cnName;
         this.subLbl.string = `等级：${pet.lv}   品阶：${PetRankNames[pet.rank]}   默契值：${pet.privity}`;
         this.stateLbl.string = PetStateNames[pet.state];
+        this.stateBtn.interactable = pet.state == PetState.rest || pet.state == PetState.ready;
         this.petSp.node.color = CellPet.getPetHeadUI(petModel).color;
     }
 
@@ -73,7 +78,12 @@ export default class CellPet extends ListViewCell {
         this.ctrlr.pushPage(PagePetDetail, this.curPet);
     }
 
-    onClickFunc() {
+    onClickStateBtn() {
+        cc.log('PUT change state: ', this.petNameLbl.string, this.curIdx);
+        this.page.changePetState(this.curPet);
+    }
+
+    onClickFuncBtn() {
         cc.log('PUT show pet cell func: ', this.petNameLbl.string, this.curIdx);
         this.page.showFuncBar(this.curIdx, this.node);
     }

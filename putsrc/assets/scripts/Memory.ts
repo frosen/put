@@ -25,14 +25,14 @@ function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
         if (typeof cNum == 'number') checkIns[key] = getCheckedNumber(cNum) as any;
     }
     return new Proxy(ins, {
-        set: function(target, key, value, receiver) {
+        set: function (target, key, value, receiver) {
             if (typeof value == 'number') {
                 checkIns[key] = getCheckedNumber(value);
             }
             memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
             return Reflect.set(target, key, value, receiver);
         },
-        get: function(target, key) {
+        get: function (target, key) {
             let v = target[key];
             if (typeof v == 'number') {
                 if (getCheckedNumber(v) != checkIns[key]) {
@@ -46,7 +46,7 @@ function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
 
 function newList(list = null) {
     return new Proxy(list || [], {
-        set: function(target, key, value, receiver) {
+        set: function (target, key, value, receiver) {
             memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
             return Reflect.set(target, key, value, receiver);
         }
@@ -55,7 +55,7 @@ function newList(list = null) {
 
 function newDict(dict = null) {
     return new Proxy(dict || {}, {
-        set: function(target, key, value, receiver) {
+        set: function (target, key, value, receiver) {
             memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
             return Reflect.set(target, key, value, receiver);
         }
@@ -328,11 +328,11 @@ export class PetModel {
 }
 
 export enum PetState {
-    rest,
-    ready
+    ready = 1,
+    rest
 }
 
-export const PetStateNames = ['休息中', '备战中'];
+export const PetStateNames = ['', '备战中', '休息中'];
 
 export const PetRankNames = ['?', 'D', 'C', 'B', 'B+', 'A', 'A+', 'S', 'SS', 'N', 'T', 'Z'];
 export const PetRankToFeatureCount = [0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 5, 6];
@@ -387,7 +387,7 @@ const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4
 const BioToFromToRatio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
 
 // @ts-ignore
-Array.prototype.removeIndex = function(ridx) {
+Array.prototype.removeIndex = function (ridx) {
     this[ridx] = undefined;
     for (let index = this.length - 1; index >= 0; index--) {
         if (this[index] === undefined) continue;
@@ -398,7 +398,7 @@ Array.prototype.removeIndex = function(ridx) {
 };
 
 // @ts-ignore
-Array.prototype.getLast = function() {
+Array.prototype.getLast = function () {
     return this.length > 0 ? this[this.length - 1] : null;
 };
 
@@ -714,6 +714,35 @@ export class Memory {
         for (const feature of features) pet.inbornFeatures.push(feature.clone());
 
         this.gameData.pets.push(pet);
+
+        this.sortPetsByState();
+    }
+
+    sortPetsByState() {
+        this.gameData.pets.sort((a: Pet, b: Pet): number => {
+            return a.state - b.state;
+        });
+    }
+
+    moveUpPetInList(index: number) {
+        if (index == 0) return;
+        let pet = this.gameData.pets[index];
+        this.gameData.pets.splice(index, 1);
+        this.gameData.pets.splice(index - 1, 0, pet);
+    }
+
+    moveDownPetInList(index: number) {
+        if (index == this.gameData.pets.length - 1) return;
+        let pet = this.gameData.pets[index];
+        cc.log('^_^!', this.gameData.pets);
+        this.gameData.pets.splice(index, 1);
+        this.gameData.pets.splice(index + 1, 0, pet);
+
+        cc.log('^_^! end ', this.gameData.pets);
+    }
+
+    deletePet(index: number) {
+        this.gameData.pets.splice(index, 1);
     }
 
     // -----------------------------------------------------------------

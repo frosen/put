@@ -19,7 +19,7 @@ var Tea = {}; // Tea namespace
  * @param {string} password  Password to be used for encryption (1st 16 chars)
  * @returns {string} encrypted text
  */
-Tea.encrypt = function(plaintext, password) {
+Tea.encrypt = function (plaintext, password) {
     if (plaintext.length == 0) return ''; // nothing to encrypt
 
     // convert string to array of longs after converting any multi-byte chars to UTF-8
@@ -64,7 +64,7 @@ Tea.encrypt = function(plaintext, password) {
  * @param {string} password   Password to be used for decryption (1st 16 chars)
  * @returns {string} decrypted text
  */
-Tea.decrypt = function(ciphertext, password) {
+Tea.decrypt = function (ciphertext, password) {
     if (ciphertext.length == 0) return '';
     var v = Tea.strToLongs(Base64.decode(ciphertext));
     var k = Tea.strToLongs(Utf8.encode(password).slice(0, 16));
@@ -104,7 +104,7 @@ Tea.decrypt = function(ciphertext, password) {
 
 // supporting functions
 
-Tea.strToLongs = function(s) {
+Tea.strToLongs = function (s) {
     // convert string to array of longs, each containing 4 chars
     // note chars must be within ISO-8859-1 (with Unicode code-point < 256) to fit 4/long
     var l = new Array(Math.ceil(s.length / 4));
@@ -120,7 +120,7 @@ Tea.strToLongs = function(s) {
     return l; // note running off the end of the string generates nulls since
 }; // bitwise operators treat NaN as 0
 
-Tea.longsToStr = function(l) {
+Tea.longsToStr = function (l) {
     // convert array of longs back to string
     var a = new Array(l.length);
     for (var i = 0; i < l.length; i++) {
@@ -148,7 +148,7 @@ Base64.code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=
  * @returns {String} Base64-encoded string
  */
 
-Base64.encode = function(str, utf8encode) {
+Base64.encode = function (str, utf8encode) {
     // http://tools.ietf.org/html/rfc4648
     utf8encode = typeof utf8encode == 'undefined' ? false : utf8encode;
     var o1,
@@ -211,7 +211,7 @@ Base64.encode = function(str, utf8encode) {
  * @returns {String} decoded string
  */
 
-Base64.decode = function(str, utf8decode) {
+Base64.decode = function (str, utf8decode) {
     utf8decode = typeof utf8decode == 'undefined' ? false : utf8decode;
     var o1,
         o2,
@@ -267,19 +267,19 @@ var Utf8 = {}; // Utf8 namespace
  * @param {String} strUni Unicode string to be encoded as UTF-8
  * @returns {String} encoded string
  */
-Utf8.encode = function(strUni) {
+Utf8.encode = function (strUni) {
     // use regular expressions & String.replace callback function for better efficiency
     // than procedural approaches
     var strUtf = strUni.replace(
         /[\u0080-\u07ff]/g, // U+0080 - U+07FF => 2 bytes 110yyyyy, 10zzzzzz
-        function(c) {
+        function (c) {
             var cc = c.charCodeAt(0);
             return String.fromCharCode(0xc0 | (cc >> 6), 0x80 | (cc & 0x3f));
         }
     );
     strUtf = strUtf.replace(
         /[\u0800-\uffff]/g, // U+0800 - U+FFFF => 3 bytes 1110xxxx, 10yyyyyy, 10zzzzzz
-        function(c) {
+        function (c) {
             var cc = c.charCodeAt(0);
             return String.fromCharCode(0xe0 | (cc >> 12), 0x80 | ((cc >> 6) & 0x3f), 0x80 | (cc & 0x3f));
         }
@@ -293,11 +293,11 @@ Utf8.encode = function(strUni) {
  * @param {String} strUtf UTF-8 string to be decoded back to Unicode
  * @returns {String} decoded string
  */
-Utf8.decode = function(strUtf) {
+Utf8.decode = function (strUtf) {
     // note: decode 3-byte chars first as decoded 2-byte strings could appear to be 3-byte char!
     var strUni = strUtf.replace(
         /[\u00e0-\u00ef][\u0080-\u00bf][\u0080-\u00bf]/g, // 3-byte chars
-        function(c) {
+        function (c) {
             // (note parentheses for precence)
             var cc = ((c.charCodeAt(0) & 0x0f) << 12) | ((c.charCodeAt(1) & 0x3f) << 6) | (c.charCodeAt(2) & 0x3f);
             return String.fromCharCode(cc);
@@ -305,7 +305,7 @@ Utf8.decode = function(strUtf) {
     );
     strUni = strUni.replace(
         /[\u00c0-\u00df][\u0080-\u00bf]/g, // 2-byte chars
-        function(c) {
+        function (c) {
             // (note parentheses for precence)
             var cc = ((c.charCodeAt(0) & 0x1f) << 6) | (c.charCodeAt(1) & 0x3f);
             return String.fromCharCode(cc);

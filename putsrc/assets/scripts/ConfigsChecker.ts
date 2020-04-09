@@ -15,8 +15,7 @@ function checkActPosModelDict() {
         const model = actPosModelDict[key];
         if (model.id != key) cc.error('ActPosModelDict中，id与dict的key不符', key, model.id);
 
-        if (Object.keys(model.actDict).length != model.acts.length)
-            cc.error('ActPosModelDict中，actDict与acts数量不一致', key);
+        if (Object.keys(model.actDict).length != model.acts.length) cc.error('ActPosModelDict中，actDict与acts数量不一致', key);
         for (const actDictKey of Object.keys(model.actDict)) {
             if (!model.acts.includes(actDictKey)) cc.error(`${actDictKey}不在${model.acts}内`, key);
         }
@@ -27,8 +26,7 @@ function checkActPosModelDict() {
             for (let index = 0; index < expl.stepModels.length; index++) {
                 const stepModel = expl.stepModels[index];
                 for (const petId of stepModel.petIds) {
-                    if (!petDictKeys.includes(petId))
-                        cc.error('ActPosModelDict中，exploration中的petId有误', key, index, petId);
+                    if (!petDictKeys.includes(petId)) cc.error('ActPosModelDict中，exploration中的petId有误', key, index, petId);
                 }
             }
         }
