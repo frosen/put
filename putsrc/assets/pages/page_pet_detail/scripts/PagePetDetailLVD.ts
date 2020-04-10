@@ -13,16 +13,7 @@ import CellAttri from 'pubcells/cell_attri/scripts/CellAttri';
 import CellAttri2 from 'pubcells/cell_attri2/scripts/CellAttri2';
 import CellPetName from '../cells/cell_pet_name/scripts/CellPetName';
 import CellTitle from 'pubcells/cell_title/scripts/CellTitle';
-import {
-    Pet,
-    Pet2,
-    PetModel,
-    PetStateNames,
-    PetRankNames,
-    BioTypeNames,
-    EleTypeNames,
-    BattleTypeNames
-} from 'scripts/Memory';
+import { Pet, Pet2, PetModel, PetStateNames, PetRankNames, BioTypeNames, EleTypeNames, BattleTypeNames } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
 import * as expModels from 'configs/ExpModels';
 
@@ -165,7 +156,7 @@ export default class PagePetDetailLVD extends ListViewDelegate {
                 break;
             case 6:
                 cell.setData1('战斗类型', BattleTypeNames[this.curPet2.exBattleTypes.getLast() || petModel.battleType]);
-                cell.setData2('速度', String(this.curPet2.exSpeed || petModel.speed));
+                cell.setData2('速度', String(this.curPet2.speed));
                 break;
             case 7:
                 cell.setData('一级属性');

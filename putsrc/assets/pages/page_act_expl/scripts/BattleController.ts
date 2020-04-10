@@ -654,9 +654,7 @@ export class BattleController {
 
         // 处理速度列表
         rb.order.sort((a: BattlePet, b: BattlePet): number => {
-            let sa = a.pet2.exSpeed || petModelDict[a.pet.id].speed;
-            let sb = b.pet2.exSpeed || petModelDict[b.pet.id].speed;
-            return sb - sa;
+            return b.pet2.speed - a.pet2.speed;
         });
 
         rb.curOrderIdx = -1;
@@ -678,9 +676,11 @@ export class BattleController {
         for (const pet of team.pets) {
             for (let index = 0; index < pet.buffDatas.length; index++) {
                 const buffData = pet.buffDatas[index];
+                buffData.time--;
+
                 let buffModel = BuffModelDict[buffData.id];
                 if (buffModel.hasOwnProperty('onTurnEnd')) {
-                    let buffOutput = buffModel.onTurnEnd(pet, buffData.caster);
+                    let buffOutput = buffModel.onTurnEnd(pet, buffData);
                     if (buffOutput) {
                         if (buffOutput.hp) {
                             let dmg = buffOutput.hp;
@@ -691,26 +691,25 @@ export class BattleController {
                             dmg = Math.floor(dmg);
                             pet.hp -= dmg;
                             if (pet.hp < 1) pet.hp = 1;
-                            if (pet.hp > pet.hpMax) pet.hp = pet.hpMax;
+                            else if (pet.hp > pet.hpMax) pet.hp = pet.hpMax;
                             this.page.doHurt(pet.beEnemy, pet.idx, pet.hp, pet.hpMax, dmg, false, 0);
                         }
                         if (buffOutput.mp || buffOutput.rage) {
                             if (buffOutput.mp) {
                                 team.mp -= buffOutput.mp;
                                 if (team.mp < 0) team.mp = 0;
-                                if (team.mp > team.mpMax) team.mp = team.mpMax;
+                                else if (team.mp > team.mpMax) team.mp = team.mpMax;
                             }
                             if (buffOutput.rage) {
                                 team.rage -= buffOutput.rage;
                                 if (team.rage < 0) team.rage = 0;
-                                if (team.rage > 100) team.rage = 100;
+                                else if (team.rage > 100) team.rage = 100;
                             }
                             if (!pet.beEnemy) this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
                         }
                     }
                 }
 
-                buffData.time--;
                 if (buffData.time == 0) {
                     if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(pet, buffData.caster, buffData.data);
                     this.page.removeBuff(pet.beEnemy, pet.idx, buffData.id);
@@ -867,7 +866,7 @@ export class BattleController {
                 }
             });
             if (aim.hp < 0) aim.hp = 0;
-            if (aim.hp > lastHp - 1) aim.hp = lastHp - 1;
+            else if (aim.hp > lastHp - 1) aim.hp = lastHp - 1;
         } else {
             aim.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
                 if (model.hasOwnProperty('onHealed')) {

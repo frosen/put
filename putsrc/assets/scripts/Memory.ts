@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { BattlePet, BattleController } from 'pages/page_act_expl/scripts/BattleController';
+import { BattlePet, BattleController, BattleBuff } from 'pages/page_act_expl/scripts/BattleController';
 import * as petModelDict from 'configs/PetModelDict';
 import actPosModelDict from 'configs/ActPosModelDict';
 import featureModelDict from 'configs/FeatureModelDict';
@@ -164,7 +164,7 @@ export abstract class BuffModel {
     abstract eleType: EleType;
     abstract onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any;
     abstract onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any): void;
-    abstract onTurnEnd(thisPet: BattlePet, caster: BattlePet): BuffOutput | void;
+    abstract onTurnEnd(thisPet: BattlePet, buff: BattleBuff): BuffOutput | void;
     abstract getInfo(caster: Readonly<BattlePet>): string;
 }
 
@@ -437,6 +437,8 @@ export class Pet2 {
 
     sklDmgFrom: number = 0;
     sklDmgTo: number = 0;
+    /** 速度 */
+    speed: number = 0;
 
     /** 额外生物类型 */
     exBioTypes: BioType[] = [];
@@ -444,8 +446,6 @@ export class Pet2 {
     exEleTypes: EleType[] = [];
     /** 额外战斗类型 */
     exBattleTypes: BattleType[] = [];
-    /** 额外速度 */
-    exSpeed: number = 0;
 
     critRate: number = 0;
     critDmgRate: number = 0;
@@ -506,6 +506,7 @@ export class Pet2 {
         this.atkDmgTo = this.atkDmgToOri;
         this.sklDmgFrom = this.sklDmgFromOri;
         this.sklDmgTo = this.sklDmgToOri;
+        this.speed = petModel.speed;
 
         // 其他属性
         let privityPercent = privity * 0.01;
