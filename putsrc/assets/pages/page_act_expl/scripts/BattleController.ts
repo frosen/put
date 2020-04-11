@@ -145,7 +145,7 @@ export class BattlePet {
             return mpUsing;
         };
 
-        // 装备技能（装备等级低于宠物等级，则蓝耗减少）
+        // 装备技能
 
         // 自带技能
         this.skillDatas.length = 0;
