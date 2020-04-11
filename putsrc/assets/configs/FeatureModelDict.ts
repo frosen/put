@@ -13,6 +13,72 @@ function rd(n: number) {
 }
 
 const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
+    strength: {
+        id: 'strength',
+        cnBrief: '力',
+        dataAreas: [[1, 1]],
+        onBaseSetting(pet: Pet2, datas: number[]): void {
+            pet.strength += datas[0] * 10;
+        },
+        getInfo(datas: number[]): string {
+            return `基础强壮增加${datas[0]}点`;
+        }
+    },
+    concentration: {
+        id: 'concentration',
+        cnBrief: '智',
+        dataAreas: [[1, 1]],
+        onBaseSetting(pet: Pet2, datas: number[]): void {
+            pet.concentration += datas[0] * 10;
+        },
+        getInfo(datas: number[]): string {
+            return `基础专注增加${datas[0]}点`;
+        }
+    },
+    durability: {
+        id: 'durability',
+        cnBrief: '体',
+        dataAreas: [[1, 1]],
+        onBaseSetting(pet: Pet2, datas: number[]): void {
+            pet.durability += datas[0] * 10;
+        },
+        getInfo(datas: number[]): string {
+            return `基础耐久增加${datas[0]}点`;
+        }
+    },
+    agility: {
+        id: 'agility',
+        cnBrief: '敏',
+        dataAreas: [[1, 1]],
+        onBaseSetting(pet: Pet2, datas: number[]): void {
+            pet.agility += datas[0] * 10;
+        },
+        getInfo(datas: number[]): string {
+            return `基础灵敏增加${datas[0]}点`;
+        }
+    },
+    sensitivity: {
+        id: 'sensitivity',
+        cnBrief: '感',
+        dataAreas: [[1, 1]],
+        onBaseSetting(pet: Pet2, datas: number[]): void {
+            pet.sensitivity += datas[0] * 10;
+        },
+        getInfo(datas: number[]): string {
+            return `基础细腻增加${datas[0]}点`;
+        }
+    },
+    elegant: {
+        id: 'elegant',
+        cnBrief: '魅',
+        dataAreas: [[1, 1]],
+        onBaseSetting(pet: Pet2, datas: number[]): void {
+            pet.elegant += datas[0] * 10;
+        },
+        getInfo(datas: number[]): string {
+            return `基础优雅增加${datas[0]}点`;
+        }
+    },
     baseStrength: {
         id: 'baseStrength',
         cnBrief: '强',
@@ -48,7 +114,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     baseAgility: {
         id: 'baseAgility',
-        cnBrief: '敏',
+        cnBrief: '捷',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
             pet.agility += pet.agilityOri * datas[0];
@@ -436,7 +502,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     castConDmg: {
         id: 'castConDmg',
-        cnBrief: '智',
+        cnBrief: '慧',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && pet.pet2.concentration > aim.pet2.concentration) aim.hp -= bData.finalDmg * datas[0];
