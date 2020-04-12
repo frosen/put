@@ -178,14 +178,16 @@ export class BattlePet {
         }
     }
 
-    getAtkDmg() {
+    getAtkDmg(aim: BattlePet) {
         let pet2 = this.pet2;
-        return pet2.atkDmgFrom + ranWithSeedInt(1 + pet2.atkDmgTo - pet2.atkDmgFrom);
+        let dmg = pet2.atkDmgFrom + ranWithSeedInt(1 + pet2.atkDmgTo - pet2.atkDmgFrom);
+        return aim ? Math.max(dmg - aim.pet2.armor, 1) : dmg;
     }
 
-    getSklDmg() {
+    getSklDmg(aim: BattlePet) {
         let pet2 = this.pet2;
-        return pet2.sklDmgFrom + ranWithSeedInt(1 + pet2.sklDmgTo - pet2.sklDmgFrom);
+        let dmg = pet2.sklDmgFrom + ranWithSeedInt(1 + pet2.sklDmgTo - pet2.sklDmgFrom);
+        return aim ? Math.max(dmg - aim.pet2.armor, 1) : dmg;
     }
 
     clone() {
@@ -840,13 +842,13 @@ export class BattleController {
                 return false;
             }
 
-            finalDmg = Math.max(battlePet.getSklDmg() - aim.pet2.armor, 1) * dmgRate * 0.01;
-            finalDmg += Math.max(battlePet.getAtkDmg() - aim.pet2.armor, 1);
+            finalDmg = battlePet.getSklDmg(aim) * dmgRate * 0.01;
+            finalDmg += battlePet.getAtkDmg(aim);
 
             finalDmg *= this.getEleDmgRate(skillModel.eleType, aim, battlePet);
             finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         } else {
-            finalDmg = battlePet.getSklDmg() * dmgRate * 0.01;
+            finalDmg = battlePet.getSklDmg(aim) * dmgRate * 0.01;
         }
 
         finalDmg = Math.floor(finalDmg);
@@ -939,7 +941,7 @@ export class BattleController {
             return true;
         }
 
-        let finalDmg = Math.max(battlePet.getAtkDmg() - aim.pet2.armor, 1);
+        let finalDmg = battlePet.getAtkDmg(aim);
         finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         if (this.realBattle.atkRound > 100) finalDmg *= 1.5; // 时间太长时增加伤害快速结束
         finalDmg = Math.floor(finalDmg);
