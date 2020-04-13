@@ -376,10 +376,14 @@ export class Pet {
     equips: Item[] = [];
 
     eachFeatures(callback: (featureModel: FeatureModel, datas: number[]) => void) {
-        for (const feature of this.inbornFeatures) callback(featureModelDict[feature.id], feature.datas);
-        let selfFeatures = petModelDict[this.id].selfFeatures.slice(0, PetRankToFeatureCount[this.rank]);
-        for (const feature of selfFeatures) callback(featureModelDict[feature.id], feature.datas);
+        // 装备特性 llytodo
         for (const feature of this.learnedFeatures) callback(featureModelDict[feature.id], feature.datas);
+        for (const feature of this.inbornFeatures) callback(featureModelDict[feature.id], feature.datas);
+        let selfFeatures = petModelDict[this.id].selfFeatures;
+        for (let index = 0; index < PetRankToFeatureCount[this.rank]; index++) {
+            const feature = selfFeatures[index];
+            callback(featureModelDict[feature.id], feature.datas);
+        }
     }
 }
 
