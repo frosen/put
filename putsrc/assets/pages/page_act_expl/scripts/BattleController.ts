@@ -17,7 +17,8 @@ import {
     EleType,
     EleTypeNames,
     FeatureModel,
-    Feature
+    Feature,
+    BattleDataForFeature
 } from 'scripts/Memory';
 import PageActExpl from './PageActExpl';
 import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
@@ -108,6 +109,42 @@ export class BattleBuff {
 
 const ExpRateByPetCount = [0, 1, 0.53, 0.37, 0.29, 0.23];
 
+type StartingBattleFeature = {
+    func: (pet: BattlePet, datas: number[], ctrlr: BattleController) => void;
+    datas: number[];
+    id: string;
+};
+type AttackingFeature = {
+    func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    datas: number[];
+    id: string;
+};
+type CastingFeature = {
+    func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    datas: number[];
+    id: string;
+};
+type HurtFeature = {
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    datas: number[];
+    id: string;
+};
+type HealedFeature = {
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    datas: number[];
+    id: string;
+};
+type EnemyDeadFeature = {
+    func: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController) => void;
+    datas: number[];
+    id: string;
+};
+type DeadFeature = {
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController) => void;
+    datas: number[];
+    id: string;
+};
+
 export class BattlePet {
     idx: number = 0;
 
@@ -122,6 +159,14 @@ export class BattlePet {
 
     hp: number = 0;
     hpMax: number = 0;
+
+    startingBattleFeatures: StartingBattleFeature[] = [];
+    attackingFeatures: AttackingFeature[] = [];
+    castingFeatures: CastingFeature[] = [];
+    hurtFeatures: HurtFeature[] = [];
+    healedFeatures: HealedFeature[] = [];
+    enemyDeadFeatures: EnemyDeadFeature[] = [];
+    deadFeatures: DeadFeature[] = [];
 
     skillDatas: BattleSkill[] = [];
 
@@ -144,6 +189,40 @@ export class BattlePet {
             if (petModelDict[pet.id].eleType == skillModel.eleType) mpUsing -= Math.floor(mpUsing * 0.1);
             return mpUsing;
         };
+
+        // 特性
+        this.startingBattleFeatures.length = 0;
+        this.attackingFeatures.length = 0;
+        this.castingFeatures.length = 0;
+        this.hurtFeatures.length = 0;
+        this.healedFeatures.length = 0;
+        this.enemyDeadFeatures.length = 0;
+        this.deadFeatures.length = 0;
+
+        let addFeatureFunc = (attri: string, funcName: string, model: FeatureModel, datas: number[]) => {
+            if (model.hasOwnProperty(funcName)) {
+                let list: { func: any; datas: number[]; id: string }[] = this[attri];
+                for (const featureInList of list) {
+                    if (featureInList.id == model.id) {
+                        for (let index = 0; index < featureInList.datas.length; index++) {
+                            featureInList.datas[index] += datas[index];
+                        }
+                        return;
+                    }
+                }
+                list.push({ func: model[funcName], datas, id: model.id });
+            }
+        };
+
+        pet.eachFeatures((model: FeatureModel, datas: number[]) => {
+            addFeatureFunc('startingBattleFeatures', 'onStartingBattle', model, datas);
+            addFeatureFunc('attackingFeatures', 'onAttacking', model, datas);
+            addFeatureFunc('castingFeatures', 'onCasting', model, datas);
+            addFeatureFunc('hurtFeatures', 'onHurt', model, datas);
+            addFeatureFunc('healedFeatures', 'onHealed', model, datas);
+            addFeatureFunc('enemyDeadFeatures', 'onEnemyDead', model, datas);
+            addFeatureFunc('deadFeatures', 'onDead', model, datas);
+        });
 
         // 装备技能
 
@@ -476,10 +555,8 @@ export class BattleController {
 
         // 触发进入战斗特性
         for (const pet of rb.order) {
-            pet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
-                if (model.hasOwnProperty('onStartingBattle')) {
-                    model.onStartingBattle(pet, datas, this);
-                }
+            pet.startingBattleFeatures.forEach((value: StartingBattleFeature) => {
+                value.func(pet, value.datas, this);
             });
         }
 
@@ -587,14 +664,6 @@ export class BattleController {
         if (nextOrderIdx == -1) {
             if (this.debugMode) {
                 this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(rb) });
-            }
-
-            for (const pet of rb.order) {
-                pet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
-                    if (model.hasOwnProperty('onTurnEnd')) {
-                        model.onTurnEnd(pet, datas, this);
-                    }
-                });
             }
 
             this.gotoNextRound();
@@ -857,23 +926,17 @@ export class BattleController {
         aim.hp -= finalDmg;
 
         if (dmgRate > 0) {
-            battlePet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
-                if (model.hasOwnProperty('onAttacking')) {
-                    model.onAttacking(battlePet, aim, datas, { ctrlr: this, finalDmg, skillModel });
-                }
+            battlePet.castingFeatures.forEach((value: AttackingFeature) => {
+                value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel });
             });
-            aim.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
-                if (model.hasOwnProperty('onHurt')) {
-                    model.onHurt(aim, battlePet, datas, { ctrlr: this, finalDmg, skillModel });
-                }
+            battlePet.hurtFeatures.forEach((value: HurtFeature) => {
+                value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel });
             });
             if (aim.hp < 0) aim.hp = 0;
             else if (aim.hp > lastHp - 1) aim.hp = lastHp - 1;
         } else {
-            aim.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
-                if (model.hasOwnProperty('onHealed')) {
-                    model.onHealed(aim, battlePet, datas, { ctrlr: this, finalDmg, skillModel });
-                }
+            battlePet.healedFeatures.forEach((value: HealedFeature) => {
+                value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel });
             });
             if (aim.hp > aim.hpMax) aim.hp = aim.hpMax;
         }
@@ -947,15 +1010,11 @@ export class BattleController {
         finalDmg = Math.floor(finalDmg);
         aim.hp -= finalDmg;
 
-        battlePet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
-            if (model.hasOwnProperty('onAttacked')) {
-                model.onAttacking(battlePet, aim, datas, { ctrlr: this, finalDmg, skillModel: null });
-            }
+        battlePet.attackingFeatures.forEach((value: AttackingFeature) => {
+            value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel: null });
         });
-        aim.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
-            if (model.hasOwnProperty('onHurt')) {
-                model.onHurt(aim, battlePet, datas, { ctrlr: this, finalDmg, skillModel: null });
-            }
+        battlePet.hurtFeatures.forEach((value: HurtFeature) => {
+            value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel: null });
         });
 
         if (aim.hp < 0) aim.hp = 0;
@@ -1004,16 +1063,15 @@ export class BattleController {
         }
 
         if (alive) {
-            battlePet.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
-                if (model.hasOwnProperty('onDead')) {
-                    model.onDead(battlePet, caster, datas, this);
-                }
+            battlePet.deadFeatures.forEach((value: DeadFeature) => {
+                value.func(battlePet, caster, value.datas, this);
             });
-            caster.pet.eachFeatures((model: FeatureModel, datas: number[]) => {
-                if (model.hasOwnProperty('onKillingEnemy')) {
-                    model.onKillingEnemy(caster, battlePet, datas, this);
-                }
-            });
+            let petsAlive = this.getTeam(caster).pets.filter((value: BattlePet) => value.hp > 0);
+            for (const petAlive of petsAlive) {
+                battlePet.enemyDeadFeatures.forEach((value: EnemyDeadFeature) => {
+                    value.func(petAlive, battlePet, caster, value.datas, this);
+                });
+            }
 
             battlePet.buffDatas.length = 0;
             this.page.removeBuff(battlePet.beEnemy, battlePet.idx, null);

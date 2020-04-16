@@ -488,7 +488,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     castFire: {
         id: 'castFire',
         cnBrief: '焚',
-        dataAreas: [[0.01, 0.009]],
+        dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.fire) aim.hp -= bData.finalDmg * datas[0];
         },
@@ -499,7 +499,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     castWater: {
         id: 'castWater',
         cnBrief: '寒',
-        dataAreas: [[0.01, 0.009]],
+        dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.water) aim.hp -= bData.finalDmg * datas[0];
         },
@@ -510,7 +510,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     castAir: {
         id: 'castAir',
         cnBrief: '苍',
-        dataAreas: [[0.01, 0.009]],
+        dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.air) aim.hp -= bData.finalDmg * datas[0];
         },
@@ -521,7 +521,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     castEarth: {
         id: 'castEarth',
         cnBrief: '势',
-        dataAreas: [[0.01, 0.009]],
+        dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.earth) aim.hp -= bData.finalDmg * datas[0];
         },
@@ -532,7 +532,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     castLight: {
         id: 'castLight',
         cnBrief: '耀',
-        dataAreas: [[0.01, 0.009]],
+        dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.light) aim.hp -= bData.finalDmg * datas[0];
         },
@@ -543,7 +543,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     castDark: {
         id: 'castDark',
         cnBrief: '邪',
-        dataAreas: [[0.01, 0.009]],
+        dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.skillModel && bData.skillModel.eleType == EleType.dark) aim.hp -= bData.finalDmg * datas[0];
         },
@@ -630,12 +630,13 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     hitByCombo: {
         id: 'hitByCombo',
         cnBrief: '狼',
-        dataAreas: [[0.01, 0.008]],
+        dataAreas: [[0.02, 0.02]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            if (bData.ctrlr.realBattle.combo > 1) aim.hp -= bData.finalDmg * datas[0];
+            let combo = bData.ctrlr.realBattle.combo - 1;
+            if (combo > 0) aim.hp -= bData.finalDmg * datas[0] * combo;
         },
         getInfo(datas: number[]): string {
-            return `连击伤害提高${rd(datas[0] * 100)}%`;
+            return `连击伤害提高${rd(datas[0] * 100)}%乘以连击次数`;
         }
     },
     hitByPetCountDiff: {
@@ -828,6 +829,33 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             return `如果血量低于25%，治疗效果提高${rd(datas[0] * 100)}%`;
         }
     },
+    healByCombo: {
+        id: 'healByCombo',
+        cnBrief: '鹿',
+        dataAreas: [[0.04, 0.04]],
+        onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            let combo = bData.ctrlr.realBattle.combo - 1;
+            if (combo > 0) pet.hp += Math.abs(bData.finalDmg) * datas[0] * combo;
+        },
+        getInfo(datas: number[]): string {
+            return `连击时，治疗效果提高${rd(datas[0] * 100)}%乘以连击次数`;
+        }
+    },
+    healAndHurt: {
+        id: 'healAndHurt',
+        cnBrief: '血',
+        dataAreas: [
+            [0.05, 0.05],
+            [0.03, 0.03]
+        ],
+        onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            pet.hp += Math.abs(bData.finalDmg) * datas[0];
+            caster.hp = Math.max(caster.hp - bData.finalDmg * datas[1], 1);
+        },
+        getInfo(datas: number[]): string {
+            return `治疗效果提高${rd(datas[0] * 100)}%，但施法者会受到${rd(datas[1] * 100)}%的伤害`;
+        }
+    },
     beginAddRage: {
         id: 'beginAddRage',
         cnBrief: '阳',
@@ -839,65 +867,79 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             return `战斗开始时，直接获取${Math.min(datas[0], 100)}点怒气`;
         }
     },
+    beginReLi: {
+        id: 'beginReLi',
+        cnBrief: '热',
+        dataAreas: [[1, 1]],
+        onStartingBattle(pet: BattlePet, datas: number[], ctrlr: BattleController): void {
+            if (ctrlr.random() < rate(datas[0], 0.05, 0.9)) ctrlr.addBuff(pet, pet, 'ReLi', 3);
+        },
+        getInfo(datas: number[]): string {
+            return `战斗开始时，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率获得热力，持续3回合`;
+        }
+    },
     killAddHp: {
         id: 'killAddHp',
         cnBrief: '恶',
-        dataAreas: [[0.1, 0.05]],
-        onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
+        dataAreas: [[0.02, 0.015]],
+        onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
             pet.hp = Math.min(pet.hp + aim.hpMax * datas[0], pet.hpMax);
         },
         getInfo(datas: number[]): string {
-            return `消灭敌人时，血量恢复目标最大血量的${rd(datas[0] * 100)}%`;
+            return `敌人被击杀时，血量恢复目标最大血量的${rd(datas[0] * 100)}%`;
         }
     },
     killAddAllHp: {
         id: 'killAddAllHp',
         cnBrief: '噬',
-        dataAreas: [[0.03, 0.015]],
-        onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
-            let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0);
-            for (const petAlive of petsAlive) {
-                petAlive.hp = Math.min(petAlive.hp + aim.hpMax * datas[0], petAlive.hpMax);
-                ctrlr.page.doHurt(petAlive.beEnemy, petAlive.idx, petAlive.hp, petAlive.hpMax, 0, false, 0);
+        dataAreas: [[0.03, 0.02]],
+        onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
+            if (pet == caster) {
+                let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0);
+                for (const petAlive of petsAlive) {
+                    petAlive.hp = Math.min(petAlive.hp + aim.hpMax * datas[0], petAlive.hpMax);
+                    ctrlr.page.doHurt(petAlive.beEnemy, petAlive.idx, petAlive.hp, petAlive.hpMax, 0, false, 0);
+                }
             }
         },
         getInfo(datas: number[]): string {
-            return `消灭敌人时，所有己方血量恢复目标最大血量的${rd(datas[0] * 100)}%`;
+            return `自己击杀敌人后，所有己方血量恢复目标最大血量的${rd(datas[0] * 100)}%`;
         }
     },
     killAddMp: {
         id: 'killAddMp',
         cnBrief: '神',
-        dataAreas: [[20, 8]],
-        onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
+        dataAreas: [[8, 8]],
+        onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
             let team = ctrlr.getTeam(pet);
             team.mp = Math.min(team.mp + datas[0], team.mpMax);
         },
         getInfo(datas: number[]): string {
-            return `消灭敌人时，精神恢复${datas[0]}点`;
+            return `敌人被击杀时，精神恢复${datas[0]}点`;
         }
     },
     killRdcCD: {
         id: 'killRdcCD',
         cnBrief: '梦',
         dataAreas: [[1, 1]],
-        onKillingEnemy(pet: BattlePet, aim: BattlePet, datas: number[], ctrlr: BattleController): void {
+        onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
             let cd = ctrlr.random() < rate(datas[0], 0.2, 0.6) ? 2 : 1;
             for (const skilllData of pet.skillDatas) skilllData.cd = Math.max(skilllData.cd - cd, 0);
         },
         getInfo(datas: number[]): string {
-            return `消灭敌人时，所有冷却直接减少1回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率减少2回合`;
+            return `敌人被击杀时，所有冷却直接减少1回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率减少2回合`;
         }
     },
     deadHurt: {
         id: 'deadHurt',
-        cnBrief: '炸',
+        cnBrief: '尽',
         dataAreas: [[0.1, 0.05]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
-            caster.hp = Math.min(caster.hp - pet.hpMax * datas[0], 1);
+            let hp = pet.hpMax * rate(datas[0], 0.1, 0.4);
+            caster.hp = Math.min(caster.hp - hp, 1);
         },
         getInfo(datas: number[]): string {
-            return `被击杀时，对敌人造成自己最大生命${rd(datas[0] * 100)}%的伤害（不会致死）`;
+            return `被击杀时，对敌人造成自己最大生命${rd(rate(datas[0], 0.1, 0.4) * 100)}%的伤害（不会致死）`;
         }
     },
     deadFangHu: {
