@@ -1,2 +1,4 @@
 document/node_modules
 document/package-lock.json
+document/scripts/node_modules
+document/scripts/package-lock.json
