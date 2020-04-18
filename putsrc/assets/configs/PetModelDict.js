@@ -284,7 +284,7 @@ module.exports = {
         baseElegant: 60,
         addElegant: 8,
         selfSkillIds: [
-            'JiSuHanJie'
+            'RongJie'
         ],
         selfFeatures: []
     },

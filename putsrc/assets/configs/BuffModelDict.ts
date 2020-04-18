@@ -111,7 +111,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             thisPet.pet2.atkDmgTo += to;
         },
         getInfo(caster: Readonly<BattlePet>): string {
-            return `普攻提高释放者技能攻击力15%外加自身15%伤害`;
+            return `普攻伤害提高，相当于自身攻击力的15%伤害外加释放者技能攻击力的15%`;
         }
     },
     KongJu: {
@@ -253,6 +253,31 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         },
         getInfo(caster: Readonly<BattlePet>): string {
             return `目标命中率降低30%`;
+        }
+    },
+    XieE: {
+        id: 'XieE',
+        cnName: '邪恶',
+        brief: '恶',
+        buffType: BuffType.buff,
+        eleType: EleType.dark,
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
+            let atk = thisPet.pet2.atkDmgTo;
+            let skl = thisPet.pet2.sklDmgTo;
+            thisPet.pet2.atkDmgTo += atk;
+            thisPet.pet2.sklDmgTo += skl;
+            return { atk, skl };
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            let { atk, skl } = data;
+            thisPet.pet2.atkDmgTo -= atk;
+            thisPet.pet2.sklDmgTo -= skl;
+        },
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>): BuffOutput | void {
+            return { hp: Math.floor(thisPet.getAtkDmg(thisPet) * 0.5) };
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `最大伤害提高100%，但每回合都会受到相当于自身攻击力50%的暗系伤害`;
         }
     }
 };
