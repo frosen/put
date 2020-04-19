@@ -336,6 +336,7 @@ export const PetStateNames = ['', '备战中', '休息中'];
 
 export const PetRankNames = ['?', 'D', 'C', 'B', 'B+', 'A', 'A+', 'S', 'SS', 'N', 'T', 'Z'];
 export const PetRankToFeatureCount = [0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 5, 6];
+export const FeatureCountToFeatureLv = [0, 2, 3, 4, 5, 6, 7];
 
 export class Pet {
     /** 类型 */
@@ -373,14 +374,18 @@ export class Pet {
     learnedFeatures: Feature[] = [];
 
     /** 装备 */
-    equips: Item[] = [];
+    equips: Equip[] = [];
 
     eachFeatures(callback: (featureModel: FeatureModel, datas: number[]) => void) {
         // 装备特性 llytodo
         for (const feature of this.learnedFeatures) callback(featureModelDict[feature.id], feature.datas);
+        cc.log('^_^!1');
         for (const feature of this.inbornFeatures) callback(featureModelDict[feature.id], feature.datas);
+        cc.log('^_^!2', this.id);
         let selfFeatures = petModelDict[this.id].selfFeatures;
+        cc.log('^_^!1');
         for (let index = 0; index < PetRankToFeatureCount[this.rank]; index++) {
+            cc.log('^_^!1', index);
             const feature = selfFeatures[index];
             callback(featureModelDict[feature.id], feature.datas);
         }
@@ -543,7 +548,15 @@ export class Pet2 {
 export class Item {
     id: string = '';
     extras: string[] = newList();
+}
 
+export enum EquipType {
+    weapon = 1,
+    defense,
+    ornaments
+}
+
+export class Equip extends Item {
     getToken(): string {
         return '';
     }

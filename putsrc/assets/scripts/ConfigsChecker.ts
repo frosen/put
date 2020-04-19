@@ -9,6 +9,7 @@ import actPosModelDict from 'configs/ActPosModelDict';
 import * as skillModelDict from 'configs/SkillModelDict';
 import buffModelDict from 'configs/BuffModelDict';
 import featureModelDict from 'configs/FeatureModelDict';
+import * as equipModelDict from 'configs/EquipModelDict';
 
 function checkActPosModelDict() {
     for (const key in actPosModelDict) {
@@ -100,10 +101,24 @@ function checkFeatureModelDict() {
     }
 }
 
+function checkEquipModelDict() {
+    for (const key in equipModelDict) {
+        const model = equipModelDict[key];
+        if (model.id != key) cc.error('equipModelDict中，id与dict的key不符', key, model.id);
+        let features = model.features;
+        for (const feature of features) {
+            if (!(feature in featureModelDict)) {
+                cc.error('equipModelDict中，feature有误', key, feature);
+            }
+        }
+    }
+}
+
 export default function checkConfigs() {
     checkActPosModelDict();
     checkPetModelDict();
     checkSkillModelDict();
     checkBuffModelDict();
     checkFeatureModelDict();
+    checkEquipModelDict();
 }
