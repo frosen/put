@@ -4,8 +4,10 @@
  * luleyan
  */
 
-import { BuffModel, BuffOutput, EleType, BattleType, BuffType } from 'scripts/Memory';
-import { BattlePet, BattleBuff } from 'pages/page_act_expl/scripts/BattleController';
+import { EleType, BattleType } from 'scripts/DataSaved';
+import { BuffModel, BuffOutput, BuffType } from 'scripts/DataModel';
+import { BattleController } from 'pages/page_act_expl/scripts/BattleController';
+import { BattlePet, BattleBuff } from 'scripts/DataOther';
 
 let fl = Math.floor;
 
@@ -21,8 +23,8 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         brief: '燃',
         buffType: BuffType.debuff,
         eleType: EleType.fire,
-        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>): BuffOutput | void {
-            return { hp: buff.caster.getSklDmg(thisPet) * 0.7 };
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
+            return { hp: ctrlr.getSklDmg(buff.caster, thisPet) * 0.7 };
         },
         getInfo(caster: Readonly<BattlePet>): string {
             return `每回合对目标造成${getSklDmgStr(caster, 0.7)}(70%)点火系伤害`;
@@ -40,8 +42,8 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
             thisPet.pet2.speed += 10;
         },
-        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>): BuffOutput | void {
-            return { hp: buff.caster.getSklDmg(thisPet) * 0.5 };
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
+            return { hp: ctrlr.getSklDmg(buff.caster, thisPet) * 0.5 };
         },
         getInfo(caster: Readonly<BattlePet>): string {
             return `减速目标，且每回合对目标造成${getSklDmgStr(caster, 0.5)}(50%)点水系伤害`;
@@ -53,9 +55,9 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         brief: '毒',
         buffType: BuffType.debuff,
         eleType: EleType.dark,
-        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>): BuffOutput | void {
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
             let rate = (1 - thisPet.hp / thisPet.hpMax) * 0.4 + 0.4;
-            return { hp: buff.caster.getSklDmg(thisPet) * rate };
+            return { hp: ctrlr.getSklDmg(buff.caster, thisPet) * rate };
         },
         getInfo(caster: Readonly<BattlePet>): string {
             return `每回合对目标造成最低40%最高80%技能攻击力的暗系伤害，血量越低伤害越高`;
@@ -67,8 +69,8 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         brief: '落',
         buffType: BuffType.debuff,
         eleType: EleType.earth,
-        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>): BuffOutput | void {
-            if (buff.time == 0) return { hp: buff.caster.getSklDmg(thisPet) };
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
+            if (buff.time == 0) return { hp: ctrlr.getSklDmg(buff.caster, thisPet) };
         },
         getInfo(caster: Readonly<BattlePet>): string {
             return `效果结束时对目标造成${getSklDmgStr(caster, 1)}(100%)点地系伤害`;
@@ -168,7 +170,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         brief: '割',
         buffType: BuffType.debuff,
         eleType: EleType.air,
-        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>): BuffOutput | void {
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
             return { hp: Math.floor(thisPet.hpMax * 0.05) };
         },
         getInfo(caster: Readonly<BattlePet>): string {
@@ -215,8 +217,8 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         brief: '春',
         buffType: BuffType.buff,
         eleType: EleType.air,
-        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>): BuffOutput | void {
-            return { hp: buff.caster.getSklDmg(null) * 0.8 * -1 };
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
+            return { hp: ctrlr.getSklDmg(buff.caster, null) * 0.8 * -1 };
         },
         getInfo(caster: Readonly<BattlePet>): string {
             return `每回合恢复目标${getSklDmgStr(caster, 0.8)}(80%)点血量`;
@@ -273,8 +275,8 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             thisPet.pet2.atkDmgTo -= atk;
             thisPet.pet2.sklDmgTo -= skl;
         },
-        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>): BuffOutput | void {
-            return { hp: Math.floor(thisPet.getAtkDmg(thisPet) * 0.5) };
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
+            return { hp: Math.floor(ctrlr.getAtkDmg(thisPet, thisPet) * 0.5) };
         },
         getInfo(caster: Readonly<BattlePet>): string {
             return `最大伤害提高100%，但每回合都会受到相当于自身攻击力50%的暗系伤害`;

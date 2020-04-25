@@ -21,7 +21,7 @@ module.exports = {
         selfSkillIds: [
             'FangHuZhao'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     NeiRanJiShou: {
         id: 'NeiRanJiShou',
@@ -45,7 +45,7 @@ module.exports = {
         selfSkillIds: [
             'HuoYanDan'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     FangShengJiXieBi: {
         id: 'FangShengJiXieBi',
@@ -69,7 +69,7 @@ module.exports = {
         selfSkillIds: [
             'ChaoZhongJi'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     YaHuHanJuRen: {
         id: 'YaHuHanJuRen',
@@ -93,7 +93,7 @@ module.exports = {
         selfSkillIds: [
             'ZhuoShao'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     ZiJingMieHuoQi: {
         id: 'ZiJingMieHuoQi',
@@ -118,7 +118,7 @@ module.exports = {
             'JingJie',
             'JingZhongChangMing'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     ShuiLengJiQiRen: {
         id: 'ShuiLengJiQiRen',
@@ -142,7 +142,7 @@ module.exports = {
         selfSkillIds: [
             'ShuiLengDan'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     JiXieMaoMi: {
         id: 'JiXieMaoMi',
@@ -166,7 +166,7 @@ module.exports = {
         selfSkillIds: [
             'ReLi'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     HeiFengWuRenJi: {
         id: 'HeiFengWuRenJi',
@@ -190,7 +190,7 @@ module.exports = {
         selfSkillIds: [
             'JiFengRen'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     CiHuaYouLing: {
         id: 'CiHuaYouLing',
@@ -214,7 +214,7 @@ module.exports = {
         selfSkillIds: [
             'DianZiMaiChong'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     DianZiShouWei: {
         id: 'DianZiShouWei',
@@ -238,7 +238,7 @@ module.exports = {
         selfSkillIds: [
             'MieShi'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     CaoPingShouGeZhe: {
         id: 'CaoPingShouGeZhe',
@@ -262,7 +262,7 @@ module.exports = {
         selfSkillIds: [
             'JiFengRen'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     JiXieXiuLiShi: {
         id: 'JiXieXiuLiShi',
@@ -286,7 +286,7 @@ module.exports = {
         selfSkillIds: [
             'RongJie'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     HuoHuoTu: {
         id: 'HuoHuoTu',
@@ -310,7 +310,7 @@ module.exports = {
         selfSkillIds: [
             'BaoZha'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     },
     BaiLanYuYan: {
         id: 'BaiLanYuYan',
@@ -334,6 +334,6 @@ module.exports = {
         selfSkillIds: [
             'HuiChunShu'
         ],
-        selfFeatures: []
+        selfFeatureIds: []
     }
 };

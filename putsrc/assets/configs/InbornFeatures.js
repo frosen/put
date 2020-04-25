@@ -16,8 +16,8 @@ module.exports = [
     'addEvdRate',
     'addHitRate',
     'addDfsRate',
-    'addDmgRdcHP',
-    'addHPRdcMP',
+    'addDmgRdcHp',
+    'addHpRdcMp',
     'addByLuck',
     'addLoad'
 ];

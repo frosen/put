@@ -13,9 +13,11 @@ import CellAttri from 'pubcells/cell_attri/scripts/CellAttri';
 import CellAttri2 from 'pubcells/cell_attri2/scripts/CellAttri2';
 import CellPetName from '../cells/cell_pet_name/scripts/CellPetName';
 import CellTitle from 'pubcells/cell_title/scripts/CellTitle';
-import { Pet, Pet2, PetModel, PetStateNames, PetRankNames, BioTypeNames, EleTypeNames, BattleTypeNames } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
 import * as expModels from 'configs/ExpModels';
+import { Pet, PetStateNames, PetRankNames, BioTypeNames, EleTypeNames, BattleTypeNames } from 'scripts/DataSaved';
+import { Pet2 } from 'scripts/DataOther';
+import { PetModel } from 'scripts/DataModel';
 
 @ccclass
 export default class PagePetDetailLVD extends ListViewDelegate {

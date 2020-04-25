@@ -8,8 +8,9 @@ const { ccclass, property } = cc._decorator;
 
 import PageBase from 'scripts/PageBase';
 import ListView from 'scripts/ListView';
-import { Pet, Pet2 } from 'scripts/Memory';
 import PagePetDetailLVD from './PagePetDetailLVD';
+import { Pet } from 'scripts/DataSaved';
+import { Pet2 } from 'scripts/DataOther';
 
 @ccclass
 export default class PagePetDetail extends PageBase {

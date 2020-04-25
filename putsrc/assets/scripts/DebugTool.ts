@@ -4,9 +4,6 @@
  * luleyan
  */
 
-import featureModelDict from 'configs/FeatureModelDict';
-import { Feature } from './Memory';
-
 export default class DebugTool {
     ctrling: boolean = false;
 

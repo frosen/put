@@ -8,9 +8,10 @@ const { ccclass, property } = cc._decorator;
 
 import ListViewCell from 'scripts/ListViewCell';
 import PagePetDetail from 'pages/page_pet_detail/scripts/PagePetDetail';
-import { EleType, PetRankNames, PetStateNames, Pet, PetModel, PetState } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
 import PagePet from 'pages/page_pet/scripts/PagePet';
+import { Pet, PetRankNames, PetStateNames, PetState, EleType } from 'scripts/DataSaved';
+import { PetModel } from 'scripts/DataModel';
 
 @ccclass
 export default class CellPet extends ListViewCell {

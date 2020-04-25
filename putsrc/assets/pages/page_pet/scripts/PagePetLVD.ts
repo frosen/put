@@ -10,8 +10,8 @@ import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
 import CellPet from '../cells/cell_pet/scripts/CellPet';
-import { Pet } from 'scripts/Memory';
 import PagePet from './PagePet';
+import { Pet } from 'scripts/DataSaved';
 
 @ccclass
 export default class PagePetLVD extends ListViewDelegate {
@@ -19,7 +19,7 @@ export default class PagePetLVD extends ListViewDelegate {
     cellPetPrefab: cc.Prefab = null;
 
     get curPets(): Pet[] {
-        if (!this._curPets) this._curPets = this.ctrlr.memory.gameData.pets;
+        if (!this._curPets) this._curPets = this.ctrlr.memory.gameDataS.pets;
         return this._curPets;
     }
     _curPets: Pet[] = null;

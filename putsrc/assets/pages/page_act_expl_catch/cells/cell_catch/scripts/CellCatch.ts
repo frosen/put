@@ -7,12 +7,13 @@
 const { ccclass, property } = cc._decorator;
 
 import ListViewCell from 'scripts/ListViewCell';
-import { PetRankNames, PetModel, Pet, BioType } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
 import CellPet from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
-import { BattlePet } from 'pages/page_act_expl/scripts/BattleController';
 import PageActExplCatch from 'pages/page_act_expl_catch/scripts/PageActExplCatch';
 import featureModelDict from 'configs/FeatureModelDict';
+import { Pet, PetRankNames, BioType } from 'scripts/DataSaved';
+import { PetModel } from 'scripts/DataModel';
+import { BattlePet } from 'scripts/DataOther';
 
 @ccclass
 export default class CellCatch extends ListViewCell {

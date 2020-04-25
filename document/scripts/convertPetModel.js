@@ -4,7 +4,7 @@
 
 let convert = require('./xlsToJs');
 
-convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.js', 'pet', function(data) {
+convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.js', 'pet', function (data) {
     let petJson = {};
     for (let rowIdx = 1; rowIdx < data.length; rowIdx++) {
         const rowData = data[rowIdx];
@@ -48,13 +48,13 @@ convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.js', 'pet', func
         if (rowData[18]) selfSkillIds.push(rowData[18]);
         if (rowData[19]) selfSkillIds.push(rowData[19]);
 
-        let selfFeatures = [];
-        if (rowData[20]) selfSkillIds.push(rowData[20]);
-        if (rowData[21]) selfSkillIds.push(rowData[21]);
-        if (rowData[22]) selfSkillIds.push(rowData[22]);
-        if (rowData[23]) selfSkillIds.push(rowData[23]);
-        if (rowData[24]) selfSkillIds.push(rowData[24]);
-        if (rowData[25]) selfSkillIds.push(rowData[25]);
+        let selfFeatureIds = [];
+        if (rowData[20]) selfFeatureIds.push(rowData[20]);
+        if (rowData[21]) selfFeatureIds.push(rowData[21]);
+        if (rowData[22]) selfFeatureIds.push(rowData[22]);
+        if (rowData[23]) selfFeatureIds.push(rowData[23]);
+        if (rowData[24]) selfFeatureIds.push(rowData[24]);
+        if (rowData[25]) selfFeatureIds.push(rowData[25]);
 
         let petData = {
             id,
@@ -76,7 +76,7 @@ convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.js', 'pet', func
             baseElegant,
             addElegant,
             selfSkillIds,
-            selfFeatures
+            selfFeatureIds
         };
         petJson[id] = petData;
     }

@@ -4,8 +4,10 @@
  * luleyan
  */
 
-import { FeatureModel, Pet2, BattleDataForFeature, SkillModel, EleType, SkillType, BattleType } from 'scripts/Memory';
-import { BattlePet, BattleController } from 'pages/page_act_expl/scripts/BattleController';
+import { BattleController } from 'pages/page_act_expl/scripts/BattleController';
+import { FeatureModel, BattleDataForFeature, SkillType } from 'scripts/DataModel';
+import { Pet2, BattlePet } from 'scripts/DataOther';
+import { EleType, BattleType } from 'scripts/DataSaved';
 
 function rd(n: number) {
     if (Math.round(n) * 10 == Math.round(n * 10)) return String(Math.round(n));
@@ -337,7 +339,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '焰',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            aim.hp -= pet.getSklDmg(aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.fire, aim, pet);
+            aim.hp -= bData.ctrlr.getSklDmg(pet, aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.fire, aim, pet);
         },
         getInfo(datas: number[]): string {
             return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的火系伤害`;
@@ -348,7 +350,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '湍',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            aim.hp -= pet.getSklDmg(aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.water, aim, pet);
+            aim.hp -= bData.ctrlr.getSklDmg(pet, aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.water, aim, pet);
         },
         getInfo(datas: number[]): string {
             return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的水系伤害`;
@@ -359,7 +361,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '穹',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            aim.hp -= pet.getSklDmg(aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.air, aim, pet);
+            aim.hp -= bData.ctrlr.getSklDmg(pet, aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.air, aim, pet);
         },
         getInfo(datas: number[]): string {
             return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的空系伤害`;
@@ -370,7 +372,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '渊',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            aim.hp -= pet.getSklDmg(aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.earth, aim, pet);
+            aim.hp -= bData.ctrlr.getSklDmg(pet, aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.earth, aim, pet);
         },
         getInfo(datas: number[]): string {
             return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的地系伤害`;
@@ -381,7 +383,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '烁',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            aim.hp -= pet.getSklDmg(aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.light, aim, pet);
+            aim.hp -= bData.ctrlr.getSklDmg(pet, aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.light, aim, pet);
         },
         getInfo(datas: number[]): string {
             return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的光系伤害`;
@@ -392,7 +394,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '影',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            aim.hp -= pet.getSklDmg(aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.dark, aim, pet);
+            aim.hp -= bData.ctrlr.getSklDmg(pet, aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.dark, aim, pet);
         },
         getInfo(datas: number[]): string {
             return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的暗系伤害`;

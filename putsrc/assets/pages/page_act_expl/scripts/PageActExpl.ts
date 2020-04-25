@@ -8,13 +8,14 @@ const { ccclass, property, executionOrder } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import { ExplUpdater, ExplState } from './ExplUpdater';
 import PetUI from './PetUI';
-import { PetRankNames, BuffModel, BuffType, EleType } from 'scripts/Memory';
 import * as petModelDict from 'configs/PetModelDict';
-import { BattlePet } from './BattleController';
 import BuffModelDict from 'configs/BuffModelDict';
 import PageActExplLVD from './PageActExplLVD';
 import ListView from 'scripts/ListView';
 import PageActExplCatch from 'pages/page_act_expl_catch/scripts/PageActExplCatch';
+import { PetRankNames, EleType } from 'scripts/DataSaved';
+import { BuffModel, BuffType } from 'scripts/DataModel';
+import { BattlePet } from 'scripts/DataOther';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -344,7 +345,7 @@ export default class PageActExpl extends PageBase {
 
     onClickCatch() {
         let ctrlr = this.updater.battleCtrlr;
-        let id = this.ctrlr.memory.gameData.curExpl.curBattle.startTime;
+        let id = this.ctrlr.memory.gameDataS.curExpl.curBattle.startTime;
         this.ctrlr.pushPage(PageActExplCatch, { ctrlr, pets: ctrlr.realBattle.enemyTeam.pets, id });
     }
 

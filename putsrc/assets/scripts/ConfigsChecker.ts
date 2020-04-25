@@ -10,6 +10,7 @@ import * as skillModelDict from 'configs/SkillModelDict';
 import buffModelDict from 'configs/BuffModelDict';
 import featureModelDict from 'configs/FeatureModelDict';
 import * as equipModelDict from 'configs/EquipModelDict';
+import * as inBornFeatures from 'configs/InbornFeatures';
 
 function checkActPosModelDict() {
     for (const key in actPosModelDict) {
@@ -91,24 +92,30 @@ function checkFeatureModelDict() {
 
     for (const key in featureModelDict) {
         const model = featureModelDict[key];
-        if (model.id != key) cc.error('featureModelDict中，id与dict的key不符', key, model.id);
-        if (!model.hasOwnProperty('id')) cc.error('featureModelDict中，缺少id', key);
-        if (!model.hasOwnProperty('dataAreas')) cc.error('featureModelDict中，缺少dataAreas', key);
-        if (!model.hasOwnProperty('getInfo')) cc.error('featureModelDict中，缺少getInfo', key);
-        if (!model.hasOwnProperty('cnBrief')) cc.error('featureModelDict中，缺少cnBrief', key);
-        if (briefDict[model.cnBrief] == true) cc.error('featureModelDict中，cnBrief重复了', key);
+        if (model.id != key) cc.error('featureModelDict中，id与dict的key不符：', key, model.id);
+        if (!model.hasOwnProperty('id')) cc.error('featureModelDict中，缺少id：', key);
+        if (!model.hasOwnProperty('dataAreas')) cc.error('featureModelDict中，缺少dataAreas：', key);
+        if (!model.hasOwnProperty('getInfo')) cc.error('featureModelDict中，缺少getInfo：', key);
+        if (!model.hasOwnProperty('cnBrief')) cc.error('featureModelDict中，缺少cnBrief：', key);
+        if (briefDict[model.cnBrief] == true) cc.error('featureModelDict中，cnBrief重复了：', key);
         briefDict[model.cnBrief] = true;
+    }
+}
+
+function checkFeatureInBorn() {
+    for (const featureId of inBornFeatures) {
+        if (!featureModelDict.hasOwnProperty(featureId)) cc.error('inBornFeatures中有错误id：', featureId);
     }
 }
 
 function checkEquipModelDict() {
     for (const key in equipModelDict) {
         const model = equipModelDict[key];
-        if (model.id != key) cc.error('equipModelDict中，id与dict的key不符', key, model.id);
+        if (model.id != key) cc.error('equipModelDict中，id与dict的key不符：', key, model.id);
         let features = model.features;
         for (const feature of features) {
             if (!(feature in featureModelDict)) {
-                cc.error('equipModelDict中，feature有误', key, feature);
+                cc.error('equipModelDict中，feature有误：', key, feature);
             }
         }
     }
@@ -120,5 +127,6 @@ export default function checkConfigs() {
     checkSkillModelDict();
     checkBuffModelDict();
     checkFeatureModelDict();
+    checkFeatureInBorn();
     checkEquipModelDict();
 }

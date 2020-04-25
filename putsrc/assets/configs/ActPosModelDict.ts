@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { ActPosModel } from 'scripts/Memory';
+import { ActPosModel } from 'scripts/DataModel';
 
 const ActPosModelDict: { [key: string]: ActPosModel } = {
     YiZhuang: {

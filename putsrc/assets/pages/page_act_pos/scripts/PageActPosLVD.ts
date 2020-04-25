@@ -7,7 +7,6 @@
 const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
-import { ActPos, ActPosModel } from 'scripts/Memory';
 import actPosModelDict from 'configs/ActPosModelDict';
 import ListViewCell from 'scripts/ListViewCell';
 import CellPosInfo from '../cells/cell_pos_info/scripts/CellPosInfo';
@@ -16,6 +15,8 @@ import CellPosMov from '../cells/cell_pos_mov/scripts/CellPosMov';
 import PageActPos from './PageActPos';
 import { PageSwitchAnim } from 'scripts/BaseController';
 import PageActExpl from 'pages/page_act_expl/scripts/PageActExpl';
+import { ActPos } from 'scripts/DataSaved';
+import { ActPosModel } from 'scripts/DataModel';
 
 const CellActInfo = {
     work: { cnName: '工作介绍所' },
@@ -41,13 +42,13 @@ export default class PageActPosLVD extends ListViewDelegate {
     movPrefab: cc.Prefab = null;
 
     get curPosId(): string {
-        if (!this._curPosId) this._curPosId = this.ctrlr.memory.gameData.curPosId;
+        if (!this._curPosId) this._curPosId = this.ctrlr.memory.gameDataS.curPosId;
         return this._curPosId;
     }
     _curPosId: string = null;
 
     get curActPos(): ActPos {
-        if (!this._curActPos) this._curActPos = this.ctrlr.memory.gameData.posDataDict[this.curPosId];
+        if (!this._curActPos) this._curActPos = this.ctrlr.memory.gameDataS.posDataDict[this.curPosId];
         return this._curActPos;
     }
     _curActPos: ActPos = null;
@@ -162,7 +163,7 @@ export default class PageActPosLVD extends ListViewDelegate {
             switchAnim = disY > 0 ? PageSwitchAnim.fromTop : PageSwitchAnim.fromBottom;
         }
 
-        this.ctrlr.memory.gameData.curPosId = nextPosId;
+        this.ctrlr.memory.gameDataS.curPosId = nextPosId;
         this.ctrlr.switchCurPage(PageActPos, null, switchAnim);
     }
 }

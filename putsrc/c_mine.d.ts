@@ -45,3 +45,47 @@ interface Array<T> {
     removeIndex(idx: number);
     getLast(): any;
 }
+
+// -----------------------------------------------------------------
+
+declare interface StartingBattleFeature {
+    func: (pet: BattlePet, datas: number[], ctrlr: BattleController) => void;
+    datas: number[];
+    id: string;
+}
+
+declare interface AttackingFeature {
+    func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    datas: number[];
+    id: string;
+}
+
+declare interface CastingFeature {
+    func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    datas: number[];
+    id: string;
+}
+
+declare interface HurtFeature {
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    datas: number[];
+    id: string;
+}
+
+declare interface HealedFeature {
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    datas: number[];
+    id: string;
+}
+
+declare interface EnemyDeadFeature {
+    func: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController) => void;
+    datas: number[];
+    id: string;
+}
+
+declare interface DeadFeature {
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController) => void;
+    datas: number[];
+    id: string;
+}

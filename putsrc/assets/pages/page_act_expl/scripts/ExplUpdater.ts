@@ -5,8 +5,9 @@
  */
 
 import PageActExpl from './PageActExpl';
-import { Memory } from 'scripts/Memory';
+import { Memory, GameDataSavedTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
+import { GameDataSaved } from 'scripts/DataSaved';
 
 export enum ExplState {
     none,
@@ -23,6 +24,7 @@ enum ExplResult {
 export class ExplUpdater {
     page: PageActExpl = null;
     memory: Memory = null;
+    gameDataS: GameDataSaved = null;
     battleCtrlr: BattleController = null;
 
     state: ExplState = ExplState.none;
@@ -34,12 +36,14 @@ export class ExplUpdater {
     init(page: PageActExpl) {
         this.page = page;
         this.memory = this.page.ctrlr.memory;
+        this.gameDataS = this.memory.gameDataS;
+
         this.battleCtrlr = new BattleController();
         this.battleCtrlr.init(this.page, this.memory, () => {
             this.startRecover();
         });
 
-        if (!this.memory.gameData.curExpl) {
+        if (!this.memory.gameDataS.curExpl) {
             this.createExpl();
         } else {
             this.restoreLastExpl();
@@ -69,7 +73,7 @@ export class ExplUpdater {
     }
 
     createExpl() {
-        this.memory.createExpl();
+        GameDataSavedTool.createExpl(this.gameDataS);
         this.startExpl();
         this.page.handleLog();
     }
@@ -78,7 +82,7 @@ export class ExplUpdater {
 
     destroy() {
         cc.director.getScheduler().unscheduleUpdate(this);
-        this.memory.deleteExpl();
+        GameDataSavedTool.deleteExpl(this.gameDataS);
         this.memory.removeDataListener(this);
         this.page.ctrlr.debugTool.removeShortCut('ww');
         this.page.ctrlr.debugTool.removeShortCut('gg');
@@ -223,8 +227,8 @@ export class ExplUpdater {
     }
 
     executeHide(callback: (result: boolean) => void) {
-        let cur = !this.memory.gameData.curExpl.hiding;
-        this.memory.gameData.curExpl.hiding = cur;
+        let cur = !this.memory.gameDataS.curExpl.hiding;
+        this.memory.gameDataS.curExpl.hiding = cur;
         callback(cur);
     }
 }

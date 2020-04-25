@@ -8,7 +8,8 @@ const { ccclass, property } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import PageActPosLVD from './PageActPosLVD';
 import ListView from 'scripts/ListView';
-import { ActPos } from 'scripts/Memory';
+import { ActPos } from 'scripts/DataSaved';
+import { GameDataSavedTool } from 'scripts/Memory';
 
 @ccclass
 export default class PageActPos extends PageBase {
@@ -26,12 +27,12 @@ export default class PageActPos extends PageBase {
     onPageShow() {
         this.ctrlr.setTitle('位置');
 
-        let gameData = this.ctrlr.memory.gameData;
+        let gameData = this.ctrlr.memory.gameDataS;
         let posId = gameData.curPosId;
 
         let actPos: ActPos = null;
         if (!gameData.posDataDict.hasOwnProperty(posId)) {
-            actPos = this.ctrlr.memory.addActPos(posId);
+            actPos = GameDataSavedTool.addActPos(this.ctrlr.memory.gameDataS, posId);
         } else {
             actPos = gameData.posDataDict[posId];
         }
