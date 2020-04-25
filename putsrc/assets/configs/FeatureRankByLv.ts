@@ -1,4 +1,10 @@
-module.exports = [
+/*
+ * FeatureRankByLv.ts
+ * 宠物每个等级对应特性的等级数
+ * luleyan
+ */
+
+export let featureRankByLv: number[][] = [
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],

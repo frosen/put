@@ -6,7 +6,7 @@
 
 import { ActPosModel } from 'scripts/DataModel';
 
-const ActPosModelDict: { [key: string]: ActPosModel } = {
+export const actPosModelDict: { [key: string]: ActPosModel } = {
     YiZhuang: {
         id: 'YiZhuang',
         cnName: '易庄',
@@ -56,5 +56,3 @@ const ActPosModelDict: { [key: string]: ActPosModel } = {
         loc: { x: 1100, y: 100 }
     }
 };
-
-export default ActPosModelDict;

@@ -104,12 +104,6 @@ export class Item {
     itemType: ItemType;
 }
 
-export enum EquipType {
-    weapon = 1,
-    defense,
-    ornaments
-}
-
 export class Equip extends Item {}
 
 // -----------------------------------------------------------------

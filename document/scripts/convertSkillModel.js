@@ -8,7 +8,7 @@ function getEnum(str) {
     return Number(String(str).substr(0, 1));
 }
 
-convert('../put.xls', '../../putsrc/assets/configs/SkillModelDict.js', 'skill', function(data) {
+convert('../put.xls', '../../putsrc/assets/configs/SkillModelDict.ts', 'skill', 'skillModelDict', 'SkillModel', function (data) {
     let sklJson = {};
     for (let rowIdx = 1; rowIdx < data.length; rowIdx++) {
         const rowData = data[rowIdx];

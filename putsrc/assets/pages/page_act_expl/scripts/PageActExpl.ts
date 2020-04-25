@@ -8,8 +8,8 @@ const { ccclass, property, executionOrder } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import { ExplUpdater, ExplState } from './ExplUpdater';
 import PetUI from './PetUI';
-import * as petModelDict from 'configs/PetModelDict';
-import BuffModelDict from 'configs/BuffModelDict';
+import { petModelDict } from 'configs/PetModelDict';
+import { buffModelDict } from 'configs/BuffModelDict';
 import PageActExplLVD from './PageActExplLVD';
 import ListView from 'scripts/ListView';
 import PageActExplCatch from 'pages/page_act_expl_catch/scripts/PageActExplCatch';
@@ -240,7 +240,7 @@ export default class PageActExpl extends PageBase {
     }
 
     addBuff(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
-        let buffModel = BuffModelDict[buffId] as BuffModel;
+        let buffModel = buffModelDict[buffId] as BuffModel;
         let buffBrief = buffModel.brief;
         let buffStr = buffBrief + String(buffTime);
         this.addBuffByStr(beEnemy, idx, buffStr, this.getBuffColor(buffModel));
@@ -284,7 +284,7 @@ export default class PageActExpl extends PageBase {
     resetBuffTime(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
         let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
         let ui = uis[idx];
-        let buffBrief = (BuffModelDict[buffId] as BuffModel).brief;
+        let buffBrief = (buffModelDict[buffId] as BuffModel).brief;
         let buffStrTest = new RegExp('\\[' + buffBrief + '[0-9]*\\]');
         for (const child of ui.buffNode.children) {
             if (buffStrTest.test(child.getComponent(cc.Label).string)) {
@@ -299,7 +299,7 @@ export default class PageActExpl extends PageBase {
         let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
         let ui = uis[idx];
         if (buffId) {
-            let buffBrief = (BuffModelDict[buffId] as BuffModel).brief;
+            let buffBrief = (buffModelDict[buffId] as BuffModel).brief;
             let buffStrTest = new RegExp('\\[' + buffBrief + '[0-9]*\\]');
             for (const child of ui.buffNode.children) {
                 if (buffStrTest.test(child.getComponent(cc.Label).string)) {

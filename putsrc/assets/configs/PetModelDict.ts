@@ -1,4 +1,12 @@
-module.exports = {
+/*
+ * PetModelDict.ts
+ * 数据列表，从document中转义而来
+ * luleyan
+ */
+
+import { PetModel } from 'scripts/DataModel';
+  
+export let petModelDict: { [key: string]: PetModel } = {
     FaTiaoWa: {
         id: 'FaTiaoWa',
         cnName: '发条蛙',
@@ -21,7 +29,12 @@ module.exports = {
         selfSkillIds: [
             'FangHuZhao'
         ],
-        selfFeatureIds: []
+        selfFeatureIds: [
+            'addAtkDmg',
+            'hurtGotRage',
+            'addCritRate',
+            'deadFangHu'
+        ]
     },
     NeiRanJiShou: {
         id: 'NeiRanJiShou',
@@ -43,7 +56,8 @@ module.exports = {
         baseElegant: 100,
         addElegant: 15,
         selfSkillIds: [
-            'HuoYanDan'
+            'HuoYanDan',
+            'BaoZha'
         ],
         selfFeatureIds: []
     },
@@ -164,7 +178,8 @@ module.exports = {
         baseElegant: 150,
         addElegant: 21,
         selfSkillIds: [
-            'ReLi'
+            'ReLi',
+            'KuangReZhiWu'
         ],
         selfFeatureIds: []
     },
@@ -236,7 +251,8 @@ module.exports = {
         baseElegant: 80,
         addElegant: 12,
         selfSkillIds: [
-            'MieShi'
+            'MieShi',
+            'ShengGuang'
         ],
         selfFeatureIds: []
     },
@@ -308,7 +324,8 @@ module.exports = {
         baseElegant: 100,
         addElegant: 17,
         selfSkillIds: [
-            'BaoZha'
+            'LiaoYuan',
+            'HuoYanDan'
         ],
         selfFeatureIds: []
     },
@@ -332,7 +349,8 @@ module.exports = {
         baseElegant: 60,
         addElegant: 18,
         selfSkillIds: [
-            'HuiChunShu'
+            'HuiChunShu',
+            'YinSuQiLiu'
         ],
         selfFeatureIds: []
     }

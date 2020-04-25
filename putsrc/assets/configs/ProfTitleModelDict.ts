@@ -37,4 +37,4 @@ const ProfTitleModelDict: { [key: string]: Partial<ProfTitleModel> } = {
     }
 };
 
-export default <{ [key: string]: ProfTitleModel }>ProfTitleModelDict;
+export let profTitleModelDict: { [key: string]: ProfTitleModel } = <{ [key: string]: ProfTitleModel }>ProfTitleModelDict;

@@ -1,8 +1,16 @@
-module.exports = {
+/*
+ * EquipModelDict.ts
+ * 数据列表，从document中转义而来
+ * luleyan
+ */
+
+import { EquipModel } from 'scripts/DataModel';
+  
+export let equipModelDict: { [key: string]: EquipModel } = {
     DuanJian: {
         id: 'DuanJian',
         cnName: '短剑',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 8,
         equipPosType: 1,
@@ -20,7 +28,7 @@ module.exports = {
     ChangRenJian: {
         id: 'ChangRenJian',
         cnName: '长刃剑',
-        features: [
+        featureIds: [
             'baseStrength'
         ],
         rank: 2,
@@ -40,7 +48,7 @@ module.exports = {
     TieZhiYuGan: {
         id: 'TieZhiYuGan',
         cnName: '铁质鱼竿',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 8,
         equipPosType: 1,
@@ -58,7 +66,7 @@ module.exports = {
     JingZhiYuGan: {
         id: 'JingZhiYuGan',
         cnName: '精致鱼竿',
-        features: [
+        featureIds: [
             'addCritRate'
         ],
         rank: 2,
@@ -78,7 +86,7 @@ module.exports = {
     JingLingMoZhang: {
         id: 'JingLingMoZhang',
         cnName: '精灵魔杖',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 8,
         equipPosType: 1,
@@ -96,7 +104,7 @@ module.exports = {
     YuHuaMoZhang: {
         id: 'YuHuaMoZhang',
         cnName: '羽化魔杖',
-        features: [
+        featureIds: [
             'addMpMax'
         ],
         rank: 2,
@@ -116,7 +124,7 @@ module.exports = {
     WanDao: {
         id: 'WanDao',
         cnName: '弯刀',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 9,
         equipPosType: 1,
@@ -134,7 +142,7 @@ module.exports = {
     HongYingDao: {
         id: 'HongYingDao',
         cnName: '红缨刀',
-        features: [
+        featureIds: [
             'addAtkDmg'
         ],
         rank: 2,
@@ -154,7 +162,7 @@ module.exports = {
     ZhongChui: {
         id: 'ZhongChui',
         cnName: '重锤',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 10,
         equipPosType: 1,
@@ -172,7 +180,7 @@ module.exports = {
     ChaiLangZhanChui: {
         id: 'ChaiLangZhanChui',
         cnName: '豺狼战锤',
-        features: [
+        featureIds: [
             'addHpRdcMp'
         ],
         rank: 2,
@@ -192,7 +200,7 @@ module.exports = {
     BanShou: {
         id: 'BanShou',
         cnName: '扳手',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 10,
         equipPosType: 1,
@@ -210,7 +218,7 @@ module.exports = {
     WanNengBanShou: {
         id: 'WanNengBanShou',
         cnName: '万能扳手',
-        features: [
+        featureIds: [
             'addByLuck'
         ],
         rank: 2,
@@ -230,7 +238,7 @@ module.exports = {
     LieGong: {
         id: 'LieGong',
         cnName: '猎弓',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 11,
         equipPosType: 1,
@@ -248,7 +256,7 @@ module.exports = {
     QingXingLieGong: {
         id: 'QingXingLieGong',
         cnName: '轻型猎弓',
-        features: [
+        featureIds: [
             'baseAgility'
         ],
         rank: 2,
@@ -268,7 +276,7 @@ module.exports = {
     JianXiaoLieGong: {
         id: 'JianXiaoLieGong',
         cnName: '尖啸猎弓',
-        features: [
+        featureIds: [
             'baseAgility',
             'addHitRate'
         ],
@@ -289,7 +297,7 @@ module.exports = {
     MoFaJian: {
         id: 'MoFaJian',
         cnName: '魔法剑',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 11,
         equipPosType: 1,
@@ -307,7 +315,7 @@ module.exports = {
     FuWenJian: {
         id: 'FuWenJian',
         cnName: '符文剑',
-        features: [
+        featureIds: [
             'baseConcentration'
         ],
         rank: 2,
@@ -327,7 +335,7 @@ module.exports = {
     AoFaChangJian: {
         id: 'AoFaChangJian',
         cnName: '奥法长剑',
-        features: [
+        featureIds: [
             'baseConcentration',
             'hitWithLight'
         ],
@@ -348,7 +356,7 @@ module.exports = {
     MiNiDianHuoQi: {
         id: 'MiNiDianHuoQi',
         cnName: '迷你点火器',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 12,
         equipPosType: 1,
@@ -366,7 +374,7 @@ module.exports = {
     JiSuDianHuoQi: {
         id: 'JiSuDianHuoQi',
         cnName: '急速点火器',
-        features: [
+        featureIds: [
             'castFire'
         ],
         rank: 2,
@@ -386,7 +394,7 @@ module.exports = {
     DiJingDianHuoQi: {
         id: 'DiJingDianHuoQi',
         cnName: '地精点火器',
-        features: [
+        featureIds: [
             'castFire',
             'hitAddRg'
         ],
@@ -407,7 +415,7 @@ module.exports = {
     'DaLüBangZi': {
         id: 'DaLüBangZi',
         cnName: '大绿棒子',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 12,
         equipPosType: 1,
@@ -425,7 +433,7 @@ module.exports = {
     'PoSuiDeLüBangZi': {
         id: 'PoSuiDeLüBangZi',
         cnName: '破碎的绿棒子',
-        features: [
+        featureIds: [
             'addDmgRdcHp'
         ],
         rank: 2,
@@ -445,7 +453,7 @@ module.exports = {
     'HunRanLüBangZi': {
         id: 'HunRanLüBangZi',
         cnName: '魂染绿棒子',
-        features: [
+        featureIds: [
             'addDmgRdcHp',
             'hurtGotMp'
         ],
@@ -466,7 +474,7 @@ module.exports = {
     MoShiBiShou: {
         id: 'MoShiBiShou',
         cnName: '魔石匕首',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 13,
         equipPosType: 1,
@@ -484,7 +492,7 @@ module.exports = {
     ShuiJingBiShou: {
         id: 'ShuiJingBiShou',
         cnName: '水晶匕首',
-        features: [
+        featureIds: [
             'castConDmg'
         ],
         rank: 2,
@@ -504,7 +512,7 @@ module.exports = {
     DuanJiFu: {
         id: 'DuanJiFu',
         cnName: '断击斧',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 13,
         equipPosType: 1,
@@ -522,7 +530,7 @@ module.exports = {
     SuiLieFu: {
         id: 'SuiLieFu',
         cnName: '碎裂斧',
-        features: [
+        featureIds: [
             'hitKill'
         ],
         rank: 2,
@@ -542,7 +550,7 @@ module.exports = {
     HuanYuZhiJing: {
         id: 'HuanYuZhiJing',
         cnName: '幻羽之镜',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 13,
         equipPosType: 1,
@@ -560,7 +568,7 @@ module.exports = {
     QingShanZhiJing: {
         id: 'QingShanZhiJing',
         cnName: '青山之镜',
-        features: [
+        featureIds: [
             'castEarth'
         ],
         rank: 2,
@@ -580,7 +588,7 @@ module.exports = {
     WuShiZhangZhang: {
         id: 'WuShiZhangZhang',
         cnName: '巫师长杖',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 13,
         equipPosType: 1,
@@ -598,7 +606,7 @@ module.exports = {
     YuYanShiZhangZhang: {
         id: 'YuYanShiZhangZhang',
         cnName: '预言师长杖',
-        features: [
+        featureIds: [
             'hurtRdcMp'
         ],
         rank: 2,
@@ -618,7 +626,7 @@ module.exports = {
     TieQuanShouTao: {
         id: 'TieQuanShouTao',
         cnName: '铁拳手套',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 13,
         equipPosType: 1,
@@ -636,7 +644,7 @@ module.exports = {
     QiangJiShouTao: {
         id: 'QiangJiShouTao',
         cnName: '强击手套',
-        features: [
+        featureIds: [
             'hitByRage'
         ],
         rank: 2,
@@ -656,7 +664,7 @@ module.exports = {
     DaChiLun: {
         id: 'DaChiLun',
         cnName: '大齿轮',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 14,
         equipPosType: 1,
@@ -674,7 +682,7 @@ module.exports = {
     ZhongXingChiLun: {
         id: 'ZhongXingChiLun',
         cnName: '重型齿轮',
-        features: [
+        featureIds: [
             'addHpMax'
         ],
         rank: 2,
@@ -694,7 +702,7 @@ module.exports = {
     MaiChongFaSheQi: {
         id: 'MaiChongFaSheQi',
         cnName: '脉冲发射器',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 14,
         equipPosType: 1,
@@ -712,7 +720,7 @@ module.exports = {
     MaiChongPao: {
         id: 'MaiChongPao',
         cnName: '脉冲炮',
-        features: [
+        featureIds: [
             'castByCombo'
         ],
         rank: 2,
@@ -732,7 +740,7 @@ module.exports = {
     DianXingGun: {
         id: 'DianXingGun',
         cnName: '电刑棍',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 14,
         equipPosType: 1,
@@ -750,7 +758,7 @@ module.exports = {
     GaoYaDianQiang: {
         id: 'GaoYaDianQiang',
         cnName: '高压电枪',
-        features: [
+        featureIds: [
             'addSklMax'
         ],
         rank: 2,
@@ -770,7 +778,7 @@ module.exports = {
     PouYuDao: {
         id: 'PouYuDao',
         cnName: '剖鱼刀',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 15,
         equipPosType: 1,
@@ -788,7 +796,7 @@ module.exports = {
     FeiYuCha: {
         id: 'FeiYuCha',
         cnName: '飞鱼叉',
-        features: [
+        featureIds: [
             'hitWithWater'
         ],
         rank: 2,
@@ -808,7 +816,7 @@ module.exports = {
     FengShuShuZhi: {
         id: 'FengShuShuZhi',
         cnName: '枫树树枝',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 15,
         equipPosType: 1,
@@ -826,7 +834,7 @@ module.exports = {
     FengLingQuanZhang: {
         id: 'FengLingQuanZhang',
         cnName: '枫灵权杖',
-        features: [
+        featureIds: [
             'heal'
         ],
         rank: 2,
@@ -846,7 +854,7 @@ module.exports = {
     TuLuXiaoDao: {
         id: 'TuLuXiaoDao',
         cnName: '屠戮小刀',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 15,
         equipPosType: 1,
@@ -864,7 +872,7 @@ module.exports = {
     BaoPiRen: {
         id: 'BaoPiRen',
         cnName: '剥皮刃',
-        features: [
+        featureIds: [
             'hitAddRg'
         ],
         rank: 2,
@@ -884,7 +892,7 @@ module.exports = {
     DaiJianDeTieBang: {
         id: 'DaiJianDeTieBang',
         cnName: '带尖的铁棒',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 16,
         equipPosType: 1,
@@ -902,7 +910,7 @@ module.exports = {
     MangCiTieBang: {
         id: 'MangCiTieBang',
         cnName: '芒刺铁棒',
-        features: [
+        featureIds: [
             'castHurtMe'
         ],
         rank: 2,
@@ -922,7 +930,7 @@ module.exports = {
     DanShouNu: {
         id: 'DanShouNu',
         cnName: '单手弩',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 16,
         equipPosType: 1,
@@ -940,7 +948,7 @@ module.exports = {
     XunJieLianNu: {
         id: 'XunJieLianNu',
         cnName: '迅捷连弩',
-        features: [
+        featureIds: [
             'castEleRein'
         ],
         rank: 2,
@@ -960,7 +968,7 @@ module.exports = {
     TieShan: {
         id: 'TieShan',
         cnName: '铁扇',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 17,
         equipPosType: 1,
@@ -978,7 +986,7 @@ module.exports = {
     YuHunShan: {
         id: 'YuHunShan',
         cnName: '御魂扇',
-        features: [
+        featureIds: [
             'hitAddMp'
         ],
         rank: 2,
@@ -998,7 +1006,7 @@ module.exports = {
     FenChaFu: {
         id: 'FenChaFu',
         cnName: '分叉斧',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 17,
         equipPosType: 1,
@@ -1016,7 +1024,7 @@ module.exports = {
     XingGuangZhanFu: {
         id: 'XingGuangZhanFu',
         cnName: '星光战斧',
-        features: [
+        featureIds: [
             'addDfsRate'
         ],
         rank: 2,
@@ -1036,7 +1044,7 @@ module.exports = {
     LiMingZhiRen: {
         id: 'LiMingZhiRen',
         cnName: '黎明之刃',
-        features: [
+        featureIds: [
             'addDfsRate',
             'killRdcCD'
         ],
@@ -1057,7 +1065,7 @@ module.exports = {
     HeFengShouZhang: {
         id: 'HeFengShouZhang',
         cnName: '和风手杖',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 17,
         equipPosType: 1,
@@ -1075,7 +1083,7 @@ module.exports = {
     YuFengFaZhang: {
         id: 'YuFengFaZhang',
         cnName: '御风法杖',
-        features: [
+        featureIds: [
             'castAir'
         ],
         rank: 2,
@@ -1095,7 +1103,7 @@ module.exports = {
     GuoLuJiaoBanQi: {
         id: 'GuoLuJiaoBanQi',
         cnName: '锅炉搅拌器',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 18,
         equipPosType: 1,
@@ -1113,7 +1121,7 @@ module.exports = {
     XuanFengQi: {
         id: 'XuanFengQi',
         cnName: '旋风器',
-        features: [
+        featureIds: [
             'hitWithAir'
         ],
         rank: 2,
@@ -1133,7 +1141,7 @@ module.exports = {
     HuoYanPenSheQi: {
         id: 'HuoYanPenSheQi',
         cnName: '火焰喷射器',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 18,
         equipPosType: 1,
@@ -1151,7 +1159,7 @@ module.exports = {
     RongNengQiang: {
         id: 'RongNengQiang',
         cnName: '融能枪',
-        features: [
+        featureIds: [
             'hitWithFire'
         ],
         rank: 2,
@@ -1171,7 +1179,7 @@ module.exports = {
     DuYinHuoQiang: {
         id: 'DuYinHuoQiang',
         cnName: '镀银火枪',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 18,
         equipPosType: 1,
@@ -1189,7 +1197,7 @@ module.exports = {
     ShanGuangBuQiang: {
         id: 'ShanGuangBuQiang',
         cnName: '闪光步枪',
-        features: [
+        featureIds: [
             'addEvdRate'
         ],
         rank: 2,
@@ -1209,7 +1217,7 @@ module.exports = {
     ShuiJingZhiDanQi: {
         id: 'ShuiJingZhiDanQi',
         cnName: '水晶掷弹器',
-        features: [
+        featureIds: [
             'addEvdRate',
             'hitAddMp'
         ],
@@ -1230,7 +1238,7 @@ module.exports = {
     FaMuFu: {
         id: 'FaMuFu',
         cnName: '伐木斧',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 19,
         equipPosType: 1,
@@ -1248,7 +1256,7 @@ module.exports = {
     KaiShanFu: {
         id: 'KaiShanFu',
         cnName: '开山斧',
-        features: [
+        featureIds: [
             'hitWithEarth'
         ],
         rank: 2,
@@ -1268,7 +1276,7 @@ module.exports = {
     ShiHuaJingGu: {
         id: 'ShiHuaJingGu',
         cnName: '石化胫骨',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 19,
         equipPosType: 1,
@@ -1286,7 +1294,7 @@ module.exports = {
     GuShouJingGu: {
         id: 'GuShouJingGu',
         cnName: '古兽胫骨',
-        features: [
+        featureIds: [
             'hurtWithShoot'
         ],
         rank: 2,
@@ -1306,7 +1314,7 @@ module.exports = {
     ShenShouJingGu: {
         id: 'ShenShouJingGu',
         cnName: '神兽胫骨',
-        features: [
+        featureIds: [
             'hurtWithShoot',
             'beginAddRage'
         ],
@@ -1327,7 +1335,7 @@ module.exports = {
     TengBian: {
         id: 'TengBian',
         cnName: '藤鞭',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 19,
         equipPosType: 1,
@@ -1345,7 +1353,7 @@ module.exports = {
     JingJiCi: {
         id: 'JingJiCi',
         cnName: '荆棘刺',
-        features: [
+        featureIds: [
             'hurtAndHurt'
         ],
         rank: 2,
@@ -1365,7 +1373,7 @@ module.exports = {
     JianDingZhiJian: {
         id: 'JianDingZhiJian',
         cnName: '坚定之剑',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 19,
         equipPosType: 1,
@@ -1383,7 +1391,7 @@ module.exports = {
     YongQiZhiJian: {
         id: 'YongQiZhiJian',
         cnName: '勇气之剑',
-        features: [
+        featureIds: [
             'castMpDmg'
         ],
         rank: 2,
@@ -1403,7 +1411,7 @@ module.exports = {
     WangZheZhiJian: {
         id: 'WangZheZhiJian',
         cnName: '王者之剑',
-        features: [
+        featureIds: [
             'castMpDmg',
             'castUlti'
         ],
@@ -1424,7 +1432,7 @@ module.exports = {
     LieDanZhiHu: {
         id: 'LieDanZhiHu',
         cnName: '裂胆指虎',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 20,
         equipPosType: 1,
@@ -1442,7 +1450,7 @@ module.exports = {
     ZhiMingZhiHu: {
         id: 'ZhiMingZhiHu',
         cnName: '致命指虎',
-        features: [
+        featureIds: [
             'hitWithDark'
         ],
         rank: 2,
@@ -1462,7 +1470,7 @@ module.exports = {
     JiSiFaZhang: {
         id: 'JiSiFaZhang',
         cnName: '祭祀法杖',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 21,
         equipPosType: 1,
@@ -1480,7 +1488,7 @@ module.exports = {
     DiYuFaZhang: {
         id: 'DiYuFaZhang',
         cnName: '地狱法杖',
-        features: [
+        featureIds: [
             'deadHurt'
         ],
         rank: 2,
@@ -1500,7 +1508,7 @@ module.exports = {
     MoLiDuanGong: {
         id: 'MoLiDuanGong',
         cnName: '魔力短弓',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 21,
         equipPosType: 1,
@@ -1518,7 +1526,7 @@ module.exports = {
     MoLongDuanGong: {
         id: 'MoLongDuanGong',
         cnName: '魔龙短弓',
-        features: [
+        featureIds: [
             'addCritDmgRate'
         ],
         rank: 2,
@@ -1538,7 +1546,7 @@ module.exports = {
     MoLongSiYaoZhiGong: {
         id: 'MoLongSiYaoZhiGong',
         cnName: '魔龙撕咬之弓',
-        features: [
+        featureIds: [
             'addCritDmgRate',
             'hitStlHp'
         ],
@@ -1559,7 +1567,7 @@ module.exports = {
     KunLunShan: {
         id: 'KunLunShan',
         cnName: '昆仑扇',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 1,
@@ -1577,7 +1585,7 @@ module.exports = {
     XuWuShan: {
         id: 'XuWuShan',
         cnName: '虚无扇',
-        features: [
+        featureIds: [
             'hitRdcMp'
         ],
         rank: 2,
@@ -1597,7 +1605,7 @@ module.exports = {
     ZhiBingQi: {
         id: 'ZhiBingQi',
         cnName: '制冰器',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 1,
@@ -1615,7 +1623,7 @@ module.exports = {
     HanShuangFaSheQiang: {
         id: 'HanShuangFaSheQiang',
         cnName: '寒霜发射枪',
-        features: [
+        featureIds: [
             'castWater'
         ],
         rank: 2,
@@ -1635,7 +1643,7 @@ module.exports = {
     DianCiJian: {
         id: 'DianCiJian',
         cnName: '电磁剑',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 1,
@@ -1653,7 +1661,7 @@ module.exports = {
     ChongNengDianCiJian: {
         id: 'ChongNengDianCiJian',
         cnName: '充能电磁剑',
-        features: [
+        featureIds: [
             'hitAddMp'
         ],
         rank: 2,
@@ -1673,7 +1681,7 @@ module.exports = {
     SuiShiChui: {
         id: 'SuiShiChui',
         cnName: '碎石锤',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 1,
@@ -1691,7 +1699,7 @@ module.exports = {
     FengShaZhanChui: {
         id: 'FengShaZhanChui',
         cnName: '风沙战锤',
-        features: [
+        featureIds: [
             'hurtWithCast'
         ],
         rank: 2,
@@ -1711,7 +1719,7 @@ module.exports = {
     BaoLieDuanQiang: {
         id: 'BaoLieDuanQiang',
         cnName: '爆裂短枪',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 1,
@@ -1729,7 +1737,7 @@ module.exports = {
     ShaYingDuanQiang: {
         id: 'ShaYingDuanQiang',
         cnName: '沙鹰短枪',
-        features: [
+        featureIds: [
             'addCritRate'
         ],
         rank: 2,
@@ -1749,7 +1757,7 @@ module.exports = {
     JingZhunChangGong: {
         id: 'JingZhunChangGong',
         cnName: '精准长弓',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 1,
@@ -1767,7 +1775,7 @@ module.exports = {
     YingYanChangGong: {
         id: 'YingYanChangGong',
         cnName: '鹰眼长弓',
-        features: [
+        featureIds: [
             'baseSensitivity'
         ],
         rank: 2,
@@ -1787,7 +1795,7 @@ module.exports = {
     ZhenZhuQuanZhang: {
         id: 'ZhenZhuQuanZhang',
         cnName: '珍珠权杖',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 1,
@@ -1805,7 +1813,7 @@ module.exports = {
     ShanHuQuanZhang: {
         id: 'ShanHuQuanZhang',
         cnName: '珊瑚权杖',
-        features: [
+        featureIds: [
             'addMpMax'
         ],
         rank: 2,
@@ -1825,7 +1833,7 @@ module.exports = {
     TiGuDao: {
         id: 'TiGuDao',
         cnName: '剔骨刀',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 23,
         equipPosType: 1,
@@ -1843,7 +1851,7 @@ module.exports = {
     XiuRouDao: {
         id: 'XiuRouDao',
         cnName: '修肉刀',
-        features: [
+        featureIds: [
             'hitByHp'
         ],
         rank: 2,
@@ -1863,7 +1871,7 @@ module.exports = {
     GuoYeDeKaoYangTui: {
         id: 'GuoYeDeKaoYangTui',
         cnName: '过夜的烤羊腿',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 23,
         equipPosType: 1,
@@ -1881,7 +1889,7 @@ module.exports = {
     QuNianDeKaoYangTui: {
         id: 'QuNianDeKaoYangTui',
         cnName: '去年的烤羊腿',
-        features: [
+        featureIds: [
             'castByPetCount'
         ],
         rank: 2,
@@ -1901,7 +1909,7 @@ module.exports = {
     FeiCuiChangDi: {
         id: 'FeiCuiChangDi',
         cnName: '翡翠长笛',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 25,
         equipPosType: 1,
@@ -1919,7 +1927,7 @@ module.exports = {
     ShengYuChangDi: {
         id: 'ShengYuChangDi',
         cnName: '圣玉长笛',
-        features: [
+        featureIds: [
             'healByHp'
         ],
         rank: 2,
@@ -1939,7 +1947,7 @@ module.exports = {
     YeSeChangQiang: {
         id: 'YeSeChangQiang',
         cnName: '夜色长枪',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 25,
         equipPosType: 1,
@@ -1957,7 +1965,7 @@ module.exports = {
     YueYingChangQiang: {
         id: 'YueYingChangQiang',
         cnName: '月影长枪',
-        features: [
+        featureIds: [
             'castLight'
         ],
         rank: 2,
@@ -1977,7 +1985,7 @@ module.exports = {
     YueShenChangQiang: {
         id: 'YueShenChangQiang',
         cnName: '月神长枪',
-        features: [
+        featureIds: [
             'castLight',
             'addSklMax'
         ],
@@ -1998,7 +2006,7 @@ module.exports = {
     ZhongJinShuJuJian: {
         id: 'ZhongJinShuJuJian',
         cnName: '重金属巨剑',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 25,
         equipPosType: 1,
@@ -2016,7 +2024,7 @@ module.exports = {
     XuanTieJuJian: {
         id: 'XuanTieJuJian',
         cnName: '玄铁巨剑',
-        features: [
+        featureIds: [
             'baseStrength'
         ],
         rank: 2,
@@ -2036,7 +2044,7 @@ module.exports = {
     ShouHuZheJuJian: {
         id: 'ShouHuZheJuJian',
         cnName: '守护者巨剑',
-        features: [
+        featureIds: [
             'baseStrength',
             'hurtWithAtk'
         ],
@@ -2057,7 +2065,7 @@ module.exports = {
     CanFengSan: {
         id: 'CanFengSan',
         cnName: '残风伞',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 25,
         equipPosType: 1,
@@ -2075,7 +2083,7 @@ module.exports = {
     BiYueSan: {
         id: 'BiYueSan',
         cnName: '闭月伞',
-        features: [
+        featureIds: [
             'hitRdcRg'
         ],
         rank: 2,
@@ -2095,7 +2103,7 @@ module.exports = {
     HaiDaoDeZhuaGou: {
         id: 'HaiDaoDeZhuaGou',
         cnName: '海盗的抓钩',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 25,
         equipPosType: 1,
@@ -2113,7 +2121,7 @@ module.exports = {
     HaiDaoJiaTui: {
         id: 'HaiDaoJiaTui',
         cnName: '海盗假腿',
-        features: [
+        featureIds: [
             'addDmgRdcHp'
         ],
         rank: 2,
@@ -2133,7 +2141,7 @@ module.exports = {
     MiNiFeiDanCang: {
         id: 'MiNiFeiDanCang',
         cnName: '迷你飞弹仓',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 26,
         equipPosType: 1,
@@ -2151,7 +2159,7 @@ module.exports = {
     MiNiHuoShenPao: {
         id: 'MiNiHuoShenPao',
         cnName: '迷你火神炮',
-        features: [
+        featureIds: [
             'hitKill'
         ],
         rank: 2,
@@ -2171,7 +2179,7 @@ module.exports = {
     JiXieDao: {
         id: 'JiXieDao',
         cnName: '机械刀',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 26,
         equipPosType: 1,
@@ -2189,7 +2197,7 @@ module.exports = {
     ZhanJiDao: {
         id: 'ZhanJiDao',
         cnName: '斩机刀',
-        features: [
+        featureIds: [
             'addAtkMax'
         ],
         rank: 2,
@@ -2209,7 +2217,7 @@ module.exports = {
     PoJiDao: {
         id: 'PoJiDao',
         cnName: '破机刀',
-        features: [
+        featureIds: [
             'addAtkMax',
             'addCritDmgRate'
         ],
@@ -2230,7 +2238,7 @@ module.exports = {
     GaoSuZuanTou: {
         id: 'GaoSuZuanTou',
         cnName: '高速钻头',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 26,
         equipPosType: 1,
@@ -2248,7 +2256,7 @@ module.exports = {
     GuangSuZuanTou: {
         id: 'GuangSuZuanTou',
         cnName: '光速钻头',
-        features: [
+        featureIds: [
             'castUlti'
         ],
         rank: 2,
@@ -2268,7 +2276,7 @@ module.exports = {
     YingHuoZhiZhang: {
         id: 'YingHuoZhiZhang',
         cnName: '萤火之杖',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 27,
         equipPosType: 1,
@@ -2286,7 +2294,7 @@ module.exports = {
     XingZhiZhang: {
         id: 'XingZhiZhang',
         cnName: '星之杖',
-        features: [
+        featureIds: [
             'hurtByHp'
         ],
         rank: 2,
@@ -2306,7 +2314,7 @@ module.exports = {
     LieHuZhao: {
         id: 'LieHuZhao',
         cnName: '猎虎爪',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 27,
         equipPosType: 1,
@@ -2324,7 +2332,7 @@ module.exports = {
     FeiLongGou: {
         id: 'FeiLongGou',
         cnName: '飞龙钩',
-        features: [
+        featureIds: [
             'addHitRate'
         ],
         rank: 2,
@@ -2344,7 +2352,7 @@ module.exports = {
     DuanYa: {
         id: 'DuanYa',
         cnName: '断牙',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 27,
         equipPosType: 1,
@@ -2362,7 +2370,7 @@ module.exports = {
     EQuanDeDuanYa: {
         id: 'EQuanDeDuanYa',
         cnName: '恶犬的断牙',
-        features: [
+        featureIds: [
             'hitStlHp'
         ],
         rank: 2,
@@ -2382,7 +2390,7 @@ module.exports = {
     GuLangDeDuanYa: {
         id: 'GuLangDeDuanYa',
         cnName: '孤狼的断牙',
-        features: [
+        featureIds: [
             'hitStlHp',
             'killAddHp'
         ],
@@ -2403,7 +2411,7 @@ module.exports = {
     YuanSeTiDao: {
         id: 'YuanSeTiDao',
         cnName: '原色剃刀',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 28,
         equipPosType: 1,
@@ -2421,7 +2429,7 @@ module.exports = {
     HuoYuanTiDao: {
         id: 'HuoYuanTiDao',
         cnName: '祸源剃刀',
-        features: [
+        featureIds: [
             'hitAddRg'
         ],
         rank: 2,
@@ -2441,7 +2449,7 @@ module.exports = {
     ShengChui: {
         id: 'ShengChui',
         cnName: '圣锤',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 28,
         equipPosType: 1,
@@ -2459,7 +2467,7 @@ module.exports = {
     QiShiZhiChui: {
         id: 'QiShiZhiChui',
         cnName: '骑士之锤',
-        features: [
+        featureIds: [
             'killAddMp'
         ],
         rank: 2,
@@ -2479,7 +2487,7 @@ module.exports = {
     FuYaoSan: {
         id: 'FuYaoSan',
         cnName: '扶摇伞',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 28,
         equipPosType: 1,
@@ -2497,7 +2505,7 @@ module.exports = {
     XiaoYaoSan: {
         id: 'XiaoYaoSan',
         cnName: '逍遥伞',
-        features: [
+        featureIds: [
             'baseElegant'
         ],
         rank: 2,
@@ -2517,7 +2525,7 @@ module.exports = {
     EHunChangMao: {
         id: 'EHunChangMao',
         cnName: '恶魂长矛',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 29,
         equipPosType: 1,
@@ -2535,7 +2543,7 @@ module.exports = {
     NiuQuZhiMao: {
         id: 'NiuQuZhiMao',
         cnName: '扭曲之矛',
-        features: [
+        featureIds: [
             'castDark'
         ],
         rank: 2,
@@ -2555,7 +2563,7 @@ module.exports = {
     ShiSengJianDao: {
         id: 'ShiSengJianDao',
         cnName: '侍僧尖刀',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 29,
         equipPosType: 1,
@@ -2573,7 +2581,7 @@ module.exports = {
     ShiXiangGuiZhiYa: {
         id: 'ShiXiangGuiZhiYa',
         cnName: '石像鬼之牙',
-        features: [
+        featureIds: [
             'hurtWithAss'
         ],
         rank: 2,
@@ -2593,7 +2601,7 @@ module.exports = {
     ZhengQiTieQuan: {
         id: 'ZhengQiTieQuan',
         cnName: '蒸汽铁拳',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 30,
         equipPosType: 1,
@@ -2611,7 +2619,7 @@ module.exports = {
     JiXieTieQuan: {
         id: 'JiXieTieQuan',
         cnName: '机械铁拳',
-        features: [
+        featureIds: [
             'castHurtMe'
         ],
         rank: 2,
@@ -2631,7 +2639,7 @@ module.exports = {
     ZhiNengTieQuan: {
         id: 'ZhiNengTieQuan',
         cnName: '智能铁拳',
-        features: [
+        featureIds: [
             'castHurtMe',
             'castEleRein'
         ],
@@ -2652,7 +2660,7 @@ module.exports = {
     ShiSeBian: {
         id: 'ShiSeBian',
         cnName: '石色鞭',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 30,
         equipPosType: 1,
@@ -2670,7 +2678,7 @@ module.exports = {
     YuSheBian: {
         id: 'YuSheBian',
         cnName: '玉蛇鞭',
-        features: [
+        featureIds: [
             'castAir'
         ],
         rank: 2,
@@ -2690,7 +2698,7 @@ module.exports = {
     QingLongBian: {
         id: 'QingLongBian',
         cnName: '青龙利鞭',
-        features: [
+        featureIds: [
             'castAir',
             'baseConcentration'
         ],
@@ -2711,7 +2719,7 @@ module.exports = {
     GeLanZhiRen: {
         id: 'GeLanZhiRen',
         cnName: '格兰之刃',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 31,
         equipPosType: 1,
@@ -2729,7 +2737,7 @@ module.exports = {
     QingTianZhiRen: {
         id: 'QingTianZhiRen',
         cnName: '擎天之刃',
-        features: [
+        featureIds: [
             'castByCombo'
         ],
         rank: 2,
@@ -2749,7 +2757,7 @@ module.exports = {
     BuFengTuDao: {
         id: 'BuFengTuDao',
         cnName: '布冯屠刀',
-        features: [
+        featureIds: [
             'castByCombo',
             'addAtkMax'
         ],
@@ -2770,7 +2778,7 @@ module.exports = {
     JiXieHuiXuanBiao: {
         id: 'JiXieHuiXuanBiao',
         cnName: '机械回旋镖',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 31,
         equipPosType: 1,
@@ -2788,7 +2796,7 @@ module.exports = {
     YinSuHuiXuanBiao: {
         id: 'YinSuHuiXuanBiao',
         cnName: '音速回旋镖',
-        features: [
+        featureIds: [
             'hitWithAir'
         ],
         rank: 2,
@@ -2808,7 +2816,7 @@ module.exports = {
     GuangSuHuiXuanBiao: {
         id: 'GuangSuHuiXuanBiao',
         cnName: '光速回旋镖',
-        features: [
+        featureIds: [
             'hitWithAir',
             'hurtWithShoot'
         ],
@@ -2829,7 +2837,7 @@ module.exports = {
     MoFaLaZhu: {
         id: 'MoFaLaZhu',
         cnName: '魔法蜡烛',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 31,
         equipPosType: 1,
@@ -2847,7 +2855,7 @@ module.exports = {
     ShenShengLaZhu: {
         id: 'ShenShengLaZhu',
         cnName: '神圣蜡烛',
-        features: [
+        featureIds: [
             'castLight'
         ],
         rank: 2,
@@ -2867,7 +2875,7 @@ module.exports = {
     BuMieZhiZhu: {
         id: 'BuMieZhiZhu',
         cnName: '不灭之烛',
-        features: [
+        featureIds: [
             'castLight',
             'killAddMp'
         ],
@@ -2888,7 +2896,7 @@ module.exports = {
     BingZhiJian: {
         id: 'BingZhiJian',
         cnName: '冰之剑',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 32,
         equipPosType: 1,
@@ -2906,7 +2914,7 @@ module.exports = {
     'XueNüZhiJian': {
         id: 'XueNüZhiJian',
         cnName: '雪女之剑',
-        features: [
+        featureIds: [
             'hitAddMp'
         ],
         rank: 2,
@@ -2926,7 +2934,7 @@ module.exports = {
     LeiJingZhiXiRen: {
         id: 'LeiJingZhiXiRen',
         cnName: '泪晶之细刃',
-        features: [
+        featureIds: [
             'hitAddMp',
             'hitWithWater'
         ],
@@ -2947,7 +2955,7 @@ module.exports = {
     YingHuaZhanChui: {
         id: 'YingHuaZhanChui',
         cnName: '硬化战锤',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 32,
         equipPosType: 1,
@@ -2965,7 +2973,7 @@ module.exports = {
     YeZhuZhanChui: {
         id: 'YeZhuZhanChui',
         cnName: '野猪战锤',
-        features: [
+        featureIds: [
             'addDfsRate'
         ],
         rank: 2,
@@ -2985,7 +2993,7 @@ module.exports = {
     KuangZhanChui: {
         id: 'KuangZhanChui',
         cnName: '狂战锤',
-        features: [
+        featureIds: [
             'addDfsRate',
             'hurtGotRage'
         ],
@@ -3006,7 +3014,7 @@ module.exports = {
     ShouZhaoBiShou: {
         id: 'ShouZhaoBiShou',
         cnName: '兽爪匕首',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 33,
         equipPosType: 1,
@@ -3024,7 +3032,7 @@ module.exports = {
     TuHuBiShou: {
         id: 'TuHuBiShou',
         cnName: '屠虎匕首',
-        features: [
+        featureIds: [
             'addEvdRate'
         ],
         rank: 2,
@@ -3044,7 +3052,7 @@ module.exports = {
     TuLongBiShou: {
         id: 'TuLongBiShou',
         cnName: '屠龙匕首',
-        features: [
+        featureIds: [
             'addEvdRate',
             'castUlti'
         ],
@@ -3065,7 +3073,7 @@ module.exports = {
     HeiTieHuoQiang: {
         id: 'HeiTieHuoQiang',
         cnName: '黑铁火枪',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 33,
         equipPosType: 1,
@@ -3083,7 +3091,7 @@ module.exports = {
     AnLuHuoQiang: {
         id: 'AnLuHuoQiang',
         cnName: '暗炉火枪',
-        features: [
+        featureIds: [
             'hitWithFire'
         ],
         rank: 2,
@@ -3103,7 +3111,7 @@ module.exports = {
     MoYanFaSheQi: {
         id: 'MoYanFaSheQi',
         cnName: '魔炎发射器',
-        features: [
+        featureIds: [
             'hitWithFire',
             'beginAddRage'
         ],
@@ -3124,7 +3132,7 @@ module.exports = {
     ShiZiGao: {
         id: 'ShiZiGao',
         cnName: '十字镐',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 33,
         equipPosType: 1,
@@ -3142,7 +3150,7 @@ module.exports = {
     ZhongXingShiZiGao: {
         id: 'ZhongXingShiZiGao',
         cnName: '重型十字镐',
-        features: [
+        featureIds: [
             'hitByRage'
         ],
         rank: 2,
@@ -3162,7 +3170,7 @@ module.exports = {
     JingGongShiZiGao: {
         id: 'JingGongShiZiGao',
         cnName: '精工十字镐',
-        features: [
+        featureIds: [
             'hitByRage',
             'addByLuck'
         ],
@@ -3183,7 +3191,7 @@ module.exports = {
     JuXingLianDao: {
         id: 'JuXingLianDao',
         cnName: '巨型镰刀',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 34,
         equipPosType: 1,
@@ -3201,7 +3209,7 @@ module.exports = {
     WangZheLianDao: {
         id: 'WangZheLianDao',
         cnName: '亡者镰刀',
-        features: [
+        featureIds: [
             'hitRdcMp'
         ],
         rank: 2,
@@ -3221,7 +3229,7 @@ module.exports = {
     SiGeLianDao: {
         id: 'SiGeLianDao',
         cnName: '死歌镰刀',
-        features: [
+        featureIds: [
             'hitRdcMp',
             'addCritDmgRate'
         ],
@@ -3242,7 +3250,7 @@ module.exports = {
     YuFengShan: {
         id: 'YuFengShan',
         cnName: '雨风扇',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 34,
         equipPosType: 1,
@@ -3260,7 +3268,7 @@ module.exports = {
     LiuYunShan: {
         id: 'LiuYunShan',
         cnName: '流云扇',
-        features: [
+        featureIds: [
             'castWater'
         ],
         rank: 2,
@@ -3280,7 +3288,7 @@ module.exports = {
     TianLingShan: {
         id: 'TianLingShan',
         cnName: '天凌扇',
-        features: [
+        featureIds: [
             'castWater',
             'hitRdcRg'
         ],
@@ -3301,7 +3309,7 @@ module.exports = {
     DianDongHanQiang: {
         id: 'DianDongHanQiang',
         cnName: '电动焊枪',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 1,
@@ -3319,7 +3327,7 @@ module.exports = {
     DiJingHanQiang: {
         id: 'DiJingHanQiang',
         cnName: '地精焊枪',
-        features: [
+        featureIds: [
             'addHpRdcMp'
         ],
         rank: 2,
@@ -3339,7 +3347,7 @@ module.exports = {
     BeiErHanQiang: {
         id: 'BeiErHanQiang',
         cnName: '贝尔焊枪',
-        features: [
+        featureIds: [
             'addHpRdcMp',
             'hitKill'
         ],
@@ -3360,7 +3368,7 @@ module.exports = {
     ShouChiHuoPao: {
         id: 'ShouChiHuoPao',
         cnName: '手持火炮',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 1,
@@ -3378,7 +3386,7 @@ module.exports = {
     AiRenShouChiPao: {
         id: 'AiRenShouChiPao',
         cnName: '矮人手持炮',
-        features: [
+        featureIds: [
             'addDmgRdcHp'
         ],
         rank: 2,
@@ -3398,7 +3406,7 @@ module.exports = {
     JiaLinShouChiPao: {
         id: 'JiaLinShouChiPao',
         cnName: '加林手持炮',
-        features: [
+        featureIds: [
             'addDmgRdcHp',
             'castByPetCount'
         ],
@@ -3419,7 +3427,7 @@ module.exports = {
     YongBingJian: {
         id: 'YongBingJian',
         cnName: '佣兵剑',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 1,
@@ -3437,7 +3445,7 @@ module.exports = {
     GuiZuPeiJian: {
         id: 'GuiZuPeiJian',
         cnName: '贵族佩剑',
-        features: [
+        featureIds: [
             'hitWithLight'
         ],
         rank: 2,
@@ -3457,7 +3465,7 @@ module.exports = {
     BaoShiZhiJian: {
         id: 'BaoShiZhiJian',
         cnName: '宝石之剑',
-        features: [
+        featureIds: [
             'hitWithLight',
             'hurtGotMp'
         ],
@@ -3478,7 +3486,7 @@ module.exports = {
     MoDaoJieZhang: {
         id: 'MoDaoJieZhang',
         cnName: '魔导节杖',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 1,
@@ -3496,7 +3504,7 @@ module.exports = {
     YuanSuJieZhang: {
         id: 'YuanSuJieZhang',
         cnName: '元素节杖',
-        features: [
+        featureIds: [
             'addSklMax'
         ],
         rank: 2,
@@ -3516,7 +3524,7 @@ module.exports = {
     TiaoHeJieZhang: {
         id: 'TiaoHeJieZhang',
         cnName: '调和节杖',
-        features: [
+        featureIds: [
             'addSklMax',
             'castConDmg'
         ],
@@ -3537,7 +3545,7 @@ module.exports = {
     YingRenZhiZhao: {
         id: 'YingRenZhiZhao',
         cnName: '鹰人之爪',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 1,
@@ -3555,7 +3563,7 @@ module.exports = {
     YingRenYuMaoCi: {
         id: 'YingRenYuMaoCi',
         cnName: '鹰人羽毛刺',
-        features: [
+        featureIds: [
             'hurtWithCast'
         ],
         rank: 2,
@@ -3575,7 +3583,7 @@ module.exports = {
     YingRenFengYiZhen: {
         id: 'YingRenFengYiZhen',
         cnName: '鹰人缝衣针',
-        features: [
+        featureIds: [
             'hurtWithCast',
             'addSklDmg'
         ],
@@ -3596,7 +3604,7 @@ module.exports = {
     JuRenZhanFu: {
         id: 'JuRenZhanFu',
         cnName: '巨人战斧',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 1,
@@ -3614,7 +3622,7 @@ module.exports = {
     DaDiZhanFu: {
         id: 'DaDiZhanFu',
         cnName: '大地战斧',
-        features: [
+        featureIds: [
             'deadFangHu'
         ],
         rank: 2,
@@ -3634,7 +3642,7 @@ module.exports = {
     ShanLingYiZhiZhanFu: {
         id: 'ShanLingYiZhiZhanFu',
         cnName: '山岭意志战斧',
-        features: [
+        featureIds: [
             'deadFangHu',
             'hitWithEarth'
         ],
@@ -3655,7 +3663,7 @@ module.exports = {
     ZhanDouWaiYi: {
         id: 'ZhanDouWaiYi',
         cnName: '战斗外衣',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 21,
         equipPosType: 2,
@@ -3673,7 +3681,7 @@ module.exports = {
     ZhuJiangWaiYi: {
         id: 'ZhuJiangWaiYi',
         cnName: '主将外衣',
-        features: [
+        featureIds: [
             'hitAddRg'
         ],
         rank: 2,
@@ -3693,7 +3701,7 @@ module.exports = {
     QingXingSuoJia: {
         id: 'QingXingSuoJia',
         cnName: '轻型锁甲',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 2,
@@ -3711,7 +3719,7 @@ module.exports = {
     TieXinLianJia: {
         id: 'TieXinLianJia',
         cnName: '铁心链甲',
-        features: [
+        featureIds: [
             'addHpMax'
         ],
         rank: 2,
@@ -3731,7 +3739,7 @@ module.exports = {
     BoNengHuZhao: {
         id: 'BoNengHuZhao',
         cnName: '波能护罩',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 2,
@@ -3749,7 +3757,7 @@ module.exports = {
     LiZiHuZhao: {
         id: 'LiZiHuZhao',
         cnName: '离子护罩',
-        features: [
+        featureIds: [
             'hurtFullRage'
         ],
         rank: 2,
@@ -3769,7 +3777,7 @@ module.exports = {
     FaShuPiFeng: {
         id: 'FaShuPiFeng',
         cnName: '法术披风',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 2,
@@ -3787,7 +3795,7 @@ module.exports = {
     PoMoPiFeng: {
         id: 'PoMoPiFeng',
         cnName: '破魔披风',
-        features: [
+        featureIds: [
             'hurtWithCast'
         ],
         rank: 2,
@@ -3807,7 +3815,7 @@ module.exports = {
     SenLinXiongJia: {
         id: 'SenLinXiongJia',
         cnName: '森林胸甲',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 22,
         equipPosType: 2,
@@ -3825,7 +3833,7 @@ module.exports = {
     JingJiZhiJia: {
         id: 'JingJiZhiJia',
         cnName: '荆棘之甲',
-        features: [
+        featureIds: [
             'hurtAndHurt'
         ],
         rank: 2,
@@ -3845,7 +3853,7 @@ module.exports = {
     TongZhiHuXiong: {
         id: 'TongZhiHuXiong',
         cnName: '铜制护胸',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 23,
         equipPosType: 2,
@@ -3863,7 +3871,7 @@ module.exports = {
     GangZhiXiongJia: {
         id: 'GangZhiXiongJia',
         cnName: '钢制胸甲',
-        features: [
+        featureIds: [
             'baseDurability'
         ],
         rank: 2,
@@ -3883,7 +3891,7 @@ module.exports = {
     XiaoYuanDun: {
         id: 'XiaoYuanDun',
         cnName: '小圆盾',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 24,
         equipPosType: 2,
@@ -3901,7 +3909,7 @@ module.exports = {
     JingBingYuanDun: {
         id: 'JingBingYuanDun',
         cnName: '精兵圆盾',
-        features: [
+        featureIds: [
             'beginReLi'
         ],
         rank: 2,
@@ -3921,7 +3929,7 @@ module.exports = {
     ChiHouWaiTao: {
         id: 'ChiHouWaiTao',
         cnName: '斥候外套',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 25,
         equipPosType: 2,
@@ -3939,7 +3947,7 @@ module.exports = {
     MiCaiFu: {
         id: 'MiCaiFu',
         cnName: '迷彩服',
-        features: [
+        featureIds: [
             'addEvdRate'
         ],
         rank: 2,
@@ -3959,7 +3967,7 @@ module.exports = {
     QiBingDingJia: {
         id: 'QiBingDingJia',
         cnName: '骑兵钉甲',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 26,
         equipPosType: 2,
@@ -3977,7 +3985,7 @@ module.exports = {
     ShouHuZheWaiTao: {
         id: 'ShouHuZheWaiTao',
         cnName: '守护者外套',
-        features: [
+        featureIds: [
             'addDfsRate'
         ],
         rank: 2,
@@ -3997,7 +4005,7 @@ module.exports = {
     GangTieZhuangJia: {
         id: 'GangTieZhuangJia',
         cnName: '钢铁装甲',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 27,
         equipPosType: 2,
@@ -4015,7 +4023,7 @@ module.exports = {
     JieNengZhuangJia: {
         id: 'JieNengZhuangJia',
         cnName: '节能装甲',
-        features: [
+        featureIds: [
             'hitAddMp'
         ],
         rank: 2,
@@ -4035,7 +4043,7 @@ module.exports = {
     YouMingHuJia: {
         id: 'YouMingHuJia',
         cnName: '幽冥护甲',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 27,
         equipPosType: 2,
@@ -4053,7 +4061,7 @@ module.exports = {
     MengYanHuJia: {
         id: 'MengYanHuJia',
         cnName: '梦魇护甲',
-        features: [
+        featureIds: [
             'hitWithDark'
         ],
         rank: 2,
@@ -4073,7 +4081,7 @@ module.exports = {
     ShiGuiDun: {
         id: 'ShiGuiDun',
         cnName: '石龟盾',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 27,
         equipPosType: 2,
@@ -4091,7 +4099,7 @@ module.exports = {
     ShiGuiHuJia: {
         id: 'ShiGuiHuJia',
         cnName: '石龟护甲',
-        features: [
+        featureIds: [
             'hurt'
         ],
         rank: 2,
@@ -4111,7 +4119,7 @@ module.exports = {
     BaoJunBanJia: {
         id: 'BaoJunBanJia',
         cnName: '暴君板甲',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 28,
         equipPosType: 2,
@@ -4129,7 +4137,7 @@ module.exports = {
     BaZhuBanJia: {
         id: 'BaZhuBanJia',
         cnName: '霸主板甲',
-        features: [
+        featureIds: [
             'hurtGotRage'
         ],
         rank: 2,
@@ -4149,7 +4157,7 @@ module.exports = {
     XueZheChangPao: {
         id: 'XueZheChangPao',
         cnName: '学者长袍',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 29,
         equipPosType: 2,
@@ -4167,7 +4175,7 @@ module.exports = {
     ShangGuFaPao: {
         id: 'ShangGuFaPao',
         cnName: '上古法袍',
-        features: [
+        featureIds: [
             'hurtGotMp'
         ],
         rank: 2,
@@ -4187,7 +4195,7 @@ module.exports = {
     HeiTieFangDun: {
         id: 'HeiTieFangDun',
         cnName: '黑铁方盾',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 30,
         equipPosType: 2,
@@ -4205,7 +4213,7 @@ module.exports = {
     XueSeFangDun: {
         id: 'XueSeFangDun',
         cnName: '血色方盾',
-        features: [
+        featureIds: [
             'healAndHurt'
         ],
         rank: 2,
@@ -4225,7 +4233,7 @@ module.exports = {
     JuLiZhuangJia: {
         id: 'JuLiZhuangJia',
         cnName: '聚力装甲',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 31,
         equipPosType: 2,
@@ -4243,7 +4251,7 @@ module.exports = {
     FuSheZhuangJia: {
         id: 'FuSheZhuangJia',
         cnName: '辐射装甲',
-        features: [
+        featureIds: [
             'deadHurt'
         ],
         rank: 2,
@@ -4263,7 +4271,7 @@ module.exports = {
     CaiGuangZhuangJia: {
         id: 'CaiGuangZhuangJia',
         cnName: '彩光装甲',
-        features: [
+        featureIds: [
             'deadHurt',
             'castLight'
         ],
@@ -4284,7 +4292,7 @@ module.exports = {
     JingShenChangPao: {
         id: 'JingShenChangPao',
         cnName: '精神长袍',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 31,
         equipPosType: 2,
@@ -4302,7 +4310,7 @@ module.exports = {
     RuiZhiChangPao: {
         id: 'RuiZhiChangPao',
         cnName: '睿智长袍',
-        features: [
+        featureIds: [
             'baseConcentration'
         ],
         rank: 2,
@@ -4322,7 +4330,7 @@ module.exports = {
     XianZhiChangPao: {
         id: 'XianZhiChangPao',
         cnName: '先知长袍',
-        features: [
+        featureIds: [
             'baseConcentration',
             'hurtWithShoot'
         ],
@@ -4343,7 +4351,7 @@ module.exports = {
     LieBaoHuJia: {
         id: 'LieBaoHuJia',
         cnName: '猎豹护甲',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 31,
         equipPosType: 2,
@@ -4361,7 +4369,7 @@ module.exports = {
     XiongShiHuJia: {
         id: 'XiongShiHuJia',
         cnName: '雄狮护甲',
-        features: [
+        featureIds: [
             'addCritRate'
         ],
         rank: 2,
@@ -4381,7 +4389,7 @@ module.exports = {
     XunMengLongHuJia: {
         id: 'XunMengLongHuJia',
         cnName: '迅猛龙护甲',
-        features: [
+        featureIds: [
             'addCritRate',
             'addCritDmgRate'
         ],
@@ -4402,7 +4410,7 @@ module.exports = {
     ShiZheDunPai: {
         id: 'ShiZheDunPai',
         cnName: '使者盾牌',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 32,
         equipPosType: 2,
@@ -4420,7 +4428,7 @@ module.exports = {
     WangHunZhiDun: {
         id: 'WangHunZhiDun',
         cnName: '亡魂之盾',
-        features: [
+        featureIds: [
             'killAddAllHp'
         ],
         rank: 2,
@@ -4440,7 +4448,7 @@ module.exports = {
     HuiMieZhiDun: {
         id: 'HuiMieZhiDun',
         cnName: '毁灭之盾',
-        features: [
+        featureIds: [
             'killAddAllHp',
             'addAtkMax'
         ],
@@ -4461,7 +4469,7 @@ module.exports = {
     ZuoZhanDouPeng: {
         id: 'ZuoZhanDouPeng',
         cnName: '作战斗篷',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 33,
         equipPosType: 2,
@@ -4479,7 +4487,7 @@ module.exports = {
     DaShiPiFeng: {
         id: 'DaShiPiFeng',
         cnName: '大师披风',
-        features: [
+        featureIds: [
             'baseStrength'
         ],
         rank: 2,
@@ -4499,7 +4507,7 @@ module.exports = {
     YingXiongPiFeng: {
         id: 'YingXiongPiFeng',
         cnName: '英雄披风',
-        features: [
+        featureIds: [
             'baseStrength',
             'hurtWithAtk'
         ],
@@ -4520,7 +4528,7 @@ module.exports = {
     HuaLiZhanJia: {
         id: 'HuaLiZhanJia',
         cnName: '华丽战甲',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 34,
         equipPosType: 2,
@@ -4538,7 +4546,7 @@ module.exports = {
     ShuiYinZhanJia: {
         id: 'ShuiYinZhanJia',
         cnName: '水银战甲',
-        features: [
+        featureIds: [
             'castWater'
         ],
         rank: 2,
@@ -4558,7 +4566,7 @@ module.exports = {
     WeiGuangZhanJia: {
         id: 'WeiGuangZhanJia',
         cnName: '微光战甲',
-        features: [
+        featureIds: [
             'castWater',
             'addHitRate'
         ],
@@ -4579,7 +4587,7 @@ module.exports = {
     QiDongDunPai: {
         id: 'QiDongDunPai',
         cnName: '气动盾牌',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 2,
@@ -4597,7 +4605,7 @@ module.exports = {
     DianZiDunPai: {
         id: 'DianZiDunPai',
         cnName: '电子盾牌',
-        features: [
+        featureIds: [
             'hurtByHp'
         ],
         rank: 2,
@@ -4617,7 +4625,7 @@ module.exports = {
     KeJiDunPai: {
         id: 'KeJiDunPai',
         cnName: '科技盾牌',
-        features: [
+        featureIds: [
             'hurtByHp',
             'hurtOthers'
         ],
@@ -4638,7 +4646,7 @@ module.exports = {
     GuLingFaPao: {
         id: 'GuLingFaPao',
         cnName: '骨灵法袍',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 2,
@@ -4656,7 +4664,7 @@ module.exports = {
     BaoZangFaPao: {
         id: 'BaoZangFaPao',
         cnName: '薄葬法袍',
-        features: [
+        featureIds: [
             'healByCombo'
         ],
         rank: 2,
@@ -4676,7 +4684,7 @@ module.exports = {
     YongShengFaPao: {
         id: 'YongShengFaPao',
         cnName: '永生法袍',
-        features: [
+        featureIds: [
             'healByCombo',
             'hurtRdcMp'
         ],
@@ -4697,7 +4705,7 @@ module.exports = {
     FuMuTuTeng: {
         id: 'FuMuTuTeng',
         cnName: '腐木图腾',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 2,
@@ -4715,7 +4723,7 @@ module.exports = {
     ShengMingTuTeng: {
         id: 'ShengMingTuTeng',
         cnName: '生命图腾',
-        features: [
+        featureIds: [
             'hitStlHp'
         ],
         rank: 2,
@@ -4735,7 +4743,7 @@ module.exports = {
     ChongShengTuTeng: {
         id: 'ChongShengTuTeng',
         cnName: '重生图腾',
-        features: [
+        featureIds: [
             'hitStlHp',
             'deadHuiChun'
         ],
@@ -4756,7 +4764,7 @@ module.exports = {
     ZhanDouZhiHuan: {
         id: 'ZhanDouZhiHuan',
         cnName: '战斗指环',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 31,
         equipPosType: 3,
@@ -4774,7 +4782,7 @@ module.exports = {
     YongQiZhiHuan: {
         id: 'YongQiZhiHuan',
         cnName: '勇气指环',
-        features: [
+        featureIds: [
             'beginReLi'
         ],
         rank: 2,
@@ -4794,7 +4802,7 @@ module.exports = {
     FaTiaoYinJi: {
         id: 'FaTiaoYinJi',
         cnName: '发条印记',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 31,
         equipPosType: 3,
@@ -4812,7 +4820,7 @@ module.exports = {
     ChiLunYinJi: {
         id: 'ChiLunYinJi',
         cnName: '齿轮印记',
-        features: [
+        featureIds: [
             'addSklDmg'
         ],
         rank: 2,
@@ -4832,7 +4840,7 @@ module.exports = {
     JingLingHuFu: {
         id: 'JingLingHuFu',
         cnName: '精灵护符',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 31,
         equipPosType: 3,
@@ -4850,7 +4858,7 @@ module.exports = {
     XinLingHuFu: {
         id: 'XinLingHuFu',
         cnName: '心灵护符',
-        features: [
+        featureIds: [
             'hurtWithCast'
         ],
         rank: 2,
@@ -4870,7 +4878,7 @@ module.exports = {
     GangYuZhiJie: {
         id: 'GangYuZhiJie',
         cnName: '刚玉之戒',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 31,
         equipPosType: 3,
@@ -4888,7 +4896,7 @@ module.exports = {
     HongBaoShiZhiJie: {
         id: 'HongBaoShiZhiJie',
         cnName: '红宝石之戒',
-        features: [
+        featureIds: [
             'addHpMax'
         ],
         rank: 2,
@@ -4908,7 +4916,7 @@ module.exports = {
     ZhiZunXiangLian: {
         id: 'ZhiZunXiangLian',
         cnName: '至尊项链',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 33,
         equipPosType: 3,
@@ -4926,7 +4934,7 @@ module.exports = {
     WanMeiXiangLian: {
         id: 'WanMeiXiangLian',
         cnName: '完美项链',
-        features: [
+        featureIds: [
             'baseElegant'
         ],
         rank: 2,
@@ -4946,7 +4954,7 @@ module.exports = {
     DianZiShouHuan: {
         id: 'DianZiShouHuan',
         cnName: '电子手环',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 33,
         equipPosType: 3,
@@ -4964,7 +4972,7 @@ module.exports = {
     ZhiNengShouHuan: {
         id: 'ZhiNengShouHuan',
         cnName: '智能手环',
-        features: [
+        featureIds: [
             'addEvdRate'
         ],
         rank: 2,
@@ -4984,7 +4992,7 @@ module.exports = {
     ShouRenBiZhang: {
         id: 'ShouRenBiZhang',
         cnName: '兽人臂章',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 33,
         equipPosType: 3,
@@ -5002,7 +5010,7 @@ module.exports = {
     LongXinBiZhang: {
         id: 'LongXinBiZhang',
         cnName: '龙心臂章',
-        features: [
+        featureIds: [
             'addDmgRdcHp'
         ],
         rank: 2,
@@ -5022,7 +5030,7 @@ module.exports = {
     CongLinHuFu: {
         id: 'CongLinHuFu',
         cnName: '丛林护符',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 33,
         equipPosType: 3,
@@ -5040,7 +5048,7 @@ module.exports = {
     ZiRanZhiYuHuFu: {
         id: 'ZiRanZhiYuHuFu',
         cnName: '自然之语护符',
-        features: [
+        featureIds: [
             'hurtRdcMp'
         ],
         rank: 2,
@@ -5060,7 +5068,7 @@ module.exports = {
     HeiYaoShiZhiHuan: {
         id: 'HeiYaoShiZhiHuan',
         cnName: '黑曜石指环',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 3,
@@ -5078,7 +5086,7 @@ module.exports = {
     CuiHuoZhiHuan: {
         id: 'CuiHuoZhiHuan',
         cnName: '淬火指环',
-        features: [
+        featureIds: [
             'hitWithFire'
         ],
         rank: 2,
@@ -5098,7 +5106,7 @@ module.exports = {
     RanJinZhiJie: {
         id: 'RanJinZhiJie',
         cnName: '燃尽之戒',
-        features: [
+        featureIds: [
             'hitWithFire',
             'addHpRdcMp'
         ],
@@ -5119,7 +5127,7 @@ module.exports = {
     LingNengWanBiao: {
         id: 'LingNengWanBiao',
         cnName: '灵能腕表',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 3,
@@ -5137,7 +5145,7 @@ module.exports = {
     HeiShiWanBiao: {
         id: 'HeiShiWanBiao',
         cnName: '黑石腕表',
-        features: [
+        featureIds: [
             'baseSensitivity'
         ],
         rank: 2,
@@ -5157,7 +5165,7 @@ module.exports = {
     LeiDaWanBiao: {
         id: 'LeiDaWanBiao',
         cnName: '雷达腕表',
-        features: [
+        featureIds: [
             'baseSensitivity',
             'addHitRate'
         ],
@@ -5178,7 +5186,7 @@ module.exports = {
     YuYiHuiZhang: {
         id: 'YuYiHuiZhang',
         cnName: '羽翼徽章',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 3,
@@ -5196,7 +5204,7 @@ module.exports = {
     TianQiongHuiZhang: {
         id: 'TianQiongHuiZhang',
         cnName: '天穹徽章',
-        features: [
+        featureIds: [
             'addMpMax'
         ],
         rank: 2,
@@ -5216,7 +5224,7 @@ module.exports = {
     LieKongHuiZhang: {
         id: 'LieKongHuiZhang',
         cnName: '猎空徽章',
-        features: [
+        featureIds: [
             'addMpMax',
             'hurtWithShoot'
         ],
@@ -5237,7 +5245,7 @@ module.exports = {
     ChunYinDiaoZhui: {
         id: 'ChunYinDiaoZhui',
         cnName: '纯银吊坠',
-        features: [],
+        featureIds: [],
         rank: 1,
         lv: 35,
         equipPosType: 3,
@@ -5255,7 +5263,7 @@ module.exports = {
     ChaoXiDiaoZhui: {
         id: 'ChaoXiDiaoZhui',
         cnName: '潮汐吊坠',
-        features: [
+        featureIds: [
             'hitAddMp'
         ],
         rank: 2,
@@ -5275,7 +5283,7 @@ module.exports = {
     XuanWoZhiLiDiaoZhui: {
         id: 'XuanWoZhiLiDiaoZhui',
         cnName: '旋涡之力吊坠',
-        features: [
+        featureIds: [
             'hitAddMp',
             'hurtAndHurt'
         ],

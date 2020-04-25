@@ -8,17 +8,17 @@ import { Memory, EquipDataTool, GameDataSavedTool, FeatureDataTool, PetDataTool 
 import PageActExpl from './PageActExpl';
 import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
 
-import * as expModels from 'configs/ExpModels';
-import actPosModelDict from 'configs/ActPosModelDict';
-import * as petModelDict from 'configs/PetModelDict';
-import * as skillModelDict from 'configs/SkillModelDict';
-import * as inbornFeatures from 'configs/InbornFeatures';
-import BuffModelDict from 'configs/BuffModelDict';
+import { expModels } from 'configs/ExpModels';
+import { actPosModelDict } from 'configs/ActPosModelDict';
+import { skillModelDict } from 'configs/SkillModelDict';
+import { inbornFeatures } from 'configs/InbornFeatures';
+import { buffModelDict } from 'configs/BuffModelDict';
+import { petModelDict } from 'configs/PetModelDict';
 
 import { deepCopy } from 'scripts/Utils';
 import { SkillModel, SkillType, ExplModel, SkillAimtype, SkillDirType } from 'scripts/DataModel';
 import { Pet, Feature, EleType, BattleType, EleTypeNames, GameDataSaved } from 'scripts/DataSaved';
-import { Pet2, RealBattle, BattleTeam, BattlePet, BattleBuff } from 'scripts/DataOther';
+import { RealBattle, BattleTeam, BattlePet, BattleBuff } from 'scripts/DataOther';
 
 // random with seed -----------------------------------------------------------------
 
@@ -444,7 +444,7 @@ export class BattleController {
                 const buffData = pet.buffDatas[index];
                 buffData.time--;
 
-                let buffModel = BuffModelDict[buffData.id];
+                let buffModel = buffModelDict[buffData.id];
                 if (buffModel.hasOwnProperty('onTurnEnd')) {
                     let buffOutput = buffModel.onTurnEnd(pet, buffData, this);
                     if (buffOutput) {
@@ -667,7 +667,7 @@ export class BattleController {
     }
 
     addBuff(aim: BattlePet, caster: BattlePet, buffId: string, buffTime: number) {
-        let buffModel = BuffModelDict[buffId];
+        let buffModel = buffModelDict[buffId];
         for (let index = 0; index < aim.buffDatas.length; index++) {
             const buffData = aim.buffDatas[index];
             if (buffData.id == buffId) {

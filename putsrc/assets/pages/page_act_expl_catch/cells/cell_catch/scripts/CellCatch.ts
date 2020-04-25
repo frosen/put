@@ -7,10 +7,10 @@
 const { ccclass, property } = cc._decorator;
 
 import ListViewCell from 'scripts/ListViewCell';
-import * as petModelDict from 'configs/PetModelDict';
+import { petModelDict } from 'configs/PetModelDict';
 import CellPet from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 import PageActExplCatch from 'pages/page_act_expl_catch/scripts/PageActExplCatch';
-import featureModelDict from 'configs/FeatureModelDict';
+import { featureModelDict } from 'configs/FeatureModelDict';
 import { Pet, PetRankNames, BioType } from 'scripts/DataSaved';
 import { PetModel } from 'scripts/DataModel';
 import { BattlePet } from 'scripts/DataOther';

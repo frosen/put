@@ -1,4 +1,10 @@
-module.exports = [
+/*
+ * InbornFeatures.ts
+ * 天赋特性
+ * luleyan
+ */
+
+export let inbornFeatures: string[] = [
     'baseStrength',
     'baseConcentration',
     'baseDurability',

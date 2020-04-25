@@ -1,4 +1,12 @@
-module.exports = {
+/*
+ * SkillModelDict.ts
+ * 数据列表，从document中转义而来
+ * luleyan
+ */
+
+import { SkillModel } from 'scripts/DataModel';
+  
+export let skillModelDict: { [key: string]: SkillModel } = {
     HuoYanDan: {
         id: 'HuoYanDan',
         cnName: '火焰弹',

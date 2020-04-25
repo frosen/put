@@ -2,7 +2,7 @@
  * 转换xls到js文件
  */
 
-module.exports = function(xlsFile, jsFile, sheetName, call) {
+module.exports = function (xlsFile, jsFile, sheetName, dataName, className, call) {
     let xlsx = require('node-xlsx');
 
     // 解析得到文档中的所有 sheet
@@ -32,7 +32,18 @@ module.exports = function(xlsFile, jsFile, sheetName, call) {
 
     let jsonStr = JSON.stringify(json, null, 4);
     let jsStr = jsonStr.replace(/\"([a-zA-Z0-9]*?)\":/g, '$1:').replace(/\"/g, "'");
-    Fs.writeFileSync(jsFile, 'module.exports = ' + jsStr + ';');
+
+    let path = require('path');
+
+    let head = `/*
+ * ${path.basename(jsFile)}
+ * 数据列表，从document中转义而来
+ * luleyan
+ */
+${className ? '\nimport { ' + className + " } from 'scripts/DataModel';\n" : ''}  
+export let ${dataName}${className ? ': { [key: string]: ' + className + ' }' : ''} = `;
+
+    Fs.writeFileSync(jsFile, head + jsStr + ';\n');
 
     console.log('Done!');
 };

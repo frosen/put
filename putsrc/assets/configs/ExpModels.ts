@@ -1,4 +1,10 @@
-module.exports = [
+/*
+ * ExpModels.ts
+ * 数据列表，从document中转义而来
+ * luleyan
+ */
+  
+export let expModels = [
     0,
     80,
     570,

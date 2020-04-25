@@ -8,8 +8,8 @@ import { PetDataTool } from './Memory';
 import { FeatureModel, PetModel, SkillModel, SkillType } from './DataModel';
 import { BioType, EleType, BattleType, Pet } from './DataSaved';
 
-import * as petModelDict from 'configs/PetModelDict';
-import * as skillModelDict from 'configs/SkillModelDict';
+import { petModelDict } from 'configs/PetModelDict';
+import { skillModelDict } from 'configs/SkillModelDict';
 import { deepCopy } from './Utils';
 
 const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];

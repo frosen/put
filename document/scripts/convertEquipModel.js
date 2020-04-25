@@ -4,7 +4,7 @@
 
 let convert = require('./xlsToJs');
 
-convert('../put.xls', '../../putsrc/assets/configs/EquipModelDict.js', 'equip', function (data) {
+convert('../put.xls', '../../putsrc/assets/configs/EquipModelDict.ts', 'equip', 'equipModelDict', 'EquipModel', function (data) {
     equipJson = {};
     for (let rowIdx = 1; rowIdx < data.length; rowIdx++) {
         const rowData = data[rowIdx];
@@ -81,7 +81,7 @@ convert('../put.xls', '../../putsrc/assets/configs/EquipModelDict.js', 'equip', 
                 {
                     id: id1,
                     cnName: name1,
-                    features: []
+                    featureIds: []
                 },
                 1
             );
@@ -92,7 +92,7 @@ convert('../put.xls', '../../putsrc/assets/configs/EquipModelDict.js', 'equip', 
                 {
                     id: id2,
                     cnName: name2,
-                    features: [f1]
+                    featureIds: [f1]
                 },
                 2
             );
@@ -103,7 +103,7 @@ convert('../put.xls', '../../putsrc/assets/configs/EquipModelDict.js', 'equip', 
                 {
                     id: id3,
                     cnName: name3,
-                    features: [f1, f2]
+                    featureIds: [f1, f2]
                 },
                 3
             );

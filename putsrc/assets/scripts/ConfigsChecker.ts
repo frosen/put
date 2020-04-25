@@ -4,13 +4,13 @@
  * luleyan
  */
 
-import * as petModelDict from 'configs/PetModelDict';
-import actPosModelDict from 'configs/ActPosModelDict';
-import * as skillModelDict from 'configs/SkillModelDict';
-import buffModelDict from 'configs/BuffModelDict';
-import featureModelDict from 'configs/FeatureModelDict';
-import * as equipModelDict from 'configs/EquipModelDict';
-import * as inBornFeatures from 'configs/InbornFeatures';
+import { petModelDict } from 'configs/PetModelDict';
+import { actPosModelDict } from 'configs/ActPosModelDict';
+import { skillModelDict } from 'configs/SkillModelDict';
+import { buffModelDict } from 'configs/BuffModelDict';
+import { featureModelDict } from 'configs/FeatureModelDict';
+import { equipModelDict } from 'configs/EquipModelDict';
+import { inbornFeatures } from 'configs/InbornFeatures';
 
 function checkActPosModelDict() {
     for (const key in actPosModelDict) {
@@ -103,7 +103,7 @@ function checkFeatureModelDict() {
 }
 
 function checkFeatureInBorn() {
-    for (const featureId of inBornFeatures) {
+    for (const featureId of inbornFeatures) {
         if (!featureModelDict.hasOwnProperty(featureId)) cc.error('inBornFeatures中有错误id：', featureId);
     }
 }
@@ -112,7 +112,7 @@ function checkEquipModelDict() {
     for (const key in equipModelDict) {
         const model = equipModelDict[key];
         if (model.id != key) cc.error('equipModelDict中，id与dict的key不符：', key, model.id);
-        let features = model.features;
+        let features = model.featureIds;
         for (const feature of features) {
             if (!(feature in featureModelDict)) {
                 cc.error('equipModelDict中，feature有误：', key, feature);

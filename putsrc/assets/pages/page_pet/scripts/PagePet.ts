@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import ListView from 'scripts/ListView';
 import PagePetLVD from './PagePetLVD';
-import * as petModelDict from 'configs/PetModelDict';
+import { petModelDict } from 'configs/PetModelDict';
 import { GameDataSavedTool } from 'scripts/Memory';
 import { PetModel } from 'scripts/DataModel';
 import { Pet, PetState } from 'scripts/DataSaved';

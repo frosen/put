@@ -4,10 +4,9 @@
  * luleyan
  */
 
-import * as petModelDict from 'configs/PetModelDict';
-import actPosModelDict from 'configs/ActPosModelDict';
-import featureModelDict from 'configs/FeatureModelDict';
-import * as featureRankByLv from 'configs/FeatureRankByLv';
+import { petModelDict } from 'configs/PetModelDict';
+import { featureModelDict } from 'configs/FeatureModelDict';
+import { featureRankByLv } from 'configs/FeatureRankByLv';
 import { Feature, Pet, ActPos, ExplMmr, PetState, SelfPetMmr, BattleMmr, EnemyPetMmr, GameDataSaved, Equip } from './DataSaved';
 import { FeatureModel, PetModel } from './DataModel';
 import { GameDataRuntime } from './DataOther';

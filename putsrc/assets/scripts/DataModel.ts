@@ -8,39 +8,6 @@ import { BattleController } from 'pages/page_act_expl/scripts/BattleController';
 import { Pet2, BattlePet, BattleBuff } from './DataOther';
 import { EleType, BattleType, BioType } from './DataSaved';
 
-export class WorkModel {
-    stepModels: StepModel[] = [];
-}
-
-export class StepModel {
-    petIds: string[] = [];
-}
-
-export class ExplModel {
-    stepModels: StepModel[] = [];
-}
-
-type AllActType = WorkModel | ExplModel;
-
-export class MovConditionModel {}
-
-export class MovModel {
-    id: string = '';
-    price: number = 0;
-    condition: MovConditionModel = null;
-}
-
-export class ActPosModel {
-    id: string = '';
-    cnName: string = '-';
-    lv: number = 0;
-    acts: string[] = [];
-    actDict: { [key: string]: AllActType } = {};
-    evts: string[] = [];
-    movs: MovModel[] = [];
-    loc: Partial<cc.Vec2> = null;
-}
-
 // -----------------------------------------------------------------
 
 export class BuffOutput {
@@ -130,39 +97,109 @@ export abstract class FeatureModel {
 }
 
 export class PetModel {
-    id: string = '';
-    cnName: string = '';
+    id: string;
+    cnName: string;
 
     /** 生物类型 */
-    bioType: BioType = BioType.none;
+    bioType: BioType;
     /** 元素类型 */
-    eleType: EleType = EleType.none;
+    eleType: EleType;
     /** 战斗类型 */
-    battleType: BattleType = BattleType.none;
+    battleType: BattleType;
     /** 速度 */
-    speed: number = 0;
+    speed: number;
 
-    baseStrength: number = 0;
-    addStrength: number = 0;
+    baseStrength: number;
+    addStrength: number;
 
-    baseConcentration: number = 0;
-    addConcentration: number = 0;
+    baseConcentration: number;
+    addConcentration: number;
 
-    baseDurability: number = 0;
-    addDurability: number = 0;
+    baseDurability: number;
+    addDurability: number;
 
-    baseAgility: number = 0;
-    addAgility: number = 0;
+    baseAgility: number;
+    addAgility: number;
 
-    baseSensitivity: number = 0;
-    addSensitivity: number = 0;
+    baseSensitivity: number;
+    addSensitivity: number;
 
-    baseElegant: number = 0;
-    addElegant: number = 0;
+    baseElegant: number;
+    addElegant: number;
 
-    selfFeatureIds: string[] = [];
+    selfFeatureIds: string[];
 
-    selfSkillIds: string[] = [];
+    selfSkillIds: string[];
+}
+
+// -----------------------------------------------------------------
+
+export enum EquipPosType {
+    none,
+    weapon = 1,
+    defense,
+    ornaments
+}
+
+export enum EquipAttriType {
+    none,
+    attack,
+    skill,
+    composition
+}
+
+export class EquipModel {
+    id: string;
+    cnName: string;
+    featureIds: string[];
+    rank: number;
+    lv: number;
+    equipPosType: EquipPosType;
+    bioType: BioType;
+    attriType: EquipAttriType;
+    eleType: EleType;
+    strength: number;
+    concentration: number;
+    durability: number;
+    agility: number;
+    sensitivity: number;
+    elegant: number;
+    armor: number;
+}
+
+// -----------------------------------------------------------------
+
+export class WorkModel {
+    stepModels: StepModel[];
+}
+
+export class StepModel {
+    petIds: string[];
+}
+
+export class ExplModel {
+    stepModels: StepModel[];
+}
+
+type AllActType = WorkModel | ExplModel;
+
+export class MovConditionModel {}
+
+export class MovModel {
+    id: string = '';
+    price: number = 0;
+    condition: MovConditionModel = null;
+}
+
+export class ActPosModel {
+    id: string;
+    cnName: string;
+    lv: number;
+    acts: string[];
+    actDict: { [key: string]: AllActType };
+    evts: string[];
+    movs: MovModel[];
+    loc: Partial<cc.Vec2>;
 }
 
 // -----------------------------------------------------------------
