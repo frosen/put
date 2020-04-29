@@ -17,10 +17,10 @@ function getSklDmgStr(caster: BattlePet, rate: number) {
 }
 
 const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
-    RanShao: {
-        id: 'RanShao',
-        cnName: '燃烧',
-        brief: '燃',
+    ZhuoShao: {
+        id: 'ZhuoShao',
+        cnName: '灼烧',
+        brief: '灼',
         buffType: BuffType.debuff,
         eleType: EleType.fire,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
@@ -280,6 +280,20 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         },
         getInfo(caster: Readonly<BattlePet>): string {
             return `最大伤害提高100%，但每回合都会受到相当于自身攻击力50%的暗系伤害`;
+        }
+    },
+    FaRan: {
+        id: 'FaRan',
+        cnName: '法燃',
+        brief: '燃',
+        buffType: BuffType.debuff,
+        eleType: EleType.fire,
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
+            ??
+            return { mp: 10 };
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `每回合对目标造成${getSklDmgStr(caster, 0.7)}(70%)点火系伤害`;
         }
     }
 };

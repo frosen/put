@@ -182,6 +182,8 @@ export class BattleBuff {
     data: any;
 }
 
+export const RAGE_MAX: number = 150;
+
 export class BattlePet {
     idx: number = 0;
 

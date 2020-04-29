@@ -18,7 +18,7 @@ import { petModelDict } from 'configs/PetModelDict';
 import { deepCopy } from 'scripts/Utils';
 import { SkillModel, SkillType, ExplModel, SkillAimtype, SkillDirType } from 'scripts/DataModel';
 import { Pet, Feature, EleType, BattleType, EleTypeNames, GameDataSaved } from 'scripts/DataSaved';
-import { RealBattle, BattleTeam, BattlePet, BattleBuff } from 'scripts/DataOther';
+import { RealBattle, BattleTeam, BattlePet, BattleBuff, RAGE_MAX } from 'scripts/DataOther';
 
 // random with seed -----------------------------------------------------------------
 
@@ -469,7 +469,7 @@ export class BattleController {
                         if (buffOutput.rage) {
                             team.rage -= buffOutput.rage;
                             if (team.rage < 0) team.rage = 0;
-                            else if (team.rage > 100) team.rage = 100;
+                            else if (team.rage > RAGE_MAX) team.rage = RAGE_MAX;
                         }
                     }
                 }
@@ -728,7 +728,7 @@ export class BattleController {
 
         let team = this.getTeam(aim);
         team.rage += rage;
-        if (team.rage > 100) team.rage = 100;
+        if (team.rage > RAGE_MAX) team.rage = RAGE_MAX;
     }
 
     addMp(battlePet: BattlePet, aim: BattlePet) {

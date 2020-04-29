@@ -15,7 +15,7 @@ import ListView from 'scripts/ListView';
 import PageActExplCatch from 'pages/page_act_expl_catch/scripts/PageActExplCatch';
 import { PetRankNames, EleType } from 'scripts/DataSaved';
 import { BuffModel, BuffType } from 'scripts/DataModel';
-import { BattlePet } from 'scripts/DataOther';
+import { BattlePet, RAGE_MAX } from 'scripts/DataOther';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -337,8 +337,8 @@ export default class PageActExpl extends PageBase {
         this.mpProgress.progress = mp / mpMax;
         this.mpLbl.string = `${mp} / ${mpMax}`;
 
-        this.rageProgress.progress = rage / 100;
-        this.rageLbl.string = `${rage} / 100`;
+        this.rageProgress.progress = rage / RAGE_MAX;
+        this.rageLbl.string = `${rage} / ${RAGE_MAX}`;
     }
 
     // button -----------------------------------------------------------------

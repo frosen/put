@@ -6,7 +6,7 @@
 
 import { BattleController } from 'pages/page_act_expl/scripts/BattleController';
 import { FeatureModel, BattleDataForFeature, SkillType } from 'scripts/DataModel';
-import { Pet2, BattlePet } from 'scripts/DataOther';
+import { Pet2, BattlePet, RAGE_MAX } from 'scripts/DataOther';
 import { EleType, BattleType } from 'scripts/DataSaved';
 
 function rd(n: number) {
@@ -451,7 +451,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             let selfTeam = bData.ctrlr.getTeam(pet);
-            selfTeam.rage = Math.min(selfTeam.rage + datas[0], 100);
+            selfTeam.rage = Math.min(selfTeam.rage + datas[0], RAGE_MAX);
         },
         getInfo(datas: number[]): string {
             return `普攻击中时，额外获得${datas[0]}点怒气`;
@@ -672,7 +672,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '熊',
         dataAreas: [[1, 1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            bData.ctrlr.getTeam(pet).rage = Math.min(bData.ctrlr.getTeam(pet).rage + datas[0], 100);
+            bData.ctrlr.getTeam(pet).rage = Math.min(bData.ctrlr.getTeam(pet).rage + datas[0], RAGE_MAX);
         },
         getInfo(datas: number[]): string {
             return `受伤时，额外获得${datas[0]}点怒气`;
@@ -771,7 +771,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '消',
         dataAreas: [[100, -1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            if (bData.ctrlr.getTeam(pet).rage == 100) {
+            if (bData.ctrlr.getTeam(pet).rage == RAGE_MAX) {
                 pet.hp += bData.finalDmg * 5;
                 bData.ctrlr.getTeam(pet).rage -= Math.max(datas[0], 50);
             }
@@ -855,10 +855,10 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '阳',
         dataAreas: [[5, 5]],
         onStartingBattle(pet: BattlePet, datas: number[], ctrlr: BattleController): void {
-            ctrlr.getTeam(pet).rage = Math.min(ctrlr.getTeam(pet).rage + datas[0], 100);
+            ctrlr.getTeam(pet).rage = Math.min(ctrlr.getTeam(pet).rage + datas[0], RAGE_MAX);
         },
         getInfo(datas: number[]): string {
-            return `战斗开始时，直接获取${Math.min(datas[0], 100)}点怒气`;
+            return `战斗开始时，直接获取${Math.min(datas[0], RAGE_MAX)}点怒气`;
         }
     },
     beginReLi: {
