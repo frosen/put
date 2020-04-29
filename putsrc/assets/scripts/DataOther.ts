@@ -226,7 +226,7 @@ export class BattlePet {
             let skillModel: SkillModel = skillModelDict[skillId];
             if (skillModel.skillType == SkillType.ultimate) return 0;
             let mpUsing = skillModel.mp;
-            if (petModelDict[pet.id].eleType == skillModel.eleType) mpUsing -= Math.floor(mpUsing * 0.1);
+            if (petModelDict[pet.id].eleType == skillModel.eleType) mpUsing -= Math.ceil(mpUsing * 0.1);
             return mpUsing;
         };
 

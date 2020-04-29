@@ -16,7 +16,7 @@ import { buffModelDict } from 'configs/BuffModelDict';
 import { petModelDict } from 'configs/PetModelDict';
 
 import { deepCopy } from 'scripts/Utils';
-import { SkillModel, SkillType, ExplModel, SkillAimtype, SkillDirType } from 'scripts/DataModel';
+import { SkillModel, SkillType, ExplModel, SkillAimtype, SkillDirType, BuffOutput } from 'scripts/DataModel';
 import { Pet, Feature, EleType, BattleType, EleTypeNames, GameDataSaved } from 'scripts/DataSaved';
 import { RealBattle, BattleTeam, BattlePet, BattleBuff, RAGE_MAX } from 'scripts/DataOther';
 
@@ -439,6 +439,8 @@ export class BattleController {
     }
 
     handleBuff(team: BattleTeam) {
+        let newBuffDataList: { aim: BattlePet; caster: BattlePet; id: string; time: number }[] = [];
+
         for (const pet of team.pets) {
             for (let index = 0; index < pet.buffDatas.length; index++) {
                 const buffData = pet.buffDatas[index];
@@ -471,6 +473,11 @@ export class BattleController {
                             if (team.rage < 0) team.rage = 0;
                             else if (team.rage > RAGE_MAX) team.rage = RAGE_MAX;
                         }
+                        if (buffOutput.newBuffs) {
+                            for (const { id, time } of buffOutput.newBuffs) {
+                                newBuffDataList.push({ aim: pet, caster: buffData.caster, id, time });
+                            }
+                        }
                     }
                 }
 
@@ -483,6 +490,10 @@ export class BattleController {
                     this.page.resetBuffTime(pet.beEnemy, pet.idx, buffData.id, buffData.time);
                 }
             }
+        }
+
+        for (const { aim, caster, id, time } of newBuffDataList) {
+            this.addBuff(aim, caster, id, time);
         }
     }
 
@@ -732,7 +743,7 @@ export class BattleController {
     }
 
     addMp(battlePet: BattlePet, aim: BattlePet) {
-        let mp = 5 + (aim.pet.lv > battlePet.pet.lv ? 1 : 0) + (aim.pet.rank > battlePet.pet.rank ? 1 : 0);
+        let mp = 3 + (aim.pet.lv > battlePet.pet.lv ? 1 : 0) + (aim.pet.rank > battlePet.pet.rank ? 1 : 0);
 
         let team = this.getTeam(battlePet);
         team.mp += mp;

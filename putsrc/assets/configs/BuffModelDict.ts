@@ -109,8 +109,8 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         },
         onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
             let { from, to } = data;
-            thisPet.pet2.atkDmgFrom += from;
-            thisPet.pet2.atkDmgTo += to;
+            thisPet.pet2.atkDmgFrom -= from;
+            thisPet.pet2.atkDmgTo -= to;
         },
         getInfo(caster: Readonly<BattlePet>): string {
             return `普攻伤害提高，相当于自身攻击力的15%伤害外加释放者技能攻击力的15%`;
@@ -211,6 +211,38 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             return `增加20%免伤`;
         }
     },
+    DunQiang: {
+        id: 'DunQiang',
+        cnName: '盾墙',
+        brief: '墙',
+        buffType: BuffType.buff,
+        eleType: EleType.earth,
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
+            thisPet.pet2.dfsRate += 0.8;
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            thisPet.pet2.dfsRate -= 0.8;
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `增加80%免伤`;
+        }
+    },
+    FeiXing: {
+        id: 'FeiXing',
+        cnName: '飞行',
+        brief: '飞',
+        buffType: BuffType.buff,
+        eleType: EleType.air,
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
+            thisPet.pet2.speed += 100;
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            thisPet.pet2.speed -= 100;
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `速度升至最大值`;
+        }
+    },
     HuiChun: {
         id: 'HuiChun',
         cnName: '回春',
@@ -264,8 +296,8 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         buffType: BuffType.buff,
         eleType: EleType.dark,
         onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
-            let atk = thisPet.pet2.atkDmgTo;
-            let skl = thisPet.pet2.sklDmgTo;
+            let atk = thisPet.pet2.atkDmgTo * 1.5;
+            let skl = thisPet.pet2.sklDmgTo * 1.5;
             thisPet.pet2.atkDmgTo += atk;
             thisPet.pet2.sklDmgTo += skl;
             return { atk, skl };
@@ -276,24 +308,117 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             thisPet.pet2.sklDmgTo -= skl;
         },
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            return { hp: Math.floor(ctrlr.getAtkDmg(thisPet, thisPet) * 0.5) };
+            let dmg = ctrlr.getAtkDmg(thisPet, thisPet) + ctrlr.getSklDmg(thisPet, thisPet);
+            return { hp: Math.floor(dmg * 0.3) };
         },
         getInfo(caster: Readonly<BattlePet>): string {
-            return `最大伤害提高100%，但每回合都会受到相当于自身攻击力50%的暗系伤害`;
+            return `最大伤害提高150%，但每回合都会受到相当于自身全部攻击力30%的暗系伤害`;
         }
     },
-    FaRan: {
-        id: 'FaRan',
-        cnName: '法燃',
-        brief: '燃',
+    JingJin: {
+        id: 'JingJin',
+        cnName: '精尽',
+        brief: '尽',
         buffType: BuffType.debuff,
         eleType: EleType.fire,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            ??
-            return { mp: 10 };
+            let mp = 20 + Math.floor(buff.caster.pet.lv / 10);
+            if (ctrlr.getTeam(thisPet).mp >= mp) {
+                return { mp };
+            } else {
+                return { mp, hp: ctrlr.getSklDmg(buff.caster, thisPet) * 1.2 };
+            }
         },
         getInfo(caster: Readonly<BattlePet>): string {
-            return `每回合对目标造成${getSklDmgStr(caster, 0.7)}(70%)点火系伤害`;
+            let mp = 20 + Math.floor(caster.pet.lv / 10);
+            return `每回合燃烧掉目标${mp}点精神，如果精神不足20，则造成${getSklDmgStr(caster, 1.2)}(120%)点火系伤害`;
+        }
+    },
+    NingJing: {
+        id: 'NingJing',
+        cnName: '宁静',
+        brief: '宁',
+        buffType: BuffType.debuff,
+        eleType: EleType.water,
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
+            return { rage: 15 };
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `每回合减少目标15点怒气`;
+        }
+    },
+    QiangJi: {
+        id: 'QiangJi',
+        cnName: '强击',
+        brief: '强',
+        buffType: BuffType.buff,
+        eleType: EleType.earth,
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
+            let from = thisPet.pet2.atkDmgFrom * 0.6;
+            let to = thisPet.pet2.atkDmgTo * 0.6;
+            thisPet.pet2.atkDmgFrom += from;
+            thisPet.pet2.atkDmgTo += to;
+            return { from, to };
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            let { from, to } = data;
+            thisPet.pet2.atkDmgFrom -= from;
+            thisPet.pet2.atkDmgTo -= to;
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `普攻伤害提高60%`;
+        }
+    },
+    ZhuanZhu: {
+        id: 'ZhuanZhu',
+        cnName: '专注',
+        brief: '专',
+        buffType: BuffType.buff,
+        eleType: EleType.earth,
+        onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any {
+            let from = thisPet.pet2.sklDmgFrom * 0.4;
+            let to = thisPet.pet2.sklDmgTo * 0.4;
+            thisPet.pet2.sklDmgFrom += from;
+            thisPet.pet2.sklDmgTo += to;
+            return { from, to };
+        },
+        onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any) {
+            let { from, to } = data;
+            thisPet.pet2.sklDmgFrom -= from;
+            thisPet.pet2.sklDmgTo -= to;
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `技能伤害提高40%`;
+        }
+    },
+    ShengMen: {
+        id: 'ShengMen',
+        cnName: '生门',
+        brief: '生',
+        buffType: BuffType.buff,
+        eleType: EleType.earth,
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
+            let r = ctrlr.random();
+            let id = r > 0.8 ? 'ReLi' : r > 0.6 ? 'JingJie' : r > 0.4 ? 'HuiChun' : r > 0.2 ? 'ZhuanZhu' : 'ShanYao';
+            return { newBuffs: [{ id, time: 3 }] };
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `每回合随机获得增益效果`;
+        }
+    },
+    SiMen: {
+        id: 'SiMen',
+        cnName: '死门',
+        brief: '死',
+        buffType: BuffType.debuff,
+        eleType: EleType.earth,
+        onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
+            let r = ctrlr.random();
+            let id = r > 0.8 ? 'ZhuoShao' : r > 0.6 ? 'HanLeng' : r > 0.4 ? 'GeShang' : r > 0.2 ? 'ZhuiLuo' : 'ZhongDu';
+            return { newBuffs: [{ id, time: 3 }] };
+        },
+        getInfo(caster: Readonly<BattlePet>): string {
+            return `每回合随机获得减益效果`;
         }
     }
 };

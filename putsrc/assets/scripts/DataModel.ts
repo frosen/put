@@ -14,6 +14,7 @@ export class BuffOutput {
     hp?: number;
     mp?: number;
     rage?: number;
+    newBuffs?: { id: string; time: number }[];
 }
 
 export enum BuffType {
