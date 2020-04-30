@@ -15,22 +15,6 @@ import { deepCopy } from './Utils';
 const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
 const BioToFromToRatio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
 
-// @ts-ignore
-Array.prototype.removeIndex = function (ridx) {
-    this[ridx] = undefined;
-    for (let index = this.length - 1; index >= 0; index--) {
-        if (this[index] === undefined) continue;
-        this.length = index + 1;
-        return;
-    }
-    this.length = 0;
-};
-
-// @ts-ignore
-Array.prototype.getLast = function () {
-    return this.length > 0 ? this[this.length - 1] : null;
-};
-
 export class Pet2 {
     // 原始值 -----------------------------------------------------------------
     strengthOri: number = 0;

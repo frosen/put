@@ -47,3 +47,30 @@ export function getNodeByUuid(uuid: string): cc.Node {
 export function getNodeByDir(dir: string): cc.Node {
     return null;
 }
+
+// -----------------------------------------------------------------
+
+// @ts-ignore
+Array.prototype.removeIndex = function (ridx) {
+    this[ridx] = undefined;
+    for (let index = this.length - 1; index >= 0; index--) {
+        if (this[index] === undefined) continue;
+        this.length = index + 1;
+        return;
+    }
+    this.length = 0;
+};
+
+// @ts-ignore
+Array.prototype.getLast = function () {
+    return this.length > 0 ? this[this.length - 1] : null;
+};
+
+// @ts-ignore
+Array.prototype.getOne = function (callback) {
+    for (let index = 0; index < this.length; index++) {
+        let curItem = this[index];
+        if (callback(curItem)) return curItem;
+    }
+    return null;
+};

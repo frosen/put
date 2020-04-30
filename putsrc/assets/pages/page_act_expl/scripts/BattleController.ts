@@ -474,15 +474,15 @@ export class BattleController {
                             else if (team.rage > RAGE_MAX) team.rage = RAGE_MAX;
                         }
                         if (buffOutput.newBuffs) {
-                            for (const { id, time } of buffOutput.newBuffs) {
-                                newBuffDataList.push({ aim: pet, caster: buffData.caster, id, time });
+                            for (const { aim, id, time } of buffOutput.newBuffs) {
+                                newBuffDataList.push({ aim: aim || pet, caster: buffData.caster, id, time });
                             }
                         }
                     }
                 }
 
                 if (buffData.time == 0) {
-                    if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(pet, buffData.caster, buffData.data);
+                    if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(pet, buffData.caster, buffData.data, this);
                     this.page.removeBuff(pet.beEnemy, pet.idx, buffData.id);
                     pet.buffDatas.splice(index, 1);
                     index--;
@@ -691,7 +691,7 @@ export class BattleController {
         buffData.id = buffId;
         buffData.time = buffTime;
         buffData.caster = caster;
-        if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted(aim, caster);
+        if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted(aim, caster, this);
         this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime);
         this.logBuff(aim, buffModel.cnName);
         aim.buffDatas.push(buffData);

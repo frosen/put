@@ -14,20 +14,21 @@ export let petModelDict: { [key: string]: PetModel } = {
         eleType: 4,
         battleType: 1,
         speed: 62,
-        baseStrength: 230,
-        addStrength: 33,
+        baseStrength: 190,
+        addStrength: 32,
         baseConcentration: 160,
         addConcentration: 27,
         baseDurability: 110,
-        addDurability: 20,
-        baseAgility: 180,
+        addDurability: 14,
+        baseAgility: 220,
         addAgility: 31,
         baseSensitivity: 120,
         addSensitivity: 16,
         baseElegant: 100,
         addElegant: 9,
         selfSkillIds: [
-            'FangHuZhao'
+            'FangHuZhao',
+            'BengHuai'
         ],
         selfFeatureIds: [
             'addAtkDmg',
@@ -81,7 +82,8 @@ export let petModelDict: { [key: string]: PetModel } = {
         baseElegant: 120,
         addElegant: 13,
         selfSkillIds: [
-            'ChaoZhongJi'
+            'ChaoZhongJi',
+            'FangHuZhao'
         ],
         selfFeatureIds: []
     },
@@ -105,7 +107,8 @@ export let petModelDict: { [key: string]: PetModel } = {
         baseElegant: 50,
         addElegant: 18,
         selfSkillIds: [
-            'ZhuoShao'
+            'ZhuoShao',
+            'HuoYanDan'
         ],
         selfFeatureIds: []
     },
@@ -154,7 +157,8 @@ export let petModelDict: { [key: string]: PetModel } = {
         baseElegant: 80,
         addElegant: 16,
         selfSkillIds: [
-            'ShuiLengDan'
+            'ShuiLengDan',
+            'ShuangDong'
         ],
         selfFeatureIds: []
     },
@@ -179,7 +183,7 @@ export let petModelDict: { [key: string]: PetModel } = {
         addElegant: 21,
         selfSkillIds: [
             'ReLi',
-            'KuangReZhiWu'
+            'JingShenRanJin'
         ],
         selfFeatureIds: []
     },
@@ -203,7 +207,8 @@ export let petModelDict: { [key: string]: PetModel } = {
         baseElegant: 100,
         addElegant: 13,
         selfSkillIds: [
-            'JiFengRen'
+            'YinSuQiLiu',
+            'TaiKongWu'
         ],
         selfFeatureIds: []
     },
@@ -227,7 +232,8 @@ export let petModelDict: { [key: string]: PetModel } = {
         baseElegant: 130,
         addElegant: 11,
         selfSkillIds: [
-            'DianZiMaiChong'
+            'DianZiMaiChong',
+            'ZhiMang'
         ],
         selfFeatureIds: []
     },
@@ -261,7 +267,7 @@ export let petModelDict: { [key: string]: PetModel } = {
         cnName: '草坪收割者',
         bioType: 3,
         eleType: 3,
-        battleType: 3,
+        battleType: 5,
         speed: 60,
         baseStrength: 200,
         addStrength: 26,
@@ -276,7 +282,8 @@ export let petModelDict: { [key: string]: PetModel } = {
         baseElegant: 90,
         addElegant: 10,
         selfSkillIds: [
-            'JiFengRen'
+            'JiFengRen',
+            'TaiFeng'
         ],
         selfFeatureIds: []
     },
@@ -300,7 +307,8 @@ export let petModelDict: { [key: string]: PetModel } = {
         baseElegant: 60,
         addElegant: 8,
         selfSkillIds: [
-            'RongJie'
+            'RongJie',
+            'KuangReZhiWu'
         ],
         selfFeatureIds: []
     },
@@ -334,7 +342,7 @@ export let petModelDict: { [key: string]: PetModel } = {
         cnName: '白蓝雨燕',
         bioType: 4,
         eleType: 3,
-        battleType: 5,
+        battleType: 3,
         speed: 90,
         baseStrength: 120,
         addStrength: 10,
@@ -350,7 +358,7 @@ export let petModelDict: { [key: string]: PetModel } = {
         addElegant: 18,
         selfSkillIds: [
             'HuiChunShu',
-            'YinSuQiLiu'
+            'YuYiShengCheng'
         ],
         selfFeatureIds: []
     }

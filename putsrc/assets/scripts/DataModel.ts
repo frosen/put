@@ -14,7 +14,7 @@ export class BuffOutput {
     hp?: number;
     mp?: number;
     rage?: number;
-    newBuffs?: { id: string; time: number }[];
+    newBuffs?: { aim?: BattlePet; id: string; time: number }[];
 }
 
 export enum BuffType {
@@ -29,8 +29,8 @@ export abstract class BuffModel {
     abstract brief: string;
     abstract buffType: BuffType;
     abstract eleType: EleType;
-    abstract onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>): any;
-    abstract onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, data: any): void;
+    abstract onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BattleController): any;
+    abstract onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BattleController, data: any): void;
     abstract onTurnEnd(thisPet: BattlePet, buff: BattleBuff, ctrlr: BattleController): BuffOutput | void;
     abstract getInfo(caster: Readonly<BattlePet>): string;
 }

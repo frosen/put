@@ -43,7 +43,8 @@ declare let _Scene: {
 
 interface Array<T> {
     removeIndex(idx: number);
-    getLast(): any;
+    getLast(): T;
+    getOne(callback: (item: T) => boolean): T;
 }
 
 // -----------------------------------------------------------------
