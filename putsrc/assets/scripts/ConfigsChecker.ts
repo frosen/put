@@ -40,11 +40,14 @@ function checkActPosModelDict() {
 }
 
 function checkPetModelDict() {
-    let skillDictKeys = Object.keys(skillModelDict);
     for (const key in petModelDict) {
         const model = petModelDict[key];
         for (const skillId of model.selfSkillIds) {
-            if (!skillDictKeys.includes(skillId)) cc.error('pet model中的skillId有误', key, skillId);
+            if (!skillModelDict.hasOwnProperty(skillId)) cc.error('pet model中的skillId有误', key, skillId);
+        }
+        for (const featureId of model.selfFeatureIds) {
+            featureModelDict;
+            if (!featureModelDict.hasOwnProperty(featureId)) cc.error('pet model中的featureId有误', key, featureId);
         }
     }
 }

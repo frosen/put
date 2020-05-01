@@ -430,6 +430,6 @@ export default class PageActExpl extends PageBase {
     }
 
     setNewLogTip(tipCount: number) {
-        cc.log('PUT new log count: ', tipCount);
+        // cc.log('^_^! new log count: ', tipCount);
     }
 }

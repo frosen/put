@@ -73,7 +73,7 @@ declare interface HurtFeature {
     id: string;
 }
 
-declare interface HealedFeature {
+declare interface HealingFeature {
     func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
     datas: number[];
     id: string;

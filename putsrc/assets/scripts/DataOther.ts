@@ -187,7 +187,7 @@ export class BattlePet {
     attackingFeatures: AttackingFeature[] = [];
     castingFeatures: CastingFeature[] = [];
     hurtFeatures: HurtFeature[] = [];
-    healedFeatures: HealedFeature[] = [];
+    healingFeatures: HealingFeature[] = [];
     enemyDeadFeatures: EnemyDeadFeature[] = [];
     deadFeatures: DeadFeature[] = [];
 
@@ -219,7 +219,7 @@ export class BattlePet {
         this.attackingFeatures.length = 0;
         this.castingFeatures.length = 0;
         this.hurtFeatures.length = 0;
-        this.healedFeatures.length = 0;
+        this.healingFeatures.length = 0;
         this.enemyDeadFeatures.length = 0;
         this.deadFeatures.length = 0;
 
@@ -243,7 +243,7 @@ export class BattlePet {
             addFeatureFunc('attackingFeatures', 'onAttacking', model, datas);
             addFeatureFunc('castingFeatures', 'onCasting', model, datas);
             addFeatureFunc('hurtFeatures', 'onHurt', model, datas);
-            addFeatureFunc('healedFeatures', 'onHealed', model, datas);
+            addFeatureFunc('healingFeatures', 'onHealing', model, datas);
             addFeatureFunc('enemyDeadFeatures', 'onEnemyDead', model, datas);
             addFeatureFunc('deadFeatures', 'onDead', model, datas);
         });

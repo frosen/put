@@ -334,6 +334,18 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             return `负重增加${datas[0]}点`;
         }
     },
+    addAtkBySkl: {
+        id: 'addAtkBySkl',
+        cnBrief: '晓',
+        dataAreas: [[0.02, 0.02]],
+        onSetting(pet: Pet2, datas: number[]): void {
+            pet.atkDmgFrom += pet.sklDmgFromOri * datas[0];
+            pet.atkDmgTo += pet.sklDmgToOri * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `普攻伤害增加，数值等于技能伤害的${rd(datas[0] * 100)}%`;
+        }
+    },
     hitWithFire: {
         id: 'hitWithFire',
         cnBrief: '焰',
@@ -644,6 +656,20 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             return `如果战场己方人数小于敌方，则技能伤害提高${rd(datas[0] * 100)}%`;
         }
     },
+    castFullRage: {
+        id: 'castFullRage',
+        cnBrief: '皇',
+        dataAreas: [[100, 1]],
+        onCasting(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (bData.ctrlr.getTeam(pet).rage == RAGE_MAX) {
+                pet.hp -= bData.finalDmg * 2;
+                bData.ctrlr.getTeam(pet).rage -= Math.max(datas[0], 50);
+            }
+        },
+        getInfo(datas: number[]): string {
+            return `当怒气满槽时，消耗${Math.max(datas[0], 50)}点怒气，伤害提高200%`;
+        }
+    },
     hurtAndHurt: {
         id: 'hurtAndHurt',
         cnBrief: '荆',
@@ -805,8 +831,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'heal',
         cnBrief: '医',
         dataAreas: [[0.02, 0.02]],
-        onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            pet.hp += Math.abs(bData.finalDmg) * datas[0];
+        onHealing(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            aim.hp += Math.abs(bData.finalDmg) * datas[0];
         },
         getInfo(datas: number[]): string {
             return `治疗效果提高${rd(datas[0] * 100)}%`;
@@ -816,8 +842,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'healByHp',
         cnBrief: '恩',
         dataAreas: [[0.1, 0.1]],
-        onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            if (pet.hp < pet.hpMax * 0.25) pet.hp += Math.abs(bData.finalDmg) * datas[0];
+        onHealing(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            if (aim.hp < aim.hpMax * 0.25) aim.hp += Math.abs(bData.finalDmg) * datas[0];
         },
         getInfo(datas: number[]): string {
             return `如果血量低于25%，治疗效果提高${rd(datas[0] * 100)}%`;
@@ -827,9 +853,9 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'healByCombo',
         cnBrief: '鹿',
         dataAreas: [[0.04, 0.04]],
-        onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+        onHealing(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             let combo = bData.ctrlr.realBattle.combo - 1;
-            if (combo > 0) pet.hp += Math.abs(bData.finalDmg) * datas[0] * combo;
+            if (combo > 0) aim.hp += Math.abs(bData.finalDmg) * datas[0] * combo;
         },
         getInfo(datas: number[]): string {
             return `连击时，治疗效果提高${rd(datas[0] * 100)}%乘以连击次数`;
@@ -842,9 +868,9 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             [0.05, 0.05],
             [0.03, 0.03]
         ],
-        onHealed(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            pet.hp += Math.abs(bData.finalDmg) * datas[0];
-            caster.hp = Math.max(caster.hp - bData.finalDmg * datas[1], 1);
+        onHealing(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            aim.hp += Math.abs(bData.finalDmg) * datas[0];
+            pet.hp = Math.max(pet.hp - bData.finalDmg * datas[1], 1);
         },
         getInfo(datas: number[]): string {
             return `治疗效果提高${rd(datas[0] * 100)}%，但施法者会受到${rd(datas[1] * 100)}%的伤害`;

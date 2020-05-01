@@ -637,8 +637,8 @@ export class BattleController {
             if (aim.hp < 0) aim.hp = 0;
             else if (aim.hp > lastHp - 1) aim.hp = lastHp - 1;
         } else {
-            aim.healedFeatures.forEach((value: HealedFeature) => {
-                value.func(aim, battlePet, value.datas, { ctrlr: this, finalDmg, skillModel });
+            battlePet.healingFeatures.forEach((value: HealingFeature) => {
+                value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel });
             });
             if (aim.hp > aim.hpMax) aim.hp = aim.hpMax;
         }
