@@ -51,7 +51,7 @@ export const PetRankNames = ['?', 'D', 'C', 'B', 'B+', 'A', 'A+', 'S', 'SS', 'N'
 
 export class Feature {
     id: string;
-    datas: number[];
+    lv: number;
 }
 
 export class Pet {
@@ -104,7 +104,14 @@ export class Item {
     itemType: ItemType;
 }
 
-export class Equip extends Item {}
+export class Equip extends Item {
+    skillId: string;
+    growth: number;
+    selfFeatureLvs: number[];
+
+    affixes: Feature[];
+    learnTimes: number;
+}
 
 // -----------------------------------------------------------------
 

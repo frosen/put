@@ -6,10 +6,11 @@
 
 import { petModelDict } from 'configs/PetModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
-import { featureRankByLv } from 'configs/FeatureRankByLv';
+import { featureLvsByPetLv } from 'configs/FeatureLvsByPetLv';
 import { Feature, Pet, ActPos, ExplMmr, PetState, SelfPetMmr, BattleMmr, EnemyPetMmr, GameDataSaved, Equip } from './DataSaved';
 import { FeatureModel, PetModel } from './DataModel';
 import { GameDataRuntime } from './DataOther';
+import { equipModelDict } from 'configs/EquipModelDict';
 
 let memoryDirtyToken: number = -1;
 
@@ -146,23 +147,20 @@ export class Memory {
 }
 
 export class FeatureDataTool {
-    static setDatas(feature: Feature, lv: number) {
-        let featureModel = featureModelDict[feature.id];
-        let datas = newList();
+    static getDatas(featureId: string, lv: number) {
+        let featureModel = featureModelDict[featureId];
+        let datas = [];
         for (const dataArea of featureModel.dataAreas) {
             let data = dataArea[0] + (lv - 1) * dataArea[1];
             datas.push(data);
         }
-        feature.datas = datas;
+        return datas;
     }
 
     static clone(feature: Feature): Feature {
         let newFeature = newInsWithChecker(Feature);
         newFeature.id = feature.id;
-        newFeature.datas = newList();
-        for (const data of feature.datas) {
-            newFeature.datas.push(data);
-        }
+        newFeature.lv = feature.lv;
         return newFeature;
     }
 }
@@ -198,33 +196,53 @@ export class PetDataTool {
     }
 
     static eachFeatures(pet: Pet, callback: (featureModel: FeatureModel, datas: number[]) => void) {
-        // 装备特性 llytodo
-        for (const feature of pet.learnedFeatures) callback(featureModelDict[feature.id], feature.datas);
-        for (const feature of pet.inbornFeatures) callback(featureModelDict[feature.id], feature.datas);
+        for (const equip of pet.equips) {
+            let equipModel = equipModelDict[equip.id];
+            for (let index = 0; index < equipModel.featureIds.length; index++) {
+                const featureId = equipModel.featureIds[index];
+                const lv = equip.selfFeatureLvs[index];
+                callback(featureModelDict[featureId], FeatureDataTool.getDatas(featureId, lv));
+            }
+            for (const feature of equip.affixes) {
+                callback(featureModelDict[feature.id], FeatureDataTool.getDatas(feature.id, feature.lv));
+            }
+        }
+
+        for (const feature of pet.learnedFeatures) {
+            callback(featureModelDict[feature.id], FeatureDataTool.getDatas(feature.id, feature.lv));
+        }
+
+        for (const feature of pet.inbornFeatures) {
+            callback(featureModelDict[feature.id], FeatureDataTool.getDatas(feature.id, feature.lv));
+        }
+
         let selfFeatures = PetDataTool.getSelfFeaturesByCurLv(pet);
-        for (const feature of selfFeatures) callback(featureModelDict[feature.id], feature.datas);
+        for (const feature of selfFeatures) {
+            callback(featureModelDict[feature.id], FeatureDataTool.getDatas(feature.id, feature.lv));
+        }
     }
 
     static getSelfFeaturesByCurLv(pet: Pet) {
         let selfFeatureIds = (petModelDict[pet.id] as PetModel).selfFeatureIds;
-        let featureRanks = featureRankByLv[pet.lv];
+        let featureLvs = featureLvsByPetLv[pet.lv];
         let features: Feature[] = [];
 
         for (let index = 0; index < selfFeatureIds.length; index++) {
-            let featureRank = featureRanks[index];
-            if (featureRank == 0) continue;
+            let featureLv = featureLvs[index];
+            if (featureLv == 0) continue;
 
             let newFeature = new Feature();
             newFeature.id = selfFeatureIds[index];
-            FeatureDataTool.setDatas(newFeature, featureRank);
+            newFeature.lv = featureLv;
+            features.push(newFeature);
         }
         return features;
     }
 
-    static getSelfSkillByCurLv(pet: Pet): string[] {
+    static getSelfSkillIdByCurLv(pet: Pet): string[] {
         let skillIds = petModelDict[pet.id].selfSkillIds;
         if (pet.lv >= 30) {
-            return [skillIds[1], skillIds[0]];
+            return [skillIds[0], skillIds[1]];
         } else if (pet.lv >= 10) {
             return [skillIds[0]];
         } else {
@@ -294,11 +312,8 @@ export class GameDataSavedTool {
     static moveDownPetInList(gameDataS: GameDataSaved, index: number) {
         if (index == gameDataS.pets.length - 1) return;
         let pet = gameDataS.pets[index];
-        cc.log('^_^!', gameDataS.pets);
         gameDataS.pets.splice(index, 1);
         gameDataS.pets.splice(index + 1, 0, pet);
-
-        cc.log('^_^! end ', gameDataS.pets);
     }
 
     static deletePet(gameDataS: GameDataSaved, index: number) {

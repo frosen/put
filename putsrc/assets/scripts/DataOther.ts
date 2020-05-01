@@ -5,12 +5,13 @@
  */
 
 import { PetDataTool } from './Memory';
-import { FeatureModel, PetModel, SkillModel, SkillType } from './DataModel';
+import { FeatureModel, PetModel, SkillModel, SkillType, EquipModel } from './DataModel';
 import { BioType, EleType, BattleType, Pet } from './DataSaved';
 
 import { petModelDict } from 'configs/PetModelDict';
 import { skillModelDict } from 'configs/SkillModelDict';
 import { deepCopy } from './Utils';
+import { equipModelDict } from 'configs/EquipModelDict';
 
 const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
 const BioToFromToRatio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
@@ -103,6 +104,20 @@ export class Pet2 {
         });
 
         // 装备加成
+        let setAttriByEquip = (pet2: Pet2, equipModel: EquipModel, key: string, growth: number) => {
+            if (equipModel[key] > 0) pet2[key] += equipModel[key] + growth;
+        };
+
+        for (const equip of pet.equips) {
+            let equipModel = equipModelDict[equip.id];
+            setAttriByEquip(this, equipModel, 'strength', equip.growth * 20);
+            setAttriByEquip(this, equipModel, 'concentration', equip.growth * 20);
+            setAttriByEquip(this, equipModel, 'durability', equip.growth * 20);
+            setAttriByEquip(this, equipModel, 'agility', equip.growth * 10);
+            setAttriByEquip(this, equipModel, 'sensitivity', equip.growth * 10);
+            setAttriByEquip(this, equipModel, 'elegant', equip.growth * 10);
+            setAttriByEquip(this, equipModel, 'armor', 0);
+        }
 
         // 二级原始属性
         this.hpMaxOri = this.durability * 25;
@@ -136,8 +151,7 @@ export class Pet2 {
             if (model.hasOwnProperty('onSetting')) model.onSetting(this, datas);
         });
 
-        // 装备加成
-
+        // 限制
         this.hpMax = Math.max(this.hpMax, 1);
         this.mpMax = Math.max(this.mpMax, 1);
         this.atkDmgFrom = Math.max(this.atkDmgFrom, 1);
@@ -206,14 +220,6 @@ export class BattlePet {
         this.hp = this.pet2.hpMax;
         this.hpMax = this.pet2.hpMax;
 
-        let getMpUsing = (skillId: string) => {
-            let skillModel: SkillModel = skillModelDict[skillId];
-            if (skillModel.skillType == SkillType.ultimate) return 0;
-            let mpUsing = skillModel.mp;
-            if (petModelDict[pet.id].eleType == skillModel.eleType) mpUsing -= Math.ceil(mpUsing * 0.1);
-            return mpUsing;
-        };
-
         // 特性
         this.startingBattleFeatures.length = 0;
         this.attackingFeatures.length = 0;
@@ -249,17 +255,33 @@ export class BattlePet {
         });
 
         // 技能
+        let getSkillMpUsing = (skillId: string) => {
+            let skillModel: SkillModel = skillModelDict[skillId];
+            if (skillModel.skillType == SkillType.ultimate) return 0;
+            let mpUsing = skillModel.mp;
+            if (petModelDict[pet.id].eleType == skillModel.eleType) mpUsing -= Math.ceil(mpUsing * 0.1);
+            return mpUsing;
+        };
 
         this.skillDatas.length = 0;
-        for (let index = pet.equips.length - 1; index >= 0; index--) {
-            // 装备技能
-        }
 
-        for (const skillId of PetDataTool.getSelfSkillByCurLv(pet)) {
-            // 自带技能
+        // 装备技能
+        for (let index = pet.equips.length - 1; index >= 0; index--) {
+            let skillId = pet.equips[index].skillId;
+            if (!skillId) continue;
             let skill = new BattleSkill();
             skill.id = skillId;
-            skill.mpUsing = getMpUsing(skillId);
+            skill.mpUsing = getSkillMpUsing(skillId);
+            this.skillDatas.push(skill);
+        }
+
+        // 自带技能
+        let selfSkillIds = PetDataTool.getSelfSkillIdByCurLv(pet);
+        for (let index = selfSkillIds.length - 1; index >= 0; index--) {
+            const skillId = selfSkillIds[index];
+            let skill = new BattleSkill();
+            skill.id = skillId;
+            skill.mpUsing = getSkillMpUsing(skillId);
             this.skillDatas.push(skill);
         }
     }

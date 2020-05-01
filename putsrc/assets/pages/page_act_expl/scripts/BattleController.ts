@@ -343,7 +343,7 @@ export class BattleController {
     createInbornFeature(): Feature {
         let feature = new Feature();
         feature.id = getRandomOneInList(inbornFeatures);
-        FeatureDataTool.setDatas(feature, 1 + Math.floor(Math.pow(Math.random(), 3) * 10)); // 使用3次方，使随机结果更小
+        feature.lv = 1 + Math.floor(Math.pow(Math.random(), 3) * 10); // 使用3次方，使随机结果更小
         return feature;
     }
 

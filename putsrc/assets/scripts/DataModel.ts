@@ -5,8 +5,8 @@
  */
 
 import { BattleController } from 'pages/page_act_expl/scripts/BattleController';
-import { Pet2, BattlePet, BattleBuff } from './DataOther';
 import { EleType, BattleType, BioType } from './DataSaved';
+import { Pet2, BattlePet, BattleBuff } from './DataOther';
 
 // -----------------------------------------------------------------
 
