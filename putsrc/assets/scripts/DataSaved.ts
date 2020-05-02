@@ -111,6 +111,8 @@ export class Equip extends Item {
 
     affixes: Feature[];
     learnTimes: number;
+
+    catchIdx: number;
 }
 
 // -----------------------------------------------------------------
@@ -155,10 +157,10 @@ export class GameDataSaved {
     profTitleIds: string[];
 
     pets: Pet[];
-    /** 一共抓取过的宠物的总量，用于pet的索引 */
-    totalPetCount: number;
+    totalPetCount: number; // 一共抓取过的宠物的总量，用于pet的索引
 
     items: Item[];
+    totalEquipCount: number; // 一共获得过的装备的总量，用于装备的索引
 
     curPosId: string;
     posDataDict: { [key: string]: ActPos };

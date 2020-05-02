@@ -7,10 +7,25 @@
 import { petModelDict } from 'configs/PetModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { featureLvsByPetLv } from 'configs/FeatureLvsByPetLv';
-import { Feature, Pet, ActPos, ExplMmr, PetState, SelfPetMmr, BattleMmr, EnemyPetMmr, GameDataSaved, Equip } from './DataSaved';
-import { FeatureModel, PetModel } from './DataModel';
+import {
+    Feature,
+    Pet,
+    ActPos,
+    ExplMmr,
+    PetState,
+    SelfPetMmr,
+    BattleMmr,
+    EnemyPetMmr,
+    GameDataSaved,
+    Equip,
+    ItemType
+} from './DataSaved';
+import { FeatureModel, PetModel, EquipPosType } from './DataModel';
 import { GameDataRuntime } from './DataOther';
 import { equipModelDict } from 'configs/EquipModelDict';
+import { random, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
+import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
+import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
 
 let memoryDirtyToken: number = -1;
 
@@ -166,7 +181,9 @@ export class FeatureDataTool {
 }
 
 export class PetDataTool {
-    static init(pet: Pet, id: string, lv: number, rank: number, features: Feature[], gameDataS: GameDataSaved) {
+    static create(id: string, lv: number, rank: number, features: Feature[], gameDataS: GameDataSaved): Pet {
+        let pet = newInsWithChecker(Pet);
+
         pet.inbornFeatures = newList();
         pet.learnedFeatures = newList();
         pet.equips = newList();
@@ -193,6 +210,8 @@ export class PetDataTool {
         pet.exp = 0;
 
         for (const feature of features) pet.inbornFeatures.push(FeatureDataTool.clone(feature));
+
+        return pet;
     }
 
     static eachFeatures(pet: Pet, callback: (featureModel: FeatureModel, datas: number[]) => void) {
@@ -252,15 +271,106 @@ export class PetDataTool {
 }
 
 export class EquipDataTool {
-    static getToken(equip: Equip): string {
-        return '';
+    static create(
+        id: string,
+        skillId: string,
+        growth: number,
+        featureLvs: number[],
+        affixes: Feature[],
+        learnTimes: number,
+        catchIdx: number
+    ): Equip {
+        let equip = newInsWithChecker(Equip);
+
+        equip.id = id;
+        equip.itemType = ItemType.equip;
+        equip.skillId = skillId;
+        equip.growth = growth;
+        equip.selfFeatureLvs = newList();
+        for (const lv of featureLvs) equip.selfFeatureLvs.push(lv);
+        equip.affixes = newList();
+        for (const feature of affixes) equip.affixes.push(FeatureDataTool.clone(feature));
+        equip.learnTimes = learnTimes;
+        equip.catchIdx = catchIdx;
+
+        return equip;
+    }
+
+    static createRandom(lvFrom: number, lvTo: number, catchIdx: number) {
+        let equipIds: string[];
+        let lv = lvFrom + random(lvTo + 1);
+        let equipIdsByRank = equipIdsByLvRank[lv];
+        switch (equipIdsByRank.length) {
+            case 0:
+                return null;
+            case 1:
+                equipIds = equipIdsByRank[0];
+                break;
+            case 2:
+                equipIds = equipIdsByRank[randomRate(0.7) ? 0 : 1];
+                break;
+            case 3:
+                equipIds = equipIdsByRank[getRandomOneInListWithRate([0, 1, 2], [0.7, 0.25])];
+                break;
+        }
+        let equipId = getRandomOneInList(equipIds);
+
+        let equipModel = equipModelDict[equipId];
+
+        let skillId: string;
+        let skillIds = skillIdsByEleType[equipModel.eleType];
+        if (skillIds) {
+            skillId = getRandomOneInList(skillIds);
+        } else {
+            skillId = '';
+        }
+
+        let featureLvs = [];
+        let equipType = equipModel.equipPosType;
+        let beginLv = equipType == EquipPosType.weapon ? 20 : equipType == EquipPosType.defense ? 30 : 40;
+        let featureLvFrom = lv <= beginLv ? 1 : Math.ceil((lv - beginLv) * 0.1) + 1;
+        for (let index = 0; index < equipModel.featureIds.length; index++) featureLvs.push(featureLvFrom + random(3));
+
+        let affixes = [];
+        if (lv >= 26 && randomRate(0.7)) {
+            let featureIds = Object.keys(featureModelDict);
+            let featureId = getRandomOneInList(featureIds);
+            let feature = new Feature();
+            feature.id = featureId;
+            feature.lv = 1;
+            affixes.push(feature);
+        }
+
+        return this.create(equipId, skillId, 0, featureLvs, affixes, 0, catchIdx);
+    }
+
+    static getLv(equip: Equip): number {
+        return equipModelDict[equip.id].lv + equip.growth;
+    }
+
+    static getCnName(equip: Equip): string {
+        if (equip.affixes.length > 0) {
+            let name = '';
+            for (let index = equip.affixes.length - 1; index >= 0; index--) {
+                const affix = equip.affixes[index];
+                name += featureModelDict[affix.id].cnBrief;
+            }
+            return name + '之' + equipModelDict[equip.id].cnName;
+        } else {
+            return equipModelDict[equip.id].cnName;
+        }
+    }
+
+    static getToken(e: Equip): string {
+        return String(e.catchIdx);
     }
 }
 
 export class ActPosDataTool {
-    static init(actPos: ActPos, posId: string) {
-        // let curActPosModel: ActPosModel = actPosModelDict[posId];
+    static create(posId: string): ActPos {
+        let actPos = newInsWithChecker(ActPos);
         actPos.id = posId;
+        return actPos;
     }
 }
 
@@ -286,9 +396,7 @@ export class GameDataSavedTool {
     ) {
         gameDataS.totalPetCount++;
 
-        let pet = newInsWithChecker(Pet);
-        PetDataTool.init(pet, id, lv, rank, features, gameDataS);
-
+        let pet = PetDataTool.create(id, lv, rank, features, gameDataS);
         gameDataS.pets.push(pet);
 
         this.sortPetsByState(gameDataS);
@@ -323,8 +431,7 @@ export class GameDataSavedTool {
     // -----------------------------------------------------------------
 
     static addActPos(gameDataS: GameDataSaved, posId: string): ActPos {
-        let actPos = newInsWithChecker(ActPos);
-        ActPosDataTool.init(actPos, posId);
+        let actPos = ActPosDataTool.create(posId);
         gameDataS.posDataDict[posId] = actPos;
         return actPos;
     }
@@ -340,10 +447,9 @@ export class GameDataSavedTool {
             let selfPetMmr = newInsWithChecker(SelfPetMmr);
             selfPetMmr.catchIdx = pet.catchIdx;
             selfPetMmr.privity = pet.privity;
-            selfPetMmr.eqpTokens = newList();
-            for (const equip of pet.equips) {
-                selfPetMmr.eqpTokens.push(EquipDataTool.getToken(equip));
-            }
+            let tokens = [];
+            for (const equip of pet.equips) tokens.push(EquipDataTool.getToken(equip));
+            selfPetMmr.eqpTokens = newList(tokens);
             expl.selfs.push(selfPetMmr);
         }
         expl.hiding = false;

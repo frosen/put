@@ -46,4 +46,6 @@ export let ${dataName}${className ? ': { [key: string]: ' + className + ' }' : '
     Fs.writeFileSync(jsFile, head + jsStr + ';\n');
 
     console.log('Done!');
+
+    return json;
 };

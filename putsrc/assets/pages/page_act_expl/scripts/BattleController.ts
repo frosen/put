@@ -269,9 +269,7 @@ export class BattleController {
         for (let index = 0; index < enemyPetDatas.length; index++) {
             const enemyPet = enemyPetDatas[index];
 
-            let petData = new Pet();
-            PetDataTool.init(petData, enemyPet.id, enemyPet.lv, enemyPet.rank, enemyPet.features, null);
-
+            let petData = PetDataTool.create(enemyPet.id, enemyPet.lv, enemyPet.rank, enemyPet.features, null);
             let battlePet = new BattlePet();
             battlePet.init(index, 5 - enemyPetDatas.length + index, petData, true);
             if (last) {
