@@ -117,6 +117,13 @@ export class Equip extends Item {
 
 // -----------------------------------------------------------------
 
+export class PetMmr {
+    id: string;
+    lv: number;
+    rank: number;
+    features: Feature[];
+}
+
 export class ActPos {
     id: string;
 }
@@ -129,18 +136,12 @@ export class SelfPetMmr {
     eqpTokens: string[];
 }
 
-export class EnemyPetMmr {
-    id: string;
-    lv: number;
-    rank: number;
-    features: Feature[];
-}
-
 export class BattleMmr {
     startTime: number;
     seed: number;
-    enemys: EnemyPetMmr[];
+    enemys: PetMmr[];
     catchPetIdx: number;
+    spcBtlId: number; // 特殊战斗的id
 }
 
 export class ExplMmr {
@@ -153,7 +154,7 @@ export class ExplMmr {
 
 // -----------------------------------------------------------------
 
-export class GameDataSaved {
+export class GameData {
     profTitleIds: string[];
 
     pets: Pet[];

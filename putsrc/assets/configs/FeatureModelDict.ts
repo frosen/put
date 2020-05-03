@@ -323,17 +323,6 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             return `任意基础属性如果为3的倍数，则提高${rd(datas[0] * 100)}%`;
         }
     },
-    addLoad: {
-        id: 'addLoad',
-        cnBrief: '猿',
-        dataAreas: [[30, 30]],
-        onSetting(pet: Pet2, datas: number[]): void {
-            pet.load += datas[0];
-        },
-        getInfo(datas: number[]): string {
-            return `负重增加${datas[0]}点`;
-        }
-    },
     addAtkBySkl: {
         id: 'addAtkBySkl',
         cnBrief: '晓',
@@ -359,7 +348,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitWithWater: {
         id: 'hitWithWater',
-        cnBrief: '湍',
+        cnBrief: '海',
         dataAreas: [[0.01, 0.01]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             aim.hp -= bData.ctrlr.getSklDmg(pet, aim) * datas[0] * bData.ctrlr.getEleDmgRate(EleType.water, aim, pet);
@@ -425,7 +414,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitRdcMp: {
         id: 'hitRdcMp',
-        cnBrief: '惊',
+        cnBrief: '鬼',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             bData.ctrlr.getTeam(aim).mp = Math.min(bData.ctrlr.getTeam(aim).mp - datas[0], 0);
@@ -436,7 +425,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitRdcRg: {
         id: 'hitRdcRg',
-        cnBrief: '凝',
+        cnBrief: '雕',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             bData.ctrlr.getTeam(aim).rage = Math.min(bData.ctrlr.getTeam(aim).rage - datas[0], 0);
@@ -459,7 +448,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hitAddRg: {
         id: 'hitAddRg',
-        cnBrief: '吼',
+        cnBrief: '猿',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             let selfTeam = bData.ctrlr.getTeam(pet);
@@ -794,7 +783,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtFullRage: {
         id: 'hurtFullRage',
-        cnBrief: '消',
+        cnBrief: '羽',
         dataAreas: [[100, -1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (bData.ctrlr.getTeam(pet).rage == RAGE_MAX) {

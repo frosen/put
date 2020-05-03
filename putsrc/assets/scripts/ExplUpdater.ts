@@ -5,9 +5,9 @@
  */
 
 import BattlePageBase from './BattlePageBase';
-import { Memory, GameDataSavedTool } from 'scripts/Memory';
+import { Memory, GameDataTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameDataSaved } from 'scripts/DataSaved';
+import { GameData } from 'scripts/DataSaved';
 
 export enum ExplState {
     none,
@@ -24,7 +24,7 @@ enum ExplResult {
 export class ExplUpdater {
     page: BattlePageBase = null;
     memory: Memory = null;
-    gameDataS: GameDataSaved = null;
+    gameData: GameData = null;
     battleCtrlr: BattleController = null;
 
     state: ExplState = ExplState.none;
@@ -36,14 +36,14 @@ export class ExplUpdater {
     init(page: BattlePageBase) {
         this.page = page;
         this.memory = this.page.ctrlr.memory;
-        this.gameDataS = this.memory.gameDataS;
+        this.gameData = this.memory.gameData;
 
         this.battleCtrlr = new BattleController();
         this.battleCtrlr.init(this.page, this.memory, () => {
             this.startRecover();
         });
 
-        if (!this.memory.gameDataS.curExpl) {
+        if (!this.memory.gameData.curExpl) {
             this.createExpl();
         } else {
             this.restoreLastExpl();
@@ -73,7 +73,7 @@ export class ExplUpdater {
     }
 
     createExpl() {
-        GameDataSavedTool.createExpl(this.gameDataS);
+        GameDataTool.createExpl(this.gameData);
         this.startExpl();
         this.page.handleLog();
     }
@@ -82,7 +82,7 @@ export class ExplUpdater {
 
     destroy() {
         cc.director.getScheduler().unscheduleUpdate(this);
-        GameDataSavedTool.deleteExpl(this.gameDataS);
+        GameDataTool.deleteExpl(this.gameData);
         this.memory.removeDataListener(this);
         this.page.ctrlr.debugTool.removeShortCut('ww');
         this.page.ctrlr.debugTool.removeShortCut('gg');
@@ -227,8 +227,8 @@ export class ExplUpdater {
     }
 
     executeHide() {
-        let cur = !this.memory.gameDataS.curExpl.hiding;
-        this.memory.gameDataS.curExpl.hiding = cur;
+        let cur = !this.memory.gameData.curExpl.hiding;
+        this.memory.gameData.curExpl.hiding = cur;
         this.page.setHideActive(cur);
     }
 }

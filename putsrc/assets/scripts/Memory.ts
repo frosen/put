@@ -7,21 +7,8 @@
 import { petModelDict } from 'configs/PetModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { featureLvsByPetLv } from 'configs/FeatureLvsByPetLv';
-import {
-    Feature,
-    Pet,
-    ActPos,
-    ExplMmr,
-    PetState,
-    SelfPetMmr,
-    BattleMmr,
-    EnemyPetMmr,
-    GameDataSaved,
-    Equip,
-    ItemType
-} from './DataSaved';
+import { Feature, Pet, ActPos, ExplMmr, PetState, SelfPetMmr, BattleMmr, PetMmr, GameData, Equip, ItemType } from './DataSaved';
 import { FeatureModel, PetModel, EquipPosType } from './DataModel';
-import { GameDataRuntime } from './DataOther';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { random, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
@@ -83,8 +70,7 @@ function newDict(dict = null) {
 // -----------------------------------------------------------------
 
 export class Memory {
-    gameDataS: GameDataSaved = newInsWithChecker(GameDataSaved);
-    gameDataR: GameDataRuntime = new GameDataRuntime();
+    gameData: GameData = newInsWithChecker(GameData);
 
     saveToken: boolean = false;
     saveInterval: number = 0;
@@ -97,7 +83,7 @@ export class Memory {
     }
 
     init() {
-        GameDataSavedTool.init(this.gameDataS);
+        GameDataTool.init(this.gameData);
         this.test();
     }
 
@@ -144,18 +130,18 @@ export class Memory {
     // -----------------------------------------------------------------
 
     test() {
-        this.gameDataS.curPosId = 'YiZhuang';
+        this.gameData.curPosId = 'YiZhuang';
 
-        GameDataSavedTool.addPet(this.gameDataS, 'FaTiaoWa', 1, 4, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, 4, [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.privity = 100;
         });
 
-        GameDataSavedTool.addPet(this.gameDataS, 'YaHuHanJuRen', 1, 2, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, 2, [], (pet: Pet) => {
             pet.state = PetState.ready;
         });
 
-        GameDataSavedTool.addPet(this.gameDataS, 'BaiLanYuYan', 1, 2, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 2, [], (pet: Pet) => {
             pet.state = PetState.ready;
         });
     }
@@ -181,7 +167,7 @@ export class FeatureDataTool {
 }
 
 export class PetDataTool {
-    static create(id: string, lv: number, rank: number, features: Feature[], gameDataS: GameDataSaved): Pet {
+    static create(id: string, lv: number, rank: number, features: Feature[], gameData: GameData): Pet {
         let pet = newInsWithChecker(Pet);
 
         pet.inbornFeatures = newList();
@@ -192,7 +178,7 @@ export class PetDataTool {
         pet.master = '';
 
         pet.catchTime = new Date().getTime();
-        pet.catchIdx = gameDataS ? gameDataS.totalPetCount : -99;
+        pet.catchIdx = gameData ? gameData.totalPetCount : -99;
         pet.catchLv = lv;
         pet.catchRank = rank;
 
@@ -296,7 +282,7 @@ export class EquipDataTool {
         return equip;
     }
 
-    static createRandom(lvFrom: number, lvTo: number, catchIdx: number) {
+    static createRandom(lvFrom: number, lvTo: number, catchIdx: number): Equip {
         let equipIds: string[];
         let lv = lvFrom + random(lvTo + 1);
         let equipIdsByRank = equipIdsByLvRank[lv];
@@ -374,75 +360,124 @@ export class ActPosDataTool {
     }
 }
 
-export class GameDataSavedTool {
-    static init(gameDataS: GameDataSaved) {
-        gameDataS.posDataDict = newDict();
-        gameDataS.pets = newList();
-        gameDataS.items = newList();
+export class GameDataTool {
+    static SUC: string = 'K';
 
-        gameDataS.totalPetCount = 0;
+    static init(gameData: GameData) {
+        gameData.posDataDict = newDict();
+        gameData.pets = newList();
+        gameData.items = newList();
 
-        gameDataS.curPosId = '';
-        gameDataS.curExpl = null;
+        gameData.totalPetCount = 0;
+
+        gameData.curPosId = '';
+        gameData.curExpl = null;
     }
 
     static addPet(
-        gameDataS: GameDataSaved,
+        gameData: GameData,
         id: string,
         lv: number,
         rank: number,
         features: Feature[],
         callback: (pet: Pet) => void = null
-    ) {
-        gameDataS.totalPetCount++;
+    ): string {
+        if (gameData.pets.length >= this.getPetCountMax(gameData)) return '宠物数量到达上限';
 
-        let pet = PetDataTool.create(id, lv, rank, features, gameDataS);
-        gameDataS.pets.push(pet);
+        gameData.totalPetCount++;
 
-        this.sortPetsByState(gameDataS);
+        let pet = PetDataTool.create(id, lv, rank, features, gameData);
+        gameData.pets.push(pet);
+
+        this.sortPetsByState(gameData);
 
         if (callback) callback(pet);
+
+        return this.SUC;
     }
 
-    static sortPetsByState(gameDataS: GameDataSaved) {
-        gameDataS.pets.sort((a: Pet, b: Pet): number => {
+    static sortPetsByState(gameData: GameData) {
+        gameData.pets.sort((a: Pet, b: Pet): number => {
             return a.state - b.state;
         });
     }
 
-    static moveUpPetInList(gameDataS: GameDataSaved, index: number) {
+    static moveUpPetInList(gameData: GameData, index: number) {
         if (index == 0) return;
-        let pet = gameDataS.pets[index];
-        gameDataS.pets.splice(index, 1);
-        gameDataS.pets.splice(index - 1, 0, pet);
+        let pet = gameData.pets[index];
+        gameData.pets.splice(index, 1);
+        gameData.pets.splice(index - 1, 0, pet);
     }
 
-    static moveDownPetInList(gameDataS: GameDataSaved, index: number) {
-        if (index == gameDataS.pets.length - 1) return;
-        let pet = gameDataS.pets[index];
-        gameDataS.pets.splice(index, 1);
-        gameDataS.pets.splice(index + 1, 0, pet);
+    static moveDownPetInList(gameData: GameData, index: number) {
+        if (index == gameData.pets.length - 1) return;
+        let pet = gameData.pets[index];
+        gameData.pets.splice(index, 1);
+        gameData.pets.splice(index + 1, 0, pet);
     }
 
-    static deletePet(gameDataS: GameDataSaved, index: number) {
-        gameDataS.pets.splice(index, 1);
+    static deletePet(gameData: GameData, index: number) {
+        gameData.pets.splice(index, 1);
     }
 
     // -----------------------------------------------------------------
 
-    static addActPos(gameDataS: GameDataSaved, posId: string): ActPos {
+    static addEquip(gameData: GameData, equip: Equip, callback: (equip: Equip) => void = null): string {
+        if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+
+        gameData.totalEquipCount++;
+        gameData.items.push(equip);
+        callback(equip);
+        return this.SUC;
+    }
+
+    static putOnEquip(gameData: GameData, equip: Equip, pet: Pet): string {
+        if (pet.equips.length >= 3) return '一只宠物最多只能持有三件装备';
+
+        let equipPosType = equipModelDict[equip.id].equipPosType;
+        for (const equipHeld of pet.equips) {
+            if (equipModelDict[equipHeld.id].equipPosType == equipPosType) {
+                let strs = ['', '武器', '防具', '饰品'];
+                return '一只宠物同时只能持有一件' + strs[equipPosType];
+            }
+        }
+
+        let index = gameData.items.indexOf(equip);
+        if (index == -1) return '此装备不在道具栏里';
+
+        gameData.items.splice(index, 0);
+        pet.equips.push(equip);
+
+        return this.SUC;
+    }
+
+    static putOffEquip(gameData: GameData, equip: Equip, pet: Pet): string {
+        if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+
+        let index = pet.equips.indexOf(equip);
+        if (index == -1) return '此装备不在宠物身上';
+
+        pet.equips.splice(index, 0);
+        gameData.items.push(equip);
+
+        return this.SUC;
+    }
+
+    // -----------------------------------------------------------------
+
+    static addActPos(gameData: GameData, posId: string): ActPos {
         let actPos = ActPosDataTool.create(posId);
-        gameDataS.posDataDict[posId] = actPos;
+        gameData.posDataDict[posId] = actPos;
         return actPos;
     }
 
-    static createExpl(gameDataS: GameDataSaved) {
-        if (gameDataS.curExpl) return;
+    static createExpl(gameData: GameData) {
+        if (gameData.curExpl) return;
         let expl = newInsWithChecker(ExplMmr);
         expl.startTime = new Date().getTime();
         expl.curStep = 0;
         expl.selfs = newList();
-        for (const pet of gameDataS.pets) {
+        for (const pet of gameData.pets) {
             if (pet.state != PetState.ready) break; // 备战的pet一定在最上，且不会超过5个
             let selfPetMmr = newInsWithChecker(SelfPetMmr);
             selfPetMmr.catchIdx = pet.catchIdx;
@@ -454,45 +489,56 @@ export class GameDataSavedTool {
         }
         expl.hiding = false;
 
-        gameDataS.curExpl = expl;
+        gameData.curExpl = expl;
     }
 
-    static deleteExpl(gameDataS: GameDataSaved) {
-        if (gameDataS.curExpl) {
-            gameDataS.curExpl = null;
+    static deleteExpl(gameData: GameData) {
+        if (gameData.curExpl) {
+            gameData.curExpl = null;
         }
     }
 
-    static createBattle(gameDataS: GameDataSaved, seed: number, pets: Pet[]) {
-        cc.assert(gameDataS.curExpl, '创建battle前必有Expl');
-        let curExpl = gameDataS.curExpl;
+    static createBattle(gameData: GameData, seed: number, pets: Pet[], spcBtlId: number) {
+        cc.assert(gameData.curExpl, '创建battle前必有Expl');
+        let curExpl = gameData.curExpl;
         if (curExpl.curBattle) return;
         let battle = newInsWithChecker(BattleMmr);
         battle.startTime = new Date().getTime();
         battle.seed = seed;
         battle.enemys = newList();
         battle.catchPetIdx = -1;
+        battle.spcBtlId = spcBtlId;
 
         curExpl.curBattle = battle;
 
         for (const pet of pets) {
-            this.createEnemyPet(gameDataS, pet.id, pet.lv, pet.rank, pet.inbornFeatures);
+            this.createEnemyPet(gameData, pet.id, pet.lv, pet.rank, pet.inbornFeatures);
         }
     }
 
-    static createEnemyPet(gameDataS: GameDataSaved, id: string, lv: number, rank: number, features: Feature[]) {
-        let p = newInsWithChecker(EnemyPetMmr);
+    static createEnemyPet(gameData: GameData, id: string, lv: number, rank: number, features: Feature[]) {
+        let p = newInsWithChecker(PetMmr);
         p.id = id;
         p.lv = lv;
         p.rank = rank;
         p.features = newList();
         for (const feature of features) p.features.push(FeatureDataTool.clone(feature));
 
-        gameDataS.curExpl.curBattle.enemys.push(p);
+        gameData.curExpl.curBattle.enemys.push(p);
     }
 
-    static deleteBattle(gameDataS: GameDataSaved) {
-        cc.assert(gameDataS.curExpl, '删除battle前必有Expl');
-        gameDataS.curExpl.curBattle = null;
+    static deleteBattle(gameData: GameData) {
+        cc.assert(gameData.curExpl, '删除battle前必有Expl');
+        gameData.curExpl.curBattle = null;
+    }
+
+    // -----------------------------------------------------------------
+
+    static getPetCountMax(gameData: GameData) {
+        return 10; // llytodo 根据职称不同而不同
+    }
+
+    static getItemCountMax(gameData: GameData) {
+        return 300; // llytodo 根据职称不同而不同
     }
 }

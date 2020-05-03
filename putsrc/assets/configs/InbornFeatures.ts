@@ -25,6 +25,5 @@ export let inbornFeatures: string[] = [
     'addDmgRdcHp',
     'addHpRdcMp',
     'addByLuck',
-    'addAtkBySkl',
-    'addLoad'
+    'addAtkBySkl'
 ];

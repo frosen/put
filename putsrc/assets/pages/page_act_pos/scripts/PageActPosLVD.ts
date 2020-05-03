@@ -42,13 +42,13 @@ export default class PageActPosLVD extends ListViewDelegate {
     movPrefab: cc.Prefab = null;
 
     get curPosId(): string {
-        if (!this._curPosId) this._curPosId = this.ctrlr.memory.gameDataS.curPosId;
+        if (!this._curPosId) this._curPosId = this.ctrlr.memory.gameData.curPosId;
         return this._curPosId;
     }
     _curPosId: string = null;
 
     get curActPos(): ActPos {
-        if (!this._curActPos) this._curActPos = this.ctrlr.memory.gameDataS.posDataDict[this.curPosId];
+        if (!this._curActPos) this._curActPos = this.ctrlr.memory.gameData.posDataDict[this.curPosId];
         return this._curActPos;
     }
     _curActPos: ActPos = null;
@@ -163,7 +163,7 @@ export default class PageActPosLVD extends ListViewDelegate {
             switchAnim = disY > 0 ? PageSwitchAnim.fromTop : PageSwitchAnim.fromBottom;
         }
 
-        this.ctrlr.memory.gameDataS.curPosId = nextPosId;
+        this.ctrlr.memory.gameData.curPosId = nextPosId;
         this.ctrlr.switchCurPage(PageActPos, null, switchAnim);
     }
 }

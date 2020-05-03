@@ -19,7 +19,7 @@ export default class PagePetLVD extends ListViewDelegate {
     cellPetPrefab: cc.Prefab = null;
 
     get curPets(): Pet[] {
-        if (!this._curPets) this._curPets = this.ctrlr.memory.gameDataS.pets;
+        if (!this._curPets) this._curPets = this.ctrlr.memory.gameData.pets;
         return this._curPets;
     }
     _curPets: Pet[] = null;

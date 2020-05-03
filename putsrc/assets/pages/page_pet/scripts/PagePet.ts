@@ -10,7 +10,7 @@ import PageBase from 'scripts/PageBase';
 import ListView from 'scripts/ListView';
 import PagePetLVD from './PagePetLVD';
 import { petModelDict } from 'configs/PetModelDict';
-import { GameDataSavedTool } from 'scripts/Memory';
+import { GameDataTool } from 'scripts/Memory';
 import { PetModel } from 'scripts/DataModel';
 import { Pet, PetState } from 'scripts/DataSaved';
 
@@ -83,14 +83,14 @@ export default class PagePet extends PageBase {
 
     onMoveUpCell() {
         if (this.funcBarShowIdx < 0) return;
-        GameDataSavedTool.moveUpPetInList(this.ctrlr.memory.gameDataS, this.funcBarShowIdx);
+        GameDataTool.moveUpPetInList(this.ctrlr.memory.gameData, this.funcBarShowIdx);
         this.getComponentInChildren(ListView).resetContent(true);
         this.hideFuncBar();
     }
 
     onMoveDownCell() {
         if (this.funcBarShowIdx < 0) return;
-        GameDataSavedTool.moveDownPetInList(this.ctrlr.memory.gameDataS, this.funcBarShowIdx);
+        GameDataTool.moveDownPetInList(this.ctrlr.memory.gameData, this.funcBarShowIdx);
         this.getComponentInChildren(ListView).resetContent(true);
         this.hideFuncBar();
     }
@@ -98,12 +98,12 @@ export default class PagePet extends PageBase {
     onRemoveCell() {
         if (this.funcBarShowIdx < 0) return;
         let idx = this.funcBarShowIdx;
-        let pet = this.ctrlr.memory.gameDataS.pets[idx];
+        let pet = this.ctrlr.memory.gameData.pets[idx];
         let name = (petModelDict[pet.id] as PetModel).cnName;
         let str = `确定放生宠物“${name}”？ ` + '\n注意：放生后将无法找回！';
         this.ctrlr.popAlert(str, (key: number) => {
             if (key == 1) {
-                GameDataSavedTool.deletePet(this.ctrlr.memory.gameDataS, idx);
+                GameDataTool.deletePet(this.ctrlr.memory.gameData, idx);
                 this.getComponentInChildren(ListView).resetContent(true);
             }
         });
@@ -112,7 +112,7 @@ export default class PagePet extends PageBase {
 
     changePetState(pet: Pet) {
         pet.state = pet.state == PetState.rest ? PetState.ready : PetState.rest;
-        GameDataSavedTool.sortPetsByState(this.ctrlr.memory.gameDataS);
+        GameDataTool.sortPetsByState(this.ctrlr.memory.gameData);
         this.getComponentInChildren(ListView).resetContent(true);
     }
 }

@@ -9,7 +9,7 @@ import PageBase from 'scripts/PageBase';
 import PageActPosLVD from './PageActPosLVD';
 import ListView from 'scripts/ListView';
 import { ActPos } from 'scripts/DataSaved';
-import { GameDataSavedTool } from 'scripts/Memory';
+import { GameDataTool } from 'scripts/Memory';
 
 @ccclass
 export default class PageActPos extends PageBase {
@@ -27,12 +27,12 @@ export default class PageActPos extends PageBase {
     onPageShow() {
         this.ctrlr.setTitle('位置');
 
-        let gameData = this.ctrlr.memory.gameDataS;
+        let gameData = this.ctrlr.memory.gameData;
         let posId = gameData.curPosId;
 
         let actPos: ActPos = null;
         if (!gameData.posDataDict.hasOwnProperty(posId)) {
-            actPos = GameDataSavedTool.addActPos(this.ctrlr.memory.gameDataS, posId);
+            actPos = GameDataTool.addActPos(this.ctrlr.memory.gameData, posId);
         } else {
             actPos = gameData.posDataDict[posId];
         }

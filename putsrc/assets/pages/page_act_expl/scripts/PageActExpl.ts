@@ -345,7 +345,7 @@ export default class PageActExpl extends BattlePageBase {
 
     onClickCatch() {
         let ctrlr = this.updater.battleCtrlr;
-        let id = this.ctrlr.memory.gameDataS.curExpl.curBattle.startTime;
+        let id = this.ctrlr.memory.gameData.curExpl.curBattle.startTime;
         this.ctrlr.pushPage(PageActExplCatch, { ctrlr, pets: ctrlr.realBattle.enemyTeam.pets, id });
     }
 

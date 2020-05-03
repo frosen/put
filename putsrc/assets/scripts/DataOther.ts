@@ -69,8 +69,6 @@ export class Pet2 {
 
     armor: number = 0;
 
-    load: number = 0;
-
     setData(pet: Pet, exEquipTokens: string[] = null, exPrivity: number = null) {
         let petModel: PetModel = petModelDict[pet.id];
 
@@ -144,8 +142,6 @@ export class Pet2 {
         this.hitRate = 0.8 + privityPercent * 0.2;
         this.dfsRate = 0;
 
-        this.load = Math.floor(this.durability / 10);
-
         // 特性加成
         PetDataTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
             if (model.hasOwnProperty('onSetting')) model.onSetting(this, datas);
@@ -159,10 +155,6 @@ export class Pet2 {
         this.sklDmgFrom = Math.max(this.sklDmgFrom, 1);
         this.sklDmgTo = Math.max(this.sklDmgTo, 1);
     }
-}
-
-export class GameDataRuntime {
-    petLenMax: number = 10;
 }
 
 // battle -----------------------------------------------------------------
