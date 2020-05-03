@@ -4,8 +4,8 @@
  * luleyan
  */
 
-import { Memory, EquipDataTool, GameDataSavedTool, FeatureDataTool, PetDataTool } from 'scripts/Memory';
-import PageActExpl from './PageActExpl';
+import { Memory, EquipDataTool, GameDataSavedTool, PetDataTool } from 'scripts/Memory';
+import BattlePageBase from './BattlePageBase';
 import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
 
 import { expModels } from 'configs/ExpModels';
@@ -59,7 +59,7 @@ const EleReinforceRelation = [0, 3, 1, 4, 2, 6, 5]; // 元素相克表
 const CatchRatebyRank = [1, 0.9, 0.6, 0.5, 0.3, 0.1, 0, -0.2, -1, -2, -10];
 
 export class BattleController {
-    page: PageActExpl = null;
+    page: BattlePageBase = null;
     memory: Memory = null;
     gameDataS: GameDataSaved = null;
     endCallback: () => void = null;
@@ -69,7 +69,7 @@ export class BattleController {
     debugMode: boolean = false;
     realBattleCopys: { seed: number; rb: RealBattle }[] = []; // 用于战斗重置
 
-    init(page: PageActExpl, memory: Memory, endCallback: () => void) {
+    init(page: BattlePageBase, memory: Memory, endCallback: () => void) {
         this.page = page;
         this.memory = memory;
         this.gameDataS = memory.gameDataS;
@@ -125,7 +125,7 @@ export class BattleController {
         this.page.setUIofSelfPet(-1);
         this.page.setUIofEnemyPet(-1);
         let team = this.realBattle.selfTeam;
-        this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
+        this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
         for (const pet of team.pets) {
             this.page.removeBuff(pet.beEnemy, pet.idx, null);
             for (const { id, time } of pet.buffDatas) this.page.addBuff(pet.beEnemy, pet.idx, id, time);
@@ -177,7 +177,7 @@ export class BattleController {
         this.realBattle.selfTeam.mp = mpMax;
 
         this.page.setUIofSelfPet(-1);
-        this.page.resetCenterBar(mpMax, mpMax, 0);
+        this.page.resetAttriBar(mpMax, mpMax, 0);
     }
 
     checkIfSelfTeamChanged(): boolean {
@@ -387,7 +387,7 @@ export class BattleController {
         }
 
         let team = this.realBattle.selfTeam;
-        this.page.resetCenterBar(team.mp, team.mpMax, team.rage);
+        this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
 
         cc.log('STORM cc ^_^ end -----------------------------------------------------------');
     }

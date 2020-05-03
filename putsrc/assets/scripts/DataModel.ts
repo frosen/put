@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { BattleController } from 'pages/page_act_expl/scripts/BattleController';
+import { BattleController } from './BattleController';
 import { EleType, BattleType, BioType } from './DataSaved';
 import { Pet2, BattlePet, BattleBuff } from './DataOther';
 

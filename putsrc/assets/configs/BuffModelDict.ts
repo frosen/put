@@ -6,8 +6,8 @@
 
 import { EleType, BattleType } from 'scripts/DataSaved';
 import { BuffModel, BuffOutput, BuffType } from 'scripts/DataModel';
-import { BattleController } from 'pages/page_act_expl/scripts/BattleController';
 import { BattlePet, BattleBuff } from 'scripts/DataOther';
+import { BattleController } from 'scripts/BattleController';
 
 let fl = Math.floor;
 

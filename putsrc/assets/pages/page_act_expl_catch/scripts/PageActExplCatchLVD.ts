@@ -10,8 +10,8 @@ import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
 import CellCatch from '../cells/cell_catch/scripts/CellCatch';
-import { BattlePet } from 'pages/page_act_expl/scripts/BattleController';
 import PageActExplCatch from './PageActExplCatch';
+import { BattlePet } from 'scripts/DataOther';
 
 @ccclass
 export default class PageActExplCatchLVD extends ListViewDelegate {

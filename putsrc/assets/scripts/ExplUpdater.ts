@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import PageActExpl from './PageActExpl';
+import BattlePageBase from './BattlePageBase';
 import { Memory, GameDataSavedTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
 import { GameDataSaved } from 'scripts/DataSaved';
@@ -22,7 +22,7 @@ enum ExplResult {
 }
 
 export class ExplUpdater {
-    page: PageActExpl = null;
+    page: BattlePageBase = null;
     memory: Memory = null;
     gameDataS: GameDataSaved = null;
     battleCtrlr: BattleController = null;
@@ -33,7 +33,7 @@ export class ExplUpdater {
 
     pausing: boolean = false;
 
-    init(page: PageActExpl) {
+    init(page: BattlePageBase) {
         this.page = page;
         this.memory = this.page.ctrlr.memory;
         this.gameDataS = this.memory.gameDataS;
@@ -205,7 +205,7 @@ export class ExplUpdater {
                 selfTeam.rage -= 30;
                 selfTeam.rage = Math.max(0, selfTeam.rage);
             }
-            this.page.resetCenterBar(selfTeam.mp, selfTeam.mpMax, selfTeam.rage);
+            this.page.resetAttriBar(selfTeam.mp, selfTeam.mpMax, selfTeam.rage);
         }
 
         if (done) {
@@ -226,9 +226,9 @@ export class ExplUpdater {
         this.battleCtrlr.escape();
     }
 
-    executeHide(callback: (result: boolean) => void) {
+    executeHide() {
         let cur = !this.memory.gameDataS.curExpl.hiding;
         this.memory.gameDataS.curExpl.hiding = cur;
-        callback(cur);
+        this.page.setHideActive(cur);
     }
 }

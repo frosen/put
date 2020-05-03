@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import ListView from 'scripts/ListView';
 import PageActExplCatchLVD from './PageActExplCatchLVD';
-import { BattleController } from 'pages/page_act_expl/scripts/BattleController';
+import { BattleController } from 'scripts/BattleController';
 
 @ccclass
 export default class PageActExplCatch extends PageBase {

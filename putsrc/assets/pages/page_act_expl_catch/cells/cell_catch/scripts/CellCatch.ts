@@ -14,6 +14,7 @@ import { featureModelDict } from 'configs/FeatureModelDict';
 import { Pet, PetRankNames, BioType } from 'scripts/DataSaved';
 import { PetModel } from 'scripts/DataModel';
 import { BattlePet } from 'scripts/DataOther';
+import { FeatureDataTool } from 'scripts/Memory';
 
 @ccclass
 export default class CellCatch extends ListViewCell {
@@ -50,8 +51,8 @@ export default class CellCatch extends ListViewCell {
             for (let index = 0; index < pet.inbornFeatures.length; index++) {
                 let feature = pet.inbornFeatures[index];
                 let featureModel = featureModelDict[feature.id];
-
-                featureStrs.push('天赋' + String(index + 1) + '：' + featureModel.getInfo(feature.datas));
+                let infoStr = featureModel.getInfo(FeatureDataTool.getDatas(feature.id, feature.lv));
+                featureStrs.push('天赋' + String(index + 1) + '：' + infoStr);
             }
             this.featureLbl.string = featureStrs.join('\n');
         }

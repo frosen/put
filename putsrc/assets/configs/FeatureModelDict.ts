@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { BattleController } from 'pages/page_act_expl/scripts/BattleController';
+import { BattleController } from 'scripts/BattleController';
 import { FeatureModel, BattleDataForFeature, SkillType } from 'scripts/DataModel';
 import { Pet2, BattlePet, RAGE_MAX } from 'scripts/DataOther';
 import { EleType, BattleType } from 'scripts/DataSaved';

@@ -5,8 +5,8 @@
  */
 
 const { ccclass, property, executionOrder } = cc._decorator;
-import PageBase from 'scripts/PageBase';
-import { ExplUpdater, ExplState } from './ExplUpdater';
+import BattlePageBase from 'scripts/BattlePageBase';
+import { ExplUpdater, ExplState } from 'scripts/ExplUpdater';
 import PetUI from './PetUI';
 import { petModelDict } from 'configs/PetModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
@@ -34,7 +34,7 @@ const DmgLblActParams: number[][] = [
 
 @ccclass
 @executionOrder(1) // 为了start在scrollview的start之后进行，保证对scrollview的content.y设置正确
-export default class PageActExpl extends PageBase {
+export default class PageActExpl extends BattlePageBase {
     updater: ExplUpdater = null;
 
     @property(cc.Node)
@@ -333,7 +333,7 @@ export default class PageActExpl extends PageBase {
         }
     }
 
-    resetCenterBar(mp: number, mpMax: number, rage: number) {
+    resetAttriBar(mp: number, mpMax: number, rage: number) {
         this.mpProgress.progress = mp / mpMax;
         this.mpLbl.string = `${mp} / ${mpMax}`;
 
@@ -354,9 +354,7 @@ export default class PageActExpl extends PageBase {
     }
 
     onClickHide() {
-        this.updater.executeHide((result: boolean) => {
-            this.setHideActive(result);
-        });
+        this.updater.executeHide();
     }
 
     setCatchActive(b: boolean) {
