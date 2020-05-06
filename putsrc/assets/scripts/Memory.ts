@@ -7,7 +7,20 @@
 import { petModelDict } from 'configs/PetModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { featureLvsByPetLv } from 'configs/FeatureLvsByPetLv';
-import { Feature, Pet, ActPos, ExplMmr, PetState, SelfPetMmr, BattleMmr, PetMmr, GameData, Equip, ItemType } from './DataSaved';
+import {
+    Feature,
+    Pet,
+    ActPos,
+    ExplMmr,
+    PetState,
+    SelfPetMmr,
+    BattleMmr,
+    PetMmr,
+    GameData,
+    Equip,
+    ItemType,
+    Money
+} from './DataSaved';
 import { FeatureModel, PetModel, EquipPosType } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { random, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
@@ -144,6 +157,16 @@ export class Memory {
         GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 2, [], (pet: Pet) => {
             pet.state = PetState.ready;
         });
+
+        GameDataTool.handleMoney(this.gameData, money => (money.count += 15643351790));
+
+        let equip;
+        equip = EquipDataTool.createRandom(21, 23);
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 23));
+        equip = EquipDataTool.createRandom(21, 23);
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 23));
+        equip = EquipDataTool.createRandom(21, 23);
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 23));
     }
 }
 
@@ -263,8 +286,7 @@ export class EquipDataTool {
         growth: number,
         featureLvs: number[],
         affixes: Feature[],
-        learnTimes: number,
-        catchIdx: number
+        learnTimes: number
     ): Equip {
         let equip = newInsWithChecker(Equip);
 
@@ -277,14 +299,13 @@ export class EquipDataTool {
         equip.affixes = newList();
         for (const feature of affixes) equip.affixes.push(FeatureDataTool.clone(feature));
         equip.learnTimes = learnTimes;
-        equip.catchIdx = catchIdx;
 
         return equip;
     }
 
-    static createRandom(lvFrom: number, lvTo: number, catchIdx: number): Equip {
+    static createRandom(lvFrom: number, lvTo: number): Equip {
         let equipIds: string[];
-        let lv = lvFrom + random(lvTo + 1);
+        let lv = lvFrom + random(lvTo - lvFrom + 1);
         let equipIdsByRank = equipIdsByLvRank[lv];
         switch (equipIdsByRank.length) {
             case 0:
@@ -327,7 +348,7 @@ export class EquipDataTool {
             affixes.push(feature);
         }
 
-        return this.create(equipId, skillId, 0, featureLvs, affixes, 0, catchIdx);
+        return this.create(equipId, skillId, 0, featureLvs, affixes, 0);
     }
 
     static getLv(equip: Equip): number {
@@ -367,6 +388,12 @@ export class GameDataTool {
         gameData.posDataDict = newDict();
         gameData.pets = newList();
         gameData.items = newList();
+
+        let money = newInsWithChecker(Money);
+        money.id = 'money';
+        money.itemType = ItemType.money;
+        money.count = 0;
+        gameData.items.push(money);
 
         gameData.totalPetCount = 0;
 
@@ -422,12 +449,24 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
+    static handleMoney(gameData: GameData, callback: (money: Money) => void) {
+        callback(gameData.items[0] as Money);
+    }
+
+    static getMoney(gameData: GameData) {
+        return (gameData.items[0] as Money).count;
+    }
+
     static addEquip(gameData: GameData, equip: Equip, callback: (equip: Equip) => void = null): string {
         if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+        gameData.weight++;
 
         gameData.totalEquipCount++;
+        equip.catchIdx = gameData.totalEquipCount;
+
         gameData.items.push(equip);
-        callback(equip);
+
+        if (callback) callback(equip);
         return this.SUC;
     }
 
@@ -436,10 +475,9 @@ export class GameDataTool {
 
         let equipPosType = equipModelDict[equip.id].equipPosType;
         for (const equipHeld of pet.equips) {
-            if (equipModelDict[equipHeld.id].equipPosType == equipPosType) {
-                let strs = ['', '武器', '防具', '饰品'];
-                return '一只宠物同时只能持有一件' + strs[equipPosType];
-            }
+            if (equipModelDict[equipHeld.id].equipPosType != equipPosType) continue;
+            let strs = ['', '武器', '防具', '饰品'];
+            return '一只宠物同时只能持有一件' + strs[equipPosType];
         }
 
         let index = gameData.items.indexOf(equip);
@@ -447,6 +485,7 @@ export class GameDataTool {
 
         gameData.items.splice(index, 0);
         pet.equips.push(equip);
+        gameData.weight--;
 
         return this.SUC;
     }
@@ -457,6 +496,7 @@ export class GameDataTool {
         let index = pet.equips.indexOf(equip);
         if (index == -1) return '此装备不在宠物身上';
 
+        gameData.weight++;
         pet.equips.splice(index, 0);
         gameData.items.push(equip);
 
@@ -493,9 +533,7 @@ export class GameDataTool {
     }
 
     static deleteExpl(gameData: GameData) {
-        if (gameData.curExpl) {
-            gameData.curExpl = null;
-        }
+        if (gameData.curExpl) gameData.curExpl = null;
     }
 
     static createBattle(gameData: GameData, seed: number, pets: Pet[], spcBtlId: number) {

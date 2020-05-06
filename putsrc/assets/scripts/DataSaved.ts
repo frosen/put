@@ -26,6 +26,7 @@ export enum EleType {
 }
 
 export const EleTypeNames = ['', '火系', '水系', '空系', '地系', '光系', '暗系'];
+export const EleColor = [null, cc.Color.RED, cc.Color.BLUE, cc.Color.CYAN, cc.Color.GREEN, cc.Color.YELLOW, cc.Color.BLACK];
 
 export enum BattleType {
     none,
@@ -96,12 +97,22 @@ export class Pet {
 // -----------------------------------------------------------------
 
 export enum ItemType {
-    equip = 1
+    money = 1,
+    cnsum = 9, // 消耗品
+    equip = 18
 }
 
 export class Item {
     id: string;
     itemType: ItemType;
+}
+
+export class Money extends Item {
+    count: number;
+}
+
+export class Cnsum extends Item {
+    count: number;
 }
 
 export class Equip extends Item {
@@ -161,6 +172,7 @@ export class GameData {
     totalPetCount: number; // 一共抓取过的宠物的总量，用于pet的索引
 
     items: Item[];
+    weight: number;
     totalEquipCount: number; // 一共获得过的装备的总量，用于装备的索引
 
     curPosId: string;

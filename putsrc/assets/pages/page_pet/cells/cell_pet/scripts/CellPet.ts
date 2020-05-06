@@ -10,7 +10,7 @@ import ListViewCell from 'scripts/ListViewCell';
 import PagePetDetail from 'pages/page_pet_detail/scripts/PagePetDetail';
 import { petModelDict } from 'configs/PetModelDict';
 import PagePet from 'pages/page_pet/scripts/PagePet';
-import { Pet, PetRankNames, PetStateNames, PetState, EleType } from 'scripts/DataSaved';
+import { Pet, PetRankNames, PetStateNames, PetState, EleType, EleColor } from 'scripts/DataSaved';
 import { PetModel } from 'scripts/DataModel';
 
 @ccclass
@@ -53,26 +53,7 @@ export default class CellPet extends ListViewCell {
         this.subLbl.string = `等级：${pet.lv}   品阶：${PetRankNames[pet.rank]}   默契值：${pet.privity}`;
         this.stateLbl.string = PetStateNames[pet.state];
         this.stateBtn.interactable = pet.state == PetState.rest || pet.state == PetState.ready;
-        this.petSp.node.color = CellPet.getPetHeadUI(petModel).color;
-    }
-
-    static getPetHeadUI(petModel: PetModel): { color: cc.Color } {
-        switch (petModel.eleType) {
-            case EleType.fire:
-                return { color: cc.Color.RED };
-            case EleType.water:
-                return { color: cc.Color.BLUE };
-            case EleType.air:
-                return { color: cc.Color.CYAN };
-            case EleType.earth:
-                return { color: cc.Color.GREEN };
-            case EleType.light:
-                return { color: cc.Color.YELLOW };
-            case EleType.dark:
-                return { color: cc.Color.BLACK };
-            default:
-                break;
-        }
+        this.petSp.node.color = EleColor[petModel.eleType];
     }
 
     onClick() {
