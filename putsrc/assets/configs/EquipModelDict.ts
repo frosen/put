@@ -2697,7 +2697,7 @@ export let equipModelDict: { [key: string]: EquipModel } = {
     },
     QingLongBian: {
         id: 'QingLongBian',
-        cnName: '青龙利鞭',
+        cnName: '青龙鞭',
         featureIds: [
             'castAir',
             'baseConcentration'

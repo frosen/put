@@ -160,13 +160,17 @@ export class Memory {
 
         GameDataTool.handleMoney(this.gameData, money => (money.count += 15643351790));
 
-        let equip;
-        equip = EquipDataTool.createRandom(21, 23);
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 23));
-        equip = EquipDataTool.createRandom(21, 23);
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 23));
-        equip = EquipDataTool.createRandom(21, 23);
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 23));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
+
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
+
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
     }
 }
 
@@ -422,6 +426,7 @@ export class GameDataTool {
         money.count = 0;
         gameData.items.push(money);
 
+        gameData.weight = 0;
         gameData.totalPetCount = 0;
 
         gameData.curPosId = '';

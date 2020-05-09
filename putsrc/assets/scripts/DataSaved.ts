@@ -26,7 +26,15 @@ export enum EleType {
 }
 
 export const EleTypeNames = ['', '火系', '水系', '空系', '地系', '光系', '暗系'];
-export const EleColor = [null, cc.Color.RED, cc.Color.BLUE, cc.Color.CYAN, cc.Color.GREEN, cc.Color.YELLOW, cc.Color.BLACK];
+export const EleColor = [
+    null,
+    cc.Color.RED,
+    cc.Color.BLUE,
+    cc.color(40, 170, 150),
+    cc.color(128, 64, 0),
+    cc.Color.ORANGE,
+    cc.Color.BLACK
+];
 
 export enum BattleType {
     none,
