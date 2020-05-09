@@ -53,27 +53,33 @@ export class ExplUpdater {
         cc.director.getScheduler().scheduleUpdate(this, 0, false);
         this.lastTime = new Date().getTime();
 
-        this.page.ctrlr.debugTool.setShortCut('ww', () => {
-            this.pausing = !this.pausing;
-            if (this.pausing) cc.log('PUT 暂停探索更新');
-            else cc.log('PUT 重新开始探索更新');
-        });
-
-        this.page.ctrlr.debugTool.setShortCut('gg', () => {
-            if (!this.pausing) {
-                cc.log('PUT 暂停期间才可以使用下一步功能');
-                return;
-            }
-
-            cc.log('PUT 下一步');
-            this.lastTime = new Date().getTime();
-            this.updateCount += 1;
-            this.onUpdate();
-        });
+        this.page.ctrlr.debugTool.setShortCut('ww', this.pauseOrResume.bind(this));
+        this.page.ctrlr.debugTool.setShortCut('gg', this.goNext.bind(this));
     }
+
+    pauseOrResume() {
+        this.pausing = !this.pausing;
+        if (this.pausing) cc.log('PUT 暂停探索更新');
+        else cc.log('PUT 重新开始探索更新');
+    }
+
+    goNext() {
+        if (!this.pausing) {
+            cc.log('PUT 暂停期间才可以使用下一步功能');
+            return;
+        }
+
+        cc.log('PUT 下一步');
+        this.lastTime = new Date().getTime();
+        this.updateCount += 1;
+        this.onUpdate();
+    }
+
+    // -----------------------------------------------------------------
 
     createExpl() {
         GameDataTool.createExpl(this.gameData);
+        this.selfPetsChangedFlag = true;
         this.startExpl();
         this.page.handleLog();
     }
@@ -121,17 +127,17 @@ export class ExplUpdater {
 
     checkChange(): boolean {
         if (this.selfPetsChangedFlag) {
+            GameDataTool.resetSelfPetsInExpl(this.gameData);
             this.battleCtrlr.resetSelfTeam();
             this.selfPetsChangedFlag = false;
             return true;
-        }
+        } else return false;
     }
 
     explTime: number = 0;
 
     startExpl() {
-        this.battleCtrlr.resetSelfTeam();
-        this.selfPetsChangedFlag = false;
+        this.checkChange();
 
         this.state = ExplState.explore;
         // this.explTime = 5 + random(5);

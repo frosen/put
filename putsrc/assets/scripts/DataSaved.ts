@@ -151,6 +151,10 @@ export class ActPos {
 
 export class SelfPetMmr {
     catchIdx: number;
+    lv: number;
+    rank: number;
+    state: number;
+    lndFchrLen: number;
     privity: number;
     eqpTokens: string[];
 }

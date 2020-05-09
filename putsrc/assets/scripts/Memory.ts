@@ -373,7 +373,7 @@ export class EquipDataTool {
     }
 
     static getToken(e: Equip): string {
-        return String(e.catchIdx);
+        return String(e.catchIdx); // 可以用catchIdx代表唯一的装备，因为装备在创建，增加和变化时，都会更新catchIdx
     }
 
     static getFinalAttris(equip: Equip, attris: {} = null): {} {
@@ -475,8 +475,15 @@ export class GameDataTool {
         gameData.pets.splice(index + 1, 0, pet);
     }
 
-    static deletePet(gameData: GameData, index: number) {
+    static deletePet(gameData: GameData, index: number): string {
+        let curCatchIdx = gameData.pets[index].catchIdx;
+        if (gameData.curExpl) {
+            for (const petMmr of gameData.curExpl.selfs) {
+                if (curCatchIdx == petMmr.catchIdx) return '当前宠物处于战斗或备战状态，无法放生';
+            }
+        }
         gameData.pets.splice(index, 1);
+        return this.SUC;
     }
 
     // -----------------------------------------------------------------
@@ -535,6 +542,18 @@ export class GameDataTool {
         return this.SUC;
     }
 
+    static makeGrowForEquip(gameData: GameData, equip: Equip): string {
+        gameData.totalEquipCount++;
+        equip.catchIdx = gameData.totalEquipCount;
+        return this.SUC;
+    }
+
+    static addAffixForEquip(gameData: GameData, equip: Equip): string {
+        gameData.totalEquipCount++;
+        equip.catchIdx = gameData.totalEquipCount;
+        return this.SUC;
+    }
+
     // -----------------------------------------------------------------
 
     static addActPos(gameData: GameData, posId: string): ActPos {
@@ -548,20 +567,32 @@ export class GameDataTool {
         let expl = newInsWithChecker(ExplMmr);
         expl.startTime = new Date().getTime();
         expl.curStep = 0;
-        expl.selfs = newList();
+        expl.hiding = false;
+        gameData.curExpl = expl;
+        this.resetSelfPetsInExpl(gameData);
+    }
+
+    static resetSelfPetsInExpl(gameData: GameData) {
+        let expl = gameData.curExpl;
+        if (!expl.selfs) expl.selfs = newList();
+        else expl.selfs.length = 0;
+
         for (const pet of gameData.pets) {
+            cc.log('^_^!', petModelDict[pet.id].cnName);
             if (pet.state != PetState.ready) break; // 备战的pet一定在最上，且不会超过5个
             let selfPetMmr = newInsWithChecker(SelfPetMmr);
             selfPetMmr.catchIdx = pet.catchIdx;
+            selfPetMmr.lv = pet.lv;
+            selfPetMmr.rank = pet.rank;
+            selfPetMmr.state = pet.state;
+            selfPetMmr.lndFchrLen = pet.learnedFeatures.length;
             selfPetMmr.privity = pet.privity;
             let tokens = [];
             for (const equip of pet.equips) tokens.push(EquipDataTool.getToken(equip));
             selfPetMmr.eqpTokens = newList(tokens);
             expl.selfs.push(selfPetMmr);
+            cc.log('^_^!nn', selfPetMmr);
         }
-        expl.hiding = false;
-
-        gameData.curExpl = expl;
     }
 
     static deleteExpl(gameData: GameData) {

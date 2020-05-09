@@ -103,8 +103,9 @@ export default class PagePet extends PageBase {
         let str = `确定放生宠物“${name}”？ ` + '\n注意：放生后将无法找回！';
         this.ctrlr.popAlert(str, (key: number) => {
             if (key == 1) {
-                GameDataTool.deletePet(this.ctrlr.memory.gameData, idx);
-                this.getComponentInChildren(ListView).resetContent(true);
+                let rzt = GameDataTool.deletePet(this.ctrlr.memory.gameData, idx);
+                if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+                else this.ctrlr.popToast(rzt);
             }
         });
         this.hideFuncBar();

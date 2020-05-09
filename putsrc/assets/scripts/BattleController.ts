@@ -80,23 +80,8 @@ export class BattleController {
         this.realBattle = new RealBattle();
 
         // 快捷键
-        this.page.ctrlr.debugTool.setShortCut('rr', () => {
-            if (!this.realBattle.start) {
-                cc.log('PUT 没有战斗');
-                return;
-            }
-            cc.log('PUT 重新开始当前战斗');
-            this.resetBattleDataToBegin();
-        });
-
-        this.page.ctrlr.debugTool.setShortCut('bb', () => {
-            if (!this.realBattle.start) {
-                cc.log('PUT 没有战斗');
-                return;
-            }
-            cc.log('PUT 回到上次回合开始');
-            this.resetBattleDataToTurnBegin();
-        });
+        this.page.ctrlr.debugTool.setShortCut('rr', this.resetBattleDataToBegin.bind(this));
+        this.page.ctrlr.debugTool.setShortCut('bb', this.resetBattleDataToTurnBegin.bind(this));
 
         if (CC_DEBUG) this.debugMode = true;
 
@@ -105,6 +90,12 @@ export class BattleController {
     }
 
     resetBattleDataToBegin() {
+        if (!this.realBattle.start) {
+            cc.log('PUT 没有战斗');
+            return;
+        }
+        cc.log('PUT 重新开始当前战斗');
+
         this.realBattle = <RealBattle>deepCopy(this.realBattleCopys[0].rb);
         setSeed(this.realBattleCopys[0].seed);
         this.realBattleCopys.length = 1;
@@ -113,6 +104,12 @@ export class BattleController {
     }
 
     resetBattleDataToTurnBegin() {
+        if (!this.realBattle.start) {
+            cc.log('PUT 没有战斗');
+            return;
+        }
+        cc.log('PUT 回到上次回合开始');
+
         if (this.realBattleCopys.length <= 1) {
             this.resetBattleDataToBegin();
         } else {
@@ -190,6 +187,10 @@ export class BattleController {
             let pet = pets[petIdx];
 
             if (selfPetMmr.catchIdx != pet.catchIdx) return true;
+            if (selfPetMmr.lv != pet.lv) return true;
+            if (selfPetMmr.rank != pet.rank) return true;
+            if (selfPetMmr.state != pet.state) return true;
+            if (selfPetMmr.lndFchrLen != pet.learnedFeatures.length) return true;
             if (selfPetMmr.privity != pet.privity) return true;
             if (selfPetMmr.eqpTokens.length != pet.equips.length) return true;
             for (let eqpIdx = 0; eqpIdx < selfPetMmr.eqpTokens.length; eqpIdx++) {
