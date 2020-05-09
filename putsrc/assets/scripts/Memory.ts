@@ -21,7 +21,7 @@ import {
     ItemType,
     Money
 } from './DataSaved';
-import { FeatureModel, PetModel, EquipPosType } from './DataModel';
+import { FeatureModel, PetModel, EquipPosType, EquipModel } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { random, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
@@ -370,6 +370,33 @@ export class EquipDataTool {
 
     static getToken(e: Equip): string {
         return String(e.catchIdx);
+    }
+
+    static getFinalAttris(equip: Equip, attris: {} = null): {} {
+        // 装备加成
+        let setAttriByEquip = (attris: {}, equipModel: EquipModel, key: string, growth: number) => {
+            if (equipModel[key] > 0) attris[key] += equipModel[key] + growth;
+        };
+
+        let equipModel = equipModelDict[equip.id];
+        let finalAttris = attris || {
+            strength: 0,
+            concentration: 0,
+            durability: 0,
+            agility: 0,
+            sensitivity: 0,
+            elegant: 0,
+            armor: 0
+        };
+
+        setAttriByEquip(finalAttris, equipModel, 'strength', equip.growth * 20);
+        setAttriByEquip(finalAttris, equipModel, 'concentration', equip.growth * 20);
+        setAttriByEquip(finalAttris, equipModel, 'durability', equip.growth * 20);
+        setAttriByEquip(finalAttris, equipModel, 'agility', equip.growth * 10);
+        setAttriByEquip(finalAttris, equipModel, 'sensitivity', equip.growth * 10);
+        setAttriByEquip(finalAttris, equipModel, 'elegant', equip.growth * 10);
+        setAttriByEquip(finalAttris, equipModel, 'armor', 0);
+        return finalAttris;
     }
 }
 

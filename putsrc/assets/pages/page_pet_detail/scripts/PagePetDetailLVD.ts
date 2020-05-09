@@ -164,16 +164,16 @@ export default class PagePetDetailLVD extends ListViewDelegate {
                 cell.setData('一级属性');
                 break;
             case 8:
-                cell.setData1('强壮', String((this.curPet2.strength * 0.1).toFixed(1)));
-                cell.setData2('专注', String((this.curPet2.concentration * 0.1).toFixed(1)));
+                cell.setData1('力量', (this.curPet2.strength * 0.1).toFixed(1));
+                cell.setData2('专注', (this.curPet2.concentration * 0.1).toFixed(1));
                 break;
             case 9:
-                cell.setData1('耐久', String((this.curPet2.durability * 0.1).toFixed(1)));
-                cell.setData2('灵敏', String((this.curPet2.agility * 0.1).toFixed(1)));
+                cell.setData1('耐久', (this.curPet2.durability * 0.1).toFixed(1));
+                cell.setData2('灵敏', (this.curPet2.agility * 0.1).toFixed(1));
                 break;
             case 10:
-                cell.setData1('细腻', String((this.curPet2.sensitivity * 0.1).toFixed(1)));
-                cell.setData2('优雅', String((this.curPet2.elegant * 0.1).toFixed(1)));
+                cell.setData1('感知', (this.curPet2.sensitivity * 0.1).toFixed(1));
+                cell.setData2('优雅', (this.curPet2.elegant * 0.1).toFixed(1));
                 break;
             case 11:
                 cell.setData('二级属性');

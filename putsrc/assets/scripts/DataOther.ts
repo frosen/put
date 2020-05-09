@@ -4,70 +4,69 @@
  * luleyan
  */
 
-import { PetDataTool } from './Memory';
+import { PetDataTool, EquipDataTool } from './Memory';
 import { FeatureModel, PetModel, SkillModel, SkillType, EquipModel } from './DataModel';
 import { BioType, EleType, BattleType, Pet } from './DataSaved';
 
 import { petModelDict } from 'configs/PetModelDict';
 import { skillModelDict } from 'configs/SkillModelDict';
 import { deepCopy } from './Utils';
-import { equipModelDict } from 'configs/EquipModelDict';
 
 const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
 const BioToFromToRatio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
 
 export class Pet2 {
     // 原始值 -----------------------------------------------------------------
-    strengthOri: number = 0;
-    concentrationOri: number = 0;
-    durabilityOri: number = 0;
-    agilityOri: number = 0;
-    sensitivityOri: number = 0;
-    elegantOri: number = 0;
+    strengthOri: number;
+    concentrationOri: number;
+    durabilityOri: number;
+    agilityOri: number;
+    sensitivityOri: number;
+    elegantOri: number;
 
-    hpMaxOri: number = 0;
-    mpMaxOri: number = 0;
+    hpMaxOri: number;
+    mpMaxOri: number;
 
-    atkDmgFromOri: number = 0;
-    atkDmgToOri: number = 0;
+    atkDmgFromOri: number;
+    atkDmgToOri: number;
 
-    sklDmgFromOri: number = 0;
-    sklDmgToOri: number = 0;
+    sklDmgFromOri: number;
+    sklDmgToOri: number;
 
     // 终值 -----------------------------------------------------------------
 
-    strength: number = 0;
-    concentration: number = 0;
-    durability: number = 0;
-    agility: number = 0;
-    sensitivity: number = 0;
-    elegant: number = 0;
+    strength: number;
+    concentration: number;
+    durability: number;
+    agility: number;
+    sensitivity: number;
+    elegant: number;
 
-    hpMax: number = 0;
-    mpMax: number = 0;
+    hpMax: number;
+    mpMax: number;
 
-    atkDmgFrom: number = 0;
-    atkDmgTo: number = 0;
+    atkDmgFrom: number;
+    atkDmgTo: number;
 
-    sklDmgFrom: number = 0;
-    sklDmgTo: number = 0;
+    sklDmgFrom: number;
+    sklDmgTo: number;
     /** 速度 */
-    speed: number = 0;
+    speed: number;
 
     /** 额外生物类型 */
-    exBioTypes: BioType[] = [];
+    exBioTypes: BioType[];
     /** 额外元素类型 */
-    exEleTypes: EleType[] = [];
+    exEleTypes: EleType[];
     /** 额外战斗类型 */
-    exBattleTypes: BattleType[] = [];
+    exBattleTypes: BattleType[];
 
-    critRate: number = 0;
-    critDmgRate: number = 0;
-    evdRate: number = 0;
-    hitRate: number = 0;
-    dfsRate: number = 0;
+    critRate: number;
+    critDmgRate: number;
+    evdRate: number;
+    hitRate: number;
+    dfsRate: number;
 
-    armor: number = 0;
+    armor: number;
 
     setData(pet: Pet, exEquipTokens: string[] = null, exPrivity: number = null) {
         let petModel: PetModel = petModelDict[pet.id];
@@ -96,26 +95,15 @@ export class Pet2 {
         this.sensitivity = this.sensitivityOri;
         this.elegant = this.elegantOri;
 
+        this.armor = 0;
+
         // 特性加成
         PetDataTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
             if (model.hasOwnProperty('onBaseSetting')) model.onBaseSetting(this, datas);
         });
 
         // 装备加成
-        let setAttriByEquip = (pet2: Pet2, equipModel: EquipModel, key: string, growth: number) => {
-            if (equipModel[key] > 0) pet2[key] += equipModel[key] + growth;
-        };
-
-        for (const equip of pet.equips) {
-            let equipModel = equipModelDict[equip.id];
-            setAttriByEquip(this, equipModel, 'strength', equip.growth * 20);
-            setAttriByEquip(this, equipModel, 'concentration', equip.growth * 20);
-            setAttriByEquip(this, equipModel, 'durability', equip.growth * 20);
-            setAttriByEquip(this, equipModel, 'agility', equip.growth * 10);
-            setAttriByEquip(this, equipModel, 'sensitivity', equip.growth * 10);
-            setAttriByEquip(this, equipModel, 'elegant', equip.growth * 10);
-            setAttriByEquip(this, equipModel, 'armor', 0);
-        }
+        for (const equip of pet.equips) EquipDataTool.getFinalAttris(equip, this);
 
         // 二级原始属性
         this.hpMaxOri = this.durability * 25;
@@ -133,6 +121,10 @@ export class Pet2 {
         this.sklDmgFrom = this.sklDmgFromOri;
         this.sklDmgTo = this.sklDmgToOri;
         this.speed = petModel.speed;
+
+        this.exBioTypes = [];
+        this.exEleTypes = [];
+        this.exBattleTypes = [];
 
         // 其他属性
         let privityPercent = privity * 0.01;
