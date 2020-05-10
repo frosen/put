@@ -82,6 +82,12 @@ export default class CellPkgEquip extends ListViewCell {
             this.skillLbl.node.parent.opacity = 0;
         }
 
+        this.rerenderLbl(this.nameLbl);
+        this.rerenderLbl(this.lvLbl);
+        this.rerenderLbl(this.skillLbl);
+        this.skillLbl.node.parent.getComponent(cc.Layout).updateLayout();
+        this.nameLbl.node.parent.getComponent(cc.Layout).updateLayout();
+
         let attriInfos = [];
         let attris = EquipDataTool.getFinalAttris(equip);
         for (const key in attris) {
@@ -113,11 +119,21 @@ export default class CellPkgEquip extends ListViewCell {
             infoNode.opacity = 255;
 
             infoNode.color = c;
-            infoNode.children[0].getComponent(cc.Label).string = str;
+            let lbl = infoNode.children[0].getComponent(cc.Label);
+            lbl.string = str;
+            this.rerenderLbl(lbl);
+            infoNode.getComponent(cc.Layout).updateLayout();
         }
 
         for (; attriIndex < this.infoNodePool.length; attriIndex++) {
             this.infoNodePool[attriIndex].opacity = 0;
         }
+
+        this.infoLayer.getComponent(cc.Layout).updateLayout();
+    }
+
+    rerenderLbl(lbl: cc.Label) {
+        // @ts-ignore
+        lbl._assembler.updateRenderData(lbl);
     }
 }

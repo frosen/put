@@ -60,13 +60,14 @@ export default class PagePkg extends PageBase {
             lblNode.getComponent(cc.Label).string = LIST_NAMES[index];
             this.selectionLblNodes.push(lblNode);
         }
+
+        this.turnList(0);
     }
 
     onPageShow() {
         this.ctrlr.setTitle('道具');
         let gameData = this.ctrlr.memory.gameData;
         this.ctrlr.setSubTitle(`${gameData.weight}/${GameDataTool.getItemCountMax(gameData)}`);
-        this.turnList(0);
     }
 
     resetCurList() {
