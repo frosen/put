@@ -13,6 +13,7 @@ import { skillModelDict } from 'configs/SkillModelDict';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { SkillType } from 'scripts/DataModel';
+import PagePkg from 'pages/page_pkg/scripts/PagePkg';
 
 const RankColor = [null, cc.Color.BLACK, cc.Color.BLUE, cc.color(153, 50, 205)];
 
@@ -65,7 +66,20 @@ export default class CellPkgEquip extends ListViewCell {
 
     infoNodePool: cc.Node[] = [];
 
-    setData(equip: Equip) {
+    @property(cc.Button)
+    funcBtn: cc.Button = null;
+
+    curIdx: number = -1;
+    page: PagePkg = null;
+
+    onLoad() {
+        super.onLoad();
+        if (CC_EDITOR) return;
+        this.funcBtn.node.on('click', this.onClickFuncBtn, this);
+    }
+
+    setData(idx: number, equip: Equip) {
+        this.curIdx = idx;
         let equipModel = equipModelDict[equip.id];
         this.nameLbl.string = EquipDataTool.getCnName(equip);
         this.nameLbl.node.color = RankColor[equipModel.rank];
@@ -135,5 +149,10 @@ export default class CellPkgEquip extends ListViewCell {
     rerenderLbl(lbl: cc.Label) {
         // @ts-ignore
         lbl._assembler.updateRenderData(lbl);
+    }
+
+    onClickFuncBtn() {
+        cc.log('PUT show item cell func: ', this.curIdx);
+        this.page.showFuncBar(this.curIdx, this.node);
     }
 }

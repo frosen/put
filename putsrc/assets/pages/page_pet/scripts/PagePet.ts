@@ -57,7 +57,7 @@ export default class PagePet extends PageBase {
 
         let changeBar = () => {
             this.funcBarNode.y = realY;
-            let atBottom = this.funcBarShowIdx < 2;
+            let atBottom = this.funcBarShowIdx < 5;
             this.funcBarNode.getChildByName('arrow_node').scaleY = atBottom ? 1 : -1;
             this.funcBarNode.getChildByName('func_bar').y = atBottom ? -90 : 90;
         };
@@ -83,15 +83,15 @@ export default class PagePet extends PageBase {
 
     onMoveUpCell() {
         if (this.funcBarShowIdx < 0) return;
-        GameDataTool.moveUpPetInList(this.ctrlr.memory.gameData, this.funcBarShowIdx);
-        this.getComponentInChildren(ListView).resetContent(true);
+        let rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, this.funcBarShowIdx, this.funcBarShowIdx - 1);
+        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
         this.hideFuncBar();
     }
 
     onMoveDownCell() {
         if (this.funcBarShowIdx < 0) return;
-        GameDataTool.moveDownPetInList(this.ctrlr.memory.gameData, this.funcBarShowIdx);
-        this.getComponentInChildren(ListView).resetContent(true);
+        let rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, this.funcBarShowIdx, this.funcBarShowIdx + 1);
+        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
         this.hideFuncBar();
     }
 

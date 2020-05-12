@@ -433,6 +433,8 @@ export class GameDataTool {
         gameData.curExpl = null;
     }
 
+    // -----------------------------------------------------------------
+
     static addPet(
         gameData: GameData,
         id: string,
@@ -455,24 +457,13 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static sortPetsByState(gameData: GameData) {
-        gameData.pets.sort((a: Pet, b: Pet): number => {
-            return a.state - b.state;
-        });
-    }
-
-    static moveUpPetInList(gameData: GameData, index: number) {
-        if (index == 0) return;
-        let pet = gameData.pets[index];
-        gameData.pets.splice(index, 1);
-        gameData.pets.splice(index - 1, 0, pet);
-    }
-
-    static moveDownPetInList(gameData: GameData, index: number) {
-        if (index == gameData.pets.length - 1) return;
-        let pet = gameData.pets[index];
-        gameData.pets.splice(index, 1);
-        gameData.pets.splice(index + 1, 0, pet);
+    static movePetInList(gameData: GameData, from: number, to: number): string {
+        if (from < 0 || gameData.pets.length <= from || to < 0 || gameData.pets.length <= to) return '请勿把项目移出列表范围';
+        let pet = gameData.pets[from];
+        gameData.pets.splice(from, 1);
+        gameData.pets.splice(to, 0, pet);
+        this.sortPetsByState(gameData);
+        return this.SUC;
     }
 
     static deletePet(gameData: GameData, index: number): string {
@@ -484,6 +475,12 @@ export class GameDataTool {
         }
         gameData.pets.splice(index, 1);
         return this.SUC;
+    }
+
+    static sortPetsByState(gameData: GameData) {
+        gameData.pets.sort((a: Pet, b: Pet): number => {
+            return a.state - b.state;
+        });
     }
 
     // -----------------------------------------------------------------
@@ -506,6 +503,38 @@ export class GameDataTool {
         gameData.items.push(equip);
 
         if (callback) callback(equip);
+        return this.SUC;
+    }
+
+    static moveItemInList(gameData: GameData, from: number, to: number): string {
+        if (from < 0 || gameData.items.length <= from || to < 0 || gameData.items.length <= to) return '请勿把项目移出列表范围';
+        if (from == 0 || to == 0) return '货币项目必在首位，不可移动';
+        let item = gameData.items[from];
+        gameData.items.splice(from, 1);
+        gameData.items.splice(to, 0, item);
+        return this.SUC;
+    }
+
+    static deleteItem(gameData: GameData, index: number): string {
+        if (index < 0 || gameData.items.length <= index) return '索引错误';
+        if (index == 0) return '货币项目不可删除';
+
+        let curItem = gameData.items[index];
+        if (curItem.itemType == ItemType.equip) {
+            if (gameData.curExpl) {
+                let curEquipToken = EquipDataTool.getToken(curItem as Equip);
+                for (const petMmr of gameData.curExpl.selfs) {
+                    for (const itemToken of petMmr.eqpTokens) {
+                        if (curEquipToken == itemToken) return '该物品被战斗中宠物持有，无法丢弃';
+                    }
+                }
+            }
+            gameData.weight--;
+        } else if (curItem.itemType == ItemType.cnsum) {
+            // 根据cnsum的数量减少重量
+        }
+
+        gameData.items.splice(index, 1);
         return this.SUC;
     }
 
@@ -542,13 +571,16 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static makeGrowForEquip(gameData: GameData, equip: Equip): string {
+    static growForEquip(gameData: GameData, equip: Equip): string {
+        if (equip.growth >= 5) return '装备成长不得超过5级';
+        equip.growth++;
         gameData.totalEquipCount++;
         equip.catchIdx = gameData.totalEquipCount;
         return this.SUC;
     }
 
     static addAffixForEquip(gameData: GameData, equip: Equip): string {
+        // llytodo
         gameData.totalEquipCount++;
         equip.catchIdx = gameData.totalEquipCount;
         return this.SUC;
@@ -578,7 +610,6 @@ export class GameDataTool {
         else expl.selfs.length = 0;
 
         for (const pet of gameData.pets) {
-            cc.log('^_^!', petModelDict[pet.id].cnName);
             if (pet.state != PetState.ready) break; // 备战的pet一定在最上，且不会超过5个
             let selfPetMmr = newInsWithChecker(SelfPetMmr);
             selfPetMmr.catchIdx = pet.catchIdx;
@@ -591,7 +622,6 @@ export class GameDataTool {
             for (const equip of pet.equips) tokens.push(EquipDataTool.getToken(equip));
             selfPetMmr.eqpTokens = newList(tokens);
             expl.selfs.push(selfPetMmr);
-            cc.log('^_^!nn', selfPetMmr);
         }
     }
 

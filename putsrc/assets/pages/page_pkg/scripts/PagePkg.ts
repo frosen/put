@@ -17,7 +17,7 @@ const WIDTH = 1080;
 
 @ccclass
 export default class PagePkg extends PageBase {
-    curListIdx: number = -1;
+    curListIdx: number = 0;
 
     @property(cc.Node)
     listLayer: cc.Node = null;
@@ -35,6 +35,16 @@ export default class PagePkg extends PageBase {
 
     selectionLblNodes: cc.Node[] = [];
 
+    @property(cc.Node)
+    funcBarNode: cc.Node = null;
+
+    @property(cc.Node)
+    touchLayer: cc.Node = null;
+
+    useBtnLbl: cc.Label = null;
+
+    funcBarShowIdx: number = -1;
+
     onLoad() {
         if (CC_EDITOR) return;
 
@@ -45,11 +55,10 @@ export default class PagePkg extends PageBase {
             listNode.x = index * WIDTH;
 
             let list = listNode.getComponent(ListView);
-            this.listDatas.push({
-                dirtyToken: 0,
-                list,
-                delegate: list.delegate as PagePkgLVD
-            });
+            let delegate = list.delegate as PagePkgLVD;
+            delegate.page = this;
+
+            this.listDatas.push({ dirtyToken: 0, list, delegate });
 
             let selection = selections[index];
             selection.on('click', () => {
@@ -61,13 +70,25 @@ export default class PagePkg extends PageBase {
             this.selectionLblNodes.push(lblNode);
         }
 
-        this.turnList(0);
+        this.funcBarNode.opacity = 0;
+        this.funcBarNode.y = 9999;
+
+        this.useBtnLbl = this.funcBarNode
+            .getChildByName('func_bar')
+            .getChildByName('use_button')
+            .children[0].getComponent(cc.Label);
+
+        this.touchLayer.on(cc.Node.EventType.TOUCH_START, this.hideFuncBar, this);
+        // @ts-ignore
+        this.touchLayer._touchListener.setSwallowTouches(false);
     }
 
     onPageShow() {
         this.ctrlr.setTitle('道具');
         let gameData = this.ctrlr.memory.gameData;
         this.ctrlr.setSubTitle(`${gameData.weight}/${GameDataTool.getItemCountMax(gameData)}`);
+
+        this.turnList(this.curListIdx);
     }
 
     resetCurList() {
@@ -95,10 +116,10 @@ export default class PagePkg extends PageBase {
 
     turnList(idx: number) {
         if (this.turnning) return;
-        if (idx == this.curListIdx) return;
+        this.turnning = true;
+
         this.curListIdx = idx;
 
-        this.turnning = true;
         this.resetCurList();
         cc.tween(this.listLayer)
             .to(0.2, { x: idx * WIDTH * -1 }, { easing: 'quadInOut' })
@@ -113,5 +134,85 @@ export default class PagePkg extends PageBase {
         cc.tween(this.selectionBar)
             .to(0.2, { x: idx * 216 + 108 }, { easing: 'quadInOut' })
             .start();
+    }
+
+    // -----------------------------------------------------------------
+
+    showFuncBar(cellIdx: number, cellNode: cc.Node) {
+        this.funcBarShowIdx = cellIdx;
+        let wp = cellNode.convertToWorldSpaceAR(cc.v2(0, 0));
+        let realY = cc.v2(this.node.convertToNodeSpaceAR(wp)).y;
+
+        realY -= 85;
+
+        let changeBar = () => {
+            this.funcBarNode.y = realY;
+            let atBottom = this.funcBarShowIdx < 5;
+            this.funcBarNode.getChildByName('arrow_node').scaleY = atBottom ? 1 : -1;
+            this.funcBarNode.getChildByName('func_bar').y = atBottom ? -90 : 90;
+
+            let item = this.ctrlr.memory.gameData.items[cellIdx];
+            let btnStr = item.itemType == ItemType.equip ? '装配' : '使用';
+            this.useBtnLbl.string = btnStr;
+        };
+
+        this.funcBarNode.stopAllActions();
+        if (this.funcBarShowIdx >= 0) {
+            cc.tween(this.funcBarNode).to(0.1, { opacity: 0 }).call(changeBar).to(0.1, { opacity: 255 }).start();
+        } else {
+            changeBar();
+            this.funcBarNode.opacity = 0;
+            cc.tween(this.funcBarNode).to(0.1, { opacity: 255 }).start();
+        }
+    }
+
+    hideFuncBar() {
+        if (this.funcBarShowIdx >= 0) {
+            this.funcBarShowIdx = -1;
+
+            this.funcBarNode.stopAllActions();
+            cc.tween(this.funcBarNode).to(0.1, { opacity: 0 }).set({ y: 9999 }).start();
+        }
+    }
+
+    onMoveUpCell() {
+        if (this.funcBarShowIdx < 0) return;
+        let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, this.funcBarShowIdx, this.funcBarShowIdx - 1);
+        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+        else this.ctrlr.popToast(rzt);
+        this.hideFuncBar();
+    }
+
+    onMoveDownCell() {
+        if (this.funcBarShowIdx < 0) return;
+        let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, this.funcBarShowIdx, this.funcBarShowIdx + 1);
+        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+        else if (rzt) this.ctrlr.popToast(rzt);
+        this.hideFuncBar();
+    }
+
+    onRemoveCell() {
+        if (this.funcBarShowIdx < 0) return;
+        let idx = this.funcBarShowIdx;
+        let str = `确定将该道具丢弃吗？ ` + '\n注意：丢弃后将无法找回哦！';
+        this.ctrlr.popAlert(str, (key: number) => {
+            if (key == 1) {
+                let rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, idx);
+                if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+                else this.ctrlr.popToast(rzt);
+            }
+        });
+        this.hideFuncBar();
+    }
+
+    onUseCell() {
+        if (this.funcBarShowIdx < 0) return;
+        let idx = this.funcBarShowIdx;
+        let item = this.ctrlr.memory.gameData.items[idx];
+        cc.log('PUT 使用道具：', item.id);
+
+        // llytodo
+
+        this.hideFuncBar();
     }
 }

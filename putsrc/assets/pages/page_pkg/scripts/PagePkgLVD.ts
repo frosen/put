@@ -12,6 +12,7 @@ import ListViewCell from 'scripts/ListViewCell';
 import { Item, ItemType, Money, Equip } from 'scripts/DataSaved';
 import CellPkgMoney from '../cells/cell_pkg_money/scripts/CellPkgMoney';
 import CellPkgEquip from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
+import PagePkg from './PagePkg';
 
 type CellPkg = CellPkgMoney & CellPkgEquip;
 type DataPkg = Money & Equip;
@@ -32,6 +33,8 @@ export default class PagePkgLVD extends ListViewDelegate {
     cellPkgEquipPrefab: cc.Prefab = null;
 
     curItems: Item[] = [];
+
+    page: PagePkg = null;
 
     initListData(curItems: Item[]) {
         this.curItems = curItems;
@@ -59,11 +62,13 @@ export default class PagePkgLVD extends ListViewDelegate {
             case CNSUM:
                 return null;
             case EQUIP:
-                return cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
+                let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
+                cell.page = this.page;
+                return cell;
         }
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkg) {
-        cell.setData(this.curItems[rowIdx] as DataPkg);
+        cell.setData(rowIdx, this.curItems[rowIdx] as DataPkg);
     }
 }

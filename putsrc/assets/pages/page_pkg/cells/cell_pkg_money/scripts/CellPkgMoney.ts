@@ -14,7 +14,7 @@ export default class CellPkgMoney extends ListViewCell {
     @property(cc.Label)
     countLbl: cc.Label = null;
 
-    setData(money: Money) {
+    setData(idx: number, money: Money) {
         let count = money.count;
         let zuan = Math.floor(count / 1000000);
         let zuanStr = zuan > 0 ? String(zuan) + '钻' : '';

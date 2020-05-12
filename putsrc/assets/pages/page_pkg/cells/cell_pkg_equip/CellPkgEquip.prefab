@@ -1114,7 +1114,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "change_button",
+    "_name": "func_button",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -1580,6 +1580,9 @@
     },
     "infoNodePrefab": {
       "__uuid__": "896fed7a-d458-435f-8852-7ff314e30697"
+    },
+    "funcBtn": {
+      "__id__": 35
     },
     "_id": ""
   },
