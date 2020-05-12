@@ -34,9 +34,8 @@ export default class ListView extends cc.Component {
     disTopRowH: number = 0;
     disBtmRowH: number = 0;
 
-    disCellDict: { [key: number]: ListViewCell } = {};
-
-    reuseCells: { [key: string]: ListViewCell[] } = {};
+    disCellDataDict: { [key: number]: { cell: ListViewCell; id: string } } = {};
+    reuseCellsDict: { [key: string]: ListViewCell[] } = {};
 
     _touching: boolean = false;
     get touching() {
@@ -107,9 +106,9 @@ export default class ListView extends cc.Component {
             this.disTopRowH = this.fixedHeight;
             this.disBtmRowH = this.fixedHeight;
             for (let rowIdx = this.disTopRowIdx; rowIdx <= this.disBtmRowIdx; rowIdx++) {
-                let cell = this.getUnusedCell(rowIdx);
-                this.setCellPos(cell, rowIdx * this.fixedHeight);
-                this.disCellDict[rowIdx] = cell;
+                let cellData = this.getUnusedCellData(rowIdx);
+                this.setCellPos(cellData.cell, rowIdx * this.fixedHeight);
+                this.disCellDataDict[rowIdx] = cellData;
             }
         } else {
             this.disTopRowIdx = 0;
@@ -126,9 +125,9 @@ export default class ListView extends cc.Component {
                     topDone = true;
                 }
                 if (topDone) {
-                    let cell = this.getUnusedCell(rowIdx);
-                    this.setCellPos(cell, curPos);
-                    this.disCellDict[rowIdx] = cell;
+                    let cellData = this.getUnusedCellData(rowIdx);
+                    this.setCellPos(cellData.cell, curPos);
+                    this.disCellDataDict[rowIdx] = cellData;
                 }
                 if (nextPos >= disBtm) {
                     this.disBtmRowIdx = rowIdx;
@@ -144,14 +143,14 @@ export default class ListView extends cc.Component {
     clearContent() {
         this.scrollView.stopAutoScroll();
 
-        for (const rowIdx in this.disCellDict) {
-            if (this.disCellDict.hasOwnProperty(rowIdx)) {
-                const cell = this.disCellDict[rowIdx];
+        for (const rowIdx in this.disCellDataDict) {
+            if (this.disCellDataDict.hasOwnProperty(rowIdx)) {
+                const cell = this.disCellDataDict[rowIdx];
                 // @ts-ignore
                 this.reclaimCell(cell, rowIdx);
             }
         }
-        this.disCellDict = {};
+        this.disCellDataDict = {};
 
         this.rowCount = 0;
 
@@ -169,8 +168,9 @@ export default class ListView extends cc.Component {
     }
 
     resetContent(samePos: boolean = false) {
+        let curY = samePos ? this.content.y : 0;
         this.clearContent();
-        this.createContent(samePos ? this.content.y : 0);
+        this.createContent(curY);
     }
 
     onScrolling() {
@@ -186,17 +186,17 @@ export default class ListView extends cc.Component {
                 this.disTopRowH = this.getRowHeightOnScrolling(this.disTopRowIdx);
                 this.disTopRowPos -= this.disTopRowH;
 
-                let cell = this.getUnusedCell(this.disTopRowIdx);
-                this.setCellPos(cell, this.disTopRowPos);
-                this.disCellDict[this.disTopRowIdx] = cell;
+                let cellData = this.getUnusedCellData(this.disTopRowIdx);
+                this.setCellPos(cellData.cell, this.disTopRowPos);
+                this.disCellDataDict[this.disTopRowIdx] = cellData;
 
                 return this.updateDisTopRowData(disTop);
             }
         } else if (this.disTopRowPos + this.disTopRowH <= disTop) {
             if (this.disTopRowIdx < this.rowCount - 1) {
-                let cell = this.disCellDict[this.disTopRowIdx];
-                this.reclaimCell(cell, this.disTopRowIdx);
-                delete this.disCellDict[this.disTopRowIdx];
+                let cellData = this.disCellDataDict[this.disTopRowIdx];
+                this.reclaimCell(cellData, this.disTopRowIdx);
+                delete this.disCellDataDict[this.disTopRowIdx];
 
                 this.disTopRowIdx++;
                 this.disTopRowPos += this.disTopRowH;
@@ -210,9 +210,9 @@ export default class ListView extends cc.Component {
     updateDisBtmRowData(disBtm: number) {
         if (disBtm <= this.disBtmRowPos) {
             if (this.disBtmRowIdx > 0) {
-                let cell = this.disCellDict[this.disBtmRowIdx];
-                this.reclaimCell(cell, this.disBtmRowIdx);
-                delete this.disCellDict[this.disBtmRowIdx];
+                let cellData = this.disCellDataDict[this.disBtmRowIdx];
+                this.reclaimCell(cellData, this.disBtmRowIdx);
+                delete this.disCellDataDict[this.disBtmRowIdx];
 
                 this.disBtmRowIdx--;
                 this.disBtmRowH = this.getRowHeightOnScrolling(this.disBtmRowIdx);
@@ -226,9 +226,9 @@ export default class ListView extends cc.Component {
                 this.disBtmRowPos += this.disBtmRowH;
                 this.disBtmRowH = this.getRowHeightOnScrolling(this.disBtmRowIdx);
 
-                let cell = this.getUnusedCell(this.disBtmRowIdx);
-                this.setCellPos(cell, this.disBtmRowPos);
-                this.disCellDict[this.disBtmRowIdx] = cell;
+                let cellData = this.getUnusedCellData(this.disBtmRowIdx);
+                this.setCellPos(cellData.cell, this.disBtmRowPos);
+                this.disCellDataDict[this.disBtmRowIdx] = cellData;
 
                 return this.updateDisBtmRowData(disBtm);
             }
@@ -243,11 +243,20 @@ export default class ListView extends cc.Component {
      * 区域为正数值，与实际position相反
      */
     calcDisplayArea(): { disTop: number; disBtm: number } {
-        let y = this.content.y;
-        return {
-            disTop: y,
-            disBtm: y + this.node.height
-        };
+        let disTop = this.content.y;
+        let disBtm = disTop + this.node.height;
+        if (disBtm > this.content.height) {
+            let diff = disBtm - this.content.height;
+            if (diff < disTop) {
+                disTop -= diff;
+                disBtm -= diff;
+            } else {
+                disTop = 0;
+                disBtm = this.node.height;
+            }
+            this.content.y = disTop;
+        }
+        return { disTop, disBtm };
     }
 
     /**
@@ -257,15 +266,15 @@ export default class ListView extends cc.Component {
         cell.node.y = -pos;
     }
 
-    getUnusedCell(rowIdx: number): ListViewCell {
+    getUnusedCellData(rowIdx: number): { cell: ListViewCell; id: string } {
         let cellId = this.delegate.cellIdForRow(this, rowIdx);
         cc.assert(cellId, `cellIdForRow获取cell id不成功：${rowIdx}`);
 
-        if (!this.reuseCells.hasOwnProperty(cellId)) {
-            this.reuseCells[cellId] = [];
+        if (!this.reuseCellsDict.hasOwnProperty(cellId)) {
+            this.reuseCellsDict[cellId] = [];
         }
 
-        let reuseList = this.reuseCells[cellId];
+        let reuseList = this.reuseCellsDict[cellId];
         let unusedCell: ListViewCell = null;
         if (reuseList.length == 0) {
             unusedCell = this.delegate.createCellForRow(this, rowIdx, cellId);
@@ -276,16 +285,13 @@ export default class ListView extends cc.Component {
         }
 
         this.delegate.setCellForRow(this, rowIdx, unusedCell);
-        return unusedCell;
+        return { cell: unusedCell, id: cellId };
     }
 
-    reclaimCell(cell: ListViewCell, rowIdx: number) {
-        cell.node.active = false;
-
-        let cellId = this.delegate.cellIdForRow(this, rowIdx);
-        if (!this.reuseCells.hasOwnProperty(cellId)) {
-            this.reuseCells[cellId] = [];
-        }
-        this.reuseCells[cellId].push(cell);
+    reclaimCell(cellData: { cell: ListViewCell; id: string }, rowIdx: number) {
+        cellData.cell.node.active = false;
+        let cellId = cellData.id;
+        if (!this.reuseCellsDict.hasOwnProperty(cellId)) this.reuseCellsDict[cellId] = [];
+        this.reuseCellsDict[cellId].push(cellData.cell);
     }
 }

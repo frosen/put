@@ -171,6 +171,10 @@ export class Memory {
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
+
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
     }
 }
 

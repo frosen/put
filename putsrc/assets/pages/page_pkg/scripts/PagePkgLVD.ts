@@ -33,19 +33,20 @@ export default class PagePkgLVD extends ListViewDelegate {
     cellPkgEquipPrefab: cc.Prefab = null;
 
     curItems: Item[] = [];
-
+    curIdxs: number[] = [];
     page: PagePkg = null;
 
-    initListData(curItems: Item[]) {
-        this.curItems = curItems;
+    initListData(items: Item[], idxs: number[]) {
+        this.curItems = items;
+        this.curIdxs = idxs;
     }
 
     numberOfRows(listView: ListView): number {
-        return this.curItems.length;
+        return this.curIdxs.length;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        switch (this.curItems[rowIdx].itemType) {
+        switch (this.curItems[this.curIdxs[rowIdx]].itemType) {
             case ItemType.money:
                 return MONEY;
             case ItemType.cnsum:
@@ -69,6 +70,7 @@ export default class PagePkgLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkg) {
-        cell.setData(rowIdx, this.curItems[rowIdx] as DataPkg);
+        let itemIdx = this.curIdxs[rowIdx];
+        cell.setData(itemIdx, this.curItems[itemIdx] as DataPkg);
     }
 }

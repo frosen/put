@@ -96,19 +96,22 @@ export default class PagePkg extends PageBase {
         let curData = this.listDatas[this.curListIdx];
         if (curData.dirtyToken != curDirtyToken) {
             curData.dirtyToken = curDirtyToken;
-            let items = this.getItemsByIdx(this.curListIdx);
-            curData.delegate.initListData(items);
-            curData.list.resetContent();
+            let items = this.ctrlr.memory.gameData.items;
+            let idxs = this.getItemIdxsByListIdx(items, this.curListIdx);
+            curData.delegate.initListData(items, idxs);
+            curData.list.resetContent(true);
         }
     }
 
-    getItemsByIdx(idx: number): Item[] {
-        if (idx == 0) {
-            return this.ctrlr.memory.gameData.items;
-        } else if (idx == 1) {
-            return this.ctrlr.memory.gameData.items.filter((value: Item): boolean => {
-                return value.itemType == ItemType.equip;
-            });
+    getItemIdxsByListIdx(items: Item[], listIdx: number): number[] {
+        if (listIdx == 0) {
+            let idxs: number[] = [];
+            for (let index = 0; index < items.length; index++) idxs.push(index);
+            return idxs;
+        } else if (listIdx == 1) {
+            let idxs: number[] = [];
+            for (let index = 0; index < items.length; index++) if (items[index].itemType == ItemType.equip) idxs.push(index);
+            return idxs;
         }
     }
 
@@ -178,7 +181,7 @@ export default class PagePkg extends PageBase {
     onMoveUpCell() {
         if (this.funcBarShowIdx < 0) return;
         let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, this.funcBarShowIdx, this.funcBarShowIdx - 1);
-        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+        if (rzt == GameDataTool.SUC) this.resetCurList();
         else this.ctrlr.popToast(rzt);
         this.hideFuncBar();
     }
@@ -186,7 +189,7 @@ export default class PagePkg extends PageBase {
     onMoveDownCell() {
         if (this.funcBarShowIdx < 0) return;
         let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, this.funcBarShowIdx, this.funcBarShowIdx + 1);
-        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+        if (rzt == GameDataTool.SUC) this.resetCurList();
         else if (rzt) this.ctrlr.popToast(rzt);
         this.hideFuncBar();
     }
@@ -198,7 +201,7 @@ export default class PagePkg extends PageBase {
         this.ctrlr.popAlert(str, (key: number) => {
             if (key == 1) {
                 let rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, idx);
-                if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+                if (rzt == GameDataTool.SUC) this.resetCurList();
                 else this.ctrlr.popToast(rzt);
             }
         });
