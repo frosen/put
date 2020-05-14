@@ -12,8 +12,8 @@ import { petModelDict } from 'configs/PetModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
 import PageActExplLVD from './PageActExplLVD';
 import ListView from 'scripts/ListView';
-import PageActExplCatch from 'pages/page_act_expl_catch/scripts/PageActExplCatch';
-import { PetRankNames, EleType } from 'scripts/DataSaved';
+import { PagePet, PagePetType } from 'pages/page_pet/scripts/PagePet';
+import { PetRankNames, EleType, Pet } from 'scripts/DataSaved';
 import { BuffModel, BuffType } from 'scripts/DataModel';
 import { BattlePet, RAGE_MAX } from 'scripts/DataOther';
 
@@ -344,9 +344,19 @@ export default class PageActExpl extends BattlePageBase {
     // button -----------------------------------------------------------------
 
     onClickCatch() {
-        let ctrlr = this.updater.battleCtrlr;
+        let battleCtrlr = this.updater.battleCtrlr;
         let id = this.ctrlr.memory.gameData.curExpl.curBattle.startTime;
-        this.ctrlr.pushPage(PageActExplCatch, { ctrlr, pets: ctrlr.realBattle.enemyTeam.pets, id });
+        let pets: Pet[] = [];
+        for (const battlePet of battleCtrlr.realBattle.enemyTeam.pets) pets.push(battlePet.pet);
+        this.ctrlr.pushPage(PagePet, {
+            pagePetType: PagePetType.catch,
+            name: '捕捉',
+            callback: (index: number, pet: Pet) => {
+                battleCtrlr.setCatchPetIndex(id, index);
+                this.ctrlr.popPage();
+            },
+            pets
+        });
     }
 
     onClickEscape() {

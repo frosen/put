@@ -14,8 +14,14 @@ import { GameDataTool } from 'scripts/Memory';
 import { PetModel } from 'scripts/DataModel';
 import { Pet, PetState } from 'scripts/DataSaved';
 
+export enum PagePetType {
+    normal,
+    selection,
+    catch
+}
+
 @ccclass
-export default class PagePet extends PageBase {
+export class PagePet extends PageBase {
     dirtyToken: number = 0;
 
     @property(cc.Node)
@@ -33,17 +39,45 @@ export default class PagePet extends PageBase {
         this.funcBarNode.y = 9999;
 
         this.touchLayer.on(cc.Node.EventType.TOUCH_START, this.hideFuncBar, this);
-
         // @ts-ignore
         this.touchLayer._touchListener.setSwallowTouches(false);
     }
 
-    onPageShow() {
-        this.ctrlr.setTitle('宠物');
+    pagePetType: PagePetType = PagePetType.normal;
+    specialPageName: string = null;
+    needBackBtn: boolean = false;
+    clickCallback: (index: number, pet: Pet) => void = null;
 
-        let curDirtyToken = this.ctrlr.memory.dirtyToken;
-        if (this.dirtyToken != curDirtyToken) {
-            this.dirtyToken = curDirtyToken;
+    /**
+     * pagePetType
+     * name
+     * callback
+     * pets
+     */
+    setData(data: any) {
+        if (data) {
+            this.pagePetType = data.pagePetType;
+            this.specialPageName = data.name;
+            this.clickCallback = data.callback;
+            cc.assert(this.pagePetType, 'PUT 特别的宠物列表必须有类型');
+            cc.assert(this.specialPageName, 'PUT 特别的宠物列表必须有名字');
+            cc.assert(this.clickCallback, 'PUT 特别的宠物列表必须有回调');
+            this.needBackBtn = true;
+            if (data.pets) this.getComponent(PagePetLVD).setSpecialPets(data.pets);
+        }
+    }
+
+    onPageShow() {
+        this.ctrlr.setTitle(this.specialPageName || '宠物');
+        this.ctrlr.setBackBtnEnabled(this.needBackBtn);
+
+        if (this.pagePetType == PagePetType.normal) {
+            let curDirtyToken = this.ctrlr.memory.dirtyToken;
+            if (this.dirtyToken != curDirtyToken) {
+                this.dirtyToken = curDirtyToken;
+                this.getComponentInChildren(ListView).resetContent(true);
+            }
+        } else {
             this.getComponentInChildren(ListView).resetContent(true);
         }
     }
@@ -115,5 +149,10 @@ export default class PagePet extends PageBase {
         pet.state = pet.state == PetState.rest ? PetState.ready : PetState.rest;
         GameDataTool.sortPetsByState(this.ctrlr.memory.gameData);
         this.getComponentInChildren(ListView).resetContent(true);
+    }
+
+    onClickSpecialCell(index: number, pet: Pet) {
+        cc.log('PUT on click special cell: ', index);
+        this.clickCallback(index, pet);
     }
 }
