@@ -13,7 +13,6 @@ import { skillModelDict } from 'configs/SkillModelDict';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { SkillType } from 'scripts/DataModel';
-import PagePkg from 'pages/page_pkg/scripts/PagePkg';
 
 const RankColor = [null, cc.Color.BLACK, cc.Color.BLUE, cc.color(153, 50, 205)];
 
@@ -69,8 +68,10 @@ export default class CellPkgEquip extends ListViewCell {
     @property(cc.Button)
     funcBtn: cc.Button = null;
 
-    curIdx: number = -1;
-    page: PagePkg = null;
+    curItemIdx: number = -1;
+
+    clickCallback: (cell: CellPkgEquip) => void = null;
+    funcBtnCallback: (cell: CellPkgEquip) => void = null;
 
     onLoad() {
         super.onLoad();
@@ -78,8 +79,8 @@ export default class CellPkgEquip extends ListViewCell {
         this.funcBtn.node.on('click', this.onClickFuncBtn, this);
     }
 
-    setData(idx: number, equip: Equip) {
-        this.curIdx = idx;
+    setData(itemIdx: number, equip: Equip) {
+        this.curItemIdx = itemIdx;
         let equipModel = equipModelDict[equip.id];
         this.nameLbl.string = EquipDataTool.getCnName(equip);
         this.nameLbl.node.color = RankColor[equipModel.rank];
@@ -151,8 +152,13 @@ export default class CellPkgEquip extends ListViewCell {
         lbl._assembler.updateRenderData(lbl);
     }
 
+    onClick() {
+        cc.log('PUT click equip cell: ', this.curCellIdx, this.curItemIdx);
+        if (this.clickCallback) this.clickCallback(this);
+    }
+
     onClickFuncBtn() {
-        cc.log('PUT show item cell func: ', this.curIdx);
-        this.page.showFuncBar(this.curIdx, this.node);
+        cc.log('PUT show item cell func: ', this.curCellIdx, this.curItemIdx);
+        if (this.funcBtnCallback) this.funcBtnCallback(this);
     }
 }

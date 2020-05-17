@@ -278,12 +278,14 @@ export default class ListView extends cc.Component {
         let unusedCell: ListViewCell = null;
         if (reuseList.length == 0) {
             unusedCell = this.delegate.createCellForRow(this, rowIdx, cellId);
+            cc.assert(unusedCell, `创建cell没有成功：${rowIdx}, ${cellId}`);
             unusedCell.node.parent = this.content;
         } else {
             unusedCell = reuseList.pop();
             unusedCell.node.active = true;
         }
 
+        unusedCell.curCellIdx = rowIdx;
         this.delegate.setCellForRow(this, rowIdx, unusedCell);
         return { cell: unusedCell, id: cellId };
     }

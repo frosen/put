@@ -11,6 +11,9 @@ import ListView from 'scripts/ListView';
 import PagePkgLVD from './PagePkgLVD';
 import { Item, ItemType } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
+import CellPkgEquip from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
+import ListViewCell from 'scripts/ListViewCell';
 
 const LIST_NAMES = ['全部', '装备'];
 const WIDTH = 1080;
@@ -97,13 +100,13 @@ export default class PagePkg extends PageBase {
         if (curData.dirtyToken != curDirtyToken) {
             curData.dirtyToken = curDirtyToken;
             let items = this.ctrlr.memory.gameData.items;
-            let idxs = this.getItemIdxsByListIdx(items, this.curListIdx);
+            let idxs = PagePkg.getItemIdxsByListIdx(items, this.curListIdx);
             curData.delegate.initListData(items, idxs);
             curData.list.resetContent(true);
         }
     }
 
-    getItemIdxsByListIdx(items: Item[], listIdx: number): number[] {
+    static getItemIdxsByListIdx(items: Item[], listIdx: number): number[] {
         if (listIdx == 0) {
             let idxs: number[] = [];
             for (let index = 0; index < items.length; index++) idxs.push(index);
@@ -137,6 +140,14 @@ export default class PagePkg extends PageBase {
         cc.tween(this.selectionBar)
             .to(0.2, { x: idx * 216 + 108 }, { easing: 'quadInOut' })
             .start();
+    }
+
+    // -----------------------------------------------------------------
+
+    onCellClick(cell: ListViewCell) {}
+
+    onCellClickFuncBtn(cell: ListViewCell) {
+        this.showFuncBar(cell.curCellIdx, cell.node);
     }
 
     // -----------------------------------------------------------------
@@ -215,6 +226,9 @@ export default class PagePkg extends PageBase {
         cc.log('PUT 使用道具：', item.id);
 
         // llytodo
+        if (item.itemType == ItemType.equip) {
+            this.ctrlr.pushPage(PagePkgEquip);
+        }
 
         this.hideFuncBar();
     }

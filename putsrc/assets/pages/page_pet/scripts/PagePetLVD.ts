@@ -9,8 +9,8 @@ const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
-import CellPet from '../cells/cell_pet/scripts/CellPet';
-import { PagePet } from './PagePet';
+import { CellPet } from '../cells/cell_pet/scripts/CellPet';
+import PagePet from './PagePet';
 import { Pet } from 'scripts/DataSaved';
 
 @ccclass
@@ -40,12 +40,16 @@ export default class PagePetLVD extends ListViewDelegate {
 
     createCellForRow(listView: ListView, rowIdx: number): ListViewCell {
         let cell = cc.instantiate(this.cellPetPrefab).getComponent(CellPet);
-        cell.init(this.page);
+        cell.init(this.page.cellPetType);
+        cell.clickCallback = this.page.onCellClick.bind(this.page);
+        cell.stateBtnCallback = this.page.onCellClickStateBtn.bind(this.page);
+        cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+        cell.detailBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
         return cell;
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPet) {
         let pet: Pet = this.curPets[rowIdx];
-        cell.setData(rowIdx, pet);
+        cell.setData(pet);
     }
 }

@@ -7,15 +7,20 @@
 const { ccclass, property } = cc._decorator;
 
 import ListViewCell from 'scripts/ListViewCell';
-import PagePetDetail from 'pages/page_pet_detail/scripts/PagePetDetail';
 import { petModelDict } from 'configs/PetModelDict';
-import { PagePet, PagePetType } from 'pages/page_pet/scripts/PagePet';
-import { Pet, PetRankNames, PetStateNames, PetState, EleType, EleColor } from 'scripts/DataSaved';
+
+import { Pet, PetRankNames, PetStateNames, EleColor } from 'scripts/DataSaved';
 import { PetModel } from 'scripts/DataModel';
 import { featureModelDict } from 'configs/FeatureModelDict';
 
+export enum CellPetType {
+    normal,
+    selection,
+    catch
+}
+
 @ccclass
-export default class CellPet extends ListViewCell {
+export class CellPet extends ListViewCell {
     @property(cc.Label)
     petNameLbl: cc.Label = null;
 
@@ -45,10 +50,14 @@ export default class CellPet extends ListViewCell {
 
     infoNodePool: cc.Node[] = [];
 
-    curIdx: number = -1;
     curPet: Pet = null;
 
-    page: PagePet = null;
+    type: CellPetType = CellPetType.normal;
+
+    clickCallback: (cell: CellPet) => void = null;
+    stateBtnCallback: (cell: CellPet) => void = null;
+    funcBtnCallback: (cell: CellPet) => void = null;
+    detailBtnCallback: (cell: CellPet) => void = null;
 
     onLoad() {
         super.onLoad();
@@ -57,20 +66,20 @@ export default class CellPet extends ListViewCell {
         this.funcBtn.node.on('click', this.onClickFuncBtn, this);
     }
 
-    init(page: PagePet) {
-        this.page = page;
-        switch (page.pagePetType) {
-            case PagePetType.normal:
+    init(type: CellPetType) {
+        this.type = type;
+        switch (type) {
+            case CellPetType.normal:
                 this.stateBtn.node.on('click', this.onClickStateBtn, this);
                 this.funcBtn.node.on('click', this.onClickFuncBtn, this);
                 this.detailBtn.node.active = false;
                 break;
-            case PagePetType.selection:
+            case CellPetType.selection:
                 this.stateBtn.node.active = false;
                 this.funcBtn.node.active = false;
                 this.detailBtn.node.on('click', this.onClickDetailBtn, this);
                 break;
-            case PagePetType.catch:
+            case CellPetType.catch:
                 this.stateBtn.node.active = false;
                 this.funcBtn.node.active = false;
                 this.detailBtn.node.active = false;
@@ -78,8 +87,7 @@ export default class CellPet extends ListViewCell {
         }
     }
 
-    setData(idx: number, pet: Pet) {
-        this.curIdx = idx;
+    setData(pet: Pet) {
         this.curPet = pet;
         let petModel: PetModel = petModelDict[pet.id];
         this.petNameLbl.string = petModel.cnName;
@@ -87,14 +95,18 @@ export default class CellPet extends ListViewCell {
 
         this.petSp.node.color = EleColor[petModel.eleType];
 
+        let stateLbl = this.stateBtn.getComponentInChildren(cc.Label);
+        stateLbl.string = PetStateNames[pet.state];
+        // llytodo stateLbl.node.color
+
         this.hideAllInfoNode();
         let index = 0;
-        switch (this.page.pagePetType) {
-            case PagePetType.normal:
-            case PagePetType.selection:
+        switch (this.type) {
+            case CellPetType.normal:
+            case CellPetType.selection:
                 this.setInfoNode(index, `默契值：${pet.privity}`, cc.color(100, 50 + 100 * pet.privity * 0.01, 100));
                 index++;
-            case PagePetType.catch:
+            case CellPetType.catch:
                 for (const feature of pet.inbornFeatures) {
                     let cnName = featureModelDict[feature.id].cnBrief;
                     let lv = feature.lv;
@@ -134,22 +146,22 @@ export default class CellPet extends ListViewCell {
     }
 
     onClick() {
-        if (this.page.pagePetType == PagePetType.normal) this.onClickDetailBtn();
-        else this.page.onClickSpecialCell(this.curIdx, this.curPet);
+        cc.log('PUT cell click: ', this.petNameLbl.string, this.curCellIdx);
+        if (this.clickCallback) this.clickCallback(this);
     }
 
     onClickStateBtn() {
-        cc.log('PUT change state: ', this.petNameLbl.string, this.curIdx);
-        this.page.changePetState(this.curPet);
+        cc.log('PUT change state: ', this.petNameLbl.string, this.curCellIdx);
+        if (this.stateBtnCallback) this.stateBtnCallback(this);
     }
 
     onClickFuncBtn() {
-        cc.log('PUT show pet cell func: ', this.petNameLbl.string, this.curIdx);
-        this.page.showFuncBar(this.curIdx, this.node);
+        cc.log('PUT show pet cell func: ', this.petNameLbl.string, this.curCellIdx);
+        if (this.funcBtnCallback) this.funcBtnCallback(this);
     }
 
     onClickDetailBtn() {
-        cc.log('PUT show pet detail', this.petNameLbl.string, this.curIdx);
-        this.ctrlr.pushPage(PagePetDetail, this.curPet);
+        cc.log('PUT show pet detail', this.petNameLbl.string, this.curCellIdx);
+        if (this.detailBtnCallback) this.detailBtnCallback(this);
     }
 }

@@ -33,20 +33,20 @@ export default class PagePkgLVD extends ListViewDelegate {
     cellPkgEquipPrefab: cc.Prefab = null;
 
     curItems: Item[] = [];
-    curIdxs: number[] = [];
+    curItemIdxs: number[] = [];
     page: PagePkg = null;
 
-    initListData(items: Item[], idxs: number[]) {
+    initListData(items: Item[], itemIdxs: number[]) {
         this.curItems = items;
-        this.curIdxs = idxs;
+        this.curItemIdxs = itemIdxs;
     }
 
     numberOfRows(listView: ListView): number {
-        return this.curIdxs.length;
+        return this.curItemIdxs.length;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        switch (this.curItems[this.curIdxs[rowIdx]].itemType) {
+        switch (this.curItems[this.curItemIdxs[rowIdx]].itemType) {
             case ItemType.money:
                 return MONEY;
             case ItemType.cnsum:
@@ -64,13 +64,14 @@ export default class PagePkgLVD extends ListViewDelegate {
                 return null;
             case EQUIP:
                 let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
-                cell.page = this.page;
+                cell.clickCallback = this.page.onCellClick.bind(this.page);
+                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
                 return cell;
         }
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkg) {
-        let itemIdx = this.curIdxs[rowIdx];
+        let itemIdx = this.curItemIdxs[rowIdx];
         cell.setData(itemIdx, this.curItems[itemIdx] as DataPkg);
     }
 }

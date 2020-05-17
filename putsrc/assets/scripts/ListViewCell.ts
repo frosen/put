@@ -17,6 +17,8 @@ export default class ListViewCell extends cc.Component {
     }
     _ctrlr: BaseController = null;
 
+    curCellIdx: number = -1;
+
     onLoad() {
         if (CC_EDITOR) {
             this.check();

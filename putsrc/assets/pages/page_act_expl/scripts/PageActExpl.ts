@@ -12,10 +12,11 @@ import { petModelDict } from 'configs/PetModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
 import PageActExplLVD from './PageActExplLVD';
 import ListView from 'scripts/ListView';
-import { PagePet, PagePetType } from 'pages/page_pet/scripts/PagePet';
+import PagePet from 'pages/page_pet/scripts/PagePet';
 import { PetRankNames, EleType, Pet } from 'scripts/DataSaved';
 import { BuffModel, BuffType } from 'scripts/DataModel';
 import { BattlePet, RAGE_MAX } from 'scripts/DataOther';
+import { CellPetType } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -349,7 +350,7 @@ export default class PageActExpl extends BattlePageBase {
         let pets: Pet[] = [];
         for (const battlePet of battleCtrlr.realBattle.enemyTeam.pets) pets.push(battlePet.pet);
         this.ctrlr.pushPage(PagePet, {
-            pagePetType: PagePetType.catch,
+            cellPetType: CellPetType.catch,
             name: '捕捉',
             callback: (index: number, pet: Pet) => {
                 battleCtrlr.setCatchPetIndex(id, index);

@@ -6,22 +6,18 @@
 
 const { ccclass, property } = cc._decorator;
 
-import PageBase from 'scripts/PageBase';
 import ListView from 'scripts/ListView';
 import PagePetLVD from './PagePetLVD';
 import { petModelDict } from 'configs/PetModelDict';
 import { GameDataTool } from 'scripts/Memory';
 import { PetModel } from 'scripts/DataModel';
 import { Pet, PetState } from 'scripts/DataSaved';
-
-export enum PagePetType {
-    normal,
-    selection,
-    catch
-}
+import { CellPetType, CellPet } from '../cells/cell_pet/scripts/CellPet';
+import PagePetDetail from 'pages/page_pet_detail/scripts/PagePetDetail';
+import PageBase from 'scripts/PageBase';
 
 @ccclass
-export class PagePet extends PageBase {
+export default class PagePet extends PageBase {
     dirtyToken: number = 0;
 
     @property(cc.Node)
@@ -43,7 +39,7 @@ export class PagePet extends PageBase {
         this.touchLayer._touchListener.setSwallowTouches(false);
     }
 
-    pagePetType: PagePetType = PagePetType.normal;
+    cellPetType: CellPetType = CellPetType.normal;
     specialPageName: string = null;
     needBackBtn: boolean = false;
     clickCallback: (index: number, pet: Pet) => void = null;
@@ -56,10 +52,10 @@ export class PagePet extends PageBase {
      */
     setData(data: any) {
         if (data) {
-            this.pagePetType = data.pagePetType;
+            this.cellPetType = data.cellPetType;
             this.specialPageName = data.name;
             this.clickCallback = data.callback;
-            cc.assert(this.pagePetType, 'PUT 特别的宠物列表必须有类型');
+            cc.assert(this.cellPetType, 'PUT 特别的宠物列表必须有类型');
             cc.assert(this.specialPageName, 'PUT 特别的宠物列表必须有名字');
             cc.assert(this.clickCallback, 'PUT 特别的宠物列表必须有回调');
             this.needBackBtn = true;
@@ -71,7 +67,7 @@ export class PagePet extends PageBase {
         this.ctrlr.setTitle(this.specialPageName || '宠物');
         this.ctrlr.setBackBtnEnabled(this.needBackBtn);
 
-        if (this.pagePetType == PagePetType.normal) {
+        if (this.cellPetType == CellPetType.normal) {
             let curDirtyToken = this.ctrlr.memory.dirtyToken;
             if (this.dirtyToken != curDirtyToken) {
                 this.dirtyToken = curDirtyToken;
@@ -80,6 +76,33 @@ export class PagePet extends PageBase {
         } else {
             this.getComponentInChildren(ListView).resetContent(true);
         }
+    }
+
+    // -----------------------------------------------------------------
+
+    onCellClick(cell: CellPet) {
+        if (this.cellPetType == CellPetType.normal) this.onCellClickDetailBtn(cell);
+        else this.clickCallback(cell.curCellIdx, cell.curPet);
+    }
+
+    onCellClickStateBtn(cell: CellPet) {
+        this.changePetState(cell.curPet);
+    }
+
+    onCellClickFuncBtn(cell: CellPet) {
+        this.showFuncBar(cell.curCellIdx, cell.node);
+    }
+
+    onCellClickDetailBtn(cell: CellPet) {
+        this.ctrlr.pushPage(PagePetDetail, cell.curPet);
+    }
+
+    // -----------------------------------------------------------------
+
+    changePetState(pet: Pet) {
+        pet.state = pet.state == PetState.rest ? PetState.ready : PetState.rest;
+        GameDataTool.sortPetsByState(this.ctrlr.memory.gameData);
+        this.getComponentInChildren(ListView).resetContent(true);
     }
 
     showFuncBar(cellIdx: number, cellNode: cc.Node) {
@@ -143,16 +166,5 @@ export class PagePet extends PageBase {
             }
         });
         this.hideFuncBar();
-    }
-
-    changePetState(pet: Pet) {
-        pet.state = pet.state == PetState.rest ? PetState.ready : PetState.rest;
-        GameDataTool.sortPetsByState(this.ctrlr.memory.gameData);
-        this.getComponentInChildren(ListView).resetContent(true);
-    }
-
-    onClickSpecialCell(index: number, pet: Pet) {
-        cc.log('PUT on click special cell: ', index);
-        this.clickCallback(index, pet);
     }
 }

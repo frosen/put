@@ -19,7 +19,8 @@ import {
     GameData,
     Equip,
     ItemType,
-    Money
+    Money,
+    PetEquipCountMax
 } from './DataSaved';
 import { FeatureModel, PetModel, EquipPosType, EquipModel } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
@@ -203,7 +204,10 @@ export class PetDataTool {
 
         pet.inbornFeatures = newList();
         pet.learnedFeatures = newList();
-        pet.equips = newList();
+
+        let equips = [];
+        for (let index = 0; index < PetEquipCountMax; index++) equips.push(null);
+        pet.equips = newList(equips);
 
         pet.id = id;
         pet.master = '';

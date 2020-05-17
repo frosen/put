@@ -333,13 +333,13 @@ export class BattleController {
         let enemyPetDatas: EnemyPetData[] = [];
         for (let index = 0; index < petCount; index++) {
             let id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
-            let lv = Math.max(1, curPosModel.lv - 2 + normalRandom(5));
+            let lv = Math.min(Math.max(1, curPosModel.lv - 2 + normalRandom(5)), expModels.length);
             let rank = normalRandom(step * 2) + 1;
             let features = [];
 
             let featureR = Math.random();
-            if (featureR > 0.3) features.push(this.createInbornFeature());
-            if (featureR > 0.8) features.push(this.createInbornFeature());
+            if (lv > 5 && featureR > 0.3) features.push(this.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
+            if (lv > 10 && featureR > 0.8) features.push(this.createInbornFeature());
 
             enemyPetDatas.push({ id, lv, rank, features });
         }

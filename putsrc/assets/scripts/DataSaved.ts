@@ -63,6 +63,8 @@ export class Feature {
     lv: number;
 }
 
+export const PetEquipCountMax: number = 3;
+
 export class Pet {
     /** 类型 */
     id: string;
