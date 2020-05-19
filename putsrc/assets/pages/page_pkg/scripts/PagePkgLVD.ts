@@ -11,7 +11,7 @@ import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
 import { Item, ItemType, Money, Equip } from 'scripts/DataSaved';
 import CellPkgMoney from '../cells/cell_pkg_money/scripts/CellPkgMoney';
-import CellPkgEquip from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { CellPkgEquip, CellPkgEquipType } from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
 import PagePkg from './PagePkg';
 
 type CellPkg = CellPkgMoney & CellPkgEquip;
@@ -64,6 +64,7 @@ export default class PagePkgLVD extends ListViewDelegate {
                 return null;
             case EQUIP:
                 let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
+                cell.init(CellPkgEquipType.normal);
                 cell.clickCallback = this.page.onCellClick.bind(this.page);
                 cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
                 return cell;

@@ -40,8 +40,13 @@ function getNumStr(n: number): string {
     return (n * 0.1).toFixed();
 }
 
+export enum CellPkgEquipType {
+    normal,
+    selection
+}
+
 @ccclass
-export default class CellPkgEquip extends ListViewCell {
+export class CellPkgEquip extends ListViewCell {
     @property(cc.Label)
     nameLbl: cc.Label = null;
 
@@ -57,9 +62,6 @@ export default class CellPkgEquip extends ListViewCell {
     @property(cc.Sprite)
     equipSp: cc.Sprite = null;
 
-    @property(cc.Button)
-    changeBtn: cc.Button = null;
-
     @property(cc.Prefab)
     infoNodePrefab: cc.Prefab = null;
 
@@ -68,15 +70,34 @@ export default class CellPkgEquip extends ListViewCell {
     @property(cc.Button)
     funcBtn: cc.Button = null;
 
+    @property(cc.Button)
+    detailBtn: cc.Button = null;
+
     curItemIdx: number = -1;
+
+    type: CellPkgEquipType = CellPkgEquipType.normal;
 
     clickCallback: (cell: CellPkgEquip) => void = null;
     funcBtnCallback: (cell: CellPkgEquip) => void = null;
+    detailBtnCallback: (cell: CellPkgEquip) => void = null;
 
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
-        this.funcBtn.node.on('click', this.onClickFuncBtn, this);
+    }
+
+    init(type: CellPkgEquipType) {
+        this.type = type;
+        switch (type) {
+            case CellPkgEquipType.normal:
+                this.funcBtn.node.on('click', this.onClickFuncBtn, this);
+                this.detailBtn.node.active = false;
+                break;
+            case CellPkgEquipType.selection:
+                this.funcBtn.node.active = false;
+                this.detailBtn.node.on('click', this.onClickDetailBtn, this);
+                break;
+        }
     }
 
     setData(itemIdx: number, equip: Equip) {
@@ -160,5 +181,10 @@ export default class CellPkgEquip extends ListViewCell {
     onClickFuncBtn() {
         cc.log('PUT show item cell func: ', this.curCellIdx, this.curItemIdx);
         if (this.funcBtnCallback) this.funcBtnCallback(this);
+    }
+
+    onClickDetailBtn() {
+        cc.log('PUT show item detail', this.curCellIdx, this.curItemIdx);
+        if (this.detailBtnCallback) this.detailBtnCallback(this);
     }
 }

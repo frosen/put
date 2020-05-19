@@ -11,7 +11,6 @@ import ListView from 'scripts/ListView';
 import PagePkgLVD from './PagePkgLVD';
 import { Item, ItemType } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
-import CellPkgEquip from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import ListViewCell from 'scripts/ListViewCell';
 
@@ -157,7 +156,7 @@ export default class PagePkg extends PageBase {
         let wp = cellNode.convertToWorldSpaceAR(cc.v2(0, 0));
         let realY = cc.v2(this.node.convertToNodeSpaceAR(wp)).y;
 
-        realY -= 85;
+        realY -= 78;
 
         let changeBar = () => {
             this.funcBarNode.y = realY;

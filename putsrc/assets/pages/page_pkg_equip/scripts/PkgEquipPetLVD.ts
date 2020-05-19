@@ -11,7 +11,7 @@ import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
 import { Equip, Pet } from 'scripts/DataSaved';
 import { PagePkgEquip } from './PagePkgEquip';
-import CellPkgEquip from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { CellPkgEquip, CellPkgEquipType } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import CellPetBrief from '../cells/cell_pet_brief/scripts/CellPetBrief';
 import { petModelDict } from 'configs/PetModelDict';
 import CellPkgEquipBlank from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
@@ -74,9 +74,14 @@ export default class PkgEquipItemLVD extends ListViewDelegate {
             return cc.instantiate(this.cellPetBriefPrefab).getComponent(CellPetBrief);
         } else if (cellId == EQUIP) {
             let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
+            cell.init(CellPkgEquipType.selection);
+            cell.clickCallback = this.page.onPetCellClick.bind(this.page);
+            cell.detailBtnCallback = this.page.onPetCellClickDetailBtn.bind(this.page);
             return cell;
         } else if (cellId == BLANK) {
-            return cc.instantiate(this.cellPkgEquipBlankPrefab).getComponent(CellPkgEquipBlank);
+            let cell = cc.instantiate(this.cellPkgEquipBlankPrefab).getComponent(CellPkgEquipBlank);
+            cell.clickCallback = this.page.onPetCellClick.bind(this.page);
+            return cell;
         }
     }
 

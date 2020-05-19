@@ -11,7 +11,7 @@ import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
 import { Item, Equip } from 'scripts/DataSaved';
 import { PagePkgEquip } from './PagePkgEquip';
-import CellPkgEquip from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { CellPkgEquip, CellPkgEquipType } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 
 @ccclass
 export default class PkgEquipItemLVD extends ListViewDelegate {
@@ -37,6 +37,9 @@ export default class PkgEquipItemLVD extends ListViewDelegate {
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
         let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
+        cell.init(CellPkgEquipType.selection);
+        cell.clickCallback = this.page.onItemCellClick.bind(this.page);
+        cell.detailBtnCallback = this.page.onItemCellClickDetailBtn.bind(this.page);
         return cell;
     }
 

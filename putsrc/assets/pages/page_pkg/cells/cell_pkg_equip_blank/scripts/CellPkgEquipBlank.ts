@@ -9,4 +9,9 @@ const { ccclass, property } = cc._decorator;
 import ListViewCell from 'scripts/ListViewCell';
 
 @ccclass
-export default class CellPkgEquipBlank extends ListViewCell {}
+export default class CellPkgEquipBlank extends ListViewCell {
+    clickCallback: (cell: CellPkgEquipBlank) => void = null;
+    onClick() {
+        if (this.clickCallback) this.clickCallback(this);
+    }
+}
