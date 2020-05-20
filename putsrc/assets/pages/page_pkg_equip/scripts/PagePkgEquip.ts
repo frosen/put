@@ -12,6 +12,9 @@ import PkgEquipItemLVD from './PkgEquipItemLVD';
 import PkgEquipPetLVD from './PkgEquipPetLVD';
 import PagePkg from 'pages/page_pkg/scripts/PagePkg';
 import ListViewCell from 'scripts/ListViewCell';
+import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { GameDataTool } from 'scripts/Memory';
+import { Pet } from 'scripts/DataSaved';
 
 @ccclass
 export class PagePkgEquip extends PageBase {
@@ -40,13 +43,27 @@ export class PagePkgEquip extends PageBase {
         this.petEquipSelection.parent._touchListener.setSwallowTouches(false);
     }
 
+    dataForInit: { pet: Pet; idx: number } = null;
+
+    setData(data: any) {
+        if (data) {
+            this.dataForInit = data;
+            cc.assert(data.idx, 'PUT 装备更新页面初始化需要索引');
+        }
+    }
+
     onPageShow() {
         this.ctrlr.setTitle('装配');
         this.ctrlr.setBackBtnEnabled(true);
 
+        this.resetList();
+    }
+
+    resetList() {
         // set data
         let items = this.ctrlr.memory.gameData.items;
         let idxs = PagePkg.getItemIdxsByListIdx(items, 1);
+        idxs.push(GameDataTool.UNWIELD);
         let itemDelegate = this.itemEquipList.delegate as PkgEquipItemLVD;
         itemDelegate.page = this;
         itemDelegate.initListData(items, idxs);
@@ -56,9 +73,46 @@ export class PagePkgEquip extends PageBase {
         petDelegate.page = this;
         petDelegate.initListData(pets);
 
+        let cellIdx: number = -1;
+        if (this.dataForInit) {
+            let selectedEquipIdx = this.dataForInit.idx;
+            if (!this.dataForInit.pet) {
+                for (let index = 0; index < idxs.length; index++) {
+                    if (selectedEquipIdx == idxs[index]) {
+                        cellIdx = index;
+                        break;
+                    }
+                }
+                if (cellIdx >= 0) this.itemEquipList.content.y = this.itemEquipList.fixedHeight * cellIdx;
+            } else {
+                let petEquipDataList = petDelegate.dataList;
+                let curPet = this.dataForInit.pet;
+                for (let index = 0; index < petEquipDataList.length; index++) {
+                    const petEquipData = petEquipDataList[index];
+                    if (petEquipData.pet == curPet && petEquipData.equipIndex == selectedEquipIdx) {
+                        cellIdx = index;
+                    }
+                }
+                // llytodo 位移
+            }
+        }
+
         // reset list
         this.itemEquipList.resetContent(true);
         this.petEquipList.resetContent(true);
+
+        if (this.dataForInit) {
+            if (cellIdx < 0) {
+                cc.error('PUT PagePkgEquip初始化时错误的cellIdx');
+            } else {
+                if (!this.dataForInit.pet) {
+                    this.onItemCellClick(this.itemEquipList.disCellDataDict[cellIdx].cell);
+                } else {
+                }
+            }
+
+            this.dataForInit = null;
+        }
     }
 
     // -----------------------------------------------------------------
@@ -71,7 +125,11 @@ export class PagePkgEquip extends PageBase {
         this.selectedItemEquipCell = cell;
 
         if (!this.selectedPetEquipCell) this.selectItemEquip();
-        else this.executeEquipChange();
+        else {
+            this.executeEquipChange(() => {
+                this.hideItemSelection();
+            });
+        }
     }
 
     onItemCellClickDetailBtn(cell: ListViewCell) {}
@@ -79,9 +137,12 @@ export class PagePkgEquip extends PageBase {
     onPetCellClick(cell: ListViewCell) {
         if (this.selectedPetEquipCell == cell) return;
         this.selectedPetEquipCell = cell;
-
         if (!this.selectedItemEquipCell) this.selectPetEquip();
-        else this.executeEquipChange();
+        else {
+            this.executeEquipChange(() => {
+                this.hidePetSelection();
+            });
+        }
     }
 
     onPetCellClickDetailBtn(cell: ListViewCell) {}
@@ -145,7 +206,20 @@ export class PagePkgEquip extends PageBase {
             .start();
     }
 
-    executeEquipChange() {
+    executeEquipChange(callback: () => void) {
         if (!this.selectedItemEquipCell || !this.selectedPetEquipCell) return;
+        let itemIdx = (this.selectedItemEquipCell as CellPkgEquip).curItemIdx || GameDataTool.UNWIELD;
+        let petLVD = this.petEquipList.delegate as PkgEquipPetLVD;
+        let data = petLVD.dataList[this.selectedPetEquipCell.curCellIdx];
+        let rzt = GameDataTool.wieldEquip(this.ctrlr.memory.gameData, itemIdx, data.pet, data.equipIndex);
+        if (rzt == GameDataTool.SUC) {
+            this.resetList();
+            this.ctrlr.popToast('装备更新');
+            this.hideItemSelection();
+            this.hidePetSelection();
+        } else {
+            this.ctrlr.popToast(rzt);
+            callback();
+        }
     }
 }

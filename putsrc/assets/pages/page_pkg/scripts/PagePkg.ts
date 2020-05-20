@@ -226,7 +226,7 @@ export default class PagePkg extends PageBase {
 
         // llytodo
         if (item.itemType == ItemType.equip) {
-            this.ctrlr.pushPage(PagePkgEquip);
+            this.ctrlr.pushPage(PagePkgEquip, { idx });
         }
 
         this.hideFuncBar();

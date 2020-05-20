@@ -192,7 +192,6 @@ export class BattleController {
             if (selfPetMmr.state != pet.state) return true;
             if (selfPetMmr.lndFchrLen != pet.learnedFeatures.length) return true;
             if (selfPetMmr.privity != pet.privity) return true;
-            if (selfPetMmr.eqpTokens.length != pet.equips.length) return true;
             for (let eqpIdx = 0; eqpIdx < selfPetMmr.eqpTokens.length; eqpIdx++) {
                 if (selfPetMmr.eqpTokens[eqpIdx] != EquipDataTool.getToken(pet.equips[eqpIdx])) return true;
             }

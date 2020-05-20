@@ -237,6 +237,7 @@ export class PetDataTool {
 
     static eachFeatures(pet: Pet, callback: (featureModel: FeatureModel, datas: number[]) => void) {
         for (const equip of pet.equips) {
+            if (!equip) continue;
             let equipModel = equipModelDict[equip.id];
             for (let index = 0; index < equipModel.featureIds.length; index++) {
                 const featureId = equipModel.featureIds[index];
@@ -381,7 +382,7 @@ export class EquipDataTool {
     }
 
     static getToken(e: Equip): string {
-        return String(e.catchIdx); // 可以用catchIdx代表唯一的装备，因为装备在创建，增加和变化时，都会更新catchIdx
+        return e ? String(e.catchIdx) : 'x'; // 可以用catchIdx代表唯一的装备，因为装备在创建，增加和变化时，都会更新catchIdx
     }
 
     static getFinalAttris(equip: Equip, attris: {} = null): {} {
@@ -546,35 +547,50 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static putOnEquip(gameData: GameData, equip: Equip, pet: Pet): string {
-        if (pet.equips.length >= 3) return '一只宠物最多只能持有三件装备';
+    static UNWIELD: number = -666;
 
-        let equipPosType = equipModelDict[equip.id].equipPosType;
-        for (const equipHeld of pet.equips) {
-            if (equipModelDict[equipHeld.id].equipPosType != equipPosType) continue;
-            let strs = ['', '武器', '防具', '饰品'];
-            return '一只宠物同时只能持有一件' + strs[equipPosType];
+    static wieldEquip(gameData: GameData, itemIdx: number, pet: Pet, petEquipIdx: number): string {
+        if (petEquipIdx < 0 || PetEquipCountMax <= petEquipIdx) return '宠物装备栏索引错误';
+        if (itemIdx != this.UNWIELD) {
+            let item = gameData.items[itemIdx];
+            if (!item || item.itemType != ItemType.equip) return '装备索引有误';
+
+            let equip = item as Equip;
+            let equipPosType = equipModelDict[equip.id].equipPosType;
+            for (const equipHeld of pet.equips) {
+                if (!equipHeld) continue;
+                if (equipModelDict[equipHeld.id].equipPosType != equipPosType) continue;
+                let strs = ['', '武器', '防具', '饰品'];
+                return '一只宠物同时只能持有一件' + strs[equipPosType];
+            }
+
+            let equipModel = equipModelDict[equip.id];
+            let petModel = petModelDict[pet.id];
+            let sameBio = equipModel.bioType == petModel.bioType;
+            let lvReduce = -2;
+            let equipCalcLv = equipModel.lv + (sameBio ? lvReduce : 0);
+            if (pet.lv < equipCalcLv) {
+                let sameBioStr = sameBio ? `\n（生物类型一致，需求${lvReduce}）` : '';
+                return `宠物等级L${pet.lv}不满足该装备需求等级L${equipCalcLv}${sameBioStr}`;
+            }
+
+            let oldEquip = pet.equips[petEquipIdx];
+            pet.equips[petEquipIdx] = equip;
+            if (oldEquip) {
+                gameData.items[itemIdx] = oldEquip;
+            } else {
+                gameData.items.splice(itemIdx, 1);
+                gameData.weight--;
+            }
+        } else {
+            let oldEquip = pet.equips[petEquipIdx];
+            if (!oldEquip) return '空和空无法交换';
+            if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+
+            gameData.items.push(oldEquip);
+            pet.equips[petEquipIdx] = undefined;
+            gameData.weight++;
         }
-
-        let index = gameData.items.indexOf(equip);
-        if (index == -1) return '此装备不在道具栏里';
-
-        gameData.items.splice(index, 0);
-        pet.equips.push(equip);
-        gameData.weight--;
-
-        return this.SUC;
-    }
-
-    static putOffEquip(gameData: GameData, equip: Equip, pet: Pet): string {
-        if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
-
-        let index = pet.equips.indexOf(equip);
-        if (index == -1) return '此装备不在宠物身上';
-
-        gameData.weight++;
-        pet.equips.splice(index, 0);
-        gameData.items.push(equip);
 
         return this.SUC;
     }

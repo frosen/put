@@ -12,11 +12,19 @@ import ListViewCell from 'scripts/ListViewCell';
 import { Item, Equip } from 'scripts/DataSaved';
 import { PagePkgEquip } from './PagePkgEquip';
 import { CellPkgEquip, CellPkgEquipType } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { GameDataTool } from 'scripts/Memory';
+import CellPkgEquipUnwield from 'pages/page_pkg/cells/cell_pkg_equip_unwield/scripts/CellPkgEquipUnwield';
+
+const UNWIELD = 'u';
+const EQUIP = 'e';
 
 @ccclass
 export default class PkgEquipItemLVD extends ListViewDelegate {
     @property(cc.Prefab)
     cellPkgEquipPrefab: cc.Prefab = null;
+
+    @property(cc.Prefab)
+    cellUnwieldPrefab: cc.Prefab = null;
 
     curItems: Item[] = [];
     curItemIdxs: number[] = [];
@@ -32,19 +40,25 @@ export default class PkgEquipItemLVD extends ListViewDelegate {
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        return 'equip';
+        return this.curItemIdxs[rowIdx] == GameDataTool.UNWIELD ? UNWIELD : EQUIP;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
-        cell.init(CellPkgEquipType.selection);
-        cell.clickCallback = this.page.onItemCellClick.bind(this.page);
-        cell.detailBtnCallback = this.page.onItemCellClickDetailBtn.bind(this.page);
-        return cell;
+        if (cellId == EQUIP) {
+            let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
+            cell.init(CellPkgEquipType.selection);
+            cell.clickCallback = this.page.onItemCellClick.bind(this.page);
+            cell.detailBtnCallback = this.page.onItemCellClickDetailBtn.bind(this.page);
+            return cell;
+        } else if (cellId == UNWIELD) {
+            let cell = cc.instantiate(this.cellUnwieldPrefab).getComponent(CellPkgEquipUnwield);
+            cell.clickCallback = this.page.onItemCellClick.bind(this.page);
+            return cell;
+        }
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkgEquip) {
         let itemIdx = this.curItemIdxs[rowIdx];
-        cell.setData(itemIdx, this.curItems[itemIdx] as Equip);
+        if (itemIdx != GameDataTool.UNWIELD) cell.setData(itemIdx, this.curItems[itemIdx] as Equip);
     }
 }

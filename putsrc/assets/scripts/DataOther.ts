@@ -103,7 +103,10 @@ export class Pet2 {
         });
 
         // 装备加成
-        for (const equip of pet.equips) EquipDataTool.getFinalAttris(equip, this);
+        for (const equip of pet.equips) {
+            if (!equip) continue;
+            EquipDataTool.getFinalAttris(equip, this);
+        }
 
         // 二级原始属性
         this.hpMaxOri = this.durability * 25;
@@ -251,7 +254,9 @@ export class BattlePet {
 
         // 装备技能
         for (let index = pet.equips.length - 1; index >= 0; index--) {
-            let skillId = pet.equips[index].skillId;
+            let equip = pet.equips[index];
+            if (!equip) continue;
+            let skillId = equip.skillId;
             if (!skillId) continue;
             let skill = new BattleSkill();
             skill.id = skillId;

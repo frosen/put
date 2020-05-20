@@ -9,10 +9,10 @@ const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
-import CellAttri from 'pubcells/cell_attri/scripts/CellAttri';
-import CellAttri2 from 'pubcells/cell_attri2/scripts/CellAttri2';
+import CellAttri from 'pubs/cell_attri/scripts/CellAttri';
+import CellAttri2 from 'pubs/cell_attri2/scripts/CellAttri2';
 import CellPetName from '../cells/cell_pet_name/scripts/CellPetName';
-import CellTitle from 'pubcells/cell_title/scripts/CellTitle';
+import CellTitle from 'pubs/cell_title/scripts/CellTitle';
 import { petModelDict } from 'configs/PetModelDict';
 import { expModels } from 'configs/ExpModels';
 import { Pet, PetStateNames, PetRankNames, BioTypeNames, EleTypeNames, BattleTypeNames } from 'scripts/DataSaved';
@@ -185,7 +185,7 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             case 13:
                 cell.setData1(
                     '攻击伤害',
-                    `${(this.curPet2.atkDmgFrom * 0.1).toFixed(1)} ~ ${(this.curPet2.atkDmgTo * 0.1).toFixed(1)}`
+                    `${(this.curPet2.atkDmgFrom * 0.1 + 88888).toFixed(1)} ~ ${(this.curPet2.atkDmgTo * 0.1 + 88888).toFixed(1)}`
                 );
                 cell.setData2(
                     '技能伤害',

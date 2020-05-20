@@ -890,6 +890,9 @@
     "cellPkgEquipPrefab": {
       "__uuid__": "d6eb18f8-4afe-48aa-8a1a-94199e9501c0"
     },
+    "cellUnwieldPrefab": {
+      "__uuid__": "7c133b6d-f500-4afa-b6ea-0b122d0d949c"
+    },
     "_id": ""
   },
   {
