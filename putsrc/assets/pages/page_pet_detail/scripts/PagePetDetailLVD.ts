@@ -9,15 +9,43 @@ const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
-import CellAttri from 'pubs/cell_attri/scripts/CellAttri';
-import CellAttri2 from 'pubs/cell_attri2/scripts/CellAttri2';
+import CellAttri from '../cells/cell_attri/scripts/CellAttri';
+import CellAttri2 from '../cells/cell_attri2/scripts/CellAttri2';
 import CellPetName from '../cells/cell_pet_name/scripts/CellPetName';
-import CellTitle from 'pubs/cell_title/scripts/CellTitle';
+import CellTitle from '../cells/cell_title/scripts/CellTitle';
 import { petModelDict } from 'configs/PetModelDict';
 import { expModels } from 'configs/ExpModels';
 import { Pet, PetStateNames, PetRankNames, BioTypeNames, EleTypeNames, BattleTypeNames } from 'scripts/DataSaved';
 import { Pet2 } from 'scripts/DataOther';
 import { PetModel } from 'scripts/DataModel';
+
+const PNAME = 'p';
+const ATTR2 = '2';
+const ATTR1 = '1';
+const TITLE = 't';
+
+let CellList = [
+    { id: PNAME, h: 266 },
+    { id: ATTR2, h: 106 },
+    { id: ATTR2, h: 106 },
+    { id: ATTR1, h: 126 },
+
+    { id: TITLE, h: 66 },
+    { id: ATTR2, h: 106 },
+    { id: ATTR2, h: 126 },
+
+    { id: TITLE, h: 66 },
+    { id: ATTR2, h: 10 },
+    { id: ATTR2, h: 106 },
+    { id: ATTR2, h: 126 },
+
+    { id: TITLE, h: 66 },
+    { id: ATTR2, h: 106 },
+    { id: ATTR2, h: 126 },
+
+    { id: TITLE, h: 66 },
+    { id: ATTR2, h: 106 }
+];
 
 @ccclass
 export default class PagePetDetailLVD extends ListViewDelegate {
@@ -43,7 +71,7 @@ export default class PagePetDetailLVD extends ListViewDelegate {
     heightForRow(listView: ListView, rowIdx: number): number {
         switch (rowIdx) {
             case 0:
-                return 206;
+                return 226;
             case 1:
             case 2:
                 return 106;
@@ -58,6 +86,7 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             case 7:
                 return 66;
             case 8:
+                106;
             case 9:
                 return 106;
             case 10:
@@ -78,44 +107,49 @@ export default class PagePetDetailLVD extends ListViewDelegate {
     cellIdForRow(listView: ListView, rowIdx: number): string {
         switch (rowIdx) {
             case 0:
-                return 'petName';
+                return PETNAME;
             case 1:
+                ATTRI2;
             case 2:
-                return 'attri2';
+                return ATTRI2;
             case 3:
-                return 'attri';
+                return ATTRI1;
             case 4:
-                return 'title';
+                return TITLE;
             case 5:
+                ATTRI2;
             case 6:
-                return 'attri2';
+                return ATTRI2;
             case 7:
-                return 'title';
+                return TITLE;
             case 8:
+                ATTRI2;
             case 9:
+                ATTRI2;
             case 10:
-                return 'attri2';
+                return ATTRI2;
             case 11:
-                return 'title';
+                return TITLE;
             case 12:
+                ATTRI2;
             case 13:
-                return 'attri2';
+                return ATTRI2;
             case 14:
-                return 'title';
+                return TITLE;
             case 15:
-                return 'attri2';
+                return ATTRI2;
         }
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
         switch (cellId) {
-            case 'petName':
+            case PETNAME:
                 return cc.instantiate(this.petNamePrefab).getComponent(ListViewCell);
-            case 'attri':
+            case ATTRI1:
                 return cc.instantiate(this.attriPrefab).getComponent(ListViewCell);
-            case 'attri2':
+            case ATTRI2:
                 return cc.instantiate(this.attri2Prefab).getComponent(ListViewCell);
-            case 'title':
+            case TITLE:
                 return cc.instantiate(this.titlePrefab).getComponent(ListViewCell);
         }
     }
@@ -133,31 +167,30 @@ export default class PagePetDetailLVD extends ListViewDelegate {
                 cell.setData2('品阶', PetRankNames[pet.rank]);
                 break;
             case 2:
-                cell.setData1('默契值', String(pet.privity));
-                cell.setData2('学习值', 'Me');
+                cell.setData1('契合度', String(pet.privity) + '%');
+                cell.setData2('饮食', '西红柿炒鸡蛋[59min]');
                 break;
-            case 3:
-                {
-                    let exp, expMax;
-                    if (pet.lv >= expModels.length) {
-                        exp = 0;
-                        expMax = 0;
-                    } else {
-                        exp = pet.exp;
-                        expMax = expModels[pet.lv];
-                    }
-                    cell.setData('当前经验', `${exp} / ${expMax}`, exp / expMax);
+            case 3: {
+                let exp, expMax;
+                if (pet.lv >= expModels.length) {
+                    exp = 0;
+                    expMax = 0;
+                } else {
+                    exp = pet.exp;
+                    expMax = expModels[pet.lv];
                 }
+                cell.setData('当前经验', `${exp} / ${expMax}`, exp / expMax);
                 break;
+            }
             case 4:
                 cell.setData('基础类型');
                 break;
             case 5:
-                cell.setData1('生物类型', BioTypeNames[this.curPet2.exBioTypes.getLast() || petModel.bioType]);
-                cell.setData2('元素类型', EleTypeNames[this.curPet2.exEleTypes.getLast() || petModel.eleType]);
+                cell.setData1('生物', BioTypeNames[this.curPet2.exBioTypes.getLast() || petModel.bioType]);
+                cell.setData2('元素', EleTypeNames[this.curPet2.exEleTypes.getLast() || petModel.eleType]);
                 break;
             case 6:
-                cell.setData1('战斗类型', BattleTypeNames[this.curPet2.exBattleTypes.getLast() || petModel.battleType]);
+                cell.setData1('战斗', BattleTypeNames[this.curPet2.exBattleTypes.getLast() || petModel.battleType]);
                 cell.setData2('速度', String(this.curPet2.speed));
                 break;
             case 7:
@@ -182,16 +215,15 @@ export default class PagePetDetailLVD extends ListViewDelegate {
                 cell.setData1('HP', String(Math.floor(this.curPet2.hpMax * 0.1)));
                 cell.setData2('MP', String(this.curPet2.mpMax));
                 break;
-            case 13:
-                cell.setData1(
-                    '攻击伤害',
-                    `${(this.curPet2.atkDmgFrom * 0.1 + 88888).toFixed(1)} ~ ${(this.curPet2.atkDmgTo * 0.1 + 88888).toFixed(1)}`
-                );
-                cell.setData2(
-                    '技能伤害',
-                    `${(this.curPet2.sklDmgFrom * 0.1).toFixed(1)} ~ ${(this.curPet2.sklDmgTo * 0.1).toFixed(1)}`
-                );
+            case 13: {
+                let atkFrom = (this.curPet2.atkDmgFrom * 0.1).toFixed(1);
+                let atkTo = (this.curPet2.atkDmgTo * 0.1).toFixed(1);
+                let sklFrom = (this.curPet2.sklDmgFrom * 0.1).toFixed(1);
+                let sklTo = (this.curPet2.sklDmgTo * 0.1).toFixed(1);
+                cell.setData1('攻击', `${atkFrom} ~ ${atkTo}`);
+                cell.setData2('技能', `${sklFrom} ~ ${sklTo}`);
                 break;
+            }
             case 14:
                 cell.setData('宠物特性');
                 break;
