@@ -68,6 +68,8 @@ export class Pet2 {
 
     armor: number;
 
+    skillIds: string[];
+
     setData(pet: Pet, exEquipTokens: string[] = null, exPrivity: number = null) {
         let petModel: PetModel = petModelDict[pet.id];
 
@@ -149,6 +151,25 @@ export class Pet2 {
         this.atkDmgTo = Math.max(this.atkDmgTo, 1);
         this.sklDmgFrom = Math.max(this.sklDmgFrom, 1);
         this.sklDmgTo = Math.max(this.sklDmgTo, 1);
+
+        // 技能
+        this.skillIds = [];
+
+        // 装备技能
+        for (let index = pet.equips.length - 1; index >= 0; index--) {
+            let equip = pet.equips[index];
+            if (!equip) continue;
+            let skillId = equip.skillId;
+            if (!skillId) continue;
+            this.skillIds.push(skillId);
+        }
+
+        // 自带技能
+        let selfSkillIds = PetDataTool.getSelfSkillIdByCurLv(pet);
+        for (let index = selfSkillIds.length - 1; index >= 0; index--) {
+            const skillId = selfSkillIds[index];
+            this.skillIds.push(skillId);
+        }
     }
 }
 
@@ -252,22 +273,7 @@ export class BattlePet {
 
         this.skillDatas.length = 0;
 
-        // 装备技能
-        for (let index = pet.equips.length - 1; index >= 0; index--) {
-            let equip = pet.equips[index];
-            if (!equip) continue;
-            let skillId = equip.skillId;
-            if (!skillId) continue;
-            let skill = new BattleSkill();
-            skill.id = skillId;
-            skill.mpUsing = getSkillMpUsing(skillId);
-            this.skillDatas.push(skill);
-        }
-
-        // 自带技能
-        let selfSkillIds = PetDataTool.getSelfSkillIdByCurLv(pet);
-        for (let index = selfSkillIds.length - 1; index >= 0; index--) {
-            const skillId = selfSkillIds[index];
+        for (const skillId of this.pet2.skillIds) {
             let skill = new BattleSkill();
             skill.id = skillId;
             skill.mpUsing = getSkillMpUsing(skillId);

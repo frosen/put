@@ -59,13 +59,6 @@ export class CellPet extends ListViewCell {
     funcBtnCallback: (cell: CellPet) => void = null;
     detailBtnCallback: (cell: CellPet) => void = null;
 
-    onLoad() {
-        super.onLoad();
-        if (CC_EDITOR) return;
-        this.stateBtn.node.on('click', this.onClickStateBtn, this);
-        this.funcBtn.node.on('click', this.onClickFuncBtn, this);
-    }
-
     init(type: CellPetType) {
         this.type = type;
         switch (type) {

@@ -48,6 +48,7 @@ export default class PagePkg extends PageBase {
     funcBarShowIdx: number = -1;
 
     onLoad() {
+        super.onLoad();
         if (CC_EDITOR) return;
 
         let selections = this.selectionLayer.children;

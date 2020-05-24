@@ -34,6 +34,9 @@ export class PagePkgEquip extends PageBase {
     petEquipLayer: cc.Node = null;
 
     onLoad() {
+        super.onLoad();
+        if (CC_EDITOR) return;
+
         this.itemEquipSelection.parent.on(cc.Node.EventType.TOUCH_START, this.hideItemSelection, this);
         // @ts-ignore
         this.itemEquipSelection.parent._touchListener.setSwallowTouches(false);

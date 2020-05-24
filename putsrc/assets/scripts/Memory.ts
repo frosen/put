@@ -146,7 +146,7 @@ export class Memory {
     test() {
         this.gameData.curPosId = 'YiZhuang';
 
-        GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, 4, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'FaTiaoWa', 20, 4, [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.privity = 100;
         });

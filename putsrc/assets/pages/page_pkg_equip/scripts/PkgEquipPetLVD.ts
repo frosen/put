@@ -93,7 +93,7 @@ export default class PkgEquipItemLVD extends ListViewDelegate {
             (cell as CellPetBrief).setData(petModel.cnName, pet.state);
         } else {
             let equip = data.equip;
-            if (equip) (cell as CellPkgEquip).setData(-1, data.equip);
+            if (equip) (cell as CellPkgEquip).setData(-1, equip);
         }
     }
 }
