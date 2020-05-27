@@ -52,7 +52,8 @@ export enum SkillAimtype {
     none,
     one,
     oneAndNext,
-    oneAndOthers
+    oneAndOthers,
+    oneAndSelf
 }
 
 export class SkillModel {

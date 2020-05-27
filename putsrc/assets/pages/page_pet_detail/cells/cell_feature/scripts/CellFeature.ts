@@ -19,6 +19,7 @@ export enum FeatureGainType {
 }
 
 const FeatureGainNames = ['', '天赋', '生物', '习得'];
+const GainInfo = ['', '随机天生自带，各不相同', '随等级提升获得，每种宠物固定', '通过其他方式获取，数量不限'];
 
 @ccclass
 export class CellFeature extends ListViewCell {
@@ -35,11 +36,11 @@ export class CellFeature extends ListViewCell {
     featureSp: cc.Sprite = null;
 
     feature: Feature = null;
-
-    clickCallback: (cell: CellFeature) => void = null;
+    gainType: FeatureGainType = null;
 
     setData(feature: Feature, type: FeatureGainType) {
         this.feature = feature;
+        this.gainType = type;
         let featureModel: FeatureModel = featureModelDict[feature.id];
 
         this.nameLbl.string = FeatureGainNames[type] + '特性・' + featureModel.cnBrief;
@@ -52,6 +53,6 @@ export class CellFeature extends ListViewCell {
 
     onClick() {
         cc.log('PUT cell click: ', this.feature.id, this.curCellIdx);
-        if (this.clickCallback) this.clickCallback(this);
+        this.ctrlr.popToast(`这是一个${FeatureGainNames[this.gainType]}特性：` + '\n' + GainInfo[this.gainType]);
     }
 }

@@ -33,7 +33,50 @@ const BLANK = 'b';
 const SKILL = 's';
 const FEATURE = 'f';
 
+const LV_TIP = '提高等级可以提高属性，增加特性\n10级和30级时可分别学会一个技能';
+const RANK_TIP = '提升可大幅度提高属性\n升阶时需消耗材料和一定默契值';
+const PRIVITY_TIP = '数值 0-100 随时间自行提高\n数字越大上升越慢\n可提高基础暴击率，暴击伤害，命中，闪躲';
+const DIET_TIP = '饮食llytodo';
+
+const BIO_TIP = '分为：\n人形生物 魔法生物\n机械生物 自然生物\n未知生物';
+const ELE_TIP =
+    '分为：\n火 克空   水 克火   空 克地\n地 克水   光 克暗   暗 克光\n' +
+    '对克制宠物造成15%的额外伤害\n使用同种属性技能精神消耗减少10%，伤害增加5%';
+
+const BATTLE_TIP = `分为：
+近战 攻击正前面的目标
+射击 随机攻击任一目标
+突袭 攻击排在第一位的目标
+刺杀 攻击HP最低的目标
+连段 攻击上个己方攻击的目标
+停止 不做任何动作
+混乱 随机攻击敌人，队友或自己`;
+const SPEED_TIP = '数值1-100，数字越大行动次序越靠前';
+
+const STR_TIP = '每1点力量增加1点物理伤害';
+const CON_TIP = '每1点专注增加1点技能伤害\n每30点增加1点精神上限';
+const DUN_TIP = '每1点耐久增加25点血量上限';
+const AGI_TIP = '影响暴击率和闪躲率\n影响潜行效率，偷袭效果';
+const SEN_TIP = '影响察觉宝藏和陷阱的几率\n影响制作物品成功的几率';
+const ELG_TIP = '影响获取特殊工作，捕捉高级宠物\n提高声望上升速度\n提高默契值上升速度';
+
+const HP_TIP = '这个用解释么';
+const MP_TIP = '释放技能所消耗的能量';
+
+const ATK_TIP = '影响普攻伤害\n影响技能伤害（保持1倍，不受技能伤害系数影响）';
+const SKL_TIP = '影响技能伤害（乘以技能的伤害系数）';
+
 type DetailCell = CellPetName & CellAttri & CellAttri2 & CellTitle & CellPkgEquip & CellPkgEquipBlank & CellSkill & CellFeature;
+
+function numStr(n: number): string {
+    return (n * 0.1).toFixed(1);
+}
+
+function attriTip(attri: number, attriOri: number, tip: string): string {
+    let strO = numStr(attriOri);
+    let strD = numStr(attri - attriOri);
+    return `基础值 ${strO}\n装备特性加成 ${strD}\n${tip}`;
+}
 
 @ccclass
 export default class PagePetDetailLVD extends ListViewDelegate {
@@ -144,27 +187,35 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             case TITLE:
                 return cc.instantiate(this.titlePrefab).getComponent(ListViewCell);
             case EQUIP: {
+                let equipIdx = rowIdx - 18;
                 let cell = cc.instantiate(this.equipPrefab).getComponent(CellPkgEquip);
                 cell.init(CellPkgEquipType.normal);
-                cell.clickCallback = this.page.onCellClick.bind(this.page);
-                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+                cell.clickCallback = (cell: CellPkgEquip) => {
+                    this.page.onEquipCellClick(equipIdx, cell);
+                };
+                cell.funcBtnCallback = (cell: CellPkgEquip) => {
+                    this.page.onEquipCellClickFuncBtn(equipIdx, cell);
+                };
                 return cell;
             }
             case BLANK: {
+                let equipIdx = rowIdx - 18;
                 let cell = cc.instantiate(this.equipBlankPrefab).getComponent(CellPkgEquipBlank);
-                cell.clickCallback = this.page.onCellClick.bind(this.page);
+                cell.clickCallback = (cell: CellPkgEquip) => {
+                    this.page.onEquipBlankCellClick(equipIdx, cell);
+                };
                 return cell;
             }
             case SKILL: {
+                let skillIdx = rowIdx - 22;
                 let cell = cc.instantiate(this.skillPrefab).getComponent(CellSkill);
-                cell.clickCallback = this.page.onCellClick.bind(this.page);
+                cell.clickCallback = (cell: CellSkill) => {
+                    this.page.onSkillCellClick(skillIdx, cell);
+                };
                 return cell;
             }
-            case FEATURE: {
-                let cell = cc.instantiate(this.featurePrefab).getComponent(CellFeature);
-                cell.clickCallback = this.page.onCellClick.bind(this.page);
-                return cell;
-            }
+            case FEATURE:
+                return cc.instantiate(this.featurePrefab).getComponent(CellFeature);
         }
     }
 
@@ -177,11 +228,11 @@ export default class PagePetDetailLVD extends ListViewDelegate {
         if (rowIdx == 0) {
             cell.setData(petModel.cnName, PetStateNames[pet.state]);
         } else if (rowIdx == 1) {
-            cell.setData1('等级', String(pet.lv));
-            cell.setData2('品阶', PetRankNames[pet.rank]);
+            cell.setData1('等级', String(pet.lv), LV_TIP);
+            cell.setData2('品阶', PetRankNames[pet.rank], RANK_TIP);
         } else if (rowIdx == 2) {
-            cell.setData1('契合度', String(pet.privity) + '%');
-            cell.setData2('饮食', '西红柿炒鸡蛋[59min]');
+            cell.setData1('默契值', String(Math.floor(Math.sqrt(pet.privity))) + '%', PRIVITY_TIP);
+            cell.setData2('饮食', '西红柿炒鸡蛋[59min]', DIET_TIP);
         } else if (rowIdx == 3) {
             let exp: number, expMax: number;
             if (pet.lv >= expModels.length) {
@@ -197,34 +248,34 @@ export default class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx == 4) {
             cell.setData('基础类型');
         } else if (rowIdx == 5) {
-            cell.setData1('生物', BioTypeNames[pet2.exBioTypes.getLast() || petModel.bioType]);
-            cell.setData2('元素', EleTypeNames[pet2.exEleTypes.getLast() || petModel.eleType]);
+            cell.setData1('生物', BioTypeNames[pet2.exBioTypes.getLast() || petModel.bioType], BIO_TIP);
+            cell.setData2('元素', EleTypeNames[pet2.exEleTypes.getLast() || petModel.eleType], ELE_TIP);
         } else if (rowIdx == 6) {
-            cell.setData1('战斗', BattleTypeNames[pet2.exBattleTypes.getLast() || petModel.battleType]);
-            cell.setData2('速度', String(pet2.speed));
+            cell.setData1('战斗', BattleTypeNames[pet2.exBattleTypes.getLast() || petModel.battleType], BATTLE_TIP);
+            cell.setData2('速度', String(pet2.speed), SPEED_TIP);
         }
         // 第三组
         else if (rowIdx == 7) {
             cell.setData('一级属性');
         } else if (rowIdx == 8) {
-            cell.setData1('力量', (pet2.strength * 0.1).toFixed(1));
-            cell.setData2('专注', (pet2.concentration * 0.1).toFixed(1));
+            cell.setData1('力量', numStr(pet2.strength), attriTip(pet2.strength, pet2.strengthOri, STR_TIP));
+            cell.setData2('专注', numStr(pet2.concentration), attriTip(pet2.concentration, pet2.concentrationOri, CON_TIP));
         } else if (rowIdx == 9) {
-            cell.setData1('耐久', (pet2.durability * 0.1).toFixed(1));
-            cell.setData2('灵敏', (pet2.agility * 0.1).toFixed(1));
+            cell.setData1('耐久', numStr(pet2.durability), attriTip(pet2.durability, pet2.durabilityOri, DUN_TIP));
+            cell.setData2('灵敏', numStr(pet2.agility), attriTip(pet2.agility, pet2.agilityOri, AGI_TIP));
         } else if (rowIdx == 10) {
-            cell.setData1('感知', (pet2.sensitivity * 0.1).toFixed(1));
-            cell.setData2('优雅', (pet2.elegant * 0.1).toFixed(1));
+            cell.setData1('感知', numStr(pet2.sensitivity), attriTip(pet2.durability, pet2.durabilityOri, SEN_TIP));
+            cell.setData2('优雅', numStr(pet2.elegant), attriTip(pet2.durability, pet2.durabilityOri, ELG_TIP));
         }
         // 第四组
         else if (rowIdx == 11) {
             cell.setData('二级属性');
         } else if (rowIdx == 12) {
-            cell.setData1('HP', String(Math.floor(pet2.hpMax * 0.1)));
-            cell.setData2('MP', String(pet2.mpMax));
+            cell.setData1('血量', String(Math.floor(pet2.hpMax * 0.1)), HP_TIP);
+            cell.setData2('精神上限', String(pet2.mpMax), MP_TIP);
         } else if (rowIdx == 13) {
-            cell.setData1('攻击', `${(pet2.atkDmgFrom * 0.1).toFixed(1)} ~ ${(pet2.atkDmgTo * 0.1).toFixed(1)}`);
-            cell.setData2('技能', `${(pet2.sklDmgFrom * 0.1).toFixed(1)} ~ ${(pet2.sklDmgTo * 0.1).toFixed(1)}`);
+            cell.setData1('攻击伤害', `${numStr(pet2.atkDmgFrom)}~${numStr(pet2.atkDmgTo)}`, ATK_TIP);
+            cell.setData2('技能伤害', `${numStr(pet2.sklDmgFrom)}~${numStr(pet2.sklDmgTo)}`, SKL_TIP);
         }
         // 第五组
         else if (rowIdx == 14) {

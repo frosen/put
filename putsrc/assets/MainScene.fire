@@ -4400,7 +4400,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 297.93,
-      "height": 110.4
+      "height": 155.6
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -4462,7 +4462,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 237.93,
-      "height": 90.4
+      "height": 135.6
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -4515,7 +4515,7 @@
     "_string": "asdf asdfsadf\ndfasdf",
     "_N$string": "asdf asdfsadf\ndfasdf",
     "_fontSize": 40,
-    "_lineHeight": 40,
+    "_lineHeight": 60,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -4571,7 +4571,7 @@
     "_layoutSize": {
       "__type__": "cc.Size",
       "width": 297.93,
-      "height": 110.4
+      "height": 155.6
     },
     "_resize": 1,
     "_N$layoutType": 1,
@@ -4604,7 +4604,7 @@
     "_layoutSize": {
       "__type__": "cc.Size",
       "width": 297.93,
-      "height": 110.4
+      "height": 155.6
     },
     "_resize": 1,
     "_N$layoutType": 2,

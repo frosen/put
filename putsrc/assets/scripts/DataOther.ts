@@ -132,7 +132,8 @@ export class Pet2 {
         this.exBattleTypes = [];
 
         // 其他属性
-        let privityPercent = privity * 0.01;
+        let realPrivity = Math.floor(Math.sqrt(privity));
+        let privityPercent = realPrivity * 0.01;
         this.critRate = privityPercent * 0.1;
         this.critDmgRate = 0.5 + privityPercent * 0.5;
         this.evdRate = 0.05 + privityPercent * 0.05;

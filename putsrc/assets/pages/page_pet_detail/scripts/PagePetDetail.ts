@@ -61,11 +61,15 @@ export default class PagePetDetail extends PageBase {
 
     // -----------------------------------------------------------------
 
-    onCellClick(cell: ListViewCell) {}
+    onEquipCellClick(index: number, cell: ListViewCell) {}
 
-    onCellClickFuncBtn(cell: ListViewCell) {
+    onEquipBlankCellClick(index: number, cell: ListViewCell) {}
+
+    onEquipCellClickFuncBtn(index: number, cell: ListViewCell) {
         // this.showFuncBar(cell.curCellIdx, cell.node);
     }
+
+    onSkillCellClick(index: number, cell: ListViewCell) {}
 
     // -----------------------------------------------------------------
 }
