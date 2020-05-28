@@ -458,7 +458,7 @@ export class BattleController {
                         if (buffOutput.hp) {
                             let dmg = buffOutput.hp;
                             if (dmg > 0) {
-                                dmg *= this.getEleDmgRate(buffModel.eleType, pet, buffData.caster);
+                                dmg *= BattleController.getEleDmgRate(buffModel.eleType, pet, buffData.caster);
                                 dmg *= (1 - pet.pet2.dfsRate) * FormationHitRate[pet.fromationIdx];
                             }
                             dmg = Math.floor(dmg);
@@ -618,13 +618,14 @@ export class BattleController {
                 return false;
             }
 
-            finalDmg = this.getSklDmg(battlePet, aim) * dmgRate * 0.01;
-            finalDmg += this.getAtkDmg(battlePet, aim);
+            let sklRealDmg = BattleController.getSklDmg(battlePet, aim);
+            let atkRealDmg = BattleController.getAtkDmg(battlePet, aim);
+            finalDmg = BattleController.getCastRealDmg(sklRealDmg, dmgRate * 0.01, atkRealDmg);
 
-            finalDmg *= this.getEleDmgRate(skillModel.eleType, aim, battlePet);
+            finalDmg *= BattleController.getEleDmgRate(skillModel.eleType, aim, battlePet);
             finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         } else {
-            finalDmg = this.getSklDmg(battlePet, aim) * dmgRate * 0.01;
+            finalDmg = BattleController.getSklDmg(battlePet, aim) * dmgRate * 0.01;
         }
 
         finalDmg = Math.floor(finalDmg);
@@ -669,7 +670,11 @@ export class BattleController {
         }
     }
 
-    getEleDmgRate(skillEleType: EleType, aim: BattlePet, caster: BattlePet) {
+    static getCastRealDmg(sklRealDmg: number, dmgRate: number, atkRealDmg: number): number {
+        return sklRealDmg * dmgRate + atkRealDmg;
+    }
+
+    static getEleDmgRate(skillEleType: EleType, aim: BattlePet, caster: BattlePet) {
         let eleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
         let dmgGain = caster && petModelDict[caster.pet.id].eleType == skillEleType ? 1.05 : 1;
         let dmgRestricts = EleReinforceRelation[skillEleType] == eleType ? 1.15 : 1;
@@ -713,7 +718,7 @@ export class BattleController {
             return true;
         }
 
-        let finalDmg = this.getAtkDmg(battlePet, aim);
+        let finalDmg = BattleController.getAtkDmg(battlePet, aim);
         finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         if (this.realBattle.atkRound > 100) finalDmg *= 1.5; // 时间太长时增加伤害快速结束
         finalDmg = Math.floor(finalDmg);
@@ -755,13 +760,13 @@ export class BattleController {
         if (team.mp > team.mpMax) team.mp = team.mpMax;
     }
 
-    getAtkDmg(thisPet: BattlePet, aim: BattlePet) {
+    static getAtkDmg(thisPet: BattlePet, aim: BattlePet) {
         let pet2 = thisPet.pet2;
         let dmg = pet2.atkDmgFrom + ranWithSeedInt(1 + pet2.atkDmgTo - pet2.atkDmgFrom);
         return aim ? Math.max(dmg - aim.pet2.armor, 1) : dmg;
     }
 
-    getSklDmg(thisPet: BattlePet, aim: BattlePet) {
+    static getSklDmg(thisPet: BattlePet, aim: BattlePet) {
         let pet2 = thisPet.pet2;
         let dmg = pet2.sklDmgFrom + ranWithSeedInt(1 + pet2.sklDmgTo - pet2.sklDmgFrom);
         return aim ? Math.max(dmg - aim.pet2.armor, 1) : dmg;

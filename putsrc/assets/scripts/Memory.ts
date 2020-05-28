@@ -151,11 +151,11 @@ export class Memory {
             pet.privity = 100;
         });
 
-        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, 2, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 31, 2, [], (pet: Pet) => {
             pet.state = PetState.ready;
         });
 
-        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 2, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 31, 2, [], (pet: Pet) => {
             pet.state = PetState.ready;
         });
 

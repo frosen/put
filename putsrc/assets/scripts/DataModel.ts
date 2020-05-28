@@ -5,7 +5,7 @@
  */
 
 import { BattleController } from './BattleController';
-import { EleType, BattleType, BioType } from './DataSaved';
+import { EleType, BattleType, BioType, Pet } from './DataSaved';
 import { Pet2, BattlePet, BattleBuff } from './DataOther';
 
 // -----------------------------------------------------------------
@@ -32,7 +32,7 @@ export abstract class BuffModel {
     abstract onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BattleController): any;
     abstract onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BattleController, data: any): void;
     abstract onTurnEnd(thisPet: BattlePet, buff: BattleBuff, ctrlr: BattleController): BuffOutput | void;
-    abstract getInfo(caster: Readonly<BattlePet>): string;
+    abstract getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string;
 }
 
 export enum SkillType {
