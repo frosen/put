@@ -524,6 +524,16 @@ export class GameDataTool {
         return this.SUC;
     }
 
+    static moveEquipInPetList(gameData: GameData, pet: Pet, from: number, to: number): string {
+        let equips = pet.equips;
+        if (from < 0 || equips.length <= from || to < 0 || equips.length <= to) return '请勿把项目移出列表范围';
+
+        let equip = equips[from];
+        equips.splice(from, 1);
+        equips.splice(to, 0, equip);
+        return this.SUC;
+    }
+
     static deleteItem(gameData: GameData, index: number): string {
         if (index < 0 || gameData.items.length <= index) return '索引错误';
         if (index == 0) return '货币项目不可删除';

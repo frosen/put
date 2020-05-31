@@ -32,6 +32,7 @@ export default class CellAttri2 extends ListViewCell {
     tip2: string = null;
 
     onLoad() {
+        // 故意不加 super.onLoad();
         if (CC_EDITOR) {
             this.check();
             return;

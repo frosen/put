@@ -14,10 +14,24 @@ export default class CellPetName extends ListViewCell {
     petName: cc.Label = null;
 
     @property(cc.Label)
-    masterName: cc.Label = null;
+    state: cc.Label = null;
 
-    setData(petName: string, masterName: string) {
+    tip: string = '';
+
+    onLoad() {
+        super.onLoad();
+        if (CC_EDITOR) return;
+
+        this.state.node.on(cc.Node.EventType.TOUCH_END, this.onClickState.bind(this));
+    }
+
+    setData(petName: string, masterName: string, stateTip: string) {
         this.petName.string = petName;
-        this.masterName.string = '状态：' + masterName;
+        this.state.string = '状态：' + masterName;
+        this.tip = stateTip;
+    }
+
+    onClickState() {
+        this.ctrlr.popToast(this.tip);
     }
 }

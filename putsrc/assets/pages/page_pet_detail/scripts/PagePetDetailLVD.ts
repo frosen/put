@@ -33,6 +33,11 @@ const BLANK = 'b';
 const SKILL = 's';
 const FEATURE = 'f';
 
+const STATE_TIP = `分为：
+备战中 跟随主人参与战斗
+休息中 跟随主人但不参与战斗
+是否参战可在宠物列表中点击状态按钮修改`;
+
 const LV_TIP = '提高等级可以提高属性，增加特性\n10级和30级时可分别学会一个技能';
 const RANK_TIP = '提升可大幅度提高属性\n升阶时需消耗材料和一定默契值';
 const PRIVITY_TIP = '数值 0-100 随时间自行提高\n数字越大上升越慢\n可提高基础暴击率，暴击伤害，命中，闪躲';
@@ -116,7 +121,7 @@ export default class PagePetDetailLVD extends ListViewDelegate {
 
     heightForRow(listView: ListView, rowIdx: number): number {
         // 第一组
-        if (rowIdx == 0) return 266;
+        if (rowIdx == 0) return 226;
         else if (rowIdx == 1 || rowIdx == 2) return 106;
         else if (rowIdx == 3) return 126;
         // 第二组
@@ -187,33 +192,14 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             case TITLE:
                 return cc.instantiate(this.titlePrefab).getComponent(ListViewCell);
             case EQUIP: {
-                let equipIdx = rowIdx - 18;
                 let cell = cc.instantiate(this.equipPrefab).getComponent(CellPkgEquip);
                 cell.init(CellPkgEquipType.normal);
-                cell.clickCallback = (cell: CellPkgEquip) => {
-                    this.page.onEquipCellClick(equipIdx, cell);
-                };
-                cell.funcBtnCallback = (cell: CellPkgEquip) => {
-                    this.page.onEquipCellClickFuncBtn(equipIdx, cell);
-                };
                 return cell;
             }
-            case BLANK: {
-                let equipIdx = rowIdx - 18;
-                let cell = cc.instantiate(this.equipBlankPrefab).getComponent(CellPkgEquipBlank);
-                cell.clickCallback = (cell: CellPkgEquipBlank) => {
-                    this.page.onEquipBlankCellClick(equipIdx, cell);
-                };
-                return cell;
-            }
-            case SKILL: {
-                let skillIdx = rowIdx - 22;
-                let cell = cc.instantiate(this.skillPrefab).getComponent(CellSkill);
-                cell.clickCallback = (cell: CellSkill) => {
-                    this.page.onSkillCellClick(skillIdx, cell);
-                };
-                return cell;
-            }
+            case BLANK:
+                return cc.instantiate(this.equipBlankPrefab).getComponent(CellPkgEquipBlank);
+            case SKILL:
+                return cc.instantiate(this.skillPrefab).getComponent(CellSkill);
             case FEATURE:
                 return cc.instantiate(this.featurePrefab).getComponent(CellFeature);
         }
@@ -226,7 +212,7 @@ export default class PagePetDetailLVD extends ListViewDelegate {
 
         // 第一组
         if (rowIdx == 0) {
-            cell.setData(petModel.cnName, PetStateNames[pet.state]);
+            cell.setData(petModel.cnName, PetStateNames[pet.state], STATE_TIP);
         } else if (rowIdx == 1) {
             cell.setData1('等级', String(pet.lv), LV_TIP);
             cell.setData2('品阶', PetRankNames[pet.rank], RANK_TIP);
@@ -300,14 +286,30 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             let equips = this.curPet.equips;
             let equipIndex = rowIdx - 18;
             let equip = equips[equipIndex];
-            if (equip) (cell as CellPkgEquip).setData(-1, equip);
+            if (equip) {
+                (cell as CellPkgEquip).setData(-1, equip);
+                (cell as CellPkgEquip).clickCallback = (cell: CellPkgEquip) => {
+                    this.page.onEquipCellClick(equipIndex, cell);
+                };
+                (cell as CellPkgEquip).funcBtnCallback = (cell: CellPkgEquip) => {
+                    this.page.onEquipCellClickFuncBtn(equipIndex, cell);
+                };
+            } else {
+                (cell as CellPkgEquipBlank).clickCallback = (cell: CellPkgEquipBlank) => {
+                    this.page.onEquipBlankCellClick(equipIndex, cell);
+                };
+            }
         }
         // 第七组
         else if (rowIdx == 21) {
             cell.setData(`宠物技能（${this.curPet2.skillIds.length}）`);
         } else if (rowIdx <= 21 + this.curPet2.skillIds.length) {
-            let skillId = this.curPet2.skillIds[rowIdx - 22];
+            let skillIdx = rowIdx - 22;
+            let skillId = this.curPet2.skillIds[skillIdx];
             cell.setData(skillId);
+            (cell as CellSkill).clickCallback = (cell: CellSkill) => {
+                this.page.onSkillCellClick(skillIdx, cell);
+            };
         }
         // 第八组
         else if (rowIdx == 21 + this.curPet2.skillIds.length + 1) {

@@ -12,7 +12,7 @@ import PagePetDetailLVD from './PagePetDetailLVD';
 import { Pet, Feature } from 'scripts/DataSaved';
 import { Pet2 } from 'scripts/DataOther';
 import ListViewCell from 'scripts/ListViewCell';
-import { PetDataTool } from 'scripts/Memory';
+import { PetDataTool, GameDataTool } from 'scripts/Memory';
 import { FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
@@ -99,7 +99,23 @@ export default class PagePetDetail extends PageBase {
         this.ctrlr.pushPage(PagePkgEquip, { pet: this.curPet, idx: this.curEquipIdx });
     }
 
-    onMoveUpCell(cellIdx: number) {}
+    onMoveUpCell(cellIdx: number) {
+        let rzt = GameDataTool.moveEquipInPetList(
+            this.ctrlr.memory.gameData,
+            this.curPet,
+            this.curEquipIdx,
+            this.curEquipIdx - 1
+        );
+        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+    }
 
-    onMoveDownCell(cellIdx: number) {}
+    onMoveDownCell(cellIdx: number) {
+        let rzt = GameDataTool.moveEquipInPetList(
+            this.ctrlr.memory.gameData,
+            this.curPet,
+            this.curEquipIdx,
+            this.curEquipIdx + 1
+        );
+        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+    }
 }
