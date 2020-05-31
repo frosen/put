@@ -15,28 +15,29 @@ import { Pet, PetState } from 'scripts/DataSaved';
 import { CellPetType, CellPet } from '../cells/cell_pet/scripts/CellPet';
 import PagePetDetail from 'pages/page_pet_detail/scripts/PagePetDetail';
 import PageBase from 'scripts/PageBase';
+import FuncBar from '../prefabs/prefab_func_bar/scripts/FuncBar';
 
 @ccclass
 export default class PagePet extends PageBase {
     dirtyToken: number = 0;
 
-    @property(cc.Node)
-    funcBarNode: cc.Node = null;
+    @property(cc.Prefab)
+    funcBarPrefab: cc.Prefab = null;
 
-    @property(cc.Node)
-    touchLayer: cc.Node = null;
+    funcBar: FuncBar = null;
 
-    funcBarShowIdx: number = -1;
-
-    onInit() {
+    onLoad() {
         this.getComponent(PagePetLVD).page = this;
 
-        this.funcBarNode.opacity = 0;
-        this.funcBarNode.y = 9999;
+        let funcBarNode = cc.instantiate(this.funcBarPrefab);
+        funcBarNode.parent = this.node;
 
-        this.touchLayer.on(cc.Node.EventType.TOUCH_START, this.hideFuncBar, this);
-        // @ts-ignore
-        this.touchLayer._touchListener.setSwallowTouches(false);
+        this.funcBar = funcBarNode.getComponent(FuncBar);
+        this.funcBar.setBtns([
+            { str: '上移', callback: this.onMoveUpCell.bind(this) },
+            { str: '下移', callback: this.onMoveDownCell.bind(this) },
+            { str: '放生', callback: this.onRemoveCell.bind(this) }
+        ]);
     }
 
     cellPetType: CellPetType = CellPetType.normal;
@@ -90,7 +91,7 @@ export default class PagePet extends PageBase {
     }
 
     onCellClickFuncBtn(cell: CellPet) {
-        this.showFuncBar(cell.curCellIdx, cell.node);
+        this.funcBar.showFuncBar(cell.curCellIdx, cell.node);
     }
 
     onCellClickDetailBtn(cell: CellPet) {
@@ -105,66 +106,26 @@ export default class PagePet extends PageBase {
         this.getComponentInChildren(ListView).resetContent(true);
     }
 
-    showFuncBar(cellIdx: number, cellNode: cc.Node) {
-        this.funcBarShowIdx = cellIdx;
-        let wp = cellNode.convertToWorldSpaceAR(cc.v2(0, 0));
-        let realY = cc.v2(this.node.convertToNodeSpaceAR(wp)).y;
-
-        realY -= 85;
-
-        let changeBar = () => {
-            this.funcBarNode.y = realY;
-            let atBottom = this.funcBarShowIdx < 5;
-            this.funcBarNode.getChildByName('arrow_node').scaleY = atBottom ? 1 : -1;
-            this.funcBarNode.getChildByName('func_bar').y = atBottom ? -90 : 90;
-        };
-
-        this.funcBarNode.stopAllActions();
-        if (this.funcBarShowIdx >= 0) {
-            cc.tween(this.funcBarNode).to(0.1, { opacity: 0 }).call(changeBar).to(0.1, { opacity: 255 }).start();
-        } else {
-            changeBar();
-            this.funcBarNode.opacity = 0;
-            cc.tween(this.funcBarNode).to(0.1, { opacity: 255 }).start();
-        }
-    }
-
-    hideFuncBar() {
-        if (this.funcBarShowIdx >= 0) {
-            this.funcBarShowIdx = -1;
-
-            this.funcBarNode.stopAllActions();
-            cc.tween(this.funcBarNode).to(0.1, { opacity: 0 }).set({ y: 9999 }).start();
-        }
-    }
-
-    onMoveUpCell() {
-        if (this.funcBarShowIdx < 0) return;
-        let rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, this.funcBarShowIdx, this.funcBarShowIdx - 1);
+    onMoveUpCell(cellIdx: number) {
+        let rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, cellIdx, cellIdx - 1);
         if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
-        this.hideFuncBar();
     }
 
-    onMoveDownCell() {
-        if (this.funcBarShowIdx < 0) return;
-        let rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, this.funcBarShowIdx, this.funcBarShowIdx + 1);
+    onMoveDownCell(cellIdx: number) {
+        let rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, cellIdx, cellIdx + 1);
         if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
-        this.hideFuncBar();
     }
 
-    onRemoveCell() {
-        if (this.funcBarShowIdx < 0) return;
-        let idx = this.funcBarShowIdx;
-        let pet = this.ctrlr.memory.gameData.pets[idx];
+    onRemoveCell(cellIdx: number) {
+        let pet = this.ctrlr.memory.gameData.pets[cellIdx];
         let name = (petModelDict[pet.id] as PetModel).cnName;
         let str = `确定放生宠物“${name}”？ ` + '\n注意：放生后将无法找回！';
         this.ctrlr.popAlert(str, (key: number) => {
             if (key == 1) {
-                let rzt = GameDataTool.deletePet(this.ctrlr.memory.gameData, idx);
+                let rzt = GameDataTool.deletePet(this.ctrlr.memory.gameData, cellIdx);
                 if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
                 else this.ctrlr.popToast(rzt);
             }
         });
-        this.hideFuncBar();
     }
 }

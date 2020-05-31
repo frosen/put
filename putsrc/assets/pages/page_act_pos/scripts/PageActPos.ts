@@ -19,7 +19,7 @@ export default class PageActPos extends PageBase {
     curPosId: string = '';
     dirtyToken: number = 0;
 
-    onInit() {
+    onLoad() {
         this.lvd = this.getComponent(PageActPosLVD);
         this.listView = this.getComponentInChildren(ListView);
     }

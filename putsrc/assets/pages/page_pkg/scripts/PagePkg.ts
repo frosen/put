@@ -13,6 +13,7 @@ import { Item, ItemType } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import ListViewCell from 'scripts/ListViewCell';
+import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
 
 const LIST_NAMES = ['全部', '装备'];
 const WIDTH = 1080;
@@ -37,15 +38,10 @@ export default class PagePkg extends PageBase {
 
     selectionLblNodes: cc.Node[] = [];
 
-    @property(cc.Node)
-    funcBarNode: cc.Node = null;
+    @property(cc.Prefab)
+    funcBarPrefab: cc.Prefab = null;
 
-    @property(cc.Node)
-    touchLayer: cc.Node = null;
-
-    useBtnLbl: cc.Label = null;
-
-    funcBarShowIdx: number = -1;
+    funcBar: FuncBar = null;
 
     onLoad() {
         super.onLoad();
@@ -73,17 +69,16 @@ export default class PagePkg extends PageBase {
             this.selectionLblNodes.push(lblNode);
         }
 
-        this.funcBarNode.opacity = 0;
-        this.funcBarNode.y = 9999;
+        let funcBarNode = cc.instantiate(this.funcBarPrefab);
+        funcBarNode.parent = this.node;
 
-        this.useBtnLbl = this.funcBarNode
-            .getChildByName('func_bar')
-            .getChildByName('use_button')
-            .children[0].getComponent(cc.Label);
-
-        this.touchLayer.on(cc.Node.EventType.TOUCH_START, this.hideFuncBar, this);
-        // @ts-ignore
-        this.touchLayer._touchListener.setSwallowTouches(false);
+        this.funcBar = funcBarNode.getComponent(FuncBar);
+        this.funcBar.setBtns([
+            { str: '使用', callback: this.onUseCell.bind(this) },
+            { str: '上移', callback: this.onMoveUpCell.bind(this) },
+            { str: '下移', callback: this.onMoveDownCell.bind(this) },
+            { str: '丢弃', callback: this.onRemoveCell.bind(this) }
+        ]);
     }
 
     onPageShow() {
@@ -147,89 +142,41 @@ export default class PagePkg extends PageBase {
     onCellClick(cell: ListViewCell) {}
 
     onCellClickFuncBtn(cell: ListViewCell) {
-        this.showFuncBar(cell.curCellIdx, cell.node);
+        this.funcBar.showFuncBar(cell.curCellIdx, cell.node);
     }
 
     // -----------------------------------------------------------------
 
-    showFuncBar(cellIdx: number, cellNode: cc.Node) {
-        this.funcBarShowIdx = cellIdx;
-        let wp = cellNode.convertToWorldSpaceAR(cc.v2(0, 0));
-        let realY = cc.v2(this.node.convertToNodeSpaceAR(wp)).y;
-
-        realY -= 78;
-
-        let changeBar = () => {
-            this.funcBarNode.y = realY;
-            let atBottom = this.funcBarShowIdx < 5;
-            this.funcBarNode.getChildByName('arrow_node').scaleY = atBottom ? 1 : -1;
-            this.funcBarNode.getChildByName('func_bar').y = atBottom ? -90 : 90;
-
-            let item = this.ctrlr.memory.gameData.items[cellIdx];
-            let btnStr = item.itemType == ItemType.equip ? '装配' : '使用';
-            this.useBtnLbl.string = btnStr;
-        };
-
-        this.funcBarNode.stopAllActions();
-        if (this.funcBarShowIdx >= 0) {
-            cc.tween(this.funcBarNode).to(0.1, { opacity: 0 }).call(changeBar).to(0.1, { opacity: 255 }).start();
-        } else {
-            changeBar();
-            this.funcBarNode.opacity = 0;
-            cc.tween(this.funcBarNode).to(0.1, { opacity: 255 }).start();
-        }
-    }
-
-    hideFuncBar() {
-        if (this.funcBarShowIdx >= 0) {
-            this.funcBarShowIdx = -1;
-
-            this.funcBarNode.stopAllActions();
-            cc.tween(this.funcBarNode).to(0.1, { opacity: 0 }).set({ y: 9999 }).start();
-        }
-    }
-
-    onMoveUpCell() {
-        if (this.funcBarShowIdx < 0) return;
-        let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, this.funcBarShowIdx, this.funcBarShowIdx - 1);
-        if (rzt == GameDataTool.SUC) this.resetCurList();
-        else this.ctrlr.popToast(rzt);
-        this.hideFuncBar();
-    }
-
-    onMoveDownCell() {
-        if (this.funcBarShowIdx < 0) return;
-        let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, this.funcBarShowIdx, this.funcBarShowIdx + 1);
-        if (rzt == GameDataTool.SUC) this.resetCurList();
-        else if (rzt) this.ctrlr.popToast(rzt);
-        this.hideFuncBar();
-    }
-
-    onRemoveCell() {
-        if (this.funcBarShowIdx < 0) return;
-        let idx = this.funcBarShowIdx;
-        let str = `确定将该道具丢弃吗？ ` + '\n注意：丢弃后将无法找回哦！';
-        this.ctrlr.popAlert(str, (key: number) => {
-            if (key == 1) {
-                let rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, idx);
-                if (rzt == GameDataTool.SUC) this.resetCurList();
-                else this.ctrlr.popToast(rzt);
-            }
-        });
-        this.hideFuncBar();
-    }
-
-    onUseCell() {
-        if (this.funcBarShowIdx < 0) return;
-        let idx = this.funcBarShowIdx;
-        let item = this.ctrlr.memory.gameData.items[idx];
+    onUseCell(cellIdx: number) {
+        let item = this.ctrlr.memory.gameData.items[cellIdx];
         cc.log('PUT 使用道具：', item.id);
 
         // llytodo
         if (item.itemType == ItemType.equip) {
-            this.ctrlr.pushPage(PagePkgEquip, { idx });
+            this.ctrlr.pushPage(PagePkgEquip, { idx: cellIdx });
         }
+    }
 
-        this.hideFuncBar();
+    onMoveUpCell(cellIdx: number) {
+        let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, cellIdx, cellIdx - 1);
+        if (rzt == GameDataTool.SUC) this.resetCurList();
+        else this.ctrlr.popToast(rzt);
+    }
+
+    onMoveDownCell(cellIdx: number) {
+        let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, cellIdx, cellIdx + 1);
+        if (rzt == GameDataTool.SUC) this.resetCurList();
+        else if (rzt) this.ctrlr.popToast(rzt);
+    }
+
+    onRemoveCell(cellIdx: number) {
+        let str = `确定将该道具丢弃吗？ ` + '\n注意：丢弃后将无法找回哦！';
+        this.ctrlr.popAlert(str, (key: number) => {
+            if (key == 1) {
+                let rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, cellIdx);
+                if (rzt == GameDataTool.SUC) this.resetCurList();
+                else this.ctrlr.popToast(rzt);
+            }
+        });
     }
 }

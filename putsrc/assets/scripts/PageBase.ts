@@ -23,11 +23,7 @@ export default class PageBase extends cc.Component {
 
         let widgets = this.getComponentsInChildren(cc.Widget);
         for (const widget of widgets) widget.updateAlignment();
-
-        this.onInit();
     }
-
-    onInit() {}
 
     setData(data: any) {}
 
