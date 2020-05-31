@@ -81,19 +81,8 @@ export default class ListView extends cc.Component {
     }
 
     createContent(pos: number = 0) {
-        // 计算content高度
         this.rowCount = this.delegate.numberOfRows(this);
-
-        let contentH = 0;
-        if (this.fixedHeight > 0) {
-            contentH = this.fixedHeight * this.rowCount;
-        } else {
-            for (let rowIdx = 0; rowIdx < this.rowCount; rowIdx++) {
-                contentH += this.delegate.heightForRow(this, rowIdx);
-            }
-        }
-
-        this.content.height = contentH;
+        this.content.height = this.getHeight(this.rowCount);
         this.content.y = pos;
 
         // 显示cell
@@ -138,6 +127,19 @@ export default class ListView extends cc.Component {
                 curPos = nextPos;
             }
         }
+    }
+
+    /** 计算content高度 */
+    getHeight(cellIdx: number): number {
+        let contentH = 0;
+        if (this.fixedHeight > 0) {
+            contentH = this.fixedHeight * cellIdx;
+        } else {
+            for (let rowIdx = 0; rowIdx < cellIdx; rowIdx++) {
+                contentH += this.delegate.heightForRow(this, rowIdx);
+            }
+        }
+        return contentH;
     }
 
     clearContent() {

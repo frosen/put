@@ -14,6 +14,7 @@ import { Pet2 } from 'scripts/DataOther';
 import ListViewCell from 'scripts/ListViewCell';
 import { PetDataTool } from 'scripts/Memory';
 import { FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
+import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 
 @ccclass
 export default class PagePetDetail extends PageBase {
@@ -63,7 +64,9 @@ export default class PagePetDetail extends PageBase {
 
     onEquipCellClick(index: number, cell: ListViewCell) {}
 
-    onEquipBlankCellClick(index: number, cell: ListViewCell) {}
+    onEquipBlankCellClick(index: number, cell: ListViewCell) {
+        this.ctrlr.pushPage(PagePkgEquip, { pet: this.curPet, idx: index });
+    }
 
     onEquipCellClickFuncBtn(index: number, cell: ListViewCell) {
         // this.showFuncBar(cell.curCellIdx, cell.node);

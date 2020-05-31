@@ -51,7 +51,7 @@ export class PagePkgEquip extends PageBase {
     setData(data: any) {
         if (data) {
             this.dataForInit = data;
-            cc.assert(data.idx, 'PUT 装备更新页面初始化需要索引');
+            cc.assert(data.idx != undefined, 'PUT 装备更新页面初始化需要索引');
         }
     }
 
@@ -86,7 +86,7 @@ export class PagePkgEquip extends PageBase {
                         break;
                     }
                 }
-                if (cellIdx >= 0) this.itemEquipList.content.y = this.itemEquipList.fixedHeight * cellIdx;
+                if (cellIdx >= 0) this.itemEquipList.content.y = this.itemEquipList.getHeight(cellIdx);
             } else {
                 let petEquipDataList = petDelegate.dataList;
                 let curPet = this.dataForInit.pet;
@@ -94,9 +94,10 @@ export class PagePkgEquip extends PageBase {
                     const petEquipData = petEquipDataList[index];
                     if (petEquipData.pet == curPet && petEquipData.equipIndex == selectedEquipIdx) {
                         cellIdx = index;
+                        break;
                     }
                 }
-                // llytodo 位移
+                if (cellIdx >= 0) this.petEquipList.content.y = this.petEquipList.getHeight(cellIdx);
             }
         }
 
@@ -111,6 +112,7 @@ export class PagePkgEquip extends PageBase {
                 if (!this.dataForInit.pet) {
                     this.onItemCellClick(this.itemEquipList.disCellDataDict[cellIdx].cell);
                 } else {
+                    this.onPetCellClick(this.petEquipList.disCellDataDict[cellIdx].cell);
                 }
             }
 

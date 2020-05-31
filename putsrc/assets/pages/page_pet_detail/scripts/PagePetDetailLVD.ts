@@ -28,7 +28,7 @@ const PETNAME = 'p';
 const ATTRI2 = '2';
 const ATTRI1 = '1';
 const TITLE = 't';
-const EQUIP = 't';
+const EQUIP = 'e';
 const BLANK = 'b';
 const SKILL = 's';
 const FEATURE = 'f';
@@ -201,7 +201,7 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             case BLANK: {
                 let equipIdx = rowIdx - 18;
                 let cell = cc.instantiate(this.equipBlankPrefab).getComponent(CellPkgEquipBlank);
-                cell.clickCallback = (cell: CellPkgEquip) => {
+                cell.clickCallback = (cell: CellPkgEquipBlank) => {
                     this.page.onEquipBlankCellClick(equipIdx, cell);
                 };
                 return cell;
