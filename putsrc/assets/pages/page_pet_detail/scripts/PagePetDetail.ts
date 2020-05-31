@@ -15,6 +15,7 @@ import ListViewCell from 'scripts/ListViewCell';
 import { PetDataTool } from 'scripts/Memory';
 import { FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
+import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
 
 @ccclass
 export default class PagePetDetail extends PageBase {
@@ -22,12 +23,27 @@ export default class PagePetDetail extends PageBase {
 
     curPet: Pet = null;
 
+    @property(cc.Prefab)
+    funcBarPrefab: cc.Prefab = null;
+
+    funcBar: FuncBar = null;
+
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
 
         let lvd = this.getComponent(PagePetDetailLVD);
         lvd.page = this;
+
+        let funcBarNode = cc.instantiate(this.funcBarPrefab);
+        funcBarNode.parent = this.node;
+
+        this.funcBar = funcBarNode.getComponent(FuncBar);
+        this.funcBar.setBtns([
+            { str: '更换', callback: this.onChangeEquip.bind(this) },
+            { str: '上移', callback: this.onMoveUpCell.bind(this) },
+            { str: '下移', callback: this.onMoveDownCell.bind(this) }
+        ]);
     }
 
     setData(data: Pet) {
@@ -64,15 +80,26 @@ export default class PagePetDetail extends PageBase {
 
     onEquipCellClick(index: number, cell: ListViewCell) {}
 
-    onEquipBlankCellClick(index: number, cell: ListViewCell) {
-        this.ctrlr.pushPage(PagePkgEquip, { pet: this.curPet, idx: index });
-    }
+    curEquipIdx: number = -1;
 
     onEquipCellClickFuncBtn(index: number, cell: ListViewCell) {
-        // this.showFuncBar(cell.curCellIdx, cell.node);
+        this.curEquipIdx = index;
+        this.funcBar.showFuncBar(cell.curCellIdx, cell.node);
+    }
+
+    onEquipBlankCellClick(index: number, cell: ListViewCell) {
+        this.ctrlr.pushPage(PagePkgEquip, { pet: this.curPet, idx: index });
     }
 
     onSkillCellClick(index: number, cell: ListViewCell) {}
 
     // -----------------------------------------------------------------
+
+    onChangeEquip(cellIdx: number) {
+        this.ctrlr.pushPage(PagePkgEquip, { pet: this.curPet, idx: this.curEquipIdx });
+    }
+
+    onMoveUpCell(cellIdx: number) {}
+
+    onMoveDownCell(cellIdx: number) {}
 }

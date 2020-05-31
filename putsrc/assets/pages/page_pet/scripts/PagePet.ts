@@ -27,10 +27,13 @@ export default class PagePet extends PageBase {
     funcBar: FuncBar = null;
 
     onLoad() {
+        super.onLoad();
+
+        if (CC_EDITOR) return;
         this.getComponent(PagePetLVD).page = this;
 
         let funcBarNode = cc.instantiate(this.funcBarPrefab);
-        funcBarNode.parent = this.node;
+        funcBarNode.parent = this.node.getChildByName('root');
 
         this.funcBar = funcBarNode.getComponent(FuncBar);
         this.funcBar.setBtns([

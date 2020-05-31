@@ -20,6 +20,8 @@ export default class PageActPos extends PageBase {
     dirtyToken: number = 0;
 
     onLoad() {
+        super.onLoad();
+        if (CC_EDITOR) return;
         this.lvd = this.getComponent(PageActPosLVD);
         this.listView = this.getComponentInChildren(ListView);
     }

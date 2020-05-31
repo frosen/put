@@ -988,6 +988,9 @@
       "__id__": 1
     },
     "_enabled": true,
+    "funcBarPrefab": {
+      "__uuid__": "0758fdff-1291-4b65-a985-3a224835bb4e"
+    },
     "_id": ""
   },
   {

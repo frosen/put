@@ -70,7 +70,7 @@ export default class PagePkg extends PageBase {
         }
 
         let funcBarNode = cc.instantiate(this.funcBarPrefab);
-        funcBarNode.parent = this.node;
+        funcBarNode.parent = this.node.getChildByName('root');
 
         this.funcBar = funcBarNode.getComponent(FuncBar);
         this.funcBar.setBtns([
