@@ -71,6 +71,12 @@ const MP_TIP = '释放技能所消耗的能量';
 const ATK_TIP = '影响普攻伤害\n影响技能伤害（保持1倍，不受技能伤害系数影响）';
 const SKL_TIP = '影响技能伤害（乘以技能的伤害系数）';
 
+const FEATURE_TIP = `分为：
+天赋特性 随机天生自带，各不相同
+生物特性 随等级提升获得，每种宠物固定
+习得特性 通过其他方式获取，数量不限
+每个特性都可以通过提升等级增强效果`;
+
 type DetailCell = CellPetName & CellAttri & CellAttri2 & CellTitle & CellPkgEquip & CellPkgEquipBlank & CellSkill & CellFeature;
 
 function numStr(n: number): string {
@@ -313,7 +319,7 @@ export default class PagePetDetailLVD extends ListViewDelegate {
         }
         // 第八组
         else if (rowIdx == 21 + this.curPet2.skillIds.length + 1) {
-            cell.setData(`宠物特性（${this.featureDatas.length}）`);
+            cell.setData(`宠物特性（${this.featureDatas.length}）`, FEATURE_TIP);
         } else if (rowIdx <= 21 + this.curPet2.skillIds.length + 1 + this.featureDatas.length) {
             let featureData = this.featureDatas[rowIdx - 21 - this.curPet2.skillIds.length - 1 - 1];
             cell.setData(featureData.feature, featureData.type);
