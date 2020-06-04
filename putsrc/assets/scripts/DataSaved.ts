@@ -64,6 +64,7 @@ export class Feature {
 }
 
 export const PetEquipCountMax: number = 3;
+export const PrvtyMax: number = 1000000;
 
 export class Pet {
     /** 类型 */
@@ -85,12 +86,11 @@ export class Pet {
 
     /** 默契值 */
     prvty: number;
-    prvtyChangedTime: number;
+    prvtyTime: number;
 
-    /** 学习类型 */
-    learningType: string;
-    /** 学习值 */
-    learingValue: number;
+    /** 当前食物 */
+    potion: Potion;
+    potionTime: number;
 
     /** 当前经验 */
     exp: number;
@@ -108,7 +108,7 @@ export class Pet {
 
 export enum ItemType {
     money = 1,
-    fdrnk = 9, // 消耗品
+    potion = 9, // 消耗品
     equip = 18
 }
 
@@ -123,10 +123,10 @@ export class Cnsum extends Item {
 
 export class Money extends Cnsum {}
 
-export const FdrnkRankAttri = [0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-export const FdrnkRankDuraH = [0, 2, 3, 4, 4.5, 5, 5.5, 6, 8, 10, 12, 18];
+export const PotionRankAttri = [0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+export const PotionRankDuraH = [0, 2, 3, 4, 4.5, 5, 5.5, 6, 8, 10, 12, 18];
 
-export class Fdrnk extends Cnsum {
+export class Potion extends Cnsum {
     rank: number; // 增加持续时间，并轻微提升效果
 }
 

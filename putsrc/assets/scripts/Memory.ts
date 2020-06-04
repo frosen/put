@@ -20,13 +20,17 @@ import {
     Equip,
     ItemType,
     Money,
-    PetEquipCountMax
+    PetEquipCountMax,
+    PrvtyMax,
+    PotionRankDuraH,
+    Potion
 } from './DataSaved';
-import { FeatureModel, PetModel, EquipPosType, EquipModel } from './DataModel';
+import { FeatureModel, PetModel, EquipPosType, EquipModel, PotionModel } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { random, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
+import { GameDataJIT, AmplAttriType } from './DataOther';
 
 let memoryDirtyToken: number = -1;
 
@@ -85,6 +89,7 @@ function newDict(dict = null) {
 
 export class Memory {
     gameData: GameData = newInsWithChecker(GameData);
+    gameDataJIT: GameDataJIT = null;
 
     saveToken: boolean = false;
     saveInterval: number = 0;
@@ -102,6 +107,8 @@ export class Memory {
         // 恢复历史数据
 
         // 整理历史数据
+        this.gameDataJIT = new GameDataJIT();
+
         this.test();
     }
 
@@ -122,6 +129,8 @@ export class Memory {
             this.saveInterval = 2.5;
             this.saveMemory();
         }
+
+        GameDataTool.update(this.gameData);
     }
 
     dataListeners: any[] = [];
@@ -152,7 +161,7 @@ export class Memory {
 
         GameDataTool.addPet(this.gameData, 'FaTiaoWa', 20, 4, [], (pet: Pet) => {
             pet.state = PetState.ready;
-            pet.prvty = 100;
+            pet.prvty = 10000;
         });
 
         GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 31, 2, [], (pet: Pet) => {
@@ -216,7 +225,7 @@ export class PetDataTool {
         pet.id = id;
         pet.master = '';
 
-        pet.catchTime = new Date().getTime();
+        pet.catchTime = Date.now();
         pet.catchIdx = gameData ? gameData.totalPetCount : -99;
         pet.catchLv = lv;
         pet.catchRank = rank;
@@ -227,10 +236,10 @@ export class PetDataTool {
         pet.rank = rank;
 
         pet.prvty = 0;
-        pet.prvtyChangedTime = pet.catchTime;
+        pet.prvtyTime = pet.catchTime;
 
-        pet.learningType = '';
-        pet.learingValue = 0;
+        pet.potion = null;
+        pet.potionTime = 0;
 
         pet.exp = 0;
 
@@ -292,6 +301,43 @@ export class PetDataTool {
             return [skillIds[0]];
         } else {
             return [];
+        }
+    }
+
+    static getRealPrvty(pet: Pet, exPrvty: number = null) {
+        let r = exPrvty == null ? pet.prvty : exPrvty;
+        return Math.floor(Math.sqrt(r * 0.01));
+    }
+
+    static addPotion(pet: Pet, potion: Potion, time: number = null) {
+        pet.potion = potion;
+        pet.potionTime = time || Date.now();
+        let potionModel: PotionModel = null;
+        这里;
+    }
+
+    static clearPotion(pet: Pet) {}
+
+    // -----------------------------------------------------------------
+
+    static update(pet: Pet, curTime: number) {
+        if (pet.prvty < PrvtyMax) {
+            // 默契值 10min1点(10 * 60 * 1000)
+            if (curTime - pet.prvtyTime >= 600000) {
+                // @ts-ignore
+                let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
+                pet.prvty += 100 * gameDataJIT.getAmplPercent(pet, AmplAttriType.prvty);
+                pet.prvty = Math.min(pet.prvty, PrvtyMax);
+                pet.prvtyTime = curTime;
+            }
+        }
+
+        if (pet.potion) {
+            let rank = pet.potion.rank;
+            let duration = PotionRankDuraH[rank] * 60 * 60 * 1000;
+            if (curTime - pet.potionTime >= duration) {
+                this.clearPotion(pet);
+            }
         }
     }
 }
@@ -635,7 +681,7 @@ export class GameDataTool {
     static createExpl(gameData: GameData) {
         if (gameData.curExpl) return;
         let expl = newInsWithChecker(ExplMmr);
-        expl.startTime = new Date().getTime();
+        expl.startTime = Date.now();
         expl.curStep = 0;
         expl.hiding = false;
         gameData.curExpl = expl;
@@ -672,7 +718,7 @@ export class GameDataTool {
         let curExpl = gameData.curExpl;
         if (curExpl.curBattle) return;
         let battle = newInsWithChecker(BattleMmr);
-        battle.startTime = new Date().getTime();
+        battle.startTime = Date.now();
         battle.seed = seed;
         battle.enemys = newList();
         battle.catchPetIdx = -1;
@@ -709,5 +755,27 @@ export class GameDataTool {
 
     static getItemCountMax(gameData: GameData) {
         return 300; // llytodo 根据职称不同而不同
+    }
+
+    // -----------------------------------------------------------------
+
+    static lastUpdateTime: number = 0;
+
+    static update(gameData: GameData) {
+        if (this.lastUpdateTime == 0) {
+            this.lastUpdateTime = Date.now();
+            return;
+        }
+        let curTime = Date.now();
+        let diff = curTime - this.lastUpdateTime;
+        const INTERVAL = 1000;
+        if (diff >= INTERVAL) {
+            this.lastUpdateTime += INTERVAL;
+            this.doUpdate(gameData, curTime);
+        }
+    }
+
+    static doUpdate(gameData: GameData, curTime: number) {
+        for (const pet of gameData.pets) PetDataTool.update(pet, curTime);
     }
 }

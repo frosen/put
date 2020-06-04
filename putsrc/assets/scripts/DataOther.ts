@@ -14,10 +14,54 @@ import { deepCopy } from './Utils';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { BattleController } from './BattleController';
 
+export enum AmplAttriType {
+    none,
+    exp,
+    money,
+    prvty,
+    reput
+}
+
+const ALL = 'all';
+
 /** 运行时游戏数据 */
 export class GameDataJIT {
-    /** name:attri:data */
-    attriGainAmplDict: { [key: string]: { [key: string]: number } } = {};
+    /** petid:key:attri:data */
+    attriGainAmplDict: { [key: string]: { [key: string]: { [key: number]: number } } } = {};
+
+    addAmpl(pet: Pet, key: string, data: { [key: number]: number }) {
+        let petId = pet ? String(pet.catchIdx) : ALL;
+        if (!this.attriGainAmplDict[petId]) this.attriGainAmplDict[petId] = {};
+        this.attriGainAmplDict[petId][key] = data;
+    }
+
+    removeAmpl(pet: Pet, key: string) {
+        let petId = pet ? String(pet.catchIdx) : ALL;
+        if (this.attriGainAmplDict[petId]) {
+            delete this.attriGainAmplDict[petId][key];
+        }
+    }
+
+    getAmplPercent(pet: Pet, attri: AmplAttriType) {
+        let ampl = 1;
+        let petDataDict = this.attriGainAmplDict[String(pet.catchIdx)];
+        if (petDataDict) {
+            for (const key in petDataDict) {
+                const petData = petDataDict[key];
+                let value = petData[attri];
+                if (value) ampl += value * 0.01;
+            }
+        }
+        let allPetDataDict = this.attriGainAmplDict[ALL];
+        if (allPetDataDict) {
+            for (const key in allPetDataDict) {
+                const petData = allPetDataDict[key];
+                let value = petData[attri];
+                if (value) ampl += value * 0.01;
+            }
+        }
+        return ampl;
+    }
 }
 
 // -----------------------------------------------------------------
@@ -86,7 +130,6 @@ export class Pet2 {
         let lv = pet.lv;
         let rank = pet.rank;
         let bioType = petModel.bioType;
-        let prvty = exPrvty || pet.prvty;
 
         let rankRatio = RankToAttriRatio[rank];
         let fromToRatio = BioToFromToRatio[bioType];
@@ -142,7 +185,7 @@ export class Pet2 {
         this.exBattleTypes = [];
 
         // 其他属性
-        let realPrvty = Math.floor(Math.sqrt(prvty));
+        let realPrvty = PetDataTool.getRealPrvty(pet, exPrvty);
         let prvtyPercent = realPrvty * 0.01;
         this.critRate = prvtyPercent * 0.1;
         this.critDmgRate = 0.5 + prvtyPercent * 0.5;

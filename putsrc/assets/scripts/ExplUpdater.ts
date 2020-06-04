@@ -51,7 +51,7 @@ export class ExplUpdater {
 
         this.memory.addDataListener(this);
         cc.director.getScheduler().scheduleUpdate(this, 0, false);
-        this.lastTime = new Date().getTime();
+        this.lastTime = Date.now();
 
         this.page.ctrlr.debugTool.setShortCut('ww', this.pauseOrResume.bind(this));
         this.page.ctrlr.debugTool.setShortCut('gg', this.goNext.bind(this));
@@ -70,7 +70,7 @@ export class ExplUpdater {
         }
 
         cc.log('PUT 下一步');
-        this.lastTime = new Date().getTime();
+        this.lastTime = Date.now();
         this.updateCount += 1;
         this.onUpdate();
     }
@@ -107,7 +107,7 @@ export class ExplUpdater {
 
     update() {
         if (this.pausing) return;
-        let curTime = new Date().getTime();
+        let curTime = Date.now();
         if (curTime - this.lastTime > 600) {
             this.lastTime = curTime;
             this.updateCount += 1;

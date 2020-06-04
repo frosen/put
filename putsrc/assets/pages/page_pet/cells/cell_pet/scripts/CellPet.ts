@@ -12,6 +12,7 @@ import { petModelDict } from 'configs/PetModelDict';
 import { Pet, PetRankNames, PetStateNames, EleColor } from 'scripts/DataSaved';
 import { PetModel } from 'scripts/DataModel';
 import { featureModelDict } from 'configs/FeatureModelDict';
+import { PetDataTool } from 'scripts/Memory';
 
 export enum CellPetType {
     normal,
@@ -97,7 +98,7 @@ export class CellPet extends ListViewCell {
         switch (this.type) {
             case CellPetType.normal:
             case CellPetType.selection:
-                let realPrvty = Math.floor(Math.sqrt(pet.prvty));
+                let realPrvty = PetDataTool.getRealPrvty(pet);
                 this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
                 index++;
             case CellPetType.catch:

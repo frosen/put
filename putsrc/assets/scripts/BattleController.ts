@@ -200,7 +200,7 @@ export class BattleController {
     }
 
     start(spcBtlId: number = 0) {
-        let seed = new Date().getTime();
+        let seed = Date.now();
         setSeed(seed);
 
         // 更新battle

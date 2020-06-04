@@ -23,6 +23,7 @@ import PagePetDetail from './PagePetDetail';
 import CellPkgEquipBlank from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
+import { PetDataTool } from 'scripts/Memory';
 
 const PETNAME = 'p';
 const ATTRI2 = '2';
@@ -41,7 +42,7 @@ const STATE_TIP = `分为：
 const LV_TIP = '提高等级可以提高属性，增加特性\n10级和30级时可分别学会一个技能';
 const RANK_TIP = '提升可大幅度提高属性\n升阶时需消耗材料和一定默契值';
 const PRVTY_TIP = '数值 0-100 随时间自行提高\n数字越大上升越慢\n可提高基础暴击率，暴击伤害，命中，闪躲';
-const FDRNK_TIP = '饮食llytodo';
+const POTION_TIP = '药剂llytodo';
 
 const BIO_TIP = '分为：\n人形生物 魔法生物\n机械生物 自然生物\n未知生物';
 const ELE_TIP =
@@ -223,8 +224,8 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             cell.setData1('等级', String(pet.lv), LV_TIP);
             cell.setData2('品阶', PetRankNames[pet.rank], RANK_TIP);
         } else if (rowIdx == 2) {
-            cell.setData1('默契值', String(Math.floor(Math.sqrt(pet.prvty))) + '%', PRVTY_TIP);
-            cell.setData2('饮食', '西红柿炒鸡蛋[59min]', FDRNK_TIP);
+            cell.setData1('默契值', String(PetDataTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
+            cell.setData2('药剂', '智慧药剂[59min]', POTION_TIP);
         } else if (rowIdx == 3) {
             let exp: number, expMax: number;
             if (pet.lv >= expModels.length) {

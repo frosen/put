@@ -6,7 +6,7 @@
 
 import { BattleController } from './BattleController';
 import { EleType, BattleType, BioType, Pet } from './DataSaved';
-import { Pet2, BattlePet, BattleBuff } from './DataOther';
+import { Pet2, BattlePet, BattleBuff, AmplAttriType } from './DataOther';
 
 // -----------------------------------------------------------------
 
@@ -136,27 +136,19 @@ export class PetModel {
 
 // -----------------------------------------------------------------
 
-export enum FdrnkAttriType {
-    none,
-    exp,
-    money,
-    prvty,
-    reput
-}
-
-export enum FdrnkAimType {
+export enum PotionAimType {
     none,
     one,
     all
 }
 
-export class FdrnkModel {
+export class PotionModel {
     id: string;
     cnName: string;
     lv: string;
-    attri: FdrnkAttriType;
+    attri: AmplAttriType;
     percent: number;
-    aim: FdrnkAimType;
+    aim: PotionAimType;
 }
 
 export enum EquipPosType {
