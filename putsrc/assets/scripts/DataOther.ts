@@ -14,6 +14,14 @@ import { deepCopy } from './Utils';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { BattleController } from './BattleController';
 
+/** 运行时游戏数据 */
+export class GameDataJIT {
+    /** name:attri:data */
+    attriGainAmplDict: { [key: string]: { [key: string]: number } } = {};
+}
+
+// -----------------------------------------------------------------
+
 const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
 const BioToFromToRatio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
 
@@ -72,13 +80,13 @@ export class Pet2 {
 
     skillIds: string[];
 
-    setData(pet: Pet, exEquipTokens: string[] = null, exPrivity: number = null) {
+    setData(pet: Pet, exEquipTokens: string[] = null, exPrvty: number = null) {
         let petModel: PetModel = petModelDict[pet.id];
 
         let lv = pet.lv;
         let rank = pet.rank;
         let bioType = petModel.bioType;
-        let privity = exPrivity || pet.privity;
+        let prvty = exPrvty || pet.prvty;
 
         let rankRatio = RankToAttriRatio[rank];
         let fromToRatio = BioToFromToRatio[bioType];
@@ -134,12 +142,12 @@ export class Pet2 {
         this.exBattleTypes = [];
 
         // 其他属性
-        let realPrivity = Math.floor(Math.sqrt(privity));
-        let privityPercent = realPrivity * 0.01;
-        this.critRate = privityPercent * 0.1;
-        this.critDmgRate = 0.5 + privityPercent * 0.5;
-        this.evdRate = 0.05 + privityPercent * 0.05;
-        this.hitRate = 0.8 + privityPercent * 0.2;
+        let realPrvty = Math.floor(Math.sqrt(prvty));
+        let prvtyPercent = realPrvty * 0.01;
+        this.critRate = prvtyPercent * 0.1;
+        this.critDmgRate = 0.5 + prvtyPercent * 0.5;
+        this.evdRate = 0.05 + prvtyPercent * 0.05;
+        this.hitRate = 0.8 + prvtyPercent * 0.2;
         this.dfsRate = 0;
 
         // 特性加成

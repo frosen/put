@@ -40,8 +40,8 @@ const STATE_TIP = `分为：
 
 const LV_TIP = '提高等级可以提高属性，增加特性\n10级和30级时可分别学会一个技能';
 const RANK_TIP = '提升可大幅度提高属性\n升阶时需消耗材料和一定默契值';
-const PRIVITY_TIP = '数值 0-100 随时间自行提高\n数字越大上升越慢\n可提高基础暴击率，暴击伤害，命中，闪躲';
-const DIET_TIP = '饮食llytodo';
+const PRVTY_TIP = '数值 0-100 随时间自行提高\n数字越大上升越慢\n可提高基础暴击率，暴击伤害，命中，闪躲';
+const FDRNK_TIP = '饮食llytodo';
 
 const BIO_TIP = '分为：\n人形生物 魔法生物\n机械生物 自然生物\n未知生物';
 const ELE_TIP =
@@ -223,8 +223,8 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             cell.setData1('等级', String(pet.lv), LV_TIP);
             cell.setData2('品阶', PetRankNames[pet.rank], RANK_TIP);
         } else if (rowIdx == 2) {
-            cell.setData1('默契值', String(Math.floor(Math.sqrt(pet.privity))) + '%', PRIVITY_TIP);
-            cell.setData2('饮食', '西红柿炒鸡蛋[59min]', DIET_TIP);
+            cell.setData1('默契值', String(Math.floor(Math.sqrt(pet.prvty))) + '%', PRVTY_TIP);
+            cell.setData2('饮食', '西红柿炒鸡蛋[59min]', FDRNK_TIP);
         } else if (rowIdx == 3) {
             let exp: number, expMax: number;
             if (pet.lv >= expModels.length) {

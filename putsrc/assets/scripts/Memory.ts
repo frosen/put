@@ -98,6 +98,10 @@ export class Memory {
 
     init() {
         GameDataTool.init(this.gameData);
+
+        // 恢复历史数据
+
+        // 整理历史数据
         this.test();
     }
 
@@ -148,7 +152,7 @@ export class Memory {
 
         GameDataTool.addPet(this.gameData, 'FaTiaoWa', 20, 4, [], (pet: Pet) => {
             pet.state = PetState.ready;
-            pet.privity = 100;
+            pet.prvty = 100;
         });
 
         GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 31, 2, [], (pet: Pet) => {
@@ -222,8 +226,8 @@ export class PetDataTool {
         pet.lv = lv;
         pet.rank = rank;
 
-        pet.privity = 0;
-        pet.privityChangedTime = pet.catchTime;
+        pet.prvty = 0;
+        pet.prvtyChangedTime = pet.catchTime;
 
         pet.learningType = '';
         pet.learingValue = 0;
@@ -549,7 +553,7 @@ export class GameDataTool {
                 }
             }
             gameData.weight--;
-        } else if (curItem.itemType == ItemType.cnsum) {
+        } else {
             // 根据cnsum的数量减少重量
         }
 
@@ -651,7 +655,7 @@ export class GameDataTool {
             selfPetMmr.rank = pet.rank;
             selfPetMmr.state = pet.state;
             selfPetMmr.lndFchrLen = pet.learnedFeatures.length;
-            selfPetMmr.privity = pet.privity;
+            selfPetMmr.prvty = pet.prvty;
             let tokens = [];
             for (const equip of pet.equips) tokens.push(EquipDataTool.getToken(equip));
             selfPetMmr.eqpTokens = newList(tokens);

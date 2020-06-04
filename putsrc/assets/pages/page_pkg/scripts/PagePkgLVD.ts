@@ -18,7 +18,7 @@ type CellPkg = CellPkgMoney & CellPkgEquip;
 type DataPkg = Money & Equip;
 
 let MONEY = 'M';
-let CNSUM = 'C';
+let FDRNK = 'F';
 let EQUIP = 'E';
 
 @ccclass
@@ -49,8 +49,8 @@ export default class PagePkgLVD extends ListViewDelegate {
         switch (this.curItems[this.curItemIdxs[rowIdx]].itemType) {
             case ItemType.money:
                 return MONEY;
-            case ItemType.cnsum:
-                return CNSUM;
+            case ItemType.fdrnk:
+                return FDRNK;
             case ItemType.equip:
                 return EQUIP;
         }
@@ -60,7 +60,7 @@ export default class PagePkgLVD extends ListViewDelegate {
         switch (cellId) {
             case MONEY:
                 return cc.instantiate(this.cellPkgMoneyPrefab).getComponent(CellPkgMoney);
-            case CNSUM:
+            case FDRNK:
                 return null;
             case EQUIP:
                 let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);

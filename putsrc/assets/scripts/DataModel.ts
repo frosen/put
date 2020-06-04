@@ -136,6 +136,29 @@ export class PetModel {
 
 // -----------------------------------------------------------------
 
+export enum FdrnkAttriType {
+    none,
+    exp,
+    money,
+    prvty,
+    reput
+}
+
+export enum FdrnkAimType {
+    none,
+    one,
+    all
+}
+
+export class FdrnkModel {
+    id: string;
+    cnName: string;
+    lv: string;
+    attri: FdrnkAttriType;
+    percent: number;
+    aim: FdrnkAimType;
+}
+
 export enum EquipPosType {
     none,
     weapon = 1,

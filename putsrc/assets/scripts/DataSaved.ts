@@ -84,8 +84,8 @@ export class Pet {
     rank: number;
 
     /** 默契值 */
-    privity: number;
-    privityChangedTime: number;
+    prvty: number;
+    prvtyChangedTime: number;
 
     /** 学习类型 */
     learningType: string;
@@ -108,7 +108,7 @@ export class Pet {
 
 export enum ItemType {
     money = 1,
-    cnsum = 9, // 消耗品
+    fdrnk = 9, // 消耗品
     equip = 18
 }
 
@@ -117,12 +117,17 @@ export class Item {
     itemType: ItemType;
 }
 
-export class Money extends Item {
+export class Cnsum extends Item {
     count: number;
 }
 
-export class Cnsum extends Item {
-    count: number;
+export class Money extends Cnsum {}
+
+export const FdrnkRankAttri = [0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+export const FdrnkRankDuraH = [0, 2, 3, 4, 4.5, 5, 5.5, 6, 8, 10, 12, 18];
+
+export class Fdrnk extends Cnsum {
+    rank: number; // 增加持续时间，并轻微提升效果
 }
 
 export class Equip extends Item {
@@ -157,7 +162,7 @@ export class SelfPetMmr {
     rank: number;
     state: number;
     lndFchrLen: number;
-    privity: number;
+    prvty: number;
     eqpTokens: string[];
 }
 

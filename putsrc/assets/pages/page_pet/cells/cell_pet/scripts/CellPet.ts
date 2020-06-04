@@ -97,8 +97,8 @@ export class CellPet extends ListViewCell {
         switch (this.type) {
             case CellPetType.normal:
             case CellPetType.selection:
-                let realPrivity = Math.floor(Math.sqrt(pet.privity));
-                this.setInfoNode(index, `默契值：${realPrivity}`, cc.color(100, 50 + realPrivity, 100));
+                let realPrvty = Math.floor(Math.sqrt(pet.prvty));
+                this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
                 index++;
             case CellPetType.catch:
                 for (const feature of pet.inbornFeatures) {
