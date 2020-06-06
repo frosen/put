@@ -136,19 +136,21 @@ export class PetModel {
 
 // -----------------------------------------------------------------
 
-export enum PotionAimType {
+export enum DrinkAimType {
     none,
     one,
     all
 }
 
-export class PotionModel {
+export class DrinkModel {
     id: string;
     cnName: string;
-    lv: string;
-    attri: AmplAttriType;
-    percent: number;
-    aim: PotionAimType;
+    lv: number;
+    mainAttri: AmplAttriType;
+    mainPercent: number;
+    subAttri: AmplAttriType;
+    subPercent: number;
+    aim: DrinkAimType;
 }
 
 export enum EquipPosType {

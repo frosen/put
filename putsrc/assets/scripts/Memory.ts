@@ -22,15 +22,17 @@ import {
     Money,
     PetEquipCountMax,
     PrvtyMax,
-    PotionRankDuraH,
-    Potion
+    DrinkRankDuraH,
+    Drink,
+    DrinkRankAttri
 } from './DataSaved';
-import { FeatureModel, PetModel, EquipPosType, EquipModel, PotionModel } from './DataModel';
+import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { random, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
 import { GameDataJIT, AmplAttriType } from './DataOther';
+import { drinkModels } from 'configs/DrinkModels';
 
 let memoryDirtyToken: number = -1;
 
@@ -238,8 +240,8 @@ export class PetDataTool {
         pet.prvty = 0;
         pet.prvtyTime = pet.catchTime;
 
-        pet.potion = null;
-        pet.potionTime = 0;
+        pet.drink = null;
+        pet.drinkTime = 0;
 
         pet.exp = 0;
 
@@ -309,14 +311,42 @@ export class PetDataTool {
         return Math.floor(Math.sqrt(r * 0.01));
     }
 
-    static addPotion(pet: Pet, potion: Potion, time: number = null) {
-        pet.potion = potion;
-        pet.potionTime = time || Date.now();
-        let potionModel: PotionModel = null;
-        这里;
+    static addDrink(pet: Pet, drink: Drink, curTime: number = null) {
+        pet.drink = drink;
+        pet.drinkTime = curTime || Date.now();
+        let drinkModel: DrinkModel = drinkModels[drink.id];
+
+        // @ts-ignore
+        let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
+
+        let data = {};
+        data[drinkModel.mainAttri] = drinkModel.mainPercent + DrinkRankAttri[drink.rank];
+        if (drinkModel.subAttri) {
+            data[drinkModel.subAttri] = drinkModel.subPercent + DrinkRankAttri[drink.rank];
+        }
+
+        if (drinkModel.aim == DrinkAimType.one) {
+            gameDataJIT.addAmpl(pet, drinkModel.id, data);
+        } else {
+            gameDataJIT.addAmpl(null, `${pet.catchIdx}_${drinkModel.id}`, data);
+        }
     }
 
-    static clearPotion(pet: Pet) {}
+    static clearDrink(pet: Pet) {
+        let drink = pet.drink;
+        let drinkModel: DrinkModel = drinkModels[drink.id];
+        // @ts-ignore
+        let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
+
+        if (drinkModel.aim == DrinkAimType.one) {
+            gameDataJIT.removeAmpl(pet, drinkModel.id);
+        } else {
+            gameDataJIT.removeAmpl(null, `${pet.catchIdx}_${drinkModel.id}`);
+        }
+
+        pet.drink = null;
+        pet.drinkTime = 0;
+    }
 
     // -----------------------------------------------------------------
 
@@ -324,19 +354,21 @@ export class PetDataTool {
         if (pet.prvty < PrvtyMax) {
             // 默契值 10min1点(10 * 60 * 1000)
             if (curTime - pet.prvtyTime >= 600000) {
-                // @ts-ignore
-                let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
-                pet.prvty += 100 * gameDataJIT.getAmplPercent(pet, AmplAttriType.prvty);
-                pet.prvty = Math.min(pet.prvty, PrvtyMax);
+                if (pet.state == PetState.ready || pet.state == PetState.rest) {
+                    // @ts-ignore
+                    let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
+                    pet.prvty += 100 * gameDataJIT.getAmplPercent(pet, AmplAttriType.prvty);
+                    pet.prvty = Math.min(pet.prvty, PrvtyMax);
+                }
                 pet.prvtyTime = curTime;
             }
         }
 
-        if (pet.potion) {
-            let rank = pet.potion.rank;
-            let duration = PotionRankDuraH[rank] * 60 * 60 * 1000;
-            if (curTime - pet.potionTime >= duration) {
-                this.clearPotion(pet);
+        if (pet.drink) {
+            let rank = pet.drink.rank;
+            let duration = DrinkRankDuraH[rank] * 60 * 60 * 1000;
+            if (curTime - pet.drinkTime >= duration) {
+                this.clearDrink(pet);
             }
         }
     }

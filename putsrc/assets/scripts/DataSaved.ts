@@ -89,8 +89,8 @@ export class Pet {
     prvtyTime: number;
 
     /** 当前食物 */
-    potion: Potion;
-    potionTime: number;
+    drink: Drink;
+    drinkTime: number;
 
     /** 当前经验 */
     exp: number;
@@ -108,7 +108,7 @@ export class Pet {
 
 export enum ItemType {
     money = 1,
-    potion = 9, // 消耗品
+    drink = 9, // 消耗品
     equip = 18
 }
 
@@ -123,10 +123,10 @@ export class Cnsum extends Item {
 
 export class Money extends Cnsum {}
 
-export const PotionRankAttri = [0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-export const PotionRankDuraH = [0, 2, 3, 4, 4.5, 5, 5.5, 6, 8, 10, 12, 18];
+export const DrinkRankAttri = [0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+export const DrinkRankDuraH = [0, 2, 3, 4, 4.5, 5, 5.5, 6, 8, 10, 12, 18];
 
-export class Potion extends Cnsum {
+export class Drink extends Cnsum {
     rank: number; // 增加持续时间，并轻微提升效果
 }
 
