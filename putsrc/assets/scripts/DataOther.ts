@@ -14,6 +14,7 @@ import { deepCopy } from './Utils';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { BattleController } from './BattleController';
 
+export const AmplAttriNames = ['', '经验', '货币', '默契', '声望'];
 export enum AmplAttriType {
     none,
     exp,

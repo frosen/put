@@ -9,13 +9,14 @@ const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
-import { Item, ItemType, Money, Equip, Cnsum, CnsumType } from 'scripts/DataSaved';
+import { Item, ItemType, Money, Equip, Cnsum, CnsumType, Drink } from 'scripts/DataSaved';
+import PagePkg from './PagePkg';
 import CellPkgMoney from '../cells/cell_pkg_money/scripts/CellPkgMoney';
 import { CellPkgEquip, CellPkgEquipType } from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
-import PagePkg from './PagePkg';
+import { CellPkgDrink } from '../cells/cell_pkg_drink/scripts/CellPkgDrink';
 
-type CellPkg = CellPkgMoney & CellPkgEquip;
-type DataPkg = Money & Equip;
+type CellPkg = CellPkgMoney & CellPkgDrink & CellPkgEquip;
+type DataPkg = Money & Drink & Equip;
 
 let MONEY = 'M';
 let DRINK = 'D';
@@ -27,7 +28,7 @@ export default class PagePkgLVD extends ListViewDelegate {
     cellPkgMoneyPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
-    cellPkgCnsumPrefab: cc.Prefab = null;
+    cellPkgDrinkPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
     cellPkgEquipPrefab: cc.Prefab = null;
@@ -63,14 +64,19 @@ export default class PagePkgLVD extends ListViewDelegate {
         switch (cellId) {
             case MONEY:
                 return cc.instantiate(this.cellPkgMoneyPrefab).getComponent(CellPkgMoney);
-            case DRINK:
-                return null;
-            case EQUIP:
+            case DRINK: {
+                let cell = cc.instantiate(this.cellPkgDrinkPrefab).getComponent(CellPkgDrink);
+                cell.clickCallback = this.page.onCellClick.bind(this.page);
+                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+                return cell;
+            }
+            case EQUIP: {
                 let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
                 cell.init(CellPkgEquipType.normal);
                 cell.clickCallback = this.page.onCellClick.bind(this.page);
                 cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
                 return cell;
+            }
         }
     }
 

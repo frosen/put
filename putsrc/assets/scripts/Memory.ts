@@ -194,7 +194,7 @@ export class Memory {
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
 
-        GameDataTool.addCnsum(this.gameData, 'LingGanYaoJi', CnsumType.drink, 2);
+        GameDataTool.addCnsum(this.gameData, 'LingGanYaoJi1', CnsumType.drink, 2);
     }
 }
 
@@ -438,9 +438,12 @@ export class EquipDataTool {
 }
 
 export class DrinkDataTool {
-    static create(id: string): Drink {
+    static create(id: string, count: number = 1): Drink {
         let drink = newInsWithChecker(Drink);
         drink.id = id;
+        drink.itemType = ItemType.cnsum;
+        drink.cnsumType = CnsumType.drink;
+        drink.count = count;
         return drink;
     }
 }
@@ -580,7 +583,7 @@ export class GameDataTool {
         callback: (cnsum: Cnsum) => void = null
     ): string {
         if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
-        gameData.weight++;
+        gameData.weight += count;
 
         let itemIdx: number = -1;
         for (let index = 0; index < gameData.items.length; index++) {
@@ -595,9 +598,8 @@ export class GameDataTool {
         if (itemIdx == -1) {
             let realCnsum: Cnsum;
             if (cnsumType == CnsumType.drink) {
-                realCnsum = DrinkDataTool.create(cnsumId);
+                realCnsum = DrinkDataTool.create(cnsumId, count);
             }
-            realCnsum.count = count;
             gameData.items.push(realCnsum);
             if (callback) callback(realCnsum);
         } else {
@@ -631,7 +633,7 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static deleteItem(gameData: GameData, index: number): string {
+    static deleteItem(gameData: GameData, index: number, count: number = 1): string {
         if (index < 0 || gameData.items.length <= index) return '索引错误';
         if (index == 0) return '货币项目不可删除';
 
@@ -645,12 +647,22 @@ export class GameDataTool {
                     }
                 }
             }
-            gameData.weight--;
-        } else {
+            gameData.items.splice(index, 1);
+        } else if (curItem.itemType == ItemType.cnsum) {
             // 根据cnsum的数量减少重量
+            let cnsum = curItem as Cnsum;
+            if (cnsum.count < count) {
+                return '删除数量大于实际数量';
+            } else if (cnsum.count == count) {
+                gameData.items.splice(index, 1);
+            } else if (cnsum.count > count) {
+                cnsum.count -= count;
+            }
+        } else {
+            return '类型错误';
         }
 
-        gameData.items.splice(index, 1);
+        gameData.weight -= count;
         return this.SUC;
     }
 

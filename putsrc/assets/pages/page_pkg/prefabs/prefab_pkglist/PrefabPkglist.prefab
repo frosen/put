@@ -618,9 +618,11 @@
     "cellPkgMoneyPrefab": {
       "__uuid__": "10f213dd-0093-4073-a834-f364b4079bab"
     },
-    "cellPkgCnsumPrefab": null,
-    "cellPkgEquipPrefab": {
+    "cellPkgDrinkPrefab": {
       "__uuid__": "d6eb18f8-4afe-48aa-8a1a-94199e9501c0"
+    },
+    "cellPkgEquipPrefab": {
+      "__uuid__": "e7956d4d-39b5-4382-ba28-e980fa49291a"
     },
     "_id": ""
   },
