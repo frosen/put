@@ -108,7 +108,7 @@ export class Pet {
 
 export enum ItemType {
     money = 1,
-    drink = 9, // 消耗品
+    cnsum = 9, // 消耗品
     equip = 18
 }
 
@@ -117,18 +117,20 @@ export class Item {
     itemType: ItemType;
 }
 
+export class Money extends Item {
+    sum: number;
+}
+
+export enum CnsumType {
+    drink = 1
+}
+
 export class Cnsum extends Item {
     count: number;
+    cnsumType: CnsumType;
 }
 
-export class Money extends Cnsum {}
-
-export const DrinkRankAttri = [0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-export const DrinkRankDuraH = [0, 2, 3, 4, 4.5, 5, 5.5, 6, 8, 10, 12, 18];
-
-export class Drink extends Cnsum {
-    rank: number; // 增加持续时间，并轻微提升效果
-}
+export class Drink extends Cnsum {}
 
 export class Equip extends Item {
     skillId: string;

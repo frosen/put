@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
-import { Item, ItemType, Money, Equip } from 'scripts/DataSaved';
+import { Item, ItemType, Money, Equip, Cnsum, CnsumType } from 'scripts/DataSaved';
 import CellPkgMoney from '../cells/cell_pkg_money/scripts/CellPkgMoney';
 import { CellPkgEquip, CellPkgEquipType } from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
 import PagePkg from './PagePkg';
@@ -46,11 +46,14 @@ export default class PagePkgLVD extends ListViewDelegate {
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        switch (this.curItems[this.curItemIdxs[rowIdx]].itemType) {
+        let item = this.curItems[this.curItemIdxs[rowIdx]];
+        switch (item.itemType) {
             case ItemType.money:
                 return MONEY;
-            case ItemType.drink:
-                return DRINK;
+            case ItemType.cnsum: {
+                let cnsumType = (item as Cnsum).cnsumType;
+                if (cnsumType == CnsumType.drink) return DRINK;
+            }
             case ItemType.equip:
                 return EQUIP;
         }

@@ -22,9 +22,10 @@ import {
     Money,
     PetEquipCountMax,
     PrvtyMax,
-    DrinkRankDuraH,
     Drink,
-    DrinkRankAttri
+    Item,
+    Cnsum,
+    CnsumType
 } from './DataSaved';
 import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
@@ -164,6 +165,7 @@ export class Memory {
         GameDataTool.addPet(this.gameData, 'FaTiaoWa', 20, 4, [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 10000;
+            pet.equips[0] = EquipDataTool.createRandom(15, 20);
         });
 
         GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 31, 2, [], (pet: Pet) => {
@@ -174,7 +176,7 @@ export class Memory {
             pet.state = PetState.ready;
         });
 
-        GameDataTool.handleMoney(this.gameData, money => (money.count += 15643351790));
+        GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
 
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
@@ -191,6 +193,8 @@ export class Memory {
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
+
+        GameDataTool.addCnsum(this.gameData, 'LingGanYaoJi', CnsumType.drink, 2);
     }
 }
 
@@ -309,68 +313,6 @@ export class PetDataTool {
     static getRealPrvty(pet: Pet, exPrvty: number = null) {
         let r = exPrvty == null ? pet.prvty : exPrvty;
         return Math.floor(Math.sqrt(r * 0.01));
-    }
-
-    static addDrink(pet: Pet, drink: Drink, curTime: number = null) {
-        pet.drink = drink;
-        pet.drinkTime = curTime || Date.now();
-        let drinkModel: DrinkModel = drinkModels[drink.id];
-
-        // @ts-ignore
-        let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
-
-        let data = {};
-        data[drinkModel.mainAttri] = drinkModel.mainPercent + DrinkRankAttri[drink.rank];
-        if (drinkModel.subAttri) {
-            data[drinkModel.subAttri] = drinkModel.subPercent + DrinkRankAttri[drink.rank];
-        }
-
-        if (drinkModel.aim == DrinkAimType.one) {
-            gameDataJIT.addAmpl(pet, drinkModel.id, data);
-        } else {
-            gameDataJIT.addAmpl(null, `${pet.catchIdx}_${drinkModel.id}`, data);
-        }
-    }
-
-    static clearDrink(pet: Pet) {
-        let drink = pet.drink;
-        let drinkModel: DrinkModel = drinkModels[drink.id];
-        // @ts-ignore
-        let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
-
-        if (drinkModel.aim == DrinkAimType.one) {
-            gameDataJIT.removeAmpl(pet, drinkModel.id);
-        } else {
-            gameDataJIT.removeAmpl(null, `${pet.catchIdx}_${drinkModel.id}`);
-        }
-
-        pet.drink = null;
-        pet.drinkTime = 0;
-    }
-
-    // -----------------------------------------------------------------
-
-    static update(pet: Pet, curTime: number) {
-        if (pet.prvty < PrvtyMax) {
-            // 默契值 10min1点(10 * 60 * 1000)
-            if (curTime - pet.prvtyTime >= 600000) {
-                if (pet.state == PetState.ready || pet.state == PetState.rest) {
-                    // @ts-ignore
-                    let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
-                    pet.prvty += 100 * gameDataJIT.getAmplPercent(pet, AmplAttriType.prvty);
-                    pet.prvty = Math.min(pet.prvty, PrvtyMax);
-                }
-                pet.prvtyTime = curTime;
-            }
-        }
-
-        if (pet.drink) {
-            let rank = pet.drink.rank;
-            let duration = DrinkRankDuraH[rank] * 60 * 60 * 1000;
-            if (curTime - pet.drinkTime >= duration) {
-                this.clearDrink(pet);
-            }
-        }
     }
 }
 
@@ -495,6 +437,14 @@ export class EquipDataTool {
     }
 }
 
+export class DrinkDataTool {
+    static create(id: string): Drink {
+        let drink = newInsWithChecker(Drink);
+        drink.id = id;
+        return drink;
+    }
+}
+
 export class ActPosDataTool {
     static create(posId: string): ActPos {
         let actPos = newInsWithChecker(ActPos);
@@ -514,7 +464,7 @@ export class GameDataTool {
         let money = newInsWithChecker(Money);
         money.id = 'money';
         money.itemType = ItemType.money;
-        money.count = 0;
+        money.sum = 0;
         gameData.items.push(money);
 
         gameData.weight = 0;
@@ -576,12 +526,87 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
-    static handleMoney(gameData: GameData, callback: (money: Money) => void) {
-        callback(gameData.items[0] as Money);
+    static addPetDrink(pet: Pet, drink: Drink, curTime: number = null): string {
+        let drinkModel: DrinkModel = drinkModels[drink.id];
+
+        if (pet.drinkTime > 0) {
+            if (Date.now() - pet.drinkTime < 10 * 60 * 1000) return '10分钟内不能重复使用饮品';
+        }
+
+        if (pet.lv > drinkModel.lv) return `${drinkModel.cnName}不能作用于等级高于${drinkModel.lv}的宠物`;
+
+        pet.drink = drink;
+        pet.drinkTime = curTime || Date.now();
+
+        // @ts-ignore
+        let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
+
+        let data = {};
+        data[drinkModel.mainAttri] = drinkModel.mainPercent;
+        if (drinkModel.subAttri) data[drinkModel.subAttri] = drinkModel.subPercent;
+
+        if (drinkModel.aim == DrinkAimType.one) {
+            gameDataJIT.addAmpl(pet, drinkModel.id, data);
+        } else {
+            gameDataJIT.addAmpl(null, `${pet.catchIdx}_${drinkModel.id}`, data);
+        }
+
+        return this.SUC;
     }
 
-    static getMoney(gameData: GameData) {
-        return (gameData.items[0] as Money).count;
+    static clearPetDrink(pet: Pet) {
+        let drink = pet.drink;
+        let drinkModel: DrinkModel = drinkModels[drink.id];
+        // @ts-ignore
+        let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
+
+        if (drinkModel.aim == DrinkAimType.one) {
+            gameDataJIT.removeAmpl(pet, drinkModel.id);
+        } else {
+            gameDataJIT.removeAmpl(null, `${pet.catchIdx}_${drinkModel.id}`);
+        }
+
+        pet.drink = null;
+        pet.drinkTime = 0;
+    }
+
+    // -----------------------------------------------------------------
+
+    static addCnsum(
+        gameData: GameData,
+        cnsumId: string,
+        cnsumType: CnsumType,
+        count: number = 1,
+        callback: (cnsum: Cnsum) => void = null
+    ): string {
+        if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+        gameData.weight++;
+
+        let itemIdx: number = -1;
+        for (let index = 0; index < gameData.items.length; index++) {
+            const itemInList = gameData.items[index];
+            if (itemInList.itemType != ItemType.cnsum) continue;
+            if (itemInList.id == cnsumId) {
+                itemIdx = index;
+                break;
+            }
+        }
+
+        if (itemIdx == -1) {
+            let realCnsum: Cnsum;
+            if (cnsumType == CnsumType.drink) {
+                realCnsum = DrinkDataTool.create(cnsumId);
+            }
+            realCnsum.count = count;
+            gameData.items.push(realCnsum);
+            if (callback) callback(realCnsum);
+        } else {
+            let cnsumInList = gameData.items[itemIdx] as Cnsum;
+            cnsumInList.count += count;
+            if (callback) callback(cnsumInList);
+        }
+
+        return this.SUC;
     }
 
     static addEquip(gameData: GameData, equip: Equip, callback: (equip: Equip) => void = null): string {
@@ -606,16 +631,6 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static moveEquipInPetList(gameData: GameData, pet: Pet, from: number, to: number): string {
-        let equips = pet.equips;
-        if (from < 0 || equips.length <= from || to < 0 || equips.length <= to) return '请勿把项目移出列表范围';
-
-        let equip = equips[from];
-        equips.splice(from, 1);
-        equips.splice(to, 0, equip);
-        return this.SUC;
-    }
-
     static deleteItem(gameData: GameData, index: number): string {
         if (index < 0 || gameData.items.length <= index) return '索引错误';
         if (index == 0) return '货币项目不可删除';
@@ -637,6 +652,14 @@ export class GameDataTool {
 
         gameData.items.splice(index, 1);
         return this.SUC;
+    }
+
+    static handleMoney(gameData: GameData, callback: (money: Money) => void) {
+        callback(gameData.items[0] as Money);
+    }
+
+    static getMoney(gameData: GameData) {
+        return (gameData.items[0] as Money).sum;
     }
 
     static UNWIELD: number = -666;
@@ -699,6 +722,16 @@ export class GameDataTool {
         // llytodo
         gameData.totalEquipCount++;
         equip.catchIdx = gameData.totalEquipCount;
+        return this.SUC;
+    }
+
+    static moveEquipInPetList(gameData: GameData, pet: Pet, from: number, to: number): string {
+        let equips = pet.equips;
+        if (from < 0 || equips.length <= from || to < 0 || equips.length <= to) return '请勿把项目移出列表范围';
+
+        let equip = equips[from];
+        equips.splice(from, 1);
+        equips.splice(to, 0, equip);
         return this.SUC;
     }
 
@@ -800,7 +833,7 @@ export class GameDataTool {
         }
         let curTime = Date.now();
         let diff = curTime - this.lastUpdateTime;
-        const INTERVAL = 1000;
+        const INTERVAL = 60000;
         if (diff >= INTERVAL) {
             this.lastUpdateTime += INTERVAL;
             this.doUpdate(gameData, curTime);
@@ -808,6 +841,27 @@ export class GameDataTool {
     }
 
     static doUpdate(gameData: GameData, curTime: number) {
-        for (const pet of gameData.pets) PetDataTool.update(pet, curTime);
+        for (const pet of gameData.pets) this.updatePet(pet, curTime);
+    }
+
+    static updatePet(pet: Pet, curTime: number) {
+        if (pet.prvty < PrvtyMax) {
+            // 默契值 10min1点(10 * 60 * 1000)
+            if (curTime - pet.prvtyTime >= 600000) {
+                if (pet.state == PetState.ready || pet.state == PetState.rest) {
+                    // @ts-ignore
+                    let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
+                    pet.prvty += 100 * gameDataJIT.getAmplPercent(pet, AmplAttriType.prvty);
+                    pet.prvty = Math.min(pet.prvty, PrvtyMax);
+                }
+                pet.prvtyTime = curTime;
+            }
+        }
+
+        if (pet.drink) {
+            if (curTime - pet.drinkTime >= drinkModels[pet.drink.id].dura) {
+                this.clearPetDrink(pet);
+            }
+        }
     }
 }

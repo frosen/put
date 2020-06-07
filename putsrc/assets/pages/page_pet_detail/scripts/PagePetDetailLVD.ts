@@ -23,7 +23,8 @@ import PagePetDetail from './PagePetDetail';
 import CellPkgEquipBlank from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
-import { PetDataTool } from 'scripts/Memory';
+import { PetDataTool, DrinkDataTool } from 'scripts/Memory';
+import { drinkModels } from 'configs/DrinkModels';
 
 const PETNAME = 'p';
 const ATTRI2 = '2';
@@ -225,12 +226,19 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             cell.setData2('品阶', PetRankNames[pet.rank], RANK_TIP);
         } else if (rowIdx == 2) {
             cell.setData1('默契值', String(PetDataTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
-            cell.setData2('饮品', '智慧药剂[59min]', DRINK_TIP);
+            let drinkStr: string;
+            if (pet.drink) {
+                let drinkModel = drinkModels[pet.drink.id];
+                let endTime = pet.drinkTime + drinkModel.dura;
+                let leftMins = Math.floor(endTime - Date.now() / 1000 / 60);
+                drinkStr = `${drinkModel.cnName}[${leftMins >= 1 ? leftMins : '<1'}min]`;
+            } else drinkStr = '无';
+            cell.setData2('饮品', drinkStr, DRINK_TIP);
         } else if (rowIdx == 3) {
             let exp: number, expMax: number;
             if (pet.lv >= expModels.length) {
-                exp = 0;
-                expMax = 0;
+                exp = 1;
+                expMax = 1;
             } else {
                 exp = pet.exp;
                 expMax = expModels[pet.lv];

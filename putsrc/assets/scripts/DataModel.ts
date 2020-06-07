@@ -146,11 +146,13 @@ export class DrinkModel {
     id: string;
     cnName: string;
     lv: number;
+    rank: number;
     mainAttri: AmplAttriType;
     mainPercent: number;
     subAttri: AmplAttriType;
     subPercent: number;
     aim: DrinkAimType;
+    dura: number;
 }
 
 export enum EquipPosType {
