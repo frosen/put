@@ -5,7 +5,7 @@
  */
 
 import { PetDataTool, EquipDataTool } from './Memory';
-import { FeatureModel, PetModel, SkillModel, SkillType, EquipModel, SkillDirType, SkillAimtype } from './DataModel';
+import { FeatureModel, PetModel, SkillModel, SkillType, SkillDirType, SkillAimtype, DrinkModel, DrinkAimType } from './DataModel';
 import { BioType, EleType, BattleType, Pet, EleTypeNames } from './DataSaved';
 
 import { petModelDict } from 'configs/PetModelDict';
@@ -29,6 +29,18 @@ const ALL = 'all';
 export class GameDataJIT {
     /** petid:key:attri:data */
     attriGainAmplDict: { [key: string]: { [key: string]: { [key: number]: number } } } = {};
+
+    addAmplByDrink(pet: Pet, drinkModel: DrinkModel) {
+        let data = {};
+        data[drinkModel.mainAttri] = drinkModel.mainPercent;
+        if (drinkModel.subAttri) data[drinkModel.subAttri] = drinkModel.subPercent;
+
+        if (drinkModel.aim == DrinkAimType.one) {
+            this.addAmpl(pet, drinkModel.id, data);
+        } else {
+            this.addAmpl(null, `${pet.catchIdx}_${drinkModel.id}`, data);
+        }
+    }
 
     addAmpl(pet: Pet, key: string, data: { [key: number]: number }) {
         let petId = pet ? String(pet.catchIdx) : ALL;

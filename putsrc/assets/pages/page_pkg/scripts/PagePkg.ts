@@ -9,11 +9,13 @@ const { ccclass, property } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import ListView from 'scripts/ListView';
 import PagePkgLVD from './PagePkgLVD';
-import { Item, ItemType } from 'scripts/DataSaved';
+import { Item, ItemType, Cnsum, CnsumType, Pet } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import ListViewCell from 'scripts/ListViewCell';
 import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
+import PagePet from 'pages/page_pet/scripts/PagePet';
+import { CellPetType } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 
 const LIST_NAMES = ['全部', '装备'];
 const WIDTH = 1080;
@@ -154,6 +156,19 @@ export default class PagePkg extends PageBase {
         // llytodo
         if (item.itemType == ItemType.equip) {
             this.ctrlr.pushPage(PagePkgEquip, { idx: cellIdx });
+        } else if (item.itemType == ItemType.cnsum) {
+            let cnsum = item as Cnsum;
+            if (cnsum.cnsumType == CnsumType.drink) {
+                this.ctrlr.pushPage(PagePet, {
+                    cellPetType: CellPetType.selection,
+                    name: '选择宠物',
+                    callback: (cellIdx: number, curPet: Pet) => {
+                        let rzt = GameDataTool.useDrinkToPet(this.ctrlr.memory.gameData, curPet, cnsum);
+                        if (rzt == GameDataTool.SUC) this.ctrlr.popPage();
+                        else this.ctrlr.popToast(rzt);
+                    }
+                });
+            }
         }
     }
 

@@ -18,7 +18,7 @@ import { petModelDict } from 'configs/PetModelDict';
 import { deepCopy } from 'scripts/Utils';
 import { SkillModel, SkillType, ExplModel, SkillAimtype, SkillDirType, BuffOutput } from 'scripts/DataModel';
 import { Pet, Feature, EleType, BattleType, EleTypeNames, GameData } from 'scripts/DataSaved';
-import { RealBattle, BattleTeam, BattlePet, BattleBuff, RAGE_MAX } from 'scripts/DataOther';
+import { RealBattle, BattleTeam, BattlePet, BattleBuff, RAGE_MAX, AmplAttriType } from 'scripts/DataOther';
 
 // random with seed -----------------------------------------------------------------
 
@@ -852,21 +852,23 @@ export class BattleController {
     receiveExp() {
         let rb = this.realBattle;
         let expRatebyPetCount = ExpRateByPetCount[rb.selfTeam.pets.length];
+        let gameDataJIT = this.memory.gameDataJIT;
+
         for (const selfBPet of rb.selfTeam.pets) {
             let selfPet = selfBPet.pet;
             if (selfPet.lv >= expModels.length) return;
+
             let expTotal = 0;
             for (const eBPet of rb.enemyTeam.pets) {
                 let ePet = eBPet.pet;
                 let exp = (ePet.lv * 5 + 45) * (1 + ePet.rank * 0.05);
-                exp *= expRatebyPetCount;
-
-                if (selfPet.lv >= ePet.lv) exp *= 1 + (ePet.lv - selfPet.lv) * 0.05;
+                if (ePet.lv >= selfPet.lv) exp *= 1 + (ePet.lv - selfPet.lv) * 0.05;
                 else exp *= 1 - Math.min(selfPet.lv - ePet.lv, 8) / 8;
-
                 expTotal += exp;
             }
 
+            expTotal *= expRatebyPetCount;
+            expTotal *= gameDataJIT.getAmplPercent(selfBPet.pet, AmplAttriType.exp);
             expTotal = Math.ceil(expTotal);
 
             let nextExp = selfPet.exp + expTotal;
@@ -878,6 +880,7 @@ export class BattleController {
                 this.page.log(`${petModelDict[selfPet.id].cnName}升到了${selfPet.lv}级`);
             } else {
                 selfPet.exp = nextExp;
+                this.page.log(`${petModelDict[selfPet.id].cnName}获取到了${expTotal}点经验`);
             }
         }
     }
@@ -976,8 +979,9 @@ export class BattleController {
         return aim;
     }
 
-    getBattleType(battlePet: BattlePet) {
-        return battlePet.pet2.exBattleTypes.getLast() || petModelDict[battlePet.pet.id].battleType;
+    getBattleType(battlePet: BattlePet, skillModel: SkillModel = null) {
+        let spBT = skillModel ? skillModel.spBattleType : null;
+        return spBT || battlePet.pet2.exBattleTypes.getLast() || petModelDict[battlePet.pet.id].battleType;
     }
 
     getPetAlive(battlePet: BattlePet) {

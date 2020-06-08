@@ -49,7 +49,7 @@ export default class PagePet extends PageBase {
     clickCallback: (index: number, pet: Pet) => void = null;
 
     /**
-     * pagePetType
+     * cellPetType
      * name
      * callback
      * pets

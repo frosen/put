@@ -230,8 +230,8 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             if (pet.drink) {
                 let drinkModel = drinkModels[pet.drink.id];
                 let endTime = pet.drinkTime + drinkModel.dura;
-                let leftMins = Math.floor(endTime - Date.now() / 1000 / 60);
-                drinkStr = `${drinkModel.cnName}[${leftMins >= 1 ? leftMins : '<1'}min]`;
+                let leftMins = Math.floor((endTime - Date.now()) / 1000 / 60);
+                drinkStr = `${drinkModel.cnName} [${leftMins >= 1 ? leftMins : '<1'}min]`;
             } else drinkStr = '无';
             cell.setData2('饮品', drinkStr, DRINK_TIP);
         } else if (rowIdx == 3) {

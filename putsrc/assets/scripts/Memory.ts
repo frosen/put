@@ -108,11 +108,21 @@ export class Memory {
         GameDataTool.init(this.gameData);
 
         // 恢复历史数据
+        this.test();
 
         // 整理历史数据
         this.gameDataJIT = new GameDataJIT();
+        this.resetDataJIT(this.gameDataJIT);
+    }
 
-        this.test();
+    resetDataJIT(gameDataJIT: GameDataJIT) {
+        for (const pet of this.gameData.pets) {
+            let drink = pet.drink;
+            if (drink) {
+                let drinkModel = drinkModels[drink.id];
+                gameDataJIT.addAmplByDrink(pet, drinkModel);
+            }
+        }
     }
 
     update(dt: number) {
@@ -168,8 +178,10 @@ export class Memory {
             pet.equips[0] = EquipDataTool.createRandom(15, 20);
         });
 
-        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 31, 2, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 5, 2, [], (pet: Pet) => {
             pet.state = PetState.ready;
+            pet.drink = DrinkDataTool.create('LingGanYaoJi12');
+            pet.drinkTime = Date.now();
         });
 
         GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 31, 2, [], (pet: Pet) => {
@@ -529,7 +541,7 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
-    static addPetDrink(pet: Pet, drink: Drink, curTime: number = null): string {
+    static useDrinkToPet(gameData: GameData, pet: Pet, drink: Drink, curTime: number = null): string {
         let drinkModel: DrinkModel = drinkModels[drink.id];
 
         if (pet.drinkTime > 0) {
@@ -538,26 +550,20 @@ export class GameDataTool {
 
         if (pet.lv > drinkModel.lv) return `${drinkModel.cnName}不能作用于等级高于${drinkModel.lv}的宠物`;
 
-        pet.drink = drink;
-        pet.drinkTime = curTime || Date.now();
-
         // @ts-ignore
         let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
+        gameDataJIT.addAmplByDrink(pet, drinkModel);
 
-        let data = {};
-        data[drinkModel.mainAttri] = drinkModel.mainPercent;
-        if (drinkModel.subAttri) data[drinkModel.subAttri] = drinkModel.subPercent;
+        pet.drink = DrinkDataTool.create(drink.id); // 不用 pet.drink = drink，是因为drink内部有count代表多个
+        pet.drinkTime = curTime || Date.now();
 
-        if (drinkModel.aim == DrinkAimType.one) {
-            gameDataJIT.addAmpl(pet, drinkModel.id, data);
-        } else {
-            gameDataJIT.addAmpl(null, `${pet.catchIdx}_${drinkModel.id}`, data);
-        }
+        let drinkIdx = gameData.items.indexOf(drink);
+        if (drinkIdx >= 0) this.deleteItem(gameData, drinkIdx);
 
         return this.SUC;
     }
 
-    static clearPetDrink(pet: Pet) {
+    static clearDrinkFromPet(pet: Pet) {
         let drink = pet.drink;
         let drinkModel: DrinkModel = drinkModels[drink.id];
         // @ts-ignore
@@ -872,7 +878,7 @@ export class GameDataTool {
 
         if (pet.drink) {
             if (curTime - pet.drinkTime >= drinkModels[pet.drink.id].dura) {
-                this.clearPetDrink(pet);
+                this.clearDrinkFromPet(pet);
             }
         }
     }
