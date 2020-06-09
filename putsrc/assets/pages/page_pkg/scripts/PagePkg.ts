@@ -17,7 +17,7 @@ import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
 import PagePet from 'pages/page_pet/scripts/PagePet';
 import { CellPetType } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 
-const LIST_NAMES = ['全部', '装备'];
+const LIST_NAMES = ['全部', '装备', '消耗'];
 const WIDTH = 1080;
 
 @ccclass
@@ -111,6 +111,10 @@ export default class PagePkg extends PageBase {
         } else if (listIdx == 1) {
             let idxs: number[] = [];
             for (let index = 0; index < items.length; index++) if (items[index].itemType == ItemType.equip) idxs.push(index);
+            return idxs;
+        } else if (listIdx == 2) {
+            let idxs: number[] = [];
+            for (let index = 0; index < items.length; index++) if (items[index].itemType == ItemType.cnsum) idxs.push(index);
             return idxs;
         }
     }

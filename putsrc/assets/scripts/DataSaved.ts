@@ -118,21 +118,33 @@ export class Item {
 }
 
 export class Money extends Item {
+    itemType: ItemType = ItemType.money;
+    id: string = 'money';
     sum: number;
 }
 
 export enum CnsumType {
-    drink = 1
+    drink = 1,
+    catcher = 2
 }
 
 export class Cnsum extends Item {
+    itemType: ItemType = ItemType.cnsum;
     count: number;
     cnsumType: CnsumType;
 }
 
-export class Drink extends Cnsum {}
+export class Drink extends Cnsum {
+    cnsumType: CnsumType = CnsumType.drink;
+}
+
+export class Catcher extends Cnsum {
+    cnsumType: CnsumType = CnsumType.catcher;
+}
 
 export class Equip extends Item {
+    itemType: ItemType = ItemType.equip;
+
     skillId: string;
     growth: number;
     selfFeatureLvs: number[];

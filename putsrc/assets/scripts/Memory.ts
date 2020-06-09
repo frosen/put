@@ -340,7 +340,6 @@ export class EquipDataTool {
         let equip = newInsWithChecker(Equip);
 
         equip.id = id;
-        equip.itemType = ItemType.equip;
         equip.skillId = skillId;
         equip.growth = growth;
         equip.selfFeatureLvs = newList();
@@ -453,8 +452,6 @@ export class DrinkDataTool {
     static create(id: string, count: number = 1): Drink {
         let drink = newInsWithChecker(Drink);
         drink.id = id;
-        drink.itemType = ItemType.cnsum;
-        drink.cnsumType = CnsumType.drink;
         drink.count = count;
         return drink;
     }
@@ -477,8 +474,6 @@ export class GameDataTool {
         gameData.items = newList();
 
         let money = newInsWithChecker(Money);
-        money.id = 'money';
-        money.itemType = ItemType.money;
         money.sum = 0;
         gameData.items.push(money);
 
