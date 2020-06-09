@@ -585,6 +585,10 @@ export class BaseController extends cc.Component {
 
     @property(cc.Node)
     alertNode: cc.Node = null;
+    alertLbl: cc.Label = null;
+    alertBtn1Node: cc.Node = null;
+    alertBtn2Node: cc.Node = null;
+    alertBtnCancelNode: cc.Node = null;
 
     @property(cc.Node)
     maskNode: cc.Node = null;
@@ -594,19 +598,33 @@ export class BaseController extends cc.Component {
     initPops() {
         this.toastNode.opacity = 0;
 
-        let btns = this.alertNode.getChildByName('btns');
-        btns.getChildByName('btn1').on('click', () => {
+        this.alertLbl = this.alertNode.getChildByName('text_bg').getChildByName('text').getComponent(cc.Label);
+        this.alertBtn1Node = this.alertNode.getChildByName('btn1');
+        this.alertBtn2Node = this.alertNode.getChildByName('btn2');
+        this.alertBtnCancelNode = this.alertNode.getChildByName('btn_cancel');
+
+        this.alertBtn1Node.on('click', () => {
             if (this.alertCallback) this.alertCallback(1);
             this.closeAlert();
         });
-        btns.getChildByName('btn2').on('click', () => {
+        this.alertBtn2Node.on('click', () => {
             if (this.alertCallback) this.alertCallback(2);
             this.closeAlert();
         });
-        this.alertNode.opacity = 0;
-        this.alertNode.scale = 0;
+        this.alertBtnCancelNode.on('click', () => {
+            if (this.alertCallback) this.alertCallback(0);
+            this.closeAlert();
+        });
 
         this.maskNode.scale = 0;
+        this.maskNode.opacity = 0;
+
+        this.maskNode.on(cc.Node.EventType.TOUCH_END, () => {
+            if (this.maskNode.opacity >= 100) {
+                if (this.alertCallback) this.alertCallback(0);
+                this.closeAlert();
+            }
+        });
     }
 
     popToast(str: string) {
@@ -615,32 +633,40 @@ export class BaseController extends cc.Component {
         cc.tween(this.toastNode).to(0.3, { opacity: 255 }).delay(3).to(0.3, { opacity: 0 }).start();
     }
 
-    popAlert(txt: string, callback: (key: number) => void, btn1: string = '确认', btn2: string = '取消') {
-        this.alertNode.getChildByName('text').getComponent(cc.Label).string = txt;
+    popAlert(txt: string, callback: (key: number) => void, btn1: string = '确认', btn2: string = null, btnCancel: string = null) {
+        this.alertLbl.string = txt;
         this.alertCallback = callback;
 
-        let btns = this.alertNode.getChildByName('btns');
-        btns.getChildByName('btn1').getComponentInChildren(cc.Label).string = btn1;
-        btns.getChildByName('btn2').getComponentInChildren(cc.Label).string = btn2;
+        this.alertBtn1Node.getComponentInChildren(cc.Label).string = btn1;
+        if (btn2) {
+            this.alertBtn2Node.getComponentInChildren(cc.Label).string = btn2;
+            this.alertBtn2Node.scaleY = 1;
+        } else {
+            this.alertBtn2Node.scaleY = 0;
+        }
 
-        this.alertNode.opacity = 0;
-        this.alertNode.y = 0;
-        this.alertNode.scale = 0.7;
+        this.alertBtnCancelNode.getComponentInChildren(cc.Label).string = btnCancel ? btnCancel : '取消';
 
+        // @ts-ignore
+        this.alertLbl._assembler.updateRenderData(this.alertLbl);
+        this.alertLbl.node.parent.getComponent(cc.Layout).updateLayout();
+        this.alertNode.getComponent(cc.Layout).updateLayout();
+
+        this.alertNode.y = -10;
         this.alertNode.stopAllActions();
-        cc.tween(this.alertNode).to(0.1, { opacity: 255, scale: 1 }).start();
+        cc.tween(this.alertNode).to(0.3, { y: this.alertNode.height }, { easing: cc.easing.quadOut }).start();
 
         this.popMask();
+
+        this.toastNode.y = 0;
     }
 
     closeAlert() {
         this.alertNode.stopAllActions();
         cc.tween(this.alertNode)
-            .to(0.1, { opacity: 0, scale: 0.7 })
+            .to(0.3, { y: -10 }, { easing: cc.easing.quadIn })
             .call(() => {
-                setTimeout(() => {
-                    this.alertNode.scale = 0;
-                });
+                this.toastNode.y = -410;
             })
             .start();
 
@@ -650,13 +676,13 @@ export class BaseController extends cc.Component {
     popMask() {
         this.maskNode.scale = 1;
         this.maskNode.stopAllActions();
-        cc.tween(this.maskNode).to(0.1, { opacity: 100 }).start();
+        cc.tween(this.maskNode).to(0.3, { opacity: 101 }).start();
     }
 
     closeMask() {
         this.maskNode.stopAllActions();
         cc.tween(this.maskNode)
-            .to(0.1, { opacity: 0 })
+            .to(0.3, { opacity: 0 })
             .call(() => {
                 setTimeout(() => {
                     this.maskNode.scale = 0;
