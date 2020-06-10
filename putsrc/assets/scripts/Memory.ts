@@ -543,7 +543,7 @@ export class GameDataTool {
             if (Date.now() - pet.drinkTime < 10 * 60 * 1000) return '10分钟内不能重复使用饮品';
         }
 
-        if (pet.lv > drinkModel.lv) return `${drinkModel.cnName}不能作用于等级高于${drinkModel.lv}的宠物`;
+        if (pet.lv > drinkModel.lvMax) return `${drinkModel.cnName}不能作用于等级高于${drinkModel.lvMax}的宠物`;
 
         // @ts-ignore
         let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;

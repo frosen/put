@@ -16,8 +16,19 @@ import { buffModelDict } from 'configs/BuffModelDict';
 import { petModelDict } from 'configs/PetModelDict';
 
 import { deepCopy } from 'scripts/Utils';
-import { SkillModel, SkillType, ExplModel, SkillAimtype, SkillDirType, BuffOutput } from 'scripts/DataModel';
-import { Pet, Feature, EleType, BattleType, EleTypeNames, GameData } from 'scripts/DataSaved';
+import { SkillModel, SkillType, ExplModel, SkillAimtype, SkillDirType, BuffOutput, CatcherModel } from 'scripts/DataModel';
+import {
+    Pet,
+    Feature,
+    EleType,
+    BattleType,
+    EleTypeNames,
+    GameData,
+    ItemType,
+    Cnsum,
+    CnsumType,
+    Catcher
+} from 'scripts/DataSaved';
 import { RealBattle, BattleTeam, BattlePet, BattleBuff, RAGE_MAX, AmplAttriType } from 'scripts/DataOther';
 
 // random with seed -----------------------------------------------------------------
@@ -911,8 +922,25 @@ export class BattleController {
         } else if (catchRate <= 0) {
             suc = false;
         } else {
-            let catcherHaving = false; // 拥有当前级别或者更高级别的捕捉器 llytodo
-            if (catcherHaving) catchRate *= 2;
+            let curCatcherModel: CatcherModel;
+            let curCatcherIdx: number;
+            let items = this.memory.gameData.items;
+            for (let index = 0; index < items.length; index++) {
+                const item = items[index];
+                if (item.itemType != ItemType.cnsum || (item as Cnsum).cnsumType != CnsumType.catcher) continue;
+                let catcher = item as Catcher;
+                let catcherModel: CatcherModel;
+                if (pet.lv > catcherModel.lvMax) continue;
+                if (curCatcherModel && catcherModel.lvMax >= curCatcherModel.lvMax) continue;
+                curCatcherModel = catcherModel;
+                curCatcherIdx = index;
+            }
+
+            if (curCatcherModel) {
+                GameDataTool.deleteItem(this.memory.gameData, curCatcherIdx);
+                catchRate *= curCatcherModel.rate;
+            }
+            // 减少一个陷阱数量，然后增加捕捉几率
             suc = randomRate(catchRate);
         }
 

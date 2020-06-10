@@ -30,7 +30,7 @@ convert('../put.xls', '../../putsrc/assets/configs/DrinkModels.ts', 'drink', 'dr
             let baseData = {
                 id,
                 cnName: cnName + cnNameByRank[index],
-                lv: lv + lvByRank[index],
+                lvMax: lv + lvByRank[index],
                 rank: index,
                 mainAttri,
                 mainPercent: mainPercent > 0 ? mainPercent + attrByRank[index] : 0,
