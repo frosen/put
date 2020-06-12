@@ -7,7 +7,7 @@
 import BattlePageBase from './BattlePageBase';
 import { Memory, GameDataTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData } from 'scripts/DataSaved';
+import { GameData, ItemType, Cnsum, CnsumType } from 'scripts/DataSaved';
 
 export enum ExplState {
     none,
@@ -143,8 +143,6 @@ export class ExplUpdater {
         // this.explTime = 5 + random(5);
         this.explTime = 2; // llytest
         this.page.log('开始探索');
-
-        this.page.enterState(this.state);
     }
 
     updateExpl() {
@@ -175,8 +173,6 @@ export class ExplUpdater {
         this.battleCount++;
 
         this.battleCtrlr.start();
-
-        this.page.enterState(this.state);
     }
 
     // -----------------------------------------------------------------
@@ -223,10 +219,29 @@ export class ExplUpdater {
 
     startRecover() {
         this.state = ExplState.recover;
-        this.page.enterState(this.state);
     }
 
     // -----------------------------------------------------------------
+
+    executeCatch(): string {
+        let cur = !this.memory.gameData.curExpl.catching;
+        if (cur) {
+            let items = this.memory.gameData.items;
+            let hasCatcher = false;
+            for (const item of items) {
+                if (item.itemType != ItemType.cnsum || (item as Cnsum).cnsumType != CnsumType.catcher) continue;
+                hasCatcher = true;
+                break;
+            }
+
+            if (!hasCatcher) {
+                return '没有捕捉装置，不能开始捕捉';
+            }
+        }
+        this.memory.gameData.curExpl.hiding = cur;
+        this.page.setCatchActive(cur);
+        return null;
+    }
 
     executeEscape() {
         this.battleCtrlr.escape();

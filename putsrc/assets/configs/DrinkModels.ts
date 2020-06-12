@@ -19,8 +19,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 10800000
     },
-    LingGanYaoJi12: {
-        id: 'LingGanYaoJi12',
+    LingGanYaoJi2: {
+        id: 'LingGanYaoJi2',
         cnName: '灵感药剂Ⅱ',
         lvMax: 11,
         rank: 2,
@@ -31,8 +31,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 14400000
     },
-    LingGanYaoJi123: {
-        id: 'LingGanYaoJi123',
+    LingGanYaoJi3: {
+        id: 'LingGanYaoJi3',
         cnName: '灵感药剂Ⅲ',
         lvMax: 13,
         rank: 3,
@@ -55,8 +55,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 10800000
     },
-    ZhiHuiYaoJi12: {
-        id: 'ZhiHuiYaoJi12',
+    ZhiHuiYaoJi2: {
+        id: 'ZhiHuiYaoJi2',
         cnName: '智慧药剂Ⅱ',
         lvMax: 11,
         rank: 2,
@@ -67,8 +67,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 14400000
     },
-    ZhiHuiYaoJi123: {
-        id: 'ZhiHuiYaoJi123',
+    ZhiHuiYaoJi3: {
+        id: 'ZhiHuiYaoJi3',
         cnName: '智慧药剂Ⅲ',
         lvMax: 13,
         rank: 3,
@@ -91,8 +91,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 10800000
     },
-    MoXingKaFei12: {
-        id: 'MoXingKaFei12',
+    MoXingKaFei2: {
+        id: 'MoXingKaFei2',
         cnName: '魔性咖啡Ⅱ',
         lvMax: 11,
         rank: 2,
@@ -103,8 +103,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 14400000
     },
-    MoXingKaFei123: {
-        id: 'MoXingKaFei123',
+    MoXingKaFei3: {
+        id: 'MoXingKaFei3',
         cnName: '魔性咖啡Ⅲ',
         lvMax: 13,
         rank: 3,
@@ -127,8 +127,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 10800000
     },
-    QingCaoCha12: {
-        id: 'QingCaoCha12',
+    QingCaoCha2: {
+        id: 'QingCaoCha2',
         cnName: '青草茶Ⅱ',
         lvMax: 11,
         rank: 2,
@@ -139,8 +139,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 14400000
     },
-    QingCaoCha123: {
-        id: 'QingCaoCha123',
+    QingCaoCha3: {
+        id: 'QingCaoCha3',
         cnName: '青草茶Ⅲ',
         lvMax: 13,
         rank: 3,
@@ -163,8 +163,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 10800000
     },
-    MiJiu12: {
-        id: 'MiJiu12',
+    MiJiu2: {
+        id: 'MiJiu2',
         cnName: '米酒Ⅱ',
         lvMax: 11,
         rank: 2,
@@ -175,8 +175,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 14400000
     },
-    MiJiu123: {
-        id: 'MiJiu123',
+    MiJiu3: {
+        id: 'MiJiu3',
         cnName: '米酒Ⅲ',
         lvMax: 13,
         rank: 3,
@@ -199,8 +199,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 10800000
     },
-    YueGuangJiu12: {
-        id: 'YueGuangJiu12',
+    YueGuangJiu2: {
+        id: 'YueGuangJiu2',
         cnName: '月光酒Ⅱ',
         lvMax: 11,
         rank: 2,
@@ -211,8 +211,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 1,
         dura: 14400000
     },
-    YueGuangJiu123: {
-        id: 'YueGuangJiu123',
+    YueGuangJiu3: {
+        id: 'YueGuangJiu3',
         cnName: '月光酒Ⅲ',
         lvMax: 13,
         rank: 3,
@@ -235,8 +235,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 2,
         dura: 10800000
     },
-    QingShuangMoShui12: {
-        id: 'QingShuangMoShui12',
+    QingShuangMoShui2: {
+        id: 'QingShuangMoShui2',
         cnName: '清爽魔水Ⅱ',
         lvMax: 11,
         rank: 2,
@@ -247,8 +247,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 2,
         dura: 14400000
     },
-    QingShuangMoShui123: {
-        id: 'QingShuangMoShui123',
+    QingShuangMoShui3: {
+        id: 'QingShuangMoShui3',
         cnName: '清爽魔水Ⅲ',
         lvMax: 13,
         rank: 3,
@@ -271,8 +271,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 2,
         dura: 10800000
     },
-    MeiLiMoShui12: {
-        id: 'MeiLiMoShui12',
+    MeiLiMoShui2: {
+        id: 'MeiLiMoShui2',
         cnName: '魅力魔水Ⅱ',
         lvMax: 11,
         rank: 2,
@@ -283,8 +283,8 @@ export let drinkModels: { [key: string]: DrinkModel } = {
         aim: 2,
         dura: 14400000
     },
-    MeiLiMoShui123: {
-        id: 'MeiLiMoShui123',
+    MeiLiMoShui3: {
+        id: 'MeiLiMoShui3',
         cnName: '魅力魔水Ⅲ',
         lvMax: 13,
         rank: 3,

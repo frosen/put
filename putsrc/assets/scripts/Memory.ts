@@ -25,7 +25,8 @@ import {
     Drink,
     Item,
     Cnsum,
-    CnsumType
+    CnsumType,
+    CaughtPet
 } from './DataSaved';
 import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
@@ -328,6 +329,26 @@ export class PetDataTool {
     }
 }
 
+export class DrinkDataTool {
+    static create(id: string, count: number = 1): Drink {
+        let drink = newInsWithChecker(Drink);
+        drink.id = id;
+        drink.count = count;
+        return drink;
+    }
+}
+
+export class CaughtPetDataTool {
+    static create(id: string, lv: number, rank: number, features: Feature[]): CaughtPet {
+        let cp = newInsWithChecker(CaughtPet);
+        cp.id = id;
+        cp.lv = lv;
+        cp.rank = rank;
+        cp.features = features;
+        return cp;
+    }
+}
+
 export class EquipDataTool {
     static create(
         id: string,
@@ -445,15 +466,6 @@ export class EquipDataTool {
         setAttriByEquip(finalAttris, equipModel, 'elegant', equip.growth * 10);
         setAttriByEquip(finalAttris, equipModel, 'armor', 0);
         return finalAttris;
-    }
-}
-
-export class DrinkDataTool {
-    static create(id: string, count: number = 1): Drink {
-        let drink = newInsWithChecker(Drink);
-        drink.id = id;
-        drink.count = count;
-        return drink;
     }
 }
 
@@ -625,6 +637,24 @@ export class GameDataTool {
         return this.SUC;
     }
 
+    static addCaughtPet(
+        gameData: GameData,
+        id: string,
+        lv: number,
+        rank: number,
+        features: Feature[],
+        callback: (cp: CaughtPet) => void = null
+    ): string {
+        if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+        gameData.weight++;
+
+        let cp = CaughtPetDataTool.create(id, lv, rank, features);
+        gameData.items.push(cp);
+
+        if (callback) callback(cp);
+        return this.SUC;
+    }
+
     static moveItemInList(gameData: GameData, from: number, to: number): string {
         if (from < 0 || gameData.items.length <= from || to < 0 || gameData.items.length <= to) return '请勿把项目移出列表范围';
         if (from == 0 || to == 0) return '货币项目必在首位，不可移动';
@@ -762,6 +792,8 @@ export class GameDataTool {
         expl.startTime = Date.now();
         expl.curStep = 0;
         expl.hiding = false;
+        expl.catching = false;
+        expl.cumCatchRate = 0;
         gameData.curExpl = expl;
         this.resetSelfPetsInExpl(gameData);
     }
@@ -799,7 +831,6 @@ export class GameDataTool {
         battle.startTime = Date.now();
         battle.seed = seed;
         battle.enemys = newList();
-        battle.catchPetIdx = -1;
         battle.spcBtlId = spcBtlId;
 
         curExpl.curBattle = battle;

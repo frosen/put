@@ -1,5 +1,5 @@
 /**
- * 转换pet model
+ * 转换drink model
  */
 
 let convert = require('./xlsToJs');
@@ -26,9 +26,9 @@ convert('../put.xls', '../../putsrc/assets/configs/DrinkModels.ts', 'drink', 'dr
         const duraHByRank = [0, 3, 4, 6];
 
         for (let index = 1; index <= 3; index++) {
-            id = id + String(index);
+            let newId = id + String(index);
             let baseData = {
-                id,
+                id: newId,
                 cnName: cnName + cnNameByRank[index],
                 lvMax: lv + lvByRank[index],
                 rank: index,
@@ -40,7 +40,7 @@ convert('../put.xls', '../../putsrc/assets/configs/DrinkModels.ts', 'drink', 'dr
                 dura: duraHByRank[index] * 60 * 60 * 1000
             };
 
-            drinkJson[id] = baseData;
+            drinkJson[newId] = baseData;
         }
     }
 

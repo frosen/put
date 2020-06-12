@@ -345,19 +345,8 @@ export default class PageActExpl extends BattlePageBase {
     // button -----------------------------------------------------------------
 
     onClickCatch() {
-        let battleCtrlr = this.updater.battleCtrlr;
-        let id = this.ctrlr.memory.gameData.curExpl.curBattle.startTime;
-        let pets: Pet[] = [];
-        for (const battlePet of battleCtrlr.realBattle.enemyTeam.pets) pets.push(battlePet.pet);
-        this.ctrlr.pushPage(PagePet, {
-            cellPetType: CellPetType.catch,
-            name: '捕捉',
-            callback: (index: number, pet: Pet) => {
-                battleCtrlr.setCatchPetIndex(id, index);
-                this.ctrlr.popPage();
-            },
-            pets
-        });
+        let rzt = this.updater.executeCatch();
+        if (rzt) this.ctrlr.popToast(rzt);
     }
 
     onClickEscape() {
@@ -374,17 +363,6 @@ export default class PageActExpl extends BattlePageBase {
 
     setHideActive(b: boolean) {
         this.lblBtnHide.string = b ? '潜行中' : '潜行';
-    }
-
-    enterState(state: ExplState) {
-        if (state == ExplState.battle) {
-            this.btnCatch.interactable = true;
-            this.btnEscape.interactable = true;
-        } else {
-            this.btnCatch.interactable = false;
-            this.btnEscape.interactable = false;
-            this.setCatchActive(false);
-        }
     }
 
     // list -----------------------------------------------------------------

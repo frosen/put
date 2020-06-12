@@ -10,8 +10,6 @@ import { ExplState } from './ExplUpdater';
 
 @ccclass
 export default abstract class BattlePageBase extends PageBase {
-    abstract enterState(state: ExplState): void;
-
     abstract setUIofSelfPet(index: number): void;
     abstract setUIofEnemyPet(index: number): void;
     abstract clearUIofSelfPet(index: number): void;

@@ -109,7 +109,8 @@ export class Pet {
 export enum ItemType {
     money = 1,
     cnsum = 9, // 消耗品
-    equip = 18
+    equip = 18,
+    caughtPet = 27
 }
 
 export class Item {
@@ -155,6 +156,14 @@ export class Equip extends Item {
     catchIdx: number;
 }
 
+export class CaughtPet extends Item {
+    itemType: ItemType = ItemType.caughtPet;
+    id: string;
+    lv: number;
+    rank: number;
+    features: Feature[];
+}
+
 // -----------------------------------------------------------------
 
 export class PetMmr {
@@ -184,7 +193,6 @@ export class BattleMmr {
     startTime: number;
     seed: number;
     enemys: PetMmr[];
-    catchPetIdx: number;
     spcBtlId: number; // 特殊战斗的id
 }
 
@@ -194,6 +202,8 @@ export class ExplMmr {
     selfs: SelfPetMmr[];
     curBattle: BattleMmr;
     hiding: boolean;
+    catching: boolean;
+    cumCatchRate: number; // 累计捕捉率
 }
 
 // -----------------------------------------------------------------

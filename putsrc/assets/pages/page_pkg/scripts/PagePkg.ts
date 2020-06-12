@@ -106,15 +106,19 @@ export default class PagePkg extends PageBase {
     static getItemIdxsByListIdx(items: Item[], listIdx: number): number[] {
         if (listIdx == 0) {
             let idxs: number[] = [];
-            for (let index = 0; index < items.length; index++) idxs.push(index);
+            for (let index = 0; index < items.length; index++) idxs[index] = index;
             return idxs;
         } else if (listIdx == 1) {
             let idxs: number[] = [];
-            for (let index = 0; index < items.length; index++) if (items[index].itemType == ItemType.equip) idxs.push(index);
+            for (let index = 0; index < items.length; index++) {
+                if (items[index].itemType == ItemType.equip) idxs[idxs.length] = index;
+            }
             return idxs;
         } else if (listIdx == 2) {
             let idxs: number[] = [];
-            for (let index = 0; index < items.length; index++) if (items[index].itemType == ItemType.cnsum) idxs.push(index);
+            for (let index = 0; index < items.length; index++) {
+                if (items[index].itemType == ItemType.cnsum) idxs[idxs.length] = index;
+            }
             return idxs;
         }
     }

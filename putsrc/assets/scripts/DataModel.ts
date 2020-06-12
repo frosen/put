@@ -158,8 +158,13 @@ export class DrinkModel {
 export class CatcherModel {
     id: string;
     cnName: string;
+    lvMin: number;
     lvMax: number;
-    rank: number;
+    rankMin: number;
+    rankMax: number;
+    bioType: BioType;
+    eleType: EleType;
+    battleType: BattleType;
     rate: number;
 }
 

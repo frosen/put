@@ -16,8 +16,7 @@ import { PetDataTool } from 'scripts/Memory';
 
 export enum CellPetType {
     normal,
-    selection,
-    catch
+    selection
 }
 
 @ccclass
@@ -73,11 +72,6 @@ export class CellPet extends ListViewCell {
                 this.funcBtn.node.active = false;
                 this.detailBtn.node.on('click', this.onClickDetailBtn, this);
                 break;
-            case CellPetType.catch:
-                this.stateBtn.node.active = false;
-                this.funcBtn.node.active = false;
-                this.detailBtn.node.active = false;
-                break;
         }
     }
 
@@ -95,20 +89,14 @@ export class CellPet extends ListViewCell {
 
         this.hideAllInfoNode();
         let index = 0;
-        switch (this.type) {
-            case CellPetType.normal:
-            case CellPetType.selection:
-                let realPrvty = PetDataTool.getRealPrvty(pet);
-                this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
-                index++;
-            case CellPetType.catch:
-                for (const feature of pet.inbornFeatures) {
-                    let cnName = featureModelDict[feature.id].cnBrief;
-                    let lv = feature.lv;
-                    this.setInfoNode(index, '天赋特性・' + cnName + String(lv), cc.Color.RED);
-                    index++;
-                }
-                break;
+        let realPrvty = PetDataTool.getRealPrvty(pet);
+        this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
+        index++;
+        for (const feature of pet.inbornFeatures) {
+            let cnName = featureModelDict[feature.id].cnBrief;
+            let lv = feature.lv;
+            this.setInfoNode(index, '天赋特性・' + cnName + String(lv), cc.Color.RED);
+            index++;
         }
     }
 
