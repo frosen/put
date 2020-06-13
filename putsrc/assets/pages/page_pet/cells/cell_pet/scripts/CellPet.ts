@@ -98,6 +98,8 @@ export class CellPet extends ListViewCell {
             this.setInfoNode(index, '天赋特性・' + cnName + String(lv), cc.Color.RED);
             index++;
         }
+
+        this.infoLayer.getComponent(cc.Layout).updateLayout();
     }
 
     hideAllInfoNode() {

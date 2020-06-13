@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { Memory, EquipDataTool, GameDataTool, PetDataTool, CaughtPetDataTool } from 'scripts/Memory';
+import { Memory, EquipDataTool, GameDataTool, PetDataTool, CaughtPetDataTool, FeatureDataTool } from 'scripts/Memory';
 import BattlePageBase from './BattlePageBase';
 import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
 
@@ -283,7 +283,7 @@ export class BattleController {
         let enemyPetDatas: EnemyPetData[];
         if (spcBtlId) {
             // llytodo
-        } else enemyPetDatas = this.createEnemyData();
+        } else enemyPetDatas = BattleController.createEnemyData(this.gameData);
 
         for (let index = 0; index < enemyPetDatas.length; index++) {
             const enemyPet = enemyPetDatas[index];
@@ -327,8 +327,7 @@ export class BattleController {
         rb.start = true;
     }
 
-    createEnemyData(): EnemyPetData[] {
-        let gameData = this.gameData;
+    static createEnemyData(gameData: GameData): EnemyPetData[] {
         let posId = gameData.curPosId;
         let curPosModel = actPosModelDict[posId];
         let explModel: ExplModel = <ExplModel>curPosModel.actDict['exploration'];
@@ -349,19 +348,12 @@ export class BattleController {
             let features = [];
 
             let featureR = Math.random();
-            if (lv > 5 && featureR > 0.3) features.push(this.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
-            if (lv > 10 && featureR > 0.8) features.push(this.createInbornFeature());
+            if (lv > 5 && featureR > 0.3) features.push(FeatureDataTool.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
+            if (lv > 10 && featureR > 0.8) features.push(FeatureDataTool.createInbornFeature());
 
             enemyPetDatas.push({ id, lv, rank, features });
         }
         return enemyPetDatas;
-    }
-
-    createInbornFeature(): Feature {
-        let feature = new Feature();
-        feature.id = getRandomOneInList(inbornFeatures);
-        feature.lv = 1 + Math.floor(Math.pow(Math.random(), 3) * 10); // 使用3次方，使随机结果更小
-        return feature;
     }
 
     update() {

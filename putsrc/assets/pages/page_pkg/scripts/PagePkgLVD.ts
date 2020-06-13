@@ -14,13 +14,17 @@ import PagePkg from './PagePkg';
 import CellPkgMoney from '../cells/cell_pkg_money/scripts/CellPkgMoney';
 import { CellPkgEquip, CellPkgEquipType } from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { CellPkgDrink } from '../cells/cell_pkg_drink/scripts/CellPkgDrink';
+import { CellPkgCatcher } from '../cells/cell_pkg_catcher/scripts/CellPkgCatcher';
+import { CellPkgCaughtPet } from '../cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
 
 type CellPkg = CellPkgMoney & CellPkgDrink & CellPkgEquip;
 type DataPkg = Money & Drink & Equip;
 
 let MONEY = 'M';
 let DRINK = 'D';
+let CATCHER = 'C';
 let EQUIP = 'E';
+let CPET = 'p';
 
 @ccclass
 export default class PagePkgLVD extends ListViewDelegate {
@@ -31,7 +35,13 @@ export default class PagePkgLVD extends ListViewDelegate {
     cellPkgDrinkPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
+    cellPkgCatcherPrefab: cc.Prefab = null;
+
+    @property(cc.Prefab)
     cellPkgEquipPrefab: cc.Prefab = null;
+
+    @property(cc.Prefab)
+    cellPkgCaughtPetPrefab: cc.Prefab = null;
 
     curItems: Item[] = [];
     curItemIdxs: number[] = [];
@@ -54,9 +64,12 @@ export default class PagePkgLVD extends ListViewDelegate {
             case ItemType.cnsum: {
                 let cnsumType = (item as Cnsum).cnsumType;
                 if (cnsumType == CnsumType.drink) return DRINK;
+                else if (cnsumType == CnsumType.catcher) return CATCHER;
             }
             case ItemType.equip:
                 return EQUIP;
+            case ItemType.caughtPet:
+                return CPET;
         }
     }
 
@@ -70,9 +83,21 @@ export default class PagePkgLVD extends ListViewDelegate {
                 cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
                 return cell;
             }
+            case CATCHER: {
+                let cell = cc.instantiate(this.cellPkgCatcherPrefab).getComponent(CellPkgCatcher);
+                cell.clickCallback = this.page.onCellClick.bind(this.page);
+                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+                return cell;
+            }
             case EQUIP: {
                 let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
                 cell.init(CellPkgEquipType.normal);
+                cell.clickCallback = this.page.onCellClick.bind(this.page);
+                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+                return cell;
+            }
+            case CPET: {
+                let cell = cc.instantiate(this.cellPkgCaughtPetPrefab).getComponent(CellPkgCaughtPet);
                 cell.clickCallback = this.page.onCellClick.bind(this.page);
                 cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
                 return cell;

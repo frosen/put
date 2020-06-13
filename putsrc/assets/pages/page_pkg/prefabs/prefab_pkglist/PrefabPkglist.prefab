@@ -621,8 +621,14 @@
     "cellPkgDrinkPrefab": {
       "__uuid__": "d6eb18f8-4afe-48aa-8a1a-94199e9501c0"
     },
+    "cellPkgCatcherPrefab": {
+      "__uuid__": "6fe1a8aa-0f3f-4ec4-b8cc-871b71820db9"
+    },
     "cellPkgEquipPrefab": {
       "__uuid__": "e7956d4d-39b5-4382-ba28-e980fa49291a"
+    },
+    "cellPkgCaughtPetPrefab": {
+      "__uuid__": "6edcfe6d-5318-4f6e-b09f-bcea5a0b8cf5"
     },
     "_id": ""
   },

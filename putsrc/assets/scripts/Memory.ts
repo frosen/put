@@ -23,10 +23,10 @@ import {
     PetEquipCountMax,
     PrvtyMax,
     Drink,
-    Item,
     Cnsum,
     CnsumType,
-    CaughtPet
+    CaughtPet,
+    Catcher
 } from './DataSaved';
 import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
@@ -35,6 +35,7 @@ import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
 import { GameDataJIT, AmplAttriType } from './DataOther';
 import { drinkModels } from 'configs/DrinkModels';
+import { inbornFeatures } from 'configs/InbornFeatures';
 
 let memoryDirtyToken: number = -1;
 
@@ -121,6 +122,7 @@ export class Memory {
             let drink = pet.drink;
             if (drink) {
                 let drinkModel = drinkModels[drink.id];
+                cc.log('^_^!>>>', drink.id);
                 gameDataJIT.addAmplByDrink(pet, drinkModel);
             }
         }
@@ -181,7 +183,7 @@ export class Memory {
 
         GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 5, 2, [], (pet: Pet) => {
             pet.state = PetState.ready;
-            pet.drink = DrinkDataTool.create('LingGanYaoJi12');
+            pet.drink = CnsumDataTool.create(Drink, 'LingGanYaoJi2');
             pet.drinkTime = Date.now();
         });
 
@@ -195,23 +197,34 @@ export class Memory {
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
 
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
 
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
 
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
 
         GameDataTool.addCnsum(this.gameData, 'LingGanYaoJi1', CnsumType.drink, 2);
+
+        GameDataTool.addCnsum(this.gameData, 'CiLiPan1', CnsumType.catcher, 2);
+
+        GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
     }
 }
 
 export class FeatureDataTool {
+    static createInbornFeature(): Feature {
+        let feature = new Feature();
+        feature.id = getRandomOneInList(inbornFeatures);
+        feature.lv = 1 + Math.floor(Math.pow(Math.random(), 3) * 10); // 使用3次方，使随机结果更小
+        return feature;
+    }
+
     static getDatas(featureId: string, lv: number) {
         let featureModel = featureModelDict[featureId];
         let datas = [];
@@ -329,23 +342,12 @@ export class PetDataTool {
     }
 }
 
-export class DrinkDataTool {
-    static create(id: string, count: number = 1): Drink {
-        let drink = newInsWithChecker(Drink);
+export class CnsumDataTool {
+    static create<T extends Cnsum>(cls: { new (): T }, id: string, count: number = 1): Drink {
+        let drink = newInsWithChecker(cls);
         drink.id = id;
         drink.count = count;
         return drink;
-    }
-}
-
-export class CaughtPetDataTool {
-    static create(id: string, lv: number, rank: number, features: Feature[]): CaughtPet {
-        let cp = newInsWithChecker(CaughtPet);
-        cp.id = id;
-        cp.lv = lv;
-        cp.rank = rank;
-        cp.features = features;
-        return cp;
     }
 }
 
@@ -469,6 +471,17 @@ export class EquipDataTool {
     }
 }
 
+export class CaughtPetDataTool {
+    static create(id: string, lv: number, rank: number, features: Feature[]): CaughtPet {
+        let cp = newInsWithChecker(CaughtPet);
+        cp.id = id;
+        cp.lv = lv;
+        cp.rank = rank;
+        cp.features = features;
+        return cp;
+    }
+}
+
 export class ActPosDataTool {
     static create(posId: string): ActPos {
         let actPos = newInsWithChecker(ActPos);
@@ -561,7 +574,7 @@ export class GameDataTool {
         let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
         gameDataJIT.addAmplByDrink(pet, drinkModel);
 
-        pet.drink = DrinkDataTool.create(drink.id); // 不用 pet.drink = drink，是因为drink内部有count代表多个
+        pet.drink = CnsumDataTool.create(Drink, drink.id); // 不用 pet.drink = drink，是因为drink内部有count代表多个
         pet.drinkTime = curTime || Date.now();
 
         let drinkIdx = gameData.items.indexOf(drink);
@@ -611,7 +624,9 @@ export class GameDataTool {
         if (itemIdx == -1) {
             let realCnsum: Cnsum;
             if (cnsumType == CnsumType.drink) {
-                realCnsum = DrinkDataTool.create(cnsumId, count);
+                realCnsum = CnsumDataTool.create(Drink, cnsumId, count);
+            } else if (cnsumType == CnsumType.catcher) {
+                realCnsum = CnsumDataTool.create(Catcher, cnsumId, count);
             }
             gameData.items.push(realCnsum);
             if (callback) callback(realCnsum);
@@ -669,17 +684,7 @@ export class GameDataTool {
         if (index == 0) return '货币项目不可删除';
 
         let curItem = gameData.items[index];
-        if (curItem.itemType == ItemType.equip) {
-            if (gameData.curExpl) {
-                let curEquipToken = EquipDataTool.getToken(curItem as Equip);
-                for (const petMmr of gameData.curExpl.selfs) {
-                    for (const itemToken of petMmr.eqpTokens) {
-                        if (curEquipToken == itemToken) return '该物品被战斗中宠物持有，无法丢弃';
-                    }
-                }
-            }
-            gameData.items.splice(index, 1);
-        } else if (curItem.itemType == ItemType.cnsum) {
+        if (curItem.itemType == ItemType.cnsum) {
             // 根据cnsum的数量减少重量
             let cnsum = curItem as Cnsum;
             if (cnsum.count < count) {
@@ -689,6 +694,18 @@ export class GameDataTool {
             } else if (cnsum.count > count) {
                 cnsum.count -= count;
             }
+        } else if (curItem.itemType == ItemType.equip) {
+            if (gameData.curExpl) {
+                let curEquipToken = EquipDataTool.getToken(curItem as Equip);
+                for (const petMmr of gameData.curExpl.selfs) {
+                    for (const itemToken of petMmr.eqpTokens) {
+                        if (curEquipToken == itemToken) return '该物品被战斗中宠物持有，无法丢弃';
+                    }
+                }
+            }
+            gameData.items.splice(index, 1);
+        } else if (curItem.itemType == ItemType.caughtPet) {
+            gameData.items.splice(index, 1);
         } else {
             return '类型错误';
         }

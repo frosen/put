@@ -59,13 +59,16 @@ export class CellPkgEquip extends ListViewCell {
     @property(cc.Node)
     infoLayer: cc.Node = null;
 
+    @property([cc.Layout])
+    layouts: cc.Layout[] = [];
+
     @property(cc.Sprite)
     equipSp: cc.Sprite = null;
 
     @property(cc.Prefab)
     infoNodePrefab: cc.Prefab = null;
 
-    infoNodePool: cc.Node[] = [];
+    infoNodeDataPool: { infoNode: cc.Node; lbl: cc.Label; layout: cc.Layout }[] = [];
 
     @property(cc.Button)
     funcBtn: cc.Button = null;
@@ -121,8 +124,7 @@ export class CellPkgEquip extends ListViewCell {
         this.rerenderLbl(this.nameLbl);
         this.rerenderLbl(this.lvLbl);
         this.rerenderLbl(this.skillLbl);
-        this.skillLbl.node.parent.getComponent(cc.Layout).updateLayout();
-        this.nameLbl.node.parent.getComponent(cc.Layout).updateLayout();
+        for (const layout of this.layouts) layout.updateLayout();
 
         let attriInfos = [];
         let attris = EquipDataTool.getFinalAttris(equip);
@@ -146,23 +148,28 @@ export class CellPkgEquip extends ListViewCell {
         let attriIndex = 0;
         for (; attriIndex < attriInfos.length; attriIndex++) {
             const { str, c } = attriInfos[attriIndex];
-            let infoNode = this.infoNodePool[attriIndex];
-            if (!infoNode) {
-                infoNode = cc.instantiate(this.infoNodePrefab);
-                this.infoNodePool[attriIndex] = infoNode;
+            let infoNodeData = this.infoNodeDataPool[attriIndex];
+            if (!infoNodeData) {
+                let infoNode = cc.instantiate(this.infoNodePrefab);
                 infoNode.parent = this.infoLayer;
+                infoNodeData = {
+                    infoNode,
+                    lbl: infoNode.children[0].getComponent(cc.Label),
+                    layout: infoNode.getComponent(cc.Layout)
+                };
+                this.infoNodeDataPool[attriIndex] = infoNodeData;
             }
-            infoNode.opacity = 255;
+            let { infoNode, lbl, layout } = infoNodeData;
 
+            infoNode.opacity = 255;
             infoNode.color = c;
-            let lbl = infoNode.children[0].getComponent(cc.Label);
             lbl.string = str;
             this.rerenderLbl(lbl);
-            infoNode.getComponent(cc.Layout).updateLayout();
+            layout.updateLayout();
         }
 
-        for (; attriIndex < this.infoNodePool.length; attriIndex++) {
-            this.infoNodePool[attriIndex].opacity = 0;
+        for (; attriIndex < this.infoNodeDataPool.length; attriIndex++) {
+            this.infoNodeDataPool[attriIndex].infoNode.opacity = 0;
         }
 
         this.infoLayer.getComponent(cc.Layout).updateLayout();

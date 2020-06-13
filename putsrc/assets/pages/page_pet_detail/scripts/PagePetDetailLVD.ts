@@ -23,7 +23,7 @@ import PagePetDetail from './PagePetDetail';
 import CellPkgEquipBlank from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
-import { PetDataTool, DrinkDataTool } from 'scripts/Memory';
+import { PetDataTool } from 'scripts/Memory';
 import { drinkModels } from 'configs/DrinkModels';
 
 const PETNAME = 'p';

@@ -1,6 +1,6 @@
 /*
  * CellPkgDrink.ts
- * 道具列表中的装备项目
+ * 道具列表中的饮品项目
  * luleyan
  */
 
@@ -29,6 +29,9 @@ export class CellPkgDrink extends ListViewCell {
     @property(cc.Node)
     aimTypeNode: cc.Node = null;
 
+    @property([cc.Layout])
+    layouts: cc.Layout[] = [];
+
     @property(cc.Sprite)
     sp: cc.Sprite = null;
 
@@ -54,11 +57,14 @@ export class CellPkgDrink extends ListViewCell {
         let drinkModel = drinkModels[drink.id];
 
         this.nameLbl.string = drinkModel.cnName;
-        this.lvLbl.string = `[MaxL${drinkModel.lv}]`;
+        this.lvLbl.string = `[MaxL${drinkModel.lvMax}]`;
 
-        this.mainAttri.string = AmplAttriNames[drinkModel.mainAttri] + String(drinkModel.mainPercent);
+        this.rerenderLbl(this.nameLbl);
+        this.rerenderLbl(this.lvLbl);
+
+        this.mainAttri.string = `${AmplAttriNames[drinkModel.mainAttri]}+${drinkModel.mainPercent}%`;
         if (drinkModel.subAttri) {
-            this.subAttri.string = AmplAttriNames[drinkModel.subAttri] + String(drinkModel.subPercent);
+            this.subAttri.string = `${AmplAttriNames[drinkModel.subAttri]}+${drinkModel.subPercent}%`;
             this.subAttri.node.parent.scaleX = 1;
         } else {
             this.subAttri.node.parent.scaleX = 0;
@@ -66,7 +72,17 @@ export class CellPkgDrink extends ListViewCell {
 
         this.aimTypeNode.opacity = drinkModel.aim == DrinkAimType.all ? 255 : 0;
 
+        this.rerenderLbl(this.mainAttri);
+        this.rerenderLbl(this.subAttri);
+
         this.countLbl.string = 'x ' + String(drink.count);
+
+        for (const layout of this.layouts) layout.updateLayout();
+    }
+
+    rerenderLbl(lbl: cc.Label) {
+        // @ts-ignore
+        lbl._assembler.updateRenderData(lbl);
     }
 
     onClick() {

@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import PageBase from 'scripts/PageBase';
 import ListView from 'scripts/ListView';
 import PagePkgLVD from './PagePkgLVD';
-import { Item, ItemType, Cnsum, CnsumType, Pet } from 'scripts/DataSaved';
+import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import ListViewCell from 'scripts/ListViewCell';
@@ -17,7 +17,7 @@ import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
 import PagePet from 'pages/page_pet/scripts/PagePet';
 import { CellPetType } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 
-const LIST_NAMES = ['全部', '装备', '消耗'];
+const LIST_NAMES = ['全部', '装备', '饮品', '捕捉'];
 const WIDTH = 1080;
 
 @ccclass
@@ -104,23 +104,30 @@ export default class PagePkg extends PageBase {
     }
 
     static getItemIdxsByListIdx(items: Item[], listIdx: number): number[] {
+        let idxs: number[] = [];
         if (listIdx == 0) {
-            let idxs: number[] = [];
             for (let index = 0; index < items.length; index++) idxs[index] = index;
-            return idxs;
         } else if (listIdx == 1) {
-            let idxs: number[] = [];
             for (let index = 0; index < items.length; index++) {
                 if (items[index].itemType == ItemType.equip) idxs[idxs.length] = index;
             }
-            return idxs;
         } else if (listIdx == 2) {
-            let idxs: number[] = [];
             for (let index = 0; index < items.length; index++) {
-                if (items[index].itemType == ItemType.cnsum) idxs[idxs.length] = index;
+                let item = items[index];
+                if (item.itemType == ItemType.cnsum && (item as Cnsum).cnsumType == CnsumType.drink) idxs[idxs.length] = index;
             }
-            return idxs;
+        } else if (listIdx == 3) {
+            for (let index = 0; index < items.length; index++) {
+                let item = items[index];
+                if (
+                    (item.itemType == ItemType.cnsum && (item as Cnsum).cnsumType == CnsumType.catcher) ||
+                    item.itemType == ItemType.caughtPet
+                ) {
+                    idxs[idxs.length] = index;
+                }
+            }
         }
+        return idxs;
     }
 
     turnning: boolean = false;
@@ -158,25 +165,37 @@ export default class PagePkg extends PageBase {
     // -----------------------------------------------------------------
 
     onUseCell(cellIdx: number) {
-        let item = this.ctrlr.memory.gameData.items[cellIdx];
+        let gameData = this.ctrlr.memory.gameData;
+        let idList = this.listDatas[this.curListIdx].delegate.curItemIdxs;
+        let itemId = idList[cellIdx];
+        let item = gameData.items[itemId];
         cc.log('PUT 使用道具：', item.id);
 
         // llytodo
-        if (item.itemType == ItemType.equip) {
-            this.ctrlr.pushPage(PagePkgEquip, { idx: cellIdx });
-        } else if (item.itemType == ItemType.cnsum) {
+        if (item.itemType == ItemType.cnsum) {
             let cnsum = item as Cnsum;
             if (cnsum.cnsumType == CnsumType.drink) {
                 this.ctrlr.pushPage(PagePet, {
                     cellPetType: CellPetType.selection,
                     name: '选择宠物',
                     callback: (cellIdx: number, curPet: Pet) => {
-                        let rzt = GameDataTool.useDrinkToPet(this.ctrlr.memory.gameData, curPet, cnsum);
+                        let rzt = GameDataTool.useDrinkToPet(gameData, curPet, cnsum);
                         if (rzt == GameDataTool.SUC) this.ctrlr.popPage();
                         else this.ctrlr.popToast(rzt);
                     }
                 });
+            } else if (cnsum.cnsumType == CnsumType.catcher) {
+                this.ctrlr.popToast('捕捉器会在战斗中开启“捕捉”后自动使用');
             }
+        } else if (item.itemType == ItemType.equip) {
+            this.ctrlr.pushPage(PagePkgEquip, { idx: itemId });
+        } else if (item.itemType == ItemType.caughtPet) {
+            let caughtPet = item as CaughtPet;
+            let rzt = GameDataTool.addPet(gameData, caughtPet.id, caughtPet.lv, caughtPet.rank, caughtPet.features);
+            if (rzt == GameDataTool.SUC) {
+                GameDataTool.deleteItem(gameData, itemId);
+                this.resetCurList();
+            } else this.ctrlr.popToast(rzt);
         }
     }
 
