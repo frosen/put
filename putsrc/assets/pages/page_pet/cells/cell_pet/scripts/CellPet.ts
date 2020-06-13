@@ -121,11 +121,11 @@ export class CellPet extends ListViewCell {
         infoNode.color = color;
         let lbl = infoNode.children[0].getComponent(cc.Label);
         lbl.string = str;
-        this.rerenderLbl(lbl);
+        CellPet.rerenderLbl(lbl);
         infoNode.getComponent(cc.Layout).updateLayout();
     }
 
-    rerenderLbl(lbl: cc.Label) {
+    static rerenderLbl(lbl: cc.Label) {
         // @ts-ignore
         lbl._assembler.updateRenderData(lbl);
     }

@@ -59,8 +59,8 @@ export class CellPkgDrink extends ListViewCell {
         this.nameLbl.string = drinkModel.cnName;
         this.lvLbl.string = `[MaxL${drinkModel.lvMax}]`;
 
-        this.rerenderLbl(this.nameLbl);
-        this.rerenderLbl(this.lvLbl);
+        CellPkgDrink.rerenderLbl(this.nameLbl);
+        CellPkgDrink.rerenderLbl(this.lvLbl);
 
         this.mainAttri.string = `${AmplAttriNames[drinkModel.mainAttri]}+${drinkModel.mainPercent}%`;
         if (drinkModel.subAttri) {
@@ -72,15 +72,15 @@ export class CellPkgDrink extends ListViewCell {
 
         this.aimTypeNode.opacity = drinkModel.aim == DrinkAimType.all ? 255 : 0;
 
-        this.rerenderLbl(this.mainAttri);
-        this.rerenderLbl(this.subAttri);
+        CellPkgDrink.rerenderLbl(this.mainAttri);
+        CellPkgDrink.rerenderLbl(this.subAttri);
 
         this.countLbl.string = 'x ' + String(drink.count);
 
         for (const layout of this.layouts) layout.updateLayout();
     }
 
-    rerenderLbl(lbl: cc.Label) {
+    static rerenderLbl(lbl: cc.Label) {
         // @ts-ignore
         lbl._assembler.updateRenderData(lbl);
     }

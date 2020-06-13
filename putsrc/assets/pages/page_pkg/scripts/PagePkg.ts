@@ -17,7 +17,7 @@ import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
 import PagePet from 'pages/page_pet/scripts/PagePet';
 import { CellPetType } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 
-const LIST_NAMES = ['全部', '装备', '饮品', '捕捉'];
+const LIST_NAMES = ['全部', '装备', '饮品', '捕捉', '强化', '其他'];
 const WIDTH = 1080;
 
 @ccclass
@@ -150,7 +150,7 @@ export default class PagePkg extends PageBase {
         this.selectionLblNodes[idx].color = cc.Color.RED;
 
         cc.tween(this.selectionBar)
-            .to(0.2, { x: idx * 216 + 108 }, { easing: 'quadInOut' })
+            .to(0.2, { x: idx * 180 + 90 }, { easing: 'quadInOut' })
             .start();
     }
 

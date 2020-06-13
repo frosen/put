@@ -121,9 +121,9 @@ export class CellPkgEquip extends ListViewCell {
             this.skillLbl.node.parent.opacity = 0;
         }
 
-        this.rerenderLbl(this.nameLbl);
-        this.rerenderLbl(this.lvLbl);
-        this.rerenderLbl(this.skillLbl);
+        CellPkgEquip.rerenderLbl(this.nameLbl);
+        CellPkgEquip.rerenderLbl(this.lvLbl);
+        CellPkgEquip.rerenderLbl(this.skillLbl);
         for (const layout of this.layouts) layout.updateLayout();
 
         let attriInfos = [];
@@ -164,7 +164,7 @@ export class CellPkgEquip extends ListViewCell {
             infoNode.opacity = 255;
             infoNode.color = c;
             lbl.string = str;
-            this.rerenderLbl(lbl);
+            CellPkgEquip.rerenderLbl(lbl);
             layout.updateLayout();
         }
 
@@ -175,7 +175,7 @@ export class CellPkgEquip extends ListViewCell {
         this.infoLayer.getComponent(cc.Layout).updateLayout();
     }
 
-    rerenderLbl(lbl: cc.Label) {
+    static rerenderLbl(lbl: cc.Label) {
         // @ts-ignore
         lbl._assembler.updateRenderData(lbl);
     }
