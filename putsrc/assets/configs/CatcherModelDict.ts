@@ -1,12 +1,12 @@
 /*
- * CatcherModels.ts
+ * CatcherModelDict.ts
  * 数据列表，从document中转义而来
  * luleyan
  */
 
 import { CatcherModel } from 'scripts/DataModel';
   
-export let catcherModels: { [key: string]: CatcherModel } = {
+export let catcherModelDict: { [key: string]: CatcherModel } = {
     PuTongXianJing1: {
         id: 'PuTongXianJing1',
         cnName: '普通陷阱',

@@ -24,7 +24,7 @@ import CellPkgEquipBlank from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PetDataTool } from 'scripts/Memory';
-import { drinkModels } from 'configs/DrinkModels';
+import { drinkModelDict } from 'configs/DrinkModelDict';
 
 const PETNAME = 'p';
 const ATTRI2 = '2';
@@ -228,7 +228,7 @@ export default class PagePetDetailLVD extends ListViewDelegate {
             cell.setData1('默契值', String(PetDataTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
             let drinkStr: string;
             if (pet.drink) {
-                let drinkModel = drinkModels[pet.drink.id];
+                let drinkModel = drinkModelDict[pet.drink.id];
                 let endTime = pet.drinkTime + drinkModel.dura;
                 let leftMins = Math.floor((endTime - Date.now()) / 1000 / 60);
                 drinkStr = `${drinkModel.cnName} [${leftMins >= 1 ? leftMins : '<1'}min]`;

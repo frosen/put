@@ -4,7 +4,7 @@
 
 let convert = require('./xlsToJs');
 
-convert('../put.xls', '../../putsrc/assets/configs/DrinkModels.ts', 'drink', 'drinkModels', 'DrinkModel', data => {
+convert('../put.xls', '../../putsrc/assets/configs/DrinkModelDict.ts', 'drink', 'drinkModelDict', 'DrinkModel', data => {
     let drinkJson = {};
     for (let rowIdx = 1; rowIdx < data.length; rowIdx++) {
         const rowData = data[rowIdx];

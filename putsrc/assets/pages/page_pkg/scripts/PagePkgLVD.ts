@@ -9,20 +9,22 @@ const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
-import { Item, ItemType, Money, Equip, Cnsum, CnsumType, Drink } from 'scripts/DataSaved';
-import PagePkg from './PagePkg';
+import { Item, ItemType, Money, Equip, Cnsum, CnsumType, Drink, Catcher, EqpAmplr, CaughtPet } from 'scripts/DataSaved';
+import PagePkgBase from './PagePkgBase';
 import CellPkgMoney from '../cells/cell_pkg_money/scripts/CellPkgMoney';
 import { CellPkgEquip, CellPkgEquipType } from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { CellPkgDrink } from '../cells/cell_pkg_drink/scripts/CellPkgDrink';
 import { CellPkgCatcher } from '../cells/cell_pkg_catcher/scripts/CellPkgCatcher';
 import { CellPkgCaughtPet } from '../cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
+import { CellPkgEqpAmplr } from '../cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
 
-type CellPkg = CellPkgMoney & CellPkgDrink & CellPkgEquip;
-type DataPkg = Money & Drink & Equip;
+type CellPkg = CellPkgMoney & CellPkgDrink & CellPkgCatcher & CellPkgEqpAmplr & CellPkgEquip & CellPkgCaughtPet;
+type DataPkg = Money & Drink & Catcher & EqpAmplr & Equip & CaughtPet;
 
 let MONEY = 'M';
 let DRINK = 'D';
 let CATCHER = 'C';
+let EQPAMPLR = 'ea';
 let EQUIP = 'E';
 let CPET = 'p';
 
@@ -38,6 +40,9 @@ export default class PagePkgLVD extends ListViewDelegate {
     cellPkgCatcherPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
+    cellPkgEqpAmplrPrefab: cc.Prefab = null;
+
+    @property(cc.Prefab)
     cellPkgEquipPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
@@ -45,7 +50,7 @@ export default class PagePkgLVD extends ListViewDelegate {
 
     curItems: Item[] = [];
     curItemIdxs: number[] = [];
-    page: PagePkg = null;
+    page: PagePkgBase = null;
 
     initListData(items: Item[], itemIdxs: number[]) {
         this.curItems = items;
@@ -65,6 +70,7 @@ export default class PagePkgLVD extends ListViewDelegate {
                 let cnsumType = (item as Cnsum).cnsumType;
                 if (cnsumType == CnsumType.drink) return DRINK;
                 else if (cnsumType == CnsumType.catcher) return CATCHER;
+                else if (cnsumType == CnsumType.eqpAmplr) return EQPAMPLR;
             }
             case ItemType.equip:
                 return EQUIP;
@@ -85,6 +91,12 @@ export default class PagePkgLVD extends ListViewDelegate {
             }
             case CATCHER: {
                 let cell = cc.instantiate(this.cellPkgCatcherPrefab).getComponent(CellPkgCatcher);
+                cell.clickCallback = this.page.onCellClick.bind(this.page);
+                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+                return cell;
+            }
+            case EQPAMPLR: {
+                let cell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
                 cell.clickCallback = this.page.onCellClick.bind(this.page);
                 cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
                 return cell;

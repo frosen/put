@@ -11,6 +11,9 @@ import { buffModelDict } from 'configs/BuffModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { inbornFeatures } from 'configs/InbornFeatures';
+import { drinkModelDict } from 'configs/DrinkModelDict';
+import { catcherModelDict } from 'configs/CatcherModelDict';
+import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 
 function checkActPosModelDict() {
     for (const key in actPosModelDict) {
@@ -124,6 +127,25 @@ function checkEquipModelDict() {
     }
 }
 
+function checkItems() {
+    let allKeys = {};
+    function checkKey(key: string, dictName: string) {
+        if (allKeys.hasOwnProperty(key)) {
+            cc.error(`${dictName}中存在重复的id${key}`);
+        } else {
+            allKeys[key] = true;
+        }
+    }
+    function checkAllKeys(dict: Object, name: string) {
+        for (const key in dict) checkKey(key, name);
+    }
+
+    checkAllKeys(equipModelDict, 'equipModelDict');
+    checkAllKeys(drinkModelDict, 'drinkModelDict');
+    checkAllKeys(catcherModelDict, 'catcherModelDict');
+    checkAllKeys(eqpAmplrModelDict, 'eqpAmplrModelDict');
+}
+
 export default function checkConfigs() {
     checkActPosModelDict();
     checkPetModelDict();
@@ -132,4 +154,5 @@ export default function checkConfigs() {
     checkFeatureModelDict();
     checkFeatureInBorn();
     checkEquipModelDict();
+    checkItems();
 }

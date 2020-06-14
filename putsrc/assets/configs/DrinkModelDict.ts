@@ -1,12 +1,12 @@
 /*
- * DrinkModels.ts
+ * DrinkModelDict.ts
  * 数据列表，从document中转义而来
  * luleyan
  */
 
 import { DrinkModel } from 'scripts/DataModel';
   
-export let drinkModels: { [key: string]: DrinkModel } = {
+export let drinkModelDict: { [key: string]: DrinkModel } = {
     LingGanYaoJi1: {
         id: 'LingGanYaoJi1',
         cnName: '灵感药剂',

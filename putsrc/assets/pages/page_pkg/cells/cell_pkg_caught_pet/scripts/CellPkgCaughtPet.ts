@@ -7,8 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import ListViewCell from 'scripts/ListViewCell';
-import { Drink, Catcher, BioTypeNames, EleTypeNames, BattleTypeNames, CaughtPet, PetRankNames } from 'scripts/DataSaved';
-import { catcherModels } from 'configs/CatcherModels';
+import { CaughtPet, PetRankNames } from 'scripts/DataSaved';
 import { petModelDict } from 'configs/PetModelDict';
 import { PetModel } from 'scripts/DataModel';
 import { featureModelDict } from 'configs/FeatureModelDict';
@@ -48,7 +47,7 @@ export class CellPkgCaughtPet extends ListViewCell {
 
     setData(itemIdx: number, caughtPet: CaughtPet) {
         this.curItemIdx = itemIdx;
-        let petModel: PetModel = petModelDict[caughtPet.id];
+        let petModel: PetModel = petModelDict[caughtPet.petId];
 
         this.nameLbl.string = '捕获：' + petModel.cnName;
         this.lvLbl.string = `[L${caughtPet.lv}${PetRankNames[caughtPet.rank]}]`;

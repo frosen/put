@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import ListViewCell from 'scripts/ListViewCell';
 import { Catcher, BioTypeNames, EleTypeNames, BattleTypeNames, PetRankNames } from 'scripts/DataSaved';
-import { catcherModels } from 'configs/CatcherModels';
+import { catcherModelDict } from 'configs/CatcherModelDict';
 
 @ccclass
 export class CellPkgCatcher extends ListViewCell {
@@ -58,7 +58,7 @@ export class CellPkgCatcher extends ListViewCell {
 
     setData(itemIdx: number, catcher: Catcher) {
         this.curItemIdx = itemIdx;
-        let catcherModel = catcherModels[catcher.id];
+        let catcherModel = catcherModelDict[catcher.id];
 
         this.nameLbl.string = catcherModel.cnName;
         this.lvLbl.string = `[L${catcherModel.lvMin}~${catcherModel.lvMax}]`;

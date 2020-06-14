@@ -6,7 +6,6 @@
 
 const { ccclass, property } = cc._decorator;
 import PageBase from './PageBase';
-import { ExplState } from './ExplUpdater';
 
 @ccclass
 export default abstract class BattlePageBase extends PageBase {

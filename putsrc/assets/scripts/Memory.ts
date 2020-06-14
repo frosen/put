@@ -26,7 +26,8 @@ import {
     Cnsum,
     CnsumType,
     CaughtPet,
-    Catcher
+    Catcher,
+    EqpAmplr
 } from './DataSaved';
 import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
@@ -34,7 +35,7 @@ import { random, randomRate, getRandomOneInListWithRate, getRandomOneInList } fr
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
 import { GameDataJIT, AmplAttriType } from './DataOther';
-import { drinkModels } from 'configs/DrinkModels';
+import { drinkModelDict } from 'configs/DrinkModelDict';
 import { inbornFeatures } from 'configs/InbornFeatures';
 
 let memoryDirtyToken: number = -1;
@@ -121,8 +122,7 @@ export class Memory {
         for (const pet of this.gameData.pets) {
             let drink = pet.drink;
             if (drink) {
-                let drinkModel = drinkModels[drink.id];
-                cc.log('^_^!>>>', drink.id);
+                let drinkModel = drinkModelDict[drink.id];
                 gameDataJIT.addAmplByDrink(pet, drinkModel);
             }
         }
@@ -212,6 +212,7 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'LingGanYaoJi1', CnsumType.drink, 2);
 
         GameDataTool.addCnsum(this.gameData, 'CiLiPan1', CnsumType.catcher, 2);
+        GameDataTool.addCnsum(this.gameData, 'DaMoShi', CnsumType.eqpAmplr, 2);
 
         GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
     }
@@ -474,7 +475,8 @@ export class EquipDataTool {
 export class CaughtPetDataTool {
     static create(id: string, lv: number, rank: number, features: Feature[]): CaughtPet {
         let cp = newInsWithChecker(CaughtPet);
-        cp.id = id;
+        cp.id = 'cp_' + id;
+        cp.petId = id;
         cp.lv = lv;
         cp.rank = rank;
         cp.features = features;
@@ -562,7 +564,7 @@ export class GameDataTool {
     // -----------------------------------------------------------------
 
     static useDrinkToPet(gameData: GameData, pet: Pet, drink: Drink, curTime: number = null): string {
-        let drinkModel: DrinkModel = drinkModels[drink.id];
+        let drinkModel: DrinkModel = drinkModelDict[drink.id];
 
         if (pet.drinkTime > 0) {
             if (Date.now() - pet.drinkTime < 10 * 60 * 1000) return '10分钟内不能重复使用饮品';
@@ -585,7 +587,7 @@ export class GameDataTool {
 
     static clearDrinkFromPet(pet: Pet) {
         let drink = pet.drink;
-        let drinkModel: DrinkModel = drinkModels[drink.id];
+        let drinkModel: DrinkModel = drinkModelDict[drink.id];
         // @ts-ignore
         let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
 
@@ -622,12 +624,13 @@ export class GameDataTool {
         }
 
         if (itemIdx == -1) {
-            let realCnsum: Cnsum;
-            if (cnsumType == CnsumType.drink) {
-                realCnsum = CnsumDataTool.create(Drink, cnsumId, count);
-            } else if (cnsumType == CnsumType.catcher) {
-                realCnsum = CnsumDataTool.create(Catcher, cnsumId, count);
-            }
+            let cnsumClass: { new (): Cnsum };
+
+            if (cnsumType == CnsumType.drink) cnsumClass = Drink;
+            else if (cnsumType == CnsumType.catcher) cnsumClass = Catcher;
+            else if (cnsumType == CnsumType.eqpAmplr) cnsumClass = EqpAmplr;
+
+            let realCnsum: Cnsum = CnsumDataTool.create(cnsumClass, cnsumId, count);
             gameData.items.push(realCnsum);
             if (callback) callback(realCnsum);
         } else {
@@ -771,7 +774,6 @@ export class GameDataTool {
     }
 
     static growForEquip(gameData: GameData, equip: Equip): string {
-        if (equip.growth >= 5) return '装备成长不得超过5级';
         equip.growth++;
         gameData.totalEquipCount++;
         equip.catchIdx = gameData.totalEquipCount;
@@ -920,7 +922,7 @@ export class GameDataTool {
         }
 
         if (pet.drink) {
-            if (curTime - pet.drinkTime >= drinkModels[pet.drink.id].dura) {
+            if (curTime - pet.drinkTime >= drinkModelDict[pet.drink.id].dura) {
                 this.clearDrinkFromPet(pet);
             }
         }

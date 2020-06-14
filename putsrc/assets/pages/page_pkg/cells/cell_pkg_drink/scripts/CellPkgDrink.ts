@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import ListViewCell from 'scripts/ListViewCell';
 import { Drink } from 'scripts/DataSaved';
 import { DrinkAimType } from 'scripts/DataModel';
-import { drinkModels } from 'configs/DrinkModels';
+import { drinkModelDict } from 'configs/DrinkModelDict';
 import { AmplAttriNames } from 'scripts/DataOther';
 
 @ccclass
@@ -54,7 +54,7 @@ export class CellPkgDrink extends ListViewCell {
 
     setData(itemIdx: number, drink: Drink) {
         this.curItemIdx = itemIdx;
-        let drinkModel = drinkModels[drink.id];
+        let drinkModel = drinkModelDict[drink.id];
 
         this.nameLbl.string = drinkModel.cnName;
         this.lvLbl.string = `[MaxL${drinkModel.lvMax}]`;

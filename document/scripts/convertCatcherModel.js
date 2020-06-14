@@ -4,7 +4,7 @@
 
 let convert = require('./xlsToJs');
 
-convert('../put.xls', '../../putsrc/assets/configs/CatcherModels.ts', 'catcher', 'catcherModels', 'CatcherModel', data => {
+convert('../put.xls', '../../putsrc/assets/configs/CatcherModelDict.ts', 'catcher', 'catcherModelDict', 'CatcherModel', data => {
     let catcherJson = {};
     for (let rowIdx = 1; rowIdx < data.length; rowIdx++) {
         const rowData = data[rowIdx];

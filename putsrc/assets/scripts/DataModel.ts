@@ -168,6 +168,12 @@ export class CatcherModel {
     rate: number;
 }
 
+export class EqpAmplrModel {
+    id: string;
+    cnName: string;
+    lvMax: number;
+}
+
 export enum EquipPosType {
     none,
     weapon = 1,

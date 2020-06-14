@@ -6,22 +6,27 @@
 
 const { ccclass, property } = cc._decorator;
 
-import PageBase from 'scripts/PageBase';
+import PagePkgBase from './PagePkgBase';
 import ListView from 'scripts/ListView';
 import PagePkgLVD from './PagePkgLVD';
-import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet } from 'scripts/DataSaved';
+import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet, Equip } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import ListViewCell from 'scripts/ListViewCell';
 import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
 import PagePet from 'pages/page_pet/scripts/PagePet';
 import { CellPetType } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
+import { petModelDict } from 'configs/PetModelDict';
+import { drinkModelDict } from 'configs/DrinkModelDict';
+import PagePkgSelection from 'pages/page_pkg_selection/scripts/PagePkgSelection';
+import { equipModelDict } from 'configs/EquipModelDict';
+import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 
 const LIST_NAMES = ['全部', '装备', '饮品', '捕捉', '强化', '其他'];
 const WIDTH = 1080;
 
 @ccclass
-export default class PagePkg extends PageBase {
+export default class PagePkg extends PagePkgBase {
     curListIdx: number = 0;
 
     @property(cc.Node)
@@ -126,6 +131,11 @@ export default class PagePkg extends PageBase {
                     idxs[idxs.length] = index;
                 }
             }
+        } else if (listIdx == 4) {
+            for (let index = 0; index < items.length; index++) {
+                let item = items[index];
+                if (item.itemType == ItemType.cnsum && (item as Cnsum).cnsumType == CnsumType.eqpAmplr) idxs[idxs.length] = index;
+            }
         }
         return idxs;
     }
@@ -179,19 +189,43 @@ export default class PagePkg extends PageBase {
                     cellPetType: CellPetType.selection,
                     name: '选择宠物',
                     callback: (cellIdx: number, curPet: Pet) => {
-                        let rzt = GameDataTool.useDrinkToPet(gameData, curPet, cnsum);
-                        if (rzt == GameDataTool.SUC) this.ctrlr.popPage();
-                        else this.ctrlr.popToast(rzt);
+                        let petModel = petModelDict[curPet.id];
+                        let drinkModel = drinkModelDict[cnsum.id];
+                        this.ctrlr.popAlert(`确定对${petModel.cnName}使用${drinkModel.cnName}吗`, (key: number) => {
+                            if (key == 1) {
+                                let rzt = GameDataTool.useDrinkToPet(gameData, curPet, cnsum);
+                                if (rzt == GameDataTool.SUC) this.ctrlr.popPage();
+                                else this.ctrlr.popToast(rzt);
+                            }
+                        });
                     }
                 });
             } else if (cnsum.cnsumType == CnsumType.catcher) {
                 this.ctrlr.popToast('捕捉器会在战斗中开启“捕捉”后自动使用');
+            } else if (cnsum.cnsumType == CnsumType.eqpAmplr) {
+                this.ctrlr.pushPage(PagePkgSelection, {
+                    name: '选择要强化的装备',
+                    curItemIdxs: PagePkg.getItemIdxsByListIdx(gameData.items, 1),
+                    callback: (cellIdx: number, itemIdx: number, equip: Equip) => {
+                        // 验证升级石数量，装备等级是否到达上限，该石头是否使用此装备 llytodo
+                        let eqpAmplrModel = eqpAmplrModelDict[item.id];
+                        let equipModel = equipModelDict[equip.id];
+                        this.ctrlr.popAlert(
+                            `确定使用N个${eqpAmplrModel.cnName}(共${cnsum.count}个)\n提升${equipModel.cnName}的成长等级吗`,
+                            (key: number) => {
+                                if (key == 1) {
+                                    // llytodo
+                                }
+                            }
+                        );
+                    }
+                });
             }
         } else if (item.itemType == ItemType.equip) {
             this.ctrlr.pushPage(PagePkgEquip, { idx: itemId });
         } else if (item.itemType == ItemType.caughtPet) {
             let caughtPet = item as CaughtPet;
-            let rzt = GameDataTool.addPet(gameData, caughtPet.id, caughtPet.lv, caughtPet.rank, caughtPet.features);
+            let rzt = GameDataTool.addPet(gameData, caughtPet.petId, caughtPet.lv, caughtPet.rank, caughtPet.features);
             if (rzt == GameDataTool.SUC) {
                 GameDataTool.deleteItem(gameData, itemId);
                 this.resetCurList();

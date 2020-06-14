@@ -11,7 +11,6 @@ import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Ra
 import { expModels } from 'configs/ExpModels';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { skillModelDict } from 'configs/SkillModelDict';
-import { inbornFeatures } from 'configs/InbornFeatures';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { petModelDict } from 'configs/PetModelDict';
 
@@ -30,7 +29,7 @@ import {
     Catcher
 } from 'scripts/DataSaved';
 import { RealBattle, BattleTeam, BattlePet, BattleBuff, RAGE_MAX, AmplAttriType } from 'scripts/DataOther';
-import { catcherModels } from 'configs/CatcherModels';
+import { catcherModelDict } from 'configs/CatcherModelDict';
 
 // random with seed -----------------------------------------------------------------
 
@@ -911,7 +910,7 @@ export class BattleController {
 
             for (const index of catcherIdxs) {
                 const catcher = items[index] as Catcher;
-                let catcherModel: CatcherModel = catcherModels[catcher.id];
+                let catcherModel: CatcherModel = catcherModelDict[catcher.id];
                 if (pet.lv < catcherModel.lvMin || catcherModel.lvMax < pet.lv) continue;
                 if (pet.rank < catcherModel.rankMin || catcherModel.rankMax < pet.rank) continue;
 
