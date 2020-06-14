@@ -604,16 +604,16 @@ export class BaseController extends cc.Component {
         this.alertBtnCancelNode = this.alertNode.getChildByName('btn_cancel');
 
         this.alertBtn1Node.on('click', () => {
-            if (this.alertCallback) this.alertCallback(1);
             this.closeAlert();
+            if (this.alertCallback) this.alertCallback(1);
         });
         this.alertBtn2Node.on('click', () => {
-            if (this.alertCallback) this.alertCallback(2);
             this.closeAlert();
+            if (this.alertCallback) this.alertCallback(2);
         });
         this.alertBtnCancelNode.on('click', () => {
-            if (this.alertCallback) this.alertCallback(0);
             this.closeAlert();
+            if (this.alertCallback) this.alertCallback(0);
         });
 
         this.maskNode.scale = 0;
@@ -621,8 +621,8 @@ export class BaseController extends cc.Component {
 
         this.maskNode.on(cc.Node.EventType.TOUCH_END, () => {
             if (this.maskNode.opacity >= 100) {
-                if (this.alertCallback) this.alertCallback(0);
                 this.closeAlert();
+                if (this.alertCallback) this.alertCallback(0);
             }
         });
     }
@@ -633,7 +633,7 @@ export class BaseController extends cc.Component {
         cc.tween(this.toastNode).to(0.3, { opacity: 255 }).delay(3).to(0.3, { opacity: 0 }).start();
     }
 
-    popAlert(txt: string, callback: (key: number) => void, btn1: string = '确认', btn2: string = null, btnCancel: string = null) {
+    popAlert(txt: string, callback: (key: number) => void, btn1: string = '确定', btn2: string = null, btnCancel: string = null) {
         this.alertLbl.string = txt;
         this.alertCallback = callback;
 
@@ -657,18 +657,11 @@ export class BaseController extends cc.Component {
         cc.tween(this.alertNode).to(0.3, { y: this.alertNode.height }, { easing: cc.easing.quadOut }).start();
 
         this.popMask();
-
-        this.toastNode.y = 0;
     }
 
     closeAlert() {
         this.alertNode.stopAllActions();
-        cc.tween(this.alertNode)
-            .to(0.3, { y: -10 }, { easing: cc.easing.quadIn })
-            .call(() => {
-                this.toastNode.y = -410;
-            })
-            .start();
+        cc.tween(this.alertNode).to(0.3, { y: -10 }, { easing: cc.easing.quadIn }).start();
 
         this.closeMask();
     }

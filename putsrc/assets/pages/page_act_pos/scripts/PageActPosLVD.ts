@@ -142,7 +142,7 @@ export default class PageActPosLVD extends ListViewDelegate {
                 if (moveType.price == 0) {
                     this.gotoNextPos(posId);
                 } else {
-                    let txt = `决定花费${moveType.price}前往${movPosModel.cnName}？`;
+                    let txt = `确定花费${moveType.price}前往“${movPosModel.cnName}”吗？`;
                     this.ctrlr.popAlert(txt, (key: number) => {
                         if (key == 1) this.gotoNextPos(posId);
                     });

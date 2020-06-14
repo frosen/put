@@ -197,9 +197,9 @@ export class Memory {
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
 
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
 
         // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
         // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
@@ -578,9 +578,6 @@ export class GameDataTool {
 
         pet.drink = CnsumDataTool.create(Drink, drink.id); // 不用 pet.drink = drink，是因为drink内部有count代表多个
         pet.drinkTime = curTime || Date.now();
-
-        let drinkIdx = gameData.items.indexOf(drink);
-        if (drinkIdx >= 0) this.deleteItem(gameData, drinkIdx);
 
         return this.SUC;
     }
