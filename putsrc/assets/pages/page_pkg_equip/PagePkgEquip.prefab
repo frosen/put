@@ -2609,6 +2609,9 @@
     "petEquipLayer": {
       "__id__": 40
     },
+    "detailBtnSFrame": {
+      "__uuid__": "c71ebd49-c6f8-4cdb-9d4f-fd9880b27cc2"
+    },
     "_id": ""
   },
   {

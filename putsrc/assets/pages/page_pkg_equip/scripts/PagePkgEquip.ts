@@ -12,7 +12,7 @@ import PkgEquipItemLVD from './PkgEquipItemLVD';
 import PkgEquipPetLVD from './PkgEquipPetLVD';
 import PagePkg from 'pages/page_pkg/scripts/PagePkg';
 import ListViewCell from 'scripts/ListViewCell';
-import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import CellPkgEquip from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { GameDataTool } from 'scripts/Memory';
 import { Pet } from 'scripts/DataSaved';
 
@@ -32,6 +32,9 @@ export class PagePkgEquip extends PageBase {
 
     @property(cc.Node)
     petEquipLayer: cc.Node = null;
+
+    @property(cc.SpriteFrame)
+    detailBtnSFrame: cc.SpriteFrame = null;
 
     onLoad() {
         super.onLoad();

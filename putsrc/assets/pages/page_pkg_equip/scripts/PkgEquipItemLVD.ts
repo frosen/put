@@ -11,7 +11,7 @@ import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
 import { Item, Equip } from 'scripts/DataSaved';
 import { PagePkgEquip } from './PagePkgEquip';
-import { CellPkgEquip, CellPkgEquipType } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import CellPkgEquip from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { GameDataTool } from 'scripts/Memory';
 import CellPkgEquipUnwield from 'pages/page_pkg/cells/cell_pkg_equip_unwield/scripts/CellPkgEquipUnwield';
 
@@ -46,7 +46,7 @@ export default class PkgEquipItemLVD extends ListViewDelegate {
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
         if (cellId == EQUIP) {
             let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
-            cell.init(CellPkgEquipType.selection);
+            cell.setFuncBtnUI(this.page.detailBtnSFrame);
             cell.clickCallback = this.page.onItemCellClick.bind(this.page);
             cell.funcBtnCallback = this.page.onItemCellClickDetailBtn.bind(this.page);
             return cell;
