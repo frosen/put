@@ -888,7 +888,7 @@
     },
     "_enabled": true,
     "cellPkgEquipPrefab": {
-      "__uuid__": "d6eb18f8-4afe-48aa-8a1a-94199e9501c0"
+      "__uuid__": "e7956d4d-39b5-4382-ba28-e980fa49291a"
     },
     "cellUnwieldPrefab": {
       "__uuid__": "7c133b6d-f500-4afa-b6ea-0b122d0d949c"
@@ -2053,7 +2053,7 @@
       "__uuid__": "9c2493c7-448b-46cc-8f9a-62c7b2564631"
     },
     "cellPkgEquipPrefab": {
-      "__uuid__": "d6eb18f8-4afe-48aa-8a1a-94199e9501c0"
+      "__uuid__": "e7956d4d-39b5-4382-ba28-e980fa49291a"
     },
     "cellPkgEquipBlankPrefab": {
       "__uuid__": "0bc0eb17-12a0-4b13-90ed-4411b2c4e00f"

@@ -9,12 +9,17 @@ const { ccclass, property } = cc._decorator;
 import ListViewDelegate from 'scripts/ListViewDelegate';
 import ListView from 'scripts/ListView';
 import ListViewCell from 'scripts/ListViewCell';
-import { CellPet } from '../cells/cell_pet/scripts/CellPet';
+import CellPet from '../cells/cell_pet/scripts/CellPet';
 import PagePet from './PagePet';
 import { Pet } from 'scripts/DataSaved';
 
+export enum PagePetCellType {
+    normal = 1,
+    selection
+}
+
 @ccclass
-export default class PagePetLVD extends ListViewDelegate {
+export class PagePetLVD extends ListViewDelegate {
     @property(cc.Prefab)
     cellPetPrefab: cc.Prefab = null;
 
@@ -25,6 +30,7 @@ export default class PagePetLVD extends ListViewDelegate {
     _curPets: Pet[] = null;
 
     page: PagePet = null;
+    cellType: PagePetCellType = PagePetCellType.normal;
 
     setSpecialPets(pets: Pet[]) {
         this._curPets = pets;
@@ -40,11 +46,16 @@ export default class PagePetLVD extends ListViewDelegate {
 
     createCellForRow(listView: ListView, rowIdx: number): ListViewCell {
         let cell = cc.instantiate(this.cellPetPrefab).getComponent(CellPet);
-        cell.init(this.page.cellPetType);
-        cell.clickCallback = this.page.onCellClick.bind(this.page);
+        if (this.cellType == PagePetCellType.normal) {
+            cell.clickCallback = this.page.onCellClickDetailBtn.bind(this.page);
+            cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+        } else {
+            cell.setFuncBtnUI(this.page.detailBtnSFrame);
+            cell.clickCallback = this.page.onCellClick.bind(this.page);
+            cell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
+        }
         cell.stateBtnCallback = this.page.onCellClickStateBtn.bind(this.page);
-        cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
-        cell.detailBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
+
         return cell;
     }
 

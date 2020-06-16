@@ -150,7 +150,7 @@ export class PagePkgEquip extends PageBase {
         }
     }
 
-    onPetCellClickDetailBtn(cell: ListViewCell) {}
+    onPetCellClickFuncBtn(cell: ListViewCell) {}
 
     // -----------------------------------------------------------------
 

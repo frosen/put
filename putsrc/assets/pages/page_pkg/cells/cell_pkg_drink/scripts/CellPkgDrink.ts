@@ -6,17 +6,14 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewCell from 'scripts/ListViewCell';
+import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { Drink } from 'scripts/DataSaved';
 import { DrinkAimType } from 'scripts/DataModel';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { AmplAttriNames } from 'scripts/DataOther';
 
 @ccclass
-export class CellPkgDrink extends ListViewCell {
-    @property(cc.Label)
-    nameLbl: cc.Label = null;
-
+export class CellPkgDrink extends CellPkgBase {
     @property(cc.Label)
     lvLbl: cc.Label = null;
 
@@ -32,28 +29,11 @@ export class CellPkgDrink extends ListViewCell {
     @property([cc.Layout])
     layouts: cc.Layout[] = [];
 
-    @property(cc.Sprite)
-    sp: cc.Sprite = null;
-
     @property(cc.Label)
     countLbl: cc.Label = null;
 
-    @property(cc.Button)
-    funcBtn: cc.Button = null;
-
-    curItemIdx: number = -1;
-
-    clickCallback: (cell: CellPkgDrink) => void = null;
-    funcBtnCallback: (cell: CellPkgDrink) => void = null;
-
-    onLoad() {
-        super.onLoad();
-        if (CC_EDITOR) return;
-        this.funcBtn.node.on('click', this.onClickFuncBtn, this);
-    }
-
     setData(itemIdx: number, drink: Drink) {
-        this.curItemIdx = itemIdx;
+        super.setData(itemIdx, drink);
         let drinkModel = drinkModelDict[drink.id];
 
         this.nameLbl.string = drinkModel.cnName;
@@ -78,20 +58,5 @@ export class CellPkgDrink extends ListViewCell {
         this.countLbl.string = 'x ' + String(drink.count);
 
         for (const layout of this.layouts) layout.updateLayout();
-    }
-
-    static rerenderLbl(lbl: cc.Label) {
-        // @ts-ignore
-        lbl._assembler.updateRenderData(lbl);
-    }
-
-    onClick() {
-        cc.log('PUT click drink cell: ', this.curCellIdx, this.curItemIdx);
-        if (this.clickCallback) this.clickCallback(this);
-    }
-
-    onClickFuncBtn() {
-        cc.log('PUT show drink cell func: ', this.curCellIdx, this.curItemIdx);
-        if (this.funcBtnCallback) this.funcBtnCallback(this);
     }
 }

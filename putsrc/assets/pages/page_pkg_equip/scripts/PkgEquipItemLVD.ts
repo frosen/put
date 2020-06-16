@@ -48,7 +48,7 @@ export default class PkgEquipItemLVD extends ListViewDelegate {
             let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
             cell.init(CellPkgEquipType.selection);
             cell.clickCallback = this.page.onItemCellClick.bind(this.page);
-            cell.detailBtnCallback = this.page.onItemCellClickDetailBtn.bind(this.page);
+            cell.funcBtnCallback = this.page.onItemCellClickDetailBtn.bind(this.page);
             return cell;
         } else if (cellId == UNWIELD) {
             let cell = cc.instantiate(this.cellUnwieldPrefab).getComponent(CellPkgEquipUnwield);

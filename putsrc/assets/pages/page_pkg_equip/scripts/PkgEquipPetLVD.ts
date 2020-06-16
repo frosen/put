@@ -76,7 +76,7 @@ export default class PkgEquipItemLVD extends ListViewDelegate {
             let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
             cell.init(CellPkgEquipType.selection);
             cell.clickCallback = this.page.onPetCellClick.bind(this.page);
-            cell.detailBtnCallback = this.page.onPetCellClickDetailBtn.bind(this.page);
+            cell.funcBtnCallback = this.page.onPetCellClickFuncBtn.bind(this.page);
             return cell;
         } else if (cellId == BLANK) {
             let cell = cc.instantiate(this.cellPkgEquipBlankPrefab).getComponent(CellPkgEquipBlank);

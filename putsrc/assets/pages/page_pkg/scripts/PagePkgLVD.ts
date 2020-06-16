@@ -12,11 +12,12 @@ import ListViewCell from 'scripts/ListViewCell';
 import { Item, ItemType, Money, Equip, Cnsum, CnsumType, Drink, Catcher, EqpAmplr, CaughtPet } from 'scripts/DataSaved';
 import PagePkgBase from './PagePkgBase';
 import CellPkgMoney from '../cells/cell_pkg_money/scripts/CellPkgMoney';
-import { CellPkgEquip, CellPkgEquipType } from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
+import CellPkgEquip from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { CellPkgDrink } from '../cells/cell_pkg_drink/scripts/CellPkgDrink';
 import { CellPkgCatcher } from '../cells/cell_pkg_catcher/scripts/CellPkgCatcher';
 import { CellPkgCaughtPet } from '../cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
 import { CellPkgEqpAmplr } from '../cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
+import { CellPkgBase } from './CellPkgBase';
 
 type CellPkg = CellPkgMoney & CellPkgDrink & CellPkgCatcher & CellPkgEqpAmplr & CellPkgEquip & CellPkgCaughtPet;
 type DataPkg = Money & Drink & Catcher & EqpAmplr & Equip & CaughtPet;
@@ -28,8 +29,13 @@ let EQPAMPLR = 'ea';
 let EQUIP = 'E';
 let CPET = 'p';
 
+export enum PagePkgCellType {
+    normal = 1,
+    selection
+}
+
 @ccclass
-export default class PagePkgLVD extends ListViewDelegate {
+export class PagePkgLVD extends ListViewDelegate {
     @property(cc.Prefab)
     cellPkgMoneyPrefab: cc.Prefab = null;
 
@@ -51,6 +57,7 @@ export default class PagePkgLVD extends ListViewDelegate {
     curItems: Item[] = [];
     curItemIdxs: number[] = [];
     page: PagePkgBase = null;
+    cellType: PagePkgCellType = PagePkgCellType.normal;
 
     initListData(items: Item[], itemIdxs: number[]) {
         this.curItems = items;
@@ -80,41 +87,38 @@ export default class PagePkgLVD extends ListViewDelegate {
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        switch (cellId) {
-            case MONEY:
-                return cc.instantiate(this.cellPkgMoneyPrefab).getComponent(CellPkgMoney);
-            case DRINK: {
-                let cell = cc.instantiate(this.cellPkgDrinkPrefab).getComponent(CellPkgDrink);
-                cell.clickCallback = this.page.onCellClick.bind(this.page);
-                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
-                return cell;
-            }
-            case CATCHER: {
-                let cell = cc.instantiate(this.cellPkgCatcherPrefab).getComponent(CellPkgCatcher);
-                cell.clickCallback = this.page.onCellClick.bind(this.page);
-                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
-                return cell;
-            }
-            case EQPAMPLR: {
-                let cell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
-                cell.clickCallback = this.page.onCellClick.bind(this.page);
-                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
-                return cell;
-            }
-            case EQUIP: {
-                let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
-                cell.init(CellPkgEquipType.normal);
-                cell.clickCallback = this.page.onCellClick.bind(this.page);
-                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
-                return cell;
-            }
-            case CPET: {
-                let cell = cc.instantiate(this.cellPkgCaughtPetPrefab).getComponent(CellPkgCaughtPet);
-                cell.clickCallback = this.page.onCellClick.bind(this.page);
-                cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
-                return cell;
-            }
+        if (cellId == MONEY) {
+            return cc.instantiate(this.cellPkgMoneyPrefab).getComponent(CellPkgMoney);
         }
+
+        let cell: CellPkgBase;
+        switch (cellId) {
+            case DRINK:
+                cell = cc.instantiate(this.cellPkgDrinkPrefab).getComponent(CellPkgDrink);
+                break;
+            case CATCHER:
+                cell = cc.instantiate(this.cellPkgCatcherPrefab).getComponent(CellPkgCatcher);
+                break;
+            case EQPAMPLR:
+                cell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
+                break;
+            case EQUIP:
+                cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
+                break;
+            case CPET:
+                cell = cc.instantiate(this.cellPkgCaughtPetPrefab).getComponent(CellPkgCaughtPet);
+                break;
+        }
+
+        if (this.cellType == PagePkgCellType.normal) {
+            cell.clickCallback = this.page.onCellClickDetailBtn.bind(this.page);
+            cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+        } else {
+            cell.setFuncBtnUI(this.page.detailBtnSFrame);
+            cell.clickCallback = this.page.onCellClick.bind(this.page);
+            cell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
+        }
+        return cell;
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkg) {

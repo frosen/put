@@ -6,17 +6,14 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewCell from 'scripts/ListViewCell';
+import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { CaughtPet, PetRankNames } from 'scripts/DataSaved';
 import { petModelDict } from 'configs/PetModelDict';
 import { PetModel } from 'scripts/DataModel';
 import { featureModelDict } from 'configs/FeatureModelDict';
 
 @ccclass
-export class CellPkgCaughtPet extends ListViewCell {
-    @property(cc.Label)
-    nameLbl: cc.Label = null;
-
+export class CellPkgCaughtPet extends CellPkgBase {
     @property(cc.Label)
     lvLbl: cc.Label = null;
 
@@ -28,25 +25,9 @@ export class CellPkgCaughtPet extends ListViewCell {
 
     infoNodePool: cc.Node[] = [];
 
-    @property(cc.Sprite)
-    sp: cc.Sprite = null;
-
-    @property(cc.Button)
-    funcBtn: cc.Button = null;
-
-    curItemIdx: number = -1;
-
-    clickCallback: (cell: CellPkgCaughtPet) => void = null;
-    funcBtnCallback: (cell: CellPkgCaughtPet) => void = null;
-
-    onLoad() {
-        super.onLoad();
-        if (CC_EDITOR) return;
-        this.funcBtn.node.on('click', this.onClickFuncBtn, this);
-    }
-
     setData(itemIdx: number, caughtPet: CaughtPet) {
-        this.curItemIdx = itemIdx;
+        super.setData(itemIdx, caughtPet);
+        cc.log('^_^!....', itemIdx, caughtPet);
         let petModel: PetModel = petModelDict[caughtPet.petId];
 
         this.nameLbl.string = '捕获：' + petModel.cnName;
@@ -83,22 +64,7 @@ export class CellPkgCaughtPet extends ListViewCell {
         infoNode.color = color;
         let lbl = infoNode.children[0].getComponent(cc.Label);
         lbl.string = str;
-        CellPkgCaughtPet.rerenderLbl(lbl);
+        CellPkgBase.rerenderLbl(lbl);
         infoNode.getComponent(cc.Layout).updateLayout();
-    }
-
-    static rerenderLbl(lbl: cc.Label) {
-        // @ts-ignore
-        lbl._assembler.updateRenderData(lbl);
-    }
-
-    onClick() {
-        cc.log('PUT click catcher cell: ', this.curCellIdx, this.curItemIdx);
-        if (this.clickCallback) this.clickCallback(this);
-    }
-
-    onClickFuncBtn() {
-        cc.log('PUT show catcher cell func: ', this.curCellIdx, this.curItemIdx);
-        if (this.funcBtnCallback) this.funcBtnCallback(this);
     }
 }

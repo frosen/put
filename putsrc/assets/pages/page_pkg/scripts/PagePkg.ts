@@ -8,20 +8,20 @@ const { ccclass, property } = cc._decorator;
 
 import PagePkgBase from './PagePkgBase';
 import ListView from 'scripts/ListView';
-import PagePkgLVD from './PagePkgLVD';
+import { PagePkgLVD } from './PagePkgLVD';
 import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet, Equip } from 'scripts/DataSaved';
-import { GameDataTool, CaughtPetDataTool } from 'scripts/Memory';
+import { GameDataTool } from 'scripts/Memory';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import ListViewCell from 'scripts/ListViewCell';
 import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
 import PagePet from 'pages/page_pet/scripts/PagePet';
-import { CellPetType } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 import { petModelDict } from 'configs/PetModelDict';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import PagePkgSelection from 'pages/page_pkg_selection/scripts/PagePkgSelection';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
+import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
 
 const LIST_NAMES = ['全部', '装备', '饮品', '捕捉', '强化', '其他'];
 const WIDTH = 1080;
@@ -173,6 +173,8 @@ export default class PagePkg extends PagePkgBase {
         this.funcBar.showFuncBar(cell.curCellIdx, cell.node);
     }
 
+    onCellClickDetailBtn(cell: ListViewCell) {}
+
     // -----------------------------------------------------------------
 
     onUseCell(cellIdx: number) {
@@ -187,7 +189,7 @@ export default class PagePkg extends PagePkgBase {
             let cnsum = item as Cnsum;
             if (cnsum.cnsumType == CnsumType.drink) {
                 this.ctrlr.pushPage(PagePet, {
-                    cellPetType: CellPetType.selection,
+                    cellPetType: PagePetCellType.selection,
                     name: '选择宠物',
                     callback: (cellIdx: number, curPet: Pet) => {
                         let petModel = petModelDict[curPet.id];
@@ -209,7 +211,7 @@ export default class PagePkg extends PagePkgBase {
                 this.ctrlr.pushPage(PagePkgSelection, {
                     name: '选择要强化的装备',
                     curItemIdxs: PagePkg.getItemIdxsByListIdx(gameData.items, 1),
-                    callback: (cellIdx: number, itemIdx: number, equip: Equip) => {
+                    callback: (cellIdx: number, equipIdx: number, equip: Equip) => {
                         if (equip.growth >= 5) {
                             this.ctrlr.popToast('该武器成长等级已达到上限');
                             return;

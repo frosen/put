@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import PagePkgBase from 'pages/page_pkg/scripts/PagePkgBase';
-import PagePkgLVD from 'pages/page_pkg/scripts/PagePkgLVD';
+import { PagePkgLVD, PagePkgCellType } from 'pages/page_pkg/scripts/PagePkgLVD';
 import ListView from 'scripts/ListView';
 import { Item } from 'scripts/DataSaved';
 import ListViewCell from 'scripts/ListViewCell';
@@ -19,12 +19,16 @@ export default class PagePkgSelection extends PagePkgBase {
 
     lvd: PagePkgLVD = null;
 
+    @property(cc.SpriteFrame)
+    detailBtnSFrame: cc.SpriteFrame = null;
+
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
 
         this.lvd = this.list.delegate as PagePkgLVD;
         this.lvd.page = this;
+        this.lvd.cellType = PagePkgCellType.selection;
     }
 
     pageName: string = null;
@@ -64,4 +68,6 @@ export default class PagePkgSelection extends PagePkgBase {
     }
 
     onCellClickFuncBtn(cell: ListViewCell) {}
+
+    onCellClickDetailBtn(cell: ListViewCell) {}
 }

@@ -14,13 +14,8 @@ import { PetModel } from 'scripts/DataModel';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { PetDataTool } from 'scripts/Memory';
 
-export enum CellPetType {
-    normal,
-    selection
-}
-
 @ccclass
-export class CellPet extends ListViewCell {
+export default class CellPet extends ListViewCell {
     @property(cc.Label)
     petNameLbl: cc.Label = null;
 
@@ -42,9 +37,6 @@ export class CellPet extends ListViewCell {
     @property(cc.Button)
     funcBtn: cc.Button = null;
 
-    @property(cc.Button)
-    detailBtn: cc.Button = null;
-
     @property(cc.Prefab)
     infoNodePrefab: cc.Prefab = null;
 
@@ -52,27 +44,16 @@ export class CellPet extends ListViewCell {
 
     curPet: Pet = null;
 
-    type: CellPetType = CellPetType.normal;
-
     clickCallback: (cell: CellPet) => void = null;
     stateBtnCallback: (cell: CellPet) => void = null;
     funcBtnCallback: (cell: CellPet) => void = null;
-    detailBtnCallback: (cell: CellPet) => void = null;
 
-    init(type: CellPetType) {
-        this.type = type;
-        switch (type) {
-            case CellPetType.normal:
-                this.stateBtn.node.on('click', this.onClickStateBtn, this);
-                this.funcBtn.node.on('click', this.onClickFuncBtn, this);
-                this.detailBtn.node.active = false;
-                break;
-            case CellPetType.selection:
-                this.stateBtn.node.active = false;
-                this.funcBtn.node.active = false;
-                this.detailBtn.node.on('click', this.onClickDetailBtn, this);
-                break;
-        }
+    onLoad() {
+        super.onLoad();
+        if (CC_EDITOR) return;
+
+        this.stateBtn.node.on('click', this.onClickStateBtn, this);
+        this.funcBtn.node.on('click', this.onClickFuncBtn, this);
     }
 
     setData(pet: Pet) {
@@ -145,8 +126,7 @@ export class CellPet extends ListViewCell {
         if (this.funcBtnCallback) this.funcBtnCallback(this);
     }
 
-    onClickDetailBtn() {
-        cc.log('PUT show pet detail', this.petNameLbl.string, this.curCellIdx);
-        if (this.detailBtnCallback) this.detailBtnCallback(this);
+    setFuncBtnUI(sFrame: cc.SpriteFrame) {
+        this.funcBtn.target.getComponent(cc.Sprite).spriteFrame = sFrame;
     }
 }

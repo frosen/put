@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewCell from 'scripts/ListViewCell';
+import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { Equip, EleColor } from 'scripts/DataSaved';
 import { EquipDataTool } from 'scripts/Memory';
 import { skillModelDict } from 'configs/SkillModelDict';
@@ -40,16 +40,8 @@ function getNumStr(n: number): string {
     return (n * 0.1).toFixed();
 }
 
-export enum CellPkgEquipType {
-    normal,
-    selection
-}
-
 @ccclass
-export class CellPkgEquip extends ListViewCell {
-    @property(cc.Label)
-    nameLbl: cc.Label = null;
-
+export default class CellPkgEquip extends CellPkgBase {
     @property(cc.Label)
     lvLbl: cc.Label = null;
 
@@ -62,49 +54,13 @@ export class CellPkgEquip extends ListViewCell {
     @property([cc.Layout])
     layouts: cc.Layout[] = [];
 
-    @property(cc.Sprite)
-    equipSp: cc.Sprite = null;
-
     @property(cc.Prefab)
     infoNodePrefab: cc.Prefab = null;
 
     infoNodeDataPool: { infoNode: cc.Node; lbl: cc.Label; layout: cc.Layout }[] = [];
 
-    @property(cc.Button)
-    funcBtn: cc.Button = null;
-
-    @property(cc.Button)
-    detailBtn: cc.Button = null;
-
-    curItemIdx: number = -1;
-
-    type: CellPkgEquipType = CellPkgEquipType.normal;
-
-    clickCallback: (cell: CellPkgEquip) => void = null;
-    funcBtnCallback: (cell: CellPkgEquip) => void = null;
-    detailBtnCallback: (cell: CellPkgEquip) => void = null;
-
-    onLoad() {
-        super.onLoad();
-        if (CC_EDITOR) return;
-    }
-
-    init(type: CellPkgEquipType) {
-        this.type = type;
-        switch (type) {
-            case CellPkgEquipType.normal:
-                this.funcBtn.node.on('click', this.onClickFuncBtn, this);
-                this.detailBtn.node.active = false;
-                break;
-            case CellPkgEquipType.selection:
-                this.funcBtn.node.active = false;
-                this.detailBtn.node.on('click', this.onClickDetailBtn, this);
-                break;
-        }
-    }
-
     setData(itemIdx: number, equip: Equip) {
-        this.curItemIdx = itemIdx;
+        super.setData(itemIdx, equip);
         let equipModel = equipModelDict[equip.id];
         this.nameLbl.string = EquipDataTool.getCnName(equip);
         this.nameLbl.node.color = RankColor[equipModel.rank];
@@ -121,9 +77,9 @@ export class CellPkgEquip extends ListViewCell {
             this.skillLbl.node.parent.opacity = 0;
         }
 
-        CellPkgEquip.rerenderLbl(this.nameLbl);
-        CellPkgEquip.rerenderLbl(this.lvLbl);
-        CellPkgEquip.rerenderLbl(this.skillLbl);
+        CellPkgBase.rerenderLbl(this.nameLbl);
+        CellPkgBase.rerenderLbl(this.lvLbl);
+        CellPkgBase.rerenderLbl(this.skillLbl);
         for (const layout of this.layouts) layout.updateLayout();
 
         let attriInfos = [];
@@ -164,7 +120,7 @@ export class CellPkgEquip extends ListViewCell {
             infoNode.opacity = 255;
             infoNode.color = c;
             lbl.string = str;
-            CellPkgEquip.rerenderLbl(lbl);
+            CellPkgBase.rerenderLbl(lbl);
             layout.updateLayout();
         }
 
@@ -173,25 +129,5 @@ export class CellPkgEquip extends ListViewCell {
         }
 
         this.infoLayer.getComponent(cc.Layout).updateLayout();
-    }
-
-    static rerenderLbl(lbl: cc.Label) {
-        // @ts-ignore
-        lbl._assembler.updateRenderData(lbl);
-    }
-
-    onClick() {
-        cc.log('PUT click equip cell: ', this.curCellIdx, this.curItemIdx);
-        if (this.clickCallback) this.clickCallback(this);
-    }
-
-    onClickFuncBtn() {
-        cc.log('PUT show item cell func: ', this.curCellIdx, this.curItemIdx);
-        if (this.funcBtnCallback) this.funcBtnCallback(this);
-    }
-
-    onClickDetailBtn() {
-        cc.log('PUT show item detail', this.curCellIdx, this.curItemIdx);
-        if (this.detailBtnCallback) this.detailBtnCallback(this);
     }
 }
