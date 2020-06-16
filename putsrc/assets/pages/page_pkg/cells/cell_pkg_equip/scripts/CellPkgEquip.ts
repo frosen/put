@@ -41,7 +41,7 @@ function getNumStr(n: number): string {
 }
 
 @ccclass
-export default class CellPkgEquip extends CellPkgBase {
+export class CellPkgEquip extends CellPkgBase {
     @property(cc.Label)
     lvLbl: cc.Label = null;
 

@@ -5,16 +5,16 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import ListViewDelegate from 'scripts/ListViewDelegate';
-import ListView from 'scripts/ListView';
+import { ListViewDelegate } from 'scripts/ListViewDelegate';
+import { ListView } from 'scripts/ListView';
 import { actPosModelDict } from 'configs/ActPosModelDict';
-import ListViewCell from 'scripts/ListViewCell';
-import CellPosInfo from '../cells/cell_pos_info/scripts/CellPosInfo';
-import CellPosBtn from '../cells/cell_pos_btn/scripts/CellPosBtn';
-import CellPosMov from '../cells/cell_pos_mov/scripts/CellPosMov';
-import PageActPos from './PageActPos';
+import { ListViewCell } from 'scripts/ListViewCell';
+import { CellPosInfo } from '../cells/cell_pos_info/scripts/CellPosInfo';
+import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
+import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
+import { PageActPos } from './PageActPos';
 import { PageSwitchAnim } from 'scripts/BaseController';
-import PageActExpl from 'pages/page_act_expl/scripts/PageActExpl';
+import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
 import { ActPos } from 'scripts/DataSaved';
 import { ActPosModel } from 'scripts/DataModel';
 
@@ -31,7 +31,7 @@ const CellActInfo = {
 };
 
 @ccclass
-export default class PageActPosLVD extends ListViewDelegate {
+export class PageActPosLVD extends ListViewDelegate {
     @property(cc.Prefab)
     infoPrefab: cc.Prefab = null;
 

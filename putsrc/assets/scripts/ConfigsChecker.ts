@@ -146,7 +146,7 @@ function checkItems() {
     checkAllKeys(eqpAmplrModelDict, 'eqpAmplrModelDict');
 }
 
-export default function checkConfigs() {
+export function checkConfigs() {
     checkActPosModelDict();
     checkPetModelDict();
     checkSkillModelDict();

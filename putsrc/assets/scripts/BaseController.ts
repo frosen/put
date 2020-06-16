@@ -5,11 +5,11 @@
  */
 
 const { ccclass, property, executeInEditMode } = cc._decorator;
-import PageBase from './PageBase';
+import { PageBase } from './PageBase';
 import { Memory } from './Memory';
-import DebugTool from './DebugTool';
-import TouchLayer from './TouchLayer';
-import checkConfigs from './ConfigsChecker';
+import { DebugTool } from './DebugTool';
+import { TouchLayer } from './TouchLayer';
+import { checkConfigs } from './ConfigsChecker';
 
 // @ts-ignore
 let customEngineInfo = cc.director.customEngineInfo;

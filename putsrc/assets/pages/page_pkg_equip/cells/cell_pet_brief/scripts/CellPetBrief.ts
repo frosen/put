@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewCell } from 'scripts/ListViewCell';
 import { PetState, PetStateNames } from 'scripts/DataSaved';
 
 @ccclass
-export default class CellPetBrief extends ListViewCell {
+export class CellPetBrief extends ListViewCell {
     @property(cc.Label)
     petName: cc.Label = null;
 

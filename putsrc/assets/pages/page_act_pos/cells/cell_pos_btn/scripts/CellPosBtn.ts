@@ -6,10 +6,10 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
-export default class CellPosBtn extends ListViewCell {
+export class CellPosBtn extends ListViewCell {
     @property(cc.Button)
     btn1: cc.Button = null;
 

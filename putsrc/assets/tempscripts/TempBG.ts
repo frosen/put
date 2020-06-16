@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import TempBase from 'scripts/TempBase';
+import { TempBase } from 'scripts/TempBase';
 
 enum BGType {
     cell = 1,
@@ -14,7 +14,7 @@ enum BGType {
 }
 
 @ccclass
-export default class TempBG extends TempBase {
+export class TempBG extends TempBase {
     @property({
         type: cc.Enum(BGType)
     })

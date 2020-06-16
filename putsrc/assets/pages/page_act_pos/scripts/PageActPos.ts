@@ -5,14 +5,14 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import PageBase from 'scripts/PageBase';
-import PageActPosLVD from './PageActPosLVD';
-import ListView from 'scripts/ListView';
+import { PageBase } from 'scripts/PageBase';
+import { PageActPosLVD } from './PageActPosLVD';
+import { ListView } from 'scripts/ListView';
 import { ActPos } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
 
 @ccclass
-export default class PageActPos extends PageBase {
+export class PageActPos extends PageBase {
     lvd: PageActPosLVD = null;
     listView: ListView = null;
 

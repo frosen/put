@@ -6,12 +6,12 @@
 
 const { ccclass, property, requireComponent } = cc._decorator;
 
-import ListViewDelegate from './ListViewDelegate';
-import ListViewCell from './ListViewCell';
+import { ListViewDelegate } from './ListViewDelegate';
+import { ListViewCell } from './ListViewCell';
 
 @ccclass
 @requireComponent(cc.ScrollView)
-export default class ListView extends cc.Component {
+export class ListView extends cc.Component {
     @property(ListViewDelegate)
     delegate: ListViewDelegate = null;
 

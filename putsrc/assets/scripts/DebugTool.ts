@@ -4,7 +4,7 @@
  * luleyan
  */
 
-export default class DebugTool {
+export class DebugTool {
     ctrling: boolean = false;
 
     /** 用于快捷键的key */

@@ -6,14 +6,14 @@
 
 const { ccclass, property } = cc._decorator;
 
-import PagePkgBase from 'pages/page_pkg/scripts/PagePkgBase';
+import { PagePkgBase } from 'pages/page_pkg/scripts/PagePkgBase';
 import { PagePkgLVD, PagePkgCellType } from 'pages/page_pkg/scripts/PagePkgLVD';
-import ListView from 'scripts/ListView';
+import { ListView } from 'scripts/ListView';
 import { Item } from 'scripts/DataSaved';
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
-export default class PagePkgSelection extends PagePkgBase {
+export class PagePkgSelection extends PagePkgBase {
     @property(ListView)
     list: ListView = null;
 
@@ -51,6 +51,7 @@ export default class PagePkgSelection extends PagePkgBase {
 
     onPageShow() {
         this.ctrlr.setTitle(this.pageName);
+        this.ctrlr.setBackBtnEnabled(true);
 
         let items = this.ctrlr.memory.gameData.items;
         this.lvd.initListData(items, this.curItemIdxs);

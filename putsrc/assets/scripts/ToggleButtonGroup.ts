@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class ToggleButtonGroup extends cc.Component {
+export class ToggleButtonGroup extends cc.Component {
     btns: cc.Button[] = [];
 
     onLoad() {

@@ -11,7 +11,7 @@ import { BaseController } from './BaseController';
 const BACK_MARK_BUFFER: number = 50;
 
 @ccclass
-export default class TouchLayer extends cc.Component {
+export class TouchLayer extends cc.Component {
     @property(cc.Node)
     mark: cc.Node = null;
 

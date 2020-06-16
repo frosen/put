@@ -27,7 +27,6 @@ export class CellPkgCaughtPet extends CellPkgBase {
 
     setData(itemIdx: number, caughtPet: CaughtPet) {
         super.setData(itemIdx, caughtPet);
-        cc.log('^_^!....', itemIdx, caughtPet);
         let petModel: PetModel = petModelDict[caughtPet.petId];
 
         this.nameLbl.string = '捕获：' + petModel.cnName;

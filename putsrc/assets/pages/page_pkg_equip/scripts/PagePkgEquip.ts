@@ -6,13 +6,13 @@
 
 const { ccclass, property } = cc._decorator;
 
-import PageBase from 'scripts/PageBase';
-import ListView from 'scripts/ListView';
-import PkgEquipItemLVD from './PkgEquipItemLVD';
-import PkgEquipPetLVD from './PkgEquipPetLVD';
-import PagePkg from 'pages/page_pkg/scripts/PagePkg';
-import ListViewCell from 'scripts/ListViewCell';
-import CellPkgEquip from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { PageBase } from 'scripts/PageBase';
+import { ListView } from 'scripts/ListView';
+import { PkgEquipItemLVD } from './PkgEquipItemLVD';
+import { PkgEquipPetLVD } from './PkgEquipPetLVD';
+import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
+import { ListViewCell } from 'scripts/ListViewCell';
+import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { GameDataTool } from 'scripts/Memory';
 import { Pet } from 'scripts/DataSaved';
 

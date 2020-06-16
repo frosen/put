@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewDelegate from 'scripts/ListViewDelegate';
-import ListView from 'scripts/ListView';
-import ListViewCell from 'scripts/ListViewCell';
-import CellPet from '../cells/cell_pet/scripts/CellPet';
-import PagePet from './PagePet';
+import { ListViewDelegate } from 'scripts/ListViewDelegate';
+import { ListView } from 'scripts/ListView';
+import { ListViewCell } from 'scripts/ListViewCell';
+import { CellPet } from '../cells/cell_pet/scripts/CellPet';
+import { PagePet } from './PagePet';
 import { Pet } from 'scripts/DataSaved';
 
 export enum PagePetCellType {

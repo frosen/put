@@ -6,20 +6,20 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewDelegate from 'scripts/ListViewDelegate';
-import ListView from 'scripts/ListView';
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewDelegate } from 'scripts/ListViewDelegate';
+import { ListView } from 'scripts/ListView';
+import { ListViewCell } from 'scripts/ListViewCell';
 import { Item, Equip } from 'scripts/DataSaved';
 import { PagePkgEquip } from './PagePkgEquip';
-import CellPkgEquip from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { GameDataTool } from 'scripts/Memory';
-import CellPkgEquipUnwield from 'pages/page_pkg/cells/cell_pkg_equip_unwield/scripts/CellPkgEquipUnwield';
+import { CellPkgEquipUnwield } from 'pages/page_pkg/cells/cell_pkg_equip_unwield/scripts/CellPkgEquipUnwield';
 
 const UNWIELD = 'u';
 const EQUIP = 'e';
 
 @ccclass
-export default class PkgEquipItemLVD extends ListViewDelegate {
+export class PkgEquipItemLVD extends ListViewDelegate {
     @property(cc.Prefab)
     cellPkgEquipPrefab: cc.Prefab = null;
 

@@ -5,14 +5,14 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import ListViewDelegate from 'scripts/ListViewDelegate';
-import ListView from 'scripts/ListView';
-import ListViewCell from 'scripts/ListViewCell';
-import PageActExpl from './PageActExpl';
-import CellExplLog from '../cells/cell_expl_log/scripts/CellExplLog';
+import { ListViewDelegate } from 'scripts/ListViewDelegate';
+import { ListView } from 'scripts/ListView';
+import { ListViewCell } from 'scripts/ListViewCell';
+import { PageActExpl } from './PageActExpl';
+import { CellExplLog } from '../cells/cell_expl_log/scripts/CellExplLog';
 
 @ccclass
-export default class PageActExplLVD extends ListViewDelegate {
+export class PageActExplLVD extends ListViewDelegate {
     page: PageActExpl = null;
 
     @property(cc.Prefab)

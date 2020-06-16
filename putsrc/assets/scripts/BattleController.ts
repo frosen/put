@@ -5,7 +5,7 @@
  */
 
 import { Memory, EquipDataTool, GameDataTool, PetDataTool, CaughtPetDataTool, FeatureDataTool } from 'scripts/Memory';
-import BattlePageBase from './BattlePageBase';
+import { BattlePageBase } from './BattlePageBase';
 import { normalRandom, getRandomOneInList, random, randomRate } from 'scripts/Random';
 
 import { expModels } from 'configs/ExpModels';
@@ -15,7 +15,7 @@ import { buffModelDict } from 'configs/BuffModelDict';
 import { petModelDict } from 'configs/PetModelDict';
 
 import { deepCopy } from 'scripts/Utils';
-import { SkillModel, SkillType, ExplModel, SkillAimtype, SkillDirType, BuffOutput, CatcherModel } from 'scripts/DataModel';
+import { SkillModel, SkillType, ExplModel, SkillAimtype, SkillDirType, CatcherModel } from 'scripts/DataModel';
 import {
     Pet,
     Feature,

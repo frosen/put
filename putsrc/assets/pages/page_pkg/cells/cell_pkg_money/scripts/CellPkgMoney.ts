@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewCell } from 'scripts/ListViewCell';
 import { Money } from 'scripts/DataSaved';
 
 @ccclass
-export default class CellPkgMoney extends ListViewCell {
+export class CellPkgMoney extends ListViewCell {
     @property(cc.Label)
     countLbl: cc.Label = null;
 

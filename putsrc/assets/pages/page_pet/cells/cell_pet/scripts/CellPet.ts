@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewCell } from 'scripts/ListViewCell';
 import { petModelDict } from 'configs/PetModelDict';
 
 import { Pet, PetRankNames, PetStateNames, EleColor } from 'scripts/DataSaved';
@@ -15,7 +15,7 @@ import { featureModelDict } from 'configs/FeatureModelDict';
 import { PetDataTool } from 'scripts/Memory';
 
 @ccclass
-export default class CellPet extends ListViewCell {
+export class CellPet extends ListViewCell {
     @property(cc.Label)
     petNameLbl: cc.Label = null;
 

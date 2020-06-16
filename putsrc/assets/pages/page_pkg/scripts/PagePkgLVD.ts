@@ -6,13 +6,13 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewDelegate from 'scripts/ListViewDelegate';
-import ListView from 'scripts/ListView';
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewDelegate } from 'scripts/ListViewDelegate';
+import { ListView } from 'scripts/ListView';
+import { ListViewCell } from 'scripts/ListViewCell';
 import { Item, ItemType, Money, Equip, Cnsum, CnsumType, Drink, Catcher, EqpAmplr, CaughtPet } from 'scripts/DataSaved';
-import PagePkgBase from './PagePkgBase';
-import CellPkgMoney from '../cells/cell_pkg_money/scripts/CellPkgMoney';
-import CellPkgEquip from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { PagePkgBase } from './PagePkgBase';
+import { CellPkgMoney } from '../cells/cell_pkg_money/scripts/CellPkgMoney';
+import { CellPkgEquip } from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { CellPkgDrink } from '../cells/cell_pkg_drink/scripts/CellPkgDrink';
 import { CellPkgCatcher } from '../cells/cell_pkg_catcher/scripts/CellPkgCatcher';
 import { CellPkgCaughtPet } from '../cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';

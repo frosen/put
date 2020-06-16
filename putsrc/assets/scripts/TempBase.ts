@@ -8,7 +8,7 @@ const { ccclass, property, executeInEditMode } = cc._decorator;
 
 @ccclass
 @executeInEditMode
-export default class TempBase extends cc.Component {
+export class TempBase extends cc.Component {
     onLoad() {
         this.handleTemp();
     }

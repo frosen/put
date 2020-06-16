@@ -6,19 +6,19 @@
 
 const { ccclass, property } = cc._decorator;
 
-import PageBase from 'scripts/PageBase';
-import ListView from 'scripts/ListView';
-import PagePetDetailLVD from './PagePetDetailLVD';
+import { PageBase } from 'scripts/PageBase';
+import { ListView } from 'scripts/ListView';
+import { PagePetDetailLVD } from './PagePetDetailLVD';
 import { Pet, Feature } from 'scripts/DataSaved';
 import { Pet2 } from 'scripts/DataOther';
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewCell } from 'scripts/ListViewCell';
 import { PetDataTool, GameDataTool } from 'scripts/Memory';
 import { FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
-import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
+import { FuncBar } from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
 
 @ccclass
-export default class PagePetDetail extends PageBase {
+export class PagePetDetail extends PageBase {
     dirtyToken: number = 0;
 
     curPet: Pet = null;

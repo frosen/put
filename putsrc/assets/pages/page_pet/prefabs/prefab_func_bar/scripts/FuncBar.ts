@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class FuncBar extends cc.Component {
+export class FuncBar extends cc.Component {
     @property([cc.Node])
     btns: cc.Node[] = [];
 

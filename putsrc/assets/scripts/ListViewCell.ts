@@ -9,7 +9,7 @@ import { BaseController } from './BaseController';
 
 @ccclass
 @executeInEditMode
-export default class ListViewCell extends cc.Component {
+export class ListViewCell extends cc.Component {
     get ctrlr(): BaseController {
         // @ts-ignore
         if (!this._ctrlr) this._ctrlr = window.baseCtrlr;

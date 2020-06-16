@@ -6,11 +6,11 @@
 
 const { ccclass, property, requireComponent } = cc._decorator;
 
-import TempBase from 'scripts/TempBase';
+import { TempBase } from 'scripts/TempBase';
 
 @ccclass
 @requireComponent(cc.Button)
-export default class TempCellBtn extends TempBase {
+export class TempCellBtn extends TempBase {
     handleTemp() {
         let btn = this.getComponent(cc.Button);
         btn.transition = cc.Button.Transition.COLOR;

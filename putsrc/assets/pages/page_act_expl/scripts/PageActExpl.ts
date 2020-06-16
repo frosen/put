@@ -5,18 +5,16 @@
  */
 
 const { ccclass, property, executionOrder } = cc._decorator;
-import BattlePageBase from 'scripts/BattlePageBase';
-import { ExplUpdater, ExplState } from 'scripts/ExplUpdater';
-import PetUI from './PetUI';
+import { BattlePageBase } from 'scripts/BattlePageBase';
+import { ExplUpdater } from 'scripts/ExplUpdater';
+import { PetUI } from './PetUI';
 import { petModelDict } from 'configs/PetModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
-import PageActExplLVD from './PageActExplLVD';
-import ListView from 'scripts/ListView';
-import PagePet from 'pages/page_pet/scripts/PagePet';
+import { PageActExplLVD } from './PageActExplLVD';
+import { ListView } from 'scripts/ListView';
 import { PetRankNames, EleType, Pet } from 'scripts/DataSaved';
 import { BuffModel, BuffType } from 'scripts/DataModel';
 import { BattlePet, RAGE_MAX } from 'scripts/DataOther';
-import { CellPetType } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -35,7 +33,7 @@ const DmgLblActParams: number[][] = [
 
 @ccclass
 @executionOrder(1) // 为了start在scrollview的start之后进行，保证对scrollview的content.y设置正确
-export default class PageActExpl extends BattlePageBase {
+export class PageActExpl extends BattlePageBase {
     updater: ExplUpdater = null;
 
     @property(cc.Node)

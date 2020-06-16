@@ -10,7 +10,7 @@ import { BaseController } from './BaseController';
 
 @ccclass
 @executeInEditMode
-export default class PageBase extends cc.Component {
+export class PageBase extends cc.Component {
     get ctrlr(): BaseController {
         // @ts-ignore
         if (!this._ctrlr) this._ctrlr = window.baseCtrlr;

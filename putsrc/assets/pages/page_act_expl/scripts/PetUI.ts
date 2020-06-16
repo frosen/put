@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class PetUI extends cc.Component {
+export class PetUI extends cc.Component {
     @property(cc.Label)
     petName: cc.Label = null;
 

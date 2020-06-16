@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import PageBase from 'scripts/PageBase';
-import PageActPos from 'pages/page_act_pos/scripts/PageActPos';
+import { PageBase } from 'scripts/PageBase';
+import { PageActPos } from 'pages/page_act_pos/scripts/PageActPos';
 
 @ccclass
-export default class PageAct extends PageBase {
+export class PageAct extends PageBase {
     afterPageShowAnim() {
         this.ctrlr.pushPage(PageActPos, null, false);
     }

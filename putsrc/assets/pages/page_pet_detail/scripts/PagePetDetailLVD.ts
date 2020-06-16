@@ -6,21 +6,21 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewDelegate from 'scripts/ListViewDelegate';
-import ListView from 'scripts/ListView';
-import ListViewCell from 'scripts/ListViewCell';
-import CellAttri from '../cells/cell_attri/scripts/CellAttri';
-import CellAttri2 from '../cells/cell_attri2/scripts/CellAttri2';
-import CellPetName from '../cells/cell_pet_name/scripts/CellPetName';
-import CellTitle from '../cells/cell_title/scripts/CellTitle';
+import { ListViewDelegate } from 'scripts/ListViewDelegate';
+import { ListView } from 'scripts/ListView';
+import { ListViewCell } from 'scripts/ListViewCell';
+import { CellAttri } from '../cells/cell_attri/scripts/CellAttri';
+import { CellAttri2 } from '../cells/cell_attri2/scripts/CellAttri2';
+import { CellPetName } from '../cells/cell_pet_name/scripts/CellPetName';
+import { CellTitle } from '../cells/cell_title/scripts/CellTitle';
 import { petModelDict } from 'configs/PetModelDict';
 import { expModels } from 'configs/ExpModels';
 import { Pet, PetStateNames, PetRankNames, BioTypeNames, EleTypeNames, BattleTypeNames, Feature } from 'scripts/DataSaved';
 import { Pet2 } from 'scripts/DataOther';
 import { PetModel } from 'scripts/DataModel';
-import { CellPkgEquip, CellPkgEquipType } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
-import PagePetDetail from './PagePetDetail';
-import CellPkgEquipBlank from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
+import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { PagePetDetail } from './PagePetDetail';
+import { CellPkgEquipBlank } from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PetDataTool } from 'scripts/Memory';
@@ -92,7 +92,7 @@ function attriTip(attri: number, attriOri: number, tip: string): string {
 }
 
 @ccclass
-export default class PagePetDetailLVD extends ListViewDelegate {
+export class PagePetDetailLVD extends ListViewDelegate {
     @property(cc.Prefab)
     attriPrefab: cc.Prefab = null;
 
@@ -199,11 +199,8 @@ export default class PagePetDetailLVD extends ListViewDelegate {
                 return cc.instantiate(this.attri2Prefab).getComponent(ListViewCell);
             case TITLE:
                 return cc.instantiate(this.titlePrefab).getComponent(ListViewCell);
-            case EQUIP: {
-                let cell = cc.instantiate(this.equipPrefab).getComponent(CellPkgEquip);
-                cell.init(CellPkgEquipType.normal);
-                return cell;
-            }
+            case EQUIP:
+                return cc.instantiate(this.equipPrefab).getComponent(CellPkgEquip);
             case BLANK:
                 return cc.instantiate(this.equipBlankPrefab).getComponent(CellPkgEquipBlank);
             case SKILL:

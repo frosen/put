@@ -5,10 +5,10 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import PageBase from './PageBase';
+import { PageBase } from './PageBase';
 
 @ccclass
-export default abstract class BattlePageBase extends PageBase {
+export abstract class BattlePageBase extends PageBase {
     abstract setUIofSelfPet(index: number): void;
     abstract setUIofEnemyPet(index: number): void;
     abstract clearUIofSelfPet(index: number): void;

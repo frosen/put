@@ -6,10 +6,10 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
-export default class CellExplLog extends ListViewCell {
+export class CellExplLog extends ListViewCell {
     @property(cc.RichText)
     logLbl: cc.RichText = null;
 

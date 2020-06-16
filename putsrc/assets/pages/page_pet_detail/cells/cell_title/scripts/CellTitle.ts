@@ -6,10 +6,10 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
-export default class CellTitle extends ListViewCell {
+export class CellTitle extends ListViewCell {
     @property(cc.Label)
     title: cc.Label = null;
 

@@ -6,10 +6,10 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
-export default class CellPkgEquipUnwield extends ListViewCell {
+export class CellPkgEquipUnwield extends ListViewCell {
     clickCallback: (cell: CellPkgEquipUnwield) => void = null;
     onClick() {
         if (this.clickCallback) this.clickCallback(this);

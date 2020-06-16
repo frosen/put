@@ -6,18 +6,18 @@
 
 const { ccclass, property } = cc._decorator;
 
-import PagePkgBase from './PagePkgBase';
-import ListView from 'scripts/ListView';
+import { PagePkgBase } from './PagePkgBase';
+import { ListView } from 'scripts/ListView';
 import { PagePkgLVD } from './PagePkgLVD';
 import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet, Equip } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
-import ListViewCell from 'scripts/ListViewCell';
-import FuncBar from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
-import PagePet from 'pages/page_pet/scripts/PagePet';
+import { ListViewCell } from 'scripts/ListViewCell';
+import { FuncBar } from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
+import { PagePet } from 'pages/page_pet/scripts/PagePet';
 import { petModelDict } from 'configs/PetModelDict';
 import { drinkModelDict } from 'configs/DrinkModelDict';
-import PagePkgSelection from 'pages/page_pkg_selection/scripts/PagePkgSelection';
+import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
@@ -27,7 +27,7 @@ const LIST_NAMES = ['全部', '装备', '饮品', '捕捉', '强化', '其他'];
 const WIDTH = 1080;
 
 @ccclass
-export default class PagePkg extends PagePkgBase {
+export class PagePkg extends PagePkgBase {
     curListIdx: number = 0;
 
     @property(cc.Node)

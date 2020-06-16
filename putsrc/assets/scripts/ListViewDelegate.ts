@@ -6,12 +6,12 @@
 
 const { ccclass, property } = cc._decorator;
 
-import ListView from './ListView';
-import ListViewCell from './ListViewCell';
+import { ListView } from './ListView';
+import { ListViewCell } from './ListViewCell';
 import { BaseController } from './BaseController';
 
 @ccclass
-export default abstract class ListViewDelegate extends cc.Component {
+export abstract class ListViewDelegate extends cc.Component {
     get ctrlr(): BaseController {
         // @ts-ignore
         if (!this._ctrlr) this._ctrlr = window.baseCtrlr;

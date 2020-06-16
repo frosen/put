@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import BattlePageBase from './BattlePageBase';
+import { BattlePageBase } from './BattlePageBase';
 import { Memory, GameDataTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
 import { GameData, ItemType, Cnsum, CnsumType } from 'scripts/DataSaved';

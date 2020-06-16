@@ -1,27 +1,27 @@
 /*
- * PkgEquipItemLVD.ts
+ * PkgEquipPetLVD.ts
  * 装备页面的物品栏中物品列表
  * luleyan
  */
 
 const { ccclass, property } = cc._decorator;
 
-import ListViewDelegate from 'scripts/ListViewDelegate';
-import ListView from 'scripts/ListView';
-import ListViewCell from 'scripts/ListViewCell';
+import { ListViewDelegate } from 'scripts/ListViewDelegate';
+import { ListView } from 'scripts/ListView';
+import { ListViewCell } from 'scripts/ListViewCell';
 import { Equip, Pet } from 'scripts/DataSaved';
 import { PagePkgEquip } from './PagePkgEquip';
-import CellPkgEquip from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
-import CellPetBrief from '../cells/cell_pet_brief/scripts/CellPetBrief';
+import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { CellPetBrief } from '../cells/cell_pet_brief/scripts/CellPetBrief';
 import { petModelDict } from 'configs/PetModelDict';
-import CellPkgEquipBlank from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
+import { CellPkgEquipBlank } from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
 
 const PET_INFO = 'p';
 const EQUIP = 'e';
 const BLANK = 'b';
 
 @ccclass
-export default class PkgEquipItemLVD extends ListViewDelegate {
+export class PkgEquipPetLVD extends ListViewDelegate {
     @property(cc.Prefab)
     cellPetBriefPrefab: cc.Prefab = null;
 

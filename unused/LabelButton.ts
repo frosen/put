@@ -16,7 +16,7 @@ const State = cc.Enum({
 @ccclass
 @executeInEditMode
 @requireComponent(cc.Button)
-export default class LabelButton extends cc.Component {
+export class LabelButton extends cc.Component {
     @property(cc.Label)
     lbl: cc.Label = null;
 
@@ -50,7 +50,7 @@ export default class LabelButton extends cc.Component {
         // @ts-ignore
         let oldUpdateState = btn._applyTransition;
         // @ts-ignore
-        btn._applyTransition = function(state) {
+        btn._applyTransition = function (state) {
             oldUpdateState.call(this, state);
             lblBtn.updateLbl(state);
         };
