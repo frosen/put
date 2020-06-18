@@ -224,6 +224,9 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'DaMoShi', CnsumType.eqpAmplr, 2);
 
         GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
+
+        this.gameData.curPosId = 'GuangJiDianDaDao';
+        GameDataTool.createExpl(this.gameData);
     }
 }
 

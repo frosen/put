@@ -76,7 +76,7 @@ export class PageBase extends cc.Component {
 
     onPageHide() {}
 
-    beforePageHideAnim() {}
+    beforePageHideAnim(willDestroy: boolean) {}
 
     afterPageShowAnim() {}
 }

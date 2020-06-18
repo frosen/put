@@ -129,8 +129,8 @@ export class PageActExpl extends BattlePageBase {
         this.updateLogListView();
     }
 
-    onDestroy() {
-        if (!CC_EDITOR) this.updater.destroy();
+    beforePageHideAnim(willDestroy: boolean) {
+        if (willDestroy) this.updater.destroy();
     }
 
     onPageShow() {

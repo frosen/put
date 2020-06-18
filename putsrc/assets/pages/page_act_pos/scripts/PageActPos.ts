@@ -10,6 +10,7 @@ import { PageActPosLVD } from './PageActPosLVD';
 import { ListView } from 'scripts/ListView';
 import { ActPos } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
+import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
 
 @ccclass
 export class PageActPos extends PageBase {
@@ -27,9 +28,10 @@ export class PageActPos extends PageBase {
     }
 
     onPageShow() {
-        this.ctrlr.setTitle('位置');
-
         let gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl) return;
+
+        this.ctrlr.setTitle('位置');
         let posId = gameData.curPosId;
 
         let actPos: ActPos = null;
@@ -50,5 +52,10 @@ export class PageActPos extends PageBase {
     resetListview() {
         this.lvd.clearData();
         this.listView.resetContent();
+    }
+
+    afterPageShowAnim() {
+        let gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl) this.ctrlr.pushPage(PageActExpl, null, false);
     }
 }

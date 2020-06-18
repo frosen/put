@@ -237,8 +237,8 @@ export class BaseController extends cc.Component {
         nextPage.node.zIndex = curPage.node.zIndex + 1;
 
         this.clearNavBar();
-        this.showPage(nextPage);
         this.willHidePage(curPage);
+        this.showPage(nextPage);
         let afterAnim = () => {
             this.hidePage(curPage);
             this.pageChanging = false;
@@ -290,8 +290,8 @@ export class BaseController extends cc.Component {
         let curPage = curTreeNode.page;
 
         this.clearNavBar();
+        this.willHidePage(curPage, true);
         this.showPage(nextPage);
-        this.willHidePage(curPage);
         let afterAnim = () => {
             this.deleteTreeNode(curTreeNode);
             this.pageChanging = false;
@@ -366,8 +366,8 @@ export class BaseController extends cc.Component {
         parentTreeNode.child = nextTreeNode;
 
         this.clearNavBar();
-        this.showPage(nextDisTreeNode.page);
         if (curDisTreeNode) this.willHidePage(curDisTreeNode.page);
+        this.showPage(nextDisTreeNode.page);
         this.doSwitchPageAnim(curDisTreeNode ? curDisTreeNode.page.node : null, nextDisTreeNode.page.node, anim, () => {
             if (curDisTreeNode) this.hidePage(curDisTreeNode.page);
             this.pageChanging = false;
@@ -463,14 +463,13 @@ export class BaseController extends cc.Component {
     deleteTreeNode(treeNode: TreeNode) {
         let child = treeNode.child;
         let others = treeNode.others;
-        this.deletePage(treeNode.page);
         if (child) this.deleteTreeNode(child);
         for (const key in others) {
-            if (others.hasOwnProperty(key)) {
-                const otherTreeNode = others[key];
-                this.deleteTreeNode(otherTreeNode);
-            }
+            if (!others.hasOwnProperty(key)) continue;
+            const otherTreeNode = others[key];
+            this.deleteTreeNode(otherTreeNode);
         }
+        this.deletePage(treeNode.page);
     }
 
     deletePage(page: PageBase) {
@@ -494,8 +493,8 @@ export class BaseController extends cc.Component {
         page.onPageShow();
     }
 
-    willHidePage(page: PageBase) {
-        page.beforePageHideAnim();
+    willHidePage(page: PageBase, willDestroy: boolean = false) {
+        page.beforePageHideAnim(willDestroy);
     }
 
     didShowPage(page: PageBase) {
