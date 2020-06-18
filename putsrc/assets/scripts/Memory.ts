@@ -39,38 +39,19 @@ import { drinkModelDict } from 'configs/DrinkModelDict';
 import { inbornFeatures } from 'configs/InbornFeatures';
 
 let memoryDirtyToken: number = -1;
+let sfbdCount: number = 0;
+function checkDataCorrect(): boolean {
+    if (sfbdCount > 0) {
+        sfbdCount++;
+        if (sfbdCount > 10) cc.game.end();
+        return false;
+    }
+    return true;
+}
 
 const MagicNum = 1654435769 + Math.floor(Math.random() * 1000000000);
 function getCheckedNumber(s: number): number {
     return (s * MagicNum) >> 19;
-}
-
-function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
-    let ins = new cls();
-    let checkIns = new cls();
-    for (const key in checkIns) {
-        if (!checkIns.hasOwnProperty(key)) continue;
-        let cNum = checkIns[key];
-        if (typeof cNum == 'number') checkIns[key] = getCheckedNumber(cNum) as any;
-    }
-    return new Proxy(ins, {
-        set: function (target, key, value, receiver) {
-            if (typeof value == 'number') {
-                checkIns[key] = getCheckedNumber(value);
-            }
-            memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
-            return Reflect.set(target, key, value, receiver);
-        },
-        get: function (target, key) {
-            let v = target[key];
-            if (typeof v == 'number') {
-                if (getCheckedNumber(v) != checkIns[key]) {
-                    throw new Error('number check wrong!');
-                }
-            }
-            return v;
-        }
-    });
 }
 
 function newList(list = null) {
@@ -83,12 +64,39 @@ function newList(list = null) {
 }
 
 function newDict(dict = null) {
-    return new Proxy(dict || {}, {
+    let realDict = dict || {};
+    let ckDict = {};
+    for (const key in realDict) {
+        if (!realDict.hasOwnProperty(key)) continue;
+        let cNum = realDict[key];
+        if (typeof cNum == 'number') ckDict[key] = getCheckedNumber(cNum) as any;
+    }
+    return new Proxy(realDict, {
         set: function (target, key, value, receiver) {
+            if (typeof value == 'number') {
+                ckDict[key] = getCheckedNumber(value);
+            }
             memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
             return Reflect.set(target, key, value, receiver);
+        },
+        get: function (target, key) {
+            let v = target[key];
+            if (typeof v == 'number') {
+                if (getCheckedNumber(v) != ckDict[key]) {
+                    sfbdCount++;
+                    if (!CC_BUILD) throw new Error('number check wrong!');
+                }
+            }
+            return v;
         }
     });
+}
+
+function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
+    let ins = new cls();
+    // @ts-ignore
+    ins.__proto__ = Object.prototype; // 为了避免保存读取无误，移除原型链
+    return newDict(ins);
 }
 
 // -----------------------------------------------------------------
@@ -168,6 +176,7 @@ export class Memory {
 
     saveMemory() {
         cc.log('STORM cc ^_^ 保存 ');
+        if (!checkDataCorrect()) return;
     }
 
     // -----------------------------------------------------------------
