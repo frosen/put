@@ -49,6 +49,7 @@ export class CellPkgCatcher extends CellPkgBase {
         CellPkgBase.rerenderLbl(this.rankLbl);
 
         this.rateLbl.string = `成功率+${catcherModel.rate}%`;
+        CellPkgBase.rerenderLbl(this.rateLbl);
         CellPkgCatcher.setTypeName(catcherModel.bioType, BioTypeNames, this.bioLbl, this.bioLbl.node.parent);
         CellPkgCatcher.setTypeName(catcherModel.eleType, EleTypeNames, this.eleLbl, this.eleLbl.node.parent);
         CellPkgCatcher.setTypeName(catcherModel.battleType, BattleTypeNames, this.btlTypeLbl, this.btlTypeLbl.node.parent);

@@ -184,19 +184,27 @@ export class Memory {
     test() {
         this.gameData.curPosId = 'YiZhuang';
 
-        GameDataTool.addPet(this.gameData, 'FaTiaoWa', 20, 4, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 10000;
             pet.equips[0] = EquipDataTool.createRandom(15, 20);
         });
 
-        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 5, 2, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.drink = CnsumDataTool.create(Drink, 'LingGanYaoJi2');
             pet.drinkTime = Date.now();
         });
 
-        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 31, 2, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], (pet: Pet) => {
+            pet.state = PetState.ready;
+        });
+
+        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], (pet: Pet) => {
+            pet.state = PetState.ready;
+        });
+
+        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
         });
 
@@ -226,7 +234,7 @@ export class Memory {
         GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
 
         this.gameData.curPosId = 'GuangJiDianDaDao';
-        GameDataTool.createExpl(this.gameData);
+        // GameDataTool.createExpl(this.gameData);
     }
 }
 
@@ -501,6 +509,52 @@ export class ActPosDataTool {
         let actPos = newInsWithChecker(ActPos);
         actPos.id = posId;
         return actPos;
+    }
+}
+
+export class MmrTool {
+    static createExpl(): ExplMmr {
+        let expl = newInsWithChecker(ExplMmr);
+        expl.startTime = Date.now();
+        expl.curStep = 0;
+        expl.selfs = newList();
+        expl.hiding = false;
+        expl.catching = false;
+        expl.cumCatchRate = 0;
+        return expl;
+    }
+
+    static createSelfPet(pet: Pet): SelfPetMmr {
+        let selfPetMmr = newInsWithChecker(SelfPetMmr);
+        selfPetMmr.catchIdx = pet.catchIdx;
+        selfPetMmr.lv = pet.lv;
+        selfPetMmr.rank = pet.rank;
+        selfPetMmr.state = pet.state;
+        selfPetMmr.lndFchrLen = pet.learnedFeatures.length;
+        selfPetMmr.prvty = pet.prvty;
+        let tokens = [];
+        for (const equip of pet.equips) tokens.push(EquipDataTool.getToken(equip));
+        selfPetMmr.eqpTokens = newList(tokens);
+        return selfPetMmr;
+    }
+
+    static createBattle(seed: number, spcBtlId: number): BattleMmr {
+        let battle = newInsWithChecker(BattleMmr);
+        battle.startTime = Date.now();
+        battle.seed = seed;
+        battle.enemys = newList();
+        battle.spcBtlId = spcBtlId;
+        return battle;
+    }
+
+    static createPet(id: string, lv: number, rank: number, features: Feature[]): PetMmr {
+        let p = newInsWithChecker(PetMmr);
+        p.id = id;
+        p.lv = lv;
+        p.rank = rank;
+        p.features = newList();
+        for (const feature of features) p.features.push(FeatureDataTool.clone(feature));
+        return p;
     }
 }
 
@@ -816,33 +870,18 @@ export class GameDataTool {
 
     static createExpl(gameData: GameData) {
         if (gameData.curExpl) return;
-        let expl = newInsWithChecker(ExplMmr);
-        expl.startTime = Date.now();
-        expl.curStep = 0;
-        expl.hiding = false;
-        expl.catching = false;
-        expl.cumCatchRate = 0;
+        let expl = MmrTool.createExpl();
         gameData.curExpl = expl;
         this.resetSelfPetsInExpl(gameData);
     }
 
     static resetSelfPetsInExpl(gameData: GameData) {
         let expl = gameData.curExpl;
-        if (!expl.selfs) expl.selfs = newList();
-        else expl.selfs.length = 0;
+        expl.selfs.length = 0;
 
         for (const pet of gameData.pets) {
             if (pet.state != PetState.ready) break; // 备战的pet一定在最上，且不会超过5个
-            let selfPetMmr = newInsWithChecker(SelfPetMmr);
-            selfPetMmr.catchIdx = pet.catchIdx;
-            selfPetMmr.lv = pet.lv;
-            selfPetMmr.rank = pet.rank;
-            selfPetMmr.state = pet.state;
-            selfPetMmr.lndFchrLen = pet.learnedFeatures.length;
-            selfPetMmr.prvty = pet.prvty;
-            let tokens = [];
-            for (const equip of pet.equips) tokens.push(EquipDataTool.getToken(equip));
-            selfPetMmr.eqpTokens = newList(tokens);
+            let selfPetMmr = MmrTool.createSelfPet(pet);
             expl.selfs.push(selfPetMmr);
         }
     }
@@ -851,32 +890,13 @@ export class GameDataTool {
         if (gameData.curExpl) gameData.curExpl = null;
     }
 
-    static createBattle(gameData: GameData, seed: number, pets: Pet[], spcBtlId: number) {
+    static createBattle(gameData: GameData, seed: number, spcBtlId: number, pets: Pet[]) {
         cc.assert(gameData.curExpl, '创建battle前必有Expl');
         let curExpl = gameData.curExpl;
         if (curExpl.curBattle) return;
-        let battle = newInsWithChecker(BattleMmr);
-        battle.startTime = Date.now();
-        battle.seed = seed;
-        battle.enemys = newList();
-        battle.spcBtlId = spcBtlId;
-
+        let battle = MmrTool.createBattle(seed, spcBtlId);
         curExpl.curBattle = battle;
-
-        for (const pet of pets) {
-            this.createEnemyPet(gameData, pet.id, pet.lv, pet.rank, pet.inbornFeatures);
-        }
-    }
-
-    static createEnemyPet(gameData: GameData, id: string, lv: number, rank: number, features: Feature[]) {
-        let p = newInsWithChecker(PetMmr);
-        p.id = id;
-        p.lv = lv;
-        p.rank = rank;
-        p.features = newList();
-        for (const feature of features) p.features.push(FeatureDataTool.clone(feature));
-
-        gameData.curExpl.curBattle.enemys.push(p);
+        for (const pet of pets) battle.enemys.push(MmrTool.createPet(pet.id, pet.lv, pet.rank, pet.inbornFeatures));
     }
 
     static deleteBattle(gameData: GameData) {

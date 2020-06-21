@@ -4,15 +4,29 @@
  * luleyan
  */
 
-import { PetDataTool, EquipDataTool } from './Memory';
-import { FeatureModel, PetModel, SkillModel, SkillType, SkillDirType, SkillAimtype, DrinkModel, DrinkAimType } from './DataModel';
-import { BioType, EleType, BattleType, Pet, EleTypeNames } from './DataSaved';
+import { PetDataTool, EquipDataTool, FeatureDataTool, MmrTool } from './Memory';
+import {
+    FeatureModel,
+    PetModel,
+    SkillModel,
+    SkillType,
+    SkillDirType,
+    SkillAimtype,
+    DrinkModel,
+    DrinkAimType,
+    ExplModel
+} from './DataModel';
+import { BioType, EleType, BattleType, Pet, EleTypeNames, ExplMmr, Feature, PetRankNames, BattleMmr, PetMmr } from './DataSaved';
 
 import { petModelDict } from 'configs/PetModelDict';
 import { skillModelDict } from 'configs/SkillModelDict';
 import { deepCopy } from './Utils';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { BattleController } from './BattleController';
+import { randomRate, random, getRandomOneInList, normalRandom } from './Random';
+import { actPosModelDict } from 'configs/ActPosModelDict';
+import { ExplUpdater } from './ExplUpdater';
+import { expModels } from 'configs/ExpModels';
 
 export const AmplAttriNames = ['', '经验', '货币', '默契', '声望'];
 export enum AmplAttriType {
@@ -79,8 +93,8 @@ export class GameDataJIT {
 
 // -----------------------------------------------------------------
 
-const RankToAttriRatio = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
-const BioToFromToRatio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
+export const AttriRatioByRank = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
+const DmgRangeByBio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
 
 export class Pet2 {
     // 原始值 -----------------------------------------------------------------
@@ -144,8 +158,8 @@ export class Pet2 {
         let rank = pet.rank;
         let bioType = petModel.bioType;
 
-        let rankRatio = RankToAttriRatio[rank];
-        let fromToRatio = BioToFromToRatio[bioType];
+        let rankRatio = AttriRatioByRank[rank];
+        let dmgRange = DmgRangeByBio[bioType];
 
         // 一级原始属性
         this.strengthOri = (petModel.baseStrength + petModel.addStrength * lv) * rankRatio;
@@ -179,10 +193,10 @@ export class Pet2 {
         // 二级原始属性
         this.hpMaxOri = this.durability * 25;
         this.mpMaxOri = 100 + Math.floor(this.concentration / 30);
-        this.atkDmgFromOri = this.strength * fromToRatio[0] + 5;
-        this.atkDmgToOri = this.strength * fromToRatio[1] + 15;
-        this.sklDmgFromOri = this.concentration * fromToRatio[0] + 15;
-        this.sklDmgToOri = this.concentration * fromToRatio[1] + 30;
+        this.atkDmgFromOri = this.strength * dmgRange[0] + 5;
+        this.atkDmgToOri = this.strength * dmgRange[1] + 15;
+        this.sklDmgFromOri = this.concentration * dmgRange[0] + 15;
+        this.sklDmgToOri = this.concentration * dmgRange[1] + 30;
 
         // 二级属性
         this.hpMax = this.hpMaxOri;
@@ -405,6 +419,91 @@ export class RealBattle {
 
     lastAim: BattlePet = null;
     combo: number = 1;
+
+    resetRealBattle(ePetMmrs: PetMmr[], spcBtlId: number, curExpl: ExplMmr) {
+        this.enemyTeam = new BattleTeam();
+
+        let mpMax = 0;
+        let last = null;
+
+        let realEPetMmrs: PetMmr[];
+        if (ePetMmrs) {
+            realEPetMmrs = ePetMmrs;
+        } else if (spcBtlId) {
+            // llytodo
+        } else realEPetMmrs = RealBattle.createEPetMmrs(curExpl);
+
+        for (let index = 0; index < realEPetMmrs.length; index++) {
+            const ePetMmr = realEPetMmrs[index];
+
+            let petData = PetDataTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.rank, ePetMmr.features, null);
+            if (spcBtlId) petData.master = 'spcBtl';
+            let battlePet = new BattlePet();
+            battlePet.init(index, 5 - realEPetMmrs.length + index, petData, true);
+            if (last) {
+                battlePet.last = last;
+                last.next = battlePet;
+            }
+            last = battlePet;
+            mpMax += battlePet.pet2.mpMax;
+
+            this.enemyTeam.pets.push(battlePet);
+        }
+
+        // 按照HP排序
+        if (randomRate(0.5)) {
+            let ePets = this.enemyTeam.pets;
+            ePets.sort((a, b) => b.hpMax - a.hpMax);
+            // 重置索引
+            for (let index = 0; index < ePets.length; index++) {
+                const pet = ePets[index];
+                pet.idx = index;
+                pet.fromationIdx = 5 - ePets.length + index;
+            }
+        }
+
+        this.enemyTeam.mp = mpMax;
+        this.enemyTeam.mpMax = mpMax;
+
+        this.battleRound = 0;
+        this.atkRound = 0;
+
+        this.order.length = 0;
+        for (const pet of this.selfTeam.pets) this.order.push(pet);
+        for (const pet of this.enemyTeam.pets) this.order.push(pet);
+
+        this.start = true;
+    }
+
+    static createEPetMmrs(curExpl: ExplMmr): PetMmr[] {
+        let posId = curExpl.curPosId;
+        let curPosModel = actPosModelDict[posId];
+        let explModel: ExplModel = <ExplModel>curPosModel.actDict['exploration'];
+
+        let petCountMax = curPosModel.lv < 10 ? 4 : 5;
+        let petCount = random(petCountMax) + 1;
+        let step = curExpl.curStep;
+        let curStepModel = explModel.stepModels[step];
+
+        let enmeyPetType1 = getRandomOneInList(curStepModel.petIds);
+        let enmeyPetType2 = getRandomOneInList(curStepModel.petIds);
+
+        let petMmrs: PetMmr[] = [];
+        for (let index = 0; index < petCount; index++) {
+            let id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
+            let lv = Math.min(Math.max(1, curPosModel.lv - 2 + normalRandom(5)), expModels.length);
+            let rank = normalRandom(ExplUpdater.calcRankByExplStep(step));
+            rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
+            let features = [];
+
+            let featureR = Math.random();
+            if (lv > 5 && featureR > 0.3) features.push(FeatureDataTool.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
+            if (lv > 10 && featureR > 0.8) features.push(FeatureDataTool.createInbornFeature());
+
+            petMmrs.push(MmrTool.createPet(id, lv, rank, features));
+        }
+        return petMmrs;
+    }
 
     clone() {
         let newRB = new RealBattle();

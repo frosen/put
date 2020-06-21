@@ -202,6 +202,7 @@ export class BattleMmr {
 }
 
 export class ExplMmr {
+    curPosId: string;
     startTime: number;
     curStep: number;
     selfs: SelfPetMmr[];

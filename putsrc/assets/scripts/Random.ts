@@ -25,7 +25,7 @@ export function getRandomOneInListWithRate(list, rates) {
     return null;
 }
 
-export function normalRandom(c) {
+export function normalRandom(c: number): number {
     let r = Math.random();
     if (r <= 0.5) {
         r = 0.5 - r;
