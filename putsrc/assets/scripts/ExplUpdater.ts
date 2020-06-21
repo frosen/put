@@ -7,7 +7,10 @@
 import { BattlePageBase } from './BattlePageBase';
 import { Memory, GameDataTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, ItemType, Cnsum, CnsumType } from 'scripts/DataSaved';
+import { GameData, ItemType, Cnsum, CnsumType, ExplMmr } from 'scripts/DataSaved';
+import { AttriRatioByRank } from './DataOther';
+import { actPosModelDict } from 'configs/ActPosModelDict';
+import { ExplModel } from './DataModel';
 
 export enum ExplState {
     none,
@@ -43,11 +46,9 @@ export class ExplUpdater {
             this.startRecover();
         });
 
-        if (!this.memory.gameData.curExpl) {
-            this.createExpl();
-        } else {
-            this.restoreLastExpl();
-        }
+        let curExpl = this.gameData.curExpl;
+        if (!curExpl) this.createExpl();
+        else this.restoreLastExpl(curExpl);
 
         this.memory.addDataListener(this);
         cc.director.getScheduler().scheduleUpdate(this, 0, false);
@@ -84,7 +85,54 @@ export class ExplUpdater {
         this.page.handleLog();
     }
 
-    restoreLastExpl() {}
+    restoreLastExpl(curExpl: ExplMmr) {
+        if (curExpl.curBattle) {
+            let startTime = curExpl.curBattle.startTime;
+            let curTime = Date.now();
+            let explDuration = ExplUpdater.calcExplDuration(curExpl);
+            let interval = curTime - startTime;
+            if (interval < explDuration) {
+                this.battleCtrlr.resetSelfTeam();
+                // this.battleCtrlr.start;
+            }
+        }
+    }
+
+    static calcExplDuration(curExpl: ExplMmr): number {
+        return this.calcBattleDuration(curExpl) + 20; // 一场战斗时间，加上20秒恢复和探索时间
+    }
+
+    static calcBattleDuration(curExpl: ExplMmr): number {
+        let { selfLv, selfRank, enemyLv, enemyRank } = this.getAvgLvRankInMmr(curExpl);
+        // ((enemyLv * 30 * 25 * AttriRatioByRank[enemyRank]) / (selfLv * 30 * 2 * AttriRatioByRank[selfRank])) * 0.75 * 6;
+        // 敌人血量 / 己方攻击伤害+技能伤害 * 每次攻击时间 * 平均一回合攻击次数之和
+        let duration = ((enemyLv * AttriRatioByRank[enemyRank]) / (selfLv * AttriRatioByRank[selfRank])) * 56.25;
+        return duration;
+    }
+
+    static getAvgLvRankInMmr(curExpl: ExplMmr): { selfLv: number; selfRank: number; enemyLv: number; enemyRank: number } {
+        let selfLv: number = 0,
+            selfRank: number = 0;
+        let selfPetsMmr = curExpl.selfs;
+        for (const selfPetMmr of selfPetsMmr) {
+            selfLv += selfPetMmr.lv;
+            selfRank += selfPetMmr.rank;
+        }
+        selfLv /= selfPetsMmr.length;
+        selfRank /= selfPetsMmr.length;
+
+        let posId = curExpl.curPosId;
+        let curPosModel = actPosModelDict[posId];
+
+        let enemyLv: number = curPosModel.lv,
+            enemyRank: number = ExplUpdater.calcRankByExplStep(curExpl.curStep);
+
+        return { selfLv, selfRank, enemyLv, enemyRank };
+    }
+
+    static calcRankByExplStep(step: number) {
+        return step * 2 + 1;
+    }
 
     destroy() {
         cc.director.getScheduler().unscheduleUpdate(this);
@@ -108,7 +156,7 @@ export class ExplUpdater {
     update() {
         if (this.pausing) return;
         let curTime = Date.now();
-        if (curTime - this.lastTime > 600) {
+        if (curTime - this.lastTime > 750) {
             this.lastTime = curTime;
             this.updateCount += 1;
             this.onUpdate();
@@ -120,7 +168,7 @@ export class ExplUpdater {
         else if (this.state == ExplState.battle) this.updateBattle();
         else if (this.state == ExplState.recover) this.updateRecover();
 
-        this.page.handleLog();
+        if (this.page) this.page.handleLog();
     }
 
     // -----------------------------------------------------------------
@@ -172,7 +220,7 @@ export class ExplUpdater {
         this.state = ExplState.battle;
         this.battleCount++;
 
-        this.battleCtrlr.start();
+        this.battleCtrlr.startBattle();
     }
 
     // -----------------------------------------------------------------
