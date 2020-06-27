@@ -37,6 +37,7 @@ import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
 import { GameDataJIT, AmplAttriType } from './DataOther';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { inbornFeatures } from 'configs/InbornFeatures';
+import { expModels } from 'configs/ExpModels';
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = 0;
@@ -361,6 +362,25 @@ export class PetDataTool {
         let r = exPrvty == null ? pet.prvty : exPrvty;
         return Math.floor(Math.sqrt(r * 0.01));
     }
+
+    static addExp(pet: Pet, exp: number): number {
+        let newExp = pet.exp + exp;
+        let lv = pet.lv;
+        while (true) {
+            if (lv >= expModels.length) return 0;
+            let curExpMax = expModels[lv];
+
+            if (newExp < curExpMax) {
+                pet.exp = newExp;
+                let lvDiff = lv - pet.lv;
+                pet.lv = lv;
+                return lvDiff + newExp / curExpMax;
+            } else {
+                lv++;
+                newExp -= curExpMax;
+            }
+        }
+    }
 }
 
 export class CnsumDataTool {
@@ -426,8 +446,8 @@ export class EquipDataTool {
 
         let featureLvs = [];
         let equipType = equipModel.equipPosType;
-        let beginLv = equipType == EquipPosType.weapon ? 20 : equipType == EquipPosType.defense ? 30 : 40;
-        let featureLvFrom = lv <= beginLv ? 1 : Math.ceil((lv - beginLv) * 0.1) + 1;
+        let startLv = equipType == EquipPosType.weapon ? 20 : equipType == EquipPosType.defense ? 30 : 40;
+        let featureLvFrom = lv <= startLv ? 1 : Math.ceil((lv - startLv) * 0.1) + 1;
         for (let index = 0; index < equipModel.featureIds.length; index++) featureLvs.push(featureLvFrom + random(3));
 
         let affixes = [];
@@ -538,9 +558,9 @@ export class MmrTool {
         return selfPetMmr;
     }
 
-    static createBattle(seed: number, spcBtlId: number): BattleMmr {
+    static createBattle(seed: number, startUpdCnt: number, spcBtlId: number): BattleMmr {
         let battle = newInsWithChecker(BattleMmr);
-        battle.startTime = Date.now();
+        battle.startUpdCnt = startUpdCnt;
         battle.seed = seed;
         battle.enemys = newList();
         battle.spcBtlId = spcBtlId;
@@ -879,22 +899,30 @@ export class GameDataTool {
         let expl = gameData.curExpl;
         expl.selfs.length = 0;
 
-        for (const pet of gameData.pets) {
-            if (pet.state != PetState.ready) break; // 备战的pet一定在最上，且不会超过5个
+        for (const pet of this.getReadyPets(gameData)) {
             let selfPetMmr = MmrTool.createSelfPet(pet);
             expl.selfs.push(selfPetMmr);
         }
+    }
+
+    static getReadyPets(gameData: GameData): Pet[] {
+        let pets: Pet[] = [];
+        for (const pet of gameData.pets) {
+            if (pet.state != PetState.ready) break; // 备战的pet一定在最上，且不会超过5个
+            pets[pets.length] = pet;
+        }
+        return pets;
     }
 
     static deleteExpl(gameData: GameData) {
         if (gameData.curExpl) gameData.curExpl = null;
     }
 
-    static createBattle(gameData: GameData, seed: number, spcBtlId: number, pets: Pet[]) {
+    static createBattle(gameData: GameData, seed: number, startUpdCnt: number, spcBtlId: number, pets: Pet[]) {
         cc.assert(gameData.curExpl, '创建battle前必有Expl');
         let curExpl = gameData.curExpl;
         if (curExpl.curBattle) return;
-        let battle = MmrTool.createBattle(seed, spcBtlId);
+        let battle = MmrTool.createBattle(seed, startUpdCnt, spcBtlId);
         curExpl.curBattle = battle;
         for (const pet of pets) battle.enemys.push(MmrTool.createPet(pet.id, pet.lv, pet.rank, pet.inbornFeatures));
     }

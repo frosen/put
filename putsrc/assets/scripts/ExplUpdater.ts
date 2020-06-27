@@ -5,12 +5,12 @@
  */
 
 import { BattlePageBase } from './BattlePageBase';
-import { Memory, GameDataTool } from 'scripts/Memory';
+import { Memory, GameDataTool, PetDataTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, ItemType, Cnsum, CnsumType, ExplMmr } from 'scripts/DataSaved';
+import { GameData, ItemType, Cnsum, CnsumType, ExplMmr, BattleMmr } from 'scripts/DataSaved';
 import { AttriRatioByRank } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
-import { ExplModel } from './DataModel';
+import { random, randomArea, randomRate } from './Random';
 
 export enum ExplState {
     none,
@@ -23,6 +23,9 @@ enum ExplResult {
     none,
     battle
 }
+
+/** 探索时间间隔毫秒 */
+const ExplInterval = 750;
 
 export class ExplUpdater {
     page: BattlePageBase = null;
@@ -47,8 +50,8 @@ export class ExplUpdater {
         });
 
         let curExpl = this.gameData.curExpl;
-        if (!curExpl) this.createExpl();
-        else this.restoreLastExpl(curExpl);
+        if (!curExpl) this.createExpl(0);
+        else this.recoverLastExpl(curExpl);
 
         this.memory.addDataListener(this);
         cc.director.getScheduler().scheduleUpdate(this, 0, false);
@@ -78,36 +81,81 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
-    createExpl() {
+    createExpl(spcBtlId: number) {
         GameDataTool.createExpl(this.gameData);
         this.selfPetsChangedFlag = true;
-        this.startExpl();
+        if (!spcBtlId) {
+            this.startExpl();
+        } else {
+            this.checkChange();
+            this.startBattle(spcBtlId); // 专属作战直接进入战斗
+        }
+
         this.page.handleLog();
     }
 
-    restoreLastExpl(curExpl: ExplMmr) {
+    recoverLastExpl(curExpl: ExplMmr) {
+        let startTime = curExpl.startTime;
         if (curExpl.curBattle) {
-            let startTime = curExpl.curBattle.startTime;
-            let curTime = Date.now();
-            let explDuration = ExplUpdater.calcExplDuration(curExpl);
-            let interval = curTime - startTime;
-            if (interval < explDuration) {
-                this.battleCtrlr.resetSelfTeam();
-                // this.battleCtrlr.start;
+            let timePtr = curExpl.curBattle.startUpdCnt * ExplInterval + startTime;
+
+            let oldPage = this.page;
+            let endCall = this.battleCtrlr.endCallback;
+            this.page = null;
+            this.battleCtrlr.page = null;
+            this.battleCtrlr.endCallback = null;
+
+            this.battleCtrlr.resetSelfTeam();
+            this.battleCtrlr.resetBattle(curExpl.curBattle);
+
+            let inBattle = true;
+            while (true) {
+                if (this.battleCtrlr.realBattle.start == false) {
+                    inBattle = false;
+                    break;
+                }
+
+                timePtr += ExplInterval;
+                if (timePtr > Date.now()) break;
+                this.battleCtrlr.update();
+            }
+
+            this.page = oldPage;
+            this.battleCtrlr.page = oldPage;
+            this.battleCtrlr.endCallback = endCall;
+
+            if (inBattle) {
+                this.lastTime = timePtr - ExplInterval;
+                this.state = ExplState.battle;
+
+                // msg
+            } else {
+                startTime = timePtr;
             }
         }
-    }
 
-    static calcExplDuration(curExpl: ExplMmr): number {
-        return this.calcBattleDuration(curExpl) + 20; // 一场战斗时间，加上20秒恢复和探索时间
-    }
+        let { selfLv, selfRank, enemyLv, enemyRank } = ExplUpdater.getAvgLvRankInMmr(curExpl);
+        let explDura = ExplUpdater.calcExplDura(selfLv, selfRank, enemyLv, enemyRank);
 
-    static calcBattleDuration(curExpl: ExplMmr): number {
-        let { selfLv, selfRank, enemyLv, enemyRank } = this.getAvgLvRankInMmr(curExpl);
-        // ((enemyLv * 30 * 25 * AttriRatioByRank[enemyRank]) / (selfLv * 30 * 2 * AttriRatioByRank[selfRank])) * 0.75 * 6;
-        // 敌人血量 / 己方攻击伤害+技能伤害 * 每次攻击时间 * 平均一回合攻击次数之和
-        let duration = ((enemyLv * AttriRatioByRank[enemyRank]) / (selfLv * AttriRatioByRank[selfRank])) * 56.25;
-        return duration;
+        let diff = Date.now() - startTime;
+        let explCount = Math.floor(diff / explDura);
+        if (explCount > 10) explCount = randomArea(explCount, 0.1); // 增加随机范围
+
+        let winRate = ExplUpdater.calcWinRate(selfLv, selfRank, enemyLv, enemyRank);
+        let winCount = Math.ceil(explCount * randomArea(winRate, 0.1));
+
+        // 计算获取的经验
+        let exp = BattleController.calcExpByLvRank(selfLv, selfRank, enemyLv, enemyRank);
+        let totalExp = exp * winCount;
+        totalExp = randomArea(totalExp, 0.05);
+
+        for (const pet of GameDataTool.getReadyPets(this.gameData)) {
+            // 计算饮品的加成 // llytodo
+            // expl中selfs的价值？？？？// llytodo
+            PetDataTool.addExp(pet, totalExp);
+        }
+
+        // 计算获得的物品 // llytodo
     }
 
     static getAvgLvRankInMmr(curExpl: ExplMmr): { selfLv: number; selfRank: number; enemyLv: number; enemyRank: number } {
@@ -134,6 +182,22 @@ export class ExplUpdater {
         return step * 2 + 1;
     }
 
+    static calcExplDura(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
+        return this.calcBattleDura(selfLv, selfRank, enemyLv, enemyRank) + 20000; // 一场战斗时间，加上20秒恢复和探索时间
+    }
+
+    static calcBattleDura(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
+        // 敌人血量 / 己方攻击伤害+技能伤害 * 每次攻击时间 * 平均一回合攻击次数之和
+        let enemyHp = enemyLv * 30 * 25 * AttriRatioByRank[enemyRank];
+        let selfDmg = selfLv * 30 * 2 * AttriRatioByRank[selfRank];
+        let duration = (enemyHp / selfDmg) * ExplInterval * 6 * 1000;
+        return duration;
+    }
+
+    static calcWinRate(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
+        return 0.9;
+    }
+
     destroy() {
         cc.director.getScheduler().unscheduleUpdate(this);
         GameDataTool.deleteExpl(this.gameData);
@@ -156,8 +220,8 @@ export class ExplUpdater {
     update() {
         if (this.pausing) return;
         let curTime = Date.now();
-        if (curTime - this.lastTime > 750) {
-            this.lastTime = curTime;
+        if (curTime - this.lastTime > ExplInterval) {
+            this.lastTime = this.lastTime + ExplInterval;
             this.updateCount += 1;
             this.onUpdate();
         }
@@ -214,13 +278,10 @@ export class ExplUpdater {
         this.page.log('探索中......');
     }
 
-    battleCount: number = 0;
-
-    startBattle() {
+    startBattle(spcBtlId: number = 0) {
         this.state = ExplState.battle;
-        this.battleCount++;
 
-        this.battleCtrlr.startBattle();
+        this.battleCtrlr.startBattle(this.updateCount, spcBtlId);
     }
 
     // -----------------------------------------------------------------

@@ -145,24 +145,28 @@ export class PagePkg extends PagePkgBase {
 
     turnList(idx: number) {
         if (this.turnning) return;
-        this.turnning = true;
 
-        this.curListIdx = idx;
+        if (this.curListIdx != idx) {
+            this.curListIdx = idx;
+            this.resetCurList();
 
-        this.resetCurList();
-        cc.tween(this.listLayer)
-            .to(0.2, { x: idx * WIDTH * -1 }, { easing: 'quadInOut' })
-            .call(() => {
-                this.turnning = false;
-            })
-            .start();
+            this.turnning = true;
+            cc.tween(this.listLayer)
+                .to(0.2, { x: idx * WIDTH * -1 }, { easing: 'quadInOut' })
+                .call(() => {
+                    this.turnning = false;
+                })
+                .start();
 
-        for (const lblNode of this.selectionLblNodes) lblNode.color = cc.color(90, 90, 90);
-        this.selectionLblNodes[idx].color = cc.Color.RED;
+            for (const lblNode of this.selectionLblNodes) lblNode.color = cc.color(90, 90, 90);
+            this.selectionLblNodes[idx].color = cc.Color.RED;
 
-        cc.tween(this.selectionBar)
-            .to(0.2, { x: idx * 180 + 90 }, { easing: 'quadInOut' })
-            .start();
+            cc.tween(this.selectionBar)
+                .to(0.2, { x: idx * 180 + 90 }, { easing: 'quadInOut' })
+                .start();
+        } else {
+            this.resetCurList();
+        }
     }
 
     // -----------------------------------------------------------------

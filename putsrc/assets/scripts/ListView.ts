@@ -298,4 +298,8 @@ export class ListView extends cc.Component {
         if (!this.reuseCellsDict.hasOwnProperty(cellId)) this.reuseCellsDict[cellId] = [];
         this.reuseCellsDict[cellId].push(cellData.cell);
     }
+
+    isScrolling(): boolean {
+        return this.scrollView.isScrolling() || this.scrollView.isAutoScrolling();
+    }
 }

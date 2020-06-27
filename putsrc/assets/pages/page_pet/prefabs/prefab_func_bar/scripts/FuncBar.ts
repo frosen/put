@@ -39,16 +39,16 @@ export class FuncBar extends cc.Component {
 
     setBtns(datas: { str: string; callback: (cellIdx: number) => void }[]) {
         let len = datas.length;
-        let begin = this.btns.length - len;
+        let startIdx = this.btns.length - len;
         for (let index = 0; index < this.btns.length; index++) {
             let btn = this.btns[index];
             let lbl = this.lbls[index];
             let baffle = this.baffles[index];
-            if (index < begin) {
+            if (index < startIdx) {
                 btn.scaleX = 0;
                 if (baffle) baffle.scaleX = 0;
             } else {
-                let dataIdx = index - begin;
+                let dataIdx = index - startIdx;
                 let data = datas[dataIdx];
 
                 btn.scaleX = 1;

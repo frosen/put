@@ -8,11 +8,15 @@ export function random(c: number): number {
     return Math.floor(Math.random() * c);
 }
 
-export function randomRate(r: number) {
+export function randomRate(r: number): boolean {
     return Math.random() < r;
 }
 
-export function getRandomOneInList(list) {
+export function randomArea(c: number, r: number) {
+    return Math.floor(c * (1 + Math.random() * 2 * r - r));
+}
+
+export function getRandomOneInList<T>(list: Array<T>): T {
     return list[random(list.length)];
 }
 

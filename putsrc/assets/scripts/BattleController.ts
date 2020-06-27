@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { Memory, EquipDataTool, GameDataTool, PetDataTool, FeatureDataTool } from 'scripts/Memory';
+import { Memory, EquipDataTool, GameDataTool, PetDataTool } from 'scripts/Memory';
 import { BattlePageBase } from './BattlePageBase';
 import { randomRate } from 'scripts/Random';
 
@@ -207,7 +207,7 @@ export class BattleController {
         return false;
     }
 
-    startBattle(spcBtlId: number = 0) {
+    startBattle(startUpdCnt: number, spcBtlId: number = 0) {
         let seed = Date.now();
         setSeed(seed);
 
@@ -222,6 +222,7 @@ export class BattleController {
         GameDataTool.createBattle(
             this.gameData,
             seed,
+            startUpdCnt,
             spcBtlId,
             this.realBattle.enemyTeam.pets.map<Pet>(
                 (value: BattlePet): Pet => {
@@ -785,7 +786,7 @@ export class BattleController {
             }
         }
 
-        this.endCallback();
+        if (this.endCallback) this.endCallback();
     }
 
     receiveExp() {
@@ -800,14 +801,7 @@ export class BattleController {
             let expTotal = 0;
             for (const eBPet of rb.enemyTeam.pets) {
                 let ePet = eBPet.pet;
-                let exp = ePet.lv * 5 + 45;
-
-                if (ePet.rank >= selfPet.rank) exp *= 1 + (ePet.rank - selfPet.rank) * 0.05;
-                else exp *= AttriRatioByRank[ePet.rank] / AttriRatioByRank[selfPet.rank];
-
-                if (ePet.lv >= selfPet.lv) exp *= 1 + (ePet.lv - selfPet.lv) * 0.05;
-                else exp *= 1 - Math.min(selfPet.lv - ePet.lv, 8) / 8;
-
+                let exp = BattleController.calcExpByLvRank(selfPet.lv, selfPet.rank, ePet.lv, ePet.rank);
                 expTotal += exp;
             }
 
@@ -815,20 +809,30 @@ export class BattleController {
             expTotal *= gameDataJIT.getAmplPercent(selfBPet.pet, AmplAttriType.exp);
             expTotal = Math.ceil(expTotal);
 
-            let nextExp = selfPet.exp + expTotal;
-            let curExpMax = expModels[selfPet.lv];
-
-            let petName = petModelDict[selfPet.id].cnName;
-            if (nextExp >= curExpMax) {
-                selfPet.lv++;
-                selfPet.exp = 0;
-                if (this.page) this.page.log(`${petName}升到了${selfPet.lv}级`);
-            } else {
-                selfPet.exp = nextExp;
-                let expRate = ((nextExp * 100) / curExpMax).toFixed(1);
-                if (this.page) this.page.log(`${petName}获得${expTotal}点经验，升级进度完成了${expRate}%`);
+            let curExpPercent = PetDataTool.addExp(selfPet, expTotal);
+            if (this.page) {
+                let petName = petModelDict[selfPet.id].cnName;
+                if (curExpPercent <= 0) {
+                    // 跳过
+                } else if (curExpPercent >= 1) {
+                    this.page.log(`${petName}升到了${selfPet.lv}级`);
+                } else {
+                    let expRate = (curExpPercent * 100).toFixed(1);
+                    this.page.log(`${petName}获得${expTotal}点经验，升级进度完成了${expRate}%`);
+                }
             }
         }
+    }
+
+    static calcExpByLvRank(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
+        let exp = enemyLv * 5 + 45;
+        if (enemyRank >= selfRank) exp *= 1 + (enemyRank - selfRank) * 0.05;
+        else exp *= AttriRatioByRank[enemyRank] / AttriRatioByRank[selfRank];
+
+        if (enemyLv >= selfLv) exp *= 1 + (enemyLv - selfLv) * 0.05;
+        else exp *= 1 - Math.min(selfLv - enemyLv, 8) / 8;
+
+        return exp;
     }
 
     executePetCatch() {

@@ -195,7 +195,7 @@ export class SelfPetMmr {
 }
 
 export class BattleMmr {
-    startTime: number;
+    startUpdCnt: number;
     seed: number;
     enemys: PetMmr[];
     spcBtlId: number; // 特殊战斗的id
