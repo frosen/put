@@ -9,7 +9,6 @@ import { BuffModel, BuffOutput, BuffType } from 'scripts/DataModel';
 import { BattlePet, BattleBuff, Pet2 } from 'scripts/DataOther';
 import { BattleController } from 'scripts/BattleController';
 
-let BCtrlr = BattleController;
 function fl1(n: number) {
     return n.toFixed(1);
 }
@@ -26,7 +25,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         buffType: BuffType.debuff,
         eleType: EleType.fire,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            return { hp: BCtrlr.getSklDmg(buff.caster, thisPet) * 0.7 };
+            return { hp: BattleController.getSklDmg(buff.caster, thisPet) * 0.7 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `每回合对目标造成${getSklDmgStr(pet2, 0.7)}(70%)点火系伤害`;
@@ -45,7 +44,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             thisPet.pet2.speed += 10;
         },
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            return { hp: BCtrlr.getSklDmg(buff.caster, thisPet) * 0.5 };
+            return { hp: BattleController.getSklDmg(buff.caster, thisPet) * 0.5 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `减速目标，且每回合对目标造成${getSklDmgStr(pet2, 0.5)}(50%)点水系伤害`;
@@ -59,7 +58,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         eleType: EleType.dark,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
             let rate = (1 - thisPet.hp / thisPet.hpMax) * 0.4 + 0.4;
-            return { hp: BCtrlr.getSklDmg(buff.caster, thisPet) * rate };
+            return { hp: BattleController.getSklDmg(buff.caster, thisPet) * rate };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `每回合对目标造成最低40%最高80%技能攻击力的暗系伤害，血量越低伤害越高`;
@@ -72,7 +71,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         buffType: BuffType.debuff,
         eleType: EleType.earth,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            if (buff.time == 0) return { hp: BCtrlr.getSklDmg(buff.caster, thisPet) };
+            if (buff.time == 0) return { hp: BattleController.getSklDmg(buff.caster, thisPet) };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `效果结束时对目标造成${getSklDmgStr(pet2, 1)}(100%)点地系伤害`;
@@ -252,7 +251,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         buffType: BuffType.buff,
         eleType: EleType.air,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            return { hp: BCtrlr.getSklDmg(buff.caster, null) * 0.8 * -1 };
+            return { hp: BattleController.getSklDmg(buff.caster, null) * 0.8 * -1 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `每回合恢复目标${getSklDmgStr(pet2, 0.8)}(80%)点血量`;
@@ -310,7 +309,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             thisPet.pet2.sklDmgTo -= skl;
         },
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            let dmg = BCtrlr.getAtkDmg(thisPet, thisPet) + BCtrlr.getSklDmg(thisPet, thisPet);
+            let dmg = BattleController.getAtkDmg(thisPet, thisPet) + BattleController.getSklDmg(thisPet, thisPet);
             return { hp: Math.floor(dmg * 0.3) };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -328,7 +327,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             if (ctrlr.getTeam(thisPet).mp >= mp) {
                 return { mp };
             } else {
-                return { mp, hp: BCtrlr.getSklDmg(buff.caster, thisPet) * 1.2 };
+                return { mp, hp: BattleController.getSklDmg(buff.caster, thisPet) * 1.2 };
             }
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {

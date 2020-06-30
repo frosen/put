@@ -14,7 +14,7 @@ import { PageActExplLVD } from './PageActExplLVD';
 import { ListView } from 'scripts/ListView';
 import { PetRankNames, EleType, Pet } from 'scripts/DataSaved';
 import { BuffModel, BuffType } from 'scripts/DataModel';
-import { BattlePet, RAGE_MAX } from 'scripts/DataOther';
+import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -77,6 +77,8 @@ export class PageActExpl extends BattlePageBase {
     listView: ListView = null;
     lvd: PageActExplLVD = null;
 
+    inited: boolean = false;
+
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
@@ -93,7 +95,7 @@ export class PageActExpl extends BattlePageBase {
         this.lvd = this.getComponent(PageActExplLVD);
         this.lvd.page = this;
 
-        for (let index = 0; index < 5; index++) {
+        for (let index = 0; index < BattlePetLenMax; index++) {
             let y = BattleUnitYs[index];
 
             let selfPetNode = cc.instantiate(this.selfPetPrefab);
@@ -141,6 +143,12 @@ export class PageActExpl extends BattlePageBase {
             return false;
         });
         this.ctrlr.setTitle('探索');
+
+        if (this.inited) this.updater.gotoCheckChange();
+    }
+
+    afterPageShowAnim() {
+        this.inited = true;
     }
 
     // ui -----------------------------------------------------------------
@@ -150,7 +158,7 @@ export class PageActExpl extends BattlePageBase {
         if (index == -1) {
             let petIdx = 0;
             for (; petIdx < pets.length; petIdx++) this.setUIofSelfPet(petIdx);
-            for (; petIdx < 5; petIdx++) this.clearUIofSelfPet(petIdx);
+            for (; petIdx < BattlePetLenMax; petIdx++) this.clearUIofSelfPet(petIdx);
         } else {
             this.setUIofPet(pets[index], this.selfPetUIs[index]);
         }
@@ -336,8 +344,8 @@ export class PageActExpl extends BattlePageBase {
         this.mpProgress.progress = mp / mpMax;
         this.mpLbl.string = `${mp} / ${mpMax}`;
 
-        this.rageProgress.progress = rage / RAGE_MAX;
-        this.rageLbl.string = `${rage} / ${RAGE_MAX}`;
+        this.rageProgress.progress = rage / RageMax;
+        this.rageLbl.string = `${rage} / ${RageMax}`;
     }
 
     // button -----------------------------------------------------------------

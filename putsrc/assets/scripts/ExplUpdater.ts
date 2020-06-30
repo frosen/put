@@ -37,6 +37,7 @@ export class ExplUpdater {
 
     _id: string = 'idforupdater';
 
+    inited: boolean = false;
     pausing: boolean = false;
 
     init(page: BattlePageBase) {
@@ -87,7 +88,7 @@ export class ExplUpdater {
         if (!spcBtlId) {
             this.startExpl();
         } else {
-            this.checkChange();
+            this.handleSelfChange(true);
             this.startBattle(spcBtlId); // 专属作战直接进入战斗
         }
 
@@ -105,7 +106,7 @@ export class ExplUpdater {
             this.battleCtrlr.page = null;
             this.battleCtrlr.endCallback = null;
 
-            this.battleCtrlr.resetSelfTeam();
+            this.battleCtrlr.resetSelfTeam(true);
             this.battleCtrlr.resetBattle(curExpl.curBattle);
 
             let inBattle = true;
@@ -134,7 +135,7 @@ export class ExplUpdater {
             }
         }
 
-        let { selfLv, selfRank, enemyLv, enemyRank } = ExplUpdater.getAvgLvRankInMmr(curExpl);
+        let { selfLv, selfRank, enemyLv, enemyRank } = ExplUpdater.getAvgLvRankInMmr(this.gameData);
         let explDura = ExplUpdater.calcExplDura(selfLv, selfRank, enemyLv, enemyRank);
 
         let diff = Date.now() - startTime;
@@ -158,10 +159,10 @@ export class ExplUpdater {
         // 计算获得的物品 // llytodo
     }
 
-    static getAvgLvRankInMmr(curExpl: ExplMmr): { selfLv: number; selfRank: number; enemyLv: number; enemyRank: number } {
+    static getAvgLvRankInMmr(gameData: GameData): { selfLv: number; selfRank: number; enemyLv: number; enemyRank: number } {
         let selfLv: number = 0,
             selfRank: number = 0;
-        let selfPetsMmr = curExpl.selfs;
+        let selfPetsMmr = GameDataTool.getReadyPets(gameData);
         for (const selfPetMmr of selfPetsMmr) {
             selfLv += selfPetMmr.lv;
             selfRank += selfPetMmr.rank;
@@ -169,11 +170,11 @@ export class ExplUpdater {
         selfLv /= selfPetsMmr.length;
         selfRank /= selfPetsMmr.length;
 
-        let posId = curExpl.curPosId;
+        let posId = gameData.curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
 
         let enemyLv: number = curPosModel.lv,
-            enemyRank: number = ExplUpdater.calcRankByExplStep(curExpl.curStep);
+            enemyRank: number = ExplUpdater.calcRankByExplStep(gameData.curExpl.curStep);
 
         return { selfLv, selfRank, enemyLv, enemyRank };
     }
@@ -207,18 +208,13 @@ export class ExplUpdater {
         this.battleCtrlr.destroy();
     }
 
-    selfPetsChangedFlag: boolean = false;
-
-    onMemoryDataChanged() {
-        let change = this.battleCtrlr.checkIfSelfTeamChanged();
-        if (change) this.selfPetsChangedFlag = true;
-    }
-
     lastTime: number = 0;
     updateCount: number = 0;
 
     update() {
         if (this.pausing) return;
+        if (!this.inited) this.inited = true;
+
         let curTime = Date.now();
         if (curTime - this.lastTime > ExplInterval) {
             this.lastTime = this.lastTime + ExplInterval;
@@ -237,19 +233,31 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
-    checkChange(): boolean {
-        if (this.selfPetsChangedFlag) {
-            GameDataTool.resetSelfPetsInExpl(this.gameData);
-            this.battleCtrlr.resetSelfTeam();
-            this.selfPetsChangedFlag = false;
-            return true;
-        } else return false;
+    needCheckChanged: boolean = false;
+    selfPetsChangedFlag: boolean = false;
+
+    gotoCheckChange() {
+        this.needCheckChanged = true;
     }
+
+    onMemoryDataChanged() {
+        this.selfPetsChangedFlag = true;
+    }
+
+    handleSelfChange(force: boolean) {
+        if ((force || this.needCheckChanged) && this.selfPetsChangedFlag) {
+            this.battleCtrlr.resetSelfTeam();
+            this.needCheckChanged = false;
+            this.selfPetsChangedFlag = false;
+        }
+    }
+
+    // -----------------------------------------------------------------
 
     explTime: number = 0;
 
     startExpl() {
-        this.checkChange();
+        this.handleSelfChange(true);
 
         this.state = ExplState.explore;
         // this.explTime = 5 + random(5);
@@ -258,8 +266,7 @@ export class ExplUpdater {
     }
 
     updateExpl() {
-        let change = this.checkChange();
-        if (change) return;
+        this.handleSelfChange(false);
         let result = this.getExplResult();
         if (result == ExplResult.none) this.exploreNothing();
         else if (result == ExplResult.battle) this.startBattle();
@@ -279,8 +286,9 @@ export class ExplUpdater {
     }
 
     startBattle(spcBtlId: number = 0) {
-        this.state = ExplState.battle;
+        this.handleSelfChange(true);
 
+        this.state = ExplState.battle;
         this.battleCtrlr.startBattle(this.updateCount, spcBtlId);
     }
 

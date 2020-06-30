@@ -26,9 +26,20 @@ import {
     Cnsum,
     CnsumType,
     Catcher,
-    BattleMmr
+    BattleMmr,
+    Equip,
+    Item
 } from 'scripts/DataSaved';
-import { RealBattle, BattleTeam, BattlePet, BattleBuff, RAGE_MAX, AmplAttriType, AttriRatioByRank } from 'scripts/DataOther';
+import {
+    RealBattle,
+    BattleTeam,
+    BattlePet,
+    BattleBuff,
+    RageMax,
+    AmplAttriType,
+    AttriRatioByRank,
+    BattlePetLenMax
+} from 'scripts/DataOther';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 
 // random with seed -----------------------------------------------------------------
@@ -146,25 +157,63 @@ export class BattleController {
         this.page.ctrlr.debugTool.removeShortCut('bb');
     }
 
-    resetSelfTeam() {
+    resetSelfTeam(byMmr: boolean = false) {
         this.realBattle.selfTeam = new BattleTeam();
 
-        let selfPetsMmr = this.gameData.curExpl.selfs;
+        let sPets: Pet[];
+        let exPrvtys: number[] = [];
+        let exEquips: Equip[][] = [];
+        if (byMmr) {
+            sPets = [];
+            let sPetMmrs = this.gameData.curExpl.curBattle.selfs;
+
+            let checkEquipToken = (token: string, items: Item[], equipsOutput: Equip[]): boolean => {
+                for (const item of items) {
+                    if (item.itemType != ItemType.equip) continue;
+                    let equip = item as Equip;
+                    if (EquipDataTool.getToken(equip) == token) {
+                        equipsOutput.push(equip);
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            for (let petIdx = 0; petIdx < sPetMmrs.length; petIdx++) {
+                const selfPetMmr = sPetMmrs[petIdx];
+                let curPet: Pet;
+                for (const petInAll of this.gameData.pets) {
+                    if (petInAll.catchIdx == selfPetMmr.catchIdx) {
+                        curPet = petInAll;
+                        break;
+                    }
+                }
+                sPets.push(curPet);
+
+                exPrvtys.push(selfPetMmr.prvty);
+
+                let equips = [];
+                for (const token of selfPetMmr.eqpTokens) {
+                    if (checkEquipToken(token, curPet.equips, equips)) continue;
+                    if (checkEquipToken(token, this.gameData.items, equips)) continue;
+                    for (const petInAll of this.gameData.pets) {
+                        if (checkEquipToken(token, petInAll.equips, equips)) {
+                            break;
+                        }
+                    }
+                }
+                exEquips.push(equips);
+            }
+        } else sPets = GameDataTool.getReadyPets(this.gameData);
+
         let mpMax = 0;
         let last = null;
-        for (let petIdx = 0; petIdx < selfPetsMmr.length; petIdx++) {
-            const selfPetMmr = selfPetsMmr[petIdx];
-
-            let pet: Pet;
-            for (const petInAll of this.gameData.pets) {
-                if (petInAll.catchIdx == selfPetMmr.catchIdx) {
-                    pet = petInAll;
-                    break;
-                }
-            }
+        for (let petIdx = 0; petIdx < sPets.length; petIdx++) {
+            let pet: Pet = sPets[petIdx];
 
             let battlePet = new BattlePet();
-            battlePet.init(petIdx, 5 - selfPetsMmr.length + petIdx, pet, false);
+            let fIdx = BattlePetLenMax - sPets.length + petIdx;
+            battlePet.init(petIdx, fIdx, pet, false, exPrvtys[petIdx], exEquips[petIdx]);
             if (last) {
                 battlePet.last = last;
                 last.next = battlePet;
@@ -175,7 +224,7 @@ export class BattleController {
 
             mpMax += battlePet.pet2.mpMax;
 
-            if (this.realBattle.selfTeam.pets.length == 5) break;
+            if (this.realBattle.selfTeam.pets.length == BattlePetLenMax) break;
         }
 
         this.realBattle.selfTeam.mpMax = mpMax;
@@ -185,26 +234,6 @@ export class BattleController {
             this.page.setUIofSelfPet(-1);
             this.page.resetAttriBar(mpMax, mpMax, 0);
         }
-    }
-
-    checkIfSelfTeamChanged(): boolean {
-        let pets = this.gameData.pets;
-        let selfPetsMmr = this.gameData.curExpl.selfs;
-        for (let petIdx = 0; petIdx < selfPetsMmr.length; petIdx++) {
-            const selfPetMmr = selfPetsMmr[petIdx];
-            let pet = pets[petIdx];
-
-            if (selfPetMmr.catchIdx != pet.catchIdx) return true;
-            if (selfPetMmr.lv != pet.lv) return true;
-            if (selfPetMmr.rank != pet.rank) return true;
-            if (selfPetMmr.state != pet.state) return true;
-            if (selfPetMmr.lndFchrLen != pet.learnedFeatures.length) return true;
-            if (selfPetMmr.prvty != pet.prvty) return true;
-            for (let eqpIdx = 0; eqpIdx < selfPetMmr.eqpTokens.length; eqpIdx++) {
-                if (selfPetMmr.eqpTokens[eqpIdx] != EquipDataTool.getToken(pet.equips[eqpIdx])) return true;
-            }
-        }
-        return false;
     }
 
     startBattle(startUpdCnt: number, spcBtlId: number = 0) {
@@ -267,7 +296,7 @@ export class BattleController {
 
         // 偷袭
         if (hiding) {
-            for (let index = 0; index < 5; index++) {
+            for (let index = 0; index < BattlePetLenMax; index++) {
                 if (index >= rb.selfTeam.pets.length || index >= rb.enemyTeam.pets.length) break;
                 let selfPet = rb.selfTeam.pets[index];
                 let enemyPet = rb.enemyTeam.pets[index];
@@ -408,7 +437,7 @@ export class BattleController {
                         if (buffOutput.rage) {
                             team.rage -= buffOutput.rage;
                             if (team.rage < 0) team.rage = 0;
-                            else if (team.rage > RAGE_MAX) team.rage = RAGE_MAX;
+                            else if (team.rage > RageMax) team.rage = RageMax;
                         }
                         if (buffOutput.newBuffs) {
                             for (const { aim, id, time } of buffOutput.newBuffs) {
@@ -691,7 +720,7 @@ export class BattleController {
 
         let team = this.getTeam(aim);
         team.rage += rage;
-        if (team.rage > RAGE_MAX) team.rage = RAGE_MAX;
+        if (team.rage > RageMax) team.rage = RageMax;
     }
 
     addMp(battlePet: BattlePet, aim: BattlePet) {
@@ -774,7 +803,7 @@ export class BattleController {
 
         if (this.page) {
             // 清理敌人状态
-            for (let index = 0; index < 5; index++) {
+            for (let index = 0; index < BattlePetLenMax; index++) {
                 this.page.clearUIofEnemyPet(index);
                 this.page.removeBuff(true, index, null);
             }

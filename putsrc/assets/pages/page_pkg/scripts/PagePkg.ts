@@ -279,7 +279,6 @@ export class PagePkg extends PagePkgBase {
         let itemIdx = idxList[cellIdx];
         let item = gameData.items[itemIdx];
         cc.log('PUT 丢弃道具：', item.id);
-        cc.log('^_^!', cellIdx, itemIdx);
 
         let name: string;
         if (item.itemType == ItemType.cnsum) {

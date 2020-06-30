@@ -185,18 +185,16 @@ export class ActPos {
 // -----------------------------------------------------------------
 
 export class SelfPetMmr {
-    catchIdx: number;
-    lv: number;
-    rank: number;
-    state: number;
-    lndFchrLen: number;
+    catchIdx: number; // 战斗开始后，可能会变化的只有如下几项
     prvty: number;
+    // drinks: llytodo
     eqpTokens: string[];
 }
 
 export class BattleMmr {
     startUpdCnt: number;
     seed: number;
+    selfs: SelfPetMmr[];
     enemys: PetMmr[];
     spcBtlId: number; // 特殊战斗的id
 }
@@ -205,7 +203,6 @@ export class ExplMmr {
     curPosId: string;
     startTime: number;
     curStep: number;
-    selfs: SelfPetMmr[];
     curBattle: BattleMmr;
     hiding: boolean;
     catching: boolean;

@@ -199,6 +199,10 @@ export class Memory {
 
         GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
+            let f = newInsWithChecker(Feature);
+            f.id = 'hitWithDark';
+            f.lv = 1;
+            pet.learnedFeatures.push(f);
         });
 
         GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], (pet: Pet) => {
@@ -533,24 +537,29 @@ export class ActPosDataTool {
 }
 
 export class MmrTool {
-    static createExpl(): ExplMmr {
+    static createExplMmr(): ExplMmr {
         let expl = newInsWithChecker(ExplMmr);
         expl.startTime = Date.now();
         expl.curStep = 0;
-        expl.selfs = newList();
         expl.hiding = false;
         expl.catching = false;
         expl.cumCatchRate = 0;
         return expl;
     }
 
-    static createSelfPet(pet: Pet): SelfPetMmr {
+    static createBattleMmr(seed: number, startUpdCnt: number, spcBtlId: number): BattleMmr {
+        let battle = newInsWithChecker(BattleMmr);
+        battle.startUpdCnt = startUpdCnt;
+        battle.seed = seed;
+        battle.selfs = newList();
+        battle.enemys = newList();
+        battle.spcBtlId = spcBtlId;
+        return battle;
+    }
+
+    static createSelfPetMmr(pet: Pet): SelfPetMmr {
         let selfPetMmr = newInsWithChecker(SelfPetMmr);
         selfPetMmr.catchIdx = pet.catchIdx;
-        selfPetMmr.lv = pet.lv;
-        selfPetMmr.rank = pet.rank;
-        selfPetMmr.state = pet.state;
-        selfPetMmr.lndFchrLen = pet.learnedFeatures.length;
         selfPetMmr.prvty = pet.prvty;
         let tokens = [];
         for (const equip of pet.equips) tokens.push(EquipDataTool.getToken(equip));
@@ -558,16 +567,7 @@ export class MmrTool {
         return selfPetMmr;
     }
 
-    static createBattle(seed: number, startUpdCnt: number, spcBtlId: number): BattleMmr {
-        let battle = newInsWithChecker(BattleMmr);
-        battle.startUpdCnt = startUpdCnt;
-        battle.seed = seed;
-        battle.enemys = newList();
-        battle.spcBtlId = spcBtlId;
-        return battle;
-    }
-
-    static createPet(id: string, lv: number, rank: number, features: Feature[]): PetMmr {
+    static createPetMmr(id: string, lv: number, rank: number, features: Feature[]): PetMmr {
         let p = newInsWithChecker(PetMmr);
         p.id = id;
         p.lv = lv;
@@ -632,9 +632,9 @@ export class GameDataTool {
 
     static deletePet(gameData: GameData, index: number): string {
         let curCatchIdx = gameData.pets[index].catchIdx;
-        if (gameData.curExpl) {
-            for (const petMmr of gameData.curExpl.selfs) {
-                if (curCatchIdx == petMmr.catchIdx) return '当前宠物处于战斗或备战状态，无法放生';
+        if (gameData.curExpl && gameData.curExpl.curBattle) {
+            for (const petMmr of gameData.curExpl.curBattle.selfs) {
+                if (curCatchIdx == petMmr.catchIdx) return '当前宠物处于战斗状态，无法放生';
             }
         }
         gameData.pets.splice(index, 1);
@@ -781,9 +781,9 @@ export class GameDataTool {
                 cnsum.count -= count;
             }
         } else if (curItem.itemType == ItemType.equip) {
-            if (gameData.curExpl) {
+            if (gameData.curExpl && gameData.curExpl.curBattle) {
                 let curEquipToken = EquipDataTool.getToken(curItem as Equip);
-                for (const petMmr of gameData.curExpl.selfs) {
+                for (const petMmr of gameData.curExpl.curBattle.selfs) {
                     for (const itemToken of petMmr.eqpTokens) {
                         if (curEquipToken == itemToken) return '该物品被战斗中宠物持有，无法丢弃';
                     }
@@ -890,28 +890,9 @@ export class GameDataTool {
 
     static createExpl(gameData: GameData) {
         if (gameData.curExpl) return;
-        let expl = MmrTool.createExpl();
+        let expl = MmrTool.createExplMmr();
+        expl.curPosId = gameData.curPosId;
         gameData.curExpl = expl;
-        this.resetSelfPetsInExpl(gameData);
-    }
-
-    static resetSelfPetsInExpl(gameData: GameData) {
-        let expl = gameData.curExpl;
-        expl.selfs.length = 0;
-
-        for (const pet of this.getReadyPets(gameData)) {
-            let selfPetMmr = MmrTool.createSelfPet(pet);
-            expl.selfs.push(selfPetMmr);
-        }
-    }
-
-    static getReadyPets(gameData: GameData): Pet[] {
-        let pets: Pet[] = [];
-        for (const pet of gameData.pets) {
-            if (pet.state != PetState.ready) break; // 备战的pet一定在最上，且不会超过5个
-            pets[pets.length] = pet;
-        }
-        return pets;
     }
 
     static deleteExpl(gameData: GameData) {
@@ -922,9 +903,21 @@ export class GameDataTool {
         cc.assert(gameData.curExpl, '创建battle前必有Expl');
         let curExpl = gameData.curExpl;
         if (curExpl.curBattle) return;
-        let battle = MmrTool.createBattle(seed, startUpdCnt, spcBtlId);
+        let battle = MmrTool.createBattleMmr(seed, startUpdCnt, spcBtlId);
+
+        for (const pet of this.getReadyPets(gameData)) battle.selfs.push(MmrTool.createSelfPetMmr(pet));
+        for (const pet of pets) battle.enemys.push(MmrTool.createPetMmr(pet.id, pet.lv, pet.rank, pet.inbornFeatures));
+
         curExpl.curBattle = battle;
-        for (const pet of pets) battle.enemys.push(MmrTool.createPet(pet.id, pet.lv, pet.rank, pet.inbornFeatures));
+    }
+
+    static getReadyPets(gameData: GameData): Pet[] {
+        let pets: Pet[] = [];
+        for (const pet of gameData.pets) {
+            if (pet.state != PetState.ready) break; // 备战的pet一定在最上，且不会超过5个
+            pets[pets.length] = pet;
+        }
+        return pets;
     }
 
     static deleteBattle(gameData: GameData) {

@@ -16,7 +16,7 @@ import {
     DrinkAimType,
     ExplModel
 } from './DataModel';
-import { BioType, EleType, BattleType, Pet, EleTypeNames, ExplMmr, Feature, PetRankNames, BattleMmr, PetMmr } from './DataSaved';
+import { BioType, EleType, BattleType, Pet, EleTypeNames, ExplMmr, PetRankNames, PetMmr, Equip } from './DataSaved';
 
 import { petModelDict } from 'configs/PetModelDict';
 import { skillModelDict } from 'configs/SkillModelDict';
@@ -37,7 +37,7 @@ export enum AmplAttriType {
     reput
 }
 
-const ALL = 'all';
+const All = 'all';
 
 /** 运行时游戏数据 */
 export class GameDataJIT {
@@ -57,13 +57,13 @@ export class GameDataJIT {
     }
 
     addAmpl(pet: Pet, key: string, data: { [key: number]: number }) {
-        let petId = pet ? String(pet.catchIdx) : ALL;
+        let petId = pet ? String(pet.catchIdx) : All;
         if (!this.attriGainAmplDict[petId]) this.attriGainAmplDict[petId] = {};
         this.attriGainAmplDict[petId][key] = data;
     }
 
     removeAmpl(pet: Pet, key: string) {
-        let petId = pet ? String(pet.catchIdx) : ALL;
+        let petId = pet ? String(pet.catchIdx) : All;
         if (this.attriGainAmplDict[petId]) {
             delete this.attriGainAmplDict[petId][key];
         }
@@ -79,7 +79,7 @@ export class GameDataJIT {
                 if (value) ampl += value * 0.01;
             }
         }
-        let allPetDataDict = this.attriGainAmplDict[ALL];
+        let allPetDataDict = this.attriGainAmplDict[All];
         if (allPetDataDict) {
             for (const key in allPetDataDict) {
                 const petData = allPetDataDict[key];
@@ -151,7 +151,7 @@ export class Pet2 {
 
     skillIds: string[];
 
-    setData(pet: Pet, exEquipTokens: string[] = null, exPrvty: number = null) {
+    setData(pet: Pet, exPrvty: number = null, exEquips: Equip[] = null) {
         let petModel: PetModel = petModelDict[pet.id];
 
         let lv = pet.lv;
@@ -185,7 +185,8 @@ export class Pet2 {
         });
 
         // 装备加成
-        for (const equip of pet.equips) {
+        let equips = exEquips == null ? pet.equips : exEquips;
+        for (const equip of equips) {
             if (!equip) continue;
             EquipDataTool.getFinalAttris(equip, this);
         }
@@ -269,7 +270,8 @@ export class BattleBuff {
     data: any;
 }
 
-export const RAGE_MAX: number = 150;
+export const RageMax: number = 150;
+export const BattlePetLenMax: number = 5;
 
 export class BattlePet {
     idx: number = 0;
@@ -298,12 +300,35 @@ export class BattlePet {
 
     buffDatas: BattleBuff[] = [];
 
-    init(idx: number, fromationIdx: number, pet: Pet, beEnemy: boolean) {
+    static addFeatureFunc(bPet: BattlePet, attri: string, funcName: string, model: FeatureModel, datas: number[]) {
+        if (model.hasOwnProperty(funcName)) {
+            let list: { func: any; datas: number[]; id: string }[] = bPet[attri];
+            for (const featureInList of list) {
+                if (featureInList.id == model.id) {
+                    for (let index = 0; index < featureInList.datas.length; index++) {
+                        featureInList.datas[index] += datas[index];
+                    }
+                    return;
+                }
+            }
+            list.push({ func: model[funcName], datas, id: model.id });
+        }
+    }
+
+    static getSkillMpUsing(skillId: string, pet: Pet) {
+        let skillModel: SkillModel = skillModelDict[skillId];
+        if (skillModel.skillType == SkillType.ultimate) return 0;
+        let mpUsing = skillModel.mp;
+        if (petModelDict[pet.id].eleType == skillModel.eleType) mpUsing -= Math.ceil(mpUsing * 0.1);
+        return mpUsing;
+    }
+
+    init(idx: number, fromationIdx: number, pet: Pet, beEnemy: boolean, exPrvty: number, exEquips: Equip[]) {
         this.idx = idx;
         this.fromationIdx = fromationIdx;
         this.pet = pet;
         this.pet2 = new Pet2();
-        this.pet2.setData(pet);
+        this.pet2.setData(pet, exPrvty, exEquips);
         this.beEnemy = beEnemy;
 
         this.hp = this.pet2.hpMax;
@@ -318,46 +343,23 @@ export class BattlePet {
         this.enemyDeadFeatures.length = 0;
         this.deadFeatures.length = 0;
 
-        let addFeatureFunc = (attri: string, funcName: string, model: FeatureModel, datas: number[]) => {
-            if (model.hasOwnProperty(funcName)) {
-                let list: { func: any; datas: number[]; id: string }[] = this[attri];
-                for (const featureInList of list) {
-                    if (featureInList.id == model.id) {
-                        for (let index = 0; index < featureInList.datas.length; index++) {
-                            featureInList.datas[index] += datas[index];
-                        }
-                        return;
-                    }
-                }
-                list.push({ func: model[funcName], datas, id: model.id });
-            }
-        };
-
         PetDataTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
-            addFeatureFunc('startingBattleFeatures', 'onStartingBattle', model, datas);
-            addFeatureFunc('attackingFeatures', 'onAttacking', model, datas);
-            addFeatureFunc('castingFeatures', 'onCasting', model, datas);
-            addFeatureFunc('hurtFeatures', 'onHurt', model, datas);
-            addFeatureFunc('healingFeatures', 'onHealing', model, datas);
-            addFeatureFunc('enemyDeadFeatures', 'onEnemyDead', model, datas);
-            addFeatureFunc('deadFeatures', 'onDead', model, datas);
+            BattlePet.addFeatureFunc(this, 'startingBattleFeatures', 'onStartingBattle', model, datas);
+            BattlePet.addFeatureFunc(this, 'attackingFeatures', 'onAttacking', model, datas);
+            BattlePet.addFeatureFunc(this, 'castingFeatures', 'onCasting', model, datas);
+            BattlePet.addFeatureFunc(this, 'hurtFeatures', 'onHurt', model, datas);
+            BattlePet.addFeatureFunc(this, 'healingFeatures', 'onHealing', model, datas);
+            BattlePet.addFeatureFunc(this, 'enemyDeadFeatures', 'onEnemyDead', model, datas);
+            BattlePet.addFeatureFunc(this, 'deadFeatures', 'onDead', model, datas);
         });
 
         // 技能
-        let getSkillMpUsing = (skillId: string) => {
-            let skillModel: SkillModel = skillModelDict[skillId];
-            if (skillModel.skillType == SkillType.ultimate) return 0;
-            let mpUsing = skillModel.mp;
-            if (petModelDict[pet.id].eleType == skillModel.eleType) mpUsing -= Math.ceil(mpUsing * 0.1);
-            return mpUsing;
-        };
-
         this.skillDatas.length = 0;
 
         for (const skillId of this.pet2.skillIds) {
             let skill = new BattleSkill();
             skill.id = skillId;
-            skill.mpUsing = getSkillMpUsing(skillId);
+            skill.mpUsing = BattlePet.getSkillMpUsing(skillId, pet);
             this.skillDatas.push(skill);
         }
     }
@@ -439,7 +441,8 @@ export class RealBattle {
             let petData = PetDataTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.rank, ePetMmr.features, null);
             if (spcBtlId) petData.master = 'spcBtl';
             let battlePet = new BattlePet();
-            battlePet.init(index, 5 - realEPetMmrs.length + index, petData, true);
+            let fIdx = BattlePetLenMax - realEPetMmrs.length + index;
+            battlePet.init(index, fIdx, petData, true, null, null);
             if (last) {
                 battlePet.last = last;
                 last.next = battlePet;
@@ -500,7 +503,7 @@ export class RealBattle {
             if (lv > 5 && featureR > 0.3) features.push(FeatureDataTool.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
             if (lv > 10 && featureR > 0.8) features.push(FeatureDataTool.createInbornFeature());
 
-            petMmrs.push(MmrTool.createPet(id, lv, rank, features));
+            petMmrs.push(MmrTool.createPetMmr(id, lv, rank, features));
         }
         return petMmrs;
     }
