@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { PetDataTool, EquipDataTool, FeatureDataTool, MmrTool } from './Memory';
+import { PetDataTool, EquipDataTool, FeatureDataTool, MmrTool, GameDataTool } from './Memory';
 import {
     FeatureModel,
     PetModel,
@@ -16,7 +16,20 @@ import {
     DrinkAimType,
     ExplModel
 } from './DataModel';
-import { BioType, EleType, BattleType, Pet, EleTypeNames, ExplMmr, PetRankNames, PetMmr, Equip } from './DataSaved';
+import {
+    BioType,
+    EleType,
+    BattleType,
+    Pet,
+    EleTypeNames,
+    ExplMmr,
+    PetRankNames,
+    PetMmr,
+    Equip,
+    GameData,
+    Item,
+    ItemType
+} from './DataSaved';
 
 import { petModelDict } from 'configs/PetModelDict';
 import { skillModelDict } from 'configs/SkillModelDict';
@@ -323,13 +336,16 @@ export class BattlePet {
         return mpUsing;
     }
 
-    init(idx: number, fromationIdx: number, pet: Pet, beEnemy: boolean, exPrvty: number, exEquips: Equip[]) {
+    initPosition(idx: number, fromationIdx: number, beEnemy: boolean) {
         this.idx = idx;
         this.fromationIdx = fromationIdx;
-        this.pet = pet;
-        this.pet2 = new Pet2();
-        this.pet2.setData(pet, exPrvty, exEquips);
         this.beEnemy = beEnemy;
+    }
+
+    init(pet: Pet, exPrvty: number, exEquips: Equip[]) {
+        this.pet = pet;
+        if (!this.pet2) this.pet2 = new Pet2();
+        this.pet2.setData(pet, exPrvty, exEquips);
 
         this.hp = this.pet2.hpMax;
         this.hpMax = this.pet2.hpMax;
@@ -405,6 +421,32 @@ export class BattleTeam {
     mpMax: number = 0;
     mp: number = 0;
     rage: number = 0;
+
+    reset(len: number, beEnemy: boolean, call: (bPet: BattlePet, petIdx: number) => void) {
+        this.pets.length = len;
+        let mpMax = 0;
+        let last = null;
+        for (let petIdx = 0; petIdx < len; petIdx++) {
+            let battlePet = this.pets[petIdx] || new BattlePet();
+            let fIdx = BattlePetLenMax - len + petIdx;
+            battlePet.initPosition(petIdx, fIdx, beEnemy);
+            call(battlePet, petIdx);
+            if (last) {
+                battlePet.last = last;
+                battlePet.next = null;
+                last.next = battlePet;
+            } else battlePet.last = null;
+            last = battlePet;
+
+            this.pets[petIdx] = battlePet;
+
+            mpMax += battlePet.pet2.mpMax;
+        }
+
+        this.mpMax = mpMax;
+        this.mp = mpMax;
+        this.rage = 0;
+    }
 }
 
 export class RealBattle {
@@ -422,11 +464,62 @@ export class RealBattle {
     lastAim: BattlePet = null;
     combo: number = 1;
 
-    resetRealBattle(ePetMmrs: PetMmr[], spcBtlId: number, curExpl: ExplMmr) {
-        this.enemyTeam = new BattleTeam();
+    resetSelf(gameData: GameData, byMmr: boolean) {
+        if (!this.selfTeam) this.selfTeam = new BattleTeam();
 
-        let mpMax = 0;
-        let last = null;
+        let sPets: Pet[];
+        let exPrvtys: number[] = [];
+        let exEquips: Equip[][] = [];
+        if (byMmr) {
+            sPets = [];
+            let sPetMmrs = gameData.curExpl.curBattle.selfs;
+
+            let checkEquipToken = (token: string, items: Item[], equipsOutput: Equip[]): boolean => {
+                for (const item of items) {
+                    if (item.itemType != ItemType.equip) continue;
+                    let equip = item as Equip;
+                    if (EquipDataTool.getToken(equip) == token) {
+                        equipsOutput.push(equip);
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            for (let petIdx = 0; petIdx < sPetMmrs.length; petIdx++) {
+                const selfPetMmr = sPetMmrs[petIdx];
+                let curPet: Pet;
+                for (const petInAll of gameData.pets) {
+                    if (petInAll.catchIdx == selfPetMmr.catchIdx) {
+                        curPet = petInAll;
+                        break;
+                    }
+                }
+                sPets.push(curPet);
+
+                exPrvtys.push(selfPetMmr.prvty);
+
+                let equips = [];
+                for (const token of selfPetMmr.eqpTokens) {
+                    if (checkEquipToken(token, curPet.equips, equips)) continue;
+                    if (checkEquipToken(token, gameData.items, equips)) continue;
+                    for (const petInAll of gameData.pets) {
+                        if (checkEquipToken(token, petInAll.equips, equips)) {
+                            break;
+                        }
+                    }
+                }
+                exEquips.push(equips);
+            }
+        } else sPets = GameDataTool.getReadyPets(gameData);
+
+        this.selfTeam.reset(sPets.length, false, (bPet: BattlePet, petIdx: number) => {
+            bPet.init(sPets[petIdx], exPrvtys[petIdx], exEquips[petIdx]);
+        });
+    }
+
+    resetBattle(ePetMmrs: PetMmr[], spcBtlId: number, curExpl: ExplMmr) {
+        if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
 
         let realEPetMmrs: PetMmr[];
         if (ePetMmrs) {
@@ -435,23 +528,12 @@ export class RealBattle {
             // llytodo
         } else realEPetMmrs = RealBattle.createEPetMmrs(curExpl);
 
-        for (let index = 0; index < realEPetMmrs.length; index++) {
-            const ePetMmr = realEPetMmrs[index];
-
+        this.enemyTeam.reset(realEPetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
+            const ePetMmr = realEPetMmrs[petIdx];
             let petData = PetDataTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.rank, ePetMmr.features, null);
             if (spcBtlId) petData.master = 'spcBtl';
-            let battlePet = new BattlePet();
-            let fIdx = BattlePetLenMax - realEPetMmrs.length + index;
-            battlePet.init(index, fIdx, petData, true, null, null);
-            if (last) {
-                battlePet.last = last;
-                last.next = battlePet;
-            }
-            last = battlePet;
-            mpMax += battlePet.pet2.mpMax;
-
-            this.enemyTeam.pets.push(battlePet);
-        }
+            bPet.init(petData, null, null);
+        });
 
         // 按照HP排序
         if (randomRate(0.5)) {
@@ -464,9 +546,6 @@ export class RealBattle {
                 pet.fromationIdx = 5 - ePets.length + index;
             }
         }
-
-        this.enemyTeam.mp = mpMax;
-        this.enemyTeam.mpMax = mpMax;
 
         this.battleRound = 0;
         this.atkRound = 0;

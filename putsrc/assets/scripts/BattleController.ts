@@ -158,80 +158,10 @@ export class BattleController {
     }
 
     resetSelfTeam(byMmr: boolean = false) {
-        this.realBattle.selfTeam = new BattleTeam();
-
-        let sPets: Pet[];
-        let exPrvtys: number[] = [];
-        let exEquips: Equip[][] = [];
-        if (byMmr) {
-            sPets = [];
-            let sPetMmrs = this.gameData.curExpl.curBattle.selfs;
-
-            let checkEquipToken = (token: string, items: Item[], equipsOutput: Equip[]): boolean => {
-                for (const item of items) {
-                    if (item.itemType != ItemType.equip) continue;
-                    let equip = item as Equip;
-                    if (EquipDataTool.getToken(equip) == token) {
-                        equipsOutput.push(equip);
-                        return true;
-                    }
-                }
-                return false;
-            };
-
-            for (let petIdx = 0; petIdx < sPetMmrs.length; petIdx++) {
-                const selfPetMmr = sPetMmrs[petIdx];
-                let curPet: Pet;
-                for (const petInAll of this.gameData.pets) {
-                    if (petInAll.catchIdx == selfPetMmr.catchIdx) {
-                        curPet = petInAll;
-                        break;
-                    }
-                }
-                sPets.push(curPet);
-
-                exPrvtys.push(selfPetMmr.prvty);
-
-                let equips = [];
-                for (const token of selfPetMmr.eqpTokens) {
-                    if (checkEquipToken(token, curPet.equips, equips)) continue;
-                    if (checkEquipToken(token, this.gameData.items, equips)) continue;
-                    for (const petInAll of this.gameData.pets) {
-                        if (checkEquipToken(token, petInAll.equips, equips)) {
-                            break;
-                        }
-                    }
-                }
-                exEquips.push(equips);
-            }
-        } else sPets = GameDataTool.getReadyPets(this.gameData);
-
-        let mpMax = 0;
-        let last = null;
-        for (let petIdx = 0; petIdx < sPets.length; petIdx++) {
-            let pet: Pet = sPets[petIdx];
-
-            let battlePet = new BattlePet();
-            let fIdx = BattlePetLenMax - sPets.length + petIdx;
-            battlePet.init(petIdx, fIdx, pet, false, exPrvtys[petIdx], exEquips[petIdx]);
-            if (last) {
-                battlePet.last = last;
-                last.next = battlePet;
-            }
-            last = battlePet;
-
-            this.realBattle.selfTeam.pets.push(battlePet);
-
-            mpMax += battlePet.pet2.mpMax;
-
-            if (this.realBattle.selfTeam.pets.length == BattlePetLenMax) break;
-        }
-
-        this.realBattle.selfTeam.mpMax = mpMax;
-        this.realBattle.selfTeam.mp = mpMax;
-
+        this.realBattle.resetSelf(this.gameData, byMmr);
         if (this.page) {
             this.page.setUIofSelfPet(-1);
+            let mpMax = this.realBattle.selfTeam.mpMax;
             this.page.resetAttriBar(mpMax, mpMax, 0);
         }
     }
@@ -241,7 +171,7 @@ export class BattleController {
         setSeed(seed);
 
         // 更新battle
-        this.realBattle.resetRealBattle(null, spcBtlId, this.gameData.curExpl);
+        this.realBattle.resetBattle(null, spcBtlId, this.gameData.curExpl);
         if (this.debugMode) {
             this.realBattleCopys.length = 0;
             this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(this.realBattle) });
@@ -268,7 +198,7 @@ export class BattleController {
         setSeed(battleMmr.seed);
 
         // 更新battle
-        this.realBattle.resetRealBattle(battleMmr.enemys, null, null);
+        this.realBattle.resetBattle(battleMmr.enemys, null, null);
         if (this.debugMode) {
             this.realBattleCopys.length = 0;
             this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(this.realBattle) });

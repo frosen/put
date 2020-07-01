@@ -156,7 +156,11 @@ export class ExplUpdater {
             PetDataTool.addExp(pet, totalExp);
         }
 
+        // 计算捕获
+
         // 计算获得的物品 // llytodo
+
+        // 考虑潜行
     }
 
     static getAvgLvRankInMmr(gameData: GameData): { selfLv: number; selfRank: number; enemyLv: number; enemyRank: number } {

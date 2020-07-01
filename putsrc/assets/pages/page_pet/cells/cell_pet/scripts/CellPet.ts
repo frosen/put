@@ -59,8 +59,12 @@ export class CellPet extends ListViewCell {
     setData(pet: Pet) {
         this.curPet = pet;
         let petModel: PetModel = petModelDict[pet.id];
+
         this.petNameLbl.string = petModel.cnName;
         this.lvLbl.string = `[L${pet.lv}${PetRankNames[pet.rank]}]`;
+        CellPet.rerenderLbl(this.petNameLbl);
+        CellPet.rerenderLbl(this.lvLbl);
+        this.petNameLbl.node.parent.getComponent(cc.Layout).updateLayout();
 
         this.petSp.node.color = EleColor[petModel.eleType];
 
