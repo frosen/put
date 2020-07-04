@@ -540,6 +540,7 @@ export class MmrTool {
     static createExplMmr(): ExplMmr {
         let expl = newInsWithChecker(ExplMmr);
         expl.startTime = Date.now();
+        expl.chngUpdCnt = 0;
         expl.curStep = 0;
         expl.hiding = false;
         expl.catching = false;

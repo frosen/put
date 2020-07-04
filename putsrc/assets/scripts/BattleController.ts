@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { Memory, EquipDataTool, GameDataTool, PetDataTool } from 'scripts/Memory';
+import { Memory, GameDataTool, PetDataTool } from 'scripts/Memory';
 import { BattlePageBase } from './BattlePageBase';
 import { randomRate } from 'scripts/Random';
 
@@ -26,9 +26,7 @@ import {
     Cnsum,
     CnsumType,
     Catcher,
-    BattleMmr,
-    Equip,
-    Item
+    BattleMmr
 } from 'scripts/DataSaved';
 import {
     RealBattle,
@@ -230,9 +228,7 @@ export class BattleController {
                 if (index >= rb.selfTeam.pets.length || index >= rb.enemyTeam.pets.length) break;
                 let selfPet = rb.selfTeam.pets[index];
                 let enemyPet = rb.enemyTeam.pets[index];
-
-                let agiRate = selfPet.pet2.agility / enemyPet.pet2.agility;
-                let times = Math.ceil(agiRate); // 敏捷每大于敌人100%，会让敌人多静止1回合
+                let times = BattleController.calcSneakAttackTimes(selfPet, enemyPet);
                 this.addBuff(enemyPet, selfPet, 'JingZhi', times);
             }
         }
@@ -243,6 +239,10 @@ export class BattleController {
                 value.func(pet, value.datas, this);
             });
         }
+    }
+
+    static calcSneakAttackTimes(selfPet: BattlePet, enemyPet: BattlePet): number {
+        return Math.ceil(selfPet.pet2.agility / enemyPet.pet2.agility); // 敏捷每大于敌人100%，会让敌人多静止1回合
     }
 
     update() {
@@ -378,7 +378,7 @@ export class BattleController {
                 }
 
                 if (buffData.time == 0) {
-                    if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(pet, buffData.caster, buffData.data, this);
+                    if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(pet, buffData.caster, this, buffData.data);
                     if (this.page) this.page.removeBuff(pet.beEnemy, pet.idx, buffData.id);
                     pet.buffDatas.splice(index, 1);
                     index--;

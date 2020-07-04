@@ -77,8 +77,6 @@ export class PageActExpl extends BattlePageBase {
     listView: ListView = null;
     lvd: PageActExplLVD = null;
 
-    inited: boolean = false;
-
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
@@ -143,12 +141,6 @@ export class PageActExpl extends BattlePageBase {
             return false;
         });
         this.ctrlr.setTitle('探索');
-
-        if (this.inited) this.updater.gotoCheckChange();
-    }
-
-    afterPageShowAnim() {
-        this.inited = true;
     }
 
     // ui -----------------------------------------------------------------

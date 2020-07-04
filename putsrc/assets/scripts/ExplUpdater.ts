@@ -21,6 +21,7 @@ export enum ExplState {
 
 enum ExplResult {
     none,
+    gain, // 获取收益
     battle
 }
 
@@ -47,6 +48,7 @@ export class ExplUpdater {
 
         this.battleCtrlr = new BattleController();
         this.battleCtrlr.init(this.page, this.memory, () => {
+            this.updateChgUpdCnt();
             this.startRecover();
         });
 
@@ -54,7 +56,6 @@ export class ExplUpdater {
         if (!curExpl) this.createExpl(0);
         else this.recoverLastExpl(curExpl);
 
-        this.memory.addDataListener(this);
         cc.director.getScheduler().scheduleUpdate(this, 0, false);
         this.lastTime = Date.now();
 
@@ -76,7 +77,7 @@ export class ExplUpdater {
 
         cc.log('PUT 下一步');
         this.lastTime = Date.now();
-        this.updateCount += 1;
+        this.updCnt += 1;
         this.onUpdate();
     }
 
@@ -84,11 +85,9 @@ export class ExplUpdater {
 
     createExpl(spcBtlId: number) {
         GameDataTool.createExpl(this.gameData);
-        this.selfPetsChangedFlag = true;
         if (!spcBtlId) {
             this.startExpl();
         } else {
-            this.handleSelfChange(true);
             this.startBattle(spcBtlId); // 专属作战直接进入战斗
         }
 
@@ -133,6 +132,8 @@ export class ExplUpdater {
             } else {
                 startTime = timePtr;
             }
+        } else {
+            startTime += curExpl.chngUpdCnt * ExplInterval;
         }
 
         let { selfLv, selfRank, enemyLv, enemyRank } = ExplUpdater.getAvgLvRankInMmr(this.gameData);
@@ -188,7 +189,7 @@ export class ExplUpdater {
     }
 
     static calcExplDura(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
-        return this.calcBattleDura(selfLv, selfRank, enemyLv, enemyRank) + 20000; // 一场战斗时间，加上20秒恢复和探索时间
+        return this.calcBattleDura(selfLv, selfRank, enemyLv, enemyRank) + 15000; // 一场战斗时间，加上15秒恢复(1.5)和探索(13.5)时间
     }
 
     static calcBattleDura(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
@@ -213,7 +214,7 @@ export class ExplUpdater {
     }
 
     lastTime: number = 0;
-    updateCount: number = 0;
+    updCnt: number = 0;
 
     update() {
         if (this.pausing) return;
@@ -222,7 +223,7 @@ export class ExplUpdater {
         let curTime = Date.now();
         if (curTime - this.lastTime > ExplInterval) {
             this.lastTime = this.lastTime + ExplInterval;
-            this.updateCount += 1;
+            this.updCnt += 1;
             this.onUpdate();
         }
     }
@@ -237,42 +238,59 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
-    needCheckChanged: boolean = false;
-    selfPetsChangedFlag: boolean = false;
-
-    gotoCheckChange() {
-        this.needCheckChanged = true;
-    }
-
-    onMemoryDataChanged() {
-        this.selfPetsChangedFlag = true;
-    }
-
-    handleSelfChange(force: boolean) {
-        if ((force || this.needCheckChanged) && this.selfPetsChangedFlag) {
-            this.battleCtrlr.resetSelfTeam();
-            this.needCheckChanged = false;
-            this.selfPetsChangedFlag = false;
-        }
+    handleSelfTeamChange() {
+        this.battleCtrlr.resetSelfTeam(); // 重置过程不消耗性能，且大概率会触发onMemoryDataChanged
     }
 
     // -----------------------------------------------------------------
 
     explTime: number = 0;
+    explCnt: number = 0;
 
+    // 一轮是平均5+1乘以0.75 = 4.5 平均2+1轮 也就是13.5s
     startExpl() {
-        this.handleSelfChange(true);
+        this.handleSelfTeamChange();
 
+        let enter = this.state != ExplState.explore;
         this.state = ExplState.explore;
-        // this.explTime = 5 + random(5);
-        this.explTime = 2; // llytest
-        this.page.log('开始探索');
+
+        this.explTime = 3 + random(5); // 3-7个空隙
+
+        if (enter) {
+            this.explCnt = random(5);
+            if (this.gameData.curExpl.hiding) {
+                this.explCnt += ExplUpdater.calcHideExplCnt(this.gameData.curExpl, this.battleCtrlr);
+            }
+            this.page.log('开始探索');
+        } else {
+            this.explCnt--;
+        }
+
+        cc.log('PUT 探索次数和本次时间: ', this.explCnt, this.explTime);
+    }
+
+    static calcHideExplCnt(curExpl: ExplMmr, battleCtrlr: BattleController): number {
+        let curPosLv = actPosModelDict[curExpl.curPosId].lv;
+
+        let posSens = (100 + curPosLv * 15) * (1 + curExpl.curStep * 0.5);
+
+        let petSens = 0;
+        let selfPets = battleCtrlr.realBattle.selfTeam.pets;
+        for (const selfPet of selfPets) petSens = Math.max(petSens, selfPet.pet2.sensitivity); // 取最大
+
+        if (petSens < posSens) return 0;
+        else {
+            let rate = petSens / posSens;
+            let baseCnt = Math.floor(rate);
+            let rateCnt = randomRate(rate - baseCnt) ? 1 : 0;
+            return baseCnt + rateCnt;
+        }
     }
 
     updateExpl() {
-        this.handleSelfChange(false);
         let result = this.getExplResult();
         if (result == ExplResult.none) this.exploreNothing();
+        else if (result == ExplResult.gain) this.gainRes();
         else if (result == ExplResult.battle) this.startBattle();
     }
 
@@ -281,7 +299,8 @@ export class ExplUpdater {
             this.explTime--;
             return ExplResult.none;
         } else {
-            return ExplResult.battle;
+            if (this.explCnt > 0) return ExplResult.gain;
+            else return ExplResult.battle;
         }
     }
 
@@ -289,11 +308,26 @@ export class ExplUpdater {
         this.page.log('探索中......');
     }
 
+    gainRes() {
+        this.handleSelfTeamChange();
+
+        this.page.log('获得了什么');
+
+        this.updateChgUpdCnt();
+
+        // 继续探索
+        this.startExpl();
+    }
+
     startBattle(spcBtlId: number = 0) {
-        this.handleSelfChange(true);
+        this.handleSelfTeamChange();
 
         this.state = ExplState.battle;
-        this.battleCtrlr.startBattle(this.updateCount, spcBtlId);
+        this.battleCtrlr.startBattle(this.updCnt, spcBtlId);
+    }
+
+    updateChgUpdCnt() {
+        this.gameData.curExpl.chngUpdCnt = this.updCnt;
     }
 
     // -----------------------------------------------------------------
@@ -345,9 +379,9 @@ export class ExplUpdater {
     // -----------------------------------------------------------------
 
     executeCatch(): string {
-        let cur = !this.memory.gameData.curExpl.catching;
+        let cur = !this.gameData.curExpl.catching;
         if (cur) {
-            let items = this.memory.gameData.items;
+            let items = this.gameData.items;
             let hasCatcher = false;
             for (const item of items) {
                 if (item.itemType != ItemType.cnsum || (item as Cnsum).cnsumType != CnsumType.catcher) continue;
@@ -359,7 +393,7 @@ export class ExplUpdater {
                 return '没有捕捉装置，不能开始捕捉';
             }
         }
-        this.memory.gameData.curExpl.hiding = cur;
+        this.gameData.curExpl.hiding = cur;
         this.page.setCatchActive(cur);
         return null;
     }
@@ -369,8 +403,8 @@ export class ExplUpdater {
     }
 
     executeHide() {
-        let cur = !this.memory.gameData.curExpl.hiding;
-        this.memory.gameData.curExpl.hiding = cur;
+        let cur = !this.gameData.curExpl.hiding;
+        this.gameData.curExpl.hiding = cur;
         this.page.setHideActive(cur);
     }
 }

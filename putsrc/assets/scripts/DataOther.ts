@@ -248,23 +248,23 @@ export class Pet2 {
         this.sklDmgTo = Math.max(this.sklDmgTo, 1);
 
         // 技能
-        this.skillIds = [];
-
-        // 装备技能
+        if (!this.skillIds) this.skillIds = [];
+        let skillIdx = 0;
         for (let index = pet.equips.length - 1; index >= 0; index--) {
-            let equip = pet.equips[index];
+            let equip = pet.equips[index]; // 装备技能
             if (!equip) continue;
             let skillId = equip.skillId;
             if (!skillId) continue;
-            this.skillIds.push(skillId);
+            this.skillIds[skillIdx] = skillId;
+            skillIdx++;
         }
-
-        // 自带技能
-        let selfSkillIds = PetDataTool.getSelfSkillIdByCurLv(pet);
+        let selfSkillIds = PetDataTool.getSelfSkillIdByCurLv(pet); // 自带技能
         for (let index = selfSkillIds.length - 1; index >= 0; index--) {
             const skillId = selfSkillIds[index];
-            this.skillIds.push(skillId);
+            this.skillIds[skillIdx] = skillId;
+            skillIdx++;
         }
+        this.skillIds.length = skillIdx;
     }
 }
 
@@ -314,18 +314,16 @@ export class BattlePet {
     buffDatas: BattleBuff[] = [];
 
     static addFeatureFunc(bPet: BattlePet, attri: string, funcName: string, model: FeatureModel, datas: number[]) {
-        if (model.hasOwnProperty(funcName)) {
-            let list: { func: any; datas: number[]; id: string }[] = bPet[attri];
-            for (const featureInList of list) {
-                if (featureInList.id == model.id) {
-                    for (let index = 0; index < featureInList.datas.length; index++) {
-                        featureInList.datas[index] += datas[index];
-                    }
-                    return;
-                }
+        if (!model.hasOwnProperty(funcName)) return;
+        let list: { func: any; datas: number[]; id: string }[] = bPet[attri];
+        for (const featureInList of list) {
+            if (featureInList.id != model.id) continue;
+            for (let index = 0; index < featureInList.datas.length; index++) {
+                featureInList.datas[index] += datas[index];
             }
-            list.push({ func: model[funcName], datas, id: model.id });
+            return;
         }
+        list.push({ func: model[funcName], datas, id: model.id });
     }
 
     static getSkillMpUsing(skillId: string, pet: Pet) {
@@ -370,13 +368,13 @@ export class BattlePet {
         });
 
         // 技能
-        this.skillDatas.length = 0;
-
-        for (const skillId of this.pet2.skillIds) {
-            let skill = new BattleSkill();
+        this.skillDatas.length = this.pet2.skillIds.length;
+        for (let index = 0; index < this.pet2.skillIds.length; index++) {
+            const skillId = this.pet2.skillIds[index];
+            let skill = this.skillDatas[index] || new BattleSkill();
             skill.id = skillId;
             skill.mpUsing = BattlePet.getSkillMpUsing(skillId, pet);
-            this.skillDatas.push(skill);
+            this.skillDatas[index] = skill;
         }
     }
 
