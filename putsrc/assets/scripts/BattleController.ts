@@ -111,7 +111,7 @@ export class BattleController {
         }
         cc.log('PUT 重新开始当前战斗');
 
-        this.realBattle = <RealBattle>deepCopy(this.realBattleCopys[0].rb);
+        this.realBattle = deepCopy(this.realBattleCopys[0].rb) as RealBattle;
         setSeed(this.realBattleCopys[0].seed);
         this.realBattleCopys.length = 1;
         this.resetAllUI();
@@ -129,7 +129,7 @@ export class BattleController {
             this.resetBattleDataToBegin();
         } else {
             let last = this.realBattleCopys.pop();
-            this.realBattle = <RealBattle>deepCopy(last.rb);
+            this.realBattle = deepCopy(last.rb) as RealBattle;
             setSeed(last.seed);
             this.resetAllUI();
         }

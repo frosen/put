@@ -537,11 +537,12 @@ export class ActPosDataTool {
 }
 
 export class MmrTool {
-    static createExplMmr(): ExplMmr {
+    static createExplMmr(startStep: number): ExplMmr {
         let expl = newInsWithChecker(ExplMmr);
         expl.startTime = Date.now();
         expl.chngUpdCnt = 0;
-        expl.curStep = 0;
+        expl.startStep = startStep;
+        expl.curStep = -1;
         expl.hiding = false;
         expl.catching = false;
         expl.cumCatchRate = 0;
@@ -889,9 +890,9 @@ export class GameDataTool {
         return actPos;
     }
 
-    static createExpl(gameData: GameData) {
+    static createExpl(gameData: GameData, startStep: number) {
         if (gameData.curExpl) return;
-        let expl = MmrTool.createExplMmr();
+        let expl = MmrTool.createExplMmr(startStep);
         expl.curPosId = gameData.curPosId;
         gameData.curExpl = expl;
     }

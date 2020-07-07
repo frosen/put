@@ -13,8 +13,9 @@ import { buffModelDict } from 'configs/BuffModelDict';
 import { PageActExplLVD } from './PageActExplLVD';
 import { ListView } from 'scripts/ListView';
 import { PetRankNames, EleType, Pet } from 'scripts/DataSaved';
-import { BuffModel, BuffType } from 'scripts/DataModel';
+import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames } from 'scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
+import { actPosModelDict } from 'configs/ActPosModelDict';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -119,9 +120,19 @@ export class PageActExpl extends BattlePageBase {
         this.updater = new ExplUpdater();
     }
 
+    spcBtlId: number = 0;
+    startStep: number = 0;
+
+    setData(data: any) {
+        if (data) {
+            this.spcBtlId = data.spcBtlId || 0;
+            this.startStep = data.startStep || 0;
+        }
+    }
+
     start() {
         if (CC_EDITOR) return;
-        this.updater.init(this);
+        this.updater.init(this, this.spcBtlId, this.startStep);
     }
 
     update() {
@@ -140,7 +151,29 @@ export class PageActExpl extends BattlePageBase {
             });
             return false;
         });
-        this.ctrlr.setTitle('探索');
+
+        let posId = this.ctrlr.memory.gameData.curPosId; // 宠物和主人pos不一致无法进入该page，因此此处可用主人pos
+        let posName = actPosModelDict[posId].cnName;
+        this.ctrlr.setTitle('探索' + posName);
+        this.setExplStepUI();
+    }
+
+    setExplStepUI() {
+        let curExpl = this.ctrlr.memory.gameData.curExpl;
+        if (!curExpl) return this.ctrlr.setSubTitle('');
+
+        let step = curExpl.curStep;
+        if (step == -1) return this.ctrlr.setSubTitle('');
+
+        let posId = curExpl.curPosId;
+        let curPosModel = actPosModelDict[posId];
+        let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
+
+        let stepMax = explModel.stepMax;
+        let stepType = StepTypesByMax[stepMax][step];
+        let stepName = ExplStepNames[stepType];
+
+        this.ctrlr.setSubTitle(`${stepName} ${step}/${stepMax}`);
     }
 
     // ui -----------------------------------------------------------------

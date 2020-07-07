@@ -209,16 +209,37 @@ export class EquipModel {
 
 // -----------------------------------------------------------------
 
-export class WorkModel {
-    stepModels: StepModel[];
+export class WorkModel {}
+
+export enum ExplStepType {
+    outer = 1,
+    passway,
+    deep,
+    center,
+    secret
 }
 
-export class StepModel {
-    petIds: string[];
-}
+export const ExplStepNames = ['', '外围', '走廊', '深处', '中心', '秘境'];
+
+export const RatesByStepType = [
+    [],
+    [1, 0, 0, 0],
+    [0.87, 0.96, 0.99, 1], // 后一项是当前稀有度和前面稀有度之和，为了random方便写成这样
+    [0.73, 0.92, 0.98, 1],
+    [0.6, 0.87, 0.96, 1],
+    [0.44, 0.8, 0.92, 1]
+];
+
+export const StepTypesByMax = [
+    [],
+    [ExplStepType.center],
+    [ExplStepType.outer, ExplStepType.center],
+    [ExplStepType.outer, ExplStepType.deep, ExplStepType.center],
+    [ExplStepType.outer, ExplStepType.passway, ExplStepType.deep, ExplStepType.center]
+];
 
 export class ExplModel {
-    stepModels: StepModel[];
+    stepMax: number;
 }
 
 type AllActType = WorkModel | ExplModel;
@@ -240,6 +261,7 @@ export class ActPosModel {
     evts: string[];
     movs: MovModel[];
     loc: Partial<cc.Vec2>;
+    petIdLists: string[][]; // 不同稀有度: 宠物列表
 }
 
 // -----------------------------------------------------------------

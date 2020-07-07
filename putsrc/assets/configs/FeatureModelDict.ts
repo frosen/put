@@ -979,4 +979,4 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     }
 };
 
-export let featureModelDict = <{ [key: string]: FeatureModel }>FeatureModelDict;
+export let featureModelDict = FeatureModelDict as { [key: string]: FeatureModel };

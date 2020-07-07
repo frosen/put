@@ -588,8 +588,8 @@ export class RealBattle {
     clone() {
         let newRB = new RealBattle();
         newRB.start = this.start;
-        newRB.selfTeam = <BattleTeam>deepCopy(this.selfTeam);
-        newRB.enemyTeam = <BattleTeam>deepCopy(this.enemyTeam);
+        newRB.selfTeam = deepCopy(this.selfTeam) as BattleTeam;
+        newRB.enemyTeam = deepCopy(this.enemyTeam) as BattleTeam;
         newRB.battleRound = this.battleRound;
         newRB.atkRound = this.atkRound;
         newRB.curOrderIdx = this.curOrderIdx;

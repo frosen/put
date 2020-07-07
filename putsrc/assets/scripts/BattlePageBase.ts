@@ -31,4 +31,6 @@ export abstract class BattlePageBase extends PageBase {
 
     abstract log(str: string): void;
     abstract handleLog(): void;
+
+    abstract setExplStepUI(): void;
 }

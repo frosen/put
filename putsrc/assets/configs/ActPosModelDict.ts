@@ -24,7 +24,8 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         },
         evts: [],
         movs: [{ id: 'GuangJiDianDaDao', price: 0, condition: {} }],
-        loc: { x: 1000, y: 100 }
+        loc: { x: 1000, y: 100 },
+        petIdLists: [[]]
     },
     GuangJiDianDaDao: {
         id: 'GuangJiDianDaDao',
@@ -33,26 +34,15 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         acts: ['exploration'],
         actDict: {
             exploration: {
-                stepModels: [
-                    {
-                        petIds: ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe']
-                    },
-                    {
-                        petIds: [
-                            'NeiRanJiShou',
-                            'FangShengJiXieBi',
-                            'YaHuHanJuRen',
-                            'ZiJingMieHuoQi',
-                            'CaoPingShouGeZhe',
-                            'ShuiLengJiQiRen',
-                            'DianZiShouWei'
-                        ]
-                    }
-                ]
+                stepMax: 2
             }
         },
         evts: [],
         movs: [{ id: 'YiZhuang', price: 0, condition: {} }],
-        loc: { x: 1100, y: 100 }
+        loc: { x: 1100, y: 100 },
+        petIdLists: [
+            ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
+            ['ShuiLengJiQiRen', 'DianZiShouWei']
+        ]
     }
 };

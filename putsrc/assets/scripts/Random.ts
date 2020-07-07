@@ -20,7 +20,7 @@ export function getRandomOneInList<T>(list: Array<T>): T {
     return list[random(list.length)];
 }
 
-export function getRandomOneInListWithRate(list, rates) {
+export function getRandomOneInListWithRate<T>(list: Array<T>, rates: number[]): T {
     let r = Math.random();
     for (let index = 0; index < list.length; index++) {
         let rInList = rates[index];
