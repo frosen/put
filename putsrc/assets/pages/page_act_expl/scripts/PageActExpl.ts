@@ -173,7 +173,7 @@ export class PageActExpl extends BattlePageBase {
         let stepType = StepTypesByMax[stepMax][step];
         let stepName = ExplStepNames[stepType];
 
-        this.ctrlr.setSubTitle(`${stepName} ${step}/${stepMax}`);
+        this.ctrlr.setSubTitle(`${stepName} ${step + 1}/${stepMax}`);
     }
 
     // ui -----------------------------------------------------------------

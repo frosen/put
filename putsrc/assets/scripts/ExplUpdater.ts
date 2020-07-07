@@ -11,6 +11,7 @@ import { GameData, ItemType, Cnsum, CnsumType, ExplMmr, BattleMmr } from 'script
 import { AttriRatioByRank } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { random, randomArea, randomRate } from './Random';
+import { ExplModel, StepTypesByMax, UpdCntByStepType } from './DataModel';
 
 export enum ExplState {
     none,
@@ -20,7 +21,7 @@ export enum ExplState {
 }
 
 enum ExplResult {
-    none,
+    doing,
     gain, // 获取收益
     battle
 }
@@ -34,14 +35,17 @@ export class ExplUpdater {
     gameData: GameData = null;
     battleCtrlr: BattleController = null;
 
-    state: ExplState = ExplState.none;
+    curExpl: ExplMmr = null;
+    curExplModel: ExplModel = null;
 
-    _id: string = 'idforupdater';
+    _id: string = 'expl'; // 用于cc.Scheduler.update
+
+    state: ExplState = ExplState.none;
 
     inited: boolean = false;
     pausing: boolean = false;
 
-    init(page: BattlePageBase) {
+    init(page: BattlePageBase, spcBtlId: number, startStep: number) {
         this.page = page;
         this.memory = this.page.ctrlr.memory;
         this.gameData = this.memory.gameData;
@@ -53,8 +57,11 @@ export class ExplUpdater {
         });
 
         let curExpl = this.gameData.curExpl;
-        if (!curExpl) this.createExpl(0);
+        if (!curExpl) this.createExpl(spcBtlId, startStep);
         else this.recoverLastExpl(curExpl);
+
+        this.curExpl = this.gameData.curExpl;
+        this.curExplModel = actPosModelDict[this.curExpl.curPosId].actDict['exploration'] as ExplModel;
 
         cc.director.getScheduler().scheduleUpdate(this, 0, false);
         this.lastTime = Date.now();
@@ -83,8 +90,8 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
-    createExpl(spcBtlId: number) {
-        GameDataTool.createExpl(this.gameData);
+    createExpl(spcBtlId: number, startStep: number) {
+        GameDataTool.createExpl(this.gameData, startStep);
         if (!spcBtlId) {
             this.startExpl();
         } else {
@@ -289,7 +296,7 @@ export class ExplUpdater {
 
     updateExpl() {
         let result = this.getExplResult();
-        if (result == ExplResult.none) this.exploreNothing();
+        if (result == ExplResult.doing) this.doExploration();
         else if (result == ExplResult.gain) this.gainRes();
         else if (result == ExplResult.battle) this.startBattle();
     }
@@ -297,15 +304,41 @@ export class ExplUpdater {
     getExplResult(): ExplResult {
         if (this.explTime > 0) {
             this.explTime--;
-            return ExplResult.none;
+            return ExplResult.doing;
         } else {
             if (this.explCnt > 0) return ExplResult.gain;
             else return ExplResult.battle;
         }
     }
 
-    exploreNothing() {
-        this.page.log('探索中......');
+    doExploration() {
+        let curStep = this.curExpl.curStep;
+
+        do {
+            if (curStep == -1) {
+                this.curExpl.curStep = 0;
+            } else if (curStep == this.curExplModel.stepMax) {
+                break;
+            } else {
+                let stepType = StepTypesByMax[this.curExplModel.stepMax][curStep];
+                let updCntMax = 0;
+                for (let index = this.curExpl.startStep; index <= stepType; index++) {
+                    updCntMax += UpdCntByStepType[index];
+                }
+                if (this.updCnt >= updCntMax) {
+                    this.curExpl.curStep++;
+                } else {
+                    break;
+                }
+            }
+            if (this.page) {
+                this.page.setExplStepUI();
+                this.page.log('进入');
+            }
+            return;
+        } while (0);
+
+        if (this.page) this.page.log('探索中......');
     }
 
     gainRes() {

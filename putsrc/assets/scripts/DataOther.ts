@@ -14,7 +14,9 @@ import {
     SkillAimtype,
     DrinkModel,
     DrinkAimType,
-    ExplModel
+    ExplModel,
+    StepTypesByMax,
+    RatesByStepType
 } from './DataModel';
 import {
     BioType,
@@ -36,7 +38,7 @@ import { skillModelDict } from 'configs/SkillModelDict';
 import { deepCopy } from './Utils';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { BattleController } from './BattleController';
-import { randomRate, random, getRandomOneInList, normalRandom } from './Random';
+import { randomRate, random, getRandomOneInList, normalRandom, getRandomOneInListWithRate } from './Random';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { ExplUpdater } from './ExplUpdater';
 import { expModels } from 'configs/ExpModels';
@@ -558,15 +560,18 @@ export class RealBattle {
     static createEPetMmrs(curExpl: ExplMmr): PetMmr[] {
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
-        let explModel: ExplModel = <ExplModel>curPosModel.actDict['exploration'];
+        let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
 
         let petCountMax = curPosModel.lv < 10 ? 4 : 5;
         let petCount = random(petCountMax) + 1;
         let step = curExpl.curStep;
-        let curStepModel = explModel.stepModels[step];
+        let stepMax = explModel.stepMax;
+        let stepType = StepTypesByMax[stepMax][step];
+        let rates = RatesByStepType[stepType];
+        let petIdLists = curPosModel.petIdLists;
 
-        let enmeyPetType1 = getRandomOneInList(curStepModel.petIds);
-        let enmeyPetType2 = getRandomOneInList(curStepModel.petIds);
+        let enmeyPetType1 = getRandomOneInList(getRandomOneInListWithRate(petIdLists, rates) || petIdLists[0]);
+        let enmeyPetType2 = getRandomOneInList(getRandomOneInListWithRate(petIdLists, rates) || petIdLists[0]);
 
         let petMmrs: PetMmr[] = [];
         for (let index = 0; index < petCount; index++) {
