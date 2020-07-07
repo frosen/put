@@ -11,7 +11,7 @@ import { GameData, ItemType, Cnsum, CnsumType, ExplMmr, BattleMmr } from 'script
 import { AttriRatioByRank } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { random, randomArea, randomRate } from './Random';
-import { ExplModel, StepTypesByMax, UpdCntByStepType } from './DataModel';
+import { ExplModel, StepTypesByMax, UpdCntByStep, ExplStepNames } from './DataModel';
 
 export enum ExplState {
     none,
@@ -311,29 +311,42 @@ export class ExplUpdater {
         }
     }
 
+    explStepPercent: number = -1;
+
     doExploration() {
         let curStep = this.curExpl.curStep;
-
         do {
             if (curStep == -1) {
-                this.curExpl.curStep = 0;
-            } else if (curStep == this.curExplModel.stepMax) {
+                this.curExpl.curStep = this.curExpl.startStep;
+                this.explStepPercent = 0;
+            } else if (curStep >= this.curExplModel.stepMax - 1) {
+                // 差进入秘境 llytodo
                 break;
             } else {
-                let stepType = StepTypesByMax[this.curExplModel.stepMax][curStep];
-                let updCntMax = 0;
-                for (let index = this.curExpl.startStep; index <= stepType; index++) {
-                    updCntMax += UpdCntByStepType[index];
-                }
-                if (this.updCnt >= updCntMax) {
+                let lastStepUpdCnt = 0;
+                for (let idx = this.curExpl.startStep; idx <= curStep - 1; idx++) lastStepUpdCnt += UpdCntByStep[idx];
+                let curStepUpdCnt = UpdCntByStep[curStep];
+                if (this.updCnt >= lastStepUpdCnt + curStepUpdCnt) {
                     this.curExpl.curStep++;
+                    this.explStepPercent = 0;
                 } else {
+                    // 差战斗失败时减少探索深度 llytodo
+                    let percent = Math.floor(((this.updCnt - lastStepUpdCnt) * 100) / curStepUpdCnt);
+                    if (percent > 99) percent = 99; // 战斗时候百分比不能停所以百分比在UI上需要禁止超过100%
+                    if (percent != this.explStepPercent) {
+                        this.explStepPercent = percent;
+                        if (this.page) this.page.setExplStepUI();
+                    }
                     break;
                 }
             }
             if (this.page) {
                 this.page.setExplStepUI();
-                this.page.log('进入');
+
+                let posName = actPosModelDict[this.curExpl.curPosId].cnName;
+                let stepType = StepTypesByMax[this.curExplModel.stepMax][this.curExpl.curStep];
+                let stepName = ExplStepNames[stepType];
+                this.page.log('进入' + posName + stepName);
             }
             return;
         } while (0);

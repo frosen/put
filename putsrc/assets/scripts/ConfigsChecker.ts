@@ -25,14 +25,10 @@ function checkActPosModelDict() {
             if (!model.acts.includes(actDictKey)) cc.error(`${actDictKey}不在${model.acts}内`, key);
         }
 
-        if (model.actDict.hasOwnProperty('exploration')) {
-            let expl = model.actDict['exploration'];
-            let petDictKeys = Object.keys(petModelDict);
-            for (let index = 0; index < expl.stepModels.length; index++) {
-                const stepModel = expl.stepModels[index];
-                for (const petId of stepModel.petIds) {
-                    if (!petDictKeys.includes(petId)) cc.error('ActPosModelDict中，exploration中的petId有误', key, index, petId);
-                }
+        let petDictKeys = Object.keys(petModelDict);
+        for (const petIdList of model.petIdLists) {
+            for (const petId of petIdList) {
+                if (!petDictKeys.includes(petId)) cc.error('ActPosModelDict中，petIdLists中的petId有误', key, petId);
             }
         }
 
@@ -147,12 +143,16 @@ function checkItems() {
 }
 
 export function checkConfigs() {
-    checkActPosModelDict();
-    checkPetModelDict();
-    checkSkillModelDict();
-    checkBuffModelDict();
-    checkFeatureModelDict();
-    checkFeatureInBorn();
-    checkEquipModelDict();
-    checkItems();
+    try {
+        checkActPosModelDict();
+        checkPetModelDict();
+        checkSkillModelDict();
+        checkBuffModelDict();
+        checkFeatureModelDict();
+        checkFeatureInBorn();
+        checkEquipModelDict();
+        checkItems();
+    } catch (error) {
+        cc.log('CHECK ERROR: ', error);
+    }
 }

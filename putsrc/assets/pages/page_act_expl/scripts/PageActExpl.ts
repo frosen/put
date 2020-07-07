@@ -172,8 +172,13 @@ export class PageActExpl extends BattlePageBase {
         let stepMax = explModel.stepMax;
         let stepType = StepTypesByMax[stepMax][step];
         let stepName = ExplStepNames[stepType];
+        let percent = this.updater.explStepPercent;
+        let percentStr: string;
+        if (percent >= 10) percentStr = '.' + String(percent);
+        else if (percent > 0) percentStr = '.0' + String(percent);
+        else percentStr = '';
 
-        this.ctrlr.setSubTitle(`${stepName} ${step + 1}/${stepMax}`);
+        this.ctrlr.setSubTitle(`${stepName} ${step + 1}${percentStr}/${stepMax}`);
     }
 
     // ui -----------------------------------------------------------------
