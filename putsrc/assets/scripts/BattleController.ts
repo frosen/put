@@ -79,7 +79,7 @@ export class BattleController {
     page: BattlePageBase = null;
     memory: Memory = null;
     gameData: GameData = null;
-    endCallback: () => void = null;
+    endCallback: (win: boolean) => void = null;
 
     realBattle: RealBattle = null;
 
@@ -502,7 +502,7 @@ export class BattleController {
         let finalDmg: number;
         let hitResult = 1;
         if (dmgRate > 0) {
-            hitResult = this.getHitResult(battlePet, aim);
+            hitResult = BattleController.getHitResult(battlePet, aim);
             if (hitResult == 0) {
                 if (this.page) {
                     this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
@@ -608,7 +608,7 @@ export class BattleController {
         let aim: BattlePet = this.getAim(battlePet, false);
         if (!aim) return false;
 
-        let hitResult = this.getHitResult(battlePet, aim);
+        let hitResult = BattleController.getHitResult(battlePet, aim);
         if (hitResult == 0) {
             if (this.page) {
                 this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
@@ -745,7 +745,7 @@ export class BattleController {
             }
         }
 
-        if (this.endCallback) this.endCallback();
+        if (this.endCallback) this.endCallback(selfWin);
     }
 
     receiveExp() {
@@ -865,7 +865,7 @@ export class BattleController {
 
     getAim(battlePet: BattlePet, toSelf: boolean, spBattleType: BattleType = null): BattlePet {
         let rb = this.realBattle;
-        let battleType = spBattleType || this.getBattleType(battlePet);
+        let battleType = spBattleType || BattleController.getBattleType(battlePet);
 
         let aimPets: BattlePet[];
         if (toSelf) {
@@ -877,13 +877,13 @@ export class BattleController {
         let aim: BattlePet = null;
         switch (battleType) {
             case BattleType.melee:
-                aim = this.getPetAlive(aimPets[battlePet.idx] || aimPets.getLast());
+                aim = BattleController.getPetAlive(aimPets[battlePet.idx] || aimPets.getLast());
                 break;
             case BattleType.shoot:
-                aim = this.getPetAlive(aimPets[ranWithSeedInt(aimPets.length)]);
+                aim = BattleController.getPetAlive(aimPets[ranWithSeedInt(aimPets.length)]);
                 break;
             case BattleType.charge:
-                aim = this.getPetAlive(aimPets[0]);
+                aim = BattleController.getPetAlive(aimPets[0]);
                 break;
             case BattleType.assassinate:
                 for (const enemyPet of aimPets) {
@@ -892,9 +892,9 @@ export class BattleController {
                 break;
             case BattleType.combo:
                 if (rb.lastAim && rb.lastAim.beEnemy == aimPets[0].beEnemy) {
-                    aim = this.getPetAlive(rb.lastAim);
+                    aim = BattleController.getPetAlive(rb.lastAim);
                 } else {
-                    aim = this.getPetAlive(aimPets[battlePet.idx] || aimPets[aimPets.length - 1]);
+                    aim = BattleController.getPetAlive(aimPets[battlePet.idx] || aimPets[aimPets.length - 1]);
                 }
                 break;
             case BattleType.chaos:
@@ -905,7 +905,7 @@ export class BattleController {
                     anotherSidePets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
                 }
                 let pets = ranWithSeed() > 0.5 ? aimPets : anotherSidePets;
-                aim = this.getPetAlive(pets[ranWithSeedInt(pets.length)]);
+                aim = BattleController.getPetAlive(pets[ranWithSeedInt(pets.length)]);
                 break;
             default:
                 break;
@@ -914,12 +914,12 @@ export class BattleController {
         return aim;
     }
 
-    getBattleType(battlePet: BattlePet, skillModel: SkillModel = null) {
+    static getBattleType(battlePet: BattlePet, skillModel: SkillModel = null) {
         let spBT = skillModel ? skillModel.spBattleType : null;
         return spBT || battlePet.pet2.exBattleTypes.getLast() || petModelDict[battlePet.pet.id].battleType;
     }
 
-    getPetAlive(battlePet: BattlePet) {
+    static getPetAlive(battlePet: BattlePet) {
         let usingNext = true;
         let curPet = battlePet;
         while (true) {
@@ -933,7 +933,7 @@ export class BattleController {
         }
     }
 
-    getHitResult(battlePet: BattlePet, aim: BattlePet): number {
+    static getHitResult(battlePet: BattlePet, aim: BattlePet): number {
         let hitResult: number = 0;
         let pet2 = battlePet.pet2;
         let hitRate = pet2.hitRate;

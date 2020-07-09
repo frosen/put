@@ -51,10 +51,7 @@ export class ExplUpdater {
         this.gameData = this.memory.gameData;
 
         this.battleCtrlr = new BattleController();
-        this.battleCtrlr.init(this.page, this.memory, () => {
-            this.updateChgUpdCnt();
-            this.startRecover();
-        });
+        this.battleCtrlr.init(this.page, this.memory, this.onBattleEnd.bind(this));
 
         let curExpl = this.gameData.curExpl;
         if (!curExpl) this.createExpl(spcBtlId, startStep);
@@ -245,8 +242,14 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
+    // 每个探索和探索结果前触发，除了gain
     handleSelfTeamChange() {
         this.battleCtrlr.resetSelfTeam(); // 重置过程不消耗性能，且大概率会触发onMemoryDataChanged
+    }
+
+    // 每个探索+探索结果(battle，gain)后
+    updateChgUpdCnt() {
+        this.gameData.curExpl.chngUpdCnt = this.updCnt;
     }
 
     // -----------------------------------------------------------------
@@ -323,15 +326,18 @@ export class ExplUpdater {
                 // 差进入秘境 llytodo
                 break;
             } else {
+                let startUpdCnt = 0;
+                for (let idx = 0; idx < this.curExpl.startStep; idx++) startUpdCnt += UpdCntByStep[idx];
                 let lastStepUpdCnt = 0;
-                for (let idx = this.curExpl.startStep; idx <= curStep - 1; idx++) lastStepUpdCnt += UpdCntByStep[idx];
+                for (let idx = 0; idx < curStep; idx++) lastStepUpdCnt += UpdCntByStep[idx];
+
                 let curStepUpdCnt = UpdCntByStep[curStep];
-                if (this.updCnt >= lastStepUpdCnt + curStepUpdCnt) {
+                let realUpdCnt = this.updCnt + startUpdCnt - this.curExpl.failRdcCnt;
+                if (realUpdCnt >= lastStepUpdCnt + curStepUpdCnt) {
                     this.curExpl.curStep++;
                     this.explStepPercent = 0;
                 } else {
-                    // 差战斗失败时减少探索深度 llytodo
-                    let percent = Math.floor(((this.updCnt - lastStepUpdCnt) * 100) / curStepUpdCnt);
+                    let percent = Math.floor(((realUpdCnt - lastStepUpdCnt) * 100) / curStepUpdCnt);
                     if (percent > 99) percent = 99; // 战斗时候百分比不能停所以百分比在UI上需要禁止超过100%
                     if (percent != this.explStepPercent) {
                         this.explStepPercent = percent;
@@ -355,8 +361,6 @@ export class ExplUpdater {
     }
 
     gainRes() {
-        this.handleSelfTeamChange();
-
         this.page.log('获得了什么');
 
         this.updateChgUpdCnt();
@@ -372,14 +376,40 @@ export class ExplUpdater {
         this.battleCtrlr.startBattle(this.updCnt, spcBtlId);
     }
 
-    updateChgUpdCnt() {
-        this.gameData.curExpl.chngUpdCnt = this.updCnt;
-    }
-
     // -----------------------------------------------------------------
 
     updateBattle() {
         this.battleCtrlr.update();
+    }
+
+    onBattleEnd(win: boolean) {
+        if (!win) this.reduceUpdCntByFail(); // 战斗失败时减少探索深度
+        this.updateChgUpdCnt();
+        this.startRecover();
+    }
+
+    reduceUpdCntByFail() {
+        let curStep = this.curExpl.curStep;
+        if (curStep == 0) return;
+
+        let startUpdCnt = 0;
+        for (let idx = 0; idx < this.curExpl.startStep; idx++) startUpdCnt += UpdCntByStep[idx];
+        let lastStepUpdCnt = 0;
+        for (let idx = 0; idx < curStep; idx++) lastStepUpdCnt += UpdCntByStep[idx];
+
+        let curStepUpdCnt = UpdCntByStep[curStep];
+        this.curExpl.failRdcCnt += Math.floor(curStepUpdCnt * 0.1);
+
+        let realUpdCnt = this.updCnt + startUpdCnt - this.curExpl.failRdcCnt;
+        if (realUpdCnt < lastStepUpdCnt) this.curExpl.curStep--;
+
+        if (this.page) this.page.log('由于战斗失败，队伍探索度降低');
+
+        // ***** ui在下次exploration更新 *****
+    }
+
+    startRecover() {
+        this.state = ExplState.recover;
     }
 
     updateRecover() {
@@ -416,10 +446,6 @@ export class ExplUpdater {
         } else {
             this.page.log('休息中');
         }
-    }
-
-    startRecover() {
-        this.state = ExplState.recover;
     }
 
     // -----------------------------------------------------------------

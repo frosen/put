@@ -715,7 +715,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '雀',
         dataAreas: [[0.02, 0.02]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let battleType = bData.ctrlr.getBattleType(caster, bData.skillModel);
+            let battleType = BattleController.getBattleType(caster, bData.skillModel);
             if (battleType == BattleType.shoot) pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
@@ -727,7 +727,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '松',
         dataAreas: [[0.02, 0.02]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let battleType = bData.ctrlr.getBattleType(caster, bData.skillModel);
+            let battleType = BattleController.getBattleType(caster, bData.skillModel);
             if (battleType == BattleType.assassinate) pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {

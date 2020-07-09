@@ -205,6 +205,7 @@ export class ExplMmr {
     chngUpdCnt: number;
     startStep: number;
     curStep: number;
+    failRdcCnt: number;
     curBattle: BattleMmr;
     hiding: boolean;
     catching: boolean;

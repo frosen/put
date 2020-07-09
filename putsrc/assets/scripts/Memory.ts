@@ -543,6 +543,7 @@ export class MmrTool {
         expl.chngUpdCnt = 0;
         expl.startStep = startStep;
         expl.curStep = -1;
+        expl.failRdcCnt = 0;
         expl.hiding = false;
         expl.catching = false;
         expl.cumCatchRate = 0;
