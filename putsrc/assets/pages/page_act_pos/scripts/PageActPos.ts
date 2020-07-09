@@ -42,7 +42,7 @@ export class PageActPos extends PageBase {
         }
 
         let curDirtyToken = this.ctrlr.memory.dirtyToken;
-        if (this.curPosId != actPos.id || this.dirtyToken != curDirtyToken) {
+        if (this.curPosId !== actPos.id || this.dirtyToken !== curDirtyToken) {
             this.curPosId = actPos.id;
             this.dirtyToken = curDirtyToken;
             this.resetListview();

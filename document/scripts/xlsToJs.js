@@ -10,7 +10,7 @@ module.exports = function (xlsFile, jsFile, sheetName, dataName, className, call
 
     let thisSheet = null;
     for (const sheet of sheets) {
-        if (sheet.name == sheetName) {
+        if (sheet.name === sheetName) {
             thisSheet = sheet;
             break;
         }

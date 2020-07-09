@@ -50,7 +50,7 @@ export class CellPkgDrink extends CellPkgBase {
             this.subAttri.node.parent.scaleX = 0;
         }
 
-        this.aimTypeNode.opacity = drinkModel.aim == DrinkAimType.all ? 255 : 0;
+        this.aimTypeNode.opacity = drinkModel.aim === DrinkAimType.all ? 255 : 0;
 
         CellPkgDrink.rerenderLbl(this.mainAttri);
         CellPkgDrink.rerenderLbl(this.subAttri);

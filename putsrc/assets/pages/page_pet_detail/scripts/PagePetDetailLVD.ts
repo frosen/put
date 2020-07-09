@@ -129,63 +129,63 @@ export class PagePetDetailLVD extends ListViewDelegate {
 
     heightForRow(listView: ListView, rowIdx: number): number {
         // 第一组
-        if (rowIdx == 0) return 226;
-        else if (rowIdx == 1 || rowIdx == 2) return 106;
-        else if (rowIdx == 3) return 126;
+        if (rowIdx === 0) return 226;
+        else if (rowIdx === 1 || rowIdx === 2) return 106;
+        else if (rowIdx === 3) return 126;
         // 第二组
-        else if (rowIdx == 4) return 66;
-        else if (rowIdx == 5) return 106;
-        else if (rowIdx == 6) return 126;
+        else if (rowIdx === 4) return 66;
+        else if (rowIdx === 5) return 106;
+        else if (rowIdx === 6) return 126;
         // 第三组
-        else if (rowIdx == 7) return 66;
-        else if (rowIdx == 8 || rowIdx == 9) return 106;
-        else if (rowIdx == 10) return 126;
+        else if (rowIdx === 7) return 66;
+        else if (rowIdx === 8 || rowIdx === 9) return 106;
+        else if (rowIdx === 10) return 126;
         // 第四组
-        else if (rowIdx == 11) return 66;
-        else if (rowIdx == 12) return 106;
-        else if (rowIdx == 13) return 126;
+        else if (rowIdx === 11) return 66;
+        else if (rowIdx === 12) return 106;
+        else if (rowIdx === 13) return 126;
         // 第五组
-        else if (rowIdx == 14) return 66;
-        else if (rowIdx == 15) return 106;
-        else if (rowIdx == 16) return 126;
+        else if (rowIdx === 14) return 66;
+        else if (rowIdx === 15) return 106;
+        else if (rowIdx === 16) return 126;
         // 第六组
-        else if (rowIdx == 17) return 66;
-        else if (rowIdx == 18 || rowIdx == 19) return 160;
-        else if (rowIdx == 20) return 180;
+        else if (rowIdx === 17) return 66;
+        else if (rowIdx === 18 || rowIdx === 19) return 160;
+        else if (rowIdx === 20) return 180;
         // 第七组
-        else if (rowIdx == 21) return 66;
+        else if (rowIdx === 21) return 66;
         else if (rowIdx < 21 + this.curPet2.skillIds.length) return 160;
-        else if (rowIdx == 21 + this.curPet2.skillIds.length) return 180;
+        else if (rowIdx === 21 + this.curPet2.skillIds.length) return 180;
         // 第八组
-        else if (rowIdx == 21 + this.curPet2.skillIds.length + 1) return 66;
+        else if (rowIdx === 21 + this.curPet2.skillIds.length + 1) return 66;
         else if (rowIdx <= 21 + this.curPet2.skillIds.length + 1 + this.featureDatas.length) return 160;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
         // 第一组
-        if (rowIdx == 0) return PETNAME;
-        else if (rowIdx == 1 || rowIdx == 2) return ATTRI2;
-        else if (rowIdx == 3) return ATTRI1;
+        if (rowIdx === 0) return PETNAME;
+        else if (rowIdx === 1 || rowIdx === 2) return ATTRI2;
+        else if (rowIdx === 3) return ATTRI1;
         // 第二组
-        else if (rowIdx == 4) return TITLE;
-        else if (rowIdx == 5 || rowIdx == 6) return ATTRI2;
+        else if (rowIdx === 4) return TITLE;
+        else if (rowIdx === 5 || rowIdx === 6) return ATTRI2;
         // 第三组
-        else if (rowIdx == 7) return TITLE;
-        else if (rowIdx == 8 || rowIdx == 9 || rowIdx == 10) return ATTRI2;
+        else if (rowIdx === 7) return TITLE;
+        else if (rowIdx === 8 || rowIdx === 9 || rowIdx === 10) return ATTRI2;
         // 第四组
-        else if (rowIdx == 11) return TITLE;
-        else if (rowIdx == 12 || rowIdx == 13) return ATTRI2;
+        else if (rowIdx === 11) return TITLE;
+        else if (rowIdx === 12 || rowIdx === 13) return ATTRI2;
         // 第五组
-        else if (rowIdx == 14) return TITLE;
-        else if (rowIdx == 15 || rowIdx == 16) return ATTRI2;
+        else if (rowIdx === 14) return TITLE;
+        else if (rowIdx === 15 || rowIdx === 16) return ATTRI2;
         // 第六组
-        else if (rowIdx == 17) return TITLE;
-        else if (rowIdx == 18 || rowIdx == 19 || rowIdx == 20) return this.curPet.equips[rowIdx - 18] ? EQUIP : BLANK;
+        else if (rowIdx === 17) return TITLE;
+        else if (rowIdx === 18 || rowIdx === 19 || rowIdx === 20) return this.curPet.equips[rowIdx - 18] ? EQUIP : BLANK;
         // 第七组
-        else if (rowIdx == 21) return TITLE;
+        else if (rowIdx === 21) return TITLE;
         else if (rowIdx <= 21 + this.curPet2.skillIds.length) return SKILL;
         // 第八组
-        else if (rowIdx == 21 + this.curPet2.skillIds.length + 1) return TITLE;
+        else if (rowIdx === 21 + this.curPet2.skillIds.length + 1) return TITLE;
         else if (rowIdx <= 21 + this.curPet2.skillIds.length + 1 + this.featureDatas.length) return FEATURE;
     }
 
@@ -216,12 +216,12 @@ export class PagePetDetailLVD extends ListViewDelegate {
         let petModel: PetModel = petModelDict[pet.id];
 
         // 第一组
-        if (rowIdx == 0) {
+        if (rowIdx === 0) {
             cell.setData(petModel.cnName, PetStateNames[pet.state], STATE_TIP);
-        } else if (rowIdx == 1) {
+        } else if (rowIdx === 1) {
             cell.setData1('等级', String(pet.lv), LV_TIP);
             cell.setData2('品阶', PetRankNames[pet.rank], RANK_TIP);
-        } else if (rowIdx == 2) {
+        } else if (rowIdx === 2) {
             cell.setData1('默契值', String(PetDataTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
             let drinkStr: string;
             if (pet.drink) {
@@ -231,7 +231,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
                 drinkStr = `${drinkModel.cnName} [${leftMins >= 1 ? leftMins : '<1'}min]`;
             } else drinkStr = '无';
             cell.setData2('饮品', drinkStr, DRINK_TIP);
-        } else if (rowIdx == 3) {
+        } else if (rowIdx === 3) {
             let exp: number, expMax: number;
             if (pet.lv >= expModels.length) {
                 exp = 1;
@@ -243,45 +243,45 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData('当前经验', `${exp} / ${expMax}`, exp / expMax);
         }
         // 第二组
-        else if (rowIdx == 4) {
+        else if (rowIdx === 4) {
             cell.setData('基础类型');
-        } else if (rowIdx == 5) {
+        } else if (rowIdx === 5) {
             cell.setData1('生物', BioTypeNames[pet2.exBioTypes.getLast() || petModel.bioType], BIO_TIP);
             cell.setData2('元素', EleTypeNames[pet2.exEleTypes.getLast() || petModel.eleType], ELE_TIP);
-        } else if (rowIdx == 6) {
+        } else if (rowIdx === 6) {
             cell.setData1('战斗', BattleTypeNames[pet2.exBattleTypes.getLast() || petModel.battleType], BATTLE_TIP);
             cell.setData2('速度', String(pet2.speed), SPEED_TIP);
         }
         // 第三组
-        else if (rowIdx == 7) {
+        else if (rowIdx === 7) {
             cell.setData('一级属性');
-        } else if (rowIdx == 8) {
+        } else if (rowIdx === 8) {
             cell.setData1('力量', numStr(pet2.strength), attriTip(pet2.strength, pet2.strengthOri, STR_TIP));
             cell.setData2('专注', numStr(pet2.concentration), attriTip(pet2.concentration, pet2.concentrationOri, CON_TIP));
-        } else if (rowIdx == 9) {
+        } else if (rowIdx === 9) {
             cell.setData1('耐久', numStr(pet2.durability), attriTip(pet2.durability, pet2.durabilityOri, DUN_TIP));
             cell.setData2('灵敏', numStr(pet2.agility), attriTip(pet2.agility, pet2.agilityOri, AGI_TIP));
-        } else if (rowIdx == 10) {
+        } else if (rowIdx === 10) {
             cell.setData1('感知', numStr(pet2.sensitivity), attriTip(pet2.durability, pet2.durabilityOri, SEN_TIP));
             cell.setData2('优雅', numStr(pet2.elegant), attriTip(pet2.durability, pet2.durabilityOri, ELG_TIP));
         }
         // 第四组
-        else if (rowIdx == 11) {
+        else if (rowIdx === 11) {
             cell.setData('二级属性');
-        } else if (rowIdx == 12) {
+        } else if (rowIdx === 12) {
             cell.setData1('血量', String(Math.floor(pet2.hpMax * 0.1)), HP_TIP);
             cell.setData2('精神上限', String(pet2.mpMax), MP_TIP);
-        } else if (rowIdx == 13) {
+        } else if (rowIdx === 13) {
             cell.setData1('攻击伤害', `${numStr(pet2.atkDmgFrom)}~${numStr(pet2.atkDmgTo)}`, ATK_TIP);
             cell.setData2('技能伤害', `${numStr(pet2.sklDmgFrom)}~${numStr(pet2.sklDmgTo)}`, SKL_TIP);
         }
         // 第五组
-        else if (rowIdx == 14) {
+        else if (rowIdx === 14) {
             cell.setData('身份信息');
-        } else if (rowIdx == 15) {
+        } else if (rowIdx === 15) {
             cell.setData1('主人', pet.master);
             cell.setData2('唯一标识', String(pet.catchIdx));
-        } else if (rowIdx == 16) {
+        } else if (rowIdx === 16) {
             let date = new Date(pet.catchTime);
             let Y = date.getFullYear() % 100,
                 m = date.getMonth() + 1,
@@ -292,7 +292,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData2('初始实力', 'L' + String(pet.catchLv) + PetRankNames[pet.catchRank]);
         }
         // 第六组
-        else if (rowIdx == 17) {
+        else if (rowIdx === 17) {
             cell.setData('持有装备');
         } else if (rowIdx <= 20) {
             let equips = this.curPet.equips;
@@ -313,7 +313,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
             }
         }
         // 第七组
-        else if (rowIdx == 21) {
+        else if (rowIdx === 21) {
             cell.setData(`宠物技能（${this.curPet2.skillIds.length}）`);
         } else if (rowIdx <= 21 + this.curPet2.skillIds.length) {
             let skillIdx = rowIdx - 22;
@@ -324,7 +324,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
             };
         }
         // 第八组
-        else if (rowIdx == 21 + this.curPet2.skillIds.length + 1) {
+        else if (rowIdx === 21 + this.curPet2.skillIds.length + 1) {
             cell.setData(`宠物特性（${this.featureDatas.length}）`, FEATURE_TIP);
         } else if (rowIdx <= 21 + this.curPet2.skillIds.length + 1 + this.featureDatas.length) {
             let featureData = this.featureDatas[rowIdx - 21 - this.curPet2.skillIds.length - 1 - 1];

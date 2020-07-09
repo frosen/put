@@ -75,9 +75,9 @@ export class PagePkgLVD extends ListViewDelegate {
                 return MONEY;
             case ItemType.cnsum: {
                 let cnsumType = (item as Cnsum).cnsumType;
-                if (cnsumType == CnsumType.drink) return DRINK;
-                else if (cnsumType == CnsumType.catcher) return CATCHER;
-                else if (cnsumType == CnsumType.eqpAmplr) return EQPAMPLR;
+                if (cnsumType === CnsumType.drink) return DRINK;
+                else if (cnsumType === CnsumType.catcher) return CATCHER;
+                else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
             }
             case ItemType.equip:
                 return EQUIP;
@@ -87,7 +87,7 @@ export class PagePkgLVD extends ListViewDelegate {
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        if (cellId == MONEY) {
+        if (cellId === MONEY) {
             return cc.instantiate(this.cellPkgMoneyPrefab).getComponent(CellPkgMoney);
         }
 
@@ -110,7 +110,7 @@ export class PagePkgLVD extends ListViewDelegate {
                 break;
         }
 
-        if (this.cellType == PagePkgCellType.normal) {
+        if (this.cellType === PagePkgCellType.normal) {
             cell.clickCallback = this.page.onCellClickDetailBtn.bind(this.page);
             cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
         } else {

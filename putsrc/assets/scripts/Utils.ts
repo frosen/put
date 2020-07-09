@@ -36,7 +36,7 @@ export function getNodeByUuid(uuid: string): cc.Node {
     let scene = cc.director.getScene();
     let thisNode = null;
     eachChild(scene, (node: cc.Node): boolean => {
-        if (node.uuid == uuid) {
+        if (node.uuid === uuid) {
             thisNode = node;
             return true;
         } else return false;
@@ -54,7 +54,7 @@ export function getNodeByDir(dir: string): cc.Node {
 Array.prototype.removeIndex = function (ridx) {
     this[ridx] = undefined;
     for (let index = this.length - 1; index >= 0; index--) {
-        if (this[index] === undefined) continue;
+        if (typeof this[index] === 'undefined') continue;
         this.length = index + 1;
         return;
     }

@@ -168,14 +168,14 @@ let refactorCompDict = {
                         if (
                             commandDatas.length < 2 ||
                             3 < commandDatas.length ||
-                            ['a', 'd', 'mv'].indexOf(commandDatas[0]) == -1
+                            ['a', 'd', 'mv'].indexOf(commandDatas[0]) === -1
                         ) {
                             cc.warn('PUT 数组调整命令有误，请把鼠标hover到输入框上看详情：', this.commandStr);
                             this.resetCommandStr();
                             return;
                         }
 
-                        if (this.target.value.length == 0) {
+                        if (this.target.value.length === 0) {
                             cc.warn('PUT 空数组就不要使用命令行了吧', this.commandStr);
                             this.resetCommandStr();
                             return;
@@ -231,7 +231,7 @@ let refactorCompDict = {
                             case 'mv':
                                 {
                                     let modifyIndex2 = Number(commandDatas[2]);
-                                    if (isNaN(modifyIndex2) || modifyIndex2 == modifyIndex) {
+                                    if (isNaN(modifyIndex2) || modifyIndex2 === modifyIndex) {
                                         cc.warn('PUT 数组调整值有误，请把鼠标hover到输入框上看详情：', this.commandStr);
                                         this.resetCommandStr();
                                         return;
@@ -304,12 +304,12 @@ if (CC_EDITOR && window.hasOwnProperty('Vue')) {
             value.compType = customCompNames[value.attrs.type];
         }
 
-        if (value.type == 'Array') {
+        if (value.type === 'Array') {
             for (let index = 0; index < value.value.length; index++) {
                 const subValue = value.value[index];
                 handleCompValue(subValue);
             }
-        } else if (value.type == 'Object') {
+        } else if (value.type === 'Object') {
             for (let subKey in value.value) {
                 let subVallue = value.value[subKey];
                 handleCompValue(subVallue);

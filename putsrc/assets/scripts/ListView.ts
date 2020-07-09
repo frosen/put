@@ -278,7 +278,7 @@ export class ListView extends cc.Component {
 
         let reuseList = this.reuseCellsDict[cellId];
         let unusedCell: ListViewCell = null;
-        if (reuseList.length == 0) {
+        if (reuseList.length === 0) {
             unusedCell = this.delegate.createCellForRow(this, rowIdx, cellId);
             cc.assert(unusedCell, `创建cell没有成功：${rowIdx}, ${cellId}`);
             unusedCell.node.parent = this.content;

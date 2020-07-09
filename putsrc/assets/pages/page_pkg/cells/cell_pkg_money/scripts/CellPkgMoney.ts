@@ -24,7 +24,7 @@ export class CellPkgMoney extends ListViewCell {
         let jingStr = jing > 0 ? '  ' + String(jing) + '晶' : '';
 
         let kuai = count % 1000;
-        let kuaiStr = kuai > 0 || (zuan == 0 && jing == 0) ? '  ' + String(kuai) + '块' : '';
+        let kuaiStr = kuai > 0 || (zuan === 0 && jing === 0) ? '  ' + String(kuai) + '块' : '';
 
         this.countLbl.string = zuanStr + jingStr + kuaiStr;
     }

@@ -68,7 +68,7 @@ export class CellPkgEquip extends CellPkgBase {
 
         if (equip.skillId) {
             let skillModel = skillModelDict[equip.skillId];
-            let typeStr = skillModel.skillType == SkillType.ultimate ? '绝・' : '技・';
+            let typeStr = skillModel.skillType === SkillType.ultimate ? '绝・' : '技・';
             this.skillLbl.string = typeStr + skillModel.cnName;
 
             this.skillLbl.node.parent.opacity = 255;

@@ -36,11 +36,11 @@ export class PageBase extends cc.Component {
     }
 
     check() {
-        cc.assert(this.node._prefab.root == this.node, 'Page脚本需要放在prefab的根节点');
+        cc.assert(this.node._prefab.root === this.node, 'Page脚本需要放在prefab的根节点');
 
         this.node.name = this.node._prefab.asset.name;
         let clsName = cc.js.getClassName(this.__proto__.constructor);
-        cc.assert(this.node.name == clsName, 'Page的prefab要和class名称一致');
+        cc.assert(this.node.name === clsName, 'Page的prefab要和class名称一致');
 
         this.node.anchorX = 0;
         this.node.anchorY = 1;
@@ -65,7 +65,7 @@ export class PageBase extends cc.Component {
         }
 
         for (const child of this.node.children) {
-            if (child != root) cc.error('Page根节点下只能有root');
+            if (child !== root) cc.error('Page根节点下只能有root');
         }
     }
 

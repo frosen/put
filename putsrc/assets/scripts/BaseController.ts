@@ -154,7 +154,7 @@ export class BaseController extends cc.Component {
                 let editorDir = 'db://assets/pages/' + file + '/*';
                 Editor.assetdb.queryAssets(editorDir, null, function (err, results) {
                     for (const res of results) {
-                        if (res.type == 'prefab') {
+                        if (res.type === 'prefab') {
                             cc.loader.load(
                                 { type: 'uuid', uuid: res.uuid },
                                 () => {},
@@ -376,7 +376,7 @@ export class BaseController extends cc.Component {
     }
 
     doSwitchPageAnim(curNode: cc.Node, nextNode: cc.Node, anim: PageSwitchAnim, callback: () => void) {
-        if (anim == PageSwitchAnim.none) {
+        if (anim === PageSwitchAnim.none) {
             return callback();
         }
 
@@ -438,7 +438,7 @@ export class BaseController extends cc.Component {
     }
 
     getPageName<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {
-        if (typeof page == 'string') {
+        if (typeof page === 'string') {
             return page;
         } else if (page instanceof cc.Prefab) {
             return page.name;

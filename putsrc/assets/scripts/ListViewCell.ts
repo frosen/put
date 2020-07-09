@@ -29,16 +29,16 @@ export class ListViewCell extends cc.Component {
     }
 
     check() {
-        cc.assert(this.node._prefab.root == this.node, 'cell脚本需要放在prefab的根节点');
+        cc.assert(this.node._prefab.root === this.node, 'cell脚本需要放在prefab的根节点');
 
         this.node.name = this.node._prefab.asset.name;
         let clsName = cc.js.getClassName(this.__proto__.constructor);
-        cc.assert(this.node.name == clsName, 'cell的prefab要和class名称一致');
+        cc.assert(this.node.name === clsName, 'cell的prefab要和class名称一致');
 
         this.node.anchorX = 0;
         this.node.anchorY = 1;
         this.node.width = 1080;
-        if (this.node.height == 0) this.node.height = 200;
+        if (this.node.height === 0) this.node.height = 200;
         this.node.x = 0;
         this.node.y = 0;
 
@@ -77,7 +77,7 @@ export class ListViewCell extends cc.Component {
         }
 
         for (const child of this.node.children) {
-            if (child != root && child != bake) {
+            if (child !== root && child !== bake) {
                 cc.error('cell根节点下只能有root和bake');
             }
         }

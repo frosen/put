@@ -52,7 +52,7 @@ export class PkgEquipPetLVD extends ListViewDelegate {
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
-        if (this.dataList[rowIdx].equipIndex == -1) {
+        if (this.dataList[rowIdx].equipIndex === -1) {
             return 60;
         } else {
             return 160;
@@ -60,7 +60,7 @@ export class PkgEquipPetLVD extends ListViewDelegate {
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        if (this.dataList[rowIdx].equipIndex == -1) {
+        if (this.dataList[rowIdx].equipIndex === -1) {
             return PET_INFO;
         } else if (this.dataList[rowIdx].equip) {
             return EQUIP;
@@ -70,15 +70,15 @@ export class PkgEquipPetLVD extends ListViewDelegate {
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        if (cellId == PET_INFO) {
+        if (cellId === PET_INFO) {
             return cc.instantiate(this.cellPetBriefPrefab).getComponent(CellPetBrief);
-        } else if (cellId == EQUIP) {
+        } else if (cellId === EQUIP) {
             let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
             cell.setFuncBtnUI(this.page.detailBtnSFrame);
             cell.clickCallback = this.page.onPetCellClick.bind(this.page);
             cell.funcBtnCallback = this.page.onPetCellClickFuncBtn.bind(this.page);
             return cell;
-        } else if (cellId == BLANK) {
+        } else if (cellId === BLANK) {
             let cell = cc.instantiate(this.cellPkgEquipBlankPrefab).getComponent(CellPkgEquipBlank);
             cell.clickCallback = this.page.onPetCellClick.bind(this.page);
             return cell;
@@ -87,7 +87,7 @@ export class PkgEquipPetLVD extends ListViewDelegate {
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkgEquip & CellPetBrief) {
         let data = this.dataList[rowIdx];
-        if (data.equipIndex == -1) {
+        if (data.equipIndex === -1) {
             let pet = data.pet;
             let petModel = petModelDict[pet.id];
             (cell as CellPetBrief).setData(petModel.cnName, pet.state);

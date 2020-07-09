@@ -47,7 +47,7 @@ export class TouchLayer extends cc.Component {
 
     onGestureMoved(event: cc.Event.EventTouch) {
         if (!this.ctrlr.backBtnActive || this.mark.getNumberOfRunningActions() > 0) return;
-        if (this.touchId === null || event.getID() != this.touchId) return;
+        if (this.touchId === null || event.getID() !== this.touchId) return;
         let curX = event.getLocationX();
         this.mark.x = Math.min(curX - this.touchBeginX, this.readyX);
     }

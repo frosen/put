@@ -100,7 +100,7 @@ export class PagePkg extends PagePkgBase {
     resetCurList() {
         let curDirtyToken = this.ctrlr.memory.dirtyToken;
         let curData = this.listDatas[this.curListIdx];
-        if (curData.dirtyToken != curDirtyToken) {
+        if (curData.dirtyToken !== curDirtyToken) {
             curData.dirtyToken = curDirtyToken;
             let items = this.ctrlr.memory.gameData.items;
             let idxs = PagePkg.getItemIdxsByListIdx(items, this.curListIdx);
@@ -111,31 +111,32 @@ export class PagePkg extends PagePkgBase {
 
     static getItemIdxsByListIdx(items: Item[], listIdx: number): number[] {
         let idxs: number[] = [];
-        if (listIdx == 0) {
+        if (listIdx === 0) {
             for (let index = 0; index < items.length; index++) idxs[index] = index;
-        } else if (listIdx == 1) {
+        } else if (listIdx === 1) {
             for (let index = 0; index < items.length; index++) {
-                if (items[index].itemType == ItemType.equip) idxs[idxs.length] = index;
+                if (items[index].itemType === ItemType.equip) idxs[idxs.length] = index;
             }
-        } else if (listIdx == 2) {
+        } else if (listIdx === 2) {
             for (let index = 0; index < items.length; index++) {
                 let item = items[index];
-                if (item.itemType == ItemType.cnsum && (item as Cnsum).cnsumType == CnsumType.drink) idxs[idxs.length] = index;
+                if (item.itemType === ItemType.cnsum && (item as Cnsum).cnsumType === CnsumType.drink) idxs[idxs.length] = index;
             }
-        } else if (listIdx == 3) {
+        } else if (listIdx === 3) {
             for (let index = 0; index < items.length; index++) {
                 let item = items[index];
                 if (
-                    (item.itemType == ItemType.cnsum && (item as Cnsum).cnsumType == CnsumType.catcher) ||
-                    item.itemType == ItemType.caughtPet
+                    (item.itemType === ItemType.cnsum && (item as Cnsum).cnsumType === CnsumType.catcher) ||
+                    item.itemType === ItemType.caughtPet
                 ) {
                     idxs[idxs.length] = index;
                 }
             }
-        } else if (listIdx == 4) {
+        } else if (listIdx === 4) {
             for (let index = 0; index < items.length; index++) {
                 let item = items[index];
-                if (item.itemType == ItemType.cnsum && (item as Cnsum).cnsumType == CnsumType.eqpAmplr) idxs[idxs.length] = index;
+                if (item.itemType === ItemType.cnsum && (item as Cnsum).cnsumType === CnsumType.eqpAmplr)
+                    idxs[idxs.length] = index;
             }
         }
         return idxs;
@@ -146,7 +147,7 @@ export class PagePkg extends PagePkgBase {
     turnList(idx: number) {
         if (this.turnning) return;
 
-        if (this.curListIdx != idx) {
+        if (this.curListIdx !== idx) {
             this.curListIdx = idx;
             this.resetCurList();
 
@@ -189,9 +190,9 @@ export class PagePkg extends PagePkgBase {
         cc.log('PUT 使用道具：', item.id);
 
         // llytodo
-        if (item.itemType == ItemType.cnsum) {
+        if (item.itemType === ItemType.cnsum) {
             let cnsum = item as Cnsum;
-            if (cnsum.cnsumType == CnsumType.drink) {
+            if (cnsum.cnsumType === CnsumType.drink) {
                 this.ctrlr.pushPage(PagePet, {
                     cellPetType: PagePetCellType.selection,
                     name: '选择宠物',
@@ -199,9 +200,9 @@ export class PagePkg extends PagePkgBase {
                         let petModel = petModelDict[curPet.id];
                         let drinkModel = drinkModelDict[cnsum.id];
                         this.ctrlr.popAlert(`确定对“${petModel.cnName}”使用“${drinkModel.cnName}”吗？`, (key: number) => {
-                            if (key == 1) {
+                            if (key === 1) {
                                 let rzt = GameDataTool.useDrinkToPet(gameData, curPet, cnsum);
-                                if (rzt == GameDataTool.SUC) {
+                                if (rzt === GameDataTool.SUC) {
                                     GameDataTool.deleteItem(gameData, itemIdx);
                                     this.ctrlr.popPage();
                                 } else this.ctrlr.popToast(rzt);
@@ -209,9 +210,9 @@ export class PagePkg extends PagePkgBase {
                         });
                     }
                 });
-            } else if (cnsum.cnsumType == CnsumType.catcher) {
+            } else if (cnsum.cnsumType === CnsumType.catcher) {
                 this.ctrlr.popToast('捕捉器会在战斗中开启“捕捉”后自动使用');
-            } else if (cnsum.cnsumType == CnsumType.eqpAmplr) {
+            } else if (cnsum.cnsumType === CnsumType.eqpAmplr) {
                 this.ctrlr.pushPage(PagePkgSelection, {
                     name: '选择要强化的装备',
                     curItemIdxs: PagePkg.getItemIdxsByListIdx(gameData.items, 1),
@@ -237,9 +238,9 @@ export class PagePkg extends PagePkgBase {
                             `确定使用${needCount}颗“${eaModel.cnName}”(共${cnsum.count}颗)\n` +
                             `提升“${equipModel.cnName}”的成长等级吗？`;
                         this.ctrlr.popAlert(str, (key: number) => {
-                            if (key == 1) {
+                            if (key === 1) {
                                 let rzt = GameDataTool.growForEquip(gameData, equip);
-                                if (rzt == GameDataTool.SUC) {
+                                if (rzt === GameDataTool.SUC) {
                                     GameDataTool.deleteItem(gameData, itemIdx);
                                     this.ctrlr.popToast(`“${equipModel.cnName}”的成长等级升至${equip.growth}级`);
                                     this.ctrlr.popPage();
@@ -249,12 +250,12 @@ export class PagePkg extends PagePkgBase {
                     }
                 });
             }
-        } else if (item.itemType == ItemType.equip) {
+        } else if (item.itemType === ItemType.equip) {
             this.ctrlr.pushPage(PagePkgEquip, { idx: itemIdx });
-        } else if (item.itemType == ItemType.caughtPet) {
+        } else if (item.itemType === ItemType.caughtPet) {
             let caughtPet = item as CaughtPet;
             let rzt = GameDataTool.addPet(gameData, caughtPet.petId, caughtPet.lv, caughtPet.rank, caughtPet.features);
-            if (rzt == GameDataTool.SUC) {
+            if (rzt === GameDataTool.SUC) {
                 GameDataTool.deleteItem(gameData, itemIdx);
                 this.resetCurList();
             } else this.ctrlr.popToast(rzt);
@@ -263,13 +264,13 @@ export class PagePkg extends PagePkgBase {
 
     onMoveUpCell(cellIdx: number) {
         let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, cellIdx, cellIdx - 1);
-        if (rzt == GameDataTool.SUC) this.resetCurList();
+        if (rzt === GameDataTool.SUC) this.resetCurList();
         else this.ctrlr.popToast(rzt);
     }
 
     onMoveDownCell(cellIdx: number) {
         let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, cellIdx, cellIdx + 1);
-        if (rzt == GameDataTool.SUC) this.resetCurList();
+        if (rzt === GameDataTool.SUC) this.resetCurList();
         else if (rzt) this.ctrlr.popToast(rzt);
     }
 
@@ -281,30 +282,30 @@ export class PagePkg extends PagePkgBase {
         cc.log('PUT 丢弃道具：', item.id);
 
         let name: string;
-        if (item.itemType == ItemType.cnsum) {
-            if ((item as Cnsum).cnsumType == CnsumType.drink) {
+        if (item.itemType === ItemType.cnsum) {
+            if ((item as Cnsum).cnsumType === CnsumType.drink) {
                 name = drinkModelDict[item.id].cnName;
-            } else if ((item as Cnsum).cnsumType == CnsumType.catcher) {
+            } else if ((item as Cnsum).cnsumType === CnsumType.catcher) {
                 name = catcherModelDict[item.id].cnName;
-            } else if ((item as Cnsum).cnsumType == CnsumType.eqpAmplr) {
+            } else if ((item as Cnsum).cnsumType === CnsumType.eqpAmplr) {
                 name = eqpAmplrModelDict[item.id].cnName;
             }
-        } else if (item.itemType == ItemType.equip) {
+        } else if (item.itemType === ItemType.equip) {
             name = equipModelDict[item.id].cnName;
-        } else if (item.itemType == ItemType.caughtPet) {
+        } else if (item.itemType === ItemType.caughtPet) {
             name = '捕获中的' + petModelDict[(item as CaughtPet).petId].cnName;
         }
 
         let str = `确定将“${name}”丢弃吗？\n` + '注意：丢弃后将无法找回哦！';
 
-        if (item.itemType == ItemType.cnsum) {
+        if (item.itemType === ItemType.cnsum) {
             this.ctrlr.popAlert(
                 str,
                 (key: number) => {
-                    if (key == 0) return;
-                    let count = key == 1 ? 1 : (item as Cnsum).count;
+                    if (key === 0) return;
+                    let count = key === 1 ? 1 : (item as Cnsum).count;
                     let rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, itemIdx, count);
-                    if (rzt == GameDataTool.SUC) this.resetCurList();
+                    if (rzt === GameDataTool.SUC) this.resetCurList();
                     else this.ctrlr.popToast(rzt);
                 },
                 '丢弃1件',
@@ -312,9 +313,9 @@ export class PagePkg extends PagePkgBase {
             );
         } else {
             this.ctrlr.popAlert(str, (key: number) => {
-                if (key == 1) {
+                if (key === 1) {
                     let rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, itemIdx);
-                    if (rzt == GameDataTool.SUC) this.resetCurList();
+                    if (rzt === GameDataTool.SUC) this.resetCurList();
                     else this.ctrlr.popToast(rzt);
                 }
             });

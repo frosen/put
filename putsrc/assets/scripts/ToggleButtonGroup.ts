@@ -25,7 +25,7 @@ export class ToggleButtonGroup extends cc.Component {
 
     onClick(btn: cc.Button) {
         for (const eachBtn of this.btns) {
-            if (eachBtn == btn) this.setCheck(eachBtn);
+            if (eachBtn === btn) this.setCheck(eachBtn);
             else this.setUncheck(eachBtn);
         }
     }

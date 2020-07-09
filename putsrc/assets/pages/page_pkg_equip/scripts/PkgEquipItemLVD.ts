@@ -40,17 +40,17 @@ export class PkgEquipItemLVD extends ListViewDelegate {
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        return this.curItemIdxs[rowIdx] == GameDataTool.UNWIELD ? UNWIELD : EQUIP;
+        return this.curItemIdxs[rowIdx] === GameDataTool.UNWIELD ? UNWIELD : EQUIP;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        if (cellId == EQUIP) {
+        if (cellId === EQUIP) {
             let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
             cell.setFuncBtnUI(this.page.detailBtnSFrame);
             cell.clickCallback = this.page.onItemCellClick.bind(this.page);
             cell.funcBtnCallback = this.page.onItemCellClickDetailBtn.bind(this.page);
             return cell;
-        } else if (cellId == UNWIELD) {
+        } else if (cellId === UNWIELD) {
             let cell = cc.instantiate(this.cellUnwieldPrefab).getComponent(CellPkgEquipUnwield);
             cell.clickCallback = this.page.onItemCellClick.bind(this.page);
             return cell;
@@ -59,6 +59,6 @@ export class PkgEquipItemLVD extends ListViewDelegate {
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkgEquip) {
         let itemIdx = this.curItemIdxs[rowIdx];
-        if (itemIdx != GameDataTool.UNWIELD) cell.setData(itemIdx, this.curItems[itemIdx] as Equip);
+        if (itemIdx !== GameDataTool.UNWIELD) cell.setData(itemIdx, this.curItems[itemIdx] as Equip);
     }
 }

@@ -54,7 +54,7 @@ export class PagePkgEquip extends PageBase {
     setData(data: any) {
         if (data) {
             this.dataForInit = data;
-            cc.assert(data.idx != undefined, 'PUT 装备更新页面初始化需要索引');
+            cc.assert(data.idx || data.idx === 0, 'PUT 装备更新页面初始化需要索引');
         }
     }
 
@@ -84,7 +84,7 @@ export class PagePkgEquip extends PageBase {
             let selectedEquipIdx = this.dataForInit.idx;
             if (!this.dataForInit.pet) {
                 for (let index = 0; index < idxs.length; index++) {
-                    if (selectedEquipIdx == idxs[index]) {
+                    if (selectedEquipIdx === idxs[index]) {
                         cellIdx = index;
                         break;
                     }
@@ -95,7 +95,7 @@ export class PagePkgEquip extends PageBase {
                 let curPet = this.dataForInit.pet;
                 for (let index = 0; index < petEquipDataList.length; index++) {
                     const petEquipData = petEquipDataList[index];
-                    if (petEquipData.pet == curPet && petEquipData.equipIndex == selectedEquipIdx) {
+                    if (petEquipData.pet === curPet && petEquipData.equipIndex === selectedEquipIdx) {
                         cellIdx = index;
                         break;
                     }
@@ -129,7 +129,7 @@ export class PagePkgEquip extends PageBase {
     selectedPetEquipCell: ListViewCell = null;
 
     onItemCellClick(cell: ListViewCell) {
-        if (this.selectedItemEquipCell == cell) return;
+        if (this.selectedItemEquipCell === cell) return;
         this.selectedItemEquipCell = cell;
 
         if (!this.selectedPetEquipCell) this.selectItemEquip();
@@ -143,7 +143,7 @@ export class PagePkgEquip extends PageBase {
     onItemCellClickDetailBtn(cell: ListViewCell) {}
 
     onPetCellClick(cell: ListViewCell) {
-        if (this.selectedPetEquipCell == cell) return;
+        if (this.selectedPetEquipCell === cell) return;
         this.selectedPetEquipCell = cell;
         if (!this.selectedItemEquipCell) this.selectPetEquip();
         else {
@@ -220,7 +220,7 @@ export class PagePkgEquip extends PageBase {
         let petLVD = this.petEquipList.delegate as PkgEquipPetLVD;
         let data = petLVD.dataList[this.selectedPetEquipCell.curCellIdx];
         let rzt = GameDataTool.wieldEquip(this.ctrlr.memory.gameData, itemIdx, data.pet, data.equipIndex);
-        if (rzt == GameDataTool.SUC) {
+        if (rzt === GameDataTool.SUC) {
             this.resetList();
             this.ctrlr.popToast('装备更新');
             this.hideItemSelection();

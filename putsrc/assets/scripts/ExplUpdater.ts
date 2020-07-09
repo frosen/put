@@ -114,7 +114,7 @@ export class ExplUpdater {
 
             let inBattle = true;
             while (true) {
-                if (this.battleCtrlr.realBattle.start == false) {
+                if (this.battleCtrlr.realBattle.start === false) {
                     inBattle = false;
                     break;
                 }
@@ -233,9 +233,9 @@ export class ExplUpdater {
     }
 
     onUpdate() {
-        if (this.state == ExplState.explore) this.updateExpl();
-        else if (this.state == ExplState.battle) this.updateBattle();
-        else if (this.state == ExplState.recover) this.updateRecover();
+        if (this.state === ExplState.explore) this.updateExpl();
+        else if (this.state === ExplState.battle) this.updateBattle();
+        else if (this.state === ExplState.recover) this.updateRecover();
 
         if (this.page) this.page.handleLog();
     }
@@ -261,7 +261,7 @@ export class ExplUpdater {
     startExpl() {
         this.handleSelfTeamChange();
 
-        let enter = this.state != ExplState.explore;
+        let enter = this.state !== ExplState.explore;
         this.state = ExplState.explore;
 
         this.explTime = 3 + random(5); // 3-7个空隙
@@ -299,9 +299,9 @@ export class ExplUpdater {
 
     updateExpl() {
         let result = this.getExplResult();
-        if (result == ExplResult.doing) this.doExploration();
-        else if (result == ExplResult.gain) this.gainRes();
-        else if (result == ExplResult.battle) this.startBattle();
+        if (result === ExplResult.doing) this.doExploration();
+        else if (result === ExplResult.gain) this.gainRes();
+        else if (result === ExplResult.battle) this.startBattle();
     }
 
     getExplResult(): ExplResult {
@@ -319,7 +319,7 @@ export class ExplUpdater {
     doExploration() {
         let curStep = this.curExpl.curStep;
         do {
-            if (curStep == -1) {
+            if (curStep === -1) {
                 this.curExpl.curStep = this.curExpl.startStep;
                 this.explStepPercent = 0;
             } else if (curStep >= this.curExplModel.stepMax - 1) {
@@ -339,7 +339,7 @@ export class ExplUpdater {
                 } else {
                     let percent = Math.floor(((realUpdCnt - lastStepUpdCnt) * 100) / curStepUpdCnt);
                     if (percent > 99) percent = 99; // 战斗时候百分比不能停所以百分比在UI上需要禁止超过100%
-                    if (percent != this.explStepPercent) {
+                    if (percent !== this.explStepPercent) {
                         this.explStepPercent = percent;
                         if (this.page) this.page.setExplStepUI();
                     }
@@ -390,7 +390,7 @@ export class ExplUpdater {
 
     reduceUpdCntByFail() {
         let curStep = this.curExpl.curStep;
-        if (curStep == 0) return;
+        if (curStep === 0) return;
 
         let startUpdCnt = 0;
         for (let idx = 0; idx < this.curExpl.startStep; idx++) startUpdCnt += UpdCntByStep[idx];
@@ -456,7 +456,7 @@ export class ExplUpdater {
             let items = this.gameData.items;
             let hasCatcher = false;
             for (const item of items) {
-                if (item.itemType != ItemType.cnsum || (item as Cnsum).cnsumType != CnsumType.catcher) continue;
+                if (item.itemType !== ItemType.cnsum || (item as Cnsum).cnsumType !== CnsumType.catcher) continue;
                 hasCatcher = true;
                 break;
             }

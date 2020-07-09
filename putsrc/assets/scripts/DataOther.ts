@@ -64,7 +64,7 @@ export class GameDataJIT {
         data[drinkModel.mainAttri] = drinkModel.mainPercent;
         if (drinkModel.subAttri) data[drinkModel.subAttri] = drinkModel.subPercent;
 
-        if (drinkModel.aim == DrinkAimType.one) {
+        if (drinkModel.aim === DrinkAimType.one) {
             this.addAmpl(pet, drinkModel.id, data);
         } else {
             this.addAmpl(null, `${pet.catchIdx}_${drinkModel.id}`, data);
@@ -200,7 +200,7 @@ export class Pet2 {
         });
 
         // 装备加成
-        let equips = exEquips == null ? pet.equips : exEquips;
+        let equips = exEquips ? pet.equips : exEquips;
         for (const equip of equips) {
             if (!equip) continue;
             EquipDataTool.getFinalAttris(equip, this);
@@ -319,7 +319,7 @@ export class BattlePet {
         if (!model.hasOwnProperty(funcName)) return;
         let list: { func: any; datas: number[]; id: string }[] = bPet[attri];
         for (const featureInList of list) {
-            if (featureInList.id != model.id) continue;
+            if (featureInList.id !== model.id) continue;
             for (let index = 0; index < featureInList.datas.length; index++) {
                 featureInList.datas[index] += datas[index];
             }
@@ -330,9 +330,9 @@ export class BattlePet {
 
     static getSkillMpUsing(skillId: string, pet: Pet) {
         let skillModel: SkillModel = skillModelDict[skillId];
-        if (skillModel.skillType == SkillType.ultimate) return 0;
+        if (skillModel.skillType === SkillType.ultimate) return 0;
         let mpUsing = skillModel.mp;
-        if (petModelDict[pet.id].eleType == skillModel.eleType) mpUsing -= Math.ceil(mpUsing * 0.1);
+        if (petModelDict[pet.id].eleType === skillModel.eleType) mpUsing -= Math.ceil(mpUsing * 0.1);
         return mpUsing;
     }
 
@@ -476,9 +476,9 @@ export class RealBattle {
 
             let checkEquipToken = (token: string, items: Item[], equipsOutput: Equip[]): boolean => {
                 for (const item of items) {
-                    if (item.itemType != ItemType.equip) continue;
+                    if (item.itemType !== ItemType.equip) continue;
                     let equip = item as Equip;
-                    if (EquipDataTool.getToken(equip) == token) {
+                    if (EquipDataTool.getToken(equip) === token) {
                         equipsOutput.push(equip);
                         return true;
                     }
@@ -490,7 +490,7 @@ export class RealBattle {
                 const selfPetMmr = sPetMmrs[petIdx];
                 let curPet: Pet;
                 for (const petInAll of gameData.pets) {
-                    if (petInAll.catchIdx == selfPetMmr.catchIdx) {
+                    if (petInAll.catchIdx === selfPetMmr.catchIdx) {
                         curPet = petInAll;
                         break;
                     }
@@ -635,7 +635,7 @@ export class SkillInfo {
         let skl: SkillModel = skillModelDict[id];
         let info = '';
         let aim: string;
-        if (skl.dirType == SkillDirType.enemy) {
+        if (skl.dirType === SkillDirType.enemy) {
             switch (skl.spBattleType) {
                 case BattleType.none:
                     aim = '敌方单体目标';
@@ -685,14 +685,14 @@ export class SkillInfo {
             info += `(目标血量须低于${skl.hpLimit}%才可发动)`;
         }
 
-        if (skl.aimType != SkillAimtype.one) {
+        if (skl.aimType !== SkillAimtype.one) {
             let subAim: string;
             switch (skl.aimType) {
                 case SkillAimtype.oneAndNext:
                     subAim = '下方相邻目标';
                     break;
                 case SkillAimtype.oneAndOthers:
-                    subAim = (skl.dirType == SkillDirType.enemy ? '敌方' : '己方') + '其他目标';
+                    subAim = (skl.dirType === SkillDirType.enemy ? '敌方' : '己方') + '其他目标';
                     break;
                 case SkillAimtype.oneAndSelf:
                     subAim = '自己';

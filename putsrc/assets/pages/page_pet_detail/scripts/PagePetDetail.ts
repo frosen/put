@@ -62,7 +62,7 @@ export class PagePetDetail extends PageBase {
         lvd.curPet2 = pet2;
 
         let curDirtyToken = this.ctrlr.memory.dirtyToken;
-        if (this.dirtyToken != curDirtyToken) {
+        if (this.dirtyToken !== curDirtyToken) {
             this.dirtyToken = curDirtyToken;
 
             let featureDatas: { feature: Feature; type: FeatureGainType }[] = [];
@@ -106,7 +106,7 @@ export class PagePetDetail extends PageBase {
             this.curEquipIdx,
             this.curEquipIdx - 1
         );
-        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+        if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
     }
 
     onMoveDownCell(cellIdx: number) {
@@ -116,6 +116,6 @@ export class PagePetDetail extends PageBase {
             this.curEquipIdx,
             this.curEquipIdx + 1
         );
-        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+        if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
     }
 }

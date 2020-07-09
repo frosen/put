@@ -147,7 +147,7 @@ export class PageActExpl extends BattlePageBase {
     onPageShow() {
         this.ctrlr.setBackBtnEnabled(true, (): boolean => {
             this.ctrlr.popAlert('确定退出探索？', (key: number) => {
-                if (key == 1) this.ctrlr.popPage();
+                if (key === 1) this.ctrlr.popPage();
             });
             return false;
         });
@@ -163,7 +163,7 @@ export class PageActExpl extends BattlePageBase {
         if (!curExpl) return this.ctrlr.setSubTitle('');
 
         let step = curExpl.curStep;
-        if (step == -1) return this.ctrlr.setSubTitle('');
+        if (step === -1) return this.ctrlr.setSubTitle('');
 
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
@@ -185,7 +185,7 @@ export class PageActExpl extends BattlePageBase {
 
     setUIofSelfPet(index: number) {
         let pets = this.updater.battleCtrlr.realBattle.selfTeam.pets;
-        if (index == -1) {
+        if (index === -1) {
             let petIdx = 0;
             for (; petIdx < pets.length; petIdx++) this.setUIofSelfPet(petIdx);
             for (; petIdx < BattlePetLenMax; petIdx++) this.clearUIofSelfPet(petIdx);
@@ -196,7 +196,7 @@ export class PageActExpl extends BattlePageBase {
 
     setUIofEnemyPet(index: number) {
         let pets = this.updater.battleCtrlr.realBattle.enemyTeam.pets;
-        if (index == -1) {
+        if (index === -1) {
             for (let petIdx = 0; petIdx < pets.length; petIdx++) this.setUIofEnemyPet(petIdx);
         } else {
             this.setUIofPet(pets[index], this.enemyPetUIs[index]);
@@ -284,7 +284,7 @@ export class PageActExpl extends BattlePageBase {
     }
 
     getBuffColor(buffModel: BuffModel): cc.Color {
-        let de = buffModel.buffType == BuffType.debuff;
+        let de = buffModel.buffType === BuffType.debuff;
         switch (buffModel.eleType) {
             case EleType.fire:
                 return de ? cc.color(200, 0, 0) : cc.color(255, 100, 100);
@@ -362,7 +362,7 @@ export class PageActExpl extends BattlePageBase {
         let ui = uis[idx];
         let buffStr = '[' + str + ']';
         for (const child of ui.buffNode.children) {
-            if (child.getComponent(cc.Label).string == buffStr) {
+            if (child.getComponent(cc.Label).string === buffStr) {
                 child.removeFromParent();
                 child.destroy();
                 break;
@@ -417,7 +417,7 @@ export class PageActExpl extends BattlePageBase {
     }
 
     handleLog() {
-        if (this.newLogCount == 0) return;
+        if (this.newLogCount === 0) return;
         if (this.autoShowLog) {
             let logCount = Math.min(this.newLogCount, 10);
             this.listView.clearContent();

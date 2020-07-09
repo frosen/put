@@ -46,7 +46,7 @@ export class PagePetLVD extends ListViewDelegate {
 
     createCellForRow(listView: ListView, rowIdx: number): ListViewCell {
         let cell = cc.instantiate(this.cellPetPrefab).getComponent(CellPet);
-        if (this.cellType == PagePetCellType.normal) {
+        if (this.cellType === PagePetCellType.normal) {
             cell.clickCallback = this.page.onCellClickDetailBtn.bind(this.page);
             cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
         } else {

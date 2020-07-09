@@ -78,9 +78,9 @@ export class PagePet extends PageBase {
         this.ctrlr.setBackBtnEnabled(this.needBackBtn);
 
         let lvd = this.list.delegate as PagePetLVD;
-        if (lvd.cellType == PagePetCellType.normal) {
+        if (lvd.cellType === PagePetCellType.normal) {
             let curDirtyToken = this.ctrlr.memory.dirtyToken;
-            if (this.dirtyToken != curDirtyToken) {
+            if (this.dirtyToken !== curDirtyToken) {
                 this.dirtyToken = curDirtyToken;
                 this.list.resetContent(true);
             }
@@ -110,19 +110,19 @@ export class PagePet extends PageBase {
     // -----------------------------------------------------------------
 
     changePetState(pet: Pet) {
-        pet.state = pet.state == PetState.rest ? PetState.ready : PetState.rest;
+        pet.state = pet.state === PetState.rest ? PetState.ready : PetState.rest;
         GameDataTool.sortPetsByState(this.ctrlr.memory.gameData);
         this.getComponentInChildren(ListView).resetContent(true);
     }
 
     onMoveUpCell(cellIdx: number) {
         let rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, cellIdx, cellIdx - 1);
-        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+        if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
     }
 
     onMoveDownCell(cellIdx: number) {
         let rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, cellIdx, cellIdx + 1);
-        if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+        if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
     }
 
     onRemoveCell(cellIdx: number) {
@@ -130,9 +130,9 @@ export class PagePet extends PageBase {
         let name = (petModelDict[pet.id] as PetModel).cnName;
         let str = `确定放生宠物“${name}”？\n` + '注意：放生后将无法找回！';
         this.ctrlr.popAlert(str, (key: number) => {
-            if (key == 1) {
+            if (key === 1) {
                 let rzt = GameDataTool.deletePet(this.ctrlr.memory.gameData, cellIdx);
-                if (rzt == GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+                if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
                 else this.ctrlr.popToast(rzt);
             }
         });

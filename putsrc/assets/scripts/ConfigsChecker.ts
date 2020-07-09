@@ -18,9 +18,9 @@ import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 function checkActPosModelDict() {
     for (const key in actPosModelDict) {
         const model = actPosModelDict[key];
-        if (model.id != key) cc.error('ActPosModelDict中，id与dict的key不符', key, model.id);
+        if (model.id !== key) cc.error('ActPosModelDict中，id与dict的key不符', key, model.id);
 
-        if (Object.keys(model.actDict).length != model.acts.length) cc.error('ActPosModelDict中，actDict与acts数量不一致', key);
+        if (Object.keys(model.actDict).length !== model.acts.length) cc.error('ActPosModelDict中，actDict与acts数量不一致', key);
         for (const actDictKey of Object.keys(model.actDict)) {
             if (!model.acts.includes(actDictKey)) cc.error(`${actDictKey}不在${model.acts}内`, key);
         }
@@ -66,7 +66,7 @@ function checkBuffModelDict() {
     let buffBriefDict = {};
     for (const key in buffModelDict) {
         const model = buffModelDict[key];
-        if (model.id != key) cc.error('buffModelDict中，id与dict的key不符', key, model.id);
+        if (model.id !== key) cc.error('buffModelDict中，id与dict的key不符', key, model.id);
         if (
             model.hasOwnProperty('id') &&
             model.hasOwnProperty('cnName') &&
@@ -84,7 +84,7 @@ function checkBuffModelDict() {
             cc.error('buffModelDict中，onStarted onEnd onTurnEnd 必有其一', key);
         }
 
-        if (buffBriefDict[model.brief] == true) cc.error('buffModelDict中，brief重复了', key);
+        if (buffBriefDict[model.brief] === true) cc.error('buffModelDict中，brief重复了', key);
         buffBriefDict[model.brief] = true;
     }
 }
@@ -94,12 +94,12 @@ function checkFeatureModelDict() {
 
     for (const key in featureModelDict) {
         const model = featureModelDict[key];
-        if (model.id != key) cc.error('featureModelDict中，id与dict的key不符：', key, model.id);
+        if (model.id !== key) cc.error('featureModelDict中，id与dict的key不符：', key, model.id);
         if (!model.hasOwnProperty('id')) cc.error('featureModelDict中，缺少id：', key);
         if (!model.hasOwnProperty('dataAreas')) cc.error('featureModelDict中，缺少dataAreas：', key);
         if (!model.hasOwnProperty('getInfo')) cc.error('featureModelDict中，缺少getInfo：', key);
         if (!model.hasOwnProperty('cnBrief')) cc.error('featureModelDict中，缺少cnBrief：', key);
-        if (briefDict[model.cnBrief] == true) cc.error('featureModelDict中，cnBrief重复了：', key);
+        if (briefDict[model.cnBrief] === true) cc.error('featureModelDict中，cnBrief重复了：', key);
         briefDict[model.cnBrief] = true;
     }
 }
@@ -113,7 +113,7 @@ function checkFeatureInBorn() {
 function checkEquipModelDict() {
     for (const key in equipModelDict) {
         const model = equipModelDict[key];
-        if (model.id != key) cc.error('equipModelDict中，id与dict的key不符：', key, model.id);
+        if (model.id !== key) cc.error('equipModelDict中，id与dict的key不符：', key, model.id);
         let features = model.featureIds;
         for (const feature of features) {
             if (!(feature in featureModelDict)) {

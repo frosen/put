@@ -77,11 +77,11 @@ export class PageActPosLVD extends ListViewDelegate {
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
-        if (rowIdx == 0) {
+        if (rowIdx === 0) {
             return 380;
-        } else if (rowIdx == this.actCellLength) {
+        } else if (rowIdx === this.actCellLength) {
             return 179;
-        } else if (rowIdx == this.actCellLength + this.evtCellLength) {
+        } else if (rowIdx === this.actCellLength + this.evtCellLength) {
             return 179;
         } else if (rowIdx < this.actCellLength + this.evtCellLength) {
             return 139;
@@ -91,7 +91,7 @@ export class PageActPosLVD extends ListViewDelegate {
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        if (rowIdx == 0) {
+        if (rowIdx === 0) {
             return 'posInfo';
         } else if (rowIdx <= this.actCellLength + this.evtCellLength) {
             return 'posBtn';
@@ -112,7 +112,7 @@ export class PageActPosLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPosInfo & CellPosBtn & CellPosMov) {
-        if (rowIdx == 0) {
+        if (rowIdx === 0) {
             cell.setData(this.curActPosModel.cnName);
         } else if (rowIdx <= this.actCellLength) {
             let actIdx = (rowIdx - 1) * 2;
@@ -139,12 +139,12 @@ export class PageActPosLVD extends ListViewDelegate {
             let posId = moveType.id;
             let movPosModel = actPosModelDict[posId];
             cell.setData('前往：' + movPosModel.cnName, '花费：' + String(moveType.price), () => {
-                if (moveType.price == 0) {
+                if (moveType.price === 0) {
                     this.gotoNextPos(posId);
                 } else {
                     let txt = `确定花费${moveType.price}前往“${movPosModel.cnName}”吗？`;
                     this.ctrlr.popAlert(txt, (key: number) => {
-                        if (key == 1) this.gotoNextPos(posId);
+                        if (key === 1) this.gotoNextPos(posId);
                     });
                 }
             });

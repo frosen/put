@@ -71,7 +71,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         buffType: BuffType.debuff,
         eleType: EleType.earth,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            if (buff.time == 0) return { hp: BattleController.getSklDmg(buff.caster, thisPet) };
+            if (buff.time === 0) return { hp: BattleController.getSklDmg(buff.caster, thisPet) };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `效果结束时对目标造成${getSklDmgStr(pet2, 1)}(100%)点地系伤害`;
