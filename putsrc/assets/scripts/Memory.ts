@@ -24,12 +24,22 @@ import {
     PrvtyMax,
     Drink,
     Cnsum,
-    CnsumType,
     CaughtPet,
     Catcher,
-    EqpAmplr
+    EqpAmplr,
+    CnsumType,
+    Material
 } from './DataSaved';
-import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType } from './DataModel';
+import {
+    FeatureModel,
+    PetModel,
+    EquipPosType,
+    EquipModel,
+    DrinkModel,
+    DrinkAimType,
+    CatcherModel,
+    EqpAmplrModel
+} from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { random, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
@@ -38,6 +48,9 @@ import { GameDataJIT, AmplAttriType } from './DataOther';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { inbornFeatures } from 'configs/InbornFeatures';
 import { expModels } from 'configs/ExpModels';
+import { catcherModelDict } from 'configs/CatcherModelDict';
+import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
+import { materialModelDict } from 'configs/MaterialModelDict';
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = 0;
@@ -188,7 +201,7 @@ export class Memory {
         GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 10000;
-            pet.equips[0] = EquipDataTool.createRandom(15, 20);
+            pet.equips[0] = EquipDataTool.createRandomByLv(15, 20);
         });
 
         GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, 1, [], (pet: Pet) => {
@@ -215,26 +228,26 @@ export class Memory {
 
         GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
 
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(21, 25));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(21, 25));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(21, 25));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(21, 25));
 
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(11, 15));
 
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(30, 33));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(30, 33));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(30, 33));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(30, 33));
 
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandom(15, 20));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(15, 20));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(15, 20));
+        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(15, 20));
 
-        GameDataTool.addCnsum(this.gameData, 'LingGanYaoJi1', CnsumType.drink, 2);
+        GameDataTool.addCnsum(this.gameData, 'LingGanYaoJi1', 2);
 
-        GameDataTool.addCnsum(this.gameData, 'CiLiPan1', CnsumType.catcher, 2);
-        GameDataTool.addCnsum(this.gameData, 'DaMoShi', CnsumType.eqpAmplr, 2);
+        GameDataTool.addCnsum(this.gameData, 'CiLiPan1', 2);
+        GameDataTool.addCnsum(this.gameData, 'DaMoShi', 2);
 
         GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
 
@@ -394,6 +407,27 @@ export class CnsumDataTool {
         drink.count = count;
         return drink;
     }
+
+    static getTypeById(cnsumId: string): CnsumType {
+        if (cnsumId in drinkModelDict) return CnsumType.drink;
+        else if (cnsumId in catcherModelDict) return CnsumType.catcher;
+        else if (cnsumId in eqpAmplrModelDict) return CnsumType.eqpAmplr;
+        else if (cnsumId in materialModelDict) return CnsumType.material;
+    }
+
+    static getModelById(cnsumId: string): DrinkModel | CatcherModel | EqpAmplrModel {
+        if (cnsumId in drinkModelDict) return drinkModelDict[cnsumId];
+        else if (cnsumId in catcherModelDict) return catcherModelDict[cnsumId];
+        else if (cnsumId in eqpAmplrModelDict) return eqpAmplrModelDict[cnsumId];
+        else if (cnsumId in materialModelDict) return materialModelDict[cnsumId];
+    }
+
+    static getClassById(cnsumId: string): { new (): Cnsum } {
+        if (cnsumId in drinkModelDict) return Drink;
+        else if (cnsumId in catcherModelDict) return Catcher;
+        else if (cnsumId in eqpAmplrModelDict) return EqpAmplr;
+        else if (cnsumId in materialModelDict) return Material;
+    }
 }
 
 export class EquipDataTool {
@@ -419,26 +453,9 @@ export class EquipDataTool {
         return equip;
     }
 
-    static createRandom(lvFrom: number, lvTo: number): Equip {
-        let equipIds: string[];
-        let lv = lvFrom + random(lvTo - lvFrom + 1);
-        let equipIdsByRank = equipIdsByLvRank[lv];
-        switch (equipIdsByRank.length) {
-            case 0:
-                return null;
-            case 1:
-                equipIds = equipIdsByRank[0];
-                break;
-            case 2:
-                equipIds = equipIdsByRank[randomRate(0.7) ? 0 : 1];
-                break;
-            case 3:
-                equipIds = equipIdsByRank[getRandomOneInListWithRate([0, 1, 2], [0.7, 0.25])];
-                break;
-        }
-        let equipId = getRandomOneInList(equipIds);
-
+    static createRandomById(equipId: string) {
         let equipModel = equipModelDict[equipId];
+        let lv = equipModel.lv;
 
         let skillId: string;
         let skillIds = skillIdsByEleType[equipModel.eleType];
@@ -465,6 +482,29 @@ export class EquipDataTool {
         }
 
         return this.create(equipId, skillId, 0, featureLvs, affixes, 0);
+    }
+
+    static createRandomByLv(lvFrom: number, lvTo: number): Equip {
+        let equipIds: string[];
+        let lv = lvFrom + random(lvTo - lvFrom + 1);
+        if (lv < 0) lv = 0;
+        if (lv >= equipIdsByLvRank.length) lv = equipIdsByLvRank.length - 1;
+        let equipIdsByRank = equipIdsByLvRank[lv];
+        switch (equipIdsByRank.length) {
+            case 0:
+                return null;
+            case 1:
+                equipIds = equipIdsByRank[0];
+                break;
+            case 2:
+                equipIds = equipIdsByRank[randomRate(0.7) ? 0 : 1];
+                break;
+            case 3:
+                equipIds = equipIdsByRank[getRandomOneInListWithRate([0, 1, 2], [0.7, 0.25])];
+                break;
+        }
+        let equipId = getRandomOneInList(equipIds);
+        return this.createRandomById(equipId);
     }
 
     static getLv(equip: Equip): number {
@@ -689,13 +729,7 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
-    static addCnsum(
-        gameData: GameData,
-        cnsumId: string,
-        cnsumType: CnsumType,
-        count: number = 1,
-        callback: (cnsum: Cnsum) => void = null
-    ): string {
+    static addCnsum(gameData: GameData, cnsumId: string, count: number = 1, callback: (cnsum: Cnsum) => void = null): string {
         if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
         gameData.weight += count;
 
@@ -710,12 +744,7 @@ export class GameDataTool {
         }
 
         if (itemIdx === -1) {
-            let cnsumClass: { new (): Cnsum };
-
-            if (cnsumType === CnsumType.drink) cnsumClass = Drink;
-            else if (cnsumType === CnsumType.catcher) cnsumClass = Catcher;
-            else if (cnsumType === CnsumType.eqpAmplr) cnsumClass = EqpAmplr;
-
+            let cnsumClass = CnsumDataTool.getClassById(cnsumId);
             let realCnsum: Cnsum = CnsumDataTool.create(cnsumClass, cnsumId, count);
             gameData.items.push(realCnsum);
             if (callback) callback(realCnsum);

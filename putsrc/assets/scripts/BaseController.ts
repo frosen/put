@@ -501,6 +501,10 @@ export class BaseController extends cc.Component {
         page.afterPageShowAnim();
     }
 
+    getCurPage(): PageBase {
+        return this.getTreeLeaf(this.pageTree).page;
+    }
+
     // 导航栏控制 -----------------------------------------------------------------
 
     setTitle(title: string) {

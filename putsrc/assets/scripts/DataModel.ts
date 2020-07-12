@@ -174,6 +174,12 @@ export class EqpAmplrModel {
     lvMax: number;
 }
 
+export class MaterialModel {
+    id: string;
+    cnName: string;
+    lvMax: number;
+}
+
 export enum EquipPosType {
     none,
     weapon = 1,
@@ -264,6 +270,7 @@ export class ActPosModel {
     movs: MovModel[];
     loc: Partial<cc.Vec2>;
     petIdLists: string[][]; // 不同稀有度: 宠物列表
+    itemIdLists: string[][];
 }
 
 // -----------------------------------------------------------------

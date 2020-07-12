@@ -159,6 +159,8 @@ export class PageActExpl extends BattlePageBase {
     }
 
     setExplStepUI() {
+        if (this.ctrlr.getCurPage() !== this) return;
+
         let curExpl = this.ctrlr.memory.gameData.curExpl;
         if (!curExpl) return this.ctrlr.setSubTitle('');
 

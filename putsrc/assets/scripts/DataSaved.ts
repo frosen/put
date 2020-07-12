@@ -127,7 +127,8 @@ export class Money extends Item {
 export enum CnsumType {
     drink = 1,
     catcher = 2,
-    eqpAmplr = 3
+    eqpAmplr = 3,
+    material = 4
 }
 
 export class Cnsum extends Item {
@@ -145,6 +146,10 @@ export class Catcher extends Cnsum {
 }
 
 export class EqpAmplr extends Cnsum {
+    cnsumType: CnsumType = CnsumType.eqpAmplr;
+}
+
+export class Material extends Cnsum {
     cnsumType: CnsumType = CnsumType.eqpAmplr;
 }
 

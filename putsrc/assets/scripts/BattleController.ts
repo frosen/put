@@ -219,7 +219,7 @@ export class BattleController {
                 petNameDict[cnName] = true;
             }
             let petNames = Object.keys(petNameDict);
-            this.page.log((hiding ? '伏击：' : '进入战斗：') + petNames.join(', '));
+            this.page.log('发现：' + petNames.join(', ') + (hiding ? '，偷袭成功' : '，进入战斗'));
         }
 
         // 偷袭

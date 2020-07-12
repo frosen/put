@@ -5,13 +5,15 @@
  */
 
 import { BattlePageBase } from './BattlePageBase';
-import { Memory, GameDataTool, PetDataTool } from 'scripts/Memory';
+import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
 import { GameData, ItemType, Cnsum, CnsumType, ExplMmr, BattleMmr } from 'scripts/DataSaved';
 import { AttriRatioByRank } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
-import { random, randomArea, randomRate } from './Random';
-import { ExplModel, StepTypesByMax, UpdCntByStep, ExplStepNames } from './DataModel';
+import { random, randomArea, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
+import { ExplModel, StepTypesByMax, UpdCntByStep, ExplStepNames, RatesByStepType } from './DataModel';
+import { expModels } from 'configs/ExpModels';
+import { equipModelDict } from 'configs/EquipModelDict';
 
 export enum ExplState {
     none,
@@ -257,6 +259,19 @@ export class ExplUpdater {
     explTime: number = 0;
     explCnt: number = 0;
 
+    /** 本次获取道具的数量 */
+    gainCnt: number = 1;
+
+    /** 发现宝藏 */
+    trsrFind: boolean = false;
+    /** 发现宝藏预动作 */
+    trsrPrefind: boolean = false;
+
+    /** 潜行发现敌人 */
+    enemyFind: boolean = false;
+    /** 发现敌人预动作 */
+    enemyPrefind: boolean = false;
+
     // 一轮是平均5+1乘以0.75 = 4.5 平均2+1轮 也就是13.5s
     startExpl() {
         this.handleSelfTeamChange();
@@ -266,35 +281,76 @@ export class ExplUpdater {
 
         this.explTime = 3 + random(5); // 3-7个空隙
 
+        let sensRate = ExplUpdater.getPosPetSensRate(this.gameData.curExpl, this.battleCtrlr);
+
         if (enter) {
             this.explCnt = random(5);
             if (this.gameData.curExpl.hiding) {
-                this.explCnt += ExplUpdater.calcHideExplCnt(this.gameData.curExpl, this.battleCtrlr);
+                this.explCnt += ExplUpdater.calcHideExplCnt(sensRate);
             }
-            this.page.log('开始探索');
+            if (this.page) this.page.log('开始探索');
         } else {
             this.explCnt--;
+        }
+
+        if (this.explCnt > 0) {
+            if (ExplUpdater.calcFindTreasure(sensRate)) {
+                this.trsrFind = true;
+                this.trsrPrefind = true;
+            } else {
+                this.trsrFind = false;
+                this.gainCnt = ExplUpdater.calcGainCnt(sensRate);
+            }
+        } else {
+            this.trsrFind = false;
+            if (this.gameData.curExpl.hiding) {
+                this.enemyFind = true;
+                this.enemyPrefind = true;
+            }
         }
 
         cc.log('PUT 探索次数和本次时间: ', this.explCnt, this.explTime);
     }
 
-    static calcHideExplCnt(curExpl: ExplMmr, battleCtrlr: BattleController): number {
-        let curPosLv = actPosModelDict[curExpl.curPosId].lv;
-
-        let posSens = (100 + curPosLv * 15) * (1 + curExpl.curStep * 0.5);
-
-        let petSens = 0;
-        let selfPets = battleCtrlr.realBattle.selfTeam.pets;
-        for (const selfPet of selfPets) petSens = Math.max(petSens, selfPet.pet2.sensitivity); // 取最大
-
-        if (petSens < posSens) return 0;
+    static calcHideExplCnt(rate: number): number {
+        if (rate < 1) return 0;
         else {
-            let rate = petSens / posSens;
             let baseCnt = Math.floor(rate);
             let rateCnt = randomRate(rate - baseCnt) ? 1 : 0;
             return baseCnt + rateCnt;
         }
+    }
+
+    static calcFindTreasure(rate: number): boolean {
+        let trsrRate = 0.04;
+        if (rate > 1) trsrRate += Math.min(rate - 1, 1) * 0.04;
+        return randomRate(trsrRate);
+    }
+
+    static calcGainCnt(rate: number): number {
+        if (rate < 1) return 1;
+        if (rate < 1.5) return 1 + (randomRate(rate - 1) ? 1 : 0);
+        if (rate < 2.5) return 1 + (randomRate(0.5) ? 1 : 0) + (randomRate(rate - 1.5) ? 1 : 0);
+        return 2 + (randomRate(0.5) ? 1 : 0);
+    }
+
+    static getPosPetSensRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
+        let posSens = ExplUpdater.getPosSens(curExpl);
+        let petSens = ExplUpdater.getSelfSens(battleCtrlr);
+        return petSens / posSens;
+    }
+
+    static getPosSens(curExpl: ExplMmr) {
+        if (curExpl.curStep < 0) return 999999;
+        let curPosLv = actPosModelDict[curExpl.curPosId].lv;
+        return (100 + curPosLv * 15) * (1 + curExpl.curStep * 0.5);
+    }
+
+    static getSelfSens(battleCtrlr: BattleController) {
+        let petSens = 0;
+        let selfPets = battleCtrlr.realBattle.selfTeam.pets;
+        for (const selfPet of selfPets) petSens = Math.max(petSens, selfPet.pet2.sensitivity); // 取最大
+        return petSens;
     }
 
     updateExpl() {
@@ -357,16 +413,79 @@ export class ExplUpdater {
             return;
         } while (0);
 
-        if (this.page) this.page.log('探索中......');
+        if (this.page) {
+            if (this.trsrFind) {
+                if (this.trsrPrefind) {
+                    this.trsrPrefind = false;
+                    this.page.log('发现远古宝箱');
+                } else this.page.log('宝箱解锁中......');
+            } else if (this.enemyFind) {
+                if (this.enemyPrefind) {
+                    this.enemyPrefind = false;
+                    this.page.log('发现附近似乎有威胁存在');
+                } else this.page.log('潜行接近中......');
+            } else this.page.log('探索中......');
+        }
     }
 
     gainRes() {
-        this.page.log('获得了什么');
+        let posId = this.curExpl.curPosId;
+        let curPosModel = actPosModelDict[posId];
+        let step = this.curExpl.curStep;
+
+        let itemName: string = null;
+        let failRzt: string = null;
+        if (this.trsrFind) {
+            let lvFrom = curPosModel.lv - 2;
+            if (step >= 4) lvFrom += 2;
+            else if (step >= 2) lvFrom += 1;
+            let equip = EquipDataTool.createRandomByLv(lvFrom, lvFrom + 5);
+            if (equip) {
+                let rzt = GameDataTool.addEquip(this.gameData, equip);
+                if (rzt != GameDataTool.SUC) failRzt = rzt;
+                else {
+                    let equipModel = equipModelDict[equip.id];
+                    itemName = equipModel.cnName;
+                }
+            }
+        }
+
+        if (!failRzt && !itemName) {
+            let stepMax = this.curExplModel.stepMax;
+            let stepType = StepTypesByMax[stepMax][step];
+            let rates = RatesByStepType[stepType];
+
+            let itemIdLists = curPosModel.itemIdLists;
+            let itemIdList = getRandomOneInListWithRate(itemIdLists, rates);
+            let itemId = getRandomOneInList(itemIdList);
+            let rzt = GameDataTool.addCnsum(this.gameData, itemId, this.gainCnt);
+            if (rzt != GameDataTool.SUC) failRzt = rzt;
+            else {
+                let model = CnsumDataTool.getModelById(itemId);
+                itemName = model.cnName + (this.gainCnt > 1 ? 'x' + String(this.gainCnt) : '');
+            }
+        }
+
+        if (this.page) {
+            if (failRzt) {
+                this.page.log(failRzt);
+            } else {
+                if (this.trsrFind) this.page.log('宝箱成功被打开');
+                this.page.log('获得了' + itemName);
+            }
+        }
 
         this.updateChgUpdCnt();
 
         // 继续探索
         this.startExpl();
+    }
+
+    async addCnsumSync(itemId: string) {
+        return new Promise<string | Cnsum>(resolve => {
+            let rzt = GameDataTool.addCnsum(this.gameData, itemId);
+            if (rzt != GameDataTool.SUC) resolve(rzt);
+        });
     }
 
     startBattle(spcBtlId: number = 0) {

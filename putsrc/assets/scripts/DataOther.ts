@@ -200,7 +200,7 @@ export class Pet2 {
         });
 
         // 装备加成
-        let equips = exEquips ? pet.equips : exEquips;
+        let equips = exEquips || pet.equips;
         for (const equip of equips) {
             if (!equip) continue;
             EquipDataTool.getFinalAttris(equip, this);
@@ -252,8 +252,8 @@ export class Pet2 {
         // 技能
         if (!this.skillIds) this.skillIds = [];
         let skillIdx = 0;
-        for (let index = pet.equips.length - 1; index >= 0; index--) {
-            let equip = pet.equips[index]; // 装备技能
+        for (let index = equips.length - 1; index >= 0; index--) {
+            let equip = equips[index]; // 装备技能
             if (!equip) continue;
             let skillId = equip.skillId;
             if (!skillId) continue;
@@ -564,7 +564,7 @@ export class RealBattle {
 
         let petCountMax = curPosModel.lv < 10 ? 4 : 5;
         let petCount = random(petCountMax) + 1;
-        let step = curExpl.curStep;
+        let step = curExpl.curStep; // step必然不是-1
         let stepMax = explModel.stepMax;
         let stepType = StepTypesByMax[stepMax][step];
         let rates = RatesByStepType[stepType];
