@@ -7,7 +7,7 @@
 import { BattlePageBase } from './BattlePageBase';
 import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, Cnsum, ExplMmr, Catcher } from 'scripts/DataSaved';
+import { GameData, Cnsum, ExplMmr, Catcher, Pet } from 'scripts/DataSaved';
 import { AttriRatioByRank, AmplAttriType, RealBattle } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { random, randomArea, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
@@ -188,18 +188,57 @@ export class ExplUpdater {
 
     recoverExplInExpl(step: number, fromUpdCnt: number, toUpdCnt: number, catchData: { catcherIdx: number }) {
         let curExpl = this.gameData.curExpl;
-        let { selfLv, selfRank, enemyLv, enemyRank } = ExplUpdater.getAvgLvRankInMmr(this.gameData);
-        let explDuraUpdCnt = ExplUpdater.calcExplDuraUpdCnt(selfLv, selfRank, enemyLv, enemyRank);
+        let selfPets = GameDataTool.getReadyPets(this.gameData);
+
+        // 计算敌我一般化的等级品阶和其他属性 ------------------------------------------
+        let selfLv: number = 0,
+            selfRank: number = 0,
+            selfLvAmpl: number = 0; // 把装备等其他属性直接折合成等级
+
+        for (const selfPet of selfPets) {
+            selfLv += selfPet.lv;
+            selfRank += selfPet.rank;
+
+            let totalEqpLv = 0;
+            let featureLvs = 0;
+            for (const eqp of selfPet.equips) {
+                if (!eqp) continue;
+                let eqpModel = equipModelDict[eqp.id];
+                let eqpLv = (eqpModel.lv + eqp.growth) * (1 + eqpModel.rank * 0.1);
+                totalEqpLv += eqpLv * 0.2;
+                for (const lv of eqp.selfFeatureLvs) featureLvs += lv;
+                for (const feature of eqp.affixes) featureLvs += feature.lv;
+            }
+            for (const feature of selfPet.learnedFeatures) featureLvs += feature.lv;
+
+            let realPrvty = PetDataTool.getRealPrvty(selfPet);
+
+            let curAmpl = selfLv + totalEqpLv;
+            curAmpl *= 1 + featureLvs * 0.01 + realPrvty * 0.01 * 20;
+            selfLvAmpl += curAmpl;
+        }
+        let selfPetLen = selfPets.length;
+        selfLv /= selfPetLen;
+        selfRank /= selfPetLen;
+        selfLvAmpl /= selfPetLen;
+
+        let posId = curExpl.curPosId;
+        let curPosModel = actPosModelDict[posId];
+
+        let enemyLv: number = curPosModel.lv,
+            enemyRank: number = RealBattle.calcRankByExplStep(curExpl.curStep);
+
+        // 计算回合数和胜利数量 ------------------------------------------
+        let explDuraUpdCnt = ExplUpdater.calcExplDuraUpdCnt(selfLvAmpl, selfRank, enemyLv, enemyRank);
 
         let diffUpdCnt = toUpdCnt - fromUpdCnt + 1;
         let explCnt = Math.floor(diffUpdCnt / explDuraUpdCnt);
         if (explCnt > 10) explCnt = randomArea(explCnt, 0.1); // 增加随机范围
 
-        let selfPets = GameDataTool.getReadyPets(this.gameData);
-        let winRate = ExplUpdater.calcWinRate(selfLv, selfRank, enemyLv, enemyRank, selfPets.length);
+        let winRate = ExplUpdater.calcWinRate(selfLvAmpl, selfRank, enemyLv, enemyRank, selfPets.length);
         let winCount = Math.max(Math.min(Math.ceil(explCnt * randomArea(winRate, 0.1)), explCnt), 0);
 
-        // 计算获取的经验
+        // 计算获取的经验 ------------------------------------------
         let exp = BattleController.calcExpByLvRank(selfLv, selfRank, enemyLv, enemyRank);
         let expTotal = exp * winCount;
         expTotal = randomArea(expTotal, 0.05);
@@ -210,8 +249,6 @@ export class ExplUpdater {
             PetDataTool.addExp(pet, Math.ceil(expEach));
         }
 
-        let posId = curExpl.curPosId;
-        let curPosModel = actPosModelDict[posId];
         let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
 
         let stepMax = explModel.stepMax;
@@ -274,26 +311,6 @@ export class ExplUpdater {
         // 考虑潜行
     }
 
-    static getAvgLvRankInMmr(gameData: GameData): { selfLv: number; selfRank: number; enemyLv: number; enemyRank: number } {
-        let selfLv: number = 0,
-            selfRank: number = 0;
-        let selfPetsMmr = GameDataTool.getReadyPets(gameData);
-        for (const selfPetMmr of selfPetsMmr) {
-            selfLv += selfPetMmr.lv;
-            selfRank += selfPetMmr.rank;
-        }
-        selfLv /= selfPetsMmr.length;
-        selfRank /= selfPetsMmr.length;
-
-        let posId = gameData.curExpl.curPosId;
-        let curPosModel = actPosModelDict[posId];
-
-        let enemyLv: number = curPosModel.lv,
-            enemyRank: number = RealBattle.calcRankByExplStep(gameData.curExpl.curStep);
-
-        return { selfLv, selfRank, enemyLv, enemyRank };
-    }
-
     static calcExplDuraUpdCnt(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
         return this.calcBtlDuraUpdCnt(selfLv, selfRank, enemyLv, enemyRank) + 20; // 一场战斗时间，加上2跳恢复18跳和探索
     }
@@ -305,7 +322,9 @@ export class ExplUpdater {
     }
 
     static calcWinRate(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number, selfLen: number): number {
-        let rate = Math.max(Math.min(0.9 + (selfLv - enemyLv) * 0.05 + (selfRank - enemyRank) * 0.05, 1), 0);
+        let diffLv = selfLv - enemyLv;
+        let diffRank = selfRank - enemyRank;
+        let rate = Math.max(Math.min(0.9 + diffLv * 0.05 + diffRank * 0.05, 1), 0);
         let lenRate = Math.min((selfLen + 1) * 0.2, 1);
         return rate * lenRate;
     }
