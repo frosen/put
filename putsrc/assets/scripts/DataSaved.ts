@@ -212,8 +212,7 @@ export class ExplMmr {
     curStep: number;
     curBattle: BattleMmr;
     hiding: boolean;
-    catching: boolean;
-    cumCatchRate: number; // 累计捕捉率
+    catcherId: string;
 }
 
 // -----------------------------------------------------------------

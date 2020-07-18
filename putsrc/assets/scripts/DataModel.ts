@@ -226,14 +226,6 @@ export enum ExplStepType {
 
 export const ExplStepNames = ['', '外围', '走廊', '深处', '中心'];
 
-export const RatesByStepType = [
-    [],
-    [1, 0, 0, 0],
-    [0.65, 0.95, 0.99, 1], // 后一项是当前稀有度和前面稀有度之和，为了random方便写成这样
-    [0.48, 0.88, 0.98, 1],
-    [0.35, 0.75, 0.91, 1]
-];
-
 export const StepTypesByMax = [
     [],
     [ExplStepType.center],
@@ -267,7 +259,7 @@ export class ActPosModel {
     evts: string[];
     movs: MovModel[];
     loc: Partial<cc.Vec2>;
-    petIdLists: string[][]; // 不同稀有度: 宠物列表
+    petIdLists: string[][]; // 不同stepType对应的宠物列表
     itemIdLists: string[][];
     eqpIdLists: string[][];
 }

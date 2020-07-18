@@ -32,15 +32,3 @@ export function getRandomOneInListWithRate<T>(list: Array<T>, rates: number[]): 
         return null;
     } else return null;
 }
-
-export function normalRandom(c: number): number {
-    let r = Math.random();
-    if (r <= 0.5) {
-        r = 0.5 - r;
-        r = 0.5 - r * r * 2;
-    } else {
-        r = r - 0.5;
-        r = 1 - r * r * 2;
-    }
-    return Math.floor(r * c);
-}

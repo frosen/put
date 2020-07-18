@@ -383,8 +383,9 @@ export class PageActExpl extends BattlePageBase {
     // button -----------------------------------------------------------------
 
     onClickCatch() {
-        let rzt = this.updater.executeCatch();
-        if (rzt) this.ctrlr.popToast(rzt);
+        // let rzt = this.updater.executeCatch();
+        // if (rzt) this.ctrlr.popToast(rzt);
+        // llytodo
     }
 
     onClickEscape() {

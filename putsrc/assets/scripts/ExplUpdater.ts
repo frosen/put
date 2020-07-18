@@ -7,12 +7,14 @@
 import { BattlePageBase } from './BattlePageBase';
 import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, ItemType, Cnsum, CnsumType, ExplMmr } from 'scripts/DataSaved';
-import { AttriRatioByRank, AmplAttriType } from './DataOther';
+import { GameData, Cnsum, ExplMmr, Catcher } from 'scripts/DataSaved';
+import { AttriRatioByRank, AmplAttriType, RealBattle } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { random, randomArea, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
-import { ExplModel, StepTypesByMax, UpdCntByStep, ExplStepNames, RatesByStepType } from './DataModel';
+import { ExplModel, StepTypesByMax, UpdCntByStep, ExplStepNames, CatcherModel } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
+import { catcherModelDict } from 'configs/CatcherModelDict';
+import { petModelDict } from 'configs/PetModelDict';
 
 export enum ExplState {
     none,
@@ -57,7 +59,7 @@ export class ExplUpdater {
 
         let curExpl = this.gameData.curExpl;
         if (!curExpl) this.createExpl(spcBtlId, startStep);
-        else this.recoverLastExpl(curExpl);
+        else this.recoverLastExpl(this.gameData);
 
         this.curExpl = this.gameData.curExpl;
         this.curExplModel = actPosModelDict[this.curExpl.curPosId].actDict['exploration'] as ExplModel;
@@ -100,7 +102,8 @@ export class ExplUpdater {
         this.page.handleLog();
     }
 
-    recoverLastExpl(curExpl: ExplMmr) {
+    recoverLastExpl(gameData: GameData) {
+        let curExpl = gameData.curExpl;
         let inBattle = curExpl.curBattle ? this.recoverExplInBattle(curExpl) : false;
 
         if (!inBattle) {
@@ -116,18 +119,25 @@ export class ExplUpdater {
             let nextStepUpdCnt = 0;
             for (let idx = 0; idx < curExpl.curStep; idx++) nextStepUpdCnt += UpdCntByStep[idx];
 
+            let catcherIdx = -1;
+            if (curExpl.catcherId) {
+                catcherIdx = BattleController.getCatcherIdxInItemList(gameData, curExpl.catcherId);
+                if (catcherIdx === -1) curExpl.catcherId = null;
+            }
+            let catchData = { catcherIdx };
+
             while (true) {
                 let realCurUpdCnt = curUpdCnt + startUpdCnt;
                 if (curExpl.curStep >= this.curExplModel.stepMax - 1) {
-                    this.recoverExplInExpl(curExpl, curExpl.curStep, lastStepUpdCnt, realCurUpdCnt);
+                    this.recoverExplInExpl(curExpl.curStep, lastStepUpdCnt, realCurUpdCnt, catchData);
                     break;
                 }
                 nextStepUpdCnt += UpdCntByStep[curExpl.curStep];
                 if (realCurUpdCnt < nextStepUpdCnt) {
-                    this.recoverExplInExpl(curExpl, curExpl.curStep, lastStepUpdCnt, realCurUpdCnt);
+                    this.recoverExplInExpl(curExpl.curStep, lastStepUpdCnt, realCurUpdCnt, catchData);
                     break;
                 }
-                this.recoverExplInExpl(curExpl, curExpl.curStep, lastStepUpdCnt, nextStepUpdCnt);
+                this.recoverExplInExpl(curExpl.curStep, lastStepUpdCnt, nextStepUpdCnt, catchData);
                 lastStepUpdCnt = nextStepUpdCnt + 1;
                 curExpl.curStep++;
             }
@@ -176,7 +186,8 @@ export class ExplUpdater {
         return inBattle;
     }
 
-    recoverExplInExpl(curExpl: ExplMmr, step: number, fromUpdCnt: number, toUpdCnt: number) {
+    recoverExplInExpl(step: number, fromUpdCnt: number, toUpdCnt: number, catchData: { catcherIdx: number }) {
+        let curExpl = this.gameData.curExpl;
         let { selfLv, selfRank, enemyLv, enemyRank } = ExplUpdater.getAvgLvRankInMmr(this.gameData);
         let explDuraUpdCnt = ExplUpdater.calcExplDuraUpdCnt(selfLv, selfRank, enemyLv, enemyRank);
 
@@ -186,7 +197,7 @@ export class ExplUpdater {
 
         let selfPets = GameDataTool.getReadyPets(this.gameData);
         let winRate = ExplUpdater.calcWinRate(selfLv, selfRank, enemyLv, enemyRank, selfPets.length);
-        let winCount = Math.ceil(explCnt * randomArea(winRate, 0.1));
+        let winCount = Math.max(Math.min(Math.ceil(explCnt * randomArea(winRate, 0.1)), explCnt), 0);
 
         // 计算获取的经验
         let exp = BattleController.calcExpByLvRank(selfLv, selfRank, enemyLv, enemyRank);
@@ -199,11 +210,64 @@ export class ExplUpdater {
             PetDataTool.addExp(pet, Math.ceil(expEach));
         }
 
+        let posId = curExpl.curPosId;
+        let curPosModel = actPosModelDict[posId];
+        let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
+
+        let stepMax = explModel.stepMax;
+        let stepType = StepTypesByMax[stepMax][step];
+
         // 计算捕获
-        if (curExpl.catching) {
-            let petList = [];
-            let catchers = [];
-        }
+        do {
+            if (catchData.catcherIdx === -1) break;
+            let catcher = this.gameData.items[catchData.catcherIdx] as Catcher;
+            let catcherModel: CatcherModel = catcherModelDict[catcher.id];
+
+            let { lvMin, lvMax } = RealBattle.getLvArea(enemyLv);
+            let { rankMin, rankMax } = RealBattle.getRankArea(enemyRank);
+
+            lvMin = Math.max(lvMin, catcherModel.lvMin);
+            lvMax = Math.min(lvMax, catcherModel.lvMax);
+            if (lvMin > lvMax) break;
+
+            rankMin = Math.max(rankMin, catcherModel.rankMin);
+            rankMax = Math.min(rankMax, catcherModel.rankMax);
+            if (rankMin > rankMax) break;
+
+            let petIdLists = curPosModel.petIdLists;
+            if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有宠物列表petIdLists，无法战斗`);
+            let petIds = petIdLists[stepType];
+
+            let realPetIds = [];
+            for (const petId of petIds) {
+                let petModel = petModelDict[petId];
+                if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;
+                if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) continue;
+                if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) continue;
+                realPetIds[realPetIds.length] = petId;
+            }
+            if (realPetIds.length === 0) break;
+
+            let rate = catcherModel.rate;
+            let catchCount = Math.floor(rate * winCount);
+            catchCount = Math.min(catchCount, catcher.count);
+
+            let catchIdx = 0;
+            for (; catchIdx < catchCount; catchIdx++) {
+                let petId = getRandomOneInList(realPetIds);
+                let lv = lvMin + random(lvMax - lvMin);
+                let rank = rankMin + random(rankMax - rankMin);
+                let features = RealBattle.getRandomFeatures(lv);
+                let rztStr = GameDataTool.addCaughtPet(this.gameData, petId, lv, rank, features);
+                if (rztStr !== GameDataTool.SUC) break;
+            }
+
+            if (catchIdx === catcher.count) {
+                catchData.catcherIdx = -1;
+                curExpl.catcherId = null;
+            }
+            GameDataTool.deleteItem(this.gameData, catchData.catcherIdx, catchIdx);
+        } while (false);
 
         // 计算获得的物品 // llytodo
 
@@ -225,13 +289,9 @@ export class ExplUpdater {
         let curPosModel = actPosModelDict[posId];
 
         let enemyLv: number = curPosModel.lv,
-            enemyRank: number = ExplUpdater.calcRankByExplStep(gameData.curExpl.curStep);
+            enemyRank: number = RealBattle.calcRankByExplStep(gameData.curExpl.curStep);
 
         return { selfLv, selfRank, enemyLv, enemyRank };
-    }
-
-    static calcRankByExplStep(step: number) {
-        return step * 2 + 1;
     }
 
     static calcExplDuraUpdCnt(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
@@ -245,7 +305,7 @@ export class ExplUpdater {
     }
 
     static calcWinRate(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number, selfLen: number): number {
-        let rate = Math.min(0.9 + (selfLv - enemyLv) * 0.05 + (selfRank - enemyRank) * 0.05, 1);
+        let rate = Math.max(Math.min(0.9 + (selfLv - enemyLv) * 0.05 + (selfRank - enemyRank) * 0.05, 1), 0);
         let lenRate = Math.min((selfLen + 1) * 0.2, 1);
         return rate * lenRate;
     }
@@ -481,14 +541,13 @@ export class ExplUpdater {
 
         let stepMax = this.curExplModel.stepMax;
         let stepType = StepTypesByMax[stepMax][step];
-        let rates = RatesByStepType[stepType];
 
         let itemName: string = null;
         let failRzt: string = null;
         if (this.trsrFind) {
             let eqpIdLists = curPosModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
-            let eqpIdList = getRandomOneInListWithRate(eqpIdLists, rates);
-            let eqpId = getRandomOneInList(eqpIdList);
+            let eqps = eqpIdLists[stepType];
+            let eqpId = getRandomOneInList(eqps);
             let equip = EquipDataTool.createRandomById(eqpId);
             if (equip) {
                 let rzt = GameDataTool.addEquip(this.gameData, equip);
@@ -499,8 +558,8 @@ export class ExplUpdater {
 
         if (!failRzt && !itemName) {
             let itemIdLists = curPosModel.itemIdLists;
-            let itemIdList = getRandomOneInListWithRate(itemIdLists, rates);
-            let itemId = getRandomOneInList(itemIdList);
+            let itemIds = itemIdLists[stepType];
+            let itemId = getRandomOneInList(itemIds);
             let rzt = GameDataTool.addCnsum(this.gameData, itemId, this.gainCnt);
             if (rzt === GameDataTool.SUC) {
                 let model = CnsumDataTool.getModelById(itemId);
@@ -595,24 +654,9 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
-    executeCatch(): string {
-        let cur = !this.gameData.curExpl.catching;
-        if (cur) {
-            let items = this.gameData.items;
-            let hasCatcher = false;
-            for (const item of items) {
-                if (item.itemType !== ItemType.cnsum || (item as Cnsum).cnsumType !== CnsumType.catcher) continue;
-                hasCatcher = true;
-                break;
-            }
-
-            if (!hasCatcher) {
-                return '没有捕捉装置，不能开始捕捉';
-            }
-        }
-        this.gameData.curExpl.hiding = cur;
-        this.page.setCatchActive(cur);
-        return null;
+    executeCatch(catcherId: string) {
+        this.gameData.curExpl.catcherId = catcherId;
+        this.page.setCatchActive(catcherId !== null);
     }
 
     executeEscape() {

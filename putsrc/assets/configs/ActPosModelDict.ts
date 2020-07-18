@@ -46,7 +46,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
             null,
             null,
-            ['ShuiLengJiQiRen', 'DianZiShouWei']
+            ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
         ],
         itemIdLists: [['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
         eqpIdLists: []

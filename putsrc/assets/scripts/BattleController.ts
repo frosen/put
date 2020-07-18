@@ -15,19 +15,7 @@ import { petModelDict } from 'configs/PetModelDict';
 
 import { deepCopy } from 'scripts/Utils';
 import { SkillModel, SkillType, SkillAimtype, SkillDirType, CatcherModel } from 'scripts/DataModel';
-import {
-    Pet,
-    Feature,
-    EleType,
-    BattleType,
-    EleTypeNames,
-    GameData,
-    ItemType,
-    Cnsum,
-    CnsumType,
-    Catcher,
-    BattleMmr
-} from 'scripts/DataSaved';
+import { Pet, Feature, EleType, BattleType, EleTypeNames, GameData, Catcher, BattleMmr } from 'scripts/DataSaved';
 import {
     RealBattle,
     BattleTeam,
@@ -72,8 +60,6 @@ const ExpRateByPetCount = [0, 1, 0.53, 0.37, 0.29, 0.23];
 const ComboHitRate = [0, 1, 1.1, 1.2]; // combo从1开始
 const FormationHitRate = [1, 0.95, 0.9, 0.9, 0.85]; // 阵型顺序从0开始
 const EleReinforceRelation = [0, 3, 1, 4, 2, 6, 5]; // 元素相克表
-
-const CatchRateRdcbyRank = [0, 0, 5, 10, 20, 30, 50, 100, 200, 500, 2000];
 
 export class BattleController {
     page: BattlePageBase = null;
@@ -796,71 +782,59 @@ export class BattleController {
 
     executePetCatch() {
         let gameData = this.gameData;
-        let catching = gameData.curExpl.catching;
-        if (!catching) return;
+        let catcherId = gameData.curExpl.catcherId;
+        if (!catcherId) return;
 
-        let hightestLv = 0;
-        for (const pet of this.realBattle.selfTeam.pets) hightestLv = Math.max(hightestLv, pet.pet.lv);
-
-        let catcherIdxs: number[] = [];
-        let items = this.memory.gameData.items;
-        for (let index = 0; index < items.length; index++) {
-            const item = items[index];
-            if (item.itemType !== ItemType.cnsum || (item as Cnsum).cnsumType !== CnsumType.catcher) continue;
-            catcherIdxs[catcherIdxs.length] = index;
+        let catcherIdx = BattleController.getCatcherIdxInItemList(gameData, catcherId);
+        if (catcherIdx === -1) {
+            gameData.curExpl.catcherId = null;
+            if (this.page) this.page.setCatchActive(false);
+            return;
         }
 
+        let catcherModel: CatcherModel = catcherModelDict[catcherId];
+
         for (const battlePet of this.realBattle.enemyTeam.pets) {
-            // 计算是否成功捕捉
+            // 计算能否捕捉
             let pet = battlePet.pet;
-            if (pet.lv > hightestLv) continue;
+            let petModel = petModelDict[pet.id];
+            if (pet.lv < catcherModel.lvMin || catcherModel.lvMax < pet.lv) continue;
+            if (pet.rank < catcherModel.rankMin || catcherModel.rankMax < pet.rank) continue;
+            if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;
+            if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) continue;
+            if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) continue;
 
-            let curCatcherModel: CatcherModel;
-            let curCatcherIdx: number;
-
-            for (const index of catcherIdxs) {
-                const catcher = items[index] as Catcher;
-                let catcherModel: CatcherModel = catcherModelDict[catcher.id];
-                if (pet.lv < catcherModel.lvMin || catcherModel.lvMax < pet.lv) continue;
-                if (pet.rank < catcherModel.rankMin || catcherModel.rankMax < pet.rank) continue;
-
-                let petModel = petModelDict[pet.id];
-                if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;
-                if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) continue;
-                if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) continue;
-                if (curCatcherModel && curCatcherModel.rate > catcherModel.rate) continue;
-
-                curCatcherModel = catcherModel;
-                curCatcherIdx = index;
-            }
-
-            if (!curCatcherModel) continue;
-            let catchRate = curCatcherModel.rate;
-            catchRate -= CatchRateRdcbyRank[pet.rank];
-            catchRate += hightestLv - pet.lv;
-            catchRate += gameData.curExpl.cumCatchRate;
-
-            let suc = randomRate(catchRate * 0.01);
+            // 计算成功几率
+            let suc = randomRate(catcherModel.rate * 0.01);
 
             if (suc) {
                 let features: Feature[] = deepCopy(pet.inbornFeatures) as Feature[];
                 let rztStr = GameDataTool.addCaughtPet(gameData, pet.id, pet.lv, pet.rank, features);
                 if (rztStr === GameDataTool.SUC) {
                     if (this.page) this.page.log(`成功捕获${petModelDict[pet.id].cnName}`);
-                    GameDataTool.deleteItem(gameData, curCatcherIdx);
-                    gameData.curExpl.cumCatchRate = 0;
-                    if (catcherIdxs.length === 1) {
-                        gameData.curExpl.catching = false;
+                    let catcher = this.memory.gameData.items[catcherIdx] as Catcher;
+                    if (catcher.count === 1) {
+                        gameData.curExpl.catcherId = null;
                         if (this.page) this.page.setCatchActive(false);
                     }
+                    GameDataTool.deleteItem(gameData, catcherIdx);
                 } else {
                     if (this.page) this.page.log(`捕获失败：${rztStr}`);
                 }
-                return;
+                return; // 每场战斗只能捕捉一只宠物
             }
         }
+    }
 
-        gameData.curExpl.cumCatchRate += 1;
+    static getCatcherIdxInItemList(gameData: GameData, catcherId: string): number {
+        let items = gameData.items;
+        for (let index = 0; index < items.length; index++) {
+            const item = items[index];
+            if (item.id !== catcherId) continue;
+            let catcherInList = item as Catcher;
+            return catcherInList.count > 0 ? index : -1;
+        }
+        return -1;
     }
 
     getAim(battlePet: BattlePet, toSelf: boolean, spBattleType: BattleType = null): BattlePet {

@@ -585,8 +585,7 @@ export class MmrTool {
         expl.startStep = startStep;
         expl.curStep = -1;
         expl.hiding = false;
-        expl.catching = false;
-        expl.cumCatchRate = 0;
+        expl.catcherId = null;
         return expl;
     }
 

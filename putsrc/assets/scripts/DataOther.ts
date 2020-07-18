@@ -15,8 +15,7 @@ import {
     DrinkModel,
     DrinkAimType,
     ExplModel,
-    StepTypesByMax,
-    RatesByStepType
+    StepTypesByMax
 } from './DataModel';
 import {
     BioType,
@@ -30,7 +29,8 @@ import {
     Equip,
     GameData,
     Item,
-    ItemType
+    ItemType,
+    Feature
 } from './DataSaved';
 
 import { petModelDict } from 'configs/PetModelDict';
@@ -38,9 +38,8 @@ import { skillModelDict } from 'configs/SkillModelDict';
 import { deepCopy } from './Utils';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { BattleController } from './BattleController';
-import { randomRate, random, getRandomOneInList, normalRandom, getRandomOneInListWithRate } from './Random';
+import { randomRate, random, getRandomOneInList } from './Random';
 import { actPosModelDict } from 'configs/ActPosModelDict';
-import { ExplUpdater } from './ExplUpdater';
 import { expModels } from 'configs/ExpModels';
 
 export const AmplAttriNames = ['', '经验', '货币', '默契', '声望'];
@@ -567,28 +566,45 @@ export class RealBattle {
         let step = curExpl.curStep; // step必然不是-1
         let stepMax = explModel.stepMax;
         let stepType = StepTypesByMax[stepMax][step];
-        let rates = RatesByStepType[stepType];
         let petIdLists = curPosModel.petIdLists;
         if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有宠物列表petIdLists，无法战斗`);
+        let petIds = petIdLists[stepType];
 
-        let enmeyPetType1 = getRandomOneInList(getRandomOneInListWithRate(petIdLists, rates) || petIdLists[0]);
-        let enmeyPetType2 = getRandomOneInList(getRandomOneInListWithRate(petIdLists, rates) || petIdLists[0]);
+        let enmeyPetType1 = getRandomOneInList(petIds);
+        let enmeyPetType2 = getRandomOneInList(petIds);
+
+        let { lvMin, lvMax } = this.getLvArea(curPosModel.lv);
+        let { rankMin, rankMax } = this.getRankArea(this.calcRankByExplStep(step));
 
         let petMmrs: PetMmr[] = [];
         for (let index = 0; index < petCount; index++) {
             let id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
-            let lv = Math.min(Math.max(1, curPosModel.lv - 2 + normalRandom(5)), expModels.length);
-            let rank = normalRandom(ExplUpdater.calcRankByExplStep(step));
-            rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
-            let features = [];
-
-            let featureR = Math.random();
-            if (lv > 5 && featureR > 0.3) features.push(FeatureDataTool.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
-            if (lv > 10 && featureR > 0.8) features.push(FeatureDataTool.createInbornFeature());
-
+            let lv = lvMin + random(lvMax - lvMin);
+            let rank = rankMin + random(rankMax - rankMin);
+            let features = this.getRandomFeatures(lv);
             petMmrs.push(MmrTool.createPetMmr(id, lv, rank, features));
         }
         return petMmrs;
+    }
+
+    static getRandomFeatures(lv: number): Feature[] {
+        let features = [];
+        let featureR = Math.random();
+        if (lv > 5 && featureR > 0.3) features.push(FeatureDataTool.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
+        if (lv > 10 && featureR > 0.8) features.push(FeatureDataTool.createInbornFeature());
+        return features;
+    }
+
+    static getLvArea(baseLv: number): { lvMin: number; lvMax: number } {
+        return { lvMin: Math.max(1, baseLv - 2), lvMax: Math.min(baseLv + 2, expModels.length) };
+    }
+
+    static getRankArea(baseRank: number): { rankMin: number; rankMax: number } {
+        return { rankMin: Math.max(1, baseRank - 2), rankMax: Math.min(baseRank + 2, PetRankNames.length - 1) };
+    }
+
+    static calcRankByExplStep(step: number) {
+        return step * 2 + 1;
     }
 
     clone() {
