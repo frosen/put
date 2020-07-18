@@ -453,7 +453,7 @@ export class EquipDataTool {
         return equip;
     }
 
-    static createRandomById(equipId: string) {
+    static createRandomById(equipId: string): Equip {
         let equipModel = equipModelDict[equipId];
         let lv = equipModel.lv;
 
@@ -584,7 +584,6 @@ export class MmrTool {
         expl.chngUpdCnt = 0;
         expl.startStep = startStep;
         expl.curStep = -1;
-        expl.failRdcCnt = 0;
         expl.hiding = false;
         expl.catching = false;
         expl.cumCatchRate = 0;

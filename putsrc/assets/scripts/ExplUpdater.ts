@@ -18,7 +18,8 @@ export enum ExplState {
     none,
     explore,
     battle,
-    recover
+    recover,
+    revive
 }
 
 enum ExplResult {
@@ -100,57 +101,92 @@ export class ExplUpdater {
     }
 
     recoverLastExpl(curExpl: ExplMmr) {
-        let startTime = curExpl.startTime;
-        if (curExpl.curBattle) {
-            let timePtr = curExpl.curBattle.startUpdCnt * ExplInterval + startTime;
+        let inBattle = curExpl.curBattle ? this.recoverExplInBattle(curExpl) : false;
 
-            let oldPage = this.page;
-            let endCall = this.battleCtrlr.endCallback;
-            this.page = null;
-            this.battleCtrlr.page = null;
-            this.battleCtrlr.endCallback = null;
+        if (!inBattle) {
+            // 计算step
+            let startUpdCnt = 0;
+            for (let idx = 0; idx < curExpl.startStep; idx++) startUpdCnt += UpdCntByStep[idx];
 
-            this.battleCtrlr.resetSelfTeam(true);
-            this.battleCtrlr.resetBattle(curExpl.curBattle);
+            let diff = Date.now() - curExpl.startTime;
+            let curUpdCnt = Math.floor(diff / ExplInterval);
 
-            let inBattle = true;
+            let realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
+            let lastStepUpdCnt = realChngUpdCnt + 1;
+            let nextStepUpdCnt = 0;
+            for (let idx = 0; idx < curExpl.curStep; idx++) nextStepUpdCnt += UpdCntByStep[idx];
+
             while (true) {
-                if (this.battleCtrlr.realBattle.start === false) {
-                    inBattle = false;
+                let realCurUpdCnt = curUpdCnt + startUpdCnt;
+                if (curExpl.curStep >= this.curExplModel.stepMax - 1) {
+                    this.recoverExplInExpl(curExpl, curExpl.curStep, lastStepUpdCnt, realCurUpdCnt);
                     break;
                 }
+                nextStepUpdCnt += UpdCntByStep[curExpl.curStep];
+                if (realCurUpdCnt < nextStepUpdCnt) {
+                    this.recoverExplInExpl(curExpl, curExpl.curStep, lastStepUpdCnt, realCurUpdCnt);
+                    break;
+                }
+                this.recoverExplInExpl(curExpl, curExpl.curStep, lastStepUpdCnt, nextStepUpdCnt);
+                lastStepUpdCnt = nextStepUpdCnt + 1;
+                curExpl.curStep++;
+            }
+        }
+    }
 
-                timePtr += ExplInterval;
-                if (timePtr > Date.now()) break;
-                this.battleCtrlr.update();
+    recoverExplInBattle(curExpl: ExplMmr): boolean {
+        let inBattle = true;
+        let timePtr = curExpl.curBattle.startUpdCnt * ExplInterval + curExpl.startTime;
+
+        let oldPage = this.page;
+        let endCall = this.battleCtrlr.endCallback;
+        this.page = null;
+        this.battleCtrlr.page = null;
+        this.battleCtrlr.endCallback = null;
+
+        this.battleCtrlr.resetSelfTeam(true);
+        this.battleCtrlr.resetBattle(curExpl.curBattle);
+
+        let updCnt = 0;
+        while (true) {
+            if (this.battleCtrlr.realBattle.start === false) {
+                inBattle = false;
+                break;
             }
 
-            this.page = oldPage;
-            this.battleCtrlr.page = oldPage;
-            this.battleCtrlr.endCallback = endCall;
-
-            if (inBattle) {
-                this.lastTime = timePtr - ExplInterval;
-                this.state = ExplState.battle;
-
-                // msg
-            } else {
-                startTime = timePtr;
-            }
-        } else {
-            startTime += curExpl.chngUpdCnt * ExplInterval;
+            timePtr += ExplInterval;
+            updCnt++;
+            if (timePtr > Date.now()) break;
+            this.battleCtrlr.update();
         }
 
-        let { selfLv, selfRank, enemyLv, enemyRank } = ExplUpdater.getAvgLvRankInMmr(this.gameData);
-        let explDura = ExplUpdater.calcExplDura(selfLv, selfRank, enemyLv, enemyRank);
+        this.page = oldPage;
+        this.battleCtrlr.page = oldPage;
+        this.battleCtrlr.endCallback = endCall;
 
-        let diff = Date.now() - startTime;
-        let explCount = Math.floor(diff / explDura);
-        if (explCount > 10) explCount = randomArea(explCount, 0.1); // 增加随机范围
+        if (inBattle) {
+            this.lastTime = timePtr - ExplInterval;
+            this.state = ExplState.battle;
+
+            // msg
+        } else {
+            curExpl.chngUpdCnt = curExpl.curBattle.startUpdCnt + updCnt;
+        }
+
+        return inBattle;
+    }
+
+    recoverExplInExpl(curExpl: ExplMmr, step: number, fromUpdCnt: number, toUpdCnt: number) {
+        let { selfLv, selfRank, enemyLv, enemyRank } = ExplUpdater.getAvgLvRankInMmr(this.gameData);
+        let explDuraUpdCnt = ExplUpdater.calcExplDuraUpdCnt(selfLv, selfRank, enemyLv, enemyRank);
+
+        let diffUpdCnt = toUpdCnt - fromUpdCnt + 1;
+        let explCnt = Math.floor(diffUpdCnt / explDuraUpdCnt);
+        if (explCnt > 10) explCnt = randomArea(explCnt, 0.1); // 增加随机范围
 
         let selfPets = GameDataTool.getReadyPets(this.gameData);
         let winRate = ExplUpdater.calcWinRate(selfLv, selfRank, enemyLv, enemyRank, selfPets.length);
-        let winCount = Math.ceil(explCount * randomArea(winRate, 0.1));
+        let winCount = Math.ceil(explCnt * randomArea(winRate, 0.1));
 
         // 计算获取的经验
         let exp = BattleController.calcExpByLvRank(selfLv, selfRank, enemyLv, enemyRank);
@@ -198,16 +234,14 @@ export class ExplUpdater {
         return step * 2 + 1;
     }
 
-    static calcExplDura(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
-        return this.calcBattleDura(selfLv, selfRank, enemyLv, enemyRank) + 15000; // 一场战斗时间，加上15秒恢复(1.5)和探索(13.5)时间
+    static calcExplDuraUpdCnt(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
+        return this.calcBtlDuraUpdCnt(selfLv, selfRank, enemyLv, enemyRank) + 20; // 一场战斗时间，加上2跳恢复18跳和探索
     }
 
-    static calcBattleDura(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
-        // 敌人血量 / 己方攻击伤害+技能伤害 * 每次攻击时间 * 平均一回合攻击次数之和
+    static calcBtlDuraUpdCnt(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
         let enemyHp = enemyLv * 30 * 25 * AttriRatioByRank[enemyRank];
         let selfDmg = selfLv * 30 * 2 * AttriRatioByRank[selfRank];
-        let duration = (enemyHp / selfDmg) * ExplInterval * 6 * 1000;
-        return duration;
+        return (enemyHp / selfDmg) * 6; // 敌人血量 / 己方攻击伤害+技能伤害 * 平均一回合攻击次数之和
     }
 
     static calcWinRate(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number, selfLen: number): number {
@@ -245,7 +279,8 @@ export class ExplUpdater {
     onUpdate() {
         if (this.state === ExplState.explore) this.updateExpl();
         else if (this.state === ExplState.battle) this.updateBattle();
-        else if (this.state === ExplState.recover) this.updateRecover();
+        else if (this.state === ExplState.recover) this.updateRecover(false);
+        else if (this.state === ExplState.revive) this.updateRecover(true);
 
         if (this.page) this.page.handleLog();
     }
@@ -302,7 +337,9 @@ export class ExplUpdater {
         }
 
         if (this.explCnt > 0) {
-            if (ExplUpdater.calcFindTreasure(sensRate)) {
+            let posId = this.curExpl.curPosId;
+            let curPosModel = actPosModelDict[posId];
+            if (curPosModel.eqpIdLists && curPosModel.eqpIdLists.length > 0 && ExplUpdater.calcFindTreasure(sensRate)) {
                 this.trsrFind = true;
                 this.trsrPrefind = true;
             } else {
@@ -388,7 +425,6 @@ export class ExplUpdater {
                 this.curExpl.curStep = this.curExpl.startStep;
                 this.explStepPercent = 0;
             } else if (curStep >= this.curExplModel.stepMax - 1) {
-                // 差进入秘境 llytodo
                 break;
             } else {
                 let startUpdCnt = 0;
@@ -397,9 +433,10 @@ export class ExplUpdater {
                 for (let idx = 0; idx < curStep; idx++) lastStepUpdCnt += UpdCntByStep[idx];
 
                 let curStepUpdCnt = UpdCntByStep[curStep];
-                let realUpdCnt = this.updCnt + startUpdCnt - this.curExpl.failRdcCnt;
+                let realUpdCnt = this.updCnt + startUpdCnt;
                 if (realUpdCnt >= lastStepUpdCnt + curStepUpdCnt) {
                     this.curExpl.curStep++;
+                    this.updateChgUpdCnt();
                     this.explStepPercent = 0;
                 } else {
                     let percent = Math.floor(((realUpdCnt - lastStepUpdCnt) * 100) / curStepUpdCnt);
@@ -442,35 +479,33 @@ export class ExplUpdater {
         let curPosModel = actPosModelDict[posId];
         let step = this.curExpl.curStep;
 
+        let stepMax = this.curExplModel.stepMax;
+        let stepType = StepTypesByMax[stepMax][step];
+        let rates = RatesByStepType[stepType];
+
         let itemName: string = null;
         let failRzt: string = null;
         if (this.trsrFind) {
-            let lvFrom = curPosModel.lv - 2;
-            let equip = EquipDataTool.createRandomByLv(lvFrom, lvFrom + 5, step < 1 ? 1 : step);
+            let eqpIdLists = curPosModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
+            let eqpIdList = getRandomOneInListWithRate(eqpIdLists, rates);
+            let eqpId = getRandomOneInList(eqpIdList);
+            let equip = EquipDataTool.createRandomById(eqpId);
             if (equip) {
                 let rzt = GameDataTool.addEquip(this.gameData, equip);
-                if (rzt != GameDataTool.SUC) failRzt = rzt;
-                else {
-                    let equipModel = equipModelDict[equip.id];
-                    itemName = equipModel.cnName;
-                }
-            }
+                if (rzt === GameDataTool.SUC) itemName = equipModelDict[equip.id].cnName;
+                else failRzt = rzt;
+            } else failRzt = '竟然没有获取到装备';
         }
 
         if (!failRzt && !itemName) {
-            let stepMax = this.curExplModel.stepMax;
-            let stepType = StepTypesByMax[stepMax][step];
-            let rates = RatesByStepType[stepType];
-
             let itemIdLists = curPosModel.itemIdLists;
             let itemIdList = getRandomOneInListWithRate(itemIdLists, rates);
             let itemId = getRandomOneInList(itemIdList);
             let rzt = GameDataTool.addCnsum(this.gameData, itemId, this.gainCnt);
-            if (rzt != GameDataTool.SUC) failRzt = rzt;
-            else {
+            if (rzt === GameDataTool.SUC) {
                 let model = CnsumDataTool.getModelById(itemId);
                 itemName = model.cnName + (this.gainCnt > 1 ? 'x' + String(this.gainCnt) : '');
-            }
+            } else failRzt = rzt;
         }
 
         if (this.page) {
@@ -509,36 +544,20 @@ export class ExplUpdater {
     }
 
     onBattleEnd(win: boolean) {
-        if (!win) this.reduceUpdCntByFail(); // 战斗失败时减少探索深度
         this.updateChgUpdCnt();
-        this.startRecover();
-    }
-
-    reduceUpdCntByFail() {
-        let curStep = this.curExpl.curStep;
-        if (curStep === 0) return;
-
-        let startUpdCnt = 0;
-        for (let idx = 0; idx < this.curExpl.startStep; idx++) startUpdCnt += UpdCntByStep[idx];
-        let lastStepUpdCnt = 0;
-        for (let idx = 0; idx < curStep; idx++) lastStepUpdCnt += UpdCntByStep[idx];
-
-        let curStepUpdCnt = UpdCntByStep[curStep];
-        this.curExpl.failRdcCnt += Math.floor(curStepUpdCnt * 0.1);
-
-        let realUpdCnt = this.updCnt + startUpdCnt - this.curExpl.failRdcCnt;
-        if (realUpdCnt < lastStepUpdCnt) this.curExpl.curStep--;
-
-        if (this.page) this.page.log('由于战斗失败，队伍探索度降低');
-
-        // ***** ui在下次exploration更新 *****
+        if (win) this.startRecover();
+        else this.startRevive();
     }
 
     startRecover() {
         this.state = ExplState.recover;
     }
 
-    updateRecover() {
+    startRevive() {
+        this.state = ExplState.revive;
+    }
+
+    updateRecover(revive: boolean) {
         let done = true;
         let selfTeam = this.battleCtrlr.realBattle.selfTeam;
         let battlePets = selfTeam.pets;
@@ -547,7 +566,7 @@ export class ExplUpdater {
             let hpMax = battlePet.hpMax;
             if (battlePet.hp < hpMax) {
                 done = false;
-                battlePet.hp += Math.floor(hpMax * 0.1);
+                battlePet.hp += Math.floor(hpMax * (revive ? 0.05 : 0.1));
                 battlePet.hp = Math.min(hpMax, battlePet.hp);
                 this.page.setUIofSelfPet(index);
             }
@@ -570,7 +589,7 @@ export class ExplUpdater {
         if (done) {
             this.startExpl();
         } else {
-            this.page.log('休息中');
+            this.page.log(revive ? '复原中' : '休息中');
         }
     }
 

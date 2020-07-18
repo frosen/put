@@ -18,16 +18,19 @@ export function randomArea(c: number, r: number) {
 }
 
 export function getRandomOneInList<T>(list: Array<T>): T {
-    return list[random(list.length)];
+    if (list instanceof Array) return list[random(list.length)];
+    else return null;
 }
 
 export function getRandomOneInListWithRate<T>(list: Array<T>, rates: number[]): T {
-    let r = Math.random();
-    for (let index = 0; index < list.length; index++) {
-        let rInList = rates[index];
-        if (!rInList || r < rInList) return list[index];
-    }
-    return null;
+    if (list instanceof Array) {
+        let r = Math.random();
+        for (let index = 0; index < list.length; index++) {
+            let rInList = rates[index];
+            if (!rInList || r < rInList) return list[index];
+        }
+        return null;
+    } else return null;
 }
 
 export function normalRandom(c: number): number {

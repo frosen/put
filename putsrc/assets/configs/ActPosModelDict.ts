@@ -25,8 +25,9 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         evts: [],
         movs: [{ id: 'GuangJiDianDaDao', price: 0, condition: {} }],
         loc: { x: 1000, y: 100 },
-        petIdLists: [[]],
-        itemIdLists: [[]]
+        petIdLists: [],
+        itemIdLists: [],
+        eqpIdLists: []
     },
     GuangJiDianDaDao: {
         id: 'GuangJiDianDaDao',
@@ -43,8 +44,11 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         loc: { x: 1100, y: 100 },
         petIdLists: [
             ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
+            null,
+            null,
             ['ShuiLengJiQiRen', 'DianZiShouWei']
         ],
-        itemIdLists: [['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']]
+        itemIdLists: [['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
+        eqpIdLists: []
     }
 };

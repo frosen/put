@@ -569,6 +569,7 @@ export class RealBattle {
         let stepType = StepTypesByMax[stepMax][step];
         let rates = RatesByStepType[stepType];
         let petIdLists = curPosModel.petIdLists;
+        if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有宠物列表petIdLists，无法战斗`);
 
         let enmeyPetType1 = getRandomOneInList(getRandomOneInListWithRate(petIdLists, rates) || petIdLists[0]);
         let enmeyPetType2 = getRandomOneInList(getRandomOneInListWithRate(petIdLists, rates) || petIdLists[0]);
