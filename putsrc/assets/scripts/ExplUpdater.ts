@@ -7,12 +7,11 @@
 import { BattlePageBase } from './BattlePageBase';
 import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, ItemType, Cnsum, CnsumType, ExplMmr, BattleMmr } from 'scripts/DataSaved';
-import { AttriRatioByRank } from './DataOther';
+import { GameData, ItemType, Cnsum, CnsumType, ExplMmr } from 'scripts/DataSaved';
+import { AttriRatioByRank, AmplAttriType } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { random, randomArea, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { ExplModel, StepTypesByMax, UpdCntByStep, ExplStepNames, RatesByStepType } from './DataModel';
-import { expModels } from 'configs/ExpModels';
 import { equipModelDict } from 'configs/EquipModelDict';
 
 export enum ExplState {
@@ -149,21 +148,26 @@ export class ExplUpdater {
         let explCount = Math.floor(diff / explDura);
         if (explCount > 10) explCount = randomArea(explCount, 0.1); // 增加随机范围
 
-        let winRate = ExplUpdater.calcWinRate(selfLv, selfRank, enemyLv, enemyRank);
+        let selfPets = GameDataTool.getReadyPets(this.gameData);
+        let winRate = ExplUpdater.calcWinRate(selfLv, selfRank, enemyLv, enemyRank, selfPets.length);
         let winCount = Math.ceil(explCount * randomArea(winRate, 0.1));
 
         // 计算获取的经验
         let exp = BattleController.calcExpByLvRank(selfLv, selfRank, enemyLv, enemyRank);
-        let totalExp = exp * winCount;
-        totalExp = randomArea(totalExp, 0.05);
+        let expTotal = exp * winCount;
+        expTotal = randomArea(expTotal, 0.05);
 
-        for (const pet of GameDataTool.getReadyPets(this.gameData)) {
-            // 计算饮品的加成 // llytodo
-            // expl中selfs的价值？？？？// llytodo
-            PetDataTool.addExp(pet, totalExp);
+        let gameDataJIT = this.memory.gameDataJIT;
+        for (const pet of selfPets) {
+            let expEach = expTotal * gameDataJIT.getAmplPercent(pet, AmplAttriType.exp); // 计算饮品的加成
+            PetDataTool.addExp(pet, Math.ceil(expEach));
         }
 
         // 计算捕获
+        if (curExpl.catching) {
+            let petList = [];
+            let catchers = [];
+        }
 
         // 计算获得的物品 // llytodo
 
@@ -206,9 +210,13 @@ export class ExplUpdater {
         return duration;
     }
 
-    static calcWinRate(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
-        return 0.9;
+    static calcWinRate(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number, selfLen: number): number {
+        let rate = Math.min(0.9 + (selfLv - enemyLv) * 0.05 + (selfRank - enemyRank) * 0.05, 1);
+        let lenRate = Math.min((selfLen + 1) * 0.2, 1);
+        return rate * lenRate;
     }
+
+    // -----------------------------------------------------------------
 
     destroy() {
         cc.director.getScheduler().unscheduleUpdate(this);
@@ -322,8 +330,9 @@ export class ExplUpdater {
     }
 
     static calcFindTreasure(rate: number): boolean {
-        let trsrRate = 0.04;
-        if (rate > 1) trsrRate += Math.min(rate - 1, 1) * 0.04;
+        let trsrRate: number;
+        if (rate >= 1) trsrRate = 0.04 + Math.min(rate - 1, 1) * 0.04;
+        else trsrRate = 0.02;
         return randomRate(trsrRate);
     }
 
@@ -343,7 +352,7 @@ export class ExplUpdater {
     static getPosSens(curExpl: ExplMmr) {
         if (curExpl.curStep < 0) return 999999;
         let curPosLv = actPosModelDict[curExpl.curPosId].lv;
-        return (100 + curPosLv * 15) * (1 + curExpl.curStep * 0.5);
+        return (100 + curPosLv * 15) * (1 + curExpl.curStep * 0.7);
     }
 
     static getSelfSens(battleCtrlr: BattleController) {
@@ -437,9 +446,7 @@ export class ExplUpdater {
         let failRzt: string = null;
         if (this.trsrFind) {
             let lvFrom = curPosModel.lv - 2;
-            if (step >= 4) lvFrom += 2;
-            else if (step >= 2) lvFrom += 1;
-            let equip = EquipDataTool.createRandomByLv(lvFrom, lvFrom + 5);
+            let equip = EquipDataTool.createRandomByLv(lvFrom, lvFrom + 5, step < 1 ? 1 : step);
             if (equip) {
                 let rzt = GameDataTool.addEquip(this.gameData, equip);
                 if (rzt != GameDataTool.SUC) failRzt = rzt;

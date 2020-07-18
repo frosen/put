@@ -484,13 +484,14 @@ export class EquipDataTool {
         return this.create(equipId, skillId, 0, featureLvs, affixes, 0);
     }
 
-    static createRandomByLv(lvFrom: number, lvTo: number): Equip {
+    static createRandomByLv(lvFrom: number, lvTo: number, rankMax: number = 9999): Equip {
         let equipIds: string[];
         let lv = lvFrom + random(lvTo - lvFrom + 1);
         if (lv < 0) lv = 0;
         if (lv >= equipIdsByLvRank.length) lv = equipIdsByLvRank.length - 1;
         let equipIdsByRank = equipIdsByLvRank[lv];
-        switch (equipIdsByRank.length) {
+        let len = Math.min(equipIdsByRank.length, rankMax);
+        switch (len) {
             case 0:
                 return null;
             case 1:
@@ -500,7 +501,7 @@ export class EquipDataTool {
                 equipIds = equipIdsByRank[randomRate(0.7) ? 0 : 1];
                 break;
             case 3:
-                equipIds = equipIdsByRank[getRandomOneInListWithRate([0, 1, 2], [0.7, 0.25])];
+                equipIds = equipIdsByRank[getRandomOneInListWithRate([0, 1, 2], [0.6, 0.9])];
                 break;
         }
         let equipId = getRandomOneInList(equipIds);

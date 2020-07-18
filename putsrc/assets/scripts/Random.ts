@@ -12,6 +12,7 @@ export function randomRate(r: number): boolean {
     return Math.random() < r;
 }
 
+/** c值的正负r范围 */
 export function randomArea(c: number, r: number) {
     return Math.floor(c * (1 + Math.random() * 2 * r - r));
 }
