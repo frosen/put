@@ -15,7 +15,8 @@ import {
     DrinkModel,
     DrinkAimType,
     ExplModel,
-    StepTypesByMax
+    StepTypesByMax,
+    ActPosModel
 } from './DataModel';
 import {
     BioType,
@@ -38,7 +39,7 @@ import { skillModelDict } from 'configs/SkillModelDict';
 import { deepCopy } from './Utils';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { BattleController } from './BattleController';
-import { randomRate, random, getRandomOneInList } from './Random';
+import { randomRate, random, getRandomOneInList, normalRandom } from './Random';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { expModels } from 'configs/ExpModels';
 
@@ -107,7 +108,7 @@ export class GameDataJIT {
 
 // -----------------------------------------------------------------
 
-export const AttriRatioByRank = [0, 1, 1.3, 1.63, 1.95, 2.28, 2.62, 3.02, 3.47, 3.99, 4.59, 5.28];
+export const AttriRatioByRank = [0, 1, 1.2, 1.4, 1.6, 1.8, 2.1, 2.4, 2.7, 3.1, 3.5, 3.9];
 const DmgRangeByBio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
 
 export class Pet2 {
@@ -573,14 +574,16 @@ export class RealBattle {
         let enmeyPetType1 = getRandomOneInList(petIds);
         let enmeyPetType2 = getRandomOneInList(petIds);
 
-        let { lvMin, lvMax } = this.getLvArea(curPosModel.lv);
-        let { rankMin, rankMax } = this.getRankArea(this.calcRankByExplStep(step));
+        let { base: lvBase, range: lvRange } = this.calcLvArea(curPosModel, step);
+        let { base: rankBase, range: rankRange } = this.calcRankAreaByExplStep(step);
 
         let petMmrs: PetMmr[] = [];
         for (let index = 0; index < petCount; index++) {
             let id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
-            let lv = lvMin + random(lvMax - lvMin);
-            let rank = rankMin + random(rankMax - rankMin);
+            let lv = lvBase - lvRange + normalRandom(lvRange * 2);
+            lv = Math.min(Math.max(1, lv), expModels.length);
+            let rank = rankBase - rankRange + normalRandom(rankRange * 2);
+            rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
             let features = this.getRandomFeatures(lv);
             petMmrs.push(MmrTool.createPetMmr(id, lv, rank, features));
         }
@@ -595,16 +598,19 @@ export class RealBattle {
         return features;
     }
 
-    static getLvArea(baseLv: number): { lvMin: number; lvMax: number } {
-        return { lvMin: Math.max(1, baseLv - 2), lvMax: Math.min(baseLv + 2, expModels.length) };
+    static calcLvArea(posModel: ActPosModel, step: number): { base: number; range: number } {
+        return { base: posModel.lv + step, range: 2 };
     }
 
-    static getRankArea(baseRank: number): { rankMin: number; rankMax: number } {
-        return { rankMin: Math.max(1, baseRank - 2), rankMax: Math.min(baseRank + 2, PetRankNames.length - 1) };
-    }
+    static RankByExplStep: { base: number; range: number }[] = [
+        { base: 1, range: 2 },
+        { base: 3, range: 2 },
+        { base: 4, range: 3 },
+        { base: 5, range: 3 }
+    ];
 
-    static calcRankByExplStep(step: number) {
-        return step * 2 + 1;
+    static calcRankAreaByExplStep(step: number): { base: number; range: number } {
+        return this.RankByExplStep[step];
     }
 
     clone() {
