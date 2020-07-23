@@ -15,8 +15,18 @@ import { petModelDict } from 'configs/PetModelDict';
 import { deepCopy } from 'scripts/Utils';
 import { SkillModel, SkillType, SkillAimtype, SkillDirType, CatcherModel } from 'scripts/DataModel';
 import { Pet, Feature, EleType, BattleType, EleTypeNames, GameData, Catcher, BattleMmr } from 'scripts/DataSaved';
-import { RealBattle, BattleTeam, BattlePet, BattleBuff, RageMax, AmplAttriType, BattlePetLenMax } from 'scripts/DataOther';
+import {
+    RealBattle,
+    BattleTeam,
+    BattlePet,
+    BattleBuff,
+    RageMax,
+    AmplAttriType,
+    BattlePetLenMax,
+    AttriRatioByRank
+} from 'scripts/DataOther';
 import { catcherModelDict } from 'configs/CatcherModelDict';
+import { BaseController } from './BaseController';
 
 // random with seed -----------------------------------------------------------------
 
@@ -724,27 +734,30 @@ export class BattleController {
         if (this.endCallback) this.endCallback(selfWin);
     }
 
+    static getAvg(list: any[], call: (a: any) => number): number {
+        let total: number = 0;
+        for (const one of list) total += call(one);
+        total /= list.length;
+        return total;
+    }
+
     receiveExp() {
         let rb = this.realBattle;
-        let expRatebyPetCount = ExpRateByPetCount[rb.selfTeam.pets.length];
         let gameDataJIT = this.memory.gameDataJIT;
+
+        let selfLv = BattleController.getAvg(rb.selfTeam.pets, (bPet: BattlePet) => bPet.pet.lv);
+        let enemyLv = BattleController.getAvg(rb.enemyTeam.pets, (bPet: BattlePet) => bPet.pet.lv);
+        let selfRank = BattleController.getAvg(rb.selfTeam.pets, (bPet: BattlePet) => bPet.pet.rank);
+        let enemyRank = RealBattle.calcRankAreaByExplStep(this.gameData.curExpl.curStep).base;
+        let exp = BattleController.calcExpByLvRank(selfLv, enemyLv, selfRank, enemyRank);
 
         for (const selfBPet of rb.selfTeam.pets) {
             let selfPet = selfBPet.pet;
-            if (selfPet.lv >= expModels.length) return;
 
-            let expTotal = 0;
-            for (const eBPet of rb.enemyTeam.pets) {
-                let ePet = eBPet.pet;
-                let exp = BattleController.calcExpByLvRank(selfPet.lv, selfPet.rank, ePet.lv, ePet.rank);
-                expTotal += exp;
-            }
+            let curExp = exp * gameDataJIT.getAmplPercent(selfBPet.pet, AmplAttriType.exp);
+            curExp = Math.ceil(curExp);
 
-            expTotal *= expRatebyPetCount;
-            expTotal *= gameDataJIT.getAmplPercent(selfBPet.pet, AmplAttriType.exp);
-            expTotal = Math.ceil(expTotal);
-
-            let curExpPercent = PetDataTool.addExp(selfPet, expTotal);
+            let curExpPercent = PetDataTool.addExp(selfPet, curExp);
             if (this.page) {
                 let petName = petModelDict[selfPet.id].cnName;
                 if (curExpPercent <= 0) {
@@ -753,19 +766,19 @@ export class BattleController {
                     this.page.log(`${petName}升到了${selfPet.lv}级`);
                 } else {
                     let expRate = (curExpPercent * 100).toFixed(1);
-                    this.page.log(`${petName}获得${expTotal}点经验，升级进度完成了${expRate}%`);
+                    this.page.log(`${petName}获得${curExp}点经验，升级进度完成了${expRate}%`);
                 }
             }
         }
     }
 
-    static calcExpByLvRank(selfLv: number, selfRank: number, enemyLv: number, enemyRank: number): number {
+    static calcExpByLvRank(selfLv: number, enemyLv: number, selfRank: number, enemyRank: number): number {
         let exp = enemyLv * 5 + 45;
-        if (enemyRank >= selfRank) exp *= 1 + (enemyRank - selfRank) * 0.05;
-        else exp *= AttriRatioByRank[enemyRank] / AttriRatioByRank[selfRank];
 
         if (enemyLv >= selfLv) exp *= 1 + (enemyLv - selfLv) * 0.05;
         else exp *= 1 - Math.min(selfLv - enemyLv, 8) / 8;
+
+        exp *= AttriRatioByRank[enemyRank] / AttriRatioByRank[selfRank];
 
         return exp;
     }
