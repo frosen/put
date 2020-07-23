@@ -13,10 +13,14 @@ import { CellPosInfo } from '../cells/cell_pos_info/scripts/CellPosInfo';
 import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { PageActPos } from './PageActPos';
-import { PageSwitchAnim } from 'scripts/BaseController';
+import { PageSwitchAnim, BaseController } from 'scripts/BaseController';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
 import { ActPos } from 'scripts/DataSaved';
 import { ActPosModel } from 'scripts/DataModel';
+import { GameDataTool } from 'scripts/Memory';
+import { PageBase } from 'scripts/PageBase';
+
+type CellActInfo = { cnName: string; page: { new (): PageBase }; check: (ctrlr: BaseController) => string };
 
 const CellActInfo = {
     work: { cnName: '工作介绍所' },
@@ -27,7 +31,14 @@ const CellActInfo = {
     recycler: { cnName: '回收站' },
     store: { cnName: '仓库' },
     awardsCenter: { cnName: '奖励中心' },
-    exploration: { cnName: '探索', page: PageActExpl }
+    exploration: {
+        cnName: '探索',
+        page: PageActExpl,
+        check: (ctrlr: BaseController): string => {
+            if (GameDataTool.getReadyPets(ctrlr.memory.gameData).length >= 2) return '';
+            else return '前方危险，请保证你队伍中有至少两只宠物，且处于备战状态！（宠物列表中点击状态按钮可变更状态）';
+        }
+    }
 };
 
 @ccclass
@@ -119,14 +130,14 @@ export class PageActPosLVD extends ListViewDelegate {
             let actId1 = this.curActPosModel.acts[actIdx];
             let actInfo1 = CellActInfo[actId1];
             cell.setBtn1(actInfo1.cnName, () => {
-                this.ctrlr.pushPage(actInfo1.page);
+                this.gotoPage(actInfo1);
             });
 
             if (actIdx + 1 < this.curActPosModel.acts.length) {
                 let actId2 = this.curActPosModel.acts[actIdx + 1];
                 let actInfo2 = CellActInfo[actId2];
                 cell.setBtn2(actInfo2.cnName, () => {
-                    this.ctrlr.pushPage(actInfo2.page);
+                    this.gotoPage(actInfo2);
                 });
             } else {
                 cell.hideBtn2();
@@ -148,6 +159,16 @@ export class PageActPosLVD extends ListViewDelegate {
                     });
                 }
             });
+        }
+    }
+
+    gotoPage(actInfo: CellActInfo) {
+        if (!actInfo.hasOwnProperty('check')) {
+            this.ctrlr.pushPage(actInfo.page);
+        } else {
+            let errorStr = actInfo.check(this.ctrlr);
+            if (!errorStr) this.ctrlr.pushPage(actInfo.page);
+            else this.ctrlr.popToast(errorStr);
         }
     }
 

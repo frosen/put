@@ -8,7 +8,6 @@ import { Memory, GameDataTool, PetDataTool } from 'scripts/Memory';
 import { BattlePageBase } from './BattlePageBase';
 import { randomRate } from 'scripts/Random';
 
-import { expModels } from 'configs/ExpModels';
 import { skillModelDict } from 'configs/SkillModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { petModelDict } from 'configs/PetModelDict';
@@ -16,16 +15,7 @@ import { petModelDict } from 'configs/PetModelDict';
 import { deepCopy } from 'scripts/Utils';
 import { SkillModel, SkillType, SkillAimtype, SkillDirType, CatcherModel } from 'scripts/DataModel';
 import { Pet, Feature, EleType, BattleType, EleTypeNames, GameData, Catcher, BattleMmr } from 'scripts/DataSaved';
-import {
-    RealBattle,
-    BattleTeam,
-    BattlePet,
-    BattleBuff,
-    RageMax,
-    AmplAttriType,
-    AttriRatioByRank,
-    BattlePetLenMax
-} from 'scripts/DataOther';
+import { RealBattle, BattleTeam, BattlePet, BattleBuff, RageMax, AmplAttriType, BattlePetLenMax } from 'scripts/DataOther';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 
 // random with seed -----------------------------------------------------------------
@@ -54,8 +44,6 @@ function getCurSeed(): number {
 }
 
 // -----------------------------------------------------------------
-
-const ExpRateByPetCount = [0, 1, 0.53, 0.37, 0.29, 0.23];
 
 const ComboHitRate = [0, 1, 1.1, 1.2]; // combo从1开始
 const FormationHitRate = [1, 0.95, 0.9, 0.9, 0.85]; // 阵型顺序从0开始
@@ -155,7 +143,9 @@ export class BattleController {
         setSeed(seed);
 
         // 更新battle
-        this.realBattle.resetBattle(null, spcBtlId, this.gameData.curExpl);
+        let curExpl = this.gameData.curExpl;
+        let petCount = GameDataTool.getReadyPets(this.gameData).length;
+        this.realBattle.resetBattle(null, spcBtlId, { curExpl, petCount });
         if (this.debugMode) {
             this.realBattleCopys.length = 0;
             this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(this.realBattle) });

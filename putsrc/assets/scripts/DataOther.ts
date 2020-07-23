@@ -518,7 +518,7 @@ export class RealBattle {
         });
     }
 
-    resetBattle(ePetMmrs: PetMmr[], spcBtlId: number, curExpl: ExplMmr) {
+    resetBattle(ePetMmrs: PetMmr[], spcBtlId: number, createData: { curExpl: ExplMmr; petCount: number }) {
         if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
 
         let realEPetMmrs: PetMmr[];
@@ -526,7 +526,7 @@ export class RealBattle {
             realEPetMmrs = ePetMmrs;
         } else if (spcBtlId) {
             // llytodo
-        } else realEPetMmrs = RealBattle.createEPetMmrs(curExpl);
+        } else realEPetMmrs = RealBattle.createEPetMmrs(createData.curExpl, createData.petCount);
 
         this.enemyTeam.reset(realEPetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
             const ePetMmr = realEPetMmrs[petIdx];
@@ -557,13 +557,12 @@ export class RealBattle {
         this.start = true;
     }
 
-    static createEPetMmrs(curExpl: ExplMmr): PetMmr[] {
+    static createEPetMmrs(curExpl: ExplMmr, count: number): PetMmr[] {
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
         let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
 
-        let petCountMax = curPosModel.lv < 10 ? 4 : 5;
-        let petCount = random(petCountMax) + 1;
+        let petCount = randomRate(0.5) ? count : count - 1;
         let step = curExpl.curStep; // step必然不是-1
         let stepMax = explModel.stepMax;
         let stepType = StepTypesByMax[stepMax][step];
