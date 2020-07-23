@@ -6,7 +6,7 @@
 
 import { Memory, GameDataTool, PetDataTool } from 'scripts/Memory';
 import { BattlePageBase } from './BattlePageBase';
-import { randomRate } from 'scripts/Random';
+import { randomRate, getRandomOneInList } from 'scripts/Random';
 
 import { skillModelDict } from 'configs/SkillModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
@@ -27,6 +27,7 @@ import {
 } from 'scripts/DataOther';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { BaseController } from './BaseController';
+import { battleSequence } from 'configs/BattleSequence';
 
 // random with seed -----------------------------------------------------------------
 
@@ -250,6 +251,7 @@ export class BattleController {
 
         rb.curOrderIdx = nextOrderIdx;
         rb.atkRound++;
+        let curSequenceIdx = rb.sequnence[rb.curOrderIdx];
 
         // 执行当前宠物的攻击
         let curExePet: BattlePet = rb.order[nextOrderIdx];
@@ -261,13 +263,13 @@ export class BattleController {
             if (rb.start === false) break;
             let nextNextId = this.getNextOrderIndex();
             if (nextNextId === -1) break;
-            let nextPet = rb.order[nextNextId];
-            if (nextPet.beEnemy !== curExePet.beEnemy) break;
+            if (rb.sequnence[nextNextId] !== curSequenceIdx) break;
+
             rb.curOrderIdx = nextNextId;
             rb.combo++;
+            let nextPet = rb.order[nextNextId];
             let suc = this.attack(nextPet);
             if (!suc) rb.combo--; // 未成功攻击则不算连击
-            if (rb.combo >= 3) break; // 最多三连
         }
 
         if (this.page) {
@@ -281,10 +283,8 @@ export class BattleController {
         let idx = rb.curOrderIdx + 1;
         while (true) {
             if (idx >= rb.order.length) return -1;
-            let curExePet = rb.order[idx];
-            if (curExePet.hp > 0) {
-                return idx;
-            }
+            let curPet = rb.order[idx];
+            if (curPet.hp > 0) return idx;
             idx++;
         }
     }
@@ -304,6 +304,10 @@ export class BattleController {
         rb.order.sort((a: BattlePet, b: BattlePet): number => {
             return b.pet2.speed - a.pet2.speed;
         });
+
+        let petAliveCnt = 0;
+        for (const bPet of rb.order) if (bPet.hp > 0) petAliveCnt++;
+        rb.sequnence = getRandomOneInList(battleSequence[petAliveCnt]);
 
         rb.curOrderIdx = -1;
         rb.battleRound++;
@@ -734,20 +738,13 @@ export class BattleController {
         if (this.endCallback) this.endCallback(selfWin);
     }
 
-    static getAvg(list: any[], call: (a: any) => number): number {
-        let total: number = 0;
-        for (const one of list) total += call(one);
-        total /= list.length;
-        return total;
-    }
-
     receiveExp() {
         let rb = this.realBattle;
         let gameDataJIT = this.memory.gameDataJIT;
 
-        let selfLv = BattleController.getAvg(rb.selfTeam.pets, (bPet: BattlePet) => bPet.pet.lv);
-        let enemyLv = BattleController.getAvg(rb.enemyTeam.pets, (bPet: BattlePet) => bPet.pet.lv);
-        let selfRank = BattleController.getAvg(rb.selfTeam.pets, (bPet: BattlePet) => bPet.pet.rank);
+        let selfLv = rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv);
+        let enemyLv = rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv);
+        let selfRank = rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank);
         let enemyRank = RealBattle.calcRankAreaByExplStep(this.gameData.curExpl.curStep).base;
         let exp = BattleController.calcExpByLvRank(selfLv, enemyLv, selfRank, enemyRank);
 

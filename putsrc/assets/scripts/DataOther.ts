@@ -459,6 +459,7 @@ export class RealBattle {
     atkRound: number = 0;
 
     order: BattlePet[] = [];
+    sequnence: number[] = null;
     curOrderIdx: number = 0;
 
     lastAim: BattlePet = null;

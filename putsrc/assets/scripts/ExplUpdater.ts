@@ -127,9 +127,9 @@ export class ExplUpdater {
 
             // 战斗状态
             let selfPets = GameDataTool.getReadyPets(this.gameData);
-            let selfLv = BattleController.getAvg(selfPets, (pet: Pet) => pet.lv);
-            let selfRank = BattleController.getAvg(selfPets, (pet: Pet) => pet.rank);
-            let selfPwr = BattleController.getAvg(selfPets, (pet: Pet) => {
+            let selfLv = selfPets.getAvg((pet: Pet) => pet.lv);
+            let selfRank = selfPets.getAvg((pet: Pet) => pet.rank);
+            let selfPwr = selfPets.getAvg((pet: Pet) => {
                 let totalEqpLv = 0;
                 let featureLvs = 0;
                 for (const eqp of pet.equips) {

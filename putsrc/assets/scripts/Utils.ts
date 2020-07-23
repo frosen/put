@@ -74,3 +74,11 @@ Array.prototype.getOne = function (callback) {
     }
     return null;
 };
+
+// @ts-ignore
+Array.prototype.getAvg = function (call: (a: any) => number) {
+    let total: number = 0;
+    for (const one of this) total += call(one);
+    total /= this.length;
+    return total;
+};
