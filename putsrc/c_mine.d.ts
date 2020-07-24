@@ -45,7 +45,8 @@ interface Array<T> {
     removeIndex(idx: number);
     getLast(): T;
     getOne(callback: (item: T) => boolean): T;
-    getAvg(call: (a: any) => number): number;
+    getAvg(call: (item: T) => number): number;
+    getMax(call: (item: T) => number): number;
 }
 
 // -----------------------------------------------------------------

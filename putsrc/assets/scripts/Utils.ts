@@ -82,3 +82,10 @@ Array.prototype.getAvg = function (call: (a: any) => number) {
     total /= this.length;
     return total;
 };
+
+// @ts-ignore
+Array.prototype.getMax = function (call: (a: any) => number) {
+    let max: number = -99999999;
+    for (const one of this) max = Math.max(max, call(one));
+    return max;
+};

@@ -39,7 +39,7 @@ import { skillModelDict } from 'configs/SkillModelDict';
 import { deepCopy } from './Utils';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { BattleController } from './BattleController';
-import { randomRate, random, getRandomOneInList, normalRandom } from './Random';
+import { randomRate, getRandomOneInList, normalRandom } from './Random';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { expModels } from 'configs/ExpModels';
 

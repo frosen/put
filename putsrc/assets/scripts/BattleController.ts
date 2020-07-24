@@ -4,29 +4,18 @@
  * luleyan
  */
 
-import { Memory, GameDataTool, PetDataTool } from 'scripts/Memory';
+import { Memory, GameDataTool } from 'scripts/Memory';
 import { BattlePageBase } from './BattlePageBase';
-import { randomRate, getRandomOneInList } from 'scripts/Random';
+import { getRandomOneInList } from 'scripts/Random';
 
 import { skillModelDict } from 'configs/SkillModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { petModelDict } from 'configs/PetModelDict';
 
 import { deepCopy } from 'scripts/Utils';
-import { SkillModel, SkillType, SkillAimtype, SkillDirType, CatcherModel } from 'scripts/DataModel';
-import { Pet, Feature, EleType, BattleType, EleTypeNames, GameData, Catcher, BattleMmr } from 'scripts/DataSaved';
-import {
-    RealBattle,
-    BattleTeam,
-    BattlePet,
-    BattleBuff,
-    RageMax,
-    AmplAttriType,
-    BattlePetLenMax,
-    AttriRatioByRank
-} from 'scripts/DataOther';
-import { catcherModelDict } from 'configs/CatcherModelDict';
-import { BaseController } from './BaseController';
+import { SkillModel, SkillType, SkillAimtype, SkillDirType } from 'scripts/DataModel';
+import { Pet, EleType, BattleType, EleTypeNames, GameData, Catcher, BattleMmr } from 'scripts/DataSaved';
+import { RealBattle, BattleTeam, BattlePet, BattleBuff, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { battleSequence } from 'configs/BattleSequence';
 
 // random with seed -----------------------------------------------------------------
@@ -712,15 +701,11 @@ export class BattleController {
 
     exitBattle(selfWin: boolean) {
         let rb = this.realBattle;
-
-        if (selfWin) {
-            this.receiveExp(); // 计算获得的exp
-            this.executePetCatch();
-        }
-
         rb.start = false;
-        GameDataTool.deleteBattle(this.gameData);
 
+        if (this.endCallback) this.endCallback(selfWin); // callback中可能会用到battle数据，所以放在清理前
+
+        GameDataTool.deleteBattle(this.gameData);
         if (this.page) {
             // 清理敌人状态
             for (let index = 0; index < BattlePetLenMax; index++) {
@@ -732,96 +717,6 @@ export class BattleController {
             for (const selfPet of rb.selfTeam.pets) {
                 selfPet.buffDatas.length = 0;
                 this.page.removeBuff(selfPet.beEnemy, selfPet.idx, null);
-            }
-        }
-
-        if (this.endCallback) this.endCallback(selfWin);
-    }
-
-    receiveExp() {
-        let rb = this.realBattle;
-        let gameDataJIT = this.memory.gameDataJIT;
-
-        let selfLv = rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv);
-        let enemyLv = rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv);
-        let selfRank = rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank);
-        let enemyRank = RealBattle.calcRankAreaByExplStep(this.gameData.curExpl.curStep).base;
-        let exp = BattleController.calcExpByLvRank(selfLv, enemyLv, selfRank, enemyRank);
-
-        for (const selfBPet of rb.selfTeam.pets) {
-            let selfPet = selfBPet.pet;
-
-            let curExp = exp * gameDataJIT.getAmplPercent(selfBPet.pet, AmplAttriType.exp);
-            curExp = Math.ceil(curExp);
-
-            let curExpPercent = PetDataTool.addExp(selfPet, curExp);
-            if (this.page) {
-                let petName = petModelDict[selfPet.id].cnName;
-                if (curExpPercent <= 0) {
-                    // 跳过
-                } else if (curExpPercent >= 1) {
-                    this.page.log(`${petName}升到了${selfPet.lv}级`);
-                } else {
-                    let expRate = (curExpPercent * 100).toFixed(1);
-                    this.page.log(`${petName}获得${curExp}点经验，升级进度完成了${expRate}%`);
-                }
-            }
-        }
-    }
-
-    static calcExpByLvRank(selfLv: number, enemyLv: number, selfRank: number, enemyRank: number): number {
-        let exp = enemyLv * 5 + 45;
-
-        if (enemyLv >= selfLv) exp *= 1 + (enemyLv - selfLv) * 0.05;
-        else exp *= 1 - Math.min(selfLv - enemyLv, 8) / 8;
-
-        exp *= AttriRatioByRank[enemyRank] / AttriRatioByRank[selfRank];
-
-        return exp;
-    }
-
-    executePetCatch() {
-        let gameData = this.gameData;
-        let catcherId = gameData.curExpl.catcherId;
-        if (!catcherId) return;
-
-        let catcherIdx = BattleController.getCatcherIdxInItemList(gameData, catcherId);
-        if (catcherIdx === -1) {
-            gameData.curExpl.catcherId = null;
-            if (this.page) this.page.setCatchActive(false);
-            return;
-        }
-
-        let catcherModel: CatcherModel = catcherModelDict[catcherId];
-
-        for (const battlePet of this.realBattle.enemyTeam.pets) {
-            // 计算能否捕捉
-            let pet = battlePet.pet;
-            let petModel = petModelDict[pet.id];
-            if (pet.lv < catcherModel.lvMin || catcherModel.lvMax < pet.lv) continue;
-            if (pet.rank < catcherModel.rankMin || catcherModel.rankMax < pet.rank) continue;
-            if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;
-            if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) continue;
-            if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) continue;
-
-            // 计算成功几率
-            let suc = randomRate(catcherModel.rate * 0.01);
-
-            if (suc) {
-                let features: Feature[] = deepCopy(pet.inbornFeatures) as Feature[];
-                let rztStr = GameDataTool.addCaughtPet(gameData, pet.id, pet.lv, pet.rank, features);
-                if (rztStr === GameDataTool.SUC) {
-                    if (this.page) this.page.log(`成功捕获${petModelDict[pet.id].cnName}`);
-                    let catcher = this.memory.gameData.items[catcherIdx] as Catcher;
-                    if (catcher.count === 1) {
-                        gameData.curExpl.catcherId = null;
-                        if (this.page) this.page.setCatchActive(false);
-                    }
-                    GameDataTool.deleteItem(gameData, catcherIdx);
-                } else {
-                    if (this.page) this.page.log(`捕获失败：${rztStr}`);
-                }
-                return; // 每场战斗只能捕捉一只宠物
             }
         }
     }

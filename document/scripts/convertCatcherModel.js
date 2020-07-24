@@ -24,7 +24,7 @@ convert('../put.xls', '../../putsrc/assets/configs/CatcherModelDict.ts', 'catche
         let battleType = Number(rowData[8].substr(0, 1));
 
         const cnNameByRank = ['', '', 'Ⅱ'];
-        const rateByRank = [0, 10, 30];
+        const rateByRank = [0, 6, 16];
 
         for (let index = 1; index <= 2; index++) {
             let newId = id + String(index);

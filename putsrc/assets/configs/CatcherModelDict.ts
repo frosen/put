@@ -17,7 +17,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 0,
         eleType: 0,
         battleType: 0,
-        rate: 10
+        rate: 6
     },
     PuTongXianJing2: {
         id: 'PuTongXianJing2',
@@ -29,7 +29,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 0,
         eleType: 0,
         battleType: 0,
-        rate: 30
+        rate: 16
     },
     GaoJiXianJing1: {
         id: 'GaoJiXianJing1',
@@ -41,7 +41,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 0,
         eleType: 0,
         battleType: 0,
-        rate: 10
+        rate: 6
     },
     GaoJiXianJing2: {
         id: 'GaoJiXianJing2',
@@ -53,7 +53,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 0,
         eleType: 0,
         battleType: 0,
-        rate: 30
+        rate: 16
     },
     MoFaXianJing1: {
         id: 'MoFaXianJing1',
@@ -65,7 +65,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 2,
         eleType: 0,
         battleType: 0,
-        rate: 10
+        rate: 6
     },
     MoFaXianJing2: {
         id: 'MoFaXianJing2',
@@ -77,7 +77,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 2,
         eleType: 0,
         battleType: 0,
-        rate: 30
+        rate: 16
     },
     JiXieXianJing1: {
         id: 'JiXieXianJing1',
@@ -89,7 +89,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 3,
         eleType: 0,
         battleType: 0,
-        rate: 10
+        rate: 6
     },
     JiXieXianJing2: {
         id: 'JiXieXianJing2',
@@ -101,7 +101,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 3,
         eleType: 0,
         battleType: 0,
-        rate: 30
+        rate: 16
     },
     BuShouJia1: {
         id: 'BuShouJia1',
@@ -113,7 +113,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 4,
         eleType: 0,
         battleType: 0,
-        rate: 10
+        rate: 6
     },
     BuShouJia2: {
         id: 'BuShouJia2',
@@ -125,7 +125,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 4,
         eleType: 0,
         battleType: 0,
-        rate: 30
+        rate: 16
     },
     YouMoCao1: {
         id: 'YouMoCao1',
@@ -137,7 +137,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 2,
         eleType: 0,
         battleType: 0,
-        rate: 10
+        rate: 6
     },
     YouMoCao2: {
         id: 'YouMoCao2',
@@ -149,7 +149,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 2,
         eleType: 0,
         battleType: 0,
-        rate: 30
+        rate: 16
     },
     CiLiPan1: {
         id: 'CiLiPan1',
@@ -161,7 +161,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 3,
         eleType: 0,
         battleType: 0,
-        rate: 10
+        rate: 6
     },
     CiLiPan2: {
         id: 'CiLiPan2',
@@ -173,7 +173,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 3,
         eleType: 0,
         battleType: 0,
-        rate: 30
+        rate: 16
     },
     ShiXiangHua1: {
         id: 'ShiXiangHua1',
@@ -185,7 +185,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 4,
         eleType: 0,
         battleType: 0,
-        rate: 10
+        rate: 6
     },
     ShiXiangHua2: {
         id: 'ShiXiangHua2',
@@ -197,6 +197,6 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 4,
         eleType: 0,
         battleType: 0,
-        rate: 30
+        rate: 16
     }
 };
