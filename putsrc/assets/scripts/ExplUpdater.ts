@@ -21,8 +21,7 @@ export enum ExplState {
     none,
     explore,
     battle,
-    recover,
-    revive
+    recover
 }
 
 enum ExplResult {
@@ -32,16 +31,15 @@ enum ExplResult {
 }
 
 /** 探索时间间隔毫秒 */
-const ExplInterval = 750;
+const ExplIntervalNormal = 750;
+const ExplIntervalFast = 150;
+let ExplInterval = ExplIntervalNormal;
 
 export class ExplUpdater {
     page: BattlePageBase = null;
     memory: Memory = null;
     gameData: GameData = null;
     battleCtrlr: BattleController = null;
-
-    curExpl: ExplMmr = null;
-    curExplModel: ExplModel = null;
 
     _id: string = 'expl'; // 用于cc.Scheduler.update
 
@@ -62,14 +60,12 @@ export class ExplUpdater {
         if (!curExpl) this.createExpl(spcBtlId, startStep);
         else this.recoverLastExpl(this.gameData);
 
-        this.curExpl = this.gameData.curExpl;
-        this.curExplModel = actPosModelDict[this.curExpl.curPosId].actDict['exploration'] as ExplModel;
-
         cc.director.getScheduler().scheduleUpdate(this, 0, false);
         this.lastTime = Date.now();
 
         this.page.ctrlr.debugTool.setShortCut('ww', this.pauseOrResume.bind(this));
         this.page.ctrlr.debugTool.setShortCut('gg', this.goNext.bind(this));
+        this.page.ctrlr.debugTool.setShortCut('ff', this.fastUpdate.bind(this));
     }
 
     pauseOrResume() {
@@ -88,6 +84,12 @@ export class ExplUpdater {
         this.lastTime = Date.now();
         this.updCnt += 1;
         this.onUpdate();
+    }
+
+    fastUpdate() {
+        ExplInterval = ExplInterval === ExplIntervalNormal ? ExplIntervalFast : ExplIntervalNormal;
+        if (ExplInterval === ExplIntervalFast) cc.log('PUT 加速');
+        else cc.log('PUT 恢复正常速度');
     }
 
     // -----------------------------------------------------------------
@@ -171,9 +173,10 @@ export class ExplUpdater {
             let catchSt = { catcherIdx };
 
             // 计算探索
+            let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
             while (true) {
                 let realCurUpdCnt = curUpdCnt + startUpdCnt;
-                if (curExpl.curStep >= this.curExplModel.stepMax - 1) {
+                if (curExpl.curStep >= curExplModel.stepMax - 1) {
                     this.recoverExplInExpl(curExpl.curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
                     break;
                 }
@@ -408,6 +411,7 @@ export class ExplUpdater {
         this.memory.removeDataListener(this);
         this.page.ctrlr.debugTool.removeShortCut('ww');
         this.page.ctrlr.debugTool.removeShortCut('gg');
+        this.page.ctrlr.debugTool.removeShortCut('ff');
         this.battleCtrlr.destroy();
     }
 
@@ -429,8 +433,7 @@ export class ExplUpdater {
     onUpdate() {
         if (this.state === ExplState.explore) this.updateExpl();
         else if (this.state === ExplState.battle) this.updateBattle();
-        else if (this.state === ExplState.recover) this.updateRecover(false);
-        else if (this.state === ExplState.revive) this.updateRecover(true);
+        else if (this.state === ExplState.recover) this.updateRecover();
 
         if (this.page) this.page.handleLog();
     }
@@ -469,6 +472,8 @@ export class ExplUpdater {
     startExpl() {
         this.handleSelfTeamChange();
 
+        let curExpl = this.gameData.curExpl;
+
         let enter = this.state !== ExplState.explore;
         this.state = ExplState.explore;
 
@@ -476,8 +481,8 @@ export class ExplUpdater {
 
         if (enter) {
             this.explRdCnt = random(5);
-            if (this.gameData.curExpl.hiding) {
-                let agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.battleCtrlr);
+            if (curExpl.hiding) {
+                let agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
                 this.explRdCnt += ExplUpdater.calcHideExplRdCnt(agiRate);
             }
             if (this.page) this.page.log('开始探索');
@@ -486,9 +491,9 @@ export class ExplUpdater {
         }
 
         if (this.explRdCnt > 0) {
-            let posId = this.curExpl.curPosId;
+            let posId = curExpl.curPosId;
             let curPosModel = actPosModelDict[posId];
-            let sensRate = ExplUpdater.getPosPetSensRate(this.gameData.curExpl, this.battleCtrlr);
+            let sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
             if (
                 curPosModel.eqpIdLists &&
                 curPosModel.eqpIdLists.length > 0 &&
@@ -502,7 +507,7 @@ export class ExplUpdater {
             }
         } else {
             this.trsrFind = false;
-            if (this.gameData.curExpl.hiding) {
+            if (curExpl.hiding) {
                 this.enemyFind = true;
                 this.enemyPrefind = true;
             }
@@ -574,23 +579,25 @@ export class ExplUpdater {
     explStepPercent: number = -1;
 
     doExploration() {
-        let curStep = this.curExpl.curStep;
+        let curExpl = this.gameData.curExpl;
+        let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
+        let curStep = curExpl.curStep;
         do {
             if (curStep === -1) {
-                this.curExpl.curStep = this.curExpl.startStep;
+                curExpl.curStep = curExpl.startStep;
                 this.explStepPercent = 0;
-            } else if (curStep >= this.curExplModel.stepMax - 1) {
+            } else if (curStep >= curExplModel.stepMax - 1) {
                 break;
             } else {
                 let startUpdCnt = 0;
-                for (let idx = 0; idx < this.curExpl.startStep; idx++) startUpdCnt += UpdCntByStep[idx];
+                for (let idx = 0; idx < curExpl.startStep; idx++) startUpdCnt += UpdCntByStep[idx];
                 let lastStepUpdCnt = 0;
                 for (let idx = 0; idx < curStep; idx++) lastStepUpdCnt += UpdCntByStep[idx];
 
                 let curStepUpdCnt = UpdCntByStep[curStep];
                 let realUpdCnt = this.updCnt + startUpdCnt;
                 if (realUpdCnt >= lastStepUpdCnt + curStepUpdCnt) {
-                    this.curExpl.curStep++;
+                    curExpl.curStep++;
                     this.updateChgUpdCnt();
                     this.explStepPercent = 0;
                 } else {
@@ -606,8 +613,8 @@ export class ExplUpdater {
             if (this.page) {
                 this.page.setExplStepUI();
 
-                let posName = actPosModelDict[this.curExpl.curPosId].cnName;
-                let stepType = StepTypesByMax[this.curExplModel.stepMax][this.curExpl.curStep];
+                let posName = actPosModelDict[curExpl.curPosId].cnName;
+                let stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
                 let stepName = ExplStepNames[stepType];
                 this.page.log('进入' + posName + stepName);
             }
@@ -630,11 +637,14 @@ export class ExplUpdater {
     }
 
     gainRes() {
-        let posId = this.curExpl.curPosId;
-        let curPosModel = actPosModelDict[posId];
-        let step = this.curExpl.curStep;
+        let curExpl = this.gameData.curExpl;
+        let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
 
-        let stepMax = this.curExplModel.stepMax;
+        let posId = curExpl.curPosId;
+        let curPosModel = actPosModelDict[posId];
+        let step = curExpl.curStep;
+
+        let stepMax = curExplModel.stepMax;
         let stepType = StepTypesByMax[stepMax][step];
 
         let itemName: string = null;
@@ -702,8 +712,8 @@ export class ExplUpdater {
         if (win) {
             this.receiveExp(); // 计算获得的exp
             this.catchPet();
-            this.startRecover();
-        } else this.startRevive();
+        }
+        this.startRecover();
     }
 
     receiveExp() {
@@ -763,7 +773,7 @@ export class ExplUpdater {
         let rb = this.battleCtrlr.realBattle;
 
         let catcherModel: CatcherModel = catcherModelDict[catcherId];
-        let eleRate = ExplUpdater.getPosPetEleRate(this.curExpl, this.battleCtrlr);
+        let eleRate = ExplUpdater.getPosPetEleRate(gameData.curExpl, this.battleCtrlr);
         let catchRate = ExplUpdater.calcCatchRateByEleRate(catcherModel, eleRate);
 
         for (const battlePet of rb.enemyTeam.pets) {
@@ -811,11 +821,7 @@ export class ExplUpdater {
         this.state = ExplState.recover;
     }
 
-    startRevive() {
-        this.state = ExplState.revive;
-    }
-
-    updateRecover(revive: boolean) {
+    updateRecover() {
         let done = true;
         let selfTeam = this.battleCtrlr.realBattle.selfTeam;
         let battlePets = selfTeam.pets;
@@ -824,7 +830,7 @@ export class ExplUpdater {
             let hpMax = battlePet.hpMax;
             if (battlePet.hp < hpMax) {
                 done = false;
-                battlePet.hp += Math.floor(hpMax * (revive ? 0.05 : 0.1));
+                battlePet.hp += Math.floor(hpMax * 0.1);
                 battlePet.hp = Math.min(hpMax, battlePet.hp);
                 this.page.setUIofSelfPet(index);
             }
@@ -847,7 +853,7 @@ export class ExplUpdater {
         if (done) {
             this.startExpl();
         } else {
-            this.page.log(revive ? '复原中' : '休息中');
+            this.page.log('休息中');
         }
     }
 

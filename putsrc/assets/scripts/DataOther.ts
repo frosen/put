@@ -459,8 +459,9 @@ export class RealBattle {
     atkRound: number = 0;
 
     order: BattlePet[] = [];
-    sequnence: number[] = null;
     curOrderIdx: number = 0;
+    sequnence: number[] = null;
+    curSequenceIdx: number = 0;
 
     lastAim: BattlePet = null;
     combo: number = 1;
@@ -620,13 +621,15 @@ export class RealBattle {
         newRB.enemyTeam = deepCopy(this.enemyTeam) as BattleTeam;
         newRB.battleRound = this.battleRound;
         newRB.atkRound = this.atkRound;
-        newRB.curOrderIdx = this.curOrderIdx;
-        newRB.combo = this.combo;
-
         for (const bPet of this.order) {
             newRB.order.push(this.copyAim(bPet, newRB));
         }
+        newRB.curOrderIdx = this.curOrderIdx;
+        newRB.sequnence = deepCopy(this.sequnence) as number[];
+        newRB.curSequenceIdx = this.curSequenceIdx;
+
         newRB.lastAim = this.copyAim(this.lastAim, newRB);
+        newRB.combo = this.combo;
 
         for (const pet of newRB.selfTeam.pets) {
             pet.last = this.copyAim(pet.last, newRB);

@@ -43,12 +43,13 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         movs: [{ id: 'YiZhuang', price: 0, condition: {} }],
         loc: { x: 1100, y: 100 },
         petIdLists: [
+            null,
             ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
             null,
             null,
             ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
         ],
-        itemIdLists: [['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
+        itemIdLists: [null, ['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
         eqpIdLists: []
     }
 };

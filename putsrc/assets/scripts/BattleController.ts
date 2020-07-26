@@ -238,13 +238,14 @@ export class BattleController {
             }
         }
 
-        rb.curOrderIdx = nextOrderIdx;
         rb.atkRound++;
-        let curSequenceIdx = rb.sequnence[rb.curOrderIdx];
+        rb.curOrderIdx = nextOrderIdx;
+        rb.curSequenceIdx++;
+        let startSequenceIdx = rb.sequnence[rb.curOrderIdx];
+        rb.combo = 1;
 
         // 执行当前宠物的攻击
         let curExePet: BattlePet = rb.order[nextOrderIdx];
-        rb.combo = 1;
         this.attack(curExePet);
 
         // 执行联合攻击
@@ -252,10 +253,13 @@ export class BattleController {
             if (rb.start === false) break;
             let nextNextId = this.getNextOrderIndex();
             if (nextNextId === -1) break;
-            if (rb.sequnence[nextNextId] !== curSequenceIdx) break;
 
             rb.curOrderIdx = nextNextId;
+            rb.curSequenceIdx++;
+            if (rb.sequnence[rb.curSequenceIdx] !== startSequenceIdx) break;
+
             rb.combo++;
+
             let nextPet = rb.order[nextNextId];
             let suc = this.attack(nextPet);
             if (!suc) rb.combo--; // 未成功攻击则不算连击
@@ -299,6 +303,7 @@ export class BattleController {
         rb.sequnence = getRandomOneInList(battleSequence[petAliveCnt]);
 
         rb.curOrderIdx = -1;
+        rb.curSequenceIdx = -1;
         rb.battleRound++;
         rb.lastAim = null;
 
@@ -453,11 +458,13 @@ export class BattleController {
 
         if (skillModel.aimType === SkillAimtype.oneAndNext) {
             let nextAim = aim.next;
-            if (skillModel.subDmg > 0 && nextAim.hp > 0) {
-                this.castDmg(battlePet, nextAim, skillModel.subDmg, skillModel);
-            }
-            if (skillModel.subBuffId && nextAim.hp > 0) {
-                this.castBuff(battlePet, nextAim, skillModel, false);
+            if (nextAim) {
+                if (skillModel.subDmg > 0 && nextAim.hp > 0) {
+                    this.castDmg(battlePet, nextAim, skillModel.subDmg, skillModel);
+                }
+                if (skillModel.subBuffId && nextAim.hp > 0) {
+                    this.castBuff(battlePet, nextAim, skillModel, false);
+                }
             }
         } else if (skillModel.aimType === SkillAimtype.oneAndOthers) {
             let aimPets = this.getTeam(aim).pets;
