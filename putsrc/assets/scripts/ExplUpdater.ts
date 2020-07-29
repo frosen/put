@@ -167,7 +167,7 @@ export class ExplUpdater {
             // 捕捉状态
             let catcherIdx = -1;
             if (curExpl.catcherId) {
-                catcherIdx = BattleController.getCatcherIdxInItemList(gameData, curExpl.catcherId);
+                catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, curExpl.catcherId);
                 if (catcherIdx === -1) curExpl.catcherId = null;
             }
             let catchSt = { catcherIdx };
@@ -763,7 +763,7 @@ export class ExplUpdater {
         let catcherId = gameData.curExpl.catcherId;
         if (!catcherId) return;
 
-        let catcherIdx = BattleController.getCatcherIdxInItemList(gameData, catcherId);
+        let catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, catcherId);
         if (catcherIdx === -1) {
             gameData.curExpl.catcherId = null;
             if (this.page) this.page.setCatchActive(false);
@@ -806,6 +806,17 @@ export class ExplUpdater {
                 return; // 每场战斗只能捕捉一只宠物
             }
         }
+    }
+
+    static getCatcherIdxInItemList(gameData: GameData, catcherId: string): number {
+        let items = gameData.items;
+        for (let index = 0; index < items.length; index++) {
+            const item = items[index];
+            if (item.id !== catcherId) continue;
+            let catcherInList = item as Catcher;
+            return catcherInList.count > 0 ? index : -1;
+        }
+        return -1;
     }
 
     static calcCatchRateByEleRate(catcherModel: CatcherModel, eleRate: number): number {

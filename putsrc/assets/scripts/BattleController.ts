@@ -728,17 +728,6 @@ export class BattleController {
         }
     }
 
-    static getCatcherIdxInItemList(gameData: GameData, catcherId: string): number {
-        let items = gameData.items;
-        for (let index = 0; index < items.length; index++) {
-            const item = items[index];
-            if (item.id !== catcherId) continue;
-            let catcherInList = item as Catcher;
-            return catcherInList.count > 0 ? index : -1;
-        }
-        return -1;
-    }
-
     getAim(battlePet: BattlePet, toSelf: boolean, spBattleType: BattleType = null): BattlePet {
         let rb = this.realBattle;
         let battleType = spBattleType || BattleController.getBattleType(battlePet);

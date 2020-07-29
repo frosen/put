@@ -14,7 +14,7 @@ import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
 import { ListViewCell } from 'scripts/ListViewCell';
 import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { GameDataTool } from 'scripts/Memory';
-import { Pet } from 'scripts/DataSaved';
+import { Pet, ItemType } from 'scripts/DataSaved';
 
 @ccclass
 export class PagePkgEquip extends PageBase {
@@ -68,7 +68,8 @@ export class PagePkgEquip extends PageBase {
     resetList() {
         // set data
         let items = this.ctrlr.memory.gameData.items;
-        let idxs = PagePkg.getItemIdxsByListIdx(items, 1);
+        let idxs = [];
+        PagePkg.getoutItemIdxsByType(items, idxs, ItemType.equip);
         idxs.push(GameDataTool.UNWIELD);
         let itemDelegate = this.itemEquipList.delegate as PkgEquipItemLVD;
         itemDelegate.page = this;

@@ -248,6 +248,7 @@ export class Memory {
 
         GameDataTool.addCnsum(this.gameData, 'CiLiPan1', 2);
         GameDataTool.addCnsum(this.gameData, 'DaMoShi', 2);
+        GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 2);
 
         GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
 

@@ -10,7 +10,7 @@ import { PagePkgBase } from './PagePkgBase';
 import { ListView } from 'scripts/ListView';
 import { PagePkgLVD } from './PagePkgLVD';
 import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet, Equip } from 'scripts/DataSaved';
-import { GameDataTool } from 'scripts/Memory';
+import { GameDataTool, CnsumDataTool } from 'scripts/Memory';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import { ListViewCell } from 'scripts/ListViewCell';
 import { FuncBar } from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
@@ -20,7 +20,6 @@ import { drinkModelDict } from 'configs/DrinkModelDict';
 import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
-import { catcherModelDict } from 'configs/CatcherModelDict';
 import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
 
 const LIST_NAMES = ['全部', '装备', '饮品', '捕捉', '强化', '其他'];
@@ -114,32 +113,25 @@ export class PagePkg extends PagePkgBase {
         if (listIdx === 0) {
             for (let index = 0; index < items.length; index++) idxs[index] = index;
         } else if (listIdx === 1) {
-            for (let index = 0; index < items.length; index++) {
-                if (items[index].itemType === ItemType.equip) idxs[idxs.length] = index;
-            }
+            this.getoutItemIdxsByType(items, idxs, ItemType.equip);
         } else if (listIdx === 2) {
-            for (let index = 0; index < items.length; index++) {
-                let item = items[index];
-                if (item.itemType === ItemType.cnsum && (item as Cnsum).cnsumType === CnsumType.drink) idxs[idxs.length] = index;
-            }
+            this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.drink);
         } else if (listIdx === 3) {
-            for (let index = 0; index < items.length; index++) {
-                let item = items[index];
-                if (
-                    (item.itemType === ItemType.cnsum && (item as Cnsum).cnsumType === CnsumType.catcher) ||
-                    item.itemType === ItemType.caughtPet
-                ) {
-                    idxs[idxs.length] = index;
-                }
-            }
+            this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.catcher);
+            this.getoutItemIdxsByType(items, idxs, ItemType.caughtPet);
         } else if (listIdx === 4) {
-            for (let index = 0; index < items.length; index++) {
-                let item = items[index];
-                if (item.itemType === ItemType.cnsum && (item as Cnsum).cnsumType === CnsumType.eqpAmplr)
-                    idxs[idxs.length] = index;
-            }
+            this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.eqpAmplr);
         }
         return idxs;
+    }
+
+    static getoutItemIdxsByType(items: Item[], idxsOut: number[], itemType: ItemType, cnsumType: CnsumType = null) {
+        for (let index = 0; index < items.length; index++) {
+            let item = items[index];
+            if (item.itemType === itemType && cnsumType && (item as Cnsum).cnsumType === cnsumType) {
+                idxsOut[idxsOut.length] = index;
+            }
+        }
     }
 
     turnning: boolean = false;
@@ -249,6 +241,8 @@ export class PagePkg extends PagePkgBase {
                         });
                     }
                 });
+            } else if (cnsum.cnsumType === CnsumType.material) {
+                this.ctrlr.popToast('材料无法直接使用');
             }
         } else if (item.itemType === ItemType.equip) {
             this.ctrlr.pushPage(PagePkgEquip, { idx: itemIdx });
@@ -283,13 +277,7 @@ export class PagePkg extends PagePkgBase {
 
         let name: string;
         if (item.itemType === ItemType.cnsum) {
-            if ((item as Cnsum).cnsumType === CnsumType.drink) {
-                name = drinkModelDict[item.id].cnName;
-            } else if ((item as Cnsum).cnsumType === CnsumType.catcher) {
-                name = catcherModelDict[item.id].cnName;
-            } else if ((item as Cnsum).cnsumType === CnsumType.eqpAmplr) {
-                name = eqpAmplrModelDict[item.id].cnName;
-            }
+            name = CnsumDataTool.getModelById(item.id).cnName;
         } else if (item.itemType === ItemType.equip) {
             name = equipModelDict[item.id].cnName;
         } else if (item.itemType === ItemType.caughtPet) {

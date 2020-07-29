@@ -12,10 +12,12 @@ import { petModelDict } from 'configs/PetModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { PageActExplLVD } from './PageActExplLVD';
 import { ListView } from 'scripts/ListView';
-import { PetRankNames, EleType, Pet } from 'scripts/DataSaved';
+import { PetRankNames, EleType, Pet, ItemType, CnsumType, Catcher } from 'scripts/DataSaved';
 import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames } from 'scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
+import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
+import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -383,9 +385,22 @@ export class PageActExpl extends BattlePageBase {
     // button -----------------------------------------------------------------
 
     onClickCatch() {
-        // let rzt = this.updater.executeCatch();
-        // if (rzt) this.ctrlr.popToast(rzt);
-        // llytodo
+        if (!this.ctrlr.memory.gameData.curExpl.catcherId) {
+            let idxs = [];
+            PagePkg.getoutItemIdxsByType(this.ctrlr.memory.gameData.items, idxs, ItemType.cnsum, CnsumType.catcher);
+            this.ctrlr.pushPage(PagePkgSelection, {
+                name: '选择捕捉器',
+                curItemIdxs: idxs,
+                callback: (index: number, itemIdx: number, catcher: Catcher) => {
+                    this.ctrlr.memory.gameData.curExpl.catcherId = catcher.id;
+                    this.setCatchActive(true);
+                    this.ctrlr.popPage();
+                }
+            });
+        } else {
+            this.ctrlr.memory.gameData.curExpl.catcherId = null;
+            this.setCatchActive(false);
+        }
     }
 
     onClickEscape() {

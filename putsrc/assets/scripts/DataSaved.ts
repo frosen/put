@@ -150,7 +150,7 @@ export class EqpAmplr extends Cnsum {
 }
 
 export class Material extends Cnsum {
-    cnsumType: CnsumType = CnsumType.eqpAmplr;
+    cnsumType: CnsumType = CnsumType.material;
 }
 
 export class Equip extends Item {

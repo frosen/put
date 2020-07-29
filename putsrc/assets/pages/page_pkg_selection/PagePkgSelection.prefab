@@ -917,6 +917,9 @@
     "cellPkgEqpAmplrPrefab": {
       "__uuid__": "69b80add-31e8-4a6c-9521-31b471236021"
     },
+    "cellPkgMaterialPrefab": {
+      "__uuid__": "922e4ea5-aa44-45d3-89ae-1dcfb7624677"
+    },
     "cellPkgEquipPrefab": {
       "__uuid__": "e7956d4d-39b5-4382-ba28-e980fa49291a"
     },

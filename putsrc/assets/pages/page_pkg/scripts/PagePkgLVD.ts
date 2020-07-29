@@ -18,6 +18,7 @@ import { CellPkgCatcher } from '../cells/cell_pkg_catcher/scripts/CellPkgCatcher
 import { CellPkgCaughtPet } from '../cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
 import { CellPkgEqpAmplr } from '../cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
 import { CellPkgBase } from './CellPkgBase';
+import { CellPkgMaterial } from '../cells/cell_pkg_material/scripts/CellPkgMaterial';
 
 type CellPkg = CellPkgMoney & CellPkgDrink & CellPkgCatcher & CellPkgEqpAmplr & CellPkgEquip & CellPkgCaughtPet;
 type DataPkg = Money & Drink & Catcher & EqpAmplr & Equip & CaughtPet;
@@ -26,6 +27,7 @@ let MONEY = 'M';
 let DRINK = 'D';
 let CATCHER = 'C';
 let EQPAMPLR = 'ea';
+let MATERIAL = 'ml';
 let EQUIP = 'E';
 let CPET = 'p';
 
@@ -47,6 +49,9 @@ export class PagePkgLVD extends ListViewDelegate {
 
     @property(cc.Prefab)
     cellPkgEqpAmplrPrefab: cc.Prefab = null;
+
+    @property(cc.Prefab)
+    cellPkgMaterialPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
     cellPkgEquipPrefab: cc.Prefab = null;
@@ -78,6 +83,7 @@ export class PagePkgLVD extends ListViewDelegate {
                 if (cnsumType === CnsumType.drink) return DRINK;
                 else if (cnsumType === CnsumType.catcher) return CATCHER;
                 else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
+                else if (cnsumType === CnsumType.material) return MATERIAL;
             }
             case ItemType.equip:
                 return EQUIP;
@@ -101,6 +107,9 @@ export class PagePkgLVD extends ListViewDelegate {
                 break;
             case EQPAMPLR:
                 cell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
+                break;
+            case MATERIAL:
+                cell = cc.instantiate(this.cellPkgMaterialPrefab).getComponent(CellPkgMaterial);
                 break;
             case EQUIP:
                 cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);

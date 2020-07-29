@@ -27,8 +27,10 @@ function checkActPosModelDict() {
 
         let petDictKeys = Object.keys(petModelDict);
         for (const petIdList of model.petIdLists) {
-            for (const petId of petIdList) {
-                if (!petDictKeys.includes(petId)) cc.error('ActPosModelDict中，petIdLists中的petId有误', key, petId);
+            if (petIdList) {
+                for (const petId of petIdList) {
+                    if (!petDictKeys.includes(petId)) cc.error('ActPosModelDict中，petIdLists中的petId有误', key, petId);
+                }
             }
         }
 
