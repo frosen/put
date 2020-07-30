@@ -115,7 +115,9 @@ export class ExplUpdater {
             inBattle = false;
         }
 
-        if (!inBattle) {
+        if (inBattle) {
+            this.resetAllUI();
+        } else {
             // 计算step
             let startUpdCnt = 0;
             for (let idx = 0; idx < curExpl.startStep; idx++) startUpdCnt += UpdCntByStep[idx];
@@ -189,9 +191,9 @@ export class ExplUpdater {
                 lastStepUpdCnt = nextStepUpdCnt + 1;
                 curExpl.curStep++;
             }
-        }
 
-        this.startExpl();
+            this.startExpl();
+        }
     }
 
     recoverExplInBattle(curExpl: ExplMmr): boolean {
@@ -227,8 +229,6 @@ export class ExplUpdater {
         if (inBattle) {
             this.lastTime = timePtr - ExplInterval;
             this.state = ExplState.battle;
-
-            // msg
         } else {
             curExpl.chngUpdCnt = curExpl.curBattle.startUpdCnt + updCnt;
             this.receiveExp();
@@ -401,6 +401,22 @@ export class ExplUpdater {
         else {
             return 4 * (selfPwr / enemyPwr) - 3; // (s - 0.75 * e) / (e - 0.75 * e)
         }
+    }
+
+    resetAllUI() {
+        if (!this.page) return;
+
+        if (this.battleCtrlr.realBattle.start) {
+            this.battleCtrlr.resetAllUI();
+        } else {
+            this.page.setUIofSelfPet(-1);
+
+            let team = this.battleCtrlr.realBattle.selfTeam;
+            this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
+        }
+
+        this.page.setCatchActive(this.gameData.curExpl.catcherId !== null);
+        this.page.setHideActive(this.gameData.curExpl.hiding);
     }
 
     // -----------------------------------------------------------------
