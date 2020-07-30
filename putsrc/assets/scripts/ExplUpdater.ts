@@ -720,10 +720,10 @@ export class ExplUpdater {
         let rb = this.battleCtrlr.realBattle;
         let gameDataJIT = this.memory.gameDataJIT;
 
-        let selfLv = rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv);
-        let enemyLv = rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv);
-        let selfRank = rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank);
-        let enemyRank = RealBattle.calcRankAreaByExplStep(this.gameData.curExpl.curStep).base;
+        let selfLv = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
+        let enemyLv = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
+        let selfRank = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
+        let enemyRank = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
         let exp = ExplUpdater.calcExpByLvRank(selfLv, enemyLv, selfRank, enemyRank);
 
         for (const selfBPet of rb.selfTeam.pets) {
@@ -803,7 +803,7 @@ export class ExplUpdater {
                 } else {
                     if (this.page) this.page.log(`捕获失败：${rztStr}`);
                 }
-                return; // 每场战斗只能捕捉一只宠物
+                break; // 每场战斗只能捕捉一只宠物
             }
         }
     }

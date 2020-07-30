@@ -241,7 +241,7 @@ export class BattleController {
         rb.atkRound++;
         rb.curOrderIdx = nextOrderIdx;
         rb.curSequenceIdx++;
-        let startSequenceIdx = rb.sequnence[rb.curOrderIdx];
+        let startSequenceIdx = rb.sequnence[rb.curSequenceIdx];
         rb.combo = 1;
 
         // 执行当前宠物的攻击
