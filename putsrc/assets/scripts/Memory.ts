@@ -51,13 +51,14 @@ import { expModels } from 'configs/ExpModels';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { materialModelDict } from 'configs/MaterialModelDict';
+import Tea = require('./Tea');
 
 let memoryDirtyToken: number = -1;
-let sfbdCount: number = 0;
+let sfbdCount: number = -1;
 function checkDataCorrect(): boolean {
     if (sfbdCount > 0) {
         sfbdCount++;
-        if (sfbdCount > 10) cc.game.end();
+        if (sfbdCount > 100) cc.game.end();
         return false;
     }
     return true;
@@ -97,7 +98,7 @@ function newDict(dict = null) {
             let v = target[key];
             if (typeof v === 'number') {
                 if (getCheckedNumber(v) !== ckDict[key]) {
-                    sfbdCount++;
+                    if (sfbdCount < 0) sfbdCount = 1;
                     if (!CC_BUILD) throw new Error('number check wrong!');
                 }
             }
@@ -113,10 +114,22 @@ function newInsWithChecker<T extends Object>(cls: { new (): T }): T {
     return newDict(ins);
 }
 
+function turnToDataWithChecker(data: any) {
+    if (data instanceof Array) {
+        for (let i = 0; i < data.length; ++i) data[i] = turnToDataWithChecker(data[i]);
+        return newList(data);
+    } else if (data instanceof Object) {
+        for (let i in data) data[i] = turnToDataWithChecker(data[i]);
+        return newDict(data);
+    } else {
+        return data;
+    }
+}
+
 // -----------------------------------------------------------------
 
 export class Memory {
-    gameData: GameData = newInsWithChecker(GameData);
+    gameData: GameData = null;
     gameDataJIT: GameDataJIT = null;
 
     saveToken: boolean = false;
@@ -130,7 +143,13 @@ export class Memory {
     }
 
     init() {
-        GameDataTool.init(this.gameData);
+        let lastGameData = this.loadMemory();
+        if (!lastGameData) {
+            this.gameData = newInsWithChecker(GameData);
+            GameDataTool.init(this.gameData);
+        } else {
+            this.gameData = turnToDataWithChecker(lastGameData);
+        }
 
         // 恢复历史数据
         this.test();
@@ -164,7 +183,7 @@ export class Memory {
             this.saveInterval -= dt;
         } else if (this.saveToken) {
             this.saveToken = false;
-            this.saveInterval = 2.5;
+            this.saveInterval = 1;
             this.saveMemory();
         }
 
@@ -188,9 +207,50 @@ export class Memory {
         }
     }
 
+    curSaveDataId: number = 1;
+
     saveMemory() {
         cc.log('STORM cc ^_^ 保存 ');
         if (!checkDataCorrect()) return;
+
+        let savedData = {
+            g: this.gameData,
+            t: Date.now()
+        };
+
+        let encodeStr = Tea.Tea.encrypt(JSON.stringify(savedData), '0x5d627c');
+        this.curSaveDataId = this.curSaveDataId === 1 ? 2 : 1;
+        cc.sys.localStorage.setItem(`sg${this.curSaveDataId}`, encodeStr);
+    }
+
+    loadMemory(): any {
+        let sg1 = cc.sys.localStorage.getItem('sg1');
+        let sg2 = cc.sys.localStorage.getItem('sg2');
+        let sd1 = (sg1 && this.decodeSaveData(sg1)) || { t: -1 };
+        let sd2 = (sg2 && this.decodeSaveData(sg2)) || { t: -1 };
+
+        let lastGameData: any;
+        if (sd1.t < 0 && sd2.t < 0) {
+            lastGameData = null;
+            this.curSaveDataId = 1;
+        } else if (sd1.t > sd2.t) {
+            lastGameData = this.decodeSaveData(sg1).g;
+            this.curSaveDataId = 1;
+        } else {
+            lastGameData = this.decodeSaveData(sg2).g;
+            this.curSaveDataId = 2;
+        }
+        return lastGameData;
+    }
+
+    decodeSaveData(encodeStr: string): { g: any; t: number } {
+        try {
+            let decodeStr = Tea.Tea.decrypt(encodeStr, '0x5d627c');
+            let data = JSON.parse(decodeStr) as { g: any; t: number };
+            return data;
+        } catch (error) {
+            return null;
+        }
     }
 
     // -----------------------------------------------------------------
