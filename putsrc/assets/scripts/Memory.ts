@@ -156,17 +156,7 @@ export class Memory {
 
         // 整理历史数据
         this.gameDataJIT = new GameDataJIT();
-        this.resetDataJIT(this.gameDataJIT);
-    }
-
-    resetDataJIT(gameDataJIT: GameDataJIT) {
-        for (const pet of this.gameData.pets) {
-            let drink = pet.drink;
-            if (drink) {
-                let drinkModel = drinkModelDict[drink.id];
-                gameDataJIT.addAmplByDrink(pet, drinkModel);
-            }
-        }
+        Memory.resetGameData(this.gameData, this.gameDataJIT);
     }
 
     update(dt: number) {
@@ -187,7 +177,7 @@ export class Memory {
             this.saveMemory();
         }
 
-        GameDataTool.update(this.gameData);
+        Memory.updateGameData(this.gameData, this.gameDataJIT);
     }
 
     dataListeners: any[] = [];
@@ -226,18 +216,18 @@ export class Memory {
     loadMemory(): any {
         let sg1 = cc.sys.localStorage.getItem('sg1');
         let sg2 = cc.sys.localStorage.getItem('sg2');
-        let sd1 = (sg1 && this.decodeSaveData(sg1)) || { t: -1 };
-        let sd2 = (sg2 && this.decodeSaveData(sg2)) || { t: -1 };
+        let sd1 = (sg1 && this.decodeSaveData(sg1)) || { t: -1, g: null };
+        let sd2 = (sg2 && this.decodeSaveData(sg2)) || { t: -1, g: null };
 
         let lastGameData: any;
         if (sd1.t < 0 && sd2.t < 0) {
             lastGameData = null;
             this.curSaveDataId = 1;
         } else if (sd1.t > sd2.t) {
-            lastGameData = this.decodeSaveData(sg1).g;
+            lastGameData = sd1.g;
             this.curSaveDataId = 1;
         } else {
-            lastGameData = this.decodeSaveData(sg2).g;
+            lastGameData = sd2.g;
             this.curSaveDataId = 2;
         }
         return lastGameData;
@@ -250,6 +240,54 @@ export class Memory {
             return data;
         } catch (error) {
             return null;
+        }
+    }
+
+    // -----------------------------------------------------------------
+
+    static lastUpdateTime: number = 0;
+
+    static updateGameData(gameData: GameData, gameDataJIT: GameDataJIT) {
+        if (this.lastUpdateTime === 0) {
+            this.lastUpdateTime = Date.now();
+            return;
+        }
+        let curTime = Date.now();
+        let diff = curTime - this.lastUpdateTime;
+        const INTERVAL = 60000;
+        if (diff >= INTERVAL) {
+            this.lastUpdateTime += INTERVAL;
+            for (const pet of gameData.pets) this.updatePet(pet, curTime, gameDataJIT);
+        }
+    }
+
+    static updatePet(pet: Pet, curTime: number, gameDataJIT: GameDataJIT) {
+        if (pet.prvty < PrvtyMax) {
+            const range = 600000; // 默契值 10min1点(10 * 60 * 1000)
+            if (curTime - pet.prvtyTime >= range + 1) {
+                let count = Math.floor((curTime - pet.prvtyTime) / range);
+                if (pet.state === PetState.ready || pet.state === PetState.rest) {
+                    pet.prvty += 100 * gameDataJIT.getAmplPercent(pet, AmplAttriType.prvty) * count;
+                    pet.prvty = Math.min(pet.prvty, PrvtyMax);
+                }
+                pet.prvtyTime += range * count;
+            }
+        }
+
+        if (pet.drink) {
+            if (curTime - pet.drinkTime >= drinkModelDict[pet.drink.id].dura) {
+                GameDataTool.clearDrinkFromPet(pet);
+            }
+        }
+    }
+
+    static resetGameData(gameData: GameData, gameDataJIT: GameDataJIT) {
+        for (const pet of gameData.pets) {
+            let drink = pet.drink;
+            if (drink) {
+                let drinkModel = drinkModelDict[drink.id];
+                gameDataJIT.addAmplByDrink(pet, drinkModel);
+            }
         }
     }
 
@@ -1028,45 +1066,4 @@ export class GameDataTool {
     }
 
     // -----------------------------------------------------------------
-
-    static lastUpdateTime: number = 0;
-
-    static update(gameData: GameData) {
-        if (this.lastUpdateTime === 0) {
-            this.lastUpdateTime = Date.now();
-            return;
-        }
-        let curTime = Date.now();
-        let diff = curTime - this.lastUpdateTime;
-        const INTERVAL = 60000;
-        if (diff >= INTERVAL) {
-            this.lastUpdateTime += INTERVAL;
-            this.doUpdate(gameData, curTime);
-        }
-    }
-
-    static doUpdate(gameData: GameData, curTime: number) {
-        for (const pet of gameData.pets) this.updatePet(pet, curTime);
-    }
-
-    static updatePet(pet: Pet, curTime: number) {
-        if (pet.prvty < PrvtyMax) {
-            // 默契值 10min1点(10 * 60 * 1000)
-            if (curTime - pet.prvtyTime >= 600000) {
-                if (pet.state === PetState.ready || pet.state === PetState.rest) {
-                    // @ts-ignore
-                    let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
-                    pet.prvty += 100 * gameDataJIT.getAmplPercent(pet, AmplAttriType.prvty);
-                    pet.prvty = Math.min(pet.prvty, PrvtyMax);
-                }
-                pet.prvtyTime = curTime;
-            }
-        }
-
-        if (pet.drink) {
-            if (curTime - pet.drinkTime >= drinkModelDict[pet.drink.id].dura) {
-                this.clearDrinkFromPet(pet);
-            }
-        }
-    }
 }

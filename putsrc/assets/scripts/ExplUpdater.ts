@@ -476,13 +476,14 @@ export class ExplUpdater {
 
     /** 发现宝藏 */
     trsrFind: boolean = false;
-    /** 发现宝藏预动作 */
-    trsrPrefind: boolean = false;
-
     /** 潜行发现敌人 */
     enemyFind: boolean = false;
-    /** 发现敌人预动作 */
-    enemyPrefind: boolean = false;
+    /** 随机不重要事件 */
+    unusedEvts: string[] = ['发现远古宝箱，但你们无法打开', '陷阱被触发，但你们轻松避过', '你们似乎发现四周有些异样'];
+    unusedEvtIdx: number = -1;
+
+    /** 事件前跳数 */
+    prefindCnt: number = -1;
 
     // 一轮是平均5+1乘以0.75 = 4.5 平均2+1轮 也就是13.5s
     startExpl() {
@@ -516,16 +517,23 @@ export class ExplUpdater {
                 randomRate(ExplUpdater.calcTreasureRate(sensRate))
             ) {
                 this.trsrFind = true;
-                this.trsrPrefind = true;
+                this.prefindCnt = random(3);
             } else {
                 this.trsrFind = false;
                 this.gainCnt = ExplUpdater.calcGainCnt(sensRate);
+
+                if (randomRate(0.2)) {
+                    this.unusedEvtIdx = random(this.unusedEvts.length);
+                    this.prefindCnt = random(3);
+                } else {
+                    this.unusedEvtIdx = -1;
+                }
             }
         } else {
             this.trsrFind = false;
             if (curExpl.hiding) {
                 this.enemyFind = true;
-                this.enemyPrefind = true;
+                this.prefindCnt = random(3);
             }
         }
 
@@ -638,16 +646,24 @@ export class ExplUpdater {
         } while (0);
 
         if (this.page) {
-            if (this.trsrFind) {
-                if (this.trsrPrefind) {
-                    this.trsrPrefind = false;
+            if (this.prefindCnt > 0) {
+                this.prefindCnt--;
+                this.page.log('探索中......');
+            } else if (this.trsrFind) {
+                if (this.prefindCnt === 0) {
+                    this.prefindCnt = -1;
                     this.page.log('发现远古宝箱');
                 } else this.page.log('宝箱解锁中......');
             } else if (this.enemyFind) {
-                if (this.enemyPrefind) {
-                    this.enemyPrefind = false;
+                if (this.prefindCnt === 0) {
+                    this.prefindCnt = -1;
                     this.page.log('发现附近似乎有威胁存在');
                 } else this.page.log('潜行接近中......');
+            } else if (this.unusedEvtIdx >= 0) {
+                if (this.prefindCnt === 0) {
+                    this.prefindCnt = -1;
+                    this.page.log(this.unusedEvts[this.unusedEvtIdx]);
+                }
             } else this.page.log('探索中......');
         }
     }
