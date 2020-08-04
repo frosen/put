@@ -73,6 +73,9 @@ export class PageActExpl extends BattlePageBase {
     @property(cc.Button) btnEscape: cc.Button = null;
     @property(cc.Button) btnHide: cc.Button = null;
 
+    @property(cc.Label)
+    newLogTipLbl: cc.Label = null;
+
     lblBtnCatch: cc.Label = null;
     lblBtnEscape: cc.Label = null;
     lblBtnHide: cc.Label = null;
@@ -471,6 +474,11 @@ export class PageActExpl extends BattlePageBase {
     }
 
     setNewLogTip(tipCount: number) {
-        // cc.log('^_^! new log count: ', tipCount);
+        if (tipCount <= 0) {
+            this.newLogTipLbl.node.parent.opacity = 0;
+        } else {
+            this.newLogTipLbl.node.parent.opacity = 255;
+            this.newLogTipLbl.string = String(Math.min(tipCount, 99));
+        }
     }
 }

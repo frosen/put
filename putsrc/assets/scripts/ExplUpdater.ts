@@ -439,10 +439,30 @@ export class ExplUpdater {
         if (!this.inited) this.inited = true;
 
         let curTime = Date.now();
-        if (curTime - this.lastTime > ExplInterval) {
-            this.lastTime = this.lastTime + ExplInterval;
-            this.updCnt += 1;
-            this.onUpdate();
+        let diff = curTime - this.lastTime;
+        if (diff < ExplInterval) {
+            return;
+        } else if (diff < ExplInterval * 240) {
+            // 3分钟内
+            let updateFunc = () => {
+                this.lastTime += ExplInterval;
+                this.updCnt += 1;
+                this.onUpdate();
+            };
+
+            let oldPage = this.page;
+            this.page = null;
+            this.battleCtrlr.page = null;
+
+            let turnCount = Math.floor(diff / ExplInterval);
+            for (let index = 0; index < turnCount - 1; index++) updateFunc();
+
+            this.page = oldPage;
+            this.battleCtrlr.page = oldPage;
+            this.resetAllUI();
+
+            updateFunc();
+        } else {
         }
     }
 
@@ -875,7 +895,7 @@ export class ExplUpdater {
                 done = false;
                 battlePet.hp += Math.floor(hpMax * 0.1);
                 battlePet.hp = Math.min(hpMax, battlePet.hp);
-                this.page.setUIofSelfPet(index);
+                if (this.page) this.page.setUIofSelfPet(index);
             }
         }
 
@@ -890,13 +910,13 @@ export class ExplUpdater {
                 selfTeam.rage -= 30;
                 selfTeam.rage = Math.max(0, selfTeam.rage);
             }
-            this.page.resetAttriBar(selfTeam.mp, selfTeam.mpMax, selfTeam.rage);
+            if (this.page) this.page.resetAttriBar(selfTeam.mp, selfTeam.mpMax, selfTeam.rage);
         }
 
         if (done) {
             this.startExpl();
         } else {
-            this.page.log('休息中');
+            if (this.page) this.page.log('休息中');
         }
     }
 
@@ -904,7 +924,7 @@ export class ExplUpdater {
 
     executeCatch(catcherId: string) {
         this.gameData.curExpl.catcherId = catcherId;
-        this.page.setCatchActive(catcherId !== null);
+        if (this.page) this.page.setCatchActive(catcherId !== null);
     }
 
     executeEscape() {
@@ -914,6 +934,6 @@ export class ExplUpdater {
     executeHide() {
         let cur = !this.gameData.curExpl.hiding;
         this.gameData.curExpl.hiding = cur;
-        this.page.setHideActive(cur);
+        if (this.page) this.page.setHideActive(cur);
     }
 }
