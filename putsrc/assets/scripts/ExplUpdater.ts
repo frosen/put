@@ -522,7 +522,7 @@ export class ExplUpdater {
                 this.trsrFind = false;
                 this.gainCnt = ExplUpdater.calcGainCnt(sensRate);
 
-                if (randomRate(0.2)) {
+                if (randomRate(0.35)) {
                     this.unusedEvtIdx = random(this.unusedEvts.length);
                     this.prefindCnt = random(3);
                 } else {
@@ -663,7 +663,7 @@ export class ExplUpdater {
                 if (this.prefindCnt === 0) {
                     this.prefindCnt = -1;
                     this.page.log(this.unusedEvts[this.unusedEvtIdx]);
-                }
+                } else this.page.log('探索中......');
             } else this.page.log('探索中......');
         }
     }
