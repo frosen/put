@@ -64,6 +64,11 @@ function checkDataCorrect(): boolean {
     return true;
 }
 
+// @ts-ignore
+window.__errorHandler = function () {
+    if (sfbdCount < 0) sfbdCount = 1;
+};
+
 const MagicNum = 1654435769 + Math.floor(Math.random() * 1000000000);
 function getCheckedNumber(s: number): number {
     return (s * MagicNum) >> 19;
@@ -143,16 +148,15 @@ export class Memory {
     }
 
     init() {
+        // 初始化，或者恢复历史数据
         let lastGameData = this.loadMemory();
         if (!lastGameData) {
             this.gameData = newInsWithChecker(GameData);
             GameDataTool.init(this.gameData);
+            this.test();
         } else {
             this.gameData = turnToDataWithChecker(lastGameData);
         }
-
-        // 恢复历史数据
-        this.test();
 
         // 整理历史数据
         this.gameDataJIT = new GameDataJIT();

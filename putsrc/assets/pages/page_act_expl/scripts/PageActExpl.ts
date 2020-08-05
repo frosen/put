@@ -474,10 +474,12 @@ export class PageActExpl extends BattlePageBase {
     }
 
     setNewLogTip(tipCount: number) {
+        let area = this.newLogTipLbl.node.parent;
+        area.stopAllActions();
         if (tipCount <= 0) {
-            this.newLogTipLbl.node.parent.opacity = 0;
+            cc.tween(area).to(0.2, { opacity: 0 }).start();
         } else {
-            this.newLogTipLbl.node.parent.opacity = 255;
+            cc.tween(area).to(0.2, { opacity: 255 }).start();
             this.newLogTipLbl.string = String(Math.min(tipCount, 99));
         }
     }
