@@ -478,6 +478,7 @@ export class RealBattle {
 
             let checkEquipToken = (token: string, items: Item[], equipsOutput: Equip[]): boolean => {
                 for (const item of items) {
+                    if (!item) continue;
                     if (item.itemType !== ItemType.equip) continue;
                     let equip = item as Equip;
                     if (EquipDataTool.getToken(equip) === token) {

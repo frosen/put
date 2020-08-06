@@ -151,7 +151,7 @@ export class Memory {
     init() {
         // 初始化，或者恢复历史数据
         let lastGameData = this.loadMemory();
-        if (!lastGameData) {
+        if (!lastGameData || true) {
             this.gameData = newInsWithChecker(GameData);
             GameDataTool.init(this.gameData);
             this.test();
@@ -356,7 +356,9 @@ export class Memory {
         GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
 
         this.gameData.curPosId = 'GuangJiDianDaDao';
-        // GameDataTool.createExpl(this.gameData);
+        GameDataTool.createExpl(this.gameData, 0);
+        this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 10;
+        this.gameData.curExpl.curStep = 0;
     }
 }
 
