@@ -234,8 +234,6 @@ export const StepTypesByMax = [
     [ExplStepType.outer, ExplStepType.passway, ExplStepType.deep, ExplStepType.center]
 ];
 
-export const UpdCntByStep = [1600, 4800, 14400];
-
 export class ExplModel {
     stepMax: number;
 }

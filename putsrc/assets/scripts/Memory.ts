@@ -28,7 +28,8 @@ import {
     Catcher,
     EqpAmplr,
     CnsumType,
-    Material
+    Material,
+    UpdCntByStep
 } from './DataSaved';
 import {
     FeatureModel,
@@ -686,7 +687,6 @@ export class MmrTool {
         expl.startTime = Date.now();
         expl.chngUpdCnt = 0;
         expl.startStep = startStep;
-        expl.curStep = -1;
         expl.hiding = false;
         expl.catcherId = null;
         return expl;
@@ -720,6 +720,26 @@ export class MmrTool {
         p.features = newList();
         for (const feature of features) p.features.push(FeatureDataTool.clone(feature));
         return p;
+    }
+
+    static getExplStepFromUpdCnt(updCnt: number): number {
+        for (let idx = 0; idx < UpdCntByStep.length; idx++) {
+            if (updCnt < UpdCntByStep[idx]) return idx;
+        }
+        return UpdCntByStep.length;
+    }
+
+    static getUpdCntFromExplStep(step: number): number {
+        if (step >= UpdCntByStep.length) return 999999999;
+        let updCnt = 0;
+        for (let idx = 0; idx < step; idx++) updCnt += UpdCntByStep[idx];
+        return updCnt;
+    }
+
+    static getCurStep(curExpl: ExplMmr) {
+        if (curExpl.chngUpdCnt === 0) return -1;
+        let startUpdCnt = this.getUpdCntFromExplStep(curExpl.startStep);
+        return this.getExplStepFromUpdCnt(startUpdCnt + curExpl.chngUpdCnt);
     }
 }
 

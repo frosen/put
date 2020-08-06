@@ -18,6 +18,7 @@ import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
 import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
+import { MmrTool } from 'scripts/Memory';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -169,7 +170,7 @@ export class PageActExpl extends BattlePageBase {
         let curExpl = this.ctrlr.memory.gameData.curExpl;
         if (!curExpl) return this.ctrlr.setSubTitle('');
 
-        let step = curExpl.curStep;
+        let step = MmrTool.getCurStep(curExpl);
         if (step === -1) return this.ctrlr.setSubTitle('');
 
         let posId = curExpl.curPosId;

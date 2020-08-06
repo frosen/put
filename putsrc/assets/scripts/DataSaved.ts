@@ -204,12 +204,13 @@ export class BattleMmr {
     spcBtlId: number; // 特殊战斗的id
 }
 
+export const UpdCntByStep = [1600, 4800, 14400];
+
 export class ExplMmr {
     curPosId: string;
     startTime: number;
     chngUpdCnt: number;
     startStep: number;
-    curStep: number;
     curBattle: BattleMmr;
     hiding: boolean;
     catcherId: string;

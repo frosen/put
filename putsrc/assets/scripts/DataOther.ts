@@ -565,7 +565,7 @@ export class RealBattle {
         let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
 
         let petCount = randomRate(0.5) ? count : count - 1;
-        let step = curExpl.curStep; // step必然不是-1
+        let step = MmrTool.getCurStep(curExpl); // step必然不是-1
         let stepMax = explModel.stepMax;
         let stepType = StepTypesByMax[stepMax][step];
         let petIdLists = curPosModel.petIdLists;

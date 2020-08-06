@@ -5,13 +5,13 @@
  */
 
 import { BattlePageBase } from './BattlePageBase';
-import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool } from 'scripts/Memory';
+import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool, MmrTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature } from 'scripts/DataSaved';
+import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, UpdCntByStep } from 'scripts/DataSaved';
 import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
-import { random, randomArea, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
-import { ExplModel, StepTypesByMax, UpdCntByStep, ExplStepNames, CatcherModel } from './DataModel';
+import { random, randomArea, randomRate, getRandomOneInList } from './Random';
+import { ExplModel, StepTypesByMax, ExplStepNames, CatcherModel } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { petModelDict } from 'configs/PetModelDict';
@@ -119,16 +119,15 @@ export class ExplUpdater {
             this.resetAllUI();
         } else {
             // 计算step
-            let startUpdCnt = 0;
-            for (let idx = 0; idx < curExpl.startStep; idx++) startUpdCnt += UpdCntByStep[idx];
+            let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
 
             let diff = Date.now() - curExpl.startTime;
             let curUpdCnt = Math.floor(diff / ExplInterval);
+            let realCurUpdCnt = curUpdCnt + startUpdCnt;
+            let curStep = MmrTool.getExplStepFromUpdCnt(realCurUpdCnt);
 
             let realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
             let lastStepUpdCnt = realChngUpdCnt + 1;
-            let nextStepUpdCnt = 0;
-            for (let idx = 0; idx < curExpl.curStep; idx++) nextStepUpdCnt += UpdCntByStep[idx];
 
             // 战斗状态
             let selfPets = GameDataTool.getReadyPets(this.gameData);
@@ -157,8 +156,8 @@ export class ExplUpdater {
             let posId = curExpl.curPosId;
             let curPosModel = actPosModelDict[posId];
 
-            let enemyLv: number = RealBattle.calcLvArea(curPosModel, curExpl.curStep).base;
-            let enemyRank: number = RealBattle.calcRankAreaByExplStep(curExpl.curStep).base;
+            let enemyLv: number = RealBattle.calcLvArea(curPosModel, curStep).base;
+            let enemyRank: number = RealBattle.calcRankAreaByExplStep(curStep).base;
             let enemyPwr = enemyLv * AttriRatioByRank[enemyRank];
 
             let agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
@@ -177,19 +176,19 @@ export class ExplUpdater {
             // 计算探索
             let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
             while (true) {
-                let realCurUpdCnt = curUpdCnt + startUpdCnt;
-                if (curExpl.curStep >= curExplModel.stepMax - 1) {
-                    this.recoverExplInExpl(curExpl.curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
+                if (curStep >= curExplModel.stepMax - 1) {
+                    this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
                     break;
                 }
-                nextStepUpdCnt += UpdCntByStep[curExpl.curStep];
+                let nextStepUpdCnt = MmrTool.getUpdCntFromExplStep(curStep);
                 if (realCurUpdCnt < nextStepUpdCnt) {
-                    this.recoverExplInExpl(curExpl.curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
+                    this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
                     break;
                 }
-                this.recoverExplInExpl(curExpl.curStep, lastStepUpdCnt, nextStepUpdCnt, petSt, catchSt);
+                this.recoverExplInExpl(curStep, lastStepUpdCnt, nextStepUpdCnt, petSt, catchSt);
+
                 lastStepUpdCnt = nextStepUpdCnt + 1;
-                curExpl.curStep++;
+                curStep++;
             }
 
             this.startExpl();
@@ -598,9 +597,10 @@ export class ExplUpdater {
     }
 
     static getPosSubAttriSbstValue(curExpl: ExplMmr) {
-        if (curExpl.curStep < 0) return 999999;
+        let curStep = MmrTool.getCurStep(curExpl);
+        if (curStep < 0) return 999999;
         let curPosLv = actPosModelDict[curExpl.curPosId].lv;
-        return (100 + curPosLv * 15) * (1 + curExpl.curStep * 0.4);
+        return (100 + curPosLv * 15) * (1 + curStep * 0.4);
     }
 
     updateExpl() {
@@ -625,26 +625,25 @@ export class ExplUpdater {
     doExploration() {
         let curExpl = this.gameData.curExpl;
         let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
-        let curStep = curExpl.curStep;
+        let curStep = MmrTool.getCurStep(curExpl);
         do {
             if (curStep === -1) {
-                curExpl.curStep = curExpl.startStep;
+                this.updateChgUpdCnt();
                 this.explStepPercent = 0;
             } else if (curStep >= curExplModel.stepMax - 1) {
                 break;
             } else {
-                let startUpdCnt = 0;
-                for (let idx = 0; idx < curExpl.startStep; idx++) startUpdCnt += UpdCntByStep[idx];
-                let lastStepUpdCnt = 0;
-                for (let idx = 0; idx < curStep; idx++) lastStepUpdCnt += UpdCntByStep[idx];
+                let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
+                let lastStepUpdCnt = MmrTool.getUpdCntFromExplStep(curStep);
+                let nextStepUpdCnt = MmrTool.getUpdCntFromExplStep(curStep + 1);
 
-                let curStepUpdCnt = UpdCntByStep[curStep];
                 let realUpdCnt = this.updCnt + startUpdCnt;
-                if (realUpdCnt >= lastStepUpdCnt + curStepUpdCnt) {
-                    curExpl.curStep++;
+                if (realUpdCnt >= nextStepUpdCnt) {
                     this.updateChgUpdCnt();
+                    curStep++;
                     this.explStepPercent = 0;
                 } else {
+                    let curStepUpdCnt = nextStepUpdCnt - lastStepUpdCnt;
                     let percent = Math.floor(((realUpdCnt - lastStepUpdCnt) * 100) / curStepUpdCnt);
                     if (percent > 99) percent = 99; // 战斗时候百分比不能停所以百分比在UI上需要禁止超过100%
                     if (percent !== this.explStepPercent) {
@@ -658,7 +657,7 @@ export class ExplUpdater {
                 this.page.setExplStepUI();
 
                 let posName = actPosModelDict[curExpl.curPosId].cnName;
-                let stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
+                let stepType = StepTypesByMax[curExplModel.stepMax][curStep];
                 let stepName = ExplStepNames[stepType];
                 this.page.log('进入' + posName + stepName);
             }
@@ -694,7 +693,7 @@ export class ExplUpdater {
 
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
-        let step = curExpl.curStep;
+        let step = MmrTool.getCurStep(curExpl);
 
         let stepMax = curExplModel.stepMax;
         let stepType = StepTypesByMax[stepMax][step];
