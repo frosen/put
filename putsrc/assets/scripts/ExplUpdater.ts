@@ -114,7 +114,7 @@ export class ExplUpdater {
             this.handleSelfTeamChange();
             inBattle = false;
         }
-
+        cc.log('^_^!???', inBattle);
         if (inBattle) {
             this.resetAllUI();
         } else {
@@ -180,16 +180,23 @@ export class ExplUpdater {
                     this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
                     break;
                 }
-                let nextStepUpdCnt = MmrTool.getUpdCntFromExplStep(curStep);
+                let nextStepUpdCnt = MmrTool.getUpdCntFromExplStep(curStep + 1);
                 if (realCurUpdCnt < nextStepUpdCnt) {
+                    cc.log('^_^!go end ', curStep, lastStepUpdCnt, realCurUpdCnt);
                     this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
                     break;
                 }
+                cc.log('^_^!go go ', curStep, lastStepUpdCnt, nextStepUpdCnt);
                 this.recoverExplInExpl(curStep, lastStepUpdCnt, nextStepUpdCnt, petSt, catchSt);
 
                 lastStepUpdCnt = nextStepUpdCnt + 1;
                 curStep++;
             }
+
+            curExpl.chngUpdCnt = curUpdCnt;
+            this.updCnt = curUpdCnt;
+            this.lastTime = curUpdCnt * ExplInterval + curExpl.startTime;
+            this.page.setExplStepUI();
 
             this.startExpl();
         }
@@ -270,7 +277,7 @@ export class ExplUpdater {
         let diffUpdCnt = toUpdCnt - fromUpdCnt + 1;
         let explRdCnt = Math.floor(diffUpdCnt / eachUpdCnt);
         if (explRdCnt > 10) explRdCnt = randomArea(explRdCnt, 0.1); // 增加随机范围
-
+        cc.log('^_^!expl cnt ', toUpdCnt, fromUpdCnt, diffUpdCnt, eachUpdCnt, explRdCnt);
         let winRate = ExplUpdater.calcWinRate(petSt.selfPwr, petSt.enemyPwr);
         let winCount = Math.max(Math.min(Math.ceil(explRdCnt * randomArea(winRate, 0.1)), explRdCnt), 0);
 
@@ -349,36 +356,44 @@ export class ExplUpdater {
 
         // 计算获得的物品
         let gainTimes = explRdCnt * (eachExplRdCnt + eachHidingRdCnt);
-        let eqpIds = curPosModel.eqpIdLists[stepType];
         let itemIds = curPosModel.itemIdLists[stepType];
+        let eqpIds = curPosModel.eqpIdLists[stepType];
 
-        let treasureRate = ExplUpdater.calcTreasureRate(petSt.sensRate);
-        let eqpCnt = Math.floor(gainTimes * treasureRate);
-        let itemCnt = Math.ceil(gainTimes * (1 - treasureRate));
-        let gainMoreRate = Math.min(Math.max(petSt.sensRate, 0), 3); // 与 calcGainCnt 保持一致
-        itemCnt = Math.ceil(itemCnt * gainMoreRate);
-
-        for (let index = 0; index < eqpCnt; index++) {
-            let eqpId = getRandomOneInList(eqpIds);
-            let equip = EquipDataTool.createRandomById(eqpId);
-            if (!equip) break;
-            let rzt = GameDataTool.addEquip(this.gameData, equip);
-            if (rzt !== GameDataTool.SUC) break;
+        let itemCnt: number;
+        if (eqpIds) {
+            let treasureRate = ExplUpdater.calcTreasureRate(petSt.sensRate);
+            let eqpCnt = Math.floor(gainTimes * treasureRate);
+            itemCnt = Math.ceil(gainTimes * (1 - treasureRate));
+            for (let index = 0; index < eqpCnt; index++) {
+                let eqpId = getRandomOneInList(eqpIds);
+                let equip = EquipDataTool.createRandomById(eqpId);
+                if (!equip) break;
+                let rzt = GameDataTool.addEquip(this.gameData, equip);
+                if (rzt !== GameDataTool.SUC) break;
+            }
+        } else {
+            itemCnt = gainTimes;
         }
 
+        let gainMoreRate = Math.min(Math.max(petSt.sensRate, 0), 3); // 与 calcGainCnt 保持一致
+        itemCnt = Math.ceil(itemCnt * gainMoreRate);
+        cc.log('^_^!gain cnt ', gainTimes, explRdCnt, eachExplRdCnt, eachHidingRdCnt);
         const eachItemRate = 2 / itemIds.length;
+        cc.log('^_^!>>>>', itemCnt, eachItemRate);
         let itemLeft = itemCnt;
         for (let index = 0; index < itemCnt - 1; index++) {
             let curRate = Math.random() * eachItemRate;
             let curCnt = Math.min(Math.floor(itemCnt * curRate), itemLeft);
             let itemId = itemIds[index];
             GameDataTool.addCnsum(this.gameData, itemId, curCnt);
+            cc.log('^_^! gain items ', itemId, curCnt);
             itemLeft -= curCnt;
             if (itemLeft <= 0) break;
         }
         if (itemLeft > 0) {
             let itemId = itemIds[itemIds.length - 1];
             GameDataTool.addCnsum(this.gameData, itemId, itemLeft);
+            cc.log('^_^! gain left items ', itemId, itemLeft);
         }
     }
 

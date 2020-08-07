@@ -358,7 +358,6 @@ export class Memory {
         this.gameData.curPosId = 'GuangJiDianDaDao';
         GameDataTool.createExpl(this.gameData, 0);
         this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 10;
-        this.gameData.curExpl.curStep = 0;
     }
 }
 
