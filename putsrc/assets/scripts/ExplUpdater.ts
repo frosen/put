@@ -7,7 +7,7 @@
 import { BattlePageBase } from './BattlePageBase';
 import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool, MmrTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, UpdCntByStep } from 'scripts/DataSaved';
+import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, UpdCntByStep, BattleMmr } from 'scripts/DataSaved';
 import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { random, randomArea, randomRate, getRandomOneInList } from './Random';
@@ -107,104 +107,127 @@ export class ExplUpdater {
 
     recoverLastExpl(gameData: GameData) {
         let curExpl = gameData.curExpl;
-        let inBattle: boolean;
+
         if (curExpl.curBattle) {
-            inBattle = this.recoverExplInBattle(curExpl);
+            let { inBattle, updCnt, lastTime } = this.recoverExplInBattle(curExpl.curBattle, curExpl.startTime);
+
+            if (inBattle) {
+                this.updCnt = updCnt;
+                this.lastTime = lastTime;
+
+                this.recoverExplStepPercent(curExpl);
+                this.page.setExplStepUI();
+
+                this.state = ExplState.battle;
+                this.resetAllUI();
+                return;
+            } else {
+                curExpl.chngUpdCnt = curExpl.curBattle.startUpdCnt + updCnt;
+                this.receiveExp();
+                this.catchPet();
+            }
         } else {
             this.handleSelfTeamChange();
-            inBattle = false;
         }
-        cc.log('^_^!???', inBattle);
-        if (inBattle) {
-            this.resetAllUI();
-        } else {
-            // 计算step
-            let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
 
-            let diff = Date.now() - curExpl.startTime;
-            let curUpdCnt = Math.floor(diff / ExplInterval);
-            let realCurUpdCnt = curUpdCnt + startUpdCnt;
-            let curStep = MmrTool.getExplStepFromUpdCnt(realCurUpdCnt);
+        // 计算step
+        let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
 
-            let realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
-            let lastStepUpdCnt = realChngUpdCnt + 1;
+        let diff = Date.now() - curExpl.startTime;
+        let curUpdCnt = Math.floor(diff / ExplInterval);
+        let realCurUpdCnt = curUpdCnt + startUpdCnt;
+        let curStep = MmrTool.getExplStepFromUpdCnt(realCurUpdCnt);
 
-            // 战斗状态
-            let selfPets = GameDataTool.getReadyPets(this.gameData);
-            let selfLv = selfPets.getAvg((pet: Pet) => pet.lv);
-            let selfRank = selfPets.getAvg((pet: Pet) => pet.rank);
-            let selfPwr = selfPets.getAvg((pet: Pet) => {
-                let totalEqpLv = 0;
-                let featureLvs = 0;
-                for (const eqp of pet.equips) {
-                    if (!eqp) continue;
-                    let eqpModel = equipModelDict[eqp.id];
-                    let eqpLv = (eqpModel.lv + eqp.growth) * (1 + eqpModel.rank * 0.1);
-                    totalEqpLv += eqpLv * 0.15;
-                    for (const lv of eqp.selfFeatureLvs) featureLvs += lv;
-                    for (const feature of eqp.affixes) featureLvs += feature.lv;
-                }
-                for (const feature of pet.learnedFeatures) featureLvs += feature.lv;
+        let realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
+        let lastStepUpdCnt = realChngUpdCnt + 1;
 
-                let realPrvty = PetDataTool.getRealPrvty(pet);
-
-                let curPower = pet.lv * AttriRatioByRank[pet.rank] + totalEqpLv;
-                curPower *= 1 + featureLvs * 0.01 + realPrvty * 0.01 * 20;
-                return curPower;
-            });
-
-            let posId = curExpl.curPosId;
-            let curPosModel = actPosModelDict[posId];
-
-            let enemyLv: number = RealBattle.calcLvArea(curPosModel, curStep).base;
-            let enemyRank: number = RealBattle.calcRankAreaByExplStep(curStep).base;
-            let enemyPwr = enemyLv * AttriRatioByRank[enemyRank];
-
-            let agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
-            let sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
-            let eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.battleCtrlr);
-            let petSt = { selfLv, selfRank, selfPwr, enemyLv, enemyRank, enemyPwr, agiRate, sensRate, eleRate };
-
-            // 捕捉状态
-            let catcherIdx = -1;
-            if (curExpl.catcherId) {
-                catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, curExpl.catcherId);
-                if (catcherIdx === -1) curExpl.catcherId = null;
+        // 战斗状态
+        let selfPets = GameDataTool.getReadyPets(this.gameData);
+        let selfLv = selfPets.getAvg((pet: Pet) => pet.lv);
+        let selfRank = selfPets.getAvg((pet: Pet) => pet.rank);
+        let selfPwr = selfPets.getAvg((pet: Pet) => {
+            let totalEqpLv = 0;
+            let featureLvs = 0;
+            for (const eqp of pet.equips) {
+                if (!eqp) continue;
+                let eqpModel = equipModelDict[eqp.id];
+                let eqpLv = (eqpModel.lv + eqp.growth) * (1 + eqpModel.rank * 0.1);
+                totalEqpLv += eqpLv * 0.15;
+                for (const lv of eqp.selfFeatureLvs) featureLvs += lv;
+                for (const feature of eqp.affixes) featureLvs += feature.lv;
             }
-            let catchSt = { catcherIdx };
+            for (const feature of pet.learnedFeatures) featureLvs += feature.lv;
 
-            // 计算探索
-            let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
-            while (true) {
-                if (curStep >= curExplModel.stepMax - 1) {
-                    this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
-                    break;
-                }
-                let nextStepUpdCnt = MmrTool.getUpdCntFromExplStep(curStep + 1);
-                if (realCurUpdCnt < nextStepUpdCnt) {
-                    cc.log('^_^!go end ', curStep, lastStepUpdCnt, realCurUpdCnt);
-                    this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
-                    break;
-                }
-                cc.log('^_^!go go ', curStep, lastStepUpdCnt, nextStepUpdCnt);
-                this.recoverExplInExpl(curStep, lastStepUpdCnt, nextStepUpdCnt, petSt, catchSt);
+            let realPrvty = PetDataTool.getRealPrvty(pet);
 
-                lastStepUpdCnt = nextStepUpdCnt + 1;
-                curStep++;
-            }
+            let curPower = pet.lv * AttriRatioByRank[pet.rank] + totalEqpLv;
+            curPower *= 1 + featureLvs * 0.01 + realPrvty * 0.01 * 20;
+            return curPower;
+        });
 
-            curExpl.chngUpdCnt = curUpdCnt;
-            this.updCnt = curUpdCnt;
-            this.lastTime = curUpdCnt * ExplInterval + curExpl.startTime;
-            this.page.setExplStepUI();
+        let posId = curExpl.curPosId;
+        let curPosModel = actPosModelDict[posId];
 
-            this.startExpl();
+        let enemyLv: number = RealBattle.calcLvArea(curPosModel, curStep).base;
+        let enemyRank: number = RealBattle.calcRankAreaByExplStep(curStep).base;
+        let enemyPwr = enemyLv * AttriRatioByRank[enemyRank];
+
+        let agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
+        let sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
+        let eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.battleCtrlr);
+        let petSt = { selfLv, selfRank, selfPwr, enemyLv, enemyRank, enemyPwr, agiRate, sensRate, eleRate };
+
+        // 捕捉状态
+        let catcherIdx = -1;
+        if (curExpl.catcherId) {
+            catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, curExpl.catcherId);
+            if (catcherIdx === -1) curExpl.catcherId = null;
         }
+        let catchSt = { catcherIdx };
+
+        // 计算探索
+        let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
+        while (true) {
+            if (curStep >= curExplModel.stepMax - 1) {
+                this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
+                break;
+            }
+            let nextStepUpdCnt = MmrTool.getUpdCntFromExplStep(curStep + 1);
+            if (realCurUpdCnt < nextStepUpdCnt) {
+                cc.log('^_^!go end ', curStep, lastStepUpdCnt, realCurUpdCnt);
+                this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
+                break;
+            }
+            cc.log('^_^!go go ', curStep, lastStepUpdCnt, nextStepUpdCnt);
+            this.recoverExplInExpl(curStep, lastStepUpdCnt, nextStepUpdCnt, petSt, catchSt);
+
+            lastStepUpdCnt = nextStepUpdCnt + 1;
+            curStep++;
+        }
+
+        curExpl.chngUpdCnt = curUpdCnt;
+        this.updCnt = curUpdCnt;
+        this.lastTime = curUpdCnt * ExplInterval + curExpl.startTime;
+        this.recoverExplStepPercent(curExpl);
+        this.page.setExplStepUI();
+
+        this.startExpl();
     }
 
-    recoverExplInBattle(curExpl: ExplMmr): boolean {
+    recoverExplStepPercent(curExpl: ExplMmr) {
+        let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
+        let chngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
+        let curStep = MmrTool.getCurStep(curExpl);
+        let lastStepUpdCnt = MmrTool.getUpdCntFromExplStep(curStep);
+        let nextStepUpdCnt = MmrTool.getUpdCntFromExplStep(curStep + 1);
+        let curStepUpdCntRange = nextStepUpdCnt - lastStepUpdCnt;
+        this.explStepPercent = Math.floor(((chngUpdCnt - lastStepUpdCnt) * 100) / curStepUpdCntRange);
+        if (this.explStepPercent > 99) this.explStepPercent = 99;
+    }
+
+    recoverExplInBattle(curBattle: BattleMmr, explStartTime: number): { inBattle: boolean; updCnt: number; lastTime: number } {
         let inBattle = true;
-        let timePtr = curExpl.curBattle.startUpdCnt * ExplInterval + curExpl.startTime;
+        let timePtr = curBattle.startUpdCnt * ExplInterval + explStartTime;
 
         let oldPage = this.page;
         let endCall = this.battleCtrlr.endCallback;
@@ -213,7 +236,7 @@ export class ExplUpdater {
         this.battleCtrlr.endCallback = null;
 
         this.battleCtrlr.resetSelfTeam(true);
-        this.battleCtrlr.resetBattle(curExpl.curBattle);
+        this.battleCtrlr.resetBattle(curBattle);
 
         let updCnt = 0;
         while (true) {
@@ -232,16 +255,11 @@ export class ExplUpdater {
         this.battleCtrlr.page = oldPage;
         this.battleCtrlr.endCallback = endCall;
 
-        if (inBattle) {
-            this.lastTime = timePtr - ExplInterval;
-            this.state = ExplState.battle;
-        } else {
-            curExpl.chngUpdCnt = curExpl.curBattle.startUpdCnt + updCnt;
-            this.receiveExp();
-            this.catchPet();
-        }
-
-        return inBattle;
+        return {
+            inBattle,
+            updCnt,
+            lastTime: timePtr - ExplInterval
+        };
     }
 
     recoverExplInExpl(
@@ -658,8 +676,8 @@ export class ExplUpdater {
                     curStep++;
                     this.explStepPercent = 0;
                 } else {
-                    let curStepUpdCnt = nextStepUpdCnt - lastStepUpdCnt;
-                    let percent = Math.floor(((realUpdCnt - lastStepUpdCnt) * 100) / curStepUpdCnt);
+                    let curStepUpdCntRange = nextStepUpdCnt - lastStepUpdCnt;
+                    let percent = Math.floor(((realUpdCnt - lastStepUpdCnt) * 100) / curStepUpdCntRange);
                     if (percent > 99) percent = 99; // 战斗时候百分比不能停所以百分比在UI上需要禁止超过100%
                     if (percent !== this.explStepPercent) {
                         this.explStepPercent = percent;
