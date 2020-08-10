@@ -5,7 +5,11 @@
  */
 
 export function random(c: number): number {
-    return Math.floor(Math.random() * c);
+    return Math.random() * c;
+}
+
+export function randomInt(c: number): number {
+    return Math.floor(random(c));
 }
 
 export function randomRate(r: number): boolean {
@@ -14,11 +18,15 @@ export function randomRate(r: number): boolean {
 
 /** c值的正负r范围 */
 export function randomArea(c: number, r: number) {
-    return Math.floor(c * (1 + Math.random() * 2 * r - r));
+    return c * (1 + Math.random() * 2 * r - r);
+}
+
+export function randomAreaInt(c: number, r: number) {
+    return Math.floor(randomArea(c, r));
 }
 
 export function getRandomOneInList<T>(list: Array<T>): T {
-    if (list instanceof Array) return list[random(list.length)];
+    if (list instanceof Array) return list[randomInt(list.length)];
     else return null;
 }
 

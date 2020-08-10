@@ -881,7 +881,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '热',
         dataAreas: [[1, 1]],
         onStartingBattle(pet: BattlePet, datas: number[], ctrlr: BattleController): void {
-            if (ctrlr.random() < rate(datas[0], 0.05, 0.9)) ctrlr.addBuff(pet, pet, 'ReLi', 3);
+            if (ctrlr.ranSd() < rate(datas[0], 0.05, 0.9)) ctrlr.addBuff(pet, pet, 'ReLi', 3);
         },
         getInfo(datas: number[]): string {
             return `战斗开始时，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率获得热力，持续3回合`;
@@ -932,7 +932,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '梦',
         dataAreas: [[1, 1]],
         onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
-            let cd = ctrlr.random() < rate(datas[0], 0.2, 0.6) ? 2 : 1;
+            let cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 2 : 1;
             for (const skilllData of pet.skillDatas) skilllData.cd = Math.max(skilllData.cd - cd, 0);
         },
         getInfo(datas: number[]): string {
@@ -956,7 +956,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '防',
         dataAreas: [[1, 1]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
-            let cd = ctrlr.random() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
+            let cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
             let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
             for (const petAlive of petsAlive) ctrlr.addBuff(petAlive, pet, 'FangHu', cd);
         },
@@ -969,7 +969,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '春',
         dataAreas: [[1, 1]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
-            let cd = ctrlr.random() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
+            let cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
             let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
             for (const petAlive of petsAlive) ctrlr.addBuff(petAlive, pet, 'HuiChun', cd);
         },

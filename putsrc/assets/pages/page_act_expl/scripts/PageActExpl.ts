@@ -170,14 +170,12 @@ export class PageActExpl extends BattlePageBase {
         let curExpl = this.ctrlr.memory.gameData.curExpl;
         if (!curExpl) return this.ctrlr.setSubTitle('');
 
-        let step = MmrTool.getCurStep(curExpl);
-        if (step === -1) return this.ctrlr.setSubTitle('');
-
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
         let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
 
         let stepMax = explModel.stepMax;
+        let step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
         let stepType = StepTypesByMax[stepMax][step];
         let stepName = ExplStepNames[stepType];
         let percent = this.updater.explStepPercent;

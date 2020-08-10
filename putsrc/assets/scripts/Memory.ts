@@ -42,7 +42,7 @@ import {
     EqpAmplrModel
 } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
-import { random, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
+import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
 import { GameDataJIT, AmplAttriType } from './DataOther';
@@ -269,7 +269,7 @@ export class Memory {
     static updatePet(pet: Pet, curTime: number, gameDataJIT: GameDataJIT) {
         if (pet.prvty < PrvtyMax) {
             const range = 600000; // 默契值 10min1点(10 * 60 * 1000)
-            if (curTime - pet.prvtyTime >= range + 1) {
+            if (curTime - pet.prvtyTime > range) {
                 let count = Math.floor((curTime - pet.prvtyTime) / range);
                 if (pet.state === PetState.ready || pet.state === PetState.rest) {
                     pet.prvty += 100 * gameDataJIT.getAmplPercent(pet, AmplAttriType.prvty) * count;
@@ -349,6 +349,7 @@ export class Memory {
 
         GameDataTool.addCnsum(this.gameData, 'LingGanYaoJi1', 2);
 
+        GameDataTool.addCnsum(this.gameData, 'PuTongXianJing1', 20);
         GameDataTool.addCnsum(this.gameData, 'CiLiPan1', 2);
         GameDataTool.addCnsum(this.gameData, 'DaMoShi', 2);
         GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 2);
@@ -357,7 +358,14 @@ export class Memory {
 
         this.gameData.curPosId = 'GuangJiDianDaDao';
         GameDataTool.createExpl(this.gameData, 0);
-        this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 10;
+        this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 100;
+        this.gameData.curExpl.catcherId = 'PuTongXianJing1';
+        this.gameData.curExpl.chngUpdCnt = 2100;
+
+        let ePets = [];
+        for (let index = 0; index < 3; index++) ePets.push(MmrTool.createPetMmr('FaTiaoWa', 2, 1, []));
+        GameDataTool.createBattle(this.gameData, 100, 2090, 0, []);
+        this.gameData.curExpl.curBattle.enemys = ePets;
     }
 }
 
@@ -574,7 +582,7 @@ export class EquipDataTool {
         let equipType = equipModel.equipPosType;
         let startLv = equipType === EquipPosType.weapon ? 20 : equipType === EquipPosType.defense ? 30 : 40;
         let featureLvFrom = lv <= startLv ? 1 : Math.ceil((lv - startLv) * 0.1) + 1;
-        for (let index = 0; index < equipModel.featureIds.length; index++) featureLvs.push(featureLvFrom + random(3));
+        for (let index = 0; index < equipModel.featureIds.length; index++) featureLvs.push(featureLvFrom + randomInt(3));
 
         let affixes = [];
         if (lv >= 26 && randomRate(0.7)) {
@@ -591,7 +599,7 @@ export class EquipDataTool {
 
     static createRandomByLv(lvFrom: number, lvTo: number, rankMax: number = 9999): Equip {
         let equipIds: string[];
-        let lv = lvFrom + random(lvTo - lvFrom + 1);
+        let lv = lvFrom + randomInt(lvTo - lvFrom + 1);
         if (lv < 0) lv = 0;
         if (lv >= equipIdsByLvRank.length) lv = equipIdsByLvRank.length - 1;
         let equipIdsByRank = equipIdsByLvRank[lv];
@@ -738,7 +746,6 @@ export class MmrTool {
     }
 
     static getCurStep(curExpl: ExplMmr) {
-        if (curExpl.chngUpdCnt === 0) return -1;
         let startUpdCnt = this.getUpdCntFromExplStep(curExpl.startStep);
         return this.getExplStepFromUpdCnt(startUpdCnt + curExpl.chngUpdCnt);
     }
@@ -1054,14 +1061,14 @@ export class GameDataTool {
         if (gameData.curExpl) gameData.curExpl = null;
     }
 
-    static createBattle(gameData: GameData, seed: number, startUpdCnt: number, spcBtlId: number, pets: Pet[]) {
+    static createBattle(gameData: GameData, seed: number, startUpdCnt: number, spcBtlId: number, ePets: Pet[]) {
         cc.assert(gameData.curExpl, '创建battle前必有Expl');
         let curExpl = gameData.curExpl;
         if (curExpl.curBattle) return;
         let battle = MmrTool.createBattleMmr(seed, startUpdCnt, spcBtlId);
 
         for (const pet of this.getReadyPets(gameData)) battle.selfs.push(MmrTool.createSelfPetMmr(pet));
-        for (const pet of pets) battle.enemys.push(MmrTool.createPetMmr(pet.id, pet.lv, pet.rank, pet.inbornFeatures));
+        for (const pet of ePets) battle.enemys.push(MmrTool.createPetMmr(pet.id, pet.lv, pet.rank, pet.inbornFeatures));
 
         curExpl.curBattle = battle;
     }

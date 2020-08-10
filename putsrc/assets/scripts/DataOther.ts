@@ -524,19 +524,24 @@ export class RealBattle {
     resetBattle(ePetMmrs: PetMmr[], spcBtlId: number, createData: { curExpl: ExplMmr; petCount: number }) {
         if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
 
-        let realEPetMmrs: PetMmr[];
         if (ePetMmrs) {
-            realEPetMmrs = ePetMmrs;
+            this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
+                const ePetMmr = ePetMmrs[petIdx];
+                let petData = PetDataTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.rank, ePetMmr.features, null);
+                if (spcBtlId) petData.master = 'spcBtl';
+                bPet.init(petData, null, null);
+            });
         } else if (spcBtlId) {
             // llytodo
-        } else realEPetMmrs = RealBattle.createEPetMmrs(createData.curExpl, createData.petCount);
-
-        this.enemyTeam.reset(realEPetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
-            const ePetMmr = realEPetMmrs[petIdx];
-            let petData = PetDataTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.rank, ePetMmr.features, null);
-            if (spcBtlId) petData.master = 'spcBtl';
-            bPet.init(petData, null, null);
-        });
+        } else {
+            let ePetsData = RealBattle.createRandomPetData(createData.curExpl, createData.petCount);
+            this.enemyTeam.reset(ePetsData.length, true, (bPet: BattlePet, petIdx: number) => {
+                const ePetData = ePetsData[petIdx];
+                let petData = PetDataTool.create(ePetData.id, ePetData.lv, ePetData.rank, ePetData.features, null);
+                if (spcBtlId) petData.master = 'spcBtl';
+                bPet.init(petData, null, null);
+            });
+        }
 
         // 按照HP排序
         if (randomRate(0.5)) {
@@ -560,14 +565,14 @@ export class RealBattle {
         this.start = true;
     }
 
-    static createEPetMmrs(curExpl: ExplMmr, count: number): PetMmr[] {
+    static createRandomPetData(curExpl: ExplMmr, count: number): { id: string; lv: number; rank: number; features: Feature[] }[] {
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
         let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
 
         let petCount = randomRate(0.5) ? count : count - 1;
-        let step = MmrTool.getCurStep(curExpl); // step必然不是-1
         let stepMax = explModel.stepMax;
+        let step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
         let stepType = StepTypesByMax[stepMax][step];
         let petIdLists = curPosModel.petIdLists;
         if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有宠物列表petIdLists，无法战斗`);
@@ -579,7 +584,7 @@ export class RealBattle {
         let { base: lvBase, range: lvRange } = this.calcLvArea(curPosModel, step);
         let { base: rankBase, range: rankRange } = this.calcRankAreaByExplStep(step);
 
-        let petMmrs: PetMmr[] = [];
+        let petDatas: { id: string; lv: number; rank: number; features: Feature[] }[] = [];
         for (let index = 0; index < petCount; index++) {
             let id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
             let lv = lvBase - lvRange + normalRandom(lvRange * 2);
@@ -587,9 +592,9 @@ export class RealBattle {
             let rank = rankBase - rankRange + normalRandom(rankRange * 2);
             rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
             let features = this.getRandomFeatures(lv);
-            petMmrs.push(MmrTool.createPetMmr(id, lv, rank, features));
+            petDatas.push({ id, lv, rank, features });
         }
-        return petMmrs;
+        return petDatas;
     }
 
     static getRandomFeatures(lv: number): Feature[] {

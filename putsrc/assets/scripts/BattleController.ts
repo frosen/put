@@ -28,15 +28,15 @@ function setSeed(s: number) {
     seed2 = seed;
 }
 
-function ranWithSeed() {
+function ranSd() {
     if (seed !== seed2) throw new Error('seed check wrong!');
     seed = (seed * 9301 + 49297) % 233280;
     seed2 = seed;
     return seed / 233280.0;
 }
 
-function ranWithSeedInt(c: number) {
-    return Math.floor(ranWithSeed() * c);
+function ranSdInt(c: number) {
+    return Math.floor(ranSd() * c);
 }
 
 function getCurSeed(): number {
@@ -649,13 +649,13 @@ export class BattleController {
 
     static getAtkDmg(thisPet: BattlePet, aim: BattlePet) {
         let pet2 = thisPet.pet2;
-        let dmg = pet2.atkDmgFrom + ranWithSeedInt(1 + pet2.atkDmgTo - pet2.atkDmgFrom);
+        let dmg = pet2.atkDmgFrom + ranSdInt(1 + pet2.atkDmgTo - pet2.atkDmgFrom);
         return aim ? Math.max(dmg - aim.pet2.armor, 1) : dmg;
     }
 
     static getSklDmg(thisPet: BattlePet, aim: BattlePet) {
         let pet2 = thisPet.pet2;
-        let dmg = pet2.sklDmgFrom + ranWithSeedInt(1 + pet2.sklDmgTo - pet2.sklDmgFrom);
+        let dmg = pet2.sklDmgFrom + ranSdInt(1 + pet2.sklDmgTo - pet2.sklDmgFrom);
         return aim ? Math.max(dmg - aim.pet2.armor, 1) : dmg;
     }
 
@@ -745,7 +745,7 @@ export class BattleController {
                 aim = BattleController.getPetAlive(aimPets[battlePet.idx] || aimPets.getLast());
                 break;
             case BattleType.shoot:
-                aim = BattleController.getPetAlive(aimPets[ranWithSeedInt(aimPets.length)]);
+                aim = BattleController.getPetAlive(aimPets[ranSdInt(aimPets.length)]);
                 break;
             case BattleType.charge:
                 aim = BattleController.getPetAlive(aimPets[0]);
@@ -769,8 +769,8 @@ export class BattleController {
                 } else {
                     anotherSidePets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
                 }
-                let pets = ranWithSeed() > 0.5 ? aimPets : anotherSidePets;
-                aim = BattleController.getPetAlive(pets[ranWithSeedInt(pets.length)]);
+                let pets = ranSd() > 0.5 ? aimPets : anotherSidePets;
+                aim = BattleController.getPetAlive(pets[ranSdInt(pets.length)]);
                 break;
             default:
                 break;
@@ -806,8 +806,8 @@ export class BattleController {
         if (agiProportion > 1) hitRate = hitRate + 0.02 + (agiProportion - 1) * 0.1;
         else if (agiProportion < 1) hitRate = hitRate - (1 - agiProportion) * 0.1;
 
-        if (ranWithSeed() < hitRate - aim.pet2.evdRate) {
-            if (ranWithSeed() < pet2.critRate) {
+        if (ranSd() < hitRate - aim.pet2.evdRate) {
+            if (ranSd() < pet2.critRate) {
                 hitResult = 1 + pet2.critDmgRate * (1 - aim.pet2.dfsRate);
             } else {
                 hitResult = 1 * (1 - aim.pet2.dfsRate);
@@ -844,7 +844,7 @@ export class BattleController {
         this.page.log(logStr);
     }
 
-    random() {
-        return ranWithSeed();
+    ranSd() {
+        return ranSd();
     }
 }

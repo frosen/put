@@ -399,7 +399,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         buffType: BuffType.buff,
         eleType: EleType.earth,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            let r = ctrlr.random();
+            let r = ctrlr.ranSd();
             let id = r < 0.2 ? 'ReLi' : r < 0.4 ? 'JingJie' : r < 0.6 ? 'HuiChun' : r < 0.8 ? 'ZhuanZhu' : 'ShanYao';
             return { newBuffs: [{ id, time: 3 }] };
         },
@@ -414,7 +414,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         buffType: BuffType.debuff,
         eleType: EleType.earth,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            let r = ctrlr.random();
+            let r = ctrlr.ranSd();
             let id = r < 0.2 ? 'ZhuoShao' : r < 0.4 ? 'HanLeng' : r < 0.6 ? 'GeShang' : r < 0.8 ? 'ZhuiLuo' : 'ZhongDu';
             return { newBuffs: [{ id, time: 3 }] };
         },
@@ -429,7 +429,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         buffType: BuffType.debuff,
         eleType: EleType.earth,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            if (ctrlr.random() < 0.1) return { newBuffs: [{ id: 'JingZhi', time: 1 }] };
+            if (ctrlr.ranSd() < 0.1) return { newBuffs: [{ id: 'JingZhi', time: 1 }] };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `每回合结束时，10%几率获得静止效果`;
@@ -447,7 +447,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             thisPet.pet2.evdRate += 0.1;
         },
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            if (ctrlr.random() < 0.15) {
+            if (ctrlr.ranSd() < 0.15) {
                 let newPet = ctrlr.getTeam(thisPet).pets.getOne(pet => pet.hp > 0 && pet.pet2.speed < thisPet.pet2.speed);
                 if (newPet) return { newBuffs: [{ aim: newPet, id: 'KongWu', time: 3 }] };
             }
