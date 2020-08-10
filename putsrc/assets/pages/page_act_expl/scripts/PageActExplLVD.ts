@@ -19,7 +19,7 @@ export class PageActExplLVD extends ListViewDelegate {
     logCellPrefab: cc.Prefab = null;
 
     numberOfRows(listView: ListView): number {
-        return Math.min(this.page.logList.length, 99);
+        return Math.min(this.page.getLogs().length, 99);
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
@@ -31,6 +31,7 @@ export class PageActExplLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellExplLog) {
-        cell.setData(this.page.logList[this.page.logList.length - rowIdx - 1]);
+        let logList = this.page.getLogs();
+        cell.setData(logList[logList.length - rowIdx - 1]);
     }
 }

@@ -423,30 +423,25 @@ export class PageActExpl extends BattlePageBase {
 
     // list -----------------------------------------------------------------
 
-    logList: string[] = [];
-    newLogCount: number = 0;
-
     autoShowLog: boolean = true;
     autoMoveDis: number = 0;
 
-    log(str: string) {
-        cc.log('PUT EXPL: ', str);
-        this.logList.push(str);
-        if (this.logList.length > 200) this.logList = this.logList.slice(100);
-        this.newLogCount++;
+    getLogs(): string[] {
+        return this.updater.logList;
     }
 
     handleLog() {
-        if (this.newLogCount === 0) return;
+        let newLogCount = this.updater.newLogCount;
+        if (newLogCount === 0) return;
         if (this.autoShowLog) {
-            let logCount = Math.min(this.newLogCount, 10);
+            let logCount = Math.min(newLogCount, 10);
             this.listView.clearContent();
             this.listView.createContent(logCount * 70);
             this.autoMoveDis = logCount * 6;
-            this.newLogCount = 0;
+            this.updater.clearNewLogCount();
             this.setNewLogTip(0);
         } else {
-            this.setNewLogTip(this.newLogCount);
+            this.setNewLogTip(newLogCount);
         }
     }
 

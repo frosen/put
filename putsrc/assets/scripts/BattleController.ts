@@ -4,6 +4,7 @@
  * luleyan
  */
 
+import { ExplUpdater } from './ExplUpdater';
 import { Memory, GameDataTool } from 'scripts/Memory';
 import { BattlePageBase } from './BattlePageBase';
 import { getRandomOneInList } from 'scripts/Random';
@@ -14,7 +15,7 @@ import { petModelDict } from 'configs/PetModelDict';
 
 import { deepCopy } from 'scripts/Utils';
 import { SkillModel, SkillType, SkillAimtype, SkillDirType } from 'scripts/DataModel';
-import { Pet, EleType, BattleType, EleTypeNames, GameData, Catcher, BattleMmr } from 'scripts/DataSaved';
+import { Pet, EleType, BattleType, EleTypeNames, GameData, BattleMmr } from 'scripts/DataSaved';
 import { RealBattle, BattleTeam, BattlePet, BattleBuff, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { battleSequence } from 'configs/BattleSequence';
 
@@ -54,17 +55,19 @@ export class BattleController {
     memory: Memory = null;
     gameData: GameData = null;
     endCallback: (win: boolean) => void = null;
+    logCallback: (str: string) => void = null;
 
     realBattle: RealBattle = null;
 
     debugMode: boolean = false;
     realBattleCopys: { seed: number; rb: RealBattle }[] = []; // 用于战斗重置
 
-    init(page: BattlePageBase, memory: Memory, endCallback: () => void) {
+    init(page: BattlePageBase, memory: Memory, endCallback: () => void, logCallback: (str: string) => void) {
         this.page = page;
         this.memory = memory;
         this.gameData = memory.gameData;
         this.endCallback = endCallback;
+        this.logCallback = logCallback;
 
         this.realBattle = new RealBattle();
 
@@ -186,17 +189,16 @@ export class BattleController {
         let hiding = this.gameData.curExpl.hiding;
 
         // 更新UI和日志
-        if (this.page) {
-            this.page.setUIofEnemyPet(-1);
-            let petNameDict = {};
-            for (const ePet of this.realBattle.enemyTeam.pets) {
-                let petId = ePet.pet.id;
-                let cnName = petModelDict[petId].cnName;
-                petNameDict[cnName] = true;
-            }
-            let petNames = Object.keys(petNameDict);
-            this.page.log('发现：' + petNames.join(', ') + (hiding ? '，偷袭成功' : '，进入战斗'));
+        if (this.page) this.page.setUIofEnemyPet(-1);
+
+        let petNameDict = {};
+        for (const ePet of this.realBattle.enemyTeam.pets) {
+            let petId = ePet.pet.id;
+            let cnName = petModelDict[petId].cnName;
+            petNameDict[cnName] = true;
         }
+        let petNames = Object.keys(petNameDict);
+        this.logCallback('发现：' + petNames.join(', ') + (hiding ? '，偷袭成功' : '，进入战斗'));
 
         // 偷袭
         if (hiding) {
@@ -307,7 +309,7 @@ export class BattleController {
         rb.battleRound++;
         rb.lastAim = null;
 
-        if (this.page) this.page.log(`第${rb.battleRound}回合`);
+        this.logCallback(`第${rb.battleRound}回合`);
     }
 
     handleCD(team: BattleTeam) {
@@ -389,7 +391,7 @@ export class BattleController {
             done = this.doNormalAttack(battlePet);
             if (done) break;
 
-            if (this.page) this.logStop(battlePet);
+            this.logStop(battlePet);
             return false; // 未成功攻击
         } while (false);
 
@@ -490,10 +492,8 @@ export class BattleController {
         if (dmgRate > 0) {
             hitResult = BattleController.getHitResult(battlePet, aim);
             if (hitResult === 0) {
-                if (this.page) {
-                    this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
-                    this.logMiss(battlePet, aim, skillModel.cnName);
-                }
+                if (this.page) this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
+                this.logMiss(battlePet, aim, skillModel.cnName);
                 return false;
             }
 
@@ -530,10 +530,8 @@ export class BattleController {
 
         finalDmg = lastHp - aim.hp;
 
-        if (this.page) {
-            this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
-            this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
-        }
+        if (this.page) this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
+        this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
 
         if (dmgRate > 0) {
             let baseRage: number;
@@ -583,10 +581,8 @@ export class BattleController {
         buffData.time = buffTime;
         buffData.caster = caster;
         if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted(aim, caster, this);
-        if (this.page) {
-            this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime);
-            this.logBuff(aim, buffModel.cnName);
-        }
+        if (this.page) this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime);
+        this.logBuff(aim, buffModel.cnName);
         aim.buffDatas.push(buffData);
     }
 
@@ -596,10 +592,8 @@ export class BattleController {
 
         let hitResult = BattleController.getHitResult(battlePet, aim);
         if (hitResult === 0) {
-            if (this.page) {
-                this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
-                this.logMiss(battlePet, aim, '普攻');
-            }
+            if (this.page) this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
+            this.logMiss(battlePet, aim, '普攻');
             return true;
         }
 
@@ -618,10 +612,8 @@ export class BattleController {
 
         if (aim.hp < 0) aim.hp = 0;
 
-        if (this.page) {
-            this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
-            this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, '普攻');
-        }
+        if (this.page) this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
+        this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, '普攻');
 
         this.addRageToAim(battlePet, aim, 2);
         this.addMp(battlePet, aim);
@@ -660,7 +652,7 @@ export class BattleController {
     }
 
     dead(battlePet: BattlePet, caster: BattlePet) {
-        if (this.page) this.page.log(`${petModelDict[battlePet.pet.id].cnName}被击败`);
+        this.logCallback(`${petModelDict[battlePet.pet.id].cnName}被击败`);
 
         let curPets = this.getTeam(battlePet).pets;
         let alive = false;
@@ -697,12 +689,12 @@ export class BattleController {
     }
 
     endBattle(selfWin: boolean) {
-        if (this.page) this.page.log(selfWin ? '战斗胜利' : '战斗失败');
+        this.logCallback(selfWin ? '战斗胜利' : '战斗失败');
         this.exitBattle(selfWin);
     }
 
     escape() {
-        if (this.page) this.page.log('撤退');
+        this.logCallback('撤退');
         this.exitBattle(false);
     }
 
@@ -826,22 +818,22 @@ export class BattleController {
             logStr += `，恢复血量${Math.floor(dmg * -0.1)}点`;
         }
 
-        this.page.log(logStr);
+        this.logCallback(logStr);
     }
 
     logMiss(battlePet: BattlePet, aim: BattlePet, skillName: string) {
         let logStr = `${petModelDict[aim.pet.id].cnName}避开了${petModelDict[battlePet.pet.id].cnName}的${skillName}`;
-        this.page.log(logStr);
+        this.logCallback(logStr);
     }
 
     logBuff(aim: BattlePet, name: string) {
         let logStr = `${petModelDict[aim.pet.id].cnName}受到${name}效果`;
-        this.page.log(logStr);
+        this.logCallback(logStr);
     }
 
     logStop(battlePet: BattlePet) {
         let logStr = `${petModelDict[battlePet.pet.id].cnName}无法行动`;
-        this.page.log(logStr);
+        this.logCallback(logStr);
     }
 
     ranSd() {

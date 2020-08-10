@@ -54,7 +54,7 @@ export class ExplUpdater {
         this.gameData = this.memory.gameData;
 
         this.battleCtrlr = new BattleController();
-        this.battleCtrlr.init(this.page, this.memory, this.onBattleEnd.bind(this));
+        this.battleCtrlr.init(this.page, this.memory, this.onBattleEnd.bind(this), this.log.bind(this));
 
         let curExpl = this.gameData.curExpl;
         if (!curExpl) this.createExpl(spcBtlId, startStep);
@@ -572,7 +572,7 @@ export class ExplUpdater {
                 let agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
                 this.explRdCnt += ExplUpdater.calcHideExplRdCnt(agiRate);
             }
-            if (this.page) this.page.log('开始探索');
+            this.log('开始探索');
         } else {
             this.explRdCnt--;
         }
@@ -709,38 +709,35 @@ export class ExplUpdater {
                     break;
                 }
             }
-            if (this.page) {
-                this.page.setExplStepUI();
+            if (this.page) this.page.setExplStepUI();
 
-                let posName = actPosModelDict[curExpl.curPosId].cnName;
-                let stepType = StepTypesByMax[curExplModel.stepMax][curStep];
-                let stepName = ExplStepNames[stepType];
-                this.page.log('进入' + posName + stepName);
-            }
+            let posName = actPosModelDict[curExpl.curPosId].cnName;
+            let stepType = StepTypesByMax[curExplModel.stepMax][curStep];
+            let stepName = ExplStepNames[stepType];
+            this.log('进入' + posName + stepName);
+
             return;
         } while (0);
 
-        if (this.page) {
-            if (this.prefindCnt > 0) {
-                this.prefindCnt--;
-                this.page.log('探索中......');
-            } else if (this.trsrFind) {
-                if (this.prefindCnt === 0) {
-                    this.prefindCnt = -1;
-                    this.page.log('发现远古宝箱');
-                } else this.page.log('宝箱解锁中......');
-            } else if (this.enemyFind) {
-                if (this.prefindCnt === 0) {
-                    this.prefindCnt = -1;
-                    this.page.log('发现附近似乎有威胁存在');
-                } else this.page.log('潜行接近中......');
-            } else if (this.unusedEvtIdx >= 0) {
-                if (this.prefindCnt === 0) {
-                    this.prefindCnt = -1;
-                    this.page.log(this.unusedEvts[this.unusedEvtIdx]);
-                } else this.page.log('探索中......');
-            } else this.page.log('探索中......');
-        }
+        if (this.prefindCnt > 0) {
+            this.prefindCnt--;
+            this.log('探索中......');
+        } else if (this.trsrFind) {
+            if (this.prefindCnt === 0) {
+                this.prefindCnt = -1;
+                this.log('发现远古宝箱');
+            } else this.log('宝箱解锁中......');
+        } else if (this.enemyFind) {
+            if (this.prefindCnt === 0) {
+                this.prefindCnt = -1;
+                this.log('发现附近似乎有威胁存在');
+            } else this.log('潜行接近中......');
+        } else if (this.unusedEvtIdx >= 0) {
+            if (this.prefindCnt === 0) {
+                this.prefindCnt = -1;
+                this.log(this.unusedEvts[this.unusedEvtIdx]);
+            } else this.log('探索中......');
+        } else this.log('探索中......');
     }
 
     gainRes() {
@@ -780,13 +777,11 @@ export class ExplUpdater {
             } else failRzt = rzt;
         }
 
-        if (this.page) {
-            if (failRzt) {
-                this.page.log(failRzt);
-            } else {
-                if (this.trsrFind) this.page.log('宝箱成功被打开');
-                this.page.log('获得了' + itemName);
-            }
+        if (failRzt) {
+            this.log(failRzt);
+        } else {
+            if (this.trsrFind) this.log('宝箱成功被打开');
+            this.log('获得了' + itemName);
         }
 
         this.updateChgUpdCnt();
@@ -841,16 +836,15 @@ export class ExplUpdater {
             curExp = Math.ceil(curExp);
 
             let curExpPercent = PetDataTool.addExp(selfPet, curExp);
-            if (this.page) {
-                let petName = petModelDict[selfPet.id].cnName;
-                if (curExpPercent <= 0) {
-                    // 跳过
-                } else if (curExpPercent >= 1) {
-                    this.page.log(`${petName}升到了${selfPet.lv}级`);
-                } else {
-                    let expRate = (curExpPercent * 100).toFixed(1);
-                    this.page.log(`${petName}获得${curExp}点经验，升级进度完成了${expRate}%`);
-                }
+
+            let petName = petModelDict[selfPet.id].cnName;
+            if (curExpPercent <= 0) {
+                // 跳过
+            } else if (curExpPercent >= 1) {
+                this.log(`${petName}升到了${selfPet.lv}级`);
+            } else {
+                let expRate = (curExpPercent * 100).toFixed(1);
+                this.log(`${petName}获得${curExp}点经验，升级进度完成了${expRate}%`);
             }
         }
     }
@@ -901,7 +895,7 @@ export class ExplUpdater {
                 let features: Feature[] = deepCopy(pet.inbornFeatures) as Feature[];
                 let rztStr = GameDataTool.addCaughtPet(gameData, pet.id, pet.lv, pet.rank, features);
                 if (rztStr === GameDataTool.SUC) {
-                    if (this.page) this.page.log(`成功捕获${petModelDict[pet.id].cnName}`);
+                    this.log(`成功捕获${petModelDict[pet.id].cnName}`);
                     let catcher = this.memory.gameData.items[catcherIdx] as Catcher;
                     if (catcher.count === 1) {
                         gameData.curExpl.catcherId = null;
@@ -909,7 +903,7 @@ export class ExplUpdater {
                     }
                     GameDataTool.deleteItem(gameData, catcherIdx);
                 } else {
-                    if (this.page) this.page.log(`捕获失败：${rztStr}`);
+                    this.log(`捕获失败：${rztStr}`);
                 }
                 break; // 每场战斗只能捕捉一只宠物
             }
@@ -972,7 +966,7 @@ export class ExplUpdater {
         if (done) {
             this.startExpl();
         } else {
-            if (this.page) this.page.log('休息中');
+            this.log('休息中');
         }
     }
 
@@ -991,5 +985,21 @@ export class ExplUpdater {
         let cur = !this.gameData.curExpl.hiding;
         this.gameData.curExpl.hiding = cur;
         if (this.page) this.page.setHideActive(cur);
+    }
+
+    // -----------------------------------------------------------------
+
+    logList: string[] = [];
+    newLogCount: number = 0;
+
+    log(str: string) {
+        cc.log('PUT EXPL: ', str);
+        this.logList[this.logList.length] = str;
+        if (this.logList.length > 200) this.logList = this.logList.slice(100);
+        this.newLogCount++;
+    }
+
+    clearNewLogCount() {
+        this.newLogCount = 0;
     }
 }

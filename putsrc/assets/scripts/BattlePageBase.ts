@@ -29,7 +29,6 @@ export abstract class BattlePageBase extends PageBase {
     abstract setCatchActive(b: boolean): void;
     abstract setHideActive(b: boolean): void;
 
-    abstract log(str: string): void;
     abstract handleLog(): void;
 
     abstract setExplStepUI(): void;
