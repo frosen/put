@@ -86,14 +86,17 @@ export class GameDataJIT {
 
     getAmplPercent(pet: Pet, attri: AmplAttriType) {
         let ampl = 1;
-        let petDataDict = this.attriGainAmplDict[String(pet.catchIdx)];
-        if (petDataDict) {
-            for (const key in petDataDict) {
-                const petData = petDataDict[key];
-                let value = petData[attri];
-                if (value) ampl += value * 0.01;
+        if (pet) {
+            let petDataDict = this.attriGainAmplDict[String(pet.catchIdx)];
+            if (petDataDict) {
+                for (const key in petDataDict) {
+                    const petData = petDataDict[key];
+                    let value = petData[attri];
+                    if (value) ampl += value * 0.01;
+                }
             }
         }
+
         let allPetDataDict = this.attriGainAmplDict[All];
         if (allPetDataDict) {
             for (const key in allPetDataDict) {

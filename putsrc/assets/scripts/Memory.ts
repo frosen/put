@@ -543,6 +543,22 @@ export class CnsumDataTool {
     }
 }
 
+export class MoneyTool {
+    static getStr(count: number): string {
+        let zuan = Math.floor(count / 1000000);
+        let zuanStr = zuan > 0 ? String(zuan) + '钻' : '';
+
+        count %= 1000000;
+        let jing = Math.floor(count / 1000);
+        let jingStr = jing > 0 ? '  ' + String(jing) + '晶' : '';
+
+        let kuai = count % 1000;
+        let kuaiStr = kuai > 0 || (zuan === 0 && jing === 0) ? '  ' + String(kuai) + '块' : '';
+
+        return zuanStr + jingStr + kuaiStr;
+    }
+}
+
 export class EquipDataTool {
     static create(
         id: string,

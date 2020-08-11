@@ -5,9 +5,9 @@
  */
 
 import { BattlePageBase } from './BattlePageBase';
-import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool, MmrTool } from 'scripts/Memory';
+import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool, MmrTool, MoneyTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, BattleMmr } from 'scripts/DataSaved';
+import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, BattleMmr, Money } from 'scripts/DataSaved';
 import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, randomArea, randomRate, getRandomOneInList, randomAreaInt, random } from './Random';
@@ -111,7 +111,6 @@ export class ExplUpdater {
         if (curExpl.curBattle) {
             let btlStartUpdCnt = curExpl.curBattle.startUpdCnt;
             let { inBattle, updCnt, lastTime } = this.recoverExplInBattle(curExpl.curBattle, curExpl.startTime);
-            cc.log('^_^!in battle ', inBattle, updCnt, lastTime);
             if (inBattle) {
                 this.updCnt = updCnt;
                 this.lastTime = lastTime;
@@ -136,15 +135,14 @@ export class ExplUpdater {
 
         let diff = Date.now() - curExpl.startTime;
         let curUpdCnt = Math.floor(diff / ExplInterval);
-        cc.log('^_^!diff', diff, curUpdCnt);
+
         let realCurUpdCnt = curUpdCnt + startUpdCnt;
-        cc.log('^_^!real ', realCurUpdCnt);
+        let realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
+        let lastStepUpdCnt = realChngUpdCnt + 1;
+
         let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
         let stepMaxIdx = curExplModel.stepMax - 1;
         let curStep = Math.min(MmrTool.getCurStep(curExpl), stepMaxIdx);
-
-        let realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
-        let lastStepUpdCnt = realChngUpdCnt + 1;
 
         // 战斗状态
         let selfPets = GameDataTool.getReadyPets(this.gameData);
@@ -183,6 +181,13 @@ export class ExplUpdater {
             if (catcherIdx === -1) curExpl.catcherId = null;
         }
         let catchSt = { catcherIdx };
+        let rztSt = {
+            exp: 0,
+            money: 0,
+            eqps: [],
+            pets: [],
+            itemDict: {}
+        };
 
         // 计算探索
         while (true) {
@@ -191,18 +196,15 @@ export class ExplUpdater {
             let enemyPwr = enemyLv * AttriRatioByRank[enemyRank];
             let petSt = { selfLv, selfRank, selfPwr, enemyLv, enemyRank, enemyPwr, agiRate, sensRate, eleRate };
             if (curStep >= stepMaxIdx) {
-                cc.log('^_^!go max', curStep, lastStepUpdCnt, realCurUpdCnt);
-                this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
+                this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt, rztSt);
                 break;
             }
             let nextStepUpdCnt = MmrTool.getUpdCntFromExplStep(curStep + 1);
             if (realCurUpdCnt < nextStepUpdCnt) {
-                cc.log('^_^!go end ', curStep, lastStepUpdCnt, realCurUpdCnt);
-                this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt);
+                this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt, rztSt);
                 break;
             }
-            cc.log('^_^!go go ', curStep, lastStepUpdCnt, nextStepUpdCnt);
-            this.recoverExplInExpl(curStep, lastStepUpdCnt, nextStepUpdCnt, petSt, catchSt);
+            this.recoverExplInExpl(curStep, lastStepUpdCnt, nextStepUpdCnt, petSt, catchSt, rztSt);
 
             lastStepUpdCnt = nextStepUpdCnt + 1;
             curStep++;
@@ -248,7 +250,6 @@ export class ExplUpdater {
 
         let updCnt = 0;
         while (true) {
-            cc.log('^_^!time ptr ', updCnt, timePtr, Date.now());
             if (this.battleCtrlr.realBattle.start === false) {
                 inBattle = false;
                 break;
@@ -286,18 +287,17 @@ export class ExplUpdater {
             sensRate: number;
             eleRate: number;
         },
-        catchSt: { catcherIdx: number }
+        catchSt: { catcherIdx: number },
+        rztSt: { exp: number; money: number; eqps: any[]; pets: any[]; itemDict: {} }
     ) {
         let curExpl = this.gameData.curExpl;
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
 
         let selfPets = GameDataTool.getReadyPets(this.gameData);
-        cc.log('^_^!pet st', petSt);
 
         // 计算回合数和胜利数量 ------------------------------------------
         let eachUpdCnt = ExplUpdater.calcBtlDuraUpdCnt(petSt.selfPwr, petSt.enemyPwr);
-        cc.log('^_^!each upd cnt ', eachUpdCnt);
         let eachExplRdCnt = 2;
         let eachHidingRdCnt = curExpl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
         eachUpdCnt += ExplUpdater.calcExplUpdCntByRdCnt(eachExplRdCnt + eachHidingRdCnt);
@@ -306,30 +306,28 @@ export class ExplUpdater {
         let diffUpdCnt = toUpdCnt - fromUpdCnt + 1;
         let explRdCnt = Math.floor(diffUpdCnt / eachUpdCnt);
         if (explRdCnt > 10) explRdCnt = randomAreaInt(explRdCnt, 0.1); // 增加随机范围
-        cc.log('^_^!expl cnt ', toUpdCnt, fromUpdCnt, diffUpdCnt, eachUpdCnt, explRdCnt);
         let winRate = ExplUpdater.calcWinRate(petSt.selfPwr, petSt.enemyPwr);
         let winCount = Math.ceil(explRdCnt * randomArea(winRate, 0.1));
-        cc.log('^_^!win count ', winCount, explRdCnt);
         winCount = Math.max(Math.min(winCount, explRdCnt), 0);
-        cc.log('^_^!win rate ', winRate, winCount, '>>', explRdCnt);
 
         // 计算获取的经验 ------------------------------------------
         let exp = ExplUpdater.calcExpByLvRank(petSt.selfLv, petSt.enemyLv, petSt.selfRank, petSt.enemyRank);
 
         let expTotal = exp * winCount;
         expTotal = randomAreaInt(expTotal, 0.05);
-        cc.log('^_^! exp', exp, expTotal);
+
         let gameDataJIT = this.memory.gameDataJIT;
         for (const pet of selfPets) {
             let expEach = expTotal * gameDataJIT.getAmplPercent(pet, AmplAttriType.exp); // 计算饮品的加成
             PetDataTool.addExp(pet, Math.ceil(expEach));
         }
+        rztSt.exp += expTotal;
 
         let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
 
         let stepMax = explModel.stepMax;
         let stepType = StepTypesByMax[stepMax][step];
-        cc.log('^_^!>>', StepTypesByMax, stepMax, step);
+
         // 计算捕获
         do {
             let catcherIdx = catchSt.catcherIdx;
@@ -355,7 +353,6 @@ export class ExplUpdater {
             let petIdLists = curPosModel.petIdLists;
             if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有宠物列表petIdLists，无法战斗`);
             let petIds = petIdLists[stepType];
-            cc.log('^_^! catch ', petIds);
             let realPetIds = [];
             for (const petId of petIds) {
                 let petModel = petModelDict[petId];
@@ -365,20 +362,19 @@ export class ExplUpdater {
                 realPetIds[realPetIds.length] = petId;
             }
             if (realPetIds.length === 0) break;
-            cc.log('^_^! catch realPetIds ', realPetIds);
+
             let rate = ExplUpdater.calcCatchRateByEleRate(catcherModel, petSt.eleRate);
             let catchCount = Math.floor(rate * winCount);
             catchCount = Math.min(catchCount, catcher.count);
-            cc.log('^_^!>>>', rate, winCount, catchCount, catcher.count);
             let catchIdx = 0;
             for (; catchIdx < catchCount; catchIdx++) {
                 let petId = getRandomOneInList(realPetIds);
                 let lv = lvMin + randomInt(lvMax - lvMin);
                 let rank = rankMin + randomInt(rankMax - rankMin);
                 let features = RealBattle.getRandomFeatures(lv);
-                cc.log('^_^! add pet', petId, lv, rank, features);
                 let rztStr = GameDataTool.addCaughtPet(this.gameData, petId, lv, rank, features);
                 if (rztStr !== GameDataTool.SUC) break;
+                rztSt.pets.push(petId);
             }
 
             if (catchIdx === catcher.count) {
@@ -393,41 +389,60 @@ export class ExplUpdater {
         let itemIds = curPosModel.itemIdLists[stepType];
         let eqpIds = curPosModel.eqpIdLists[stepType];
 
-        let itemCnt: number;
+        let itemTimes: number;
         if (eqpIds) {
             let treasureRate = ExplUpdater.calcTreasureRate(petSt.sensRate);
-            let eqpCnt = Math.floor(gainTimes * treasureRate);
-            itemCnt = Math.ceil(gainTimes * (1 - treasureRate));
-            for (let index = 0; index < eqpCnt; index++) {
+            let eqpTimes = Math.floor(gainTimes * treasureRate);
+            itemTimes = gainTimes - eqpTimes;
+            for (let index = 0; index < eqpTimes; index++) {
                 let eqpId = getRandomOneInList(eqpIds);
                 let equip = EquipDataTool.createRandomById(eqpId);
                 if (!equip) break;
                 let rzt = GameDataTool.addEquip(this.gameData, equip);
                 if (rzt !== GameDataTool.SUC) break;
+                rztSt.eqps.push(eqpId);
             }
         } else {
-            itemCnt = gainTimes;
+            itemTimes = gainTimes;
         }
 
-        let gainMoreRate = Math.min(Math.max(petSt.sensRate, 0), 3); // 与 calcGainCnt 保持一致
-        itemCnt = Math.ceil(itemCnt * gainMoreRate);
-        cc.log('^_^!gain cnt ', gainTimes, explRdCnt, eachExplRdCnt, eachHidingRdCnt);
+        let gainMoreRate = ExplUpdater.calcGainCnt(petSt.sensRate);
+
+        let moneyTimes = Math.floor(itemTimes * 0.6);
+        if (moneyTimes > 0) {
+            let eachMoneyCnt = this.getMoneyGain(curPosModel.lv, step, gainMoreRate);
+            let moneyAdd = randomAreaInt(eachMoneyCnt * moneyTimes, 0.2);
+            GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += moneyAdd));
+            rztSt.money += moneyAdd;
+        }
+
+        itemTimes -= moneyTimes;
+        itemTimes = Math.ceil(itemTimes * gainMoreRate);
         const eachItemRate = 2 / itemIds.length;
-        cc.log('^_^!>>>>', itemCnt, eachItemRate);
-        let itemLeft = itemCnt;
+
+        function saveItemRzt(itemId, cnt) {
+            if (rztSt.itemDict.hasOwnProperty(itemId)) rztSt.itemDict[itemId] += cnt;
+            else rztSt.itemDict[itemId] = cnt;
+        }
+
+        let itemLeft = itemTimes;
         for (let index = 0; index < itemIds.length; index++) {
             let curRate = random(eachItemRate);
-            let curCnt = Math.min(Math.floor(itemCnt * curRate), itemLeft);
+            let curCnt = Math.min(Math.floor(itemTimes * curRate), itemLeft);
             let itemId = itemIds[index];
-            GameDataTool.addCnsum(this.gameData, itemId, curCnt);
-            cc.log('^_^! gain items ', itemId, curCnt);
+            let rzt = GameDataTool.addCnsum(this.gameData, itemId, curCnt);
+            if (rzt !== GameDataTool.SUC) {
+                itemLeft = 0;
+                break;
+            }
             itemLeft -= curCnt;
+            saveItemRzt(itemId, curCnt);
             if (itemLeft <= 0) break;
         }
         if (itemLeft > 0) {
             let itemId = itemIds[0];
-            cc.log('^_^! gain left items ', itemId, itemLeft);
-            GameDataTool.addCnsum(this.gameData, itemId, itemLeft);
+            let rzt = GameDataTool.addCnsum(this.gameData, itemId, itemLeft);
+            if (rzt === GameDataTool.SUC) saveItemRzt(itemId, itemLeft);
         }
     }
 
@@ -632,21 +647,18 @@ export class ExplUpdater {
     static getPosPetAgiRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
         let posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
         let petValue = battleCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.agility);
-        cc.log('^_^!agi rate', petValue, posValue);
         return petValue / posValue;
     }
 
     static getPosPetSensRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
         let posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
         let petValue = battleCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.sensitivity);
-        cc.log('^_^!agi sens', petValue, posValue);
         return petValue / posValue;
     }
 
     static getPosPetEleRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
         let posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
         let petValue = battleCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.elegant);
-        cc.log('^_^!agi ele', petValue, posValue);
         return petValue / posValue;
     }
 
@@ -655,7 +667,6 @@ export class ExplUpdater {
         let stepMaxIdx = curExplModel.stepMax - 1;
         let curStep = Math.min(MmrTool.getCurStep(curExpl), stepMaxIdx);
         let curPosLv = actPosModelDict[curExpl.curPosId].lv;
-        cc.log('^_^!lv step ', curPosLv, curStep);
         return (100 + curPosLv * 15) * (1 + curStep * 0.4);
     }
 
@@ -740,6 +751,15 @@ export class ExplUpdater {
         } else this.log('探索中......');
     }
 
+    getMoneyGain(lv: number, step: number, gainRate: number): number {
+        let moneyAdd = (lv + step * 2) * (1 + step * 0.1);
+        moneyAdd = randomAreaInt(moneyAdd, 0.2) - 3 + randomInt(7); // +-20% +-3
+        moneyAdd = this.memory.gameDataJIT.getAmplPercent(null, AmplAttriType.money);
+        moneyAdd *= 1 + gainRate * 0.1;
+        moneyAdd = Math.max(moneyAdd, 1);
+        return moneyAdd;
+    }
+
     gainRes() {
         let curExpl = this.gameData.curExpl;
         let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
@@ -748,7 +768,6 @@ export class ExplUpdater {
         let curPosModel = actPosModelDict[posId];
         let stepMax = curExplModel.stepMax;
         let step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
-        cc.log('^_^!step ', step);
         let stepType = StepTypesByMax[stepMax][step];
 
         let itemName: string = null;
@@ -766,22 +785,27 @@ export class ExplUpdater {
         }
 
         if (!failRzt && !itemName) {
-            let itemIdLists = curPosModel.itemIdLists;
-            let itemIds = itemIdLists[stepType];
-            cc.log('^_^!itemIds', itemIds, stepType);
-            let itemId = getRandomOneInList(itemIds);
-            let rzt = GameDataTool.addCnsum(this.gameData, itemId, this.gainCnt);
-            if (rzt === GameDataTool.SUC) {
-                let model = CnsumDataTool.getModelById(itemId);
-                itemName = model.cnName + (this.gainCnt > 1 ? 'x' + String(this.gainCnt) : '');
-            } else failRzt = rzt;
+            if (randomRate(0.6)) {
+                let moneyAdd = this.getMoneyGain(curPosModel.lv, step, this.gainCnt);
+                GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += moneyAdd));
+                itemName = '通古币' + MoneyTool.getStr(moneyAdd).trim();
+            } else {
+                let itemIdLists = curPosModel.itemIdLists;
+                let itemIds = itemIdLists[stepType];
+                let itemId = getRandomOneInList(itemIds);
+                let rzt = GameDataTool.addCnsum(this.gameData, itemId, this.gainCnt);
+                if (rzt === GameDataTool.SUC) {
+                    let model = CnsumDataTool.getModelById(itemId);
+                    itemName = model.cnName + (this.gainCnt > 1 ? 'x' + String(this.gainCnt) : '');
+                } else failRzt = rzt;
+            }
         }
 
         if (failRzt) {
             this.log(failRzt);
         } else {
             if (this.trsrFind) this.log('宝箱成功被打开');
-            this.log('获得了' + itemName);
+            this.log('获得' + itemName);
         }
 
         this.updateChgUpdCnt();
