@@ -4,10 +4,8 @@
  * luleyan
  */
 
-import { ExplUpdater } from './ExplUpdater';
 import { Memory, GameDataTool } from 'scripts/Memory';
 import { BattlePageBase } from './BattlePageBase';
-import { getRandomOneInList } from 'scripts/Random';
 
 import { skillModelDict } from 'configs/SkillModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
@@ -302,7 +300,8 @@ export class BattleController {
 
         let petAliveCnt = 0;
         for (const bPet of rb.order) if (bPet.hp > 0) petAliveCnt++;
-        rb.sequnence = getRandomOneInList(battleSequence[petAliveCnt]);
+        let sequennceList = battleSequence[petAliveCnt];
+        rb.sequnence = sequennceList[ranSdInt(sequennceList.length)];
 
         rb.curOrderIdx = -1;
         rb.curSequenceIdx = -1;

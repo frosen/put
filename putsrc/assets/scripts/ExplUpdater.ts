@@ -130,6 +130,8 @@ export class ExplUpdater {
             this.handleSelfTeamChange();
         }
 
+        this.logList.length = 0;
+
         // 计算step
         let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
 

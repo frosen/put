@@ -364,7 +364,7 @@ export class Memory {
 
         let ePets = [];
         for (let index = 0; index < 3; index++) ePets.push(MmrTool.createPetMmr('FaTiaoWa', 2, 1, []));
-        GameDataTool.createBattle(this.gameData, 100, 2090, 0, []);
+        GameDataTool.createBattle(this.gameData, 100, (1000 * 60 * 100) / 750 - 10, 0, []);
         this.gameData.curExpl.curBattle.enemys = ePets;
     }
 }
