@@ -110,7 +110,7 @@ export class ExplUpdater {
 
         if (curExpl.curBattle) {
             let btlStartUpdCnt = curExpl.curBattle.startUpdCnt;
-            let { inBattle, updCnt, lastTime } = this.recoverExplInBattle(curExpl.curBattle, curExpl.startTime);
+            let { inBattle, win, updCnt, lastTime } = this.recoverExplInBattle(curExpl.curBattle, curExpl.startTime);
             if (inBattle) {
                 this.updCnt = updCnt;
                 this.lastTime = lastTime;
@@ -123,8 +123,8 @@ export class ExplUpdater {
                 return;
             } else {
                 curExpl.chngUpdCnt = btlStartUpdCnt + updCnt;
-                this.receiveExp();
-                this.catchPet();
+                this.receiveExp(win);
+                if (win) this.catchPet();
             }
         } else {
             this.handleSelfTeamChange();
@@ -238,15 +238,19 @@ export class ExplUpdater {
         }
     }
 
-    recoverExplInBattle(curBattle: BattleMmr, explStartTime: number): { inBattle: boolean; updCnt: number; lastTime: number } {
+    recoverExplInBattle(
+        curBattle: BattleMmr,
+        explStartTime: number
+    ): { inBattle: boolean; win: boolean; updCnt: number; lastTime: number } {
         let inBattle = true;
         let timePtr = curBattle.startUpdCnt * ExplInterval + explStartTime;
 
         let oldPage = this.page;
         let endCall = this.battleCtrlr.endCallback;
+        let win: boolean = false;
         this.page = null;
         this.battleCtrlr.page = null;
-        this.battleCtrlr.endCallback = null;
+        this.battleCtrlr.endCallback = bw => (win = bw);
 
         this.battleCtrlr.resetSelfTeam(true);
         this.battleCtrlr.resetBattle(curBattle);
@@ -270,6 +274,7 @@ export class ExplUpdater {
 
         return {
             inBattle,
+            win,
             updCnt,
             lastTime: timePtr - ExplInterval
         };
@@ -304,7 +309,7 @@ export class ExplUpdater {
         let eachExplRdCnt = 2;
         let eachHidingRdCnt = curExpl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
         eachUpdCnt += ExplUpdater.calcExplUpdCntByRdCnt(eachExplRdCnt + eachHidingRdCnt);
-        eachUpdCnt += 5; // 恢复5跳
+        eachUpdCnt += 10; // 恢复10跳，长于非挂机
 
         let diffUpdCnt = toUpdCnt - fromUpdCnt + 1;
         let explRdCnt = Math.floor(diffUpdCnt / eachUpdCnt);
@@ -848,22 +853,25 @@ export class ExplUpdater {
 
     onBattleEnd(win: boolean) {
         this.updateChgUpdCnt();
-        if (win) {
-            this.receiveExp(); // 计算获得的exp
-            this.catchPet();
-        }
+        this.receiveExp(win);
+        if (win) this.catchPet();
         this.startRecover();
     }
 
-    receiveExp() {
+    receiveExp(win: boolean) {
         let rb = this.battleCtrlr.realBattle;
         let gameDataJIT = this.memory.gameDataJIT;
 
-        let selfLv = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
-        let enemyLv = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
-        let selfRank = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
-        let enemyRank = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
-        let exp = ExplUpdater.calcExpByLvRank(selfLv, enemyLv, selfRank, enemyRank);
+        let exp: number;
+        if (win) {
+            let selfLv = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
+            let enemyLv = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
+            let selfRank = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
+            let enemyRank = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
+            exp = ExplUpdater.calcExpByLvRank(selfLv, enemyLv, selfRank, enemyRank);
+        } else {
+            exp = 10;
+        }
 
         for (const selfBPet of rb.selfTeam.pets) {
             let selfPet = selfBPet.pet;
