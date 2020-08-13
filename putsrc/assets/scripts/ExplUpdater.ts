@@ -10,7 +10,7 @@ import { BattleController } from './BattleController';
 import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, BattleMmr, Money } from 'scripts/DataSaved';
 import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
-import { randomInt, randomArea, randomRate, getRandomOneInList, randomAreaInt, random } from './Random';
+import { randomInt, randomArea, randomRate, getRandomOneInList, randomAreaInt, random, randomRound } from './Random';
 import { ExplModel, StepTypesByMax, ExplStepNames, CatcherModel } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
@@ -409,8 +409,9 @@ export class ExplUpdater {
             itemTimes = gainTimes;
         }
 
-        let gainMoreRate = ExplUpdater.calcGainCnt(petSt.sensRate);
+        let gainMoreRate = ExplUpdater.calcGainCntRate(petSt.sensRate);
 
+        // 计算钱
         let moneyTimes = Math.floor(itemTimes * 0.6);
         if (moneyTimes > 0) {
             let eachMoneyCnt = this.getMoneyGain(curPosModel.lv, step, gainMoreRate);
@@ -419,33 +420,38 @@ export class ExplUpdater {
             rztSt.money += moneyAdd;
         }
 
+        // 计算其他道具
         itemTimes -= moneyTimes;
         itemTimes = Math.ceil(itemTimes * gainMoreRate);
-        const eachItemRate = 2 / itemIds.length;
+        let itemMax = GameDataTool.getItemCountMax(this.gameData);
+        itemTimes = Math.min(itemTimes, itemMax);
 
-        function saveItemRzt(itemId: string, cnt: string) {
+        function saveItemRzt(itemId: string, cnt: number) {
             if (rztSt.itemDict.hasOwnProperty(itemId)) rztSt.itemDict[itemId] += cnt;
             else rztSt.itemDict[itemId] = cnt;
         }
 
-        let itemLeft = itemTimes;
-        for (let index = 0; index < itemIds.length; index++) {
-            let curRate = random(eachItemRate);
-            let curCnt = Math.min(Math.floor(itemTimes * curRate), itemLeft);
-            let itemId = itemIds[index];
-            let rzt = GameDataTool.addCnsum(this.gameData, itemId, curCnt);
-            if (rzt !== GameDataTool.SUC) {
-                itemLeft = 0;
-                break;
+        if (itemTimes > 0) {
+            const eachItemRate = 2 / itemIds.length;
+            let itemLeft = itemTimes;
+            for (let index = 0; index < itemIds.length; index++) {
+                let curRate = random(eachItemRate);
+                let curCnt = Math.min(Math.floor(itemTimes * curRate), itemLeft);
+                let itemId = itemIds[index];
+                let rzt = GameDataTool.addCnsum(this.gameData, itemId, curCnt);
+                if (rzt !== GameDataTool.SUC) {
+                    itemLeft = 0;
+                    break;
+                }
+                itemLeft -= curCnt;
+                saveItemRzt(itemId, curCnt);
+                if (itemLeft <= 0) break;
             }
-            itemLeft -= curCnt;
-            saveItemRzt(itemId, curCnt);
-            if (itemLeft <= 0) break;
-        }
-        if (itemLeft > 0) {
-            let itemId = itemIds[0];
-            let rzt = GameDataTool.addCnsum(this.gameData, itemId, itemLeft);
-            if (rzt === GameDataTool.SUC) saveItemRzt(itemId, itemLeft);
+            if (itemLeft > 0) {
+                let itemId = itemIds[0];
+                let rzt = GameDataTool.addCnsum(this.gameData, itemId, itemLeft);
+                if (rzt === GameDataTool.SUC) saveItemRzt(itemId, itemLeft);
+            }
         }
     }
 
@@ -559,8 +565,8 @@ export class ExplUpdater {
     explTime: number = 0;
     explRdCnt: number = 0;
 
-    /** 本次获取道具的数量 */
-    gainCnt: number = 1;
+    /** 本次获取道具的数量的几率数 */
+    gainCntRate: number = 1;
 
     /** 发现宝藏 */
     trsrFind: boolean = false;
@@ -608,7 +614,7 @@ export class ExplUpdater {
                 this.prefindCnt = randomInt(3);
             } else {
                 this.trsrFind = false;
-                this.gainCnt = ExplUpdater.calcGainCnt(sensRate);
+                this.gainCntRate = ExplUpdater.calcGainCntRate(sensRate);
 
                 if (randomRate(0.35)) {
                     this.unusedEvtIdx = randomInt(this.unusedEvts.length);
@@ -633,17 +639,19 @@ export class ExplUpdater {
         else return Math.ceil(rate);
     }
 
-    static calcTreasureRate(rate: number): number {
+    static calcTreasureRate(senRate: number): number {
         let trsrRate: number;
-        if (rate >= 1) trsrRate = 0.04 + Math.min(rate - 1, 1) * 0.04;
+        if (senRate >= 1) trsrRate = 0.04 + Math.min(senRate - 1, 1) * 0.04;
         else trsrRate = 0.02;
         return trsrRate;
     }
 
-    static calcGainCnt(rate: number): number {
-        if (rate < 1) return 1;
-        if (rate < 3) return 1 + (randomRate((rate - 1) * 0.5) ? 1 : 0);
-        return 2 + (randomRate(0.2) ? 1 : 0);
+    static calcGainCntRate(senRate: number): number {
+        let cntRate: number;
+        if (senRate < 1) cntRate = 1;
+        if (senRate < 3) return 1 + (senRate - 1) * 0.5;
+        else cntRate = 2;
+        return cntRate + 0.1;
     }
 
     static getPosPetAgiRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
@@ -789,17 +797,18 @@ export class ExplUpdater {
 
         if (!failRzt && !itemName) {
             if (randomRate(0.6)) {
-                let moneyAdd = this.getMoneyGain(curPosModel.lv, step, this.gainCnt);
+                let moneyAdd = this.getMoneyGain(curPosModel.lv, step, this.gainCntRate);
                 GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += moneyAdd));
                 itemName = '通古币' + MoneyTool.getStr(moneyAdd).trim();
             } else {
                 let itemIdLists = curPosModel.itemIdLists;
                 let itemIds = itemIdLists[stepType];
                 let itemId = getRandomOneInList(itemIds);
-                let rzt = GameDataTool.addCnsum(this.gameData, itemId, this.gainCnt);
+                let gainCnt = randomRound(this.gainCntRate);
+                let rzt = GameDataTool.addCnsum(this.gameData, itemId, gainCnt);
                 if (rzt === GameDataTool.SUC) {
                     let model = CnsumDataTool.getModelById(itemId);
-                    itemName = model.cnName + (this.gainCnt > 1 ? 'x' + String(this.gainCnt) : '');
+                    itemName = model.cnName + (gainCnt > 1 ? 'x' + String(gainCnt) : '');
                 } else failRzt = rzt;
             }
         }
