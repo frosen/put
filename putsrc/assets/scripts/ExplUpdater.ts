@@ -135,7 +135,12 @@ export class ExplUpdater {
         // 计算step
         let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
 
-        let diff = Date.now() - curExpl.startTime;
+        let nowTime = Date.now();
+        let realDiff = nowTime - curExpl.startTime;
+        const hangMaxTime = 1000 * 60 * 60 * 24;
+        let timeIn = realDiff < hangMaxTime;
+        let diff = timeIn ? realDiff : hangMaxTime;
+
         let curUpdCnt = Math.floor(diff / ExplInterval);
 
         let realCurUpdCnt = curUpdCnt + startUpdCnt;
@@ -215,7 +220,13 @@ export class ExplUpdater {
 
         curExpl.chngUpdCnt = curUpdCnt;
         this.updCnt = curUpdCnt;
-        this.lastTime = curUpdCnt * ExplInterval + curExpl.startTime;
+        if (timeIn) {
+            this.lastTime = curUpdCnt * ExplInterval + curExpl.startTime;
+        } else {
+            this.lastTime = nowTime;
+            curExpl.startTime = nowTime - curUpdCnt * ExplInterval;
+        }
+
         this.recoverExplStepPercent(curExpl);
         this.page.setExplStepUI();
 
@@ -894,7 +905,7 @@ export class ExplUpdater {
     }
 
     static calcExpByLvRank(selfLv: number, enemyLv: number, selfRank: number, enemyRank: number): number {
-        let exp = enemyLv * 5 + 45;
+        let exp = 8 + 3 * Math.pow(enemyLv, 1.5);
 
         if (enemyLv >= selfLv) exp *= 1 + (enemyLv - selfLv) * 0.05;
         else exp *= 1 - Math.min(selfLv - enemyLv, 8) / 8;
