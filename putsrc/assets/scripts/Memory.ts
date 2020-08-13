@@ -329,7 +329,7 @@ export class Memory {
             pet.state = PetState.ready;
         });
 
-        GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
+        // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
 
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(21, 25));
         GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(21, 25));
@@ -358,14 +358,14 @@ export class Memory {
 
         this.gameData.curPosId = 'GuangJiDianDaDao';
         GameDataTool.createExpl(this.gameData, 0);
-        this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 100;
+        this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 60 * 24;
         this.gameData.curExpl.catcherId = 'PuTongXianJing1';
-        this.gameData.curExpl.chngUpdCnt = 2100;
+        // this.gameData.curExpl.chngUpdCnt = 2100;
 
-        let ePets = [];
-        for (let index = 0; index < 3; index++) ePets.push(MmrTool.createPetMmr('FaTiaoWa', 2, 1, []));
-        GameDataTool.createBattle(this.gameData, 100, (1000 * 60 * 100) / 750 - 10, 0, []);
-        this.gameData.curExpl.curBattle.enemys = ePets;
+        // let ePets = [];
+        // for (let index = 0; index < 3; index++) ePets.push(MmrTool.createPetMmr('FaTiaoWa', 2, 1, []));
+        // GameDataTool.createBattle(this.gameData, 100, (1000 * 60 * 100) / 750 - 10, 0, []);
+        // this.gameData.curExpl.curBattle.enemys = ePets;
     }
 }
 

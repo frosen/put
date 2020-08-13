@@ -146,36 +146,6 @@ export class ExplUpdater {
         let stepMaxIdx = curExplModel.stepMax - 1;
         let curStep = Math.min(MmrTool.getCurStep(curExpl), stepMaxIdx);
 
-        // 战斗状态
-        let selfPets = GameDataTool.getReadyPets(this.gameData);
-        let selfLv = selfPets.getAvg((pet: Pet) => pet.lv);
-        let selfRank = selfPets.getAvg((pet: Pet) => pet.rank);
-        let selfPwr = selfPets.getAvg((pet: Pet) => {
-            let totalEqpLv = 0;
-            let featureLvs = 0;
-            for (const eqp of pet.equips) {
-                if (!eqp) continue;
-                let eqpModel = equipModelDict[eqp.id];
-                let eqpLv = (eqpModel.lv + eqp.growth) * (1 + eqpModel.rank * 0.1);
-                totalEqpLv += eqpLv * 0.15; // 每个装备属性大约等于同等级宠物的20%，但这里只x15%，少于20%
-                for (const lv of eqp.selfFeatureLvs) featureLvs += lv;
-                for (const feature of eqp.affixes) featureLvs += feature.lv;
-            }
-            for (const feature of pet.learnedFeatures) featureLvs += feature.lv;
-
-            let realPrvty = PetDataTool.getRealPrvty(pet);
-            let curPower = pet.lv * AttriRatioByRank[pet.rank] + totalEqpLv;
-            curPower *= 1 + (featureLvs + realPrvty * 0.01 * 20) * 0.01;
-            return curPower;
-        });
-
-        let posId = curExpl.curPosId;
-        let curPosModel = actPosModelDict[posId];
-
-        let agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
-        let sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
-        let eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.battleCtrlr);
-
         // 捕捉状态
         let catcherIdx = -1;
         if (curExpl.catcherId) {
@@ -183,6 +153,8 @@ export class ExplUpdater {
             if (catcherIdx === -1) curExpl.catcherId = null;
         }
         let catchSt = { catcherIdx };
+
+        // 结果状态
         let rztSt = {
             exp: 0,
             money: 0,
@@ -191,12 +163,41 @@ export class ExplUpdater {
             itemDict: {}
         };
 
-        // 计算探索
+        let selfPets = GameDataTool.getReadyPets(this.gameData);
+        let posId = curExpl.curPosId;
+        let curPosModel = actPosModelDict[posId];
+
         while (true) {
+            // 战斗状态
+            let selfLv = selfPets.getAvg((pet: Pet) => pet.lv);
+            let selfRank = selfPets.getAvg((pet: Pet) => pet.rank);
+            let selfPwr = selfPets.getAvg((pet: Pet) => {
+                let totalEqpLv = 0;
+                let featureLvs = 0;
+                for (const eqp of pet.equips) {
+                    if (!eqp) continue;
+                    let eqpModel = equipModelDict[eqp.id];
+                    let eqpLv = (eqpModel.lv + eqp.growth) * (1 + eqpModel.rank * 0.1);
+                    totalEqpLv += eqpLv * 0.15; // 每个装备属性大约等于同等级宠物的20%，但这里只x15%，少于20%
+                    for (const lv of eqp.selfFeatureLvs) featureLvs += lv;
+                    for (const feature of eqp.affixes) featureLvs += feature.lv;
+                }
+                for (const feature of pet.learnedFeatures) featureLvs += feature.lv;
+
+                let realPrvty = PetDataTool.getRealPrvty(pet);
+                let curPower = pet.lv * AttriRatioByRank[pet.rank] + totalEqpLv;
+                curPower *= 1 + (featureLvs + realPrvty * 0.01 * 20) * 0.01;
+                return curPower;
+            });
             let enemyLv: number = RealBattle.calcLvArea(curPosModel, curStep).base;
             let enemyRank: number = RealBattle.calcRankAreaByExplStep(curStep).base;
             let enemyPwr = enemyLv * AttriRatioByRank[enemyRank];
+            let agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
+            let sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
+            let eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.battleCtrlr);
             let petSt = { selfLv, selfRank, selfPwr, enemyLv, enemyRank, enemyPwr, agiRate, sensRate, eleRate };
+
+            // 计算探索
             if (curStep >= stepMaxIdx) {
                 this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt, rztSt);
                 break;
@@ -422,7 +423,7 @@ export class ExplUpdater {
         itemTimes = Math.ceil(itemTimes * gainMoreRate);
         const eachItemRate = 2 / itemIds.length;
 
-        function saveItemRzt(itemId, cnt) {
+        function saveItemRzt(itemId: string, cnt: string) {
             if (rztSt.itemDict.hasOwnProperty(itemId)) rztSt.itemDict[itemId] += cnt;
             else rztSt.itemDict[itemId] = cnt;
         }
@@ -641,9 +642,8 @@ export class ExplUpdater {
 
     static calcGainCnt(rate: number): number {
         if (rate < 1) return 1;
-        if (rate < 2) return 1 + (randomRate(rate - 1) ? 1 : 0);
-        if (rate < 3) return 2 + (randomRate(rate - 2) ? 1 : 0);
-        return 3 + (randomRate(0.2) ? 1 : 0);
+        if (rate < 3) return 1 + (randomRate((rate - 1) * 0.5) ? 1 : 0);
+        return 2 + (randomRate(0.2) ? 1 : 0);
     }
 
     static getPosPetAgiRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
@@ -755,10 +755,11 @@ export class ExplUpdater {
 
     getMoneyGain(lv: number, step: number, gainRate: number): number {
         let moneyAdd = (lv + step * 2) * (1 + step * 0.1);
-        moneyAdd = randomAreaInt(moneyAdd, 0.2) - 3 + randomInt(7); // +-20% +-3
-        moneyAdd = this.memory.gameDataJIT.getAmplPercent(null, AmplAttriType.money);
+        moneyAdd = randomAreaInt(moneyAdd, 0.2);
+        moneyAdd = moneyAdd - 3 + randomInt(7); // +-20% +-3
+        moneyAdd *= this.memory.gameDataJIT.getAmplPercent(null, AmplAttriType.money);
         moneyAdd *= 1 + gainRate * 0.1;
-        moneyAdd = Math.max(moneyAdd, 1);
+        moneyAdd = Math.max(Math.ceil(moneyAdd), 1);
         return moneyAdd;
     }
 
