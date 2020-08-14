@@ -532,28 +532,31 @@ export class ExplUpdater {
         let diff = curTime - this.lastTime;
         if (diff < ExplInterval) {
             return;
+        } else if (diff < ExplInterval * 2) {
+            this.updateReal();
         } else if (diff < ExplInterval * 240) {
             // 3分钟内
-            let updateFunc = () => {
-                this.lastTime += ExplInterval;
-                this.updCnt += 1;
-                this.onUpdate();
-            };
-
             let oldPage = this.page;
             this.page = null;
             this.battleCtrlr.page = null;
 
             let turnCount = Math.floor(diff / ExplInterval);
-            for (let index = 0; index < turnCount - 1; index++) updateFunc();
+            for (let index = 0; index < turnCount - 1; index++) this.updateReal();
 
             this.page = oldPage;
             this.battleCtrlr.page = oldPage;
             this.resetAllUI();
 
-            updateFunc();
+            this.updateReal();
         } else {
+            this.recoverLastExpl(this.gameData);
         }
+    }
+
+    updateReal() {
+        this.lastTime += ExplInterval;
+        this.updCnt += 1;
+        this.onUpdate();
     }
 
     onUpdate() {
@@ -912,6 +915,8 @@ export class ExplUpdater {
             exp = 8 + 5 * enemyLv;
             exp *= 1 - Math.min(selfLv - enemyLv, 8) / 8;
         }
+        exp *= AttriRatioByRank[enemyRank] / AttriRatioByRank[selfRank];
+
         return exp;
     }
 
