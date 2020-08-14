@@ -905,13 +905,13 @@ export class ExplUpdater {
     }
 
     static calcExpByLvRank(selfLv: number, enemyLv: number, selfRank: number, enemyRank: number): number {
-        let exp = 8 + 3 * Math.pow(enemyLv, 1.5);
-
-        if (enemyLv >= selfLv) exp *= 1 + (enemyLv - selfLv) * 0.05;
-        else exp *= 1 - Math.min(selfLv - enemyLv, 8) / 8;
-
-        exp *= AttriRatioByRank[enemyRank] / AttriRatioByRank[selfRank];
-
+        let exp: number;
+        if (selfLv <= enemyLv) {
+            exp = 8 + 5 * selfLv;
+        } else {
+            exp = 8 + 5 * enemyLv;
+            exp *= 1 - Math.min(selfLv - enemyLv, 8) / 8;
+        }
         return exp;
     }
 
