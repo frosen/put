@@ -784,7 +784,7 @@ export class ExplUpdater {
         let moneyAdd = (lv + step * 2) * (1 + step * 0.1);
         moneyAdd = randomAreaInt(moneyAdd, 0.2);
         moneyAdd = moneyAdd - 3 + randomInt(7); // +-20% +-3
-        moneyAdd *= this.memory.gameDataJIT.getAmplPercent(null, AmplAttriType.money);
+        moneyAdd *= this.memory.gameDataJIT.getAmplPercent(null, AmplAttriType.expl);
         moneyAdd *= 1 + gainRate * 0.1;
         moneyAdd = Math.max(Math.ceil(moneyAdd), 1);
         return moneyAdd;

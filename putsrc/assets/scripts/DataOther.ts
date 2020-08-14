@@ -43,13 +43,18 @@ import { randomRate, getRandomOneInList, normalRandom } from './Random';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { expModels } from 'configs/ExpModels';
 
-export const AmplAttriNames = ['', '经验', '货币', '默契', '声望'];
+export const AmplAttriNames = ['', '经验', '探索受益', '工作受益', '默契', '声望', '力量', '专注', '耐久'];
 export enum AmplAttriType {
     none,
     exp,
-    money,
+    expl,
+    work,
     prvty,
-    reput
+    reput,
+
+    strength,
+    concentration,
+    durability
 }
 
 const All = 'all';
@@ -95,16 +100,17 @@ export class GameDataJIT {
                     if (value) ampl += value * 0.01;
                 }
             }
-        }
-
-        let allPetDataDict = this.attriGainAmplDict[All];
-        if (allPetDataDict) {
-            for (const key in allPetDataDict) {
-                const petData = allPetDataDict[key];
-                let value = petData[attri];
-                if (value) ampl += value * 0.01;
+        } else {
+            let allPetDataDict = this.attriGainAmplDict[All];
+            if (allPetDataDict) {
+                for (const key in allPetDataDict) {
+                    const petData = allPetDataDict[key];
+                    let value = petData[attri];
+                    if (value) ampl += value * 0.01;
+                }
             }
         }
+
         return ampl;
     }
 }
@@ -243,6 +249,9 @@ export class Pet2 {
         PetDataTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
             if (model.hasOwnProperty('onSetting')) model.onSetting(this, datas);
         });
+
+        // 饮品加成
+        llytodo;
 
         // 限制
         this.hpMax = Math.max(this.hpMax, 1);
