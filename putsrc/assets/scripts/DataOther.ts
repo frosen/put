@@ -60,11 +60,15 @@ export enum AmplAttriType {
 const All = 'all';
 
 /** 运行时游戏数据 */
-export class GameDataJIT {
+export class GameJITDataTool {
     /** petid:key:attri:data */
-    attriGainAmplDict: { [key: string]: { [key: string]: { [key: number]: number } } } = {};
+    static attriGainAmplDict: { [key: string]: { [key: string]: { [key: number]: number } } };
 
-    addAmplByDrink(pet: Pet, drinkModel: DrinkModel) {
+    static init() {
+        this.attriGainAmplDict = {};
+    }
+
+    static addAmplByDrink(pet: Pet, drinkModel: DrinkModel) {
         let data = {};
         data[drinkModel.mainAttri] = drinkModel.mainPercent;
         if (drinkModel.subAttri) data[drinkModel.subAttri] = drinkModel.subPercent;
@@ -76,20 +80,20 @@ export class GameDataJIT {
         }
     }
 
-    addAmpl(pet: Pet, key: string, data: { [key: number]: number }) {
+    static addAmpl(pet: Pet, key: string, data: { [key: number]: number }) {
         let petId = pet ? String(pet.catchIdx) : All;
         if (!this.attriGainAmplDict[petId]) this.attriGainAmplDict[petId] = {};
         this.attriGainAmplDict[petId][key] = data;
     }
 
-    removeAmpl(pet: Pet, key: string) {
+    static removeAmpl(pet: Pet, key: string) {
         let petId = pet ? String(pet.catchIdx) : All;
         if (this.attriGainAmplDict[petId]) {
             delete this.attriGainAmplDict[petId][key];
         }
     }
 
-    getAmplPercent(pet: Pet, attri: AmplAttriType) {
+    static getAmplPercent(pet: Pet, attri: AmplAttriType) {
         let ampl = 1;
         if (pet) {
             let petDataDict = this.attriGainAmplDict[String(pet.catchIdx)];
@@ -215,6 +219,13 @@ export class Pet2 {
             EquipDataTool.getFinalAttris(equip, this);
         }
 
+        // 饮品加成
+        if (pet.drink) {
+            this.strength *= GameJITDataTool.getAmplPercent(pet, AmplAttriType.strength);
+            this.concentration *= GameJITDataTool.getAmplPercent(pet, AmplAttriType.concentration);
+            this.durability *= GameJITDataTool.getAmplPercent(pet, AmplAttriType.durability);
+        }
+
         // 二级原始属性
         this.hpMaxOri = this.durability * 25;
         this.mpMaxOri = 100 + Math.floor(this.concentration / 30);
@@ -249,9 +260,6 @@ export class Pet2 {
         PetDataTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
             if (model.hasOwnProperty('onSetting')) model.onSetting(this, datas);
         });
-
-        // 饮品加成
-        llytodo;
 
         // 限制
         this.hpMax = Math.max(this.hpMax, 1);

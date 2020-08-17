@@ -45,7 +45,7 @@ import { equipModelDict } from 'configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
-import { GameDataJIT, AmplAttriType } from './DataOther';
+import { GameJITDataTool, AmplAttriType } from './DataOther';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { inbornFeatures } from 'configs/InbornFeatures';
 import { expModels } from 'configs/ExpModels';
@@ -136,7 +136,6 @@ function turnToDataWithChecker(data: any) {
 
 export class Memory {
     gameData: GameData = null;
-    gameDataJIT: GameDataJIT = null;
 
     saveToken: boolean = false;
     saveInterval: number = 0;
@@ -160,8 +159,8 @@ export class Memory {
         }
 
         // 整理历史数据
-        this.gameDataJIT = new GameDataJIT();
-        Memory.resetGameData(this.gameData, this.gameDataJIT);
+        GameJITDataTool.init();
+        Memory.resetGameData(this.gameData);
     }
 
     update(dt: number) {
@@ -182,7 +181,7 @@ export class Memory {
             this.saveMemory();
         }
 
-        Memory.updateGameData(this.gameData, this.gameDataJIT);
+        Memory.updateGameData(this.gameData);
     }
 
     dataListeners: any[] = [];
@@ -252,7 +251,7 @@ export class Memory {
 
     static lastUpdateTime: number = 0;
 
-    static updateGameData(gameData: GameData, gameDataJIT: GameDataJIT) {
+    static updateGameData(gameData: GameData) {
         if (this.lastUpdateTime === 0) {
             this.lastUpdateTime = Date.now();
             return;
@@ -262,17 +261,17 @@ export class Memory {
         const INTERVAL = 60000;
         if (diff >= INTERVAL) {
             this.lastUpdateTime += INTERVAL;
-            for (const pet of gameData.pets) this.updatePet(pet, curTime, gameDataJIT);
+            for (const pet of gameData.pets) this.updatePet(pet, curTime);
         }
     }
 
-    static updatePet(pet: Pet, curTime: number, gameDataJIT: GameDataJIT) {
+    static updatePet(pet: Pet, curTime: number) {
         if (pet.prvty < PrvtyMax) {
             const range = 600000; // 默契值 10min1点(10 * 60 * 1000)
             if (curTime - pet.prvtyTime > range) {
                 let count = Math.floor((curTime - pet.prvtyTime) / range);
                 if (pet.state === PetState.ready || pet.state === PetState.rest) {
-                    pet.prvty += 100 * gameDataJIT.getAmplPercent(pet, AmplAttriType.prvty) * count;
+                    pet.prvty += 100 * GameJITDataTool.getAmplPercent(pet, AmplAttriType.prvty) * count;
                     pet.prvty = Math.min(pet.prvty, PrvtyMax);
                 }
                 pet.prvtyTime += range * count;
@@ -286,12 +285,12 @@ export class Memory {
         }
     }
 
-    static resetGameData(gameData: GameData, gameDataJIT: GameDataJIT) {
+    static resetGameData(gameData: GameData) {
         for (const pet of gameData.pets) {
             let drink = pet.drink;
             if (drink) {
                 let drinkModel = drinkModelDict[drink.id];
-                gameDataJIT.addAmplByDrink(pet, drinkModel);
+                GameJITDataTool.addAmplByDrink(pet, drinkModel);
             }
         }
     }
@@ -847,9 +846,7 @@ export class GameDataTool {
 
         if (pet.lv > drinkModel.lvMax) return `${drinkModel.cnName}不能作用于等级高于${drinkModel.lvMax}的宠物`;
 
-        // @ts-ignore
-        let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
-        gameDataJIT.addAmplByDrink(pet, drinkModel);
+        GameJITDataTool.addAmplByDrink(pet, drinkModel);
 
         pet.drink = CnsumDataTool.create(Drink, drink.id); // 不用 pet.drink = drink，是因为drink内部有count代表多个
         pet.drinkTime = curTime || Date.now();
@@ -860,13 +857,11 @@ export class GameDataTool {
     static clearDrinkFromPet(pet: Pet) {
         let drink = pet.drink;
         let drinkModel: DrinkModel = drinkModelDict[drink.id];
-        // @ts-ignore
-        let gameDataJIT: GameDataJIT = window.baseCtrlr.memory.gameDataJIT;
 
         if (drinkModel.aim === DrinkAimType.one) {
-            gameDataJIT.removeAmpl(pet, drinkModel.id);
+            GameJITDataTool.removeAmpl(pet, drinkModel.id);
         } else {
-            gameDataJIT.removeAmpl(null, `${pet.catchIdx}_${drinkModel.id}`);
+            GameJITDataTool.removeAmpl(null, `${pet.catchIdx}_${drinkModel.id}`);
         }
 
         pet.drink = null;

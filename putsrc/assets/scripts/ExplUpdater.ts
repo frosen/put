@@ -8,7 +8,7 @@ import { BattlePageBase } from './BattlePageBase';
 import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool, MmrTool, MoneyTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
 import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, BattleMmr, Money } from 'scripts/DataSaved';
-import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet } from './DataOther';
+import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, randomArea, randomRate, getRandomOneInList, randomAreaInt, random, randomRound } from './Random';
 import { ExplModel, StepTypesByMax, ExplStepNames, CatcherModel } from './DataModel';
@@ -133,16 +133,15 @@ export class ExplUpdater {
         this.logList.length = 0;
 
         // 计算step
-        let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
-
         let nowTime = Date.now();
-        let realDiff = nowTime - curExpl.startTime;
+        let chngTime = curExpl.chngUpdCnt * ExplInterval;
         const hangMaxTime = 1000 * 60 * 60 * 24;
-        let timeIn = realDiff < hangMaxTime;
-        let diff = timeIn ? realDiff : hangMaxTime;
+
+        let timeIn = nowTime - (curExpl.startTime + chngTime) < hangMaxTime;
+        let diff = timeIn ? nowTime - curExpl.startTime : hangMaxTime + chngTime;
 
         let curUpdCnt = Math.floor(diff / ExplInterval);
-
+        let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
         let realCurUpdCnt = curUpdCnt + startUpdCnt;
         let realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
         let lastStepUpdCnt = realChngUpdCnt + 1;
@@ -335,9 +334,8 @@ export class ExplUpdater {
         let expTotal = exp * winCount;
         expTotal = randomAreaInt(expTotal, 0.05);
 
-        let gameDataJIT = this.memory.gameDataJIT;
         for (const pet of selfPets) {
-            let expEach = expTotal * gameDataJIT.getAmplPercent(pet, AmplAttriType.exp); // 计算饮品的加成
+            let expEach = expTotal * GameJITDataTool.getAmplPercent(pet, AmplAttriType.exp); // 计算饮品的加成
             PetDataTool.addExp(pet, Math.ceil(expEach));
         }
         rztSt.exp += expTotal;
@@ -784,7 +782,7 @@ export class ExplUpdater {
         let moneyAdd = (lv + step * 2) * (1 + step * 0.1);
         moneyAdd = randomAreaInt(moneyAdd, 0.2);
         moneyAdd = moneyAdd - 3 + randomInt(7); // +-20% +-3
-        moneyAdd *= this.memory.gameDataJIT.getAmplPercent(null, AmplAttriType.expl);
+        moneyAdd *= GameJITDataTool.getAmplPercent(null, AmplAttriType.expl);
         moneyAdd *= 1 + gainRate * 0.1;
         moneyAdd = Math.max(Math.ceil(moneyAdd), 1);
         return moneyAdd;
@@ -874,7 +872,6 @@ export class ExplUpdater {
 
     receiveExp(win: boolean) {
         let rb = this.battleCtrlr.realBattle;
-        let gameDataJIT = this.memory.gameDataJIT;
 
         let exp: number;
         if (win) {
@@ -890,7 +887,7 @@ export class ExplUpdater {
         for (const selfBPet of rb.selfTeam.pets) {
             let selfPet = selfBPet.pet;
 
-            let curExp = exp * gameDataJIT.getAmplPercent(selfBPet.pet, AmplAttriType.exp);
+            let curExp = exp * GameJITDataTool.getAmplPercent(selfBPet.pet, AmplAttriType.exp);
             curExp = Math.ceil(curExp);
 
             let curExpPercent = PetDataTool.addExp(selfPet, curExp);
