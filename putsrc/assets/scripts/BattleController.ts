@@ -16,6 +16,7 @@ import { SkillModel, SkillType, SkillAimtype, SkillDirType } from 'scripts/DataM
 import { Pet, EleType, BattleType, EleTypeNames, GameData, BattleMmr } from 'scripts/DataSaved';
 import { RealBattle, BattleTeam, BattlePet, BattleBuff, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { battleSequence } from 'configs/BattleSequence';
+import { ExplUpdater, ExplLogType } from './ExplUpdater';
 
 // random with seed -----------------------------------------------------------------
 
@@ -49,23 +50,22 @@ const FormationHitRate = [1, 0.95, 0.9, 0.9, 0.85]; // 阵型顺序从0开始
 const EleReinforceRelation = [0, 3, 1, 4, 2, 6, 5]; // 元素相克表
 
 export class BattleController {
+    updater: ExplUpdater = null;
     page: BattlePageBase = null;
-    memory: Memory = null;
     gameData: GameData = null;
+
     endCallback: (win: boolean) => void = null;
-    logCallback: (str: string) => void = null;
 
     realBattle: RealBattle = null;
 
     debugMode: boolean = false;
     realBattleCopys: { seed: number; rb: RealBattle }[] = []; // 用于战斗重置
 
-    init(page: BattlePageBase, memory: Memory, endCallback: () => void, logCallback: (str: string) => void) {
-        this.page = page;
-        this.memory = memory;
-        this.gameData = memory.gameData;
+    init(updater: ExplUpdater, endCallback: (win: boolean) => void) {
+        this.updater = updater;
+        this.page = updater.page;
+        this.gameData = updater.memory.gameData;
         this.endCallback = endCallback;
-        this.logCallback = logCallback;
 
         this.realBattle = new RealBattle();
 
@@ -196,7 +196,7 @@ export class BattleController {
             petNameDict[cnName] = true;
         }
         let petNames = Object.keys(petNameDict);
-        this.logCallback('发现：' + petNames.join(', ') + (hiding ? '，偷袭成功' : '，进入战斗'));
+        this.updater.log(ExplLogType.rich, '发现：' + petNames.join(', ') + (hiding ? '，偷袭成功' : '，进入战斗'));
 
         // 偷袭
         if (hiding) {
@@ -308,7 +308,7 @@ export class BattleController {
         rb.battleRound++;
         rb.lastAim = null;
 
-        this.logCallback(`第${rb.battleRound}回合`);
+        this.updater.log(ExplLogType.round, rb.battleRound);
     }
 
     handleCD(team: BattleTeam) {
@@ -651,7 +651,7 @@ export class BattleController {
     }
 
     dead(battlePet: BattlePet, caster: BattlePet) {
-        this.logCallback(`${petModelDict[battlePet.pet.id].cnName}被击败`);
+        this.logDead(battlePet);
 
         let curPets = this.getTeam(battlePet).pets;
         let alive = false;
@@ -688,12 +688,12 @@ export class BattleController {
     }
 
     endBattle(selfWin: boolean) {
-        this.logCallback(selfWin ? '战斗胜利' : '战斗失败');
+        this.updater.log(ExplLogType.repeat, selfWin ? '战斗胜利' : '战斗失败');
         this.exitBattle(selfWin);
     }
 
     escape() {
-        this.logCallback('撤退');
+        this.updater.log(ExplLogType.repeat, '撤退');
         this.exitBattle(false);
     }
 
@@ -809,30 +809,49 @@ export class BattleController {
     }
 
     logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, beCombo: boolean, skillName: string, eleType: EleType = null) {
-        let logStr = `${petModelDict[battlePet.pet.id].cnName}对${petModelDict[aim.pet.id].cnName}使用${skillName}`;
-        if (dmg > 0) {
-            if (beCombo) logStr += '连击';
-            logStr += `，造成${Math.floor(dmg * 0.1)}点${eleType ? EleTypeNames[eleType] : '物理'}伤害`;
-        } else {
-            logStr += `，恢复血量${Math.floor(dmg * -0.1)}点`;
-        }
-
-        this.logCallback(logStr);
+        // let logStr = `${petModelDict[battlePet.pet.id].cnName}对${petModelDict[aim.pet.id].cnName}使用${skillName}`;
+        // if (dmg > 0) {
+        //     if (beCombo) logStr += '连击';
+        //     logStr += `，造成${Math.floor(dmg * 0.1)}点${eleType ? EleTypeNames[eleType] : '物理'}伤害`;
+        // } else {
+        //     logStr += `，恢复血量${Math.floor(dmg * -0.1)}点`;
+        // }
+        let dataList = [
+            petModelDict[battlePet.pet.id].cnName,
+            petModelDict[aim.pet.id].cnName,
+            skillName,
+            beCombo,
+            Math.floor(dmg * 0.1),
+            eleType ? EleTypeNames[eleType] : '物理'
+        ];
+        this.updater.log(ExplLogType.atk, dataList);
     }
 
     logMiss(battlePet: BattlePet, aim: BattlePet, skillName: string) {
-        let logStr = `${petModelDict[aim.pet.id].cnName}避开了${petModelDict[battlePet.pet.id].cnName}的${skillName}`;
-        this.logCallback(logStr);
+        // let logStr = `${petModelDict[aim.pet.id].cnName}避开了${petModelDict[battlePet.pet.id].cnName}的${skillName}`;
+        // this.logCallback(logStr);
+
+        let dataList = [petModelDict[battlePet.pet.id].cnName, petModelDict[aim.pet.id].cnName, skillName];
+        this.updater.log(ExplLogType.miss, dataList);
     }
 
     logBuff(aim: BattlePet, name: string) {
-        let logStr = `${petModelDict[aim.pet.id].cnName}受到${name}效果`;
-        this.logCallback(logStr);
+        // let logStr = `${petModelDict[aim.pet.id].cnName}受到${name}效果`;
+        // this.logCallback(logStr);
+
+        let dataList = [petModelDict[aim.pet.id].cnName, name];
+        this.updater.log(ExplLogType.buff, dataList);
     }
 
     logStop(battlePet: BattlePet) {
-        let logStr = `${petModelDict[battlePet.pet.id].cnName}无法行动`;
-        this.logCallback(logStr);
+        // let logStr = `${petModelDict[battlePet.pet.id].cnName}无法行动`;
+        // this.logCallback(logStr);
+        this.updater.log(ExplLogType.stop, petModelDict[battlePet.pet.id].cnName);
+    }
+
+    logDead(battlePet: BattlePet) {
+        // `${petModelDict[battlePet.pet.id].cnName}被击败`
+        this.updater.log(ExplLogType.dead, petModelDict[battlePet.pet.id].cnName);
     }
 
     ranSd() {

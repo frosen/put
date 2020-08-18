@@ -35,6 +35,22 @@ const ExplIntervalNormal = 750;
 const ExplIntervalFast = 150;
 let ExplInterval = ExplIntervalNormal;
 
+export enum ExplLogType {
+    repeat = 1,
+    rich,
+    atk,
+    miss,
+    buff,
+    stop,
+    dead,
+    round
+}
+
+export class ExplLogData {
+    type: ExplLogType;
+    data: string | string[];
+}
+
 export class ExplUpdater {
     page: BattlePageBase = null;
     memory: Memory = null;
@@ -54,7 +70,7 @@ export class ExplUpdater {
         this.gameData = this.memory.gameData;
 
         this.battleCtrlr = new BattleController();
-        this.battleCtrlr.init(this.page, this.memory, this.onBattleEnd.bind(this), this.log.bind(this));
+        this.battleCtrlr.init(this, this.onBattleEnd.bind(this));
 
         let curExpl = this.gameData.curExpl;
         if (!curExpl) this.createExpl(spcBtlId, startStep);
@@ -615,7 +631,7 @@ export class ExplUpdater {
                 let agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
                 this.explRdCnt += ExplUpdater.calcHideExplRdCnt(agiRate);
             }
-            this.log('开始探索');
+            this.log(ExplLogType.repeat, '开始探索');
         } else {
             this.explRdCnt--;
         }
@@ -754,30 +770,30 @@ export class ExplUpdater {
             let posName = actPosModelDict[curExpl.curPosId].cnName;
             let stepType = StepTypesByMax[curExplModel.stepMax][curStep];
             let stepName = ExplStepNames[stepType];
-            this.log('进入' + posName + stepName);
+            this.log(ExplLogType.rich, '进入' + posName + stepName);
 
             return;
         } while (0);
 
         if (this.prefindCnt > 0) {
             this.prefindCnt--;
-            this.log('探索中......');
+            this.log(ExplLogType.repeat, '探索中......');
         } else if (this.trsrFind) {
             if (this.prefindCnt === 0) {
                 this.prefindCnt = -1;
-                this.log('发现远古宝箱');
-            } else this.log('宝箱解锁中......');
+                this.log(ExplLogType.repeat, '发现远古宝箱');
+            } else this.log(ExplLogType.repeat, '宝箱解锁中......');
         } else if (this.enemyFind) {
             if (this.prefindCnt === 0) {
                 this.prefindCnt = -1;
-                this.log('发现附近似乎有威胁存在');
-            } else this.log('潜行接近中......');
+                this.log(ExplLogType.repeat, '发现附近似乎有威胁存在');
+            } else this.log(ExplLogType.repeat, '潜行接近中......');
         } else if (this.unusedEvtIdx >= 0) {
             if (this.prefindCnt === 0) {
                 this.prefindCnt = -1;
-                this.log(this.unusedEvts[this.unusedEvtIdx]);
-            } else this.log('探索中......');
-        } else this.log('探索中......');
+                this.log(ExplLogType.repeat, this.unusedEvts[this.unusedEvtIdx]);
+            } else this.log(ExplLogType.repeat, '探索中......');
+        } else this.log(ExplLogType.repeat, '探索中......');
     }
 
     getMoneyGain(lv: number, step: number, gainRate: number): number {
@@ -833,10 +849,10 @@ export class ExplUpdater {
         }
 
         if (failRzt) {
-            this.log(failRzt);
+            this.log(ExplLogType.rich, failRzt);
         } else {
-            if (this.trsrFind) this.log('宝箱成功被打开');
-            this.log('获得' + itemName);
+            if (this.trsrFind) this.log(ExplLogType.repeat, '宝箱成功被打开');
+            this.log(ExplLogType.rich, '获得' + itemName);
         }
 
         this.updateChgUpdCnt();
@@ -896,10 +912,10 @@ export class ExplUpdater {
             if (curExpPercent <= 0) {
                 // 跳过
             } else if (curExpPercent >= 1) {
-                this.log(`${petName}升到了${selfPet.lv}级`);
+                this.log(ExplLogType.rich, `${petName}升到了${selfPet.lv}级`);
             } else {
                 let expRate = (curExpPercent * 100).toFixed(1);
-                this.log(`${petName}获得${curExp}点经验，升级进度完成了${expRate}%`);
+                this.log(ExplLogType.rich, `${petName}获得${curExp}点经验，升级进度完成了${expRate}%`);
             }
         }
     }
@@ -952,7 +968,7 @@ export class ExplUpdater {
                 let features: Feature[] = deepCopy(pet.inbornFeatures) as Feature[];
                 let rztStr = GameDataTool.addCaughtPet(gameData, pet.id, pet.lv, pet.rank, features);
                 if (rztStr === GameDataTool.SUC) {
-                    this.log(`成功捕获${petModelDict[pet.id].cnName}`);
+                    this.log(ExplLogType.rich, `成功捕获${petModelDict[pet.id].cnName}`);
                     let catcher = this.memory.gameData.items[catcherIdx] as Catcher;
                     if (catcher.count === 1) {
                         gameData.curExpl.catcherId = null;
@@ -960,7 +976,7 @@ export class ExplUpdater {
                     }
                     GameDataTool.deleteItem(gameData, catcherIdx);
                 } else {
-                    this.log(`捕获失败：${rztStr}`);
+                    this.log(ExplLogType.rich, `捕获失败：${rztStr}`);
                 }
                 break; // 每场战斗只能捕捉一只宠物
             }
@@ -1023,7 +1039,7 @@ export class ExplUpdater {
         if (done) {
             this.startExpl();
         } else {
-            this.log('休息中');
+            this.log(ExplLogType.repeat, '休息中');
         }
     }
 
@@ -1046,12 +1062,12 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
-    logList: string[] = [];
+    logList: ExplLogData[] = [];
     newLogCount: number = 0;
 
-    log(str: string) {
-        cc.log('PUT EXPL: ', str);
-        this.logList[this.logList.length] = str;
+    log(type: ExplLogType, data: any) {
+        cc.log('PUT EXPL: ', type, data);
+        this.logList[this.logList.length] = { type, data };
         if (this.logList.length > 200) this.logList = this.logList.slice(100);
         this.newLogCount++;
     }

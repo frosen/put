@@ -6,7 +6,7 @@
 
 const { ccclass, property, executionOrder } = cc._decorator;
 import { BattlePageBase } from 'scripts/BattlePageBase';
-import { ExplUpdater } from 'scripts/ExplUpdater';
+import { ExplUpdater, ExplLogData } from 'scripts/ExplUpdater';
 import { PetUI } from './PetUI';
 import { petModelDict } from 'configs/PetModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
@@ -124,6 +124,25 @@ export class PageActExpl extends BattlePageBase {
         }
 
         this.updater = new ExplUpdater();
+        this.initLVD();
+    }
+
+    initLVD() {
+        let selfPets = this.ctrlr.memory.gameData.pets;
+        for (const sPet of selfPets) {
+            let name = petModelDict[sPet.id].cnName;
+            this.lvd.getFrameDataByString(name);
+        }
+
+        let curExpl = this.ctrlr.memory.gameData.curExpl;
+        let ePetIdLists = actPosModelDict[curExpl.curPosId].petIdLists;
+        for (const ePetIdList of ePetIdLists) {
+            if (!ePetIdList) continue;
+            for (const ePetId of ePetIdList) {
+                let name = petModelDict[ePetId].cnName;
+                this.lvd.getFrameDataByString(name);
+            }
+        }
     }
 
     spcBtlId: number = 0;
@@ -426,7 +445,7 @@ export class PageActExpl extends BattlePageBase {
     autoShowLog: boolean = true;
     autoMoveDis: number = 0;
 
-    getLogs(): string[] {
+    getLogs(): ExplLogData[] {
         return this.updater.logList;
     }
 
