@@ -123,8 +123,10 @@ export class ExplUpdater {
                 return;
             } else {
                 curExpl.chngUpdCnt = btlStartUpdCnt + updCnt;
-                this.receiveExp(win);
-                if (win) this.catchPet();
+                if (win) {
+                    this.receiveExp();
+                    this.catchPet();
+                }
             }
         } else {
             this.handleSelfTeamChange();
@@ -135,10 +137,10 @@ export class ExplUpdater {
         // 计算step
         let nowTime = Date.now();
         let chngTime = curExpl.chngUpdCnt * ExplInterval;
-        const hangMaxTime = 1000 * 60 * 60 * 24;
+        const HangMaxTime = 1000 * 60 * 60 * 24;
 
-        let timeIn = nowTime - (curExpl.startTime + chngTime) < hangMaxTime;
-        let diff = timeIn ? nowTime - curExpl.startTime : hangMaxTime + chngTime;
+        let timeIn = nowTime - (curExpl.startTime + chngTime) <= HangMaxTime;
+        let diff = timeIn ? nowTime - curExpl.startTime : HangMaxTime + chngTime;
 
         let curUpdCnt = Math.floor(diff / ExplInterval);
         let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
@@ -330,7 +332,6 @@ export class ExplUpdater {
 
         // 计算获取的经验 ------------------------------------------
         let exp = ExplUpdater.calcExpByLvRank(petSt.selfLv, petSt.enemyLv, petSt.selfRank, petSt.enemyRank);
-
         let expTotal = exp * winCount;
         expTotal = randomAreaInt(expTotal, 0.05);
 
@@ -533,7 +534,7 @@ export class ExplUpdater {
         } else if (diff < ExplInterval * 2) {
             this.updateReal();
         } else if (diff < ExplInterval * 240) {
-            // 3分钟内
+            cc.log('PUT recover update in time');
             let oldPage = this.page;
             this.page = null;
             this.battleCtrlr.page = null;
@@ -547,6 +548,7 @@ export class ExplUpdater {
 
             this.updateReal();
         } else {
+            cc.log('PUT recover update out of time');
             this.recoverLastExpl(this.gameData);
         }
     }
@@ -865,24 +867,22 @@ export class ExplUpdater {
 
     onBattleEnd(win: boolean) {
         this.updateChgUpdCnt();
-        this.receiveExp(win);
-        if (win) this.catchPet();
+        if (win) {
+            this.receiveExp();
+            this.catchPet();
+        }
         this.startRecover();
     }
 
-    receiveExp(win: boolean) {
+    receiveExp() {
         let rb = this.battleCtrlr.realBattle;
 
         let exp: number;
-        if (win) {
-            let selfLv = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
-            let enemyLv = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
-            let selfRank = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
-            let enemyRank = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
-            exp = ExplUpdater.calcExpByLvRank(selfLv, enemyLv, selfRank, enemyRank);
-        } else {
-            exp = 10;
-        }
+        let selfLv = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
+        let enemyLv = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
+        let selfRank = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
+        let enemyRank = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
+        exp = ExplUpdater.calcExpByLvRank(selfLv, enemyLv, selfRank, enemyRank);
 
         for (const selfBPet of rb.selfTeam.pets) {
             let selfPet = selfBPet.pet;

@@ -357,7 +357,7 @@ export class Memory {
 
         this.gameData.curPosId = 'GuangJiDianDaDao';
         GameDataTool.createExpl(this.gameData, 0);
-        this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 60 * 24;
+        this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 60 * 24 * 2;
         this.gameData.curExpl.catcherId = 'PuTongXianJing1';
         // this.gameData.curExpl.chngUpdCnt = 2100;
 
