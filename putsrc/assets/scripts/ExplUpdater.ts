@@ -753,6 +753,7 @@ export class ExplUpdater {
                 if (realUpdCnt >= nextStepUpdCnt) {
                     this.updateChgUpdCnt();
                     curStep++;
+                    this.saveNewStep();
                     this.explStepPercent = 0;
                 } else {
                     let curStepUpdCntRange = nextStepUpdCnt - lastStepUpdCnt;
@@ -795,6 +796,8 @@ export class ExplUpdater {
             } else this.log(ExplLogType.repeat, '探索中......');
         } else this.log(ExplLogType.repeat, '探索中......');
     }
+
+    saveNewStep(step: number) {}
 
     getMoneyGain(lv: number, step: number, gainRate: number): number {
         let moneyAdd = (lv + step * 2) * (1 + step * 0.1);

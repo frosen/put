@@ -34,12 +34,8 @@ export class PageActPos extends PageBase {
         this.ctrlr.setTitle('位置');
         let posId = gameData.curPosId;
 
-        let posMmr: PosMmr = null;
-        if (!gameData.posDataDict.hasOwnProperty(posId)) {
-            posMmr = GameDataTool.addPos(gameData, posId);
-        } else {
-            posMmr = gameData.posDataDict[posId];
-        }
+        GameDataTool.addPos(gameData, posId);
+        let posMmr: PosMmr = gameData.posDataDict[posId];
 
         let curDirtyToken = this.ctrlr.memory.dirtyToken;
         if (this.curPosId !== posMmr.id || this.dirtyToken !== curDirtyToken) {

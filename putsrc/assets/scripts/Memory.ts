@@ -1061,10 +1061,19 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
-    static addPos(gameData: GameData, posId: string): PosMmr {
-        let posMmr = PosMmrTool.create(posId);
-        gameData.posDataDict[posId] = posMmr;
-        return posMmr;
+    static addPos(gameData: GameData, posId: string) {
+        if (!gameData.posDataDict.hasOwnProperty(posId)) {
+            let posMmr = PosMmrTool.create(posId);
+            gameData.posDataDict[posId] = posMmr;
+        }
+    }
+
+    static addPosAct(gameData: GameData, posId: string, apaKey: string) {
+        let posMmr = gameData.posDataDict[posId];
+        if (!posMmr.actDict.hasOwnProperty(apaKey)) {
+            let posExpl = PosMmrTool.createExpl();
+            posMmr.actDict[apaKey] = posExpl;
+        }
     }
 
     static createExpl(gameData: GameData, startStep: number) {
