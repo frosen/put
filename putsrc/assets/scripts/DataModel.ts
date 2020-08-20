@@ -248,7 +248,7 @@ export class MovModel {
     condition: MovConditionModel = null;
 }
 
-export class APAKey {
+export class PAKey {
     static work = 'work';
     static quest = 'quest';
     static shop = 'shop';

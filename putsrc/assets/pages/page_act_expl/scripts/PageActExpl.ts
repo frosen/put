@@ -13,12 +13,12 @@ import { buffModelDict } from 'configs/BuffModelDict';
 import { PageActExplLVD } from './PageActExplLVD';
 import { ListView } from 'scripts/ListView';
 import { PetRankNames, EleType, Pet, ItemType, CnsumType, Catcher } from 'scripts/DataSaved';
-import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, APAKey } from 'scripts/DataModel';
+import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, PAKey } from 'scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
 import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
-import { MmrTool, PosMmrTool, GameDataTool } from 'scripts/Memory';
+import { MmrTool, GameDataTool } from 'scripts/Memory';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -150,7 +150,7 @@ export class PageActExpl extends BattlePageBase {
     initExplMmr() {
         let gameData = this.ctrlr.memory.gameData;
         let posId = gameData.curPosId;
-        GameDataTool.addPosAct(gameData, posId, APAKey.expl);
+        GameDataTool.addPA(gameData, posId, PAKey.expl);
     }
 
     spcBtlId: number = 0;
@@ -199,7 +199,7 @@ export class PageActExpl extends BattlePageBase {
 
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
-        let explModel: ExplModel = curPosModel.actDict[APAKey.expl] as ExplModel;
+        let explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
 
         let stepMax = explModel.stepMax;
         let step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);

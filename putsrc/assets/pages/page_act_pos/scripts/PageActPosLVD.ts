@@ -15,23 +15,23 @@ import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { PageActPos } from './PageActPos';
 import { PageSwitchAnim, BaseController } from 'scripts/BaseController';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
-import { PosMmr } from 'scripts/DataSaved';
-import { ActPosModel, APAKey } from 'scripts/DataModel';
+import { PosData } from 'scripts/DataSaved';
+import { ActPosModel, PAKey } from 'scripts/DataModel';
 import { GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 
 type CellActInfo = { cnName: string; page?: { new (): PageBase }; check?: (ctrlr: BaseController) => string };
 
 const CellActInfoDict: { [key: string]: CellActInfo } = {
-    [APAKey.work]: { cnName: '工作介绍所' },
-    [APAKey.quest]: { cnName: '任务发布栏' },
-    [APAKey.shop]: { cnName: '物资商店' },
-    [APAKey.eqpMkt]: { cnName: '装备市场' },
-    [APAKey.petMkt]: { cnName: '宠物市场' },
-    [APAKey.recycler]: { cnName: '回收站' },
-    [APAKey.store]: { cnName: '仓库' },
-    [APAKey.aCenter]: { cnName: '奖励中心' },
-    [APAKey.expl]: {
+    [PAKey.work]: { cnName: '工作介绍所' },
+    [PAKey.quest]: { cnName: '任务发布栏' },
+    [PAKey.shop]: { cnName: '物资商店' },
+    [PAKey.eqpMkt]: { cnName: '装备市场' },
+    [PAKey.petMkt]: { cnName: '宠物市场' },
+    [PAKey.recycler]: { cnName: '回收站' },
+    [PAKey.store]: { cnName: '仓库' },
+    [PAKey.aCenter]: { cnName: '奖励中心' },
+    [PAKey.expl]: {
         cnName: '探索',
         page: PageActExpl,
         check: (ctrlr: BaseController): string => {
@@ -58,11 +58,11 @@ export class PageActPosLVD extends ListViewDelegate {
     }
     _curPosId: string = null;
 
-    get curPos(): PosMmr {
+    get curPos(): PosData {
         if (!this._curPos) this._curPos = this.ctrlr.memory.gameData.posDataDict[this.curPosId];
         return this._curPos;
     }
-    _curPos: PosMmr = null;
+    _curPos: PosData = null;
 
     get curActPosModel(): ActPosModel {
         if (!this._curActPosModel) this._curActPosModel = actPosModelDict[this.curPosId];

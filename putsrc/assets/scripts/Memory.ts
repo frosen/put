@@ -10,7 +10,6 @@ import { featureLvsByPetLv } from 'configs/FeatureLvsByPetLv';
 import {
     Feature,
     Pet,
-    PosMmr,
     ExplMmr,
     PetState,
     SelfPetMmr,
@@ -30,7 +29,8 @@ import {
     CnsumType,
     Material,
     UpdCntByStep,
-    PosActMmrExpl
+    PosData,
+    PADExpl
 } from './DataSaved';
 import {
     FeatureModel,
@@ -698,16 +698,16 @@ export class CaughtPetDataTool {
     }
 }
 
-export class PosMmrTool {
-    static create(posId: string): PosMmr {
-        let posMmr = newInsWithChecker(PosMmr);
-        posMmr.id = posId;
-        posMmr.actDict = newDict();
-        return posMmr;
+export class PosDataTool {
+    static create(posId: string): PosData {
+        let pd = newInsWithChecker(PosData);
+        pd.id = posId;
+        pd.actDict = newDict();
+        return pd;
     }
 
-    static createExpl(): PosActMmrExpl {
-        return newInsWithChecker(PosActMmrExpl);
+    static createPADExpl(): PADExpl {
+        return newInsWithChecker(PADExpl);
     }
 }
 
@@ -1063,16 +1063,16 @@ export class GameDataTool {
 
     static addPos(gameData: GameData, posId: string) {
         if (!gameData.posDataDict.hasOwnProperty(posId)) {
-            let posMmr = PosMmrTool.create(posId);
-            gameData.posDataDict[posId] = posMmr;
+            let pd = PosDataTool.create(posId);
+            gameData.posDataDict[posId] = pd;
         }
     }
 
-    static addPosAct(gameData: GameData, posId: string, apaKey: string) {
-        let posMmr = gameData.posDataDict[posId];
-        if (!posMmr.actDict.hasOwnProperty(apaKey)) {
-            let posExpl = PosMmrTool.createExpl();
-            posMmr.actDict[apaKey] = posExpl;
+    static addPA(gameData: GameData, posId: string, paKey: string) {
+        let pd = gameData.posDataDict[posId];
+        if (!pd.actDict.hasOwnProperty(paKey)) {
+            let pADExpl = PosDataTool.createPADExpl();
+            pd.actDict[paKey] = pADExpl;
         }
     }
 

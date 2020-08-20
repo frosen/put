@@ -176,15 +176,15 @@ export class CaughtPet extends Item {
 
 // -----------------------------------------------------------------
 
-export class PosActMmrBase {}
+export class PADBase {}
 
-export class PosActMmrExpl extends PosActMmrBase {
+export class PADExpl extends PADBase {
     doneStep: number;
 }
 
-export class PosMmr {
+export class PosData {
     id: string;
-    actDict: { [key: string]: PosActMmrBase };
+    actDict: { [key: string]: PADBase };
 }
 
 // -----------------------------------------------------------------
@@ -236,7 +236,7 @@ export class GameData {
     totalEquipCount: number; // 一共获得过的装备的总量，用于装备的索引
 
     curPosId: string;
-    posDataDict: { [key: string]: PosMmr };
+    posDataDict: { [key: string]: PosData };
 
     curExpl: ExplMmr;
 }

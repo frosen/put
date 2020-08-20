@@ -4,32 +4,23 @@
  * luleyan
  */
 
-import { ActPosModel, APAKey } from 'scripts/DataModel';
+import { ActPosModel, PAKey } from 'scripts/DataModel';
 
 export const actPosModelDict: { [key: string]: ActPosModel } = {
     YiZhuang: {
         id: 'YiZhuang',
         cnName: '易庄',
         lv: 1,
-        acts: [
-            APAKey.work,
-            APAKey.quest,
-            APAKey.shop,
-            APAKey.eqpMkt,
-            APAKey.petMkt,
-            APAKey.recycler,
-            APAKey.store,
-            APAKey.aCenter
-        ],
+        acts: [PAKey.work, PAKey.quest, PAKey.shop, PAKey.eqpMkt, PAKey.petMkt, PAKey.recycler, PAKey.store, PAKey.aCenter],
         actDict: {
-            [APAKey.work]: null,
-            [APAKey.quest]: null,
-            [APAKey.shop]: null,
-            [APAKey.eqpMkt]: null,
-            [APAKey.petMkt]: null,
-            [APAKey.recycler]: null,
-            [APAKey.store]: null,
-            [APAKey.aCenter]: null
+            [PAKey.work]: null,
+            [PAKey.quest]: null,
+            [PAKey.shop]: null,
+            [PAKey.eqpMkt]: null,
+            [PAKey.petMkt]: null,
+            [PAKey.recycler]: null,
+            [PAKey.store]: null,
+            [PAKey.aCenter]: null
         },
         evts: [],
         movs: [{ id: 'GuangJiDianDaDao', price: 0, condition: {} }],
@@ -42,9 +33,9 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         id: 'GuangJiDianDaDao',
         cnName: '光机电大道',
         lv: 1,
-        acts: [APAKey.expl],
+        acts: [PAKey.expl],
         actDict: {
-            [APAKey.expl]: {
+            [PAKey.expl]: {
                 stepMax: 2
             }
         },
