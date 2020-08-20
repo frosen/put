@@ -4,23 +4,32 @@
  * luleyan
  */
 
-import { ActPosModel } from 'scripts/DataModel';
+import { ActPosModel, APAKey } from 'scripts/DataModel';
 
 export const actPosModelDict: { [key: string]: ActPosModel } = {
     YiZhuang: {
         id: 'YiZhuang',
         cnName: '易庄',
         lv: 1,
-        acts: ['work', 'quest', 'shop', 'equipMarket', 'petMarket', 'recycler', 'store', 'awardsCenter'],
+        acts: [
+            APAKey.work,
+            APAKey.quest,
+            APAKey.shop,
+            APAKey.eqpMkt,
+            APAKey.petMkt,
+            APAKey.recycler,
+            APAKey.store,
+            APAKey.aCenter
+        ],
         actDict: {
-            work: null,
-            quest: null,
-            shop: null,
-            equipMarket: null,
-            petMarket: null,
-            recycler: null,
-            store: null,
-            awardsCenter: null
+            [APAKey.work]: null,
+            [APAKey.quest]: null,
+            [APAKey.shop]: null,
+            [APAKey.eqpMkt]: null,
+            [APAKey.petMkt]: null,
+            [APAKey.recycler]: null,
+            [APAKey.store]: null,
+            [APAKey.aCenter]: null
         },
         evts: [],
         movs: [{ id: 'GuangJiDianDaDao', price: 0, condition: {} }],
@@ -33,9 +42,9 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         id: 'GuangJiDianDaDao',
         cnName: '光机电大道',
         lv: 1,
-        acts: ['exploration'],
+        acts: [APAKey.expl],
         actDict: {
-            exploration: {
+            [APAKey.expl]: {
                 stepMax: 2
             }
         },

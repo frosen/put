@@ -11,7 +11,7 @@ import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, BattleMmr, Money } fro
 import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, randomArea, randomRate, getRandomOneInList, randomAreaInt, random, randomRound } from './Random';
-import { ExplModel, StepTypesByMax, ExplStepNames, CatcherModel } from './DataModel';
+import { ExplModel, StepTypesByMax, ExplStepNames, CatcherModel, APAKey } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { petModelDict } from 'configs/PetModelDict';
@@ -164,7 +164,7 @@ export class ExplUpdater {
         let realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
         let lastStepUpdCnt = realChngUpdCnt + 1;
 
-        let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
+        let curExplModel = actPosModelDict[curExpl.curPosId].actDict[APAKey.expl] as ExplModel;
         let stepMaxIdx = curExplModel.stepMax - 1;
         let curStep = Math.min(MmrTool.getCurStep(curExpl), stepMaxIdx);
 
@@ -254,7 +254,7 @@ export class ExplUpdater {
         let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
         let chngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
         let curStep = MmrTool.getCurStep(curExpl);
-        let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
+        let curExplModel = actPosModelDict[curExpl.curPosId].actDict[APAKey.expl] as ExplModel;
         if (curStep >= curExplModel.stepMax - 1) {
             this.explStepPercent = 0;
         } else {
@@ -357,7 +357,7 @@ export class ExplUpdater {
         }
         rztSt.exp += expTotal;
 
-        let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
+        let explModel: ExplModel = curPosModel.actDict[APAKey.expl] as ExplModel;
 
         let stepMax = explModel.stepMax;
         let stepType = StepTypesByMax[stepMax][step];
@@ -708,7 +708,7 @@ export class ExplUpdater {
     }
 
     static getPosSubAttriSbstValue(curExpl: ExplMmr) {
-        let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
+        let curExplModel = actPosModelDict[curExpl.curPosId].actDict[APAKey.expl] as ExplModel;
         let stepMaxIdx = curExplModel.stepMax - 1;
         let curStep = Math.min(MmrTool.getCurStep(curExpl), stepMaxIdx);
         let curPosLv = actPosModelDict[curExpl.curPosId].lv;
@@ -736,7 +736,7 @@ export class ExplUpdater {
 
     doExploration() {
         let curExpl = this.gameData.curExpl;
-        let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
+        let curExplModel = actPosModelDict[curExpl.curPosId].actDict[APAKey.expl] as ExplModel;
         let curStep = MmrTool.getCurStep(curExpl);
         do {
             if (curStep === 0 && curExpl.chngUpdCnt === 0) {
@@ -808,7 +808,7 @@ export class ExplUpdater {
 
     gainRes() {
         let curExpl = this.gameData.curExpl;
-        let curExplModel = actPosModelDict[curExpl.curPosId].actDict['exploration'] as ExplModel;
+        let curExplModel = actPosModelDict[curExpl.curPosId].actDict[APAKey.expl] as ExplModel;
 
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];

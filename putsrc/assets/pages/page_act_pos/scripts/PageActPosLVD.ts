@@ -15,23 +15,23 @@ import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { PageActPos } from './PageActPos';
 import { PageSwitchAnim, BaseController } from 'scripts/BaseController';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
-import { ActPos } from 'scripts/DataSaved';
-import { ActPosModel } from 'scripts/DataModel';
+import { PosMmr } from 'scripts/DataSaved';
+import { ActPosModel, APAKey } from 'scripts/DataModel';
 import { GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 
-type CellActInfo = { cnName: string; page: { new (): PageBase }; check: (ctrlr: BaseController) => string };
+type CellActInfo = { cnName: string; page?: { new (): PageBase }; check?: (ctrlr: BaseController) => string };
 
-const CellActInfo = {
-    work: { cnName: '工作介绍所' },
-    quest: { cnName: '任务发布栏' },
-    shop: { cnName: '物资商店' },
-    equipMarket: { cnName: '装备市场' },
-    petMarket: { cnName: '宠物市场' },
-    recycler: { cnName: '回收站' },
-    store: { cnName: '仓库' },
-    awardsCenter: { cnName: '奖励中心' },
-    exploration: {
+const CellActInfoDict: { [key: string]: CellActInfo } = {
+    [APAKey.work]: { cnName: '工作介绍所' },
+    [APAKey.quest]: { cnName: '任务发布栏' },
+    [APAKey.shop]: { cnName: '物资商店' },
+    [APAKey.eqpMkt]: { cnName: '装备市场' },
+    [APAKey.petMkt]: { cnName: '宠物市场' },
+    [APAKey.recycler]: { cnName: '回收站' },
+    [APAKey.store]: { cnName: '仓库' },
+    [APAKey.aCenter]: { cnName: '奖励中心' },
+    [APAKey.expl]: {
         cnName: '探索',
         page: PageActExpl,
         check: (ctrlr: BaseController): string => {
@@ -58,11 +58,11 @@ export class PageActPosLVD extends ListViewDelegate {
     }
     _curPosId: string = null;
 
-    get curActPos(): ActPos {
-        if (!this._curActPos) this._curActPos = this.ctrlr.memory.gameData.posDataDict[this.curPosId];
-        return this._curActPos;
+    get curPos(): PosMmr {
+        if (!this._curPos) this._curPos = this.ctrlr.memory.gameData.posDataDict[this.curPosId];
+        return this._curPos;
     }
-    _curActPos: ActPos = null;
+    _curPos: PosMmr = null;
 
     get curActPosModel(): ActPosModel {
         if (!this._curActPosModel) this._curActPosModel = actPosModelDict[this.curPosId];
@@ -72,7 +72,7 @@ export class PageActPosLVD extends ListViewDelegate {
 
     clearData() {
         this._curPosId = null;
-        this._curActPos = null;
+        this._curPos = null;
         this._curActPosModel = null;
     }
 
@@ -128,14 +128,14 @@ export class PageActPosLVD extends ListViewDelegate {
         } else if (rowIdx <= this.actCellLength) {
             let actIdx = (rowIdx - 1) * 2;
             let actId1 = this.curActPosModel.acts[actIdx];
-            let actInfo1 = CellActInfo[actId1];
+            let actInfo1 = CellActInfoDict[actId1];
             cell.setBtn1(actInfo1.cnName, () => {
                 this.gotoPage(actInfo1);
             });
 
             if (actIdx + 1 < this.curActPosModel.acts.length) {
                 let actId2 = this.curActPosModel.acts[actIdx + 1];
-                let actInfo2 = CellActInfo[actId2];
+                let actInfo2 = CellActInfoDict[actId2];
                 cell.setBtn2(actInfo2.cnName, () => {
                     this.gotoPage(actInfo2);
                 });

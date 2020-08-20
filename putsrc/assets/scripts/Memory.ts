@@ -10,7 +10,7 @@ import { featureLvsByPetLv } from 'configs/FeatureLvsByPetLv';
 import {
     Feature,
     Pet,
-    ActPos,
+    PosMmr,
     ExplMmr,
     PetState,
     SelfPetMmr,
@@ -29,7 +29,8 @@ import {
     EqpAmplr,
     CnsumType,
     Material,
-    UpdCntByStep
+    UpdCntByStep,
+    PosActMmrExpl
 } from './DataSaved';
 import {
     FeatureModel,
@@ -697,11 +698,16 @@ export class CaughtPetDataTool {
     }
 }
 
-export class ActPosDataTool {
-    static create(posId: string): ActPos {
-        let actPos = newInsWithChecker(ActPos);
-        actPos.id = posId;
-        return actPos;
+export class PosMmrTool {
+    static create(posId: string): PosMmr {
+        let posMmr = newInsWithChecker(PosMmr);
+        posMmr.id = posId;
+        posMmr.actDict = newDict();
+        return posMmr;
+    }
+
+    static createExpl(): PosActMmrExpl {
+        return newInsWithChecker(PosActMmrExpl);
     }
 }
 
@@ -1055,10 +1061,10 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
-    static addActPos(gameData: GameData, posId: string): ActPos {
-        let actPos = ActPosDataTool.create(posId);
-        gameData.posDataDict[posId] = actPos;
-        return actPos;
+    static addPos(gameData: GameData, posId: string): PosMmr {
+        let posMmr = PosMmrTool.create(posId);
+        gameData.posDataDict[posId] = posMmr;
+        return posMmr;
     }
 
     static createExpl(gameData: GameData, startStep: number) {

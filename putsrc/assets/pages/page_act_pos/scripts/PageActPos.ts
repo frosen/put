@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 import { PageBase } from 'scripts/PageBase';
 import { PageActPosLVD } from './PageActPosLVD';
 import { ListView } from 'scripts/ListView';
-import { ActPos } from 'scripts/DataSaved';
+import { PosMmr } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
 
@@ -34,16 +34,16 @@ export class PageActPos extends PageBase {
         this.ctrlr.setTitle('位置');
         let posId = gameData.curPosId;
 
-        let actPos: ActPos = null;
+        let posMmr: PosMmr = null;
         if (!gameData.posDataDict.hasOwnProperty(posId)) {
-            actPos = GameDataTool.addActPos(this.ctrlr.memory.gameData, posId);
+            posMmr = GameDataTool.addPos(gameData, posId);
         } else {
-            actPos = gameData.posDataDict[posId];
+            posMmr = gameData.posDataDict[posId];
         }
 
         let curDirtyToken = this.ctrlr.memory.dirtyToken;
-        if (this.curPosId !== actPos.id || this.dirtyToken !== curDirtyToken) {
-            this.curPosId = actPos.id;
+        if (this.curPosId !== posMmr.id || this.dirtyToken !== curDirtyToken) {
+            this.curPosId = posMmr.id;
             this.dirtyToken = curDirtyToken;
             this.resetListview();
         }

@@ -176,18 +176,25 @@ export class CaughtPet extends Item {
 
 // -----------------------------------------------------------------
 
+export class PosActMmrBase {}
+
+export class PosActMmrExpl extends PosActMmrBase {
+    doneStep: number;
+}
+
+export class PosMmr {
+    id: string;
+    actDict: { [key: string]: PosActMmrBase };
+}
+
+// -----------------------------------------------------------------
+
 export class PetMmr {
     id: string;
     lv: number;
     rank: number;
     features: Feature[];
 }
-
-export class ActPos {
-    id: string;
-}
-
-// -----------------------------------------------------------------
 
 export class SelfPetMmr {
     catchIdx: number; // 战斗开始后，可能会变化的只有如下几项
@@ -229,7 +236,7 @@ export class GameData {
     totalEquipCount: number; // 一共获得过的装备的总量，用于装备的索引
 
     curPosId: string;
-    posDataDict: { [key: string]: ActPos };
+    posDataDict: { [key: string]: PosMmr };
 
     curExpl: ExplMmr;
 }

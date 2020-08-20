@@ -248,6 +248,18 @@ export class MovModel {
     condition: MovConditionModel = null;
 }
 
+export class APAKey {
+    static work = 'work';
+    static quest = 'quest';
+    static shop = 'shop';
+    static eqpMkt = 'equipMarket';
+    static petMkt = 'petMarket';
+    static recycler = 'recycler';
+    static store = 'store';
+    static aCenter = 'awardsCenter';
+    static expl = 'exploration';
+}
+
 export class ActPosModel {
     id: string;
     cnName: string;

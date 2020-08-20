@@ -16,7 +16,8 @@ import {
     DrinkAimType,
     ExplModel,
     StepTypesByMax,
-    ActPosModel
+    ActPosModel,
+    APAKey
 } from './DataModel';
 import {
     BioType,
@@ -588,7 +589,7 @@ export class RealBattle {
     static createRandomPetData(curExpl: ExplMmr, count: number): { id: string; lv: number; rank: number; features: Feature[] }[] {
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
-        let explModel: ExplModel = curPosModel.actDict['exploration'] as ExplModel;
+        let explModel: ExplModel = curPosModel.actDict[APAKey.expl] as ExplModel;
 
         let petCount = randomRate(0.5) ? count : count - 1;
         let stepMax = explModel.stepMax;
