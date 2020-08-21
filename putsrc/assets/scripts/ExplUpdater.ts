@@ -7,7 +7,7 @@
 import { BattlePageBase } from './BattlePageBase';
 import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool, MmrTool, MoneyTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, BattleMmr, Money } from 'scripts/DataSaved';
+import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, BattleMmr, Money, PosData, PADExpl } from 'scripts/DataSaved';
 import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, randomArea, randomRate, getRandomOneInList, randomAreaInt, random, randomRound } from './Random';
@@ -797,7 +797,11 @@ export class ExplUpdater {
         } else this.log(ExplLogType.repeat, '探索中......');
     }
 
-    saveNewStep(step: number) {}
+    saveNewStep(step: number) {
+        let posData: PosData = this.gameData.posDataDict[this.gameData.curExpl.curPosId];
+        let pADExpl: PADExpl = posData.actDict[PAKey.expl] as PADExpl;
+        if (step > pADExpl.doneStep) pADExpl.doneStep = step;
+    }
 
     getMoneyGain(lv: number, step: number, gainRate: number): number {
         let moneyAdd = (lv + step * 2) * (1 + step * 0.1);

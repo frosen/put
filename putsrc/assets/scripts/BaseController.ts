@@ -636,7 +636,15 @@ export class BaseController extends cc.Component {
         cc.tween(this.toastNode).to(0.3, { opacity: 255 }).delay(3).to(0.3, { opacity: 0 }).start();
     }
 
-    popAlert(txt: string, callback: (key: number) => void, btn1: string = '确定', btn2: string = null, btnCancel: string = null) {
+    popAlert(
+        txt: string,
+        callback: (key: number) => void,
+        btn1: string = '确定',
+        btn2: string = null,
+        btn3: string = null,
+        btn4: string = null,
+        btnCancel: string = '取消'
+    ) {
         this.alertLbl.string = txt;
         this.alertCallback = callback;
 
@@ -648,7 +656,7 @@ export class BaseController extends cc.Component {
             this.alertBtn2Node.scaleY = 0;
         }
 
-        this.alertBtnCancelNode.getComponentInChildren(cc.Label).string = btnCancel ? btnCancel : '取消';
+        this.alertBtnCancelNode.getComponentInChildren(cc.Label).string = btnCancel;
 
         // @ts-ignore
         this.alertLbl._assembler.updateRenderData(this.alertLbl);

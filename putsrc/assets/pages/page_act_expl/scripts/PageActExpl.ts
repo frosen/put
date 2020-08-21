@@ -12,7 +12,7 @@ import { petModelDict } from 'configs/PetModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { PageActExplLVD } from './PageActExplLVD';
 import { ListView } from 'scripts/ListView';
-import { PetRankNames, EleType, Pet, ItemType, CnsumType, Catcher } from 'scripts/DataSaved';
+import { PetRankNames, EleType, Pet, ItemType, CnsumType, Catcher, PADExpl } from 'scripts/DataSaved';
 import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, PAKey } from 'scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
@@ -126,7 +126,7 @@ export class PageActExpl extends BattlePageBase {
         this.updater = new ExplUpdater();
         this.initLVD();
 
-        this.initExplMmr();
+        this.initPADExpl();
     }
 
     initLVD() {
@@ -147,7 +147,7 @@ export class PageActExpl extends BattlePageBase {
         }
     }
 
-    initExplMmr() {
+    initPADExpl() {
         let gameData = this.ctrlr.memory.gameData;
         let posId = gameData.curPosId;
         GameDataTool.addPA(gameData, posId, PAKey.expl);

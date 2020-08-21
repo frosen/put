@@ -15,12 +15,17 @@ import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { PageActPos } from './PageActPos';
 import { PageSwitchAnim, BaseController } from 'scripts/BaseController';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
-import { PosData } from 'scripts/DataSaved';
+import { PosData, PADExpl } from 'scripts/DataSaved';
 import { ActPosModel, PAKey } from 'scripts/DataModel';
 import { GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 
-type CellActInfo = { cnName: string; page?: { new (): PageBase }; check?: (ctrlr: BaseController) => string };
+type CellActInfo = {
+    cnName: string;
+    page?: { new (): PageBase };
+    check?: (ctrlr: BaseController) => string;
+    beforeEnter?: (ctrlr: BaseController, callback: (data: any) => void) => void;
+};
 
 const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.work]: { cnName: '工作介绍所' },
@@ -35,8 +40,23 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
         cnName: '探索',
         page: PageActExpl,
         check: (ctrlr: BaseController): string => {
-            if (GameDataTool.getReadyPets(ctrlr.memory.gameData).length >= 2) return '';
-            else return '前方危险，请保证你队伍中有至少两只宠物，且处于备战状态！（宠物列表中点击状态按钮可变更状态）';
+            if (GameDataTool.getReadyPets(ctrlr.memory.gameData).length < 2) {
+                return '前方危险，请保证你队伍中有至少两只宠物，且处于备战状态！（宠物列表中点击状态按钮可变更状态）';
+            }
+            return '';
+        },
+        beforeEnter: (ctrlr: BaseController, callback: (data: any) => void): any => {
+            let gameData = ctrlr.memory.gameData;
+            let posData = gameData.posDataDict[gameData.curPosId];
+            if (!posData.actDict.hasOwnProperty(PAKey.expl)) return callback(null);
+            let pADExpl = posData.actDict[PAKey.expl] as PADExpl;
+            if (pADExpl.doneStep === 0) return callback(null);
+
+            ctrlr.popAlert('请选择起始位置', (key: number) => {
+                if (key > 0) {
+                    return callback({ startStep: key - 1 });
+                }
+            });
         }
     }
 };
@@ -163,13 +183,19 @@ export class PageActPosLVD extends ListViewDelegate {
     }
 
     gotoPage(actInfo: CellActInfo) {
-        if (!actInfo.hasOwnProperty('check')) {
-            this.ctrlr.pushPage(actInfo.page);
-        } else {
+        if (actInfo.hasOwnProperty('check')) {
             let errorStr = actInfo.check(this.ctrlr);
-            if (!errorStr) this.ctrlr.pushPage(actInfo.page);
-            else this.ctrlr.popToast(errorStr);
+            if (errorStr) {
+                this.ctrlr.popToast(errorStr);
+                return;
+            }
         }
+
+        if (actInfo.hasOwnProperty('beforeEnter')) {
+            actInfo.beforeEnter(this.ctrlr, pageData => {
+                this.ctrlr.pushPage(actInfo.page, pageData);
+            });
+        } else this.ctrlr.pushPage(actInfo.page);
     }
 
     gotoNextPos(nextPosId: string) {
