@@ -356,10 +356,10 @@ export class Memory {
 
         GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
 
-        this.gameData.curPosId = 'GuangJiDianDaDao';
-        GameDataTool.createExpl(this.gameData, 0);
-        this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 60 * 24 * 2;
-        this.gameData.curExpl.catcherId = 'PuTongXianJing1';
+        // this.gameData.curPosId = 'GuangJiDianDaDao';
+        // GameDataTool.createExpl(this.gameData, 0);
+        // this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 60 * 24 * 2;
+        // this.gameData.curExpl.catcherId = 'PuTongXianJing1';
         // this.gameData.curExpl.chngUpdCnt = 2100;
 
         // let ePets = [];
@@ -707,7 +707,9 @@ export class PosDataTool {
     }
 
     static createPADExpl(): PADExpl {
-        return newInsWithChecker(PADExpl);
+        let pADExpl = newInsWithChecker(PADExpl);
+        pADExpl.doneStep = 0;
+        return pADExpl;
     }
 }
 

@@ -809,48 +809,32 @@ export class BattleController {
     }
 
     logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, beCombo: boolean, skillName: string, eleType: EleType = null) {
-        // let logStr = `${petModelDict[battlePet.pet.id].cnName}对${petModelDict[aim.pet.id].cnName}使用${skillName}`;
-        // if (dmg > 0) {
-        //     if (beCombo) logStr += '连击';
-        //     logStr += `，造成${Math.floor(dmg * 0.1)}点${eleType ? EleTypeNames[eleType] : '物理'}伤害`;
-        // } else {
-        //     logStr += `，恢复血量${Math.floor(dmg * -0.1)}点`;
-        // }
         let dataList = [
             petModelDict[battlePet.pet.id].cnName,
             petModelDict[aim.pet.id].cnName,
             skillName,
             beCombo,
             Math.floor(dmg * 0.1),
-            eleType ? EleTypeNames[eleType] : '物理'
+            eleType
         ];
         this.updater.log(ExplLogType.atk, dataList);
     }
 
     logMiss(battlePet: BattlePet, aim: BattlePet, skillName: string) {
-        // let logStr = `${petModelDict[aim.pet.id].cnName}避开了${petModelDict[battlePet.pet.id].cnName}的${skillName}`;
-        // this.logCallback(logStr);
-
         let dataList = [petModelDict[battlePet.pet.id].cnName, petModelDict[aim.pet.id].cnName, skillName];
         this.updater.log(ExplLogType.miss, dataList);
     }
 
     logBuff(aim: BattlePet, name: string) {
-        // let logStr = `${petModelDict[aim.pet.id].cnName}受到${name}效果`;
-        // this.logCallback(logStr);
-
         let dataList = [petModelDict[aim.pet.id].cnName, name];
         this.updater.log(ExplLogType.buff, dataList);
     }
 
     logStop(battlePet: BattlePet) {
-        // let logStr = `${petModelDict[battlePet.pet.id].cnName}无法行动`;
-        // this.logCallback(logStr);
         this.updater.log(ExplLogType.stop, petModelDict[battlePet.pet.id].cnName);
     }
 
     logDead(battlePet: BattlePet) {
-        // `${petModelDict[battlePet.pet.id].cnName}被击败`
         this.updater.log(ExplLogType.dead, petModelDict[battlePet.pet.id].cnName);
     }
 

@@ -124,27 +124,8 @@ export class PageActExpl extends BattlePageBase {
         }
 
         this.updater = new ExplUpdater();
-        this.initLVD();
 
         this.initPADExpl();
-    }
-
-    initLVD() {
-        let selfPets = this.ctrlr.memory.gameData.pets;
-        for (const sPet of selfPets) {
-            let name = petModelDict[sPet.id].cnName;
-            this.lvd.getFrameDataByString(name);
-        }
-
-        let curExpl = this.ctrlr.memory.gameData.curExpl;
-        let ePetIdLists = actPosModelDict[curExpl.curPosId].petIdLists;
-        for (const ePetIdList of ePetIdLists) {
-            if (!ePetIdList) continue;
-            for (const ePetId of ePetIdList) {
-                let name = petModelDict[ePetId].cnName;
-                this.lvd.getFrameDataByString(name);
-            }
-        }
     }
 
     initPADExpl() {
@@ -166,6 +147,30 @@ export class PageActExpl extends BattlePageBase {
     start() {
         if (CC_EDITOR) return;
         this.updater.init(this, this.spcBtlId, this.startStep);
+
+        // 仅用于从setData到start传递数据，传输后直接clear
+        this.spcBtlId = 0;
+        this.startStep = 0;
+
+        this.preloadLVDData();
+    }
+
+    preloadLVDData() {
+        let selfPets = this.ctrlr.memory.gameData.pets;
+        for (const sPet of selfPets) {
+            let name = petModelDict[sPet.id].cnName;
+            this.lvd.getFrameDataByString(name);
+        }
+
+        let curExpl = this.ctrlr.memory.gameData.curExpl;
+        let ePetIdLists = actPosModelDict[curExpl.curPosId].petIdLists;
+        for (const ePetIdList of ePetIdLists) {
+            if (!ePetIdList) continue;
+            for (const ePetId of ePetIdList) {
+                let name = petModelDict[ePetId].cnName;
+                this.lvd.getFrameDataByString(name);
+            }
+        }
     }
 
     update() {

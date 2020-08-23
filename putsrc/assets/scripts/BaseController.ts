@@ -591,6 +591,8 @@ export class BaseController extends cc.Component {
     alertLbl: cc.Label = null;
     alertBtn1Node: cc.Node = null;
     alertBtn2Node: cc.Node = null;
+    alertBtn3Node: cc.Node = null;
+    alertBtn4Node: cc.Node = null;
     alertBtnCancelNode: cc.Node = null;
 
     @property(cc.Node)
@@ -604,6 +606,8 @@ export class BaseController extends cc.Component {
         this.alertLbl = this.alertNode.getChildByName('text_bg').getChildByName('text').getComponent(cc.Label);
         this.alertBtn1Node = this.alertNode.getChildByName('btn1');
         this.alertBtn2Node = this.alertNode.getChildByName('btn2');
+        this.alertBtn3Node = this.alertNode.getChildByName('btn3');
+        this.alertBtn4Node = this.alertNode.getChildByName('btn4');
         this.alertBtnCancelNode = this.alertNode.getChildByName('btn_cancel');
 
         this.alertBtn1Node.on('click', () => {
@@ -613,6 +617,14 @@ export class BaseController extends cc.Component {
         this.alertBtn2Node.on('click', () => {
             this.closeAlert();
             if (this.alertCallback) this.alertCallback(2);
+        });
+        this.alertBtn3Node.on('click', () => {
+            this.closeAlert();
+            if (this.alertCallback) this.alertCallback(3);
+        });
+        this.alertBtn4Node.on('click', () => {
+            this.closeAlert();
+            if (this.alertCallback) this.alertCallback(4);
         });
         this.alertBtnCancelNode.on('click', () => {
             this.closeAlert();
@@ -654,6 +666,18 @@ export class BaseController extends cc.Component {
             this.alertBtn2Node.scaleY = 1;
         } else {
             this.alertBtn2Node.scaleY = 0;
+        }
+        if (btn3) {
+            this.alertBtn3Node.getComponentInChildren(cc.Label).string = btn3;
+            this.alertBtn3Node.scaleY = 1;
+        } else {
+            this.alertBtn3Node.scaleY = 0;
+        }
+        if (btn4) {
+            this.alertBtn4Node.getComponentInChildren(cc.Label).string = btn4;
+            this.alertBtn4Node.scaleY = 1;
+        } else {
+            this.alertBtn4Node.scaleY = 0;
         }
 
         this.alertBtnCancelNode.getComponentInChildren(cc.Label).string = btnCancel;

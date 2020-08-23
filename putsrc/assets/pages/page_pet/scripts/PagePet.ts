@@ -110,6 +110,11 @@ export class PagePet extends PageBase {
     // -----------------------------------------------------------------
 
     changePetState(pet: Pet) {
+        let gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
+            this.ctrlr.popToast('无法改变状态！探索中，备战状态的宠物不得少于两只');
+            return;
+        }
         pet.state = pet.state === PetState.rest ? PetState.ready : PetState.rest;
         GameDataTool.sortPetsByState(this.ctrlr.memory.gameData);
         this.getComponentInChildren(ListView).resetContent(true);
@@ -127,11 +132,17 @@ export class PagePet extends PageBase {
 
     onRemoveCell(cellIdx: number) {
         let pet = this.ctrlr.memory.gameData.pets[cellIdx];
+        let gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
+            this.ctrlr.popToast('无法改变状态！探索中，备战状态的宠物不得少于两只');
+            return;
+        }
+
         let name = (petModelDict[pet.id] as PetModel).cnName;
         let str = `确定放生宠物“${name}”？\n` + '注意：放生后将无法找回！';
         this.ctrlr.popAlert(str, (key: number) => {
             if (key === 1) {
-                let rzt = GameDataTool.deletePet(this.ctrlr.memory.gameData, cellIdx);
+                let rzt = GameDataTool.deletePet(gameData, cellIdx);
                 if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
                 else this.ctrlr.popToast(rzt);
             }

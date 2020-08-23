@@ -16,7 +16,7 @@ import { PageActPos } from './PageActPos';
 import { PageSwitchAnim, BaseController } from 'scripts/BaseController';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
 import { PosData, PADExpl } from 'scripts/DataSaved';
-import { ActPosModel, PAKey } from 'scripts/DataModel';
+import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel } from 'scripts/DataModel';
 import { GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 
@@ -47,16 +47,34 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
         },
         beforeEnter: (ctrlr: BaseController, callback: (data: any) => void): any => {
             let gameData = ctrlr.memory.gameData;
+            if (gameData.curExpl) return callback(null);
             let posData = gameData.posDataDict[gameData.curPosId];
             if (!posData.actDict.hasOwnProperty(PAKey.expl)) return callback(null);
             let pADExpl = posData.actDict[PAKey.expl] as PADExpl;
             if (pADExpl.doneStep === 0) return callback(null);
 
-            ctrlr.popAlert('请选择起始位置', (key: number) => {
-                if (key > 0) {
-                    return callback({ startStep: key - 1 });
-                }
-            });
+            let posId = gameData.curPosId;
+            let curPosModel = actPosModelDict[posId];
+            let explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
+
+            let stepMax = explModel.stepMax;
+            let stepTypes = StepTypesByMax[stepMax];
+
+            let btns = [];
+            for (let index = 0; index <= pADExpl.doneStep; index++) {
+                let stepName = ExplStepNames[stepTypes[index]];
+                btns.push(stepName);
+            }
+
+            ctrlr.popAlert(
+                '请选择出发位置',
+                (key: number) => {
+                    if (key > 0) {
+                        return callback({ startStep: key - 1 });
+                    }
+                },
+                ...btns
+            );
         }
     }
 };

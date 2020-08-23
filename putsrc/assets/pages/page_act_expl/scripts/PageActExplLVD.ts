@@ -9,7 +9,7 @@ import { ListViewDelegate } from 'scripts/ListViewDelegate';
 import { ListView } from 'scripts/ListView';
 import { ListViewCell } from 'scripts/ListViewCell';
 import { PageActExpl } from './PageActExpl';
-import { CellExplLog } from '../cells/cell_expl_log/scripts/CellExplLog';
+import { CellLogBase } from './CellLogBase';
 
 export class LblFrameData {
     lbl: cc.Label;
@@ -34,12 +34,27 @@ export class PageActExplLVD extends ListViewDelegate {
 
     lblFrameDict: { [key: string]: LblFrameData } = {};
 
+    setSpByString(sp: cc.Sprite, str: string) {
+        if (str) {
+            let data = this.getFrameDataByString(str);
+            sp.spriteFrame = data.frame;
+            sp.node.width = data.width;
+        } else {
+            sp.spriteFrame = null;
+            sp.node.width = 0;
+        }
+    }
+
     getFrameDataByString(str: string): LblFrameData {
         if (!this.lblFrameDict.hasOwnProperty(str)) {
             let newNode = new cc.Node(str);
+            newNode.setAnchorPoint(0, 0.5);
             newNode.parent = this.lblFrameBaseNode;
 
             let lbl = newNode.addComponent(cc.Label);
+            lbl.verticalAlign = cc.Label.VerticalAlign.CENTER;
+            lbl.fontSize = 35;
+            lbl.lineHeight = 50;
             lbl.string = str;
             let frame = this.getLblFrame(lbl);
             cc.dynamicAtlasManager.insertSpriteFrame(frame);
@@ -99,35 +114,41 @@ export class PageActExplLVD extends ListViewDelegate {
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        let logDataList = this.page.getLogs();
-        return CellIdsByLogType[logDataList[rowIdx].type];
+        let logList = this.page.getLogs();
+        return CellIdsByLogType[logList[logList.length - rowIdx - 1].type];
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
+        let cell: CellLogBase = this.getCellClassByCellId(cellId);
+        cell.init(this);
+        return cell;
+    }
+
+    getCellClassByCellId(cellId: string): CellLogBase {
         switch (cellId) {
             case RepeatLog:
-                return cc.instantiate(this.repeatLogCellPrefab).getComponent(ListViewCell);
+                return cc.instantiate(this.repeatLogCellPrefab).getComponent(CellLogBase);
             case RichLog:
-                return cc.instantiate(this.richLogCellPrefab).getComponent(ListViewCell);
+                return cc.instantiate(this.richLogCellPrefab).getComponent(CellLogBase);
             case ALog:
-                return cc.instantiate(this.atkLogCellPrefab).getComponent(ListViewCell);
+                return cc.instantiate(this.atkLogCellPrefab).getComponent(CellLogBase);
             case MLog:
-                return cc.instantiate(this.missLogCellPrefab).getComponent(ListViewCell);
+                return cc.instantiate(this.missLogCellPrefab).getComponent(CellLogBase);
             case BLog:
-                return cc.instantiate(this.buffLogCellPrefab).getComponent(ListViewCell);
+                return cc.instantiate(this.buffLogCellPrefab).getComponent(CellLogBase);
             case SLog:
-                return cc.instantiate(this.stopLogCellPrefab).getComponent(ListViewCell);
+                return cc.instantiate(this.stopLogCellPrefab).getComponent(CellLogBase);
             case DLog:
-                return cc.instantiate(this.deadLogCellPrefab).getComponent(ListViewCell);
+                return cc.instantiate(this.deadLogCellPrefab).getComponent(CellLogBase);
             case RdLog:
-                return cc.instantiate(this.roundLogCellPrefab).getComponent(ListViewCell);
+                return cc.instantiate(this.roundLogCellPrefab).getComponent(CellLogBase);
 
             default:
                 break;
         }
     }
 
-    setCellForRow(listView: ListView, rowIdx: number, cell: CellExplLog) {
+    setCellForRow(listView: ListView, rowIdx: number, cell: CellLogBase) {
         let logList = this.page.getLogs();
         cell.setData(logList[logList.length - rowIdx - 1]);
     }

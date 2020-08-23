@@ -48,7 +48,7 @@ export enum ExplLogType {
 
 export class ExplLogData {
     type: ExplLogType;
-    data: string | string[];
+    data: any;
 }
 
 export class ExplUpdater {
