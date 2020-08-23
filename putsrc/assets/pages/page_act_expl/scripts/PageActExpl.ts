@@ -156,20 +156,13 @@ export class PageActExpl extends BattlePageBase {
     }
 
     preloadLVDData() {
-        let selfPets = this.ctrlr.memory.gameData.pets;
-        for (const sPet of selfPets) {
+        for (const sPet of GameDataTool.getReadyPets(this.ctrlr.memory.gameData)) {
             let name = petModelDict[sPet.id].cnName;
             this.lvd.getFrameDataByString(name);
         }
 
-        let curExpl = this.ctrlr.memory.gameData.curExpl;
-        let ePetIdLists = actPosModelDict[curExpl.curPosId].petIdLists;
-        for (const ePetIdList of ePetIdLists) {
-            if (!ePetIdList) continue;
-            for (const ePetId of ePetIdList) {
-                let name = petModelDict[ePetId].cnName;
-                this.lvd.getFrameDataByString(name);
-            }
+        for (let index = 0; index <= 9; index++) {
+            this.lvd.getFrameDataByString(String(index));
         }
     }
 

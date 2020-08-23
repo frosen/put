@@ -247,6 +247,8 @@ export class ExplUpdater {
         this.recoverExplStepPercent(curExpl);
         this.page.setExplStepUI();
 
+        this.saveNewStep(curStep);
+
         this.startExpl();
     }
 
@@ -739,7 +741,7 @@ export class ExplUpdater {
         let curExplModel = actPosModelDict[curExpl.curPosId].actDict[PAKey.expl] as ExplModel;
         let curStep = MmrTool.getCurStep(curExpl);
         do {
-            if (curStep === 0 && curExpl.chngUpdCnt === 0) {
+            if (curExpl.chngUpdCnt === 0) {
                 this.updateChgUpdCnt();
                 this.explStepPercent = 0;
             } else if (curStep >= curExplModel.stepMax - 1) {
