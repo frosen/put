@@ -77,7 +77,12 @@ export class PageActExplLVD extends ListViewDelegate {
         return newFrame;
     }
 
-    clear() {
+    startDynamicAtlas() {
+        cc.dynamicAtlasManager.enabled = true;
+    }
+
+    endDynamicAtlas() {
+        cc.dynamicAtlasManager.enabled = false;
         cc.dynamicAtlasManager.reset();
     }
 

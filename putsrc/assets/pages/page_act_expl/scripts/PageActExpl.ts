@@ -156,6 +156,8 @@ export class PageActExpl extends BattlePageBase {
     }
 
     preloadLVDData() {
+        this.lvd.startDynamicAtlas();
+
         for (const sPet of GameDataTool.getReadyPets(this.ctrlr.memory.gameData)) {
             let name = petModelDict[sPet.id].cnName;
             this.lvd.getFrameDataByString(name);
@@ -164,6 +166,10 @@ export class PageActExpl extends BattlePageBase {
         for (let index = 0; index <= 9; index++) {
             this.lvd.getFrameDataByString(String(index));
         }
+    }
+
+    onDestroy() {
+        this.lvd.endDynamicAtlas();
     }
 
     update() {
