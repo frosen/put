@@ -2,6 +2,21 @@
   "collision-matrix": [
     [
       true
+    ],
+    [
+      false,
+      false
+    ],
+    [
+      false,
+      false,
+      false
+    ],
+    [
+      false,
+      false,
+      false,
+      false
     ]
   ],
   "excluded-modules": [
@@ -15,7 +30,10 @@
     "3D Primitive"
   ],
   "group-list": [
-    "default"
+    "default",
+    "after1",
+    "after2",
+    "after3"
   ],
   "start-scene": "2d2f792f-a40c-49bb-a189-ed176a246e49",
   "design-resolution-width": 1080,
