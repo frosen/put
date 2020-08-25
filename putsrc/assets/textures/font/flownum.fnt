@@ -1,17 +1,17 @@
 info face="Arial" size=64 bold=0 italic=0 charset="" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=2,2
 common lineHeight=76 base=60 scaleW=256 scaleH=256 pages=1 packed=0
-page id=0 file="dmgnum.png"
-chars count=21
-char id=32     x=61    y=207   width=0     height=0     xoffset=0     yoffset=67    xadvance=18    page=0 chnl=0 letter="space"
+page id=0 file="flownum.png"
+chars count=24
+char id=32     x=195   y=207   width=0     height=0     xoffset=0     yoffset=67    xadvance=18    page=0 chnl=0 letter="space"
 char id=33     x=83    y=144   width=22    height=61    xoffset=0     yoffset=6     xadvance=18    page=0 chnl=0 letter="!"
-char id=39     x=193   y=144   width=22    height=32    xoffset=-2    yoffset=5     xadvance=12    page=0 chnl=0 letter="'"
+char id=39     x=88    y=207   width=22    height=32    xoffset=-2    yoffset=5     xadvance=12    page=0 chnl=0 letter="'"
 char id=40     x=2     y=2     width=31    height=76    xoffset=-1    yoffset=4     xadvance=21    page=0 chnl=0 letter="("
 char id=41     x=35    y=2     width=31    height=76    xoffset=-1    yoffset=4     xadvance=21    page=0 chnl=0 letter=")"
-char id=42     x=155   y=144   width=36    height=35    xoffset=-3    yoffset=5     xadvance=25    page=0 chnl=0 letter="*"
-char id=43     x=107   y=144   width=46    height=46    xoffset=-1    yoffset=14    xadvance=37    page=0 chnl=0 letter="+"
-char id=44     x=217   y=144   width=22    height=31    xoffset=0     yoffset=45    xadvance=18    page=0 chnl=0 letter=","
-char id=45     x=26    y=207   width=33    height=21    xoffset=-3    yoffset=32    xadvance=21    page=0 chnl=0 letter="-"
-char id=46     x=2     y=207   width=22    height=22    xoffset=1     yoffset=45    xadvance=18    page=0 chnl=0 letter="."
+char id=42     x=50    y=207   width=36    height=35    xoffset=-3    yoffset=5     xadvance=25    page=0 chnl=0 letter="*"
+char id=43     x=2     y=207   width=46    height=46    xoffset=-1    yoffset=14    xadvance=37    page=0 chnl=0 letter="+"
+char id=44     x=112   y=207   width=22    height=31    xoffset=0     yoffset=45    xadvance=18    page=0 chnl=0 letter=","
+char id=45     x=160   y=207   width=33    height=21    xoffset=-3    yoffset=32    xadvance=21    page=0 chnl=0 letter="-"
+char id=46     x=136   y=207   width=22    height=22    xoffset=1     yoffset=45    xadvance=18    page=0 chnl=0 letter="."
 char id=47     x=68    y=2     width=33    height=63    xoffset=-5    yoffset=5     xadvance=18    page=0 chnl=0 letter="/"
 char id=48     x=2     y=80    width=45    height=62    xoffset=-2    yoffset=6     xadvance=36    page=0 chnl=0 letter="0"
 char id=49     x=49    y=144   width=32    height=61    xoffset=2     yoffset=6     xadvance=36    page=0 chnl=0 letter="1"
@@ -23,6 +23,9 @@ char id=54     x=103   y=2     width=46    height=62    xoffset=-3    yoffset=6 
 char id=55     x=2     y=144   width=45    height=61    xoffset=-2    yoffset=6     xadvance=36    page=0 chnl=0 letter="7"
 char id=56     x=151   y=2     width=46    height=62    xoffset=-2    yoffset=6     xadvance=36    page=0 chnl=0 letter="8"
 char id=57     x=199   y=2     width=46    height=62    xoffset=-2    yoffset=6     xadvance=36    page=0 chnl=0 letter="9"
+char id=105    x=107   y=144   width=21    height=61    xoffset=-1    yoffset=6     xadvance=14    page=0 chnl=0 letter="i"
+char id=109    x=175   y=144   width=60    height=49    xoffset=-1    yoffset=18    xadvance=53    page=0 chnl=0 letter="m"
+char id=115    x=130   y=144   width=43    height=50    xoffset=-3    yoffset=18    xadvance=32    page=0 chnl=0 letter="s"
 kernings count=2
 kerning first=47 second=52 amount=-2
 kerning first=49 second=49 amount=-5
