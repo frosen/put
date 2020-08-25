@@ -132,7 +132,6 @@ export class ExplUpdater {
                 this.lastTime = lastTime;
 
                 this.recoverExplStepPercent(curExpl);
-                this.page.setExplStepUI();
 
                 this.state = ExplState.battle;
                 this.resetAllUI();
@@ -148,17 +147,30 @@ export class ExplUpdater {
             this.handleSelfTeamChange();
         }
 
+        let nowTime = Date.now();
+        let chngSpan = curExpl.chngUpdCnt * ExplInterval;
+        let lastTime = curExpl.startTime + chngSpan;
+
+        // MockSpan用于模拟日志，这部分时间靠update恢复，这样就可以保有日志了
+        const MockSpan = 20 * ExplInterval;
+        if (nowTime - lastTime <= MockSpan) {
+            this.updCnt = curExpl.chngUpdCnt;
+            this.lastTime = lastTime;
+
+            this.recoverExplStepPercent(curExpl);
+            this.startExpl();
+            return;
+        }
+
         this.logList.length = 0;
+        nowTime -= MockSpan;
 
         // 计算step
-        let nowTime = Date.now();
-        let chngTime = curExpl.chngUpdCnt * ExplInterval;
-        const HangMaxTime = 1000 * 60 * 60 * 24;
+        const HangMaxSpan = 1000 * 60 * 60 * 24;
+        let timeIn = nowTime - lastTime <= HangMaxSpan;
+        let diffSpan = timeIn ? nowTime - curExpl.startTime : HangMaxSpan + chngSpan;
 
-        let timeIn = nowTime - (curExpl.startTime + chngTime) <= HangMaxTime;
-        let diff = timeIn ? nowTime - curExpl.startTime : HangMaxTime + chngTime;
-
-        let curUpdCnt = Math.floor(diff / ExplInterval);
+        let curUpdCnt = Math.floor(diffSpan / ExplInterval);
         let startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
         let realCurUpdCnt = curUpdCnt + startUpdCnt;
         let realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
@@ -245,10 +257,7 @@ export class ExplUpdater {
         }
 
         this.recoverExplStepPercent(curExpl);
-        this.page.setExplStepUI();
-
         this.saveNewStep(curStep);
-
         this.startExpl();
     }
 
@@ -266,6 +275,8 @@ export class ExplUpdater {
             this.explStepPercent = Math.floor(((chngUpdCnt - lastStepUpdCnt) * 100) / curStepUpdCntRange);
             if (this.explStepPercent > 99) this.explStepPercent = 99;
         }
+
+        this.page.setExplStepUI();
     }
 
     recoverExplInBattle(
