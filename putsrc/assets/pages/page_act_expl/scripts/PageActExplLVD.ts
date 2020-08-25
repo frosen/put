@@ -27,6 +27,9 @@ const DLog = 'D';
 const RdLog = 'Rd';
 const CellIdsByLogType = ['', RepeatLog, RichLog, ALog, MLog, BLog, SLog, DLog, RdLog];
 
+cc.macro.CLEANUP_IMAGE_CACHE = false;
+cc.dynamicAtlasManager.enabled = true;
+
 @ccclass
 export class PageActExplLVD extends ListViewDelegate {
     @property(cc.Node)
@@ -77,12 +80,7 @@ export class PageActExplLVD extends ListViewDelegate {
         return newFrame;
     }
 
-    startDynamicAtlas() {
-        cc.dynamicAtlasManager.enabled = true;
-    }
-
-    endDynamicAtlas() {
-        cc.dynamicAtlasManager.enabled = false;
+    onDestroy() {
         cc.dynamicAtlasManager.reset();
     }
 
