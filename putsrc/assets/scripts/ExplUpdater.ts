@@ -152,7 +152,7 @@ export class ExplUpdater {
         let lastTime = curExpl.startTime + chngSpan;
 
         // MockSpan用于模拟日志，这部分时间靠update恢复，这样就可以保有日志了
-        const MockSpan = 20 * ExplInterval;
+        const MockSpan = 15 * ExplInterval;
         if (nowTime - lastTime <= MockSpan) {
             this.updCnt = curExpl.chngUpdCnt;
             this.lastTime = lastTime;
