@@ -69,19 +69,18 @@ export class ExplUpdater {
         this.memory = this.page.ctrlr.memory;
         this.gameData = this.memory.gameData;
 
+        cc.director.getScheduler().scheduleUpdate(this, 0, false);
+
+        this.page.ctrlr.debugTool.setShortCut('ww', this.pauseOrResume.bind(this));
+        this.page.ctrlr.debugTool.setShortCut('gg', this.goNext.bind(this));
+        this.page.ctrlr.debugTool.setShortCut('ff', this.fastUpdate.bind(this));
+
         this.battleCtrlr = new BattleController();
         this.battleCtrlr.init(this, this.onBattleEnd.bind(this));
 
         let curExpl = this.gameData.curExpl;
         if (!curExpl) this.createExpl(spcBtlId, startStep);
         else this.recoverLastExpl(this.gameData);
-
-        cc.director.getScheduler().scheduleUpdate(this, 0, false);
-        this.lastTime = Date.now();
-
-        this.page.ctrlr.debugTool.setShortCut('ww', this.pauseOrResume.bind(this));
-        this.page.ctrlr.debugTool.setShortCut('gg', this.goNext.bind(this));
-        this.page.ctrlr.debugTool.setShortCut('ff', this.fastUpdate.bind(this));
     }
 
     pauseOrResume() {
@@ -117,6 +116,7 @@ export class ExplUpdater {
         } else {
             this.startBattle(spcBtlId); // 专属作战直接进入战斗
         }
+        this.lastTime = Date.now();
 
         this.page.handleLog();
     }
