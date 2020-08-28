@@ -5,7 +5,7 @@
  */
 
 import { BattleController } from './BattleController';
-import { EleType, BattleType, BioType, Pet } from './DataSaved';
+import { EleType, BattleType, BioType, Pet, GameData } from './DataSaved';
 import { Pet2, BattlePet, BattleBuff, AmplAttriType } from './DataOther';
 
 // -----------------------------------------------------------------
@@ -215,7 +215,28 @@ export class EquipModel {
 
 // -----------------------------------------------------------------
 
-export class WorkModel {}
+export class PAKey {
+    static work = 'work';
+    static quest = 'quest';
+    static shop = 'shop';
+    static eqpMkt = 'equipMarket';
+    static petMkt = 'petMarket';
+    static recycler = 'recycler';
+    static store = 'store';
+    static aCenter = 'awardsCenter';
+    static expl = 'exploration';
+}
+
+type CondFunc = (gd: GameData) => boolean;
+
+export class PAModel {
+    key: string;
+    condFunc?: CondFunc;
+}
+
+export class WorkModel extends PAModel {
+    key: string = PAKey.work;
+}
 
 export enum ExplStepType {
     outer = 1,
@@ -234,30 +255,22 @@ export const StepTypesByMax = [
     [ExplStepType.outer, ExplStepType.passway, ExplStepType.deep, ExplStepType.center]
 ];
 
-export class ExplModel {
+export class ExplModel extends PAModel {
+    key: string = PAKey.expl;
     stepMax: number;
 }
 
-type AllActType = WorkModel | ExplModel;
+type AllPAType = WorkModel | ExplModel;
 
-export class MovConditionModel {}
-
-export class MovModel {
-    id: string = '';
-    price: number = 0;
-    condition: MovConditionModel = null;
+export class EvtModel {
+    id: string;
+    condFunc?: CondFunc;
 }
 
-export class PAKey {
-    static work = 'work';
-    static quest = 'quest';
-    static shop = 'shop';
-    static eqpMkt = 'equipMarket';
-    static petMkt = 'petMarket';
-    static recycler = 'recycler';
-    static store = 'store';
-    static aCenter = 'awardsCenter';
-    static expl = 'exploration';
+export class MovModel {
+    id: string;
+    price: number;
+    condFunc?: CondFunc;
 }
 
 export class ActPosModel {
@@ -265,8 +278,8 @@ export class ActPosModel {
     cnName: string;
     lv: number;
     acts: string[];
-    actDict: { [key: string]: AllActType };
-    evts: string[];
+    actDict: { [key: string]: AllPAType };
+    evts: EvtModel[];
     movs: MovModel[];
     loc: Partial<cc.Vec2>;
     petIdLists: string[][]; // 不同stepType对应的宠物列表

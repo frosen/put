@@ -16,7 +16,7 @@ import { PageActPos } from './PageActPos';
 import { PageSwitchAnim, BaseController } from 'scripts/BaseController';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
 import { PosData, PADExpl } from 'scripts/DataSaved';
-import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel } from 'scripts/DataModel';
+import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel, PAModel, EvtModel, MovModel } from 'scripts/DataModel';
 import { GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 
@@ -90,38 +90,55 @@ export class PageActPosLVD extends ListViewDelegate {
     @property(cc.Prefab)
     movPrefab: cc.Prefab = null;
 
-    get curPosId(): string {
-        if (!this._curPosId) this._curPosId = this.ctrlr.memory.gameData.curPosId;
-        return this._curPosId;
-    }
-    _curPosId: string = null;
+    curPosId: string;
+    curPos: PosData;
+    curActPosModel: ActPosModel;
 
-    get curPos(): PosData {
-        if (!this._curPos) this._curPos = this.ctrlr.memory.gameData.posDataDict[this.curPosId];
-        return this._curPos;
-    }
-    _curPos: PosData = null;
+    curActKeys: string[];
+    curEvts: EvtModel[];
+    curMovs: MovModel[];
 
-    get curActPosModel(): ActPosModel {
-        if (!this._curActPosModel) this._curActPosModel = actPosModelDict[this.curPosId];
-        return this._curActPosModel;
-    }
-    _curActPosModel: ActPosModel = null;
+    actCellLength: number;
+    evtCellLength: number;
+    movCellLength: number;
 
-    clearData() {
-        this._curPosId = null;
-        this._curPos = null;
-        this._curActPosModel = null;
-    }
+    initData() {
+        let gameData = this.ctrlr.memory.gameData;
+        this.curPosId = gameData.curPosId;
+        this.curPos = gameData.posDataDict[this.curPosId];
+        this.curActPosModel = actPosModelDict[this.curPosId];
 
-    actCellLength: number = 0;
-    evtCellLength: number = 0;
-    movCellLength: number = 0;
+        this.curActKeys.length = 0;
+        this.curEvts.length = 0;
+        this.curMovs.length = 0;
+
+        for (const pakey of this.curActPosModel.acts) {
+            let actModel = this.curActPosModel.actDict[pakey];
+            if (actModel && actModel.hasOwnProperty('condFunc')) {
+                if (actModel.condFunc(gameData)) this.curActKeys.push(pakey);
+            } else this.curActKeys.push(pakey);
+        }
+
+        for (let index = 0; index < this.curActPosModel.evts.length; index++) {
+            const evtModel = this.curActPosModel.evts[index];
+            if (evtModel && evtModel.hasOwnProperty('condFunc')) {
+                if (evtModel.condFunc(gameData)) this.curEvts.push(evtModel);
+            } else this.curEvts.push(evtModel);
+        }
+
+        for (let index = 0; index < this.curActPosModel.movs.length; index++) {
+            const movModel = this.curActPosModel.movs[index];
+            if (movModel && movModel.hasOwnProperty('condFunc')) {
+                if (movModel.condFunc(gameData)) this.curMovs.push(movModel);
+            } else this.curMovs.push(movModel);
+        }
+
+        this.actCellLength = Math.ceil(this.curActKeys.length * 0.5);
+        this.evtCellLength = Math.ceil(this.curEvts.length * 0.5);
+        this.movCellLength = this.curMovs.length;
+    }
 
     numberOfRows(listView: ListView): number {
-        this.actCellLength = Math.ceil(this.curActPosModel.acts.length * 0.5);
-        this.evtCellLength = Math.ceil(this.curActPosModel.evts.length * 0.5);
-        this.movCellLength = this.curActPosModel.movs.length;
         return 1 + this.actCellLength + this.evtCellLength + this.movCellLength;
     }
 
@@ -165,15 +182,15 @@ export class PageActPosLVD extends ListViewDelegate {
             cell.setData(this.curActPosModel.cnName);
         } else if (rowIdx <= this.actCellLength) {
             let actIdx = (rowIdx - 1) * 2;
-            let actId1 = this.curActPosModel.acts[actIdx];
-            let actInfo1 = CellActInfoDict[actId1];
+            let actKey1 = this.curActKeys[actIdx];
+            let actInfo1 = CellActInfoDict[actKey1];
             cell.setBtn1(actInfo1.cnName, () => {
                 this.gotoPage(actInfo1);
             });
 
-            if (actIdx + 1 < this.curActPosModel.acts.length) {
-                let actId2 = this.curActPosModel.acts[actIdx + 1];
-                let actInfo2 = CellActInfoDict[actId2];
+            if (actIdx + 1 < this.curActKeys.length) {
+                let actKey2 = this.curActKeys[actIdx + 1];
+                let actInfo2 = CellActInfoDict[actKey2];
                 cell.setBtn2(actInfo2.cnName, () => {
                     this.gotoPage(actInfo2);
                 });
@@ -184,7 +201,8 @@ export class PageActPosLVD extends ListViewDelegate {
             //
         } else {
             let movIdx = rowIdx - 1 - this.actCellLength - this.evtCellLength;
-            let moveType = this.curActPosModel.movs[movIdx];
+
+            let moveType = this.curMovs[movIdx];
             let posId = moveType.id;
             let movPosModel = actPosModelDict[posId];
             cell.setData('前往：' + movPosModel.cnName, '花费：' + String(moveType.price), () => {

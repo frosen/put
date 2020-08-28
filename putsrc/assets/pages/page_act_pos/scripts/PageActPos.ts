@@ -46,7 +46,7 @@ export class PageActPos extends PageBase {
     }
 
     resetListview() {
-        this.lvd.clearData();
+        this.lvd.initData();
         this.listView.resetContent();
     }
 

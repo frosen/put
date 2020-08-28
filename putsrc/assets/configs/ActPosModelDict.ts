@@ -23,7 +23,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             [PAKey.aCenter]: null
         },
         evts: [],
-        movs: [{ id: 'GuangJiDianDaDao', price: 0, condition: {} }],
+        movs: [{ id: 'GuangJiDianDaDao', price: 0 }],
         loc: { x: 1000, y: 100 },
         petIdLists: [],
         itemIdLists: [],
@@ -36,11 +36,12 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         acts: [PAKey.expl],
         actDict: {
             [PAKey.expl]: {
+                key: PAKey.expl,
                 stepMax: 2
             }
         },
         evts: [],
-        movs: [{ id: 'YiZhuang', price: 0, condition: {} }],
+        movs: [{ id: 'YiZhuang', price: 0 }],
         loc: { x: 1100, y: 100 },
         petIdLists: [
             null,
