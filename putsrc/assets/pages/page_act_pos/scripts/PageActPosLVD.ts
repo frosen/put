@@ -94,9 +94,9 @@ export class PageActPosLVD extends ListViewDelegate {
     curPos: PosData;
     curActPosModel: ActPosModel;
 
-    curActKeys: string[];
-    curEvts: EvtModel[];
-    curMovs: MovModel[];
+    curActKeys: string[] = [];
+    curEvts: EvtModel[] = [];
+    curMovs: MovModel[] = [];
 
     actCellLength: number;
     evtCellLength: number;

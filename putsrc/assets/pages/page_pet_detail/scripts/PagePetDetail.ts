@@ -16,6 +16,7 @@ import { PetDataTool, GameDataTool } from 'scripts/Memory';
 import { FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import { FuncBar } from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
+import { NavBar } from 'scripts/NavBar';
 
 @ccclass
 export class PagePetDetail extends PageBase {
@@ -50,10 +51,12 @@ export class PagePetDetail extends PageBase {
         this.curPet = data;
     }
 
-    onPageShow() {
-        this.ctrlr.setTitle('宠物详情');
-        this.ctrlr.setBackBtnEnabled(true);
+    onLoadNavBar(navBar: NavBar) {
+        navBar.setBackBtnEnabled(true);
+        navBar.setTitle('宠物详情');
+    }
 
+    onPageShow() {
         let lvd = this.getComponent(PagePetDetailLVD);
         lvd.curPet = this.curPet;
 

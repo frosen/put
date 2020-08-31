@@ -19,6 +19,7 @@ import { actPosModelDict } from 'configs/ActPosModelDict';
 import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
 import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
 import { MmrTool, GameDataTool } from 'scripts/Memory';
+import { NavBar } from 'scripts/NavBar';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -144,6 +145,19 @@ export class PageActExpl extends BattlePageBase {
         }
     }
 
+    onLoadNavBar(navBar: NavBar) {
+        navBar.setBackBtnEnabled(true, (): boolean => {
+            this.ctrlr.popAlert('确定退出探索？', (key: number) => {
+                if (key === 1) this.ctrlr.popPage();
+            });
+            return false;
+        });
+
+        let posId = this.ctrlr.memory.gameData.curPosId; // 宠物和主人pos不一致无法进入该page，因此此处可用主人pos
+        let posName = actPosModelDict[posId].cnName;
+        navBar.setTitle('探索' + posName);
+    }
+
     start() {
         if (CC_EDITOR) return;
         this.updater.init(this, this.spcBtlId, this.startStep);
@@ -176,16 +190,6 @@ export class PageActExpl extends BattlePageBase {
     }
 
     onPageShow() {
-        this.ctrlr.setBackBtnEnabled(true, (): boolean => {
-            this.ctrlr.popAlert('确定退出探索？', (key: number) => {
-                if (key === 1) this.ctrlr.popPage();
-            });
-            return false;
-        });
-
-        let posId = this.ctrlr.memory.gameData.curPosId; // 宠物和主人pos不一致无法进入该page，因此此处可用主人pos
-        let posName = actPosModelDict[posId].cnName;
-        this.ctrlr.setTitle('探索' + posName);
         this.setExplStepUI();
     }
 
@@ -193,7 +197,7 @@ export class PageActExpl extends BattlePageBase {
         if (this.ctrlr.getCurPage() !== this) return;
 
         let curExpl = this.ctrlr.memory.gameData.curExpl;
-        if (!curExpl) return this.ctrlr.setSubTitle('');
+        if (!curExpl) return this.navBar.setSubTitle('');
 
         let posId = curExpl.curPosId;
         let curPosModel = actPosModelDict[posId];
@@ -209,7 +213,7 @@ export class PageActExpl extends BattlePageBase {
         else if (percent > 0) percentStr = '.0' + String(percent);
         else percentStr = '';
 
-        this.ctrlr.setSubTitle(`${stepName} ${step + 1}${percentStr}/${stepMax}`);
+        this.navBar.setSubTitle(`${stepName} ${step + 1}${percentStr}/${stepMax}`);
     }
 
     // ui -----------------------------------------------------------------

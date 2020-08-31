@@ -11,6 +11,7 @@ import { PagePkgLVD, PagePkgCellType } from 'pages/page_pkg/scripts/PagePkgLVD';
 import { ListView } from 'scripts/ListView';
 import { Item } from 'scripts/DataSaved';
 import { ListViewCell } from 'scripts/ListViewCell';
+import { NavBar } from 'scripts/NavBar';
 
 @ccclass
 export class PagePkgSelection extends PagePkgBase {
@@ -49,10 +50,12 @@ export class PagePkgSelection extends PagePkgBase {
         cc.assert(this.clickCallback, 'PUT 物品选择页面必须有回调');
     }
 
-    onPageShow() {
-        this.ctrlr.setTitle(this.pageName);
-        this.ctrlr.setBackBtnEnabled(true);
+    onLoadNavBar(navBar: NavBar) {
+        navBar.setBackBtnEnabled(true);
+        navBar.setTitle(this.pageName);
+    }
 
+    onPageShow() {
         let items = this.ctrlr.memory.gameData.items;
         this.lvd.initListData(items, this.curItemIdxs);
         this.list.resetContent(true);

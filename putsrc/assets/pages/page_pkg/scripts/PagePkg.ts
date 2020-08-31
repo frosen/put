@@ -21,6 +21,7 @@ import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelect
 import { equipModelDict } from 'configs/EquipModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
+import { NavBar } from 'scripts/NavBar';
 
 const LIST_NAMES = ['全部', '装备', '饮品', '捕捉', '强化', '其他'];
 const WIDTH = 1080;
@@ -88,10 +89,13 @@ export class PagePkg extends PagePkgBase {
         ]);
     }
 
+    onLoadNavBar(navBar: NavBar) {
+        navBar.setTitle('道具');
+    }
+
     onPageShow() {
-        this.ctrlr.setTitle('道具');
         let gameData = this.ctrlr.memory.gameData;
-        this.ctrlr.setSubTitle(`${gameData.weight}/${GameDataTool.getItemCountMax(gameData)}`);
+        this.navBar.setSubTitle(`${gameData.weight}/${GameDataTool.getItemCountMax(gameData)}`);
 
         this.turnList(this.curListIdx);
     }

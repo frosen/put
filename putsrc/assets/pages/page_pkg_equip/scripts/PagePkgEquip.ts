@@ -15,6 +15,7 @@ import { ListViewCell } from 'scripts/ListViewCell';
 import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { GameDataTool } from 'scripts/Memory';
 import { Pet, ItemType } from 'scripts/DataSaved';
+import { NavBar } from 'scripts/NavBar';
 
 @ccclass
 export class PagePkgEquip extends PageBase {
@@ -58,10 +59,12 @@ export class PagePkgEquip extends PageBase {
         }
     }
 
-    onPageShow() {
-        this.ctrlr.setTitle('装配');
-        this.ctrlr.setBackBtnEnabled(true);
+    onLoadNavBar(navBar: NavBar) {
+        navBar.setBackBtnEnabled(true);
+        navBar.setTitle('装配');
+    }
 
+    onPageShow() {
         this.resetList();
     }
 

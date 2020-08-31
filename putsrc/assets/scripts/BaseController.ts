@@ -10,6 +10,7 @@ import { Memory } from './Memory';
 import { DebugTool } from './DebugTool';
 import { TouchLayer } from './TouchLayer';
 import { checkConfigs } from './ConfigsChecker';
+import { NavBar } from './NavBar';
 
 // @ts-ignore
 let customEngineInfo = cc.director.customEngineInfo;
@@ -36,9 +37,6 @@ const TabBtnData = cc.Class({
     }
 });
 type TabBtnData = { page: cc.Prefab; btn: cc.Button };
-
-const FUNC_BTN_DISTANCE = 108;
-const FUNC_BTN_POS_BASE = 481;
 
 class TreeNode {
     name: string = '';
@@ -67,6 +65,9 @@ export class BaseController extends cc.Component {
 
     @property(cc.Node)
     navBed: cc.Node = null;
+
+    @property(cc.Prefab)
+    navPrefab: cc.Prefab = null;
 
     @property(cc.Node)
     tabBed: cc.Node = null;
@@ -120,7 +121,6 @@ export class BaseController extends cc.Component {
         this.setPagePrefabDict();
         this.setTabBtns();
         this.setTree();
-        this.setNav();
         this.initPops();
     }
 
@@ -197,10 +197,6 @@ export class BaseController extends cc.Component {
         this.pageTree = new TreeNode();
     }
 
-    setNav() {
-        this.navBed.getChildByName('back').on('click', this.onClickBack.bind(this));
-    }
-
     start() {
         if (CC_EDITOR) return;
         this.actTBData.btn.node.emit('click', this.actTBData.btn);
@@ -236,7 +232,6 @@ export class BaseController extends cc.Component {
 
         nextPage.node.zIndex = curPage.node.zIndex + 1;
 
-        this.clearNavBar();
         this.willHidePage(curPage);
         this.showPage(nextPage);
         let afterAnim = () => {
@@ -289,7 +284,6 @@ export class BaseController extends cc.Component {
         let nextPage = nextTreeNode.page;
         let curPage = curTreeNode.page;
 
-        this.clearNavBar();
         this.willHidePage(curPage, true);
         this.showPage(nextPage);
         let afterAnim = () => {
@@ -365,7 +359,6 @@ export class BaseController extends cc.Component {
         if (curTreeNode) parentTreeNode.others[curTreeNode.name] = curTreeNode;
         parentTreeNode.child = nextTreeNode;
 
-        this.clearNavBar();
         if (curDisTreeNode) this.willHidePage(curDisTreeNode.page);
         this.showPage(nextDisTreeNode.page);
         this.doSwitchPageAnim(curDisTreeNode ? curDisTreeNode.page.node : null, nextDisTreeNode.page.node, anim, () => {
@@ -451,11 +444,21 @@ export class BaseController extends cc.Component {
         let prefab = this.prefabDict[pageName];
         cc.assert(prefab, `${pageName}并没有加入pagePrefabList中`);
 
-        let newNode = cc.instantiate(prefab);
-        let pageComp = newNode.getComponent(PageBase);
+        let pageNode = cc.instantiate(prefab);
+        pageNode.parent = this.pageBed;
+        let pageComp = pageNode.getComponent(PageBase);
         pageComp.init();
         pageComp.setData(data);
-        newNode.parent = this.pageBed;
+
+        if (!pageComp.navHidden) {
+            let navNode = cc.instantiate(this.navPrefab);
+            navNode.zIndex = 999999;
+            navNode.parent = pageNode;
+            let navBar = navNode.getComponent(NavBar);
+            navBar.ctrlr = this;
+            pageComp.navBar = navBar;
+            pageComp.onLoadNavBar(navBar);
+        }
 
         return pageComp;
     }
@@ -503,82 +506,6 @@ export class BaseController extends cc.Component {
 
     getCurPage(): PageBase {
         return this.getTreeLeaf(this.pageTree).page;
-    }
-
-    // 导航栏控制 -----------------------------------------------------------------
-
-    setTitle(title: string) {
-        let lbl = this.navBed.getChildByName('title').getComponent(cc.Label);
-        lbl.string = title;
-        let subLbl = this.navBed.getChildByName('sub_title').getComponent(cc.Label);
-        // @ts-ignore
-        lbl._assembler.updateRenderData(lbl);
-        subLbl.node.x = lbl.node.width * 0.5 + 20;
-    }
-
-    setSubTitle(title: string) {
-        let subLbl = this.navBed.getChildByName('sub_title').getComponent(cc.Label);
-        subLbl.string = title;
-    }
-
-    backBtnActive: boolean = true;
-    backBtnCallback: () => boolean = null;
-
-    setBackBtnEnabled(e: boolean, callback: () => boolean = null) {
-        this.backBtnActive = e;
-        this.navBed.getChildByName('back').active = e;
-        this.backBtnCallback = e ? callback : null;
-    }
-
-    onClickBack() {
-        if (this.backBtnCallback) {
-            let rzt = this.backBtnCallback();
-            if (rzt) this.popPage();
-        } else {
-            this.popPage();
-        }
-    }
-
-    @property(cc.Prefab)
-    funcBtnPrefab: cc.Prefab = null;
-
-    btnX: number = FUNC_BTN_POS_BASE;
-
-    addFuncBtn(name: string, frames: cc.SpriteFrame[], callback: (btn: cc.Button) => void): cc.Button {
-        let node = cc.instantiate(this.funcBtnPrefab);
-        node.name = 'fb_' + name;
-        node.parent = this.navBed;
-        node.x = this.btnX;
-
-        let btn = node.getComponent(cc.Button);
-        if (frames && frames.length > 0) {
-            btn.normalSprite = frames[0] || null;
-            btn.pressedSprite = frames[1] || null;
-            btn.hoverSprite = frames[2] || null;
-        }
-
-        node.on('click', callback);
-
-        this.btnX -= FUNC_BTN_DISTANCE;
-
-        return btn;
-    }
-
-    clearFuncBtns() {
-        for (const child of this.navBed.children) {
-            if (/^fb_[\s\S].*$/.test(child.name)) {
-                child.removeFromParent();
-                child.destroy();
-            }
-        }
-        this.btnX = FUNC_BTN_POS_BASE;
-    }
-
-    clearNavBar() {
-        this.setBackBtnEnabled(false);
-        this.setTitle('');
-        this.setSubTitle('');
-        this.clearFuncBtns();
     }
 
     // pop -----------------------------------------------------------------

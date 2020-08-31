@@ -11,6 +11,7 @@ import { ListView } from 'scripts/ListView';
 import { PosData } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
+import { NavBar } from 'scripts/NavBar';
 
 @ccclass
 export class PageActPos extends PageBase {
@@ -27,11 +28,14 @@ export class PageActPos extends PageBase {
         this.listView = this.getComponentInChildren(ListView);
     }
 
+    onLoadNavBar(navBar: NavBar) {
+        navBar.setTitle('位置');
+    }
+
     onPageShow() {
         let gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl) return;
 
-        this.ctrlr.setTitle('位置');
         let posId = gameData.curPosId;
 
         GameDataTool.addPos(gameData, posId);

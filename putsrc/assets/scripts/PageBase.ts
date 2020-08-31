@@ -7,6 +7,7 @@
 const { ccclass, property, executeInEditMode } = cc._decorator;
 
 import { BaseController } from './BaseController';
+import { NavBar } from './NavBar';
 
 @ccclass
 @executeInEditMode
@@ -26,6 +27,13 @@ export class PageBase extends cc.Component {
     }
 
     setData(data: any) {}
+
+    /** 隐藏导航栏 */
+    navHidden: boolean = false;
+
+    navBar: NavBar = null;
+
+    onLoadNavBar(navBar: NavBar) {}
 
     onLoad() {
         if (CC_EDITOR) {

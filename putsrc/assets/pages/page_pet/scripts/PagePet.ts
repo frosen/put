@@ -16,6 +16,7 @@ import { CellPet } from '../cells/cell_pet/scripts/CellPet';
 import { PagePetDetail } from 'pages/page_pet_detail/scripts/PagePetDetail';
 import { PageBase } from 'scripts/PageBase';
 import { FuncBar } from '../prefabs/prefab_func_bar/scripts/FuncBar';
+import { NavBar } from 'scripts/NavBar';
 
 @ccclass
 export class PagePet extends PageBase {
@@ -73,10 +74,12 @@ export class PagePet extends PageBase {
         }
     }
 
-    onPageShow() {
-        this.ctrlr.setTitle(this.specialPageName || '宠物');
-        this.ctrlr.setBackBtnEnabled(this.needBackBtn);
+    onLoadNavBar(navBar: NavBar) {
+        navBar.setBackBtnEnabled(this.needBackBtn);
+        navBar.setTitle(this.specialPageName || '宠物');
+    }
 
+    onPageShow() {
         let lvd = this.list.delegate as PagePetLVD;
         if (lvd.cellType === PagePetCellType.normal) {
             let curDirtyToken = this.ctrlr.memory.dirtyToken;
