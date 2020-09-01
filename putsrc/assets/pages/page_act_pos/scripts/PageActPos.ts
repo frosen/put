@@ -15,6 +15,8 @@ import { NavBar } from 'scripts/NavBar';
 
 @ccclass
 export class PageActPos extends PageBase {
+    navHidden: boolean = true;
+
     lvd: PageActPosLVD = null;
     listView: ListView = null;
 
@@ -26,10 +28,6 @@ export class PageActPos extends PageBase {
         if (CC_EDITOR) return;
         this.lvd = this.getComponent(PageActPosLVD);
         this.listView = this.getComponentInChildren(ListView);
-    }
-
-    onLoadNavBar(navBar: NavBar) {
-        navBar.setTitle('位置');
     }
 
     onPageShow() {
