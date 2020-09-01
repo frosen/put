@@ -1,30 +1,24 @@
 /*
- * TouchLayer.ts
- * 触摸控制
+ * PagePkgTouchLayer.ts
+ * 左右滑动层
  * luleyan
  */
 
 const { ccclass, property } = cc._decorator;
 
-import { BaseController } from './BaseController';
+import { PagePkg } from './PagePkg';
 
-const BACK_MARK_BUFFER: number = 50;
+const MOVE_DIS: number = 200;
 
 @ccclass
-export class TouchLayer extends cc.Component {
-    @property(cc.Node)
-    mark: cc.Node = null;
-
+export class PagePkgTouchLayer extends cc.Component {
     touchId: number = null;
     lastX: number;
     lastY: number;
     startedX: number;
 
-    readyX: number;
-
-    ctrlr: BaseController = null;
-
-    init(ctrlr: BaseController) {
+    ctrlr: PagePkg;
+    init(ctrlr: PagePkg) {
         this.ctrlr = ctrlr;
     }
 
@@ -35,22 +29,13 @@ export class TouchLayer extends cc.Component {
         this.node.on(cc.Node.EventType.TOUCH_CANCEL, this.onGestureCancel.bind(this));
         // @ts-ignore
         this.node._touchListener.setSwallowTouches(false);
-
-        this.readyX = this.mark.width + BACK_MARK_BUFFER;
     }
 
     onGestureStarted(event: cc.Event.EventTouch) {
-        let navBar = this.ctrlr.getCurPage().navBar;
-        if (!navBar || !navBar.backBtnActive || this.mark.getNumberOfRunningActions() > 0) {
-            this.touchId = null;
-            return;
-        }
         this.touchId = event.getID();
         this.lastX = event.getLocationX();
         this.lastY = event.getLocationY();
         this.startedX = this.lastX;
-        this.mark.x = 0;
-        this.mark.stopAllActions();
     }
 
     onGestureMoved(event: cc.Event.EventTouch) {
@@ -59,32 +44,31 @@ export class TouchLayer extends cc.Component {
         let curY = event.getLocationY();
         if (Math.abs(curY - this.lastY) > Math.abs(curX - this.lastX)) {
             this.touchId = null;
-            return;
         }
-        this.mark.x = Math.min(curX - this.startedX, this.readyX);
     }
 
     onGestureEnd(event: cc.Event.EventTouch) {
         if (this.touchId === null || event.getID() !== this.touchId) return;
         this.touchId = null;
-        if (this.mark.x >= this.readyX - 1) this.goBack();
-        this.moveBack();
+
+        let curX = event.getLocationX();
+        if (curX < this.startedX - MOVE_DIS) {
+            this.goRight();
+        } else if (this.startedX + MOVE_DIS < curX) {
+            this.goLeft();
+        }
     }
 
     onGestureCancel(event: cc.Event.EventTouch) {
         if (this.touchId === null || event.getID() !== this.touchId) return;
         this.touchId = null;
-        this.moveBack();
     }
 
-    goBack() {
-        let navBar = this.ctrlr.getCurPage().navBar;
-        navBar.onClickBack();
+    goLeft() {
+        this.ctrlr.moveList(-1);
     }
 
-    moveBack() {
-        if (this.mark.x > 0) {
-            cc.tween(this.mark).to(0.25, { x: 0 }, { easing: 'quadOut' }).start();
-        }
+    goRight() {
+        this.ctrlr.moveList(1);
     }
 }

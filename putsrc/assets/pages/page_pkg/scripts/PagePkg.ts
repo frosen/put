@@ -22,6 +22,7 @@ import { equipModelDict } from 'configs/EquipModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
 import { NavBar } from 'scripts/NavBar';
+import { PagePkgTouchLayer } from './PagePkgTouchLayer';
 
 const LIST_NAMES = ['全部', '装备', '饮品', '捕捉', '强化', '其他'];
 const WIDTH = 1080;
@@ -50,6 +51,9 @@ export class PagePkg extends PagePkgBase {
     funcBarPrefab: cc.Prefab = null;
 
     funcBar: FuncBar = null;
+
+    @property(PagePkgTouchLayer)
+    touchLayer: PagePkgTouchLayer = null;
 
     onLoad() {
         super.onLoad();
@@ -87,6 +91,8 @@ export class PagePkg extends PagePkgBase {
             { str: '下移', callback: this.onMoveDownCell.bind(this) },
             { str: '丢弃', callback: this.onRemoveCell.bind(this) }
         ]);
+
+        this.touchLayer.init(this);
     }
 
     onLoadNavBar(navBar: NavBar) {
@@ -164,6 +170,16 @@ export class PagePkg extends PagePkgBase {
         } else {
             this.resetCurList();
         }
+    }
+
+    moveList(moveDis: number) {
+        let nextIdx = this.curListIdx + moveDis;
+        if (nextIdx < 0 || this.listDatas.length <= nextIdx) {
+            cc.log('PUT can not move list to ', nextIdx);
+            return;
+        }
+
+        this.turnList(nextIdx);
     }
 
     // -----------------------------------------------------------------

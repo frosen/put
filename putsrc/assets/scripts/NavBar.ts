@@ -35,7 +35,7 @@ export class NavBar extends cc.Component {
         this.subTitle.string = title;
     }
 
-    backBtnActive: boolean = true;
+    backBtnActive: boolean = false;
     backBtnCallback: () => boolean = null;
 
     setBackBtnEnabled(e: boolean, callback: () => boolean = null) {

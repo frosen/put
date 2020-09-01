@@ -452,7 +452,7 @@ export class BaseController extends cc.Component {
 
         if (!pageComp.navHidden) {
             let navNode = cc.instantiate(this.navPrefab);
-            navNode.zIndex = 999999;
+            navNode.zIndex = cc.macro.MAX_ZINDEX;
             navNode.parent = pageNode;
             let navBar = navNode.getComponent(NavBar);
             navBar.ctrlr = this;
