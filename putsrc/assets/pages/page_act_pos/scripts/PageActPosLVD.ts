@@ -9,7 +9,6 @@ import { ListViewDelegate } from 'scripts/ListViewDelegate';
 import { ListView } from 'scripts/ListView';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { ListViewCell } from 'scripts/ListViewCell';
-import { CellPosInfo } from '../cells/cell_pos_info/scripts/CellPosInfo';
 import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { PageActPos } from './PageActPos';
@@ -177,9 +176,8 @@ export class PageActPosLVD extends ListViewDelegate {
         }
     }
 
-    setCellForRow(listView: ListView, rowIdx: number, cell: CellPosInfo & CellPosBtn & CellPosMov) {
+    setCellForRow(listView: ListView, rowIdx: number, cell: CellPosBtn & CellPosMov) {
         if (rowIdx === 0) {
-            cell.setData(this.curActPosModel.cnName);
         } else if (rowIdx <= this.actCellLength) {
             let actIdx = (rowIdx - 1) * 2;
             let actKey1 = this.curActKeys[actIdx];

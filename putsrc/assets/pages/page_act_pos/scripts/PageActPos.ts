@@ -11,14 +11,18 @@ import { ListView } from 'scripts/ListView';
 import { PosData } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
-import { NavBar } from 'scripts/NavBar';
+import { PanelPosInfo } from './PanelPosInfo';
 
 @ccclass
 export class PageActPos extends PageBase {
     navHidden: boolean = true;
 
-    lvd: PageActPosLVD = null;
+    @property(ListView)
     listView: ListView = null;
+    lvd: PageActPosLVD = null;
+
+    @property(PanelPosInfo)
+    posInfo: PanelPosInfo = null;
 
     curPosId: string = '';
     dirtyToken: number = 0;
@@ -26,8 +30,9 @@ export class PageActPos extends PageBase {
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
-        this.lvd = this.getComponent(PageActPosLVD);
-        this.listView = this.getComponentInChildren(ListView);
+
+        this.lvd = this.listView.delegate as PageActPosLVD;
+        this.listView.node.on('scrolling', this.onScrolling.bind(this));
     }
 
     onPageShow() {
@@ -55,5 +60,10 @@ export class PageActPos extends PageBase {
     afterPageShowAnim() {
         let gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl) this.ctrlr.pushPage(PageActExpl, null, false);
+    }
+
+    onScrolling() {
+        let y = this.listView.content.y;
+        this.posInfo.onScrolling(y);
     }
 }

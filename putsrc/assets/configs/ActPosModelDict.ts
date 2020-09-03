@@ -23,7 +23,17 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             [PAKey.aCenter]: null
         },
         evts: [],
-        movs: [{ id: 'GuangJiDianDaDao', price: 0 }],
+        movs: [
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 }
+        ],
         loc: { x: 1000, y: 100 },
         petIdLists: [],
         itemIdLists: [],
