@@ -9,7 +9,7 @@ import { BaseController } from './BaseController';
 const { ccclass, property } = cc._decorator;
 
 const FUNC_BTN_DISTANCE = 108;
-const FUNC_BTN_POS_BASE = 481;
+const FUNC_BTN_POS_BASE = 1080 - 63;
 
 @ccclass
 export class NavBar extends cc.Component {

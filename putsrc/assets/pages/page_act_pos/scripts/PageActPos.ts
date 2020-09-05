@@ -54,7 +54,12 @@ export class PageActPos extends PageBase {
 
     resetListview() {
         this.lvd.initData();
-        this.listView.resetContent();
+        this.listView.resetContent(true);
+
+        let y = PageActPos.ListViewPosDict[this.curPosId] || 0;
+        this.listView.clearContent();
+        this.listView.createContent(y);
+        this.posInfo.onScrolling(y);
     }
 
     afterPageShowAnim() {
@@ -62,8 +67,11 @@ export class PageActPos extends PageBase {
         if (gameData.curExpl) this.ctrlr.pushPage(PageActExpl, null, false);
     }
 
+    static ListViewPosDict: { [key: string]: number } = {};
+
     onScrolling() {
         let y = this.listView.content.y;
+        if (this.curPosId) PageActPos.ListViewPosDict[this.curPosId] = y;
         this.posInfo.onScrolling(y);
     }
 }

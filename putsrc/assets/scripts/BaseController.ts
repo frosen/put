@@ -354,6 +354,14 @@ export class BaseController extends cc.Component {
             nextDisTreeNode = nextTreeNode;
         }
 
+        let nextZ: number;
+        if (curTreeNode) {
+            if (anim === PageSwitchAnim.fromTop) nextZ = curTreeNode.page.node.zIndex + 1;
+            else if (anim === PageSwitchAnim.fromBottom) nextZ = curTreeNode.page.node.zIndex - 1;
+            else nextZ = curTreeNode.page.node.zIndex;
+        } else nextZ = 0;
+        nextDisTreeNode.page.node.zIndex = nextZ;
+
         cc.log(`PUT switch page to ${nextTreeNode.name}[display:${nextDisTreeNode.name}]`);
 
         if (curTreeNode) parentTreeNode.others[curTreeNode.name] = curTreeNode;
@@ -369,65 +377,60 @@ export class BaseController extends cc.Component {
     }
 
     doSwitchPageAnim(curNode: cc.Node, nextNode: cc.Node, anim: PageSwitchAnim, callback: () => void) {
-        if (anim === PageSwitchAnim.none) {
+        if (!curNode || anim === PageSwitchAnim.none) {
+            nextNode.x = 0;
+            nextNode.y = 0;
             return callback();
-        }
-
-        if (curNode) {
+        } else if (anim === PageSwitchAnim.fromLeft || anim === PageSwitchAnim.fromRight) {
             curNode.x = 0;
             curNode.y = 0;
-
-            let curToX = 0;
+            let curToX = anim === PageSwitchAnim.fromLeft ? this.pageBed.width : -this.pageBed.width;
             let curToY = 0;
-            switch (anim) {
-                case PageSwitchAnim.fromTop:
-                    curToY = -this.pageBed.height;
-                    break;
-                case PageSwitchAnim.fromBottom:
-                    curToY = this.pageBed.height;
-                    break;
-                case PageSwitchAnim.fromLeft:
-                    curToX = this.pageBed.width;
-                    break;
-                case PageSwitchAnim.fromRight:
-                    curToX = -this.pageBed.width;
-                    break;
-                default:
-                    break;
-            }
-
             cc.tween(curNode).to(0.2, { x: curToX, y: curToY }, { easing: 'sineInOut' }).start();
-        }
 
-        let nextToX = 0;
-        let nextToY = 0;
-        switch (anim) {
-            case PageSwitchAnim.fromTop:
-                nextToY = this.pageBed.height;
-                break;
-            case PageSwitchAnim.fromBottom:
-                nextToY = -this.pageBed.height;
-                break;
-            case PageSwitchAnim.fromLeft:
-                nextToX = -this.pageBed.width;
-                break;
-            case PageSwitchAnim.fromRight:
-                nextToX = this.pageBed.width;
-                break;
-            default:
-                break;
-        }
+            nextNode.x = anim === PageSwitchAnim.fromLeft ? -this.pageBed.width : this.pageBed.width;
+            nextNode.y = 0;
+            cc.tween(nextNode)
+                .to(0.2, { x: 0, y: 0 }, { easing: 'sineInOut' })
+                .call(() => {
+                    setTimeout(() => {
+                        callback();
+                    });
+                })
+                .start();
+        } else if (anim === PageSwitchAnim.fromTop) {
+            curNode.x = 0;
+            curNode.y = 0;
+            cc.tween(curNode).to(0.35, { x: 0, y: -900 }, { easing: 'sineIn' }).start();
 
-        nextNode.x = nextToX;
-        nextNode.y = nextToY;
-        cc.tween(nextNode)
-            .to(0.2, { x: 0, y: 0 }, { easing: 'sineInOut' })
-            .call(() => {
-                setTimeout(() => {
-                    callback();
-                });
-            })
-            .start();
+            nextNode.x = 0;
+            nextNode.y = this.pageBed.height + this.navBed.height * 2;
+            cc.tween(nextNode)
+                .to(0.35, { x: 0, y: 0 }, { easing: 'sineOut' })
+                .call(() => {
+                    setTimeout(() => {
+                        callback();
+                    });
+                })
+                .start();
+        } else {
+            curNode.x = 0;
+            curNode.y = 0;
+            let curToX = 0;
+            let curToY = this.pageBed.height + this.navBed.height * 2;
+            cc.tween(curNode)
+                .to(0.35, { x: curToX, y: curToY }, { easing: 'sineIn' })
+                .call(() => {
+                    setTimeout(() => {
+                        callback();
+                    });
+                })
+                .start();
+
+            nextNode.x = 0;
+            nextNode.y = -900;
+            cc.tween(nextNode).to(0.35, { x: 0, y: 0 }, { easing: 'sineOut' }).start();
+        }
     }
 
     getPageName<T extends PageBase>(page: cc.Prefab | string | { new (): T }) {

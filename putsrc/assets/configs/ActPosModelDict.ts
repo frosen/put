@@ -62,5 +62,40 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         ],
         itemIdLists: [null, ['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
         eqpIdLists: []
+    },
+    HePingQu: {
+        id: 'HePingQu',
+        cnName: '和平区',
+        lv: 10,
+        acts: [PAKey.expl],
+        actDict: {
+            [PAKey.expl]: {
+                key: PAKey.expl,
+                stepMax: 4
+            }
+        },
+        evts: [],
+        movs: [
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 },
+            { id: 'GuangJiDianDaDao', price: 0 }
+        ],
+        loc: { x: 1100, y: 300 },
+        petIdLists: [
+            null,
+            ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
+            null,
+            null,
+            ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
+        ],
+        itemIdLists: [null, ['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
+        eqpIdLists: []
     }
 };
