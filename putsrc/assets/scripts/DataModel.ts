@@ -277,9 +277,9 @@ export class ActPosModel {
     id: string;
     cnName: string;
     lv: number;
+    evts: EvtModel[];
     acts: string[];
     actDict: { [key: string]: AllPAType };
-    evts: EvtModel[];
     movs: MovModel[];
     loc: Partial<cc.Vec2>;
     petIdLists: string[][]; // 不同stepType对应的宠物列表

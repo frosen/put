@@ -11,6 +11,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         id: 'YiZhuang',
         cnName: '易庄',
         lv: 1,
+        evts: [],
         acts: [PAKey.work, PAKey.quest, PAKey.shop, PAKey.eqpMkt, PAKey.petMkt, PAKey.recycler, PAKey.store, PAKey.aCenter],
         actDict: {
             [PAKey.work]: null,
@@ -22,7 +23,6 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             [PAKey.store]: null,
             [PAKey.aCenter]: null
         },
-        evts: [],
         movs: [
             { id: 'GuangJiDianDaDao', price: 0 },
             { id: 'GuangJiDianDaDao', price: 0 },
@@ -43,6 +43,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         id: 'GuangJiDianDaDao',
         cnName: '光机电大道',
         lv: 1,
+        evts: [],
         acts: [PAKey.expl],
         actDict: {
             [PAKey.expl]: {
@@ -50,7 +51,6 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                 stepMax: 2
             }
         },
-        evts: [],
         movs: [{ id: 'YiZhuang', price: 0 }],
         loc: { x: 1100, y: 100 },
         petIdLists: [

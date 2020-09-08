@@ -93,12 +93,12 @@ export class PageActPosLVD extends ListViewDelegate {
     curPos: PosData;
     curActPosModel: ActPosModel;
 
-    curActKeys: string[] = [];
     curEvts: EvtModel[] = [];
+    curActKeys: string[] = [];
     curMovs: MovModel[] = [];
 
-    actCellLength: number;
     evtCellLength: number;
+    actCellLength: number;
     movCellLength: number;
 
     initData() {
@@ -107,22 +107,22 @@ export class PageActPosLVD extends ListViewDelegate {
         this.curPos = gameData.posDataDict[this.curPosId];
         this.curActPosModel = actPosModelDict[this.curPosId];
 
-        this.curActKeys.length = 0;
         this.curEvts.length = 0;
+        this.curActKeys.length = 0;
         this.curMovs.length = 0;
-
-        for (const pakey of this.curActPosModel.acts) {
-            let actModel = this.curActPosModel.actDict[pakey];
-            if (actModel && actModel.hasOwnProperty('condFunc')) {
-                if (actModel.condFunc(gameData)) this.curActKeys.push(pakey);
-            } else this.curActKeys.push(pakey);
-        }
 
         for (let index = 0; index < this.curActPosModel.evts.length; index++) {
             const evtModel = this.curActPosModel.evts[index];
             if (evtModel && evtModel.hasOwnProperty('condFunc')) {
                 if (evtModel.condFunc(gameData)) this.curEvts.push(evtModel);
             } else this.curEvts.push(evtModel);
+        }
+
+        for (const pakey of this.curActPosModel.acts) {
+            let actModel = this.curActPosModel.actDict[pakey];
+            if (actModel && actModel.hasOwnProperty('condFunc')) {
+                if (actModel.condFunc(gameData)) this.curActKeys.push(pakey);
+            } else this.curActKeys.push(pakey);
         }
 
         for (let index = 0; index < this.curActPosModel.movs.length; index++) {
@@ -132,23 +132,23 @@ export class PageActPosLVD extends ListViewDelegate {
             } else this.curMovs.push(movModel);
         }
 
-        this.actCellLength = Math.ceil(this.curActKeys.length * 0.5);
         this.evtCellLength = Math.ceil(this.curEvts.length * 0.5);
+        this.actCellLength = Math.ceil(this.curActKeys.length * 0.5);
         this.movCellLength = this.curMovs.length;
     }
 
     numberOfRows(listView: ListView): number {
-        return 1 + this.actCellLength + this.evtCellLength + this.movCellLength;
+        return 1 + this.evtCellLength + this.actCellLength + this.movCellLength;
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
         if (rowIdx === 0) {
             return 380;
-        } else if (rowIdx === this.actCellLength) {
+        } else if (rowIdx === this.evtCellLength) {
             return 179;
-        } else if (rowIdx === this.actCellLength + this.evtCellLength) {
+        } else if (rowIdx === this.evtCellLength + this.actCellLength) {
             return 179;
-        } else if (rowIdx < this.actCellLength + this.evtCellLength) {
+        } else if (rowIdx < this.evtCellLength + this.actCellLength) {
             return 139;
         } else {
             return 176;
@@ -158,7 +158,7 @@ export class PageActPosLVD extends ListViewDelegate {
     cellIdForRow(listView: ListView, rowIdx: number): string {
         if (rowIdx === 0) {
             return 'posInfo';
-        } else if (rowIdx <= this.actCellLength + this.evtCellLength) {
+        } else if (rowIdx <= this.evtCellLength + this.actCellLength) {
             return 'posBtn';
         } else {
             return 'posMov';
@@ -178,8 +178,10 @@ export class PageActPosLVD extends ListViewDelegate {
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPosBtn & CellPosMov) {
         if (rowIdx === 0) {
-        } else if (rowIdx <= this.actCellLength) {
-            let actIdx = (rowIdx - 1) * 2;
+        } else if (rowIdx <= this.evtCellLength) {
+            //
+        } else if (rowIdx <= this.evtCellLength + this.actCellLength) {
+            let actIdx = (rowIdx - 1 - this.evtCellLength) * 2;
             let actKey1 = this.curActKeys[actIdx];
             let actInfo1 = CellActInfoDict[actKey1];
             cell.setBtn1(actInfo1.cnName, () => {
@@ -192,13 +194,9 @@ export class PageActPosLVD extends ListViewDelegate {
                 cell.setBtn2(actInfo2.cnName, () => {
                     this.gotoPage(actInfo2);
                 });
-            } else {
-                cell.hideBtn2();
-            }
-        } else if (rowIdx <= this.actCellLength + this.evtCellLength) {
-            //
+            } else cell.setBtn2(null, null);
         } else {
-            let movIdx = rowIdx - 1 - this.actCellLength - this.evtCellLength;
+            let movIdx = rowIdx - 1 - this.evtCellLength - this.actCellLength;
 
             let moveType = this.curMovs[movIdx];
             let posId = moveType.id;

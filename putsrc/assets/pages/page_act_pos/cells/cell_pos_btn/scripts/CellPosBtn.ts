@@ -13,8 +13,20 @@ export class CellPosBtn extends ListViewCell {
     @property(cc.Button)
     btn1: cc.Button = null;
 
+    @property(cc.Label)
+    lblMain1: cc.Label = null;
+
+    @property(cc.Label)
+    lblSub1: cc.Label = null;
+
     @property(cc.Button)
     btn2: cc.Button = null;
+
+    @property(cc.Label)
+    lblMain2: cc.Label = null;
+
+    @property(cc.Label)
+    lblSub2: cc.Label = null;
 
     callback1: () => void = null;
     callback2: () => void = null;
@@ -30,19 +42,21 @@ export class CellPosBtn extends ListViewCell {
         });
     }
 
-    setBtn1(name: string, callback: () => void) {
-        this.btn1.getComponentInChildren(cc.Label).string = name;
+    setBtn1(name: string, callback: () => void, sub: string = null, subColor: cc.Color = null) {
+        this.lblMain1.string = name || '';
         this.callback1 = callback;
+
+        this.lblSub1.string = sub || '';
+        this.lblSub1.node.color = subColor || cc.color(120, 120, 120);
     }
 
-    setBtn2(name: string, callback: () => void) {
-        this.btn2.enabled = true;
-        this.btn2.getComponentInChildren(cc.Label).string = name;
+    setBtn2(name: string, callback: () => void, sub: string = null, subColor: cc.Color = null) {
+        this.btn2.enabled = !!callback;
+
+        this.lblMain2.string = name || '';
         this.callback2 = callback;
-    }
 
-    hideBtn2() {
-        this.btn2.getComponentInChildren(cc.Label).string = '';
-        this.btn2.enabled = false;
+        this.lblSub2.string = sub || '';
+        this.lblSub2.node.color = subColor || cc.color(120, 120, 120);
     }
 }
