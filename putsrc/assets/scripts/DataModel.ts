@@ -135,6 +135,10 @@ export class PetModel {
 }
 
 // -----------------------------------------------------------------
+export class CnsumModel {
+    id: string;
+    cnName: string;
+}
 
 export enum DrinkAimType {
     none,
@@ -142,9 +146,7 @@ export enum DrinkAimType {
     all
 }
 
-export class DrinkModel {
-    id: string;
-    cnName: string;
+export class DrinkModel extends CnsumModel {
     lvMax: number;
     rank: number;
     mainAttri: AmplAttriType;
@@ -155,9 +157,7 @@ export class DrinkModel {
     dura: number;
 }
 
-export class CatcherModel {
-    id: string;
-    cnName: string;
+export class CatcherModel extends CnsumModel {
     lvMin: number;
     lvMax: number;
     rankMin: number;
@@ -168,15 +168,11 @@ export class CatcherModel {
     rate: number;
 }
 
-export class EqpAmplrModel {
-    id: string;
-    cnName: string;
+export class EqpAmplrModel extends CnsumModel {
     lvMax: number;
 }
 
-export class MaterialModel {
-    id: string;
-    cnName: string;
+export class MaterialModel extends CnsumModel {
     lvMax: number;
 }
 
@@ -273,10 +269,17 @@ export class MovModel {
     condFunc?: CondFunc;
 }
 
+export enum ActPosType {
+    town = 1,
+    wild,
+    NoGA
+}
+
 export class ActPosModel {
     id: string;
     cnName: string;
     lv: number;
+    type: ActPosType;
     evts: EvtModel[];
     acts: string[];
     actDict: { [key: string]: AllPAType };
@@ -285,6 +288,7 @@ export class ActPosModel {
     petIdLists: string[][]; // 不同stepType对应的宠物列表
     itemIdLists: string[][];
     eqpIdLists: string[][];
+    goodsList: string[];
 }
 
 // -----------------------------------------------------------------

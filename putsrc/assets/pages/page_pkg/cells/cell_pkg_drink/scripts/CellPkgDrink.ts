@@ -6,14 +6,14 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { Drink } from 'scripts/DataSaved';
-import { DrinkAimType } from 'scripts/DataModel';
+import { DrinkAimType, DrinkModel } from 'scripts/DataModel';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { AmplAttriNames } from 'scripts/DataOther';
+import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 
 @ccclass
-export class CellPkgDrink extends CellPkgBase {
+export class CellPkgDrink extends CellPkgCnsum {
     @property(cc.Label)
     lvLbl: cc.Label = null;
 
@@ -29,13 +29,21 @@ export class CellPkgDrink extends CellPkgBase {
     @property([cc.Layout])
     layouts: cc.Layout[] = [];
 
-    @property(cc.Label)
-    countLbl: cc.Label = null;
-
     setData(itemIdx: number, drink: Drink) {
         super.setData(itemIdx, drink);
         let drinkModel = drinkModelDict[drink.id];
+        this.setModelData(drinkModel);
 
+        this.setCount(drink.count);
+    }
+
+    setDataByModel(itemIdx: number, drinkModel: DrinkModel) {
+        super.setData(itemIdx, null);
+        this.setModelData(drinkModel);
+        this.setCount(-1);
+    }
+
+    setModelData(drinkModel: DrinkModel) {
         this.nameLbl.string = drinkModel.cnName;
         this.lvLbl.string = `[MaxL${drinkModel.lvMax}]`;
 
@@ -54,8 +62,6 @@ export class CellPkgDrink extends CellPkgBase {
 
         CellPkgDrink.rerenderLbl(this.mainAttri);
         CellPkgDrink.rerenderLbl(this.subAttri);
-
-        this.countLbl.string = 'x ' + String(drink.count);
 
         for (const layout of this.layouts) layout.updateLayout();
     }

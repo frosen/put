@@ -25,10 +25,12 @@ export class PanelPosInfo extends cc.Component {
         if (realY > 0) realY = 0;
         this.node.y = realY;
 
-        let scale: number;
-        if (realY < -107) scale = 1;
-        else if (realY > 0) scale = 0.37;
-        else scale = (realY / -107) * 0.63 + 0.37;
-        this.uiScaleNode.scale = scale;
+        let rate: number;
+        if (realY < -141) rate = 1;
+        else if (realY > 0) rate = 0;
+        else rate = realY / -141;
+        this.uiScaleNode.scale = rate * 0.63 + 0.37;
+
+        this.posName.node.scale = 1.5 - rate * 0.5;
     }
 }

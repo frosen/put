@@ -32,16 +32,7 @@ import {
     PosData,
     PADExpl
 } from './DataSaved';
-import {
-    FeatureModel,
-    PetModel,
-    EquipPosType,
-    EquipModel,
-    DrinkModel,
-    DrinkAimType,
-    CatcherModel,
-    EqpAmplrModel
-} from './DataModel';
+import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType, CnsumModel } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
@@ -518,11 +509,11 @@ export class PetDataTool {
 }
 
 export class CnsumDataTool {
-    static create<T extends Cnsum>(cls: { new (): T }, id: string, count: number = 1): Drink {
-        let drink = newInsWithChecker(cls);
-        drink.id = id;
-        drink.count = count;
-        return drink;
+    static create<T extends Cnsum>(cls: { new (): T }, id: string, count: number = 1): T {
+        let cnsum = newInsWithChecker(cls);
+        cnsum.id = id;
+        cnsum.count = count;
+        return cnsum;
     }
 
     static getTypeById(cnsumId: string): CnsumType {
@@ -532,7 +523,7 @@ export class CnsumDataTool {
         else if (cnsumId in materialModelDict) return CnsumType.material;
     }
 
-    static getModelById(cnsumId: string): DrinkModel | CatcherModel | EqpAmplrModel {
+    static getModelById(cnsumId: string): CnsumModel {
         if (cnsumId in drinkModelDict) return drinkModelDict[cnsumId];
         else if (cnsumId in catcherModelDict) return catcherModelDict[cnsumId];
         else if (cnsumId in eqpAmplrModelDict) return eqpAmplrModelDict[cnsumId];

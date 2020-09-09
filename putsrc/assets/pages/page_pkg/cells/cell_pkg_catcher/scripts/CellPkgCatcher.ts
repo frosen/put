@@ -6,12 +6,14 @@
 
 const { ccclass, property } = cc._decorator;
 
+import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { Catcher, BioTypeNames, EleTypeNames, BattleTypeNames, PetRankNames } from 'scripts/DataSaved';
 import { catcherModelDict } from 'configs/CatcherModelDict';
+import { CatcherModel } from 'scripts/DataModel';
 
 @ccclass
-export class CellPkgCatcher extends CellPkgBase {
+export class CellPkgCatcher extends CellPkgCnsum {
     @property(cc.Label)
     lvLbl: cc.Label = null;
 
@@ -33,13 +35,22 @@ export class CellPkgCatcher extends CellPkgBase {
     @property([cc.Layout])
     layouts: cc.Layout[] = [];
 
-    @property(cc.Label)
-    countLbl: cc.Label = null;
-
     setData(itemIdx: number, catcher: Catcher) {
         super.setData(itemIdx, catcher);
         let catcherModel = catcherModelDict[catcher.id];
 
+        this.setModelData(catcherModel);
+
+        this.setCount(catcher.count);
+    }
+
+    setDataByModel(itemIdx: number, catcherModel: CatcherModel) {
+        super.setData(itemIdx, null);
+        this.setModelData(catcherModel);
+        this.setCount(-1);
+    }
+
+    setModelData(catcherModel: CatcherModel) {
         this.nameLbl.string = catcherModel.cnName;
         this.lvLbl.string = `[L${catcherModel.lvMin}~${catcherModel.lvMax}]`;
         this.rankLbl.string = `[${PetRankNames[catcherModel.rankMin]}~${PetRankNames[catcherModel.rankMax]}]`;
@@ -53,8 +64,6 @@ export class CellPkgCatcher extends CellPkgBase {
         CellPkgCatcher.setTypeName(catcherModel.bioType, BioTypeNames, this.bioLbl, this.bioLbl.node.parent);
         CellPkgCatcher.setTypeName(catcherModel.eleType, EleTypeNames, this.eleLbl, this.eleLbl.node.parent);
         CellPkgCatcher.setTypeName(catcherModel.battleType, BattleTypeNames, this.btlTypeLbl, this.btlTypeLbl.node.parent);
-
-        this.countLbl.string = 'x ' + String(catcher.count);
 
         for (const layout of this.layouts) layout.updateLayout();
     }

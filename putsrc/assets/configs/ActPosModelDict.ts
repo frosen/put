@@ -4,13 +4,14 @@
  * luleyan
  */
 
-import { ActPosModel, PAKey } from 'scripts/DataModel';
+import { ActPosModel, PAKey, ActPosType } from 'scripts/DataModel';
 
 export const actPosModelDict: { [key: string]: ActPosModel } = {
     YiZhuang: {
         id: 'YiZhuang',
         cnName: '易庄',
         lv: 1,
+        type: ActPosType.town,
         evts: [],
         acts: [PAKey.work, PAKey.quest, PAKey.shop, PAKey.eqpMkt, PAKey.petMkt, PAKey.recycler, PAKey.store, PAKey.aCenter],
         actDict: {
@@ -37,12 +38,14 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         loc: { x: 1000, y: 100 },
         petIdLists: [],
         itemIdLists: [],
-        eqpIdLists: []
+        eqpIdLists: [],
+        goodsList: []
     },
     GuangJiDianDaDao: {
         id: 'GuangJiDianDaDao',
         cnName: '光机电大道',
         lv: 1,
+        type: ActPosType.wild,
         evts: [],
         acts: [PAKey.expl],
         actDict: {
@@ -51,7 +54,14 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                 stepMax: 2
             }
         },
-        movs: [{ id: 'YiZhuang', price: 0 }],
+        movs: [
+            { id: 'YiZhuang', price: 0 },
+            { id: 'YiZhuang', price: 0 },
+            { id: 'YiZhuang', price: 0 },
+            { id: 'YiZhuang', price: 0 },
+            { id: 'YiZhuang', price: 0 },
+            { id: 'YiZhuang', price: 0 }
+        ],
         loc: { x: 1100, y: 100 },
         petIdLists: [
             null,
@@ -61,41 +71,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
         ],
         itemIdLists: [null, ['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
-        eqpIdLists: []
-    },
-    HePingQu: {
-        id: 'HePingQu',
-        cnName: '和平区',
-        lv: 10,
-        acts: [PAKey.expl],
-        actDict: {
-            [PAKey.expl]: {
-                key: PAKey.expl,
-                stepMax: 4
-            }
-        },
-        evts: [],
-        movs: [
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 }
-        ],
-        loc: { x: 1100, y: 300 },
-        petIdLists: [
-            null,
-            ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
-            null,
-            null,
-            ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
-        ],
-        itemIdLists: [null, ['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
-        eqpIdLists: []
+        eqpIdLists: [],
+        goodsList: []
     }
 };

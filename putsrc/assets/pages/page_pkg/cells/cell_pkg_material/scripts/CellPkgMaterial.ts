@@ -9,29 +9,36 @@ const { ccclass, property } = cc._decorator;
 import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { Material } from 'scripts/DataSaved';
 import { materialModelDict } from 'configs/MaterialModelDict';
+import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
+import { MaterialModel } from 'scripts/DataModel';
 
 @ccclass
-export class CellPkgMaterial extends CellPkgBase {
+export class CellPkgMaterial extends CellPkgCnsum {
     @property(cc.Label)
     lvLbl: cc.Label = null;
 
     @property([cc.Layout])
     layouts: cc.Layout[] = [];
 
-    @property(cc.Label)
-    countLbl: cc.Label = null;
-
     setData(itemIdx: number, material: Material) {
         super.setData(itemIdx, material);
-        let eqpAmplrModel = materialModelDict[material.id];
+        let materialModel = materialModelDict[material.id];
+        this.setModelData(materialModel);
+        this.setCount(material.count);
+    }
 
-        this.nameLbl.string = eqpAmplrModel.cnName;
-        this.lvLbl.string = `[MaxL${eqpAmplrModel.lvMax}]`;
+    setDataByModel(itemIdx: number, materialModel: MaterialModel) {
+        super.setData(itemIdx, null);
+        this.setModelData(materialModel);
+        this.setCount(-1);
+    }
+
+    setModelData(materialModel: MaterialModel) {
+        this.nameLbl.string = materialModel.cnName;
+        this.lvLbl.string = `[MaxL${materialModel.lvMax}]`;
 
         CellPkgBase.rerenderLbl(this.nameLbl);
         CellPkgBase.rerenderLbl(this.lvLbl);
-
-        this.countLbl.string = 'x ' + String(material.count);
 
         for (const layout of this.layouts) layout.updateLayout();
     }
