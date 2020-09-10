@@ -10,16 +10,19 @@ export let materialModelDict: { [key: string]: MaterialModel } = {
     YingZhiChiLun: {
         id: 'YingZhiChiLun',
         cnName: '硬质齿轮',
-        lvMax: 1
+        lvMax: 1,
+        price: 100
     },
     WuLuCao: {
         id: 'WuLuCao',
         cnName: '无露草',
-        lvMax: 1
+        lvMax: 1,
+        price: 100
     },
     LingQiSuiPian: {
         id: 'LingQiSuiPian',
         cnName: '灵器碎片',
-        lvMax: 1
+        lvMax: 1,
+        price: 100
     }
 };

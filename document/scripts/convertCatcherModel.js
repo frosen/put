@@ -22,6 +22,7 @@ convert('../put.xls', '../../putsrc/assets/configs/CatcherModelDict.ts', 'catche
         let bioType = Number(rowData[6].substr(0, 1));
         let eleType = Number(rowData[7].substr(0, 1));
         let battleType = Number(rowData[8].substr(0, 1));
+        let price = Number(rowData[9]);
 
         const cnNameByRank = ['', '', 'Ⅱ'];
         const rateByRank = [0, 6, 16];
@@ -38,7 +39,8 @@ convert('../put.xls', '../../putsrc/assets/configs/CatcherModelDict.ts', 'catche
                 bioType,
                 eleType,
                 battleType,
-                rate: rateByRank[index]
+                rate: rateByRank[index],
+                price: price * index
             };
 
             catcherJson[newId] = baseData;

@@ -17,7 +17,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 10800000
+        dura: 10800000,
+        price: 100
     },
     LingGanYaoJi2: {
         id: 'LingGanYaoJi2',
@@ -29,7 +30,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 14400000
+        dura: 14400000,
+        price: 200
     },
     LingGanYaoJi3: {
         id: 'LingGanYaoJi3',
@@ -41,7 +43,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 21600000
+        dura: 21600000,
+        price: 300
     },
     ZhiHuiYaoJi1: {
         id: 'ZhiHuiYaoJi1',
@@ -53,7 +56,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 10800000
+        dura: 10800000,
+        price: 100
     },
     ZhiHuiYaoJi2: {
         id: 'ZhiHuiYaoJi2',
@@ -65,7 +69,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 14400000
+        dura: 14400000,
+        price: 200
     },
     ZhiHuiYaoJi3: {
         id: 'ZhiHuiYaoJi3',
@@ -77,7 +82,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 21600000
+        dura: 21600000,
+        price: 300
     },
     MoXingKaFei1: {
         id: 'MoXingKaFei1',
@@ -89,7 +95,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 10800000
+        dura: 10800000,
+        price: 100
     },
     MoXingKaFei2: {
         id: 'MoXingKaFei2',
@@ -101,7 +108,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 14400000
+        dura: 14400000,
+        price: 200
     },
     MoXingKaFei3: {
         id: 'MoXingKaFei3',
@@ -113,7 +121,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 21600000
+        dura: 21600000,
+        price: 300
     },
     QingCaoCha1: {
         id: 'QingCaoCha1',
@@ -125,7 +134,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 10800000
+        dura: 10800000,
+        price: 100
     },
     QingCaoCha2: {
         id: 'QingCaoCha2',
@@ -137,7 +147,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 14400000
+        dura: 14400000,
+        price: 200
     },
     QingCaoCha3: {
         id: 'QingCaoCha3',
@@ -149,7 +160,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 21600000
+        dura: 21600000,
+        price: 300
     },
     MiJiu1: {
         id: 'MiJiu1',
@@ -161,7 +173,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 10800000
+        dura: 10800000,
+        price: 100
     },
     MiJiu2: {
         id: 'MiJiu2',
@@ -173,7 +186,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 14400000
+        dura: 14400000,
+        price: 200
     },
     MiJiu3: {
         id: 'MiJiu3',
@@ -185,7 +199,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 21600000
+        dura: 21600000,
+        price: 300
     },
     YueGuangJiu1: {
         id: 'YueGuangJiu1',
@@ -197,7 +212,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 10800000
+        dura: 10800000,
+        price: 100
     },
     YueGuangJiu2: {
         id: 'YueGuangJiu2',
@@ -209,7 +225,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 14400000
+        dura: 14400000,
+        price: 200
     },
     YueGuangJiu3: {
         id: 'YueGuangJiu3',
@@ -221,7 +238,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 1,
-        dura: 21600000
+        dura: 21600000,
+        price: 300
     },
     QingShuangMoShui1: {
         id: 'QingShuangMoShui1',
@@ -233,7 +251,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 2,
-        dura: 10800000
+        dura: 10800000,
+        price: 100
     },
     QingShuangMoShui2: {
         id: 'QingShuangMoShui2',
@@ -245,7 +264,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 2,
-        dura: 14400000
+        dura: 14400000,
+        price: 200
     },
     QingShuangMoShui3: {
         id: 'QingShuangMoShui3',
@@ -257,7 +277,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 2,
-        dura: 21600000
+        dura: 21600000,
+        price: 300
     },
     MeiLiMoShui1: {
         id: 'MeiLiMoShui1',
@@ -269,7 +290,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 2,
-        dura: 10800000
+        dura: 10800000,
+        price: 100
     },
     MeiLiMoShui2: {
         id: 'MeiLiMoShui2',
@@ -281,7 +303,8 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 2,
-        dura: 14400000
+        dura: 14400000,
+        price: 200
     },
     MeiLiMoShui3: {
         id: 'MeiLiMoShui3',
@@ -293,6 +316,7 @@ export let drinkModelDict: { [key: string]: DrinkModel } = {
         subAttri: 0,
         subPercent: 0,
         aim: 2,
-        dura: 21600000
+        dura: 21600000,
+        price: 300
     }
 };

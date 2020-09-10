@@ -511,6 +511,10 @@ export class PetDataTool {
             }
         }
     }
+
+    static getPrice(pet: Pet) {
+        return 100;
+    }
 }
 
 export class CnsumDataTool {
@@ -545,17 +549,19 @@ export class CnsumDataTool {
 
 export class MoneyTool {
     static getStr(count: number): string {
-        let zuan = Math.floor(count / 1000000);
+        const ZuanRate = 100000000;
+        const JinRate = 10000;
+        let zuan = Math.floor(count / ZuanRate);
         let zuanStr = zuan > 0 ? String(zuan) + '钻' : '';
 
-        count %= 1000000;
-        let jing = Math.floor(count / 1000);
-        let jingStr = jing > 0 ? '  ' + String(jing) + '晶' : '';
+        count %= ZuanRate;
+        let jin = Math.floor(count / JinRate);
+        let jinStr = jin > 0 ? '  ' + String(jin) + '金' : '';
 
-        let kuai = count % 1000;
-        let kuaiStr = kuai > 0 || (zuan === 0 && jing === 0) ? '  ' + String(kuai) + '块' : '';
+        let kuai = count % JinRate;
+        let kuaiStr = kuai > 0 || (zuan === 0 && jin === 0) ? '  ' + String(kuai) + '块' : '';
 
-        return zuanStr + jingStr + kuaiStr;
+        return zuanStr + jinStr + kuaiStr;
     }
 }
 
@@ -683,6 +689,10 @@ export class EquipDataTool {
         setAttriByEquip(finalAttris, equipModel, 'elegant', equip.growth * 10);
         setAttriByEquip(finalAttris, equipModel, 'armor', 0);
         return finalAttris;
+    }
+
+    static getPrice(equip: Equip) {
+        return 100;
     }
 }
 

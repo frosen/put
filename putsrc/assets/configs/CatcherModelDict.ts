@@ -17,7 +17,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 0,
         eleType: 0,
         battleType: 0,
-        rate: 6
+        rate: 6,
+        price: 100
     },
     PuTongXianJing2: {
         id: 'PuTongXianJing2',
@@ -29,7 +30,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 0,
         eleType: 0,
         battleType: 0,
-        rate: 16
+        rate: 16,
+        price: 200
     },
     GaoJiXianJing1: {
         id: 'GaoJiXianJing1',
@@ -41,7 +43,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 0,
         eleType: 0,
         battleType: 0,
-        rate: 6
+        rate: 6,
+        price: 100
     },
     GaoJiXianJing2: {
         id: 'GaoJiXianJing2',
@@ -53,7 +56,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 0,
         eleType: 0,
         battleType: 0,
-        rate: 16
+        rate: 16,
+        price: 200
     },
     MoFaXianJing1: {
         id: 'MoFaXianJing1',
@@ -65,7 +69,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 2,
         eleType: 0,
         battleType: 0,
-        rate: 6
+        rate: 6,
+        price: 100
     },
     MoFaXianJing2: {
         id: 'MoFaXianJing2',
@@ -77,7 +82,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 2,
         eleType: 0,
         battleType: 0,
-        rate: 16
+        rate: 16,
+        price: 200
     },
     JiXieXianJing1: {
         id: 'JiXieXianJing1',
@@ -89,7 +95,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 3,
         eleType: 0,
         battleType: 0,
-        rate: 6
+        rate: 6,
+        price: 100
     },
     JiXieXianJing2: {
         id: 'JiXieXianJing2',
@@ -101,7 +108,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 3,
         eleType: 0,
         battleType: 0,
-        rate: 16
+        rate: 16,
+        price: 200
     },
     BuShouJia1: {
         id: 'BuShouJia1',
@@ -113,7 +121,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 4,
         eleType: 0,
         battleType: 0,
-        rate: 6
+        rate: 6,
+        price: 100
     },
     BuShouJia2: {
         id: 'BuShouJia2',
@@ -125,7 +134,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 4,
         eleType: 0,
         battleType: 0,
-        rate: 16
+        rate: 16,
+        price: 200
     },
     YouMoCao1: {
         id: 'YouMoCao1',
@@ -137,7 +147,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 2,
         eleType: 0,
         battleType: 0,
-        rate: 6
+        rate: 6,
+        price: 100
     },
     YouMoCao2: {
         id: 'YouMoCao2',
@@ -149,7 +160,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 2,
         eleType: 0,
         battleType: 0,
-        rate: 16
+        rate: 16,
+        price: 200
     },
     CiLiPan1: {
         id: 'CiLiPan1',
@@ -161,7 +173,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 3,
         eleType: 0,
         battleType: 0,
-        rate: 6
+        rate: 6,
+        price: 100
     },
     CiLiPan2: {
         id: 'CiLiPan2',
@@ -173,7 +186,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 3,
         eleType: 0,
         battleType: 0,
-        rate: 16
+        rate: 16,
+        price: 200
     },
     ShiXiangHua1: {
         id: 'ShiXiangHua1',
@@ -185,7 +199,8 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 4,
         eleType: 0,
         battleType: 0,
-        rate: 6
+        rate: 6,
+        price: 100
     },
     ShiXiangHua2: {
         id: 'ShiXiangHua2',
@@ -197,6 +212,7 @@ export let catcherModelDict: { [key: string]: CatcherModel } = {
         bioType: 4,
         eleType: 0,
         battleType: 0,
-        rate: 16
+        rate: 16,
+        price: 200
     }
 };

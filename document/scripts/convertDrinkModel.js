@@ -19,6 +19,7 @@ convert('../put.xls', '../../putsrc/assets/configs/DrinkModelDict.ts', 'drink', 
         let subAttri = Number((rowData[5] || '0').substr(0, 1));
         let subPercent = Number(rowData[6] || '0');
         let aim = Number(rowData[7].substr(0, 1));
+        let price = Number(rowData[8]);
 
         const cnNameByRank = ['', '', 'Ⅱ', 'Ⅲ'];
         const lvByRank = [0, 0, 1, 3];
@@ -37,7 +38,8 @@ convert('../put.xls', '../../putsrc/assets/configs/DrinkModelDict.ts', 'drink', 
                 subAttri,
                 subPercent: subPercent > 0 ? subPercent + attrByRank[index] : 0,
                 aim,
-                dura: duraHByRank[index] * 60 * 60 * 1000
+                dura: duraHByRank[index] * 60 * 60 * 1000,
+                price: price * index
             };
 
             drinkJson[newId] = baseData;

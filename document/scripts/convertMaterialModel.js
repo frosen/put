@@ -20,11 +20,13 @@ convert(
             let id = rowData[0];
             let cnName = rowData[1];
             let lv = Number(rowData[2]);
+            let price = Number(rowData[3]);
 
             let baseData = {
                 id,
                 cnName,
-                lvMax: lv
+                lvMax: lv,
+                price
             };
 
             json[id] = baseData;
