@@ -7,7 +7,7 @@
 import { BattlePageBase } from './BattlePageBase';
 import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool, MmrTool, MoneyTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, Cnsum, ExplMmr, Catcher, Pet, Feature, BattleMmr, Money, PosData, PADExpl } from 'scripts/DataSaved';
+import { GameData, ExplMmr, Catcher, Pet, Feature, BattleMmr, Money, PosData, PADExpl, Cnsum } from 'scripts/DataSaved';
 import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, randomArea, randomRate, getRandomOneInList, randomAreaInt, random, randomRound } from './Random';
@@ -109,6 +109,30 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
+    /** 如果为null，则表示后台运行 */
+    runAt(page: BattlePageBase) {
+        this.page = page;
+        this.battleCtrlr.page = page;
+    }
+
+    static updaterInBG: ExplUpdater = null;
+
+    static save(updater: ExplUpdater) {
+        ExplUpdater.updaterInBG = updater;
+    }
+
+    static popUpdaterInBG(): ExplUpdater {
+        let curUpdater = ExplUpdater.updaterInBG;
+        ExplUpdater.updaterInBG = null;
+        return curUpdater;
+    }
+
+    static haveUpdaterInBG(): boolean {
+        return ExplUpdater.updaterInBG !== null;
+    }
+
+    // -----------------------------------------------------------------
+
     createExpl(spcBtlId: number, startStep: number) {
         GameDataTool.createExpl(this.gameData, startStep);
         if (!spcBtlId) {
@@ -118,7 +142,7 @@ export class ExplUpdater {
         }
         this.lastTime = Date.now();
 
-        this.page.handleLog();
+        if (this.page) this.page.handleLog();
     }
 
     recoverLastExpl(gameData: GameData) {
@@ -276,7 +300,7 @@ export class ExplUpdater {
             if (this.explStepPercent > 99) this.explStepPercent = 99;
         }
 
-        this.page.setExplStepUI();
+        if (this.page) this.page.setExplStepUI();
     }
 
     recoverExplInBattle(

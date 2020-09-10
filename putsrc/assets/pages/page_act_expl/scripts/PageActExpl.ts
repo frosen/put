@@ -12,13 +12,13 @@ import { petModelDict } from 'configs/PetModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { PageActExplLVD } from './PageActExplLVD';
 import { ListView } from 'scripts/ListView';
-import { PetRankNames, EleType, Pet, ItemType, CnsumType, Catcher, PADExpl } from 'scripts/DataSaved';
+import { PetRankNames, EleType, ItemType, CnsumType, Catcher } from 'scripts/DataSaved';
 import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, PAKey } from 'scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
 import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
-import { MmrTool, GameDataTool } from 'scripts/Memory';
+import { MmrTool, GameDataTool, PetDataTool } from 'scripts/Memory';
 import { NavBar } from 'scripts/NavBar';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
@@ -85,6 +85,8 @@ export class PageActExpl extends BattlePageBase {
     listView: ListView = null;
     lvd: PageActExplLVD = null;
 
+    updaterRetaining: boolean = false; // 虽然退出但保留updater
+
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
@@ -124,8 +126,6 @@ export class PageActExpl extends BattlePageBase {
             this.dmgLbls.push(dmgLblNode.getComponent(cc.Label));
         }
 
-        this.updater = new ExplUpdater();
-
         this.initPADExpl();
     }
 
@@ -147,9 +147,7 @@ export class PageActExpl extends BattlePageBase {
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
-            this.ctrlr.popAlert('确定退出探索？', (key: number) => {
-                if (key === 1) this.ctrlr.popPage();
-            });
+            this.ctrlr.popAlert('确定退出探索？', this.onClickBack.bind(this), 'yes', 'only master');
             return false;
         });
 
@@ -158,13 +156,38 @@ export class PageActExpl extends BattlePageBase {
         navBar.setTitle('探索' + posName);
     }
 
+    onClickBack(key: number) {
+        if (key === 1) this.ctrlr.popPage();
+        else if (key === 2) {
+            let gameData = this.ctrlr.memory.gameData;
+            let pets = GameDataTool.getReadyPets(gameData);
+            for (const pet of pets) {
+                let prvty = PetDataTool.getRealPrvty(pet);
+                if (prvty < 50) {
+                    this.ctrlr.popToast(`all pets prvty need 50 at least but ${petModelDict[pet.id].cnName}`);
+                    return;
+                }
+            }
+            this.updaterRetaining = true;
+            this.ctrlr.popPage();
+        }
+    }
+
     start() {
         if (CC_EDITOR) return;
-        this.updater.init(this, this.spcBtlId, this.startStep);
 
-        // 仅用于从setData到start传递数据，传输后直接clear
-        this.spcBtlId = 0;
-        this.startStep = 0;
+        if (ExplUpdater.haveUpdaterInBG()) {
+            this.updater = ExplUpdater.popUpdaterInBG();
+            this.updater.runAt(this);
+            this.updater.resetAllUI();
+        } else {
+            this.updater = new ExplUpdater();
+            this.updater.init(this, this.spcBtlId, this.startStep);
+
+            // 仅用于从setData到start传递数据，传输后直接clear
+            this.spcBtlId = 0;
+            this.startStep = 0;
+        }
 
         this.preloadLVDData();
     }
@@ -186,7 +209,13 @@ export class PageActExpl extends BattlePageBase {
     }
 
     beforePageHideAnim(willDestroy: boolean) {
-        if (willDestroy) this.updater.destroy();
+        if (willDestroy) {
+            if (!this.updaterRetaining) this.updater.destroy();
+            else {
+                this.updater.runAt(null);
+                ExplUpdater.save(this.updater);
+            }
+        }
     }
 
     onPageShow() {
