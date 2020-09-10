@@ -138,6 +138,7 @@ export class PetModel {
 export class CnsumModel {
     id: string;
     cnName: string;
+    price: string;
 }
 
 export enum DrinkAimType {

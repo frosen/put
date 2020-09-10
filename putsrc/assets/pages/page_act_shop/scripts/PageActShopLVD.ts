@@ -41,20 +41,14 @@ export class PageActShopLVD extends ListViewDelegate {
     @property(cc.Prefab)
     cellPkgMaterialPrefab: cc.Prefab = null;
 
-    goodsIds: string[];
-
     page: PageActShop;
 
-    setGoodsIds(ids: string[]) {
-        this.goodsIds = ids;
-    }
-
     numberOfRows(listView: ListView): number {
-        return this.goodsIds.length;
+        return this.page.goodsIds.length;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        let goodsId = this.goodsIds[rowIdx];
+        let goodsId = this.page.goodsIds[rowIdx];
         let cnsumType = CnsumDataTool.getTypeById[goodsId];
         if (cnsumType === CnsumType.drink) return DRINK;
         else if (cnsumType === CnsumType.catcher) return CATCHER;
@@ -64,6 +58,8 @@ export class PageActShopLVD extends ListViewDelegate {
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
         let cell = cc.instantiate(this.cellTransPrefab).getComponent(CellTransaction);
+        cell.addCallback = this.page.onCellAddCount.bind(this.page);
+        cell.rdcCallback = this.page.onCellRdcCount.bind(this.page);
 
         let subCell: CellPkgCnsum;
         switch (cellId) {
@@ -91,7 +87,10 @@ export class PageActShopLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellTransaction) {
-        let goodsId = this.goodsIds[rowIdx];
+        let goodsId = this.page.goodsIds[rowIdx];
         cell.setData(rowIdx, CnsumDataTool.getModelById(goodsId));
+
+        let count = this.page.countList[rowIdx];
+        cell.setCount(count);
     }
 }

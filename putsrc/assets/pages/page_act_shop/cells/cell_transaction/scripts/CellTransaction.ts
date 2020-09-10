@@ -29,6 +29,9 @@ export class CellTransaction extends ListViewCell {
     itemId: string;
     itemCount: number;
 
+    addCallback: (cell: CellTransaction) => void;
+    rdcCallback: (cell: CellTransaction) => void;
+
     init(cell: CellPkgCnsum) {
         this.cell = cell;
         cell.node.parent = this.itemBaseNode;
@@ -36,5 +39,17 @@ export class CellTransaction extends ListViewCell {
 
     setData(itemIdx: number, model: CnsumModel) {
         this.cell.setDataByModel(itemIdx, model);
+    }
+
+    setCount(count: number) {
+        this.numLbl.string = String(count);
+    }
+
+    onClickAdd() {
+        this.addCallback(this);
+    }
+
+    onClickRdc() {
+        this.rdcCallback(this);
     }
 }
