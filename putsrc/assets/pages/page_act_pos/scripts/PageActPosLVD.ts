@@ -53,6 +53,13 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
         },
         page: PageActExpl,
         check: (ctrlr: BaseController): string => {
+            const gameData = ctrlr.memory.gameData;
+            if (gameData.curExpl) {
+                if (gameData.curPosId !== gameData.curExpl.curPosId) {
+                    const name = actPosModelDict[gameData.curExpl.curPosId].cnName;
+                    return `宠物仍在${name}战斗`;
+                }
+            }
             if (GameDataTool.getReadyPets(ctrlr.memory.gameData).length < 2) {
                 return '前方危险，请保证你队伍中有至少两只宠物，且处于备战状态！（宠物列表中点击状态按钮可变更状态）';
             }
