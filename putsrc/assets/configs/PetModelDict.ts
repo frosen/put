@@ -6,7 +6,7 @@
 
 import { PetModel } from 'scripts/DataModel';
   
-export let petModelDict: { [key: string]: PetModel } = {
+export const petModelDict: { [key: string]: PetModel } = {
     FaTiaoWa: {
         id: 'FaTiaoWa',
         cnName: '发条蛙',

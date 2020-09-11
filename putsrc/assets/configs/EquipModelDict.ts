@@ -6,7 +6,7 @@
 
 import { EquipModel } from 'scripts/DataModel';
   
-export let equipModelDict: { [key: string]: EquipModel } = {
+export const equipModelDict: { [key: string]: EquipModel } = {
     DuanJian: {
         id: 'DuanJian',
         cnName: '短剑',

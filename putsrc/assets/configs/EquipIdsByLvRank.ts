@@ -4,7 +4,7 @@
  * luleyan
  */
   
-export let equipIdsByLvRank = [
+export const equipIdsByLvRank = [
     [],
     [],
     [],

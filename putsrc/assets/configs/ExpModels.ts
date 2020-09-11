@@ -3,8 +3,8 @@
  * 数据列表，从document中转义而来
  * luleyan
  */
-
-export let expModels = [
+  
+export const expModels = [
     0,
     20,
     180,
@@ -54,5 +54,5 @@ export let expModels = [
     3424700,
     3652000,
     3889150,
-    4136340 // 49升50
+    4136340
 ];

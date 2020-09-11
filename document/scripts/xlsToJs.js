@@ -41,7 +41,7 @@ module.exports = function (xlsFile, jsFile, sheetName, dataName, className, call
  * luleyan
  */
 ${className ? '\nimport { ' + className + " } from 'scripts/DataModel';\n" : ''}  
-export let ${dataName}${className ? ': { [key: string]: ' + className + ' }' : ''} = `;
+export const ${dataName}${className ? ': { [key: string]: ' + className + ' }' : ''} = `;
 
     Fs.writeFileSync(jsFile, head + jsStr + ';\n');
 

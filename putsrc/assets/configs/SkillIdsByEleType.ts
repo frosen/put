@@ -4,7 +4,7 @@
  * luleyan
  */
   
-export let skillIdsByEleType = [
+export const skillIdsByEleType = [
     null,
     [
         'HuoYanDan',

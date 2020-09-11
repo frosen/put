@@ -6,7 +6,7 @@
 
 import { EqpAmplrModel } from 'scripts/DataModel';
   
-export let eqpAmplrModelDict: { [key: string]: EqpAmplrModel } = {
+export const eqpAmplrModelDict: { [key: string]: EqpAmplrModel } = {
     DaMoShi: {
         id: 'DaMoShi',
         cnName: '打磨石',

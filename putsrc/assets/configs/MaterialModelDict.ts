@@ -6,7 +6,7 @@
 
 import { MaterialModel } from 'scripts/DataModel';
   
-export let materialModelDict: { [key: string]: MaterialModel } = {
+export const materialModelDict: { [key: string]: MaterialModel } = {
     YingZhiChiLun: {
         id: 'YingZhiChiLun',
         cnName: '硬质齿轮',
