@@ -32,7 +32,7 @@ export class ListViewCell extends cc.Component {
         cc.assert(this.node._prefab.root === this.node, 'cell脚本需要放在prefab的根节点');
 
         this.node.name = this.node._prefab.asset.name;
-        let clsName = cc.js.getClassName(this.__proto__.constructor);
+        const clsName = cc.js.getClassName(this.__proto__.constructor);
         cc.assert(this.node.name === clsName, 'cell的prefab要和class名称一致');
 
         this.node.anchorX = 0;
@@ -50,7 +50,7 @@ export class ListViewCell extends cc.Component {
         if (!root) {
             root = new cc.Node('root');
             root.parent = this.node;
-            let widegt = root.addComponent(cc.Widget);
+            const widegt = root.addComponent(cc.Widget);
             widegt.isAlignTop = true;
             widegt.isAlignBottom = true;
             widegt.isAlignLeft = true;
@@ -65,7 +65,7 @@ export class ListViewCell extends cc.Component {
         if (!bake) {
             bake = new cc.Node('bake');
             bake.parent = this.node;
-            let widegt = bake.addComponent(cc.Widget);
+            const widegt = bake.addComponent(cc.Widget);
             widegt.isAlignTop = true;
             widegt.isAlignBottom = true;
             widegt.isAlignLeft = true;

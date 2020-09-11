@@ -81,7 +81,7 @@ export class DebugTool {
         if (this.ctrling === false) {
             return;
         }
-        let v = this.getValeByShortCut(key);
+        const v = this.getValeByShortCut(key);
         if (!v) {
             return;
         }
@@ -113,9 +113,9 @@ export class DebugTool {
     // -----------------------------------------------------------------
 
     showDebugInfo() {
-        let debugNode = cc.director.getScene().getChildByName('PROFILER-NODE');
+        const debugNode = cc.director.getScene().getChildByName('PROFILER-NODE');
         if (debugNode) {
-            let newColor = cc.color(
+            const newColor = cc.color(
                 Math.floor(Math.random() * 255),
                 Math.floor(Math.random() * 255),
                 Math.floor(Math.random() * 255)

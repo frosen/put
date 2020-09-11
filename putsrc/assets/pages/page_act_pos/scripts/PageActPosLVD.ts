@@ -15,12 +15,13 @@ import { PageActPos } from './PageActPos';
 import { PageSwitchAnim, BaseController } from 'scripts/BaseController';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
 import { PosData, PADExpl } from 'scripts/DataSaved';
-import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel, PAModel, EvtModel, MovModel } from 'scripts/DataModel';
+import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel, EvtModel, MovModel } from 'scripts/DataModel';
 import { GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 
 type CellActInfo = {
     cnName: string;
+    getSubInfo?: (ctrlr: BaseController) => { str: string; color?: cc.Color };
     page?: { new (): PageBase };
     check?: (ctrlr: BaseController) => string;
     beforeEnter?: (ctrlr: BaseController, callback: (data: any) => void) => void;
@@ -37,6 +38,19 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.aCenter]: { cnName: '奖励中心' },
     [PAKey.expl]: {
         cnName: '探索',
+        getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
+            const gameData = ctrlr.memory.gameData;
+            const posData = gameData.posDataDict[gameData.curPosId];
+            let curStep: number;
+            if (posData.actDict.hasOwnProperty(PAKey.expl)) {
+                const pADExpl = posData.actDict[PAKey.expl] as PADExpl;
+                curStep = pADExpl.doneStep;
+            } else curStep = 0;
+            const curPosModel = actPosModelDict[gameData.curPosId];
+            const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
+            const stepMax = explModel.stepMax;
+            return { str: String(`[${curStep}/${stepMax}]`), color: cc.color(255, 102, 0) };
+        },
         page: PageActExpl,
         check: (ctrlr: BaseController): string => {
             if (GameDataTool.getReadyPets(ctrlr.memory.gameData).length < 2) {
@@ -45,23 +59,23 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
             return '';
         },
         beforeEnter: (ctrlr: BaseController, callback: (data: any) => void): any => {
-            let gameData = ctrlr.memory.gameData;
+            const gameData = ctrlr.memory.gameData;
             if (gameData.curExpl) return callback(null);
-            let posData = gameData.posDataDict[gameData.curPosId];
+            const posData = gameData.posDataDict[gameData.curPosId];
             if (!posData.actDict.hasOwnProperty(PAKey.expl)) return callback(null);
-            let pADExpl = posData.actDict[PAKey.expl] as PADExpl;
+            const pADExpl = posData.actDict[PAKey.expl] as PADExpl;
             if (pADExpl.doneStep === 0) return callback(null);
 
-            let posId = gameData.curPosId;
-            let curPosModel = actPosModelDict[posId];
-            let explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
+            const posId = gameData.curPosId;
+            const curPosModel = actPosModelDict[posId];
+            const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
 
-            let stepMax = explModel.stepMax;
-            let stepTypes = StepTypesByMax[stepMax];
+            const stepMax = explModel.stepMax;
+            const stepTypes = StepTypesByMax[stepMax];
 
-            let btns = [];
+            const btns = [];
             for (let index = 0; index <= pADExpl.doneStep; index++) {
-                let stepName = ExplStepNames[stepTypes[index]];
+                const stepName = ExplStepNames[stepTypes[index]];
                 btns.push(stepName);
             }
 
@@ -102,7 +116,7 @@ export class PageActPosLVD extends ListViewDelegate {
     movCellLength: number;
 
     initData() {
-        let gameData = this.ctrlr.memory.gameData;
+        const gameData = this.ctrlr.memory.gameData;
         this.curPosId = gameData.curPosId;
         this.curPos = gameData.posDataDict[this.curPosId];
         this.curActPosModel = actPosModelDict[this.curPosId];
@@ -119,7 +133,7 @@ export class PageActPosLVD extends ListViewDelegate {
         }
 
         for (const pakey of this.curActPosModel.acts) {
-            let actModel = this.curActPosModel.actDict[pakey];
+            const actModel = this.curActPosModel.actDict[pakey];
             if (actModel && actModel.hasOwnProperty('condFunc')) {
                 if (actModel.condFunc(gameData)) this.curActKeys.push(pakey);
             } else this.curActKeys.push(pakey);
@@ -181,31 +195,43 @@ export class PageActPosLVD extends ListViewDelegate {
         } else if (rowIdx <= this.evtCellLength) {
             //
         } else if (rowIdx <= this.evtCellLength + this.actCellLength) {
-            let actIdx = (rowIdx - 1 - this.evtCellLength) * 2;
-            let actKey1 = this.curActKeys[actIdx];
-            let actInfo1 = CellActInfoDict[actKey1];
-            cell.setBtn1(actInfo1.cnName, () => {
-                this.gotoPage(actInfo1);
-            });
+            const actIdx = (rowIdx - 1 - this.evtCellLength) * 2;
+            const actKey1 = this.curActKeys[actIdx];
+            const actInfo1 = CellActInfoDict[actKey1];
+            const { str, color } = this.getSubInfo(actInfo1);
+            cell.setBtn1(
+                actInfo1.cnName,
+                () => {
+                    this.gotoPage(actInfo1);
+                },
+                str,
+                color
+            );
 
             if (actIdx + 1 < this.curActKeys.length) {
-                let actKey2 = this.curActKeys[actIdx + 1];
-                let actInfo2 = CellActInfoDict[actKey2];
-                cell.setBtn2(actInfo2.cnName, () => {
-                    this.gotoPage(actInfo2);
-                });
+                const actKey2 = this.curActKeys[actIdx + 1];
+                const actInfo2 = CellActInfoDict[actKey2];
+                const { str, color } = this.getSubInfo(actInfo2);
+                cell.setBtn2(
+                    actInfo2.cnName,
+                    () => {
+                        this.gotoPage(actInfo2);
+                    },
+                    str,
+                    color
+                );
             } else cell.setBtn2(null, null);
         } else {
-            let movIdx = rowIdx - 1 - this.evtCellLength - this.actCellLength;
+            const movIdx = rowIdx - 1 - this.evtCellLength - this.actCellLength;
 
-            let moveType = this.curMovs[movIdx];
-            let posId = moveType.id;
-            let movPosModel = actPosModelDict[posId];
+            const moveType = this.curMovs[movIdx];
+            const posId = moveType.id;
+            const movPosModel = actPosModelDict[posId];
             cell.setData('前往：' + movPosModel.cnName, '花费：' + String(moveType.price), () => {
                 if (moveType.price === 0) {
                     this.gotoNextPos(posId);
                 } else {
-                    let txt = `确定花费${moveType.price}前往“${movPosModel.cnName}”吗？`;
+                    const txt = `确定花费${moveType.price}前往“${movPosModel.cnName}”吗？`;
                     this.ctrlr.popAlert(txt, (key: number) => {
                         if (key === 1) this.gotoNextPos(posId);
                     });
@@ -214,9 +240,15 @@ export class PageActPosLVD extends ListViewDelegate {
         }
     }
 
+    getSubInfo(actInfo: CellActInfo): { str: string; color?: cc.Color } {
+        if (actInfo.hasOwnProperty('getSubInfo')) {
+            return actInfo.getSubInfo(this.ctrlr);
+        } else return { str: null };
+    }
+
     gotoPage(actInfo: CellActInfo) {
         if (actInfo.hasOwnProperty('check')) {
-            let errorStr = actInfo.check(this.ctrlr);
+            const errorStr = actInfo.check(this.ctrlr);
             if (errorStr) {
                 this.ctrlr.popToast(errorStr);
                 return;
@@ -231,11 +263,11 @@ export class PageActPosLVD extends ListViewDelegate {
     }
 
     gotoNextPos(nextPosId: string) {
-        let curLoc = this.curActPosModel.loc;
-        let nextLoc = actPosModelDict[nextPosId].loc;
-        let disX = nextLoc.x - curLoc.x;
-        let disY = nextLoc.y - curLoc.y;
-        let switchAnim: PageSwitchAnim = null;
+        const curLoc = this.curActPosModel.loc;
+        const nextLoc = actPosModelDict[nextPosId].loc;
+        const disX = nextLoc.x - curLoc.x;
+        const disY = nextLoc.y - curLoc.y;
+        let switchAnim: PageSwitchAnim;
         if (Math.abs(disX) >= Math.abs(disY)) {
             switchAnim = disX > 0 ? PageSwitchAnim.fromRight : PageSwitchAnim.fromLeft;
         } else {

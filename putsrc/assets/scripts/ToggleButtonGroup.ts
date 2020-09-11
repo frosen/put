@@ -12,7 +12,7 @@ export class ToggleButtonGroup extends cc.Component {
 
     onLoad() {
         for (const child of this.node.children) {
-            let btn = child.getComponent(cc.Button);
+            const btn = child.getComponent(cc.Button);
             cc.assert(btn, 'ToggleButtonGroup的child需要cc.Button');
 
             this.btns.push(btn);

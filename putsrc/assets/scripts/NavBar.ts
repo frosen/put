@@ -46,7 +46,7 @@ export class NavBar extends cc.Component {
 
     onClickBack() {
         if (this.backBtnCallback) {
-            let rzt = this.backBtnCallback();
+            const rzt = this.backBtnCallback();
             if (rzt) this.ctrlr.popPage();
         } else {
             this.ctrlr.popPage();
@@ -59,12 +59,12 @@ export class NavBar extends cc.Component {
     btnX: number = FUNC_BTN_POS_BASE;
 
     addFuncBtn(name: string, frames: cc.SpriteFrame[], callback: (btn: cc.Button) => void): cc.Button {
-        let node = cc.instantiate(this.funcBtnPrefab);
+        const node = cc.instantiate(this.funcBtnPrefab);
         node.name = 'fb_' + name;
         node.parent = this.node;
         node.x = this.btnX;
 
-        let btn = node.getComponent(cc.Button);
+        const btn = node.getComponent(cc.Button);
         if (frames && frames.length > 0) {
             btn.normalSprite = frames[0] || null;
             btn.pressedSprite = frames[1] || null;

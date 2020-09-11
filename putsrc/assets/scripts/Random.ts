@@ -17,8 +17,8 @@ export function randomRate(r: number): boolean {
 }
 
 export function randomRound(n: number): number {
-    let i = Math.floor(n);
-    let s = n - i;
+    const i = Math.floor(n);
+    const s = n - i;
     return i + (randomRate(s) ? 1 : 0);
 }
 
@@ -38,9 +38,9 @@ export function getRandomOneInList<T>(list: Array<T>): T {
 
 export function getRandomOneInListWithRate<T>(list: Array<T>, rates: number[]): T {
     if (list instanceof Array) {
-        let r = Math.random();
+        const r = Math.random();
         for (let index = 0; index < list.length; index++) {
-            let rInList = rates[index];
+            const rInList = rates[index];
             if (!rInList || r < rInList) return list[index];
         }
         return null;

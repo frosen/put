@@ -12,7 +12,7 @@ import { TempBase } from 'scripts/TempBase';
 @requireComponent(cc.Button)
 export class TempFuncBarBtn extends TempBase {
     handleTemp() {
-        let btn = this.getComponent(cc.Button);
+        const btn = this.getComponent(cc.Button);
         btn.transition = cc.Button.Transition.COLOR;
         btn.normalColor = cc.Color.WHITE;
         btn.pressedColor = cc.color(243, 188, 71);

@@ -52,10 +52,10 @@ export class ListView extends cc.Component {
 
         // 解决scrollview在奇怪的时候显示bar的问题 ------------------------------------------------
 
-        let self = this;
+        const self = this;
 
         // @ts-ignore
-        let oldFunc = this.scrollView.verticalScrollBar._setOpacity;
+        const oldFunc = this.scrollView.verticalScrollBar._setOpacity;
         // @ts-ignore
         this.scrollView.verticalScrollBar._setOpacity = function (opacity) {
             if (this.node)
@@ -65,9 +65,9 @@ export class ListView extends cc.Component {
         };
 
         // @ts-ignore
-        let oldPressFunc = this.scrollView._handlePressLogic;
+        const oldPressFunc = this.scrollView._handlePressLogic;
         // @ts-ignore
-        let oldReleaseFunc = this.scrollView._handleReleaseLogic;
+        const oldReleaseFunc = this.scrollView._handleReleaseLogic;
         // @ts-ignore
         this.scrollView._handlePressLogic = function (touch) {
             oldPressFunc.call(this, touch);
@@ -86,7 +86,7 @@ export class ListView extends cc.Component {
         this.content.y = pos;
 
         // 显示cell
-        let { disTop, disBtm } = this.calcDisplayArea();
+        const { disTop, disBtm } = this.calcDisplayArea();
         if (this.fixedHeight > 0) {
             this.disTopRowIdx = Math.max(Math.floor(disTop / this.fixedHeight), 0);
             this.disBtmRowIdx = Math.min(Math.floor(disBtm / this.fixedHeight), this.rowCount - 1);
@@ -95,7 +95,7 @@ export class ListView extends cc.Component {
             this.disTopRowH = this.fixedHeight;
             this.disBtmRowH = this.fixedHeight;
             for (let rowIdx = this.disTopRowIdx; rowIdx <= this.disBtmRowIdx; rowIdx++) {
-                let cellData = this.getUnusedCellData(rowIdx);
+                const cellData = this.getUnusedCellData(rowIdx);
                 this.setCellPos(cellData.cell, rowIdx * this.fixedHeight);
                 this.disCellDataDict[rowIdx] = cellData;
             }
@@ -105,8 +105,8 @@ export class ListView extends cc.Component {
             let topDone = false;
             let curPos = 0;
             for (let rowIdx = 0; rowIdx < this.rowCount; rowIdx++) {
-                let thisH = this.delegate.heightForRow(this, rowIdx);
-                let nextPos = curPos + thisH;
+                const thisH = this.delegate.heightForRow(this, rowIdx);
+                const nextPos = curPos + thisH;
                 if (nextPos > disTop && !topDone) {
                     this.disTopRowIdx = rowIdx;
                     this.disTopRowPos = curPos;
@@ -114,7 +114,7 @@ export class ListView extends cc.Component {
                     topDone = true;
                 }
                 if (topDone) {
-                    let cellData = this.getUnusedCellData(rowIdx);
+                    const cellData = this.getUnusedCellData(rowIdx);
                     this.setCellPos(cellData.cell, curPos);
                     this.disCellDataDict[rowIdx] = cellData;
                 }
@@ -170,13 +170,13 @@ export class ListView extends cc.Component {
     }
 
     resetContent(samePos: boolean = false) {
-        let curY = samePos ? this.content.y : 0;
+        const curY = samePos ? this.content.y : 0;
         this.clearContent();
         this.createContent(curY);
     }
 
     onScrolling() {
-        let { disTop, disBtm } = this.calcDisplayArea();
+        const { disTop, disBtm } = this.calcDisplayArea();
         this.updateDisTopRowData(disTop);
         this.updateDisBtmRowData(disBtm);
     }
@@ -188,7 +188,7 @@ export class ListView extends cc.Component {
                 this.disTopRowH = this.getRowHeightOnScrolling(this.disTopRowIdx);
                 this.disTopRowPos -= this.disTopRowH;
 
-                let cellData = this.getUnusedCellData(this.disTopRowIdx);
+                const cellData = this.getUnusedCellData(this.disTopRowIdx);
                 this.setCellPos(cellData.cell, this.disTopRowPos);
                 this.disCellDataDict[this.disTopRowIdx] = cellData;
 
@@ -196,7 +196,7 @@ export class ListView extends cc.Component {
             }
         } else if (this.disTopRowPos + this.disTopRowH <= disTop) {
             if (this.disTopRowIdx < this.rowCount - 1) {
-                let cellData = this.disCellDataDict[this.disTopRowIdx];
+                const cellData = this.disCellDataDict[this.disTopRowIdx];
                 this.reclaimCell(cellData, this.disTopRowIdx);
                 delete this.disCellDataDict[this.disTopRowIdx];
 
@@ -212,7 +212,7 @@ export class ListView extends cc.Component {
     updateDisBtmRowData(disBtm: number) {
         if (disBtm <= this.disBtmRowPos) {
             if (this.disBtmRowIdx > 0) {
-                let cellData = this.disCellDataDict[this.disBtmRowIdx];
+                const cellData = this.disCellDataDict[this.disBtmRowIdx];
                 this.reclaimCell(cellData, this.disBtmRowIdx);
                 delete this.disCellDataDict[this.disBtmRowIdx];
 
@@ -228,7 +228,7 @@ export class ListView extends cc.Component {
                 this.disBtmRowPos += this.disBtmRowH;
                 this.disBtmRowH = this.getRowHeightOnScrolling(this.disBtmRowIdx);
 
-                let cellData = this.getUnusedCellData(this.disBtmRowIdx);
+                const cellData = this.getUnusedCellData(this.disBtmRowIdx);
                 this.setCellPos(cellData.cell, this.disBtmRowPos);
                 this.disCellDataDict[this.disBtmRowIdx] = cellData;
 
@@ -248,7 +248,7 @@ export class ListView extends cc.Component {
         let disTop = this.content.y;
         let disBtm = disTop + this.node.height;
         if (disBtm > this.content.height) {
-            let diff = disBtm - this.content.height;
+            const diff = disBtm - this.content.height;
             if (diff < disTop) {
                 disTop -= diff;
                 disBtm -= diff;
@@ -269,14 +269,14 @@ export class ListView extends cc.Component {
     }
 
     getUnusedCellData(rowIdx: number): { cell: ListViewCell; id: string } {
-        let cellId = this.delegate.cellIdForRow(this, rowIdx);
+        const cellId = this.delegate.cellIdForRow(this, rowIdx);
         cc.assert(cellId, `cellIdForRow获取cell id不成功：${rowIdx}`);
 
         if (!this.reuseCellsDict.hasOwnProperty(cellId)) {
             this.reuseCellsDict[cellId] = [];
         }
 
-        let reuseList = this.reuseCellsDict[cellId];
+        const reuseList = this.reuseCellsDict[cellId];
         let unusedCell: ListViewCell = null;
         if (reuseList.length === 0) {
             unusedCell = this.delegate.createCellForRow(this, rowIdx, cellId);
@@ -294,7 +294,7 @@ export class ListView extends cc.Component {
 
     reclaimCell(cellData: { cell: ListViewCell; id: string }, rowIdx: number) {
         cellData.cell.node.active = false;
-        let cellId = cellData.id;
+        const cellId = cellData.id;
         if (!this.reuseCellsDict.hasOwnProperty(cellId)) this.reuseCellsDict[cellId] = [];
         this.reuseCellsDict[cellId].push(cellData.cell);
     }

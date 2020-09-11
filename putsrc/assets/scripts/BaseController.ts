@@ -13,7 +13,7 @@ import { checkConfigs } from './ConfigsChecker';
 import { NavBar } from './NavBar';
 
 // @ts-ignore
-let customEngineInfo = cc.director.customEngineInfo;
+const customEngineInfo = cc.director.customEngineInfo;
 if (customEngineInfo) {
     cc.log('PUT Custom engine info: ' + customEngineInfo);
 } else {
@@ -128,16 +128,16 @@ export class BaseController extends cc.Component {
      * 设置根视图的位置，让出ios的非安全区域
      */
     setCorrectRootRect() {
-        let rect = cc.sys.getSafeAreaRect();
+        const rect = cc.sys.getSafeAreaRect();
         this.node.width = rect.width;
         this.node.height = rect.height;
 
-        let parent = this.node.parent;
+        const parent = this.node.parent;
         this.node.y = (this.node.height - parent.height) * 0.5 + rect.y;
 
-        let navH = this.navBed.height;
-        let tabH = this.tabBed.height;
-        let pageH = this.node.height - navH - tabH;
+        const navH = this.navBed.height;
+        const tabH = this.tabBed.height;
+        const pageH = this.node.height - navH - tabH;
 
         this.pageBed.height = pageH;
         this.pageBed.y = this.node.height * 0.5 - navH;
@@ -145,13 +145,13 @@ export class BaseController extends cc.Component {
 
     setPagePrefabList() {
         this.pagePrefabList = [];
-        let baseCtrlr = this;
-        let pageDir = Editor.Project.path + '/assets/pages';
-        let Fs = require('fs');
-        let files = Fs.readdirSync(pageDir);
+        const baseCtrlr = this;
+        const pageDir = Editor.Project.path + '/assets/pages';
+        const Fs = require('fs');
+        const files = Fs.readdirSync(pageDir);
         for (const file of files) {
             if (Fs.statSync(pageDir + '/' + file).isDirectory()) {
-                let editorDir = 'db://assets/pages/' + file + '/*';
+                const editorDir = 'db://assets/pages/' + file + '/*';
                 Editor.assetdb.queryAssets(editorDir, null, function (err, results) {
                     for (const res of results) {
                         if (res.type === 'prefab') {
@@ -173,7 +173,7 @@ export class BaseController extends cc.Component {
     setPagePrefabDict() {
         if (CC_EDITOR) this.prefabDict = {};
         for (const prefab of this.pagePrefabList) {
-            let name = prefab.name;
+            const name = prefab.name;
             cc.assert(!this.prefabDict.hasOwnProperty(name), `prefab list中有重复：${name}`);
             this.prefabDict[name] = prefab;
         }
@@ -215,26 +215,26 @@ export class BaseController extends cc.Component {
         if (this.pageChanging) return;
         this.pageChanging = true;
 
-        let nextPageName = this.getPageName(page);
-        let curTreeNode = this.getTreeLeaf(this.pageTree);
-        let curPageName = curTreeNode.name;
+        const nextPageName = this.getPageName(page);
+        const curTreeNode = this.getTreeLeaf(this.pageTree);
+        const curPageName = curTreeNode.name;
 
         cc.log(`PUT push from ${curPageName} to ${nextPageName}`);
 
-        let nextTreeNode = new TreeNode();
+        const nextTreeNode = new TreeNode();
         nextTreeNode.name = nextPageName;
         nextTreeNode.page = this.createPage(nextPageName, data);
         nextTreeNode.parent = curTreeNode;
         curTreeNode.child = nextTreeNode;
 
-        let nextPage = nextTreeNode.page;
-        let curPage = curTreeNode.page;
+        const nextPage = nextTreeNode.page;
+        const curPage = curTreeNode.page;
 
         nextPage.node.zIndex = curPage.node.zIndex + 1;
 
         this.willHidePage(curPage);
         this.showPage(nextPage);
-        let afterAnim = () => {
+        const afterAnim = () => {
             this.hidePage(curPage);
             this.pageChanging = false;
             this.didShowPage(nextPage);
@@ -266,28 +266,28 @@ export class BaseController extends cc.Component {
         if (this.pageChanging) return;
         this.pageChanging = true;
 
-        let curTreeNode = this.getTreeLeaf(this.pageTree);
-        let nextTreeNode = curTreeNode.parent;
+        const curTreeNode = this.getTreeLeaf(this.pageTree);
+        const nextTreeNode = curTreeNode.parent;
         if (!nextTreeNode) {
             this.pageChanging = false;
             return;
         }
 
-        let nextPageName = nextTreeNode.name;
-        let curPageName = curTreeNode.name;
+        const nextPageName = nextTreeNode.name;
+        const curPageName = curTreeNode.name;
 
         cc.log(`PUT push from ${curPageName} to ${nextPageName}`);
 
         nextTreeNode.child = null;
         curTreeNode.parent = null;
 
-        let nextPage = nextTreeNode.page;
-        let curPage = curTreeNode.page;
+        const nextPage = nextTreeNode.page;
+        const curPage = curTreeNode.page;
 
         this.willHidePage(curPage, true);
         this.showPage(nextPage);
-        let afterAnim = () => {
-            this.deleteTreeNode(curTreeNode);
+        const afterAnim = () => {
+            this.deconsteTreeNode(curTreeNode);
             this.pageChanging = false;
             this.didShowPage(nextPage);
         };
@@ -317,7 +317,7 @@ export class BaseController extends cc.Component {
         data: any = null,
         anim: PageSwitchAnim = PageSwitchAnim.none
     ) {
-        let nextPageName = this.getPageName(page);
+        const nextPageName = this.getPageName(page);
         this.switchPage(nextPageName, this.getTreeLeaf(this.pageTree).parent, data, anim);
     }
 
@@ -326,7 +326,7 @@ export class BaseController extends cc.Component {
         data: any = null,
         anim: PageSwitchAnim = PageSwitchAnim.none
     ) {
-        let nextPageName = this.getPageName(page);
+        const nextPageName = this.getPageName(page);
         this.switchPage(nextPageName, this.pageTree, data, anim);
     }
 
@@ -384,8 +384,8 @@ export class BaseController extends cc.Component {
         } else if (anim === PageSwitchAnim.fromLeft || anim === PageSwitchAnim.fromRight) {
             curNode.x = 0;
             curNode.y = 0;
-            let curToX = anim === PageSwitchAnim.fromLeft ? this.pageBed.width : -this.pageBed.width;
-            let curToY = 0;
+            const curToX = anim === PageSwitchAnim.fromLeft ? this.pageBed.width : -this.pageBed.width;
+            const curToY = 0;
             cc.tween(curNode).to(0.2, { x: curToX, y: curToY }, { easing: 'sineInOut' }).start();
 
             nextNode.x = anim === PageSwitchAnim.fromLeft ? -this.pageBed.width : this.pageBed.width;
@@ -416,8 +416,8 @@ export class BaseController extends cc.Component {
         } else {
             curNode.x = 0;
             curNode.y = 0;
-            let curToX = 0;
-            let curToY = this.pageBed.height + this.navBed.height * 2;
+            const curToX = 0;
+            const curToY = this.pageBed.height + this.navBed.height * 2;
             cc.tween(curNode)
                 .to(0.35, { x: curToX, y: curToY }, { easing: 'sineIn' })
                 .call(() => {
@@ -444,20 +444,20 @@ export class BaseController extends cc.Component {
     }
 
     createPage(pageName: string, data: any): PageBase {
-        let prefab = this.prefabDict[pageName];
+        const prefab = this.prefabDict[pageName];
         cc.assert(prefab, `${pageName}并没有加入pagePrefabList中`);
 
-        let pageNode = cc.instantiate(prefab);
+        const pageNode = cc.instantiate(prefab);
         pageNode.parent = this.pageBed;
-        let pageComp = pageNode.getComponent(PageBase);
+        const pageComp = pageNode.getComponent(PageBase);
         pageComp.init();
         pageComp.setData(data);
 
         if (!pageComp.navHidden) {
-            let navNode = cc.instantiate(this.navPrefab);
+            const navNode = cc.instantiate(this.navPrefab);
             navNode.zIndex = cc.macro.MAX_ZINDEX;
             navNode.parent = pageNode;
-            let navBar = navNode.getComponent(NavBar);
+            const navBar = navNode.getComponent(NavBar);
             navBar.ctrlr = this;
             pageComp.navBar = navBar;
             pageComp.onLoadNavBar(navBar);
@@ -466,19 +466,19 @@ export class BaseController extends cc.Component {
         return pageComp;
     }
 
-    deleteTreeNode(treeNode: TreeNode) {
-        let child = treeNode.child;
-        let others = treeNode.others;
-        if (child) this.deleteTreeNode(child);
+    deconsteTreeNode(treeNode: TreeNode) {
+        const child = treeNode.child;
+        const others = treeNode.others;
+        if (child) this.deconsteTreeNode(child);
         for (const key in others) {
             if (!others.hasOwnProperty(key)) continue;
             const otherTreeNode = others[key];
-            this.deleteTreeNode(otherTreeNode);
+            this.deconsteTreeNode(otherTreeNode);
         }
-        this.deletePage(treeNode.page);
+        this.deconstePage(treeNode.page);
     }
 
-    deletePage(page: PageBase) {
+    deconstePage(page: PageBase) {
         page.node.removeFromParent();
         page.node.destroy();
     }

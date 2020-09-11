@@ -22,7 +22,7 @@ export class PageBase extends cc.Component {
     init() {
         this.node.height = this.ctrlr.pageBed.height;
 
-        let widgets = this.getComponentsInChildren(cc.Widget);
+        const widgets = this.getComponentsInChildren(cc.Widget);
         for (const widget of widgets) widget.updateAlignment();
     }
 
@@ -47,7 +47,7 @@ export class PageBase extends cc.Component {
         cc.assert(this.node._prefab.root === this.node, 'Page脚本需要放在prefab的根节点');
 
         this.node.name = this.node._prefab.asset.name;
-        let clsName = cc.js.getClassName(this.__proto__.constructor);
+        const clsName = cc.js.getClassName(this.__proto__.constructor);
         cc.assert(this.node.name === clsName, 'Page的prefab要和class名称一致');
 
         this.node.anchorX = 0;
@@ -61,7 +61,7 @@ export class PageBase extends cc.Component {
         if (!root) {
             root = new cc.Node('root');
             root.parent = this.node;
-            let widegt = root.addComponent(cc.Widget);
+            const widegt = root.addComponent(cc.Widget);
             widegt.isAlignTop = true;
             widegt.isAlignBottom = true;
             widegt.isAlignLeft = true;

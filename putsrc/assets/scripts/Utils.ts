@@ -8,7 +8,7 @@
 export function deepCopy(o: object): object {
     if (o instanceof Array) {
         //先判断Array
-        let n = [];
+        const n = [];
         for (let i = 0; i < o.length; ++i) n[i] = deepCopy(o[i]);
         return n;
     } else if (o instanceof Object) {
@@ -16,8 +16,8 @@ export function deepCopy(o: object): object {
             // @ts-ignore
             return o.clone();
         } else {
-            let n = {};
-            for (let i in o) n[i] = deepCopy(o[i]);
+            const n = {};
+            for (const i in o) n[i] = deepCopy(o[i]);
             return n;
         }
     } else {
@@ -33,7 +33,7 @@ export function eachChild(node: cc.Node, func: (node: cc.Node) => boolean): bool
 }
 
 export function getNodeByUuid(uuid: string): cc.Node {
-    let scene = cc.director.getScene();
+    const scene = cc.director.getScene();
     let thisNode = null;
     eachChild(scene, (node: cc.Node): boolean => {
         if (node.uuid === uuid) {
@@ -69,7 +69,7 @@ Array.prototype.getLast = function () {
 // @ts-ignore
 Array.prototype.getOne = function (callback) {
     for (let index = 0; index < this.length; index++) {
-        let curItem = this[index];
+        const curItem = this[index];
         if (callback(curItem)) return curItem;
     }
     return null;

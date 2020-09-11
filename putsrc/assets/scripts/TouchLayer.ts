@@ -40,7 +40,7 @@ export class TouchLayer extends cc.Component {
     }
 
     onGestureStarted(event: cc.Event.EventTouch) {
-        let navBar = this.ctrlr.getCurPage().navBar;
+        const navBar = this.ctrlr.getCurPage().navBar;
         if (!navBar || !navBar.backBtnActive || this.mark.getNumberOfRunningActions() > 0) {
             this.touchId = null;
             return;
@@ -55,8 +55,8 @@ export class TouchLayer extends cc.Component {
 
     onGestureMoved(event: cc.Event.EventTouch) {
         if (this.touchId === null || event.getID() !== this.touchId) return;
-        let curX = event.getLocationX();
-        let curY = event.getLocationY();
+        const curX = event.getLocationX();
+        const curY = event.getLocationY();
         if (Math.abs(curY - this.lastY) > Math.abs(curX - this.lastX)) {
             this.touchId = null;
             return;
@@ -78,7 +78,7 @@ export class TouchLayer extends cc.Component {
     }
 
     goBack() {
-        let navBar = this.ctrlr.getCurPage().navBar;
+        const navBar = this.ctrlr.getCurPage().navBar;
         navBar.onClickBack();
     }
 

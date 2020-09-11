@@ -70,7 +70,7 @@ export class GameJITDataTool {
     }
 
     static addAmplByDrink(pet: Pet, drinkModel: DrinkModel) {
-        let data = {};
+        const data = {};
         data[drinkModel.mainAttri] = drinkModel.mainPercent;
         if (drinkModel.subAttri) data[drinkModel.subAttri] = drinkModel.subPercent;
 
@@ -82,13 +82,13 @@ export class GameJITDataTool {
     }
 
     static addAmpl(pet: Pet, key: string, data: { [key: number]: number }) {
-        let petId = pet ? String(pet.catchIdx) : All;
+        const petId = pet ? String(pet.catchIdx) : All;
         if (!this.attriGainAmplDict[petId]) this.attriGainAmplDict[petId] = {};
         this.attriGainAmplDict[petId][key] = data;
     }
 
     static removeAmpl(pet: Pet, key: string) {
-        let petId = pet ? String(pet.catchIdx) : All;
+        const petId = pet ? String(pet.catchIdx) : All;
         if (this.attriGainAmplDict[petId]) {
             delete this.attriGainAmplDict[petId][key];
         }
@@ -97,20 +97,20 @@ export class GameJITDataTool {
     static getAmplPercent(pet: Pet, attri: AmplAttriType) {
         let ampl = 1;
         if (pet) {
-            let petDataDict = this.attriGainAmplDict[String(pet.catchIdx)];
+            const petDataDict = this.attriGainAmplDict[String(pet.catchIdx)];
             if (petDataDict) {
                 for (const key in petDataDict) {
                     const petData = petDataDict[key];
-                    let value = petData[attri];
+                    const value = petData[attri];
                     if (value) ampl += value * 0.01;
                 }
             }
         } else {
-            let allPetDataDict = this.attriGainAmplDict[All];
+            const allPetDataDict = this.attriGainAmplDict[All];
             if (allPetDataDict) {
                 for (const key in allPetDataDict) {
                     const petData = allPetDataDict[key];
-                    let value = petData[attri];
+                    const value = petData[attri];
                     if (value) ampl += value * 0.01;
                 }
             }
@@ -181,14 +181,14 @@ export class Pet2 {
     skillIds: string[];
 
     setData(pet: Pet, exPrvty: number = null, exEquips: Equip[] = null) {
-        let petModel: PetModel = petModelDict[pet.id];
+        const petModel: PetModel = petModelDict[pet.id];
 
-        let lv = pet.lv;
-        let rank = pet.rank;
-        let bioType = petModel.bioType;
+        const lv = pet.lv;
+        const rank = pet.rank;
+        const bioType = petModel.bioType;
 
-        let rankRatio = AttriRatioByRank[rank];
-        let dmgRange = DmgRangeByBio[bioType];
+        const rankRatio = AttriRatioByRank[rank];
+        const dmgRange = DmgRangeByBio[bioType];
 
         // 一级原始属性
         this.strengthOri = (petModel.baseStrength + petModel.addStrength * lv) * rankRatio;
@@ -214,7 +214,7 @@ export class Pet2 {
         });
 
         // 装备加成
-        let equips = exEquips || pet.equips;
+        const equips = exEquips || pet.equips;
         for (const equip of equips) {
             if (!equip) continue;
             EquipDataTool.getFinalAttris(equip, this);
@@ -249,8 +249,8 @@ export class Pet2 {
         this.exBattleTypes = [];
 
         // 其他属性
-        let realPrvty = PetDataTool.getRealPrvty(pet, exPrvty);
-        let prvtyPercent = realPrvty * 0.01;
+        const realPrvty = PetDataTool.getRealPrvty(pet, exPrvty);
+        const prvtyPercent = realPrvty * 0.01;
         this.critRate = prvtyPercent * 0.1;
         this.critDmgRate = 0.5 + prvtyPercent * 0.5;
         this.evdRate = 0.05 + prvtyPercent * 0.05;
@@ -274,14 +274,14 @@ export class Pet2 {
         if (!this.skillIds) this.skillIds = [];
         let skillIdx = 0;
         for (let index = equips.length - 1; index >= 0; index--) {
-            let equip = equips[index]; // 装备技能
+            const equip = equips[index]; // 装备技能
             if (!equip) continue;
-            let skillId = equip.skillId;
+            const skillId = equip.skillId;
             if (!skillId) continue;
             this.skillIds[skillIdx] = skillId;
             skillIdx++;
         }
-        let selfSkillIds = PetDataTool.getSelfSkillIdByCurLv(pet); // 自带技能
+        const selfSkillIds = PetDataTool.getSelfSkillIdByCurLv(pet); // 自带技能
         for (let index = selfSkillIds.length - 1; index >= 0; index--) {
             const skillId = selfSkillIds[index];
             this.skillIds[skillIdx] = skillId;
@@ -338,7 +338,7 @@ export class BattlePet {
 
     static addFeatureFunc(bPet: BattlePet, attri: string, funcName: string, model: FeatureModel, datas: number[]) {
         if (!model.hasOwnProperty(funcName)) return;
-        let list: { func: any; datas: number[]; id: string }[] = bPet[attri];
+        const list: { func: any; datas: number[]; id: string }[] = bPet[attri];
         for (const featureInList of list) {
             if (featureInList.id !== model.id) continue;
             for (let index = 0; index < featureInList.datas.length; index++) {
@@ -350,7 +350,7 @@ export class BattlePet {
     }
 
     static getSkillMpUsing(skillId: string, pet: Pet) {
-        let skillModel: SkillModel = skillModelDict[skillId];
+        const skillModel: SkillModel = skillModelDict[skillId];
         if (skillModel.skillType === SkillType.ultimate) return 0;
         let mpUsing = skillModel.mp;
         if (petModelDict[pet.id].eleType === skillModel.eleType) mpUsing -= Math.ceil(mpUsing * 0.1);
@@ -394,7 +394,7 @@ export class BattlePet {
         this.skillDatas.length = this.pet2.skillIds.length;
         for (let index = 0; index < this.pet2.skillIds.length; index++) {
             const skillId = this.pet2.skillIds[index];
-            let skill = this.skillDatas[index] || new BattleSkill();
+            const skill = this.skillDatas[index] || new BattleSkill();
             skill.id = skillId;
             skill.mpUsing = BattlePet.getSkillMpUsing(skillId, pet);
             this.skillDatas[index] = skill;
@@ -402,7 +402,7 @@ export class BattlePet {
     }
 
     clone() {
-        let newBPet = new BattlePet();
+        const newBPet = new BattlePet();
         newBPet.idx = this.idx;
         newBPet.fromationIdx = this.fromationIdx;
         newBPet.beEnemy = this.beEnemy;
@@ -417,14 +417,14 @@ export class BattlePet {
         newBPet.hpMax = this.hpMax;
 
         for (const skill of this.skillDatas) {
-            let newSkill = new BattleSkill();
+            const newSkill = new BattleSkill();
             newSkill.cd = skill.cd;
             newSkill.id = skill.id;
             newBPet.skillDatas.push(newSkill);
         }
 
         for (const buff of this.buffDatas) {
-            let newBuff = new BattleBuff();
+            const newBuff = new BattleBuff();
             newBuff.id = buff.id;
             newBuff.caster = buff.caster;
             newBuff.time = buff.time;
@@ -448,8 +448,8 @@ export class BattleTeam {
         let mpMax = 0;
         let last = null;
         for (let petIdx = 0; petIdx < len; petIdx++) {
-            let battlePet = this.pets[petIdx] || new BattlePet();
-            let fIdx = BattlePetLenMax - len + petIdx;
+            const battlePet = this.pets[petIdx] || new BattlePet();
+            const fIdx = BattlePetLenMax - len + petIdx;
             battlePet.initPosition(petIdx, fIdx, beEnemy);
             call(battlePet, petIdx);
             if (last) {
@@ -491,17 +491,17 @@ export class RealBattle {
         if (!this.selfTeam) this.selfTeam = new BattleTeam();
 
         let sPets: Pet[];
-        let exPrvtys: number[] = [];
-        let exEquips: Equip[][] = [];
+        const exPrvtys: number[] = [];
+        const exEquips: Equip[][] = [];
         if (byMmr) {
             sPets = [];
-            let sPetMmrs = gameData.curExpl.curBattle.selfs;
+            const sPetMmrs = gameData.curExpl.curBattle.selfs;
 
-            let checkEquipToken = (token: string, items: Item[], equipsOutput: Equip[]): boolean => {
+            const checkEquipToken = (token: string, items: Item[], equipsOutput: Equip[]): boolean => {
                 for (const item of items) {
                     if (!item) continue;
                     if (item.itemType !== ItemType.equip) continue;
-                    let equip = item as Equip;
+                    const equip = item as Equip;
                     if (EquipDataTool.getToken(equip) === token) {
                         equipsOutput.push(equip);
                         return true;
@@ -523,7 +523,7 @@ export class RealBattle {
 
                 exPrvtys.push(selfPetMmr.prvty);
 
-                let equips = [];
+                const equips = [];
                 for (const token of selfPetMmr.eqpTokens) {
                     if (checkEquipToken(token, curPet.equips, equips)) continue;
                     if (checkEquipToken(token, gameData.items, equips)) continue;
@@ -548,17 +548,17 @@ export class RealBattle {
         if (ePetMmrs) {
             this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetMmr = ePetMmrs[petIdx];
-                let petData = PetDataTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.rank, ePetMmr.features, null);
+                const petData = PetDataTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.rank, ePetMmr.features, null);
                 if (spcBtlId) petData.master = 'spcBtl';
                 bPet.init(petData, null, null);
             });
         } else if (spcBtlId) {
             // llytodo
         } else {
-            let ePetsData = RealBattle.createRandomPetData(createData.curExpl, createData.petCount);
+            const ePetsData = RealBattle.createRandomPetData(createData.curExpl, createData.petCount);
             this.enemyTeam.reset(ePetsData.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetData = ePetsData[petIdx];
-                let petData = PetDataTool.create(ePetData.id, ePetData.lv, ePetData.rank, ePetData.features, null);
+                const petData = PetDataTool.create(ePetData.id, ePetData.lv, ePetData.rank, ePetData.features, null);
                 if (spcBtlId) petData.master = 'spcBtl';
                 bPet.init(petData, null, null);
             });
@@ -566,7 +566,7 @@ export class RealBattle {
 
         // 按照HP排序
         if (randomRate(0.5)) {
-            let ePets = this.enemyTeam.pets;
+            const ePets = this.enemyTeam.pets;
             ePets.sort((a, b) => b.hpMax - a.hpMax);
             // 重置索引
             for (let index = 0; index < ePets.length; index++) {
@@ -587,40 +587,40 @@ export class RealBattle {
     }
 
     static createRandomPetData(curExpl: ExplMmr, count: number): { id: string; lv: number; rank: number; features: Feature[] }[] {
-        let posId = curExpl.curPosId;
-        let curPosModel = actPosModelDict[posId];
-        let explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
+        const posId = curExpl.curPosId;
+        const curPosModel = actPosModelDict[posId];
+        const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
 
-        let petCount = randomRate(0.5) ? count : count - 1;
-        let stepMax = explModel.stepMax;
-        let step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
-        let stepType = StepTypesByMax[stepMax][step];
-        let petIdLists = curPosModel.petIdLists;
+        const petCount = randomRate(0.5) ? count : count - 1;
+        const stepMax = explModel.stepMax;
+        const step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
+        const stepType = StepTypesByMax[stepMax][step];
+        const petIdLists = curPosModel.petIdLists;
         if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有宠物列表petIdLists，无法战斗`);
-        let petIds = petIdLists[stepType];
+        const petIds = petIdLists[stepType];
 
-        let enmeyPetType1 = getRandomOneInList(petIds);
-        let enmeyPetType2 = getRandomOneInList(petIds);
+        const enmeyPetType1 = getRandomOneInList(petIds);
+        const enmeyPetType2 = getRandomOneInList(petIds);
 
-        let { base: lvBase, range: lvRange } = this.calcLvArea(curPosModel, step);
-        let { base: rankBase, range: rankRange } = this.calcRankAreaByExplStep(step);
+        const { base: lvBase, range: lvRange } = this.calcLvArea(curPosModel, step);
+        const { base: rankBase, range: rankRange } = this.calcRankAreaByExplStep(step);
 
-        let petDatas: { id: string; lv: number; rank: number; features: Feature[] }[] = [];
+        const petDatas: { id: string; lv: number; rank: number; features: Feature[] }[] = [];
         for (let index = 0; index < petCount; index++) {
-            let id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
+            const id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
             let lv = lvBase - lvRange + normalRandom(lvRange * 2);
             lv = Math.min(Math.max(1, lv), expModels.length);
             let rank = rankBase - rankRange + normalRandom(rankRange * 2);
             rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
-            let features = this.getRandomFeatures(lv);
+            const features = this.getRandomFeatures(lv);
             petDatas.push({ id, lv, rank, features });
         }
         return petDatas;
     }
 
     static getRandomFeatures(lv: number): Feature[] {
-        let features = [];
-        let featureR = Math.random();
+        const features = [];
+        const featureR = Math.random();
         if (lv > 5 && featureR > 0.3) features.push(FeatureDataTool.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
         if (lv > 10 && featureR > 0.8) features.push(FeatureDataTool.createInbornFeature());
         return features;
@@ -642,7 +642,7 @@ export class RealBattle {
     }
 
     clone() {
-        let newRB = new RealBattle();
+        const newRB = new RealBattle();
         newRB.start = this.start;
         newRB.selfTeam = deepCopy(this.selfTeam) as BattleTeam;
         newRB.enemyTeam = deepCopy(this.enemyTeam) as BattleTeam;
@@ -673,7 +673,7 @@ export class RealBattle {
 
     copyAim(aim: BattlePet, to: RealBattle) {
         if (!aim) return null;
-        let team = aim.beEnemy ? to.enemyTeam : to.selfTeam;
+        const team = aim.beEnemy ? to.enemyTeam : to.selfTeam;
         return team.pets[aim.idx];
     }
 }
@@ -685,7 +685,7 @@ export class SkillInfo {
     static get(id: string): string {
         if (this.infoDict[id]) return this.infoDict[id];
 
-        let skl: SkillModel = skillModelDict[id];
+        const skl: SkillModel = skillModelDict[id];
         let info = '';
         let aim: string;
         if (skl.dirType === SkillDirType.enemy) {
@@ -789,16 +789,16 @@ export class SkillInfo {
     }
 
     static getSklDmgStr(pet2: Pet2, rate: number) {
-        let from = BattleController.getCastRealDmg(pet2.sklDmgFrom, rate, pet2.atkDmgFrom) * 0.1;
-        let to = BattleController.getCastRealDmg(pet2.sklDmgTo, rate, pet2.atkDmgTo) * 0.1;
+        const from = BattleController.getCastRealDmg(pet2.sklDmgFrom, rate, pet2.atkDmgFrom) * 0.1;
+        const to = BattleController.getCastRealDmg(pet2.sklDmgTo, rate, pet2.atkDmgTo) * 0.1;
         return `${from.toFixed(1)}到${to.toFixed(1)}`;
     }
 
-    static getRealSklStr(skillId: string, pet2: Pet2) {
-        let info = this.get(skillId);
-        let skl: SkillModel = skillModelDict[skillId];
-        let mainDmgStr = this.getSklDmgStr(pet2, skl.mainDmg * 0.01);
-        let subDmgStr = this.getSklDmgStr(pet2, skl.subDmg * 0.01);
-        info = info.replace('##', mainDmgStr).replace('^^', subDmgStr);
+    static getRealSklStr(skillId: string, pet2: Pet2): string {
+        const info = this.get(skillId);
+        const skl: SkillModel = skillModelDict[skillId];
+        const mainDmgStr = this.getSklDmgStr(pet2, skl.mainDmg * 0.01);
+        const subDmgStr = this.getSklDmgStr(pet2, skl.subDmg * 0.01);
+        return info.replace('##', mainDmgStr).replace('^^', subDmgStr);
     }
 }

@@ -25,7 +25,7 @@ function checkActPosModelDict() {
             if (!model.acts.includes(actDictKey)) cc.error(`${actDictKey}不在${model.acts}内`, key);
         }
 
-        let petDictKeys = Object.keys(petModelDict);
+        const petDictKeys = Object.keys(petModelDict);
         for (const petIdList of model.petIdLists) {
             if (petIdList) {
                 for (const petId of petIdList) {
@@ -54,7 +54,7 @@ function checkPetModelDict() {
 }
 
 function checkSkillModelDict() {
-    let buffDictKeys = Object.keys(buffModelDict);
+    const buffDictKeys = Object.keys(buffModelDict);
     for (const key in skillModelDict) {
         const model = skillModelDict[key];
         if (model.mainBuffId && !buffDictKeys.includes(model.mainBuffId))
@@ -65,7 +65,7 @@ function checkSkillModelDict() {
 }
 
 function checkBuffModelDict() {
-    let buffBriefDict = {};
+    const buffBriefDict = {};
     for (const key in buffModelDict) {
         const model = buffModelDict[key];
         if (model.id !== key) cc.error('buffModelDict中，id与dict的key不符', key, model.id);
@@ -92,7 +92,7 @@ function checkBuffModelDict() {
 }
 
 function checkFeatureModelDict() {
-    let briefDict = {};
+    const briefDict = {};
 
     for (const key in featureModelDict) {
         const model = featureModelDict[key];
@@ -116,7 +116,7 @@ function checkEquipModelDict() {
     for (const key in equipModelDict) {
         const model = equipModelDict[key];
         if (model.id !== key) cc.error('equipModelDict中，id与dict的key不符：', key, model.id);
-        let features = model.featureIds;
+        const features = model.featureIds;
         for (const feature of features) {
             if (!(feature in featureModelDict)) {
                 cc.error('equipModelDict中，feature有误：', key, feature);
@@ -126,7 +126,7 @@ function checkEquipModelDict() {
 }
 
 function checkItems() {
-    let allKeys = {};
+    const allKeys = {};
     function checkKey(key: string, dictName: string) {
         if (allKeys.hasOwnProperty(key)) {
             cc.error(`${dictName}中存在重复的id${key}`);
