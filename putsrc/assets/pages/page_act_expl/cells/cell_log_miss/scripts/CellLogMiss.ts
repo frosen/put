@@ -34,12 +34,12 @@ export class CellLogMiss extends CellLogBase {
     }
 
     setData(data: ExplLogData) {
-        // let logStr = `${petModelDict[aim.pet.id].cnName}避开了${petModelDict[battlePet.pet.id].cnName}的${skillName}`;
+        // const logStr = `${petModelDict[aim.pet.id].cnName}避开了${petModelDict[battlePet.pet.id].cnName}的${skillName}`;
         // this.logCallback(logStr);
 
-        let petName = data.data[0];
-        let atkerName = data.data[1];
-        let sklName = data.data[2];
+        const petName = data.data[0];
+        const atkerName = data.data[1];
+        const sklName = data.data[2];
         this.lvd.setSpByString(this.petNameSp, petName);
         this.lvd.setSpByString(this.atkerNameSp, atkerName);
         this.lvd.setSpByString(this.sklNameSp, sklName);

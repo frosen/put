@@ -48,7 +48,7 @@ export class CellLogAtk extends CellLogBase {
     }
 
     setData(data: ExplLogData) {
-        // let logStr = `${petModelDict[battlePet.pet.id].cnName}对${petModelDict[aim.pet.id].cnName}使用${skillName}`;
+        // const logStr = `${petModelDict[battlePet.pet.id].cnName}对${petModelDict[aim.pet.id].cnName}使用${skillName}`;
         // if (dmg > 0) {
         //     if (beCombo) logStr += '连击';
         //     logStr += `，造成${Math.floor(dmg * 0.1)}点${eleType ? EleTypeNames[eleType] : '物理'}伤害`;
@@ -56,12 +56,12 @@ export class CellLogAtk extends CellLogBase {
         //     logStr += `，恢复血量${Math.floor(dmg * -0.1)}点`;
         // }
 
-        let petName = data.data[0];
-        let aimName = data.data[1];
-        let sklName = data.data[2];
-        let combo = data.data[3];
-        let dmg = data.data[4];
-        let eleType = data.data[5];
+        const petName = data.data[0];
+        const aimName = data.data[1];
+        const sklName = data.data[2];
+        const combo = data.data[3];
+        const dmg = data.data[4];
+        const eleType = data.data[5];
 
         this.lvd.setSpByString(this.petNameSp, petName);
         this.lvd.setSpByString(this.aimNameSp, aimName);

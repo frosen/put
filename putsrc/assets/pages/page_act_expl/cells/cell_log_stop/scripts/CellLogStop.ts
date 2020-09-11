@@ -27,10 +27,7 @@ export class CellLogStop extends CellLogBase {
     }
 
     setData(data: ExplLogData) {
-        // let logStr = `${petModelDict[battlePet.pet.id].cnName}无法行动`;
-        // this.logCallback(logStr);
-
-        let petName = data.data;
+        const petName = data.data;
         this.lvd.setSpByString(this.petNameSp, petName);
 
         let curX = 0;

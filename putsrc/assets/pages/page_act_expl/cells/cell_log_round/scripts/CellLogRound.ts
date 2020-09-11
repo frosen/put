@@ -32,7 +32,7 @@ export class CellLogRound extends CellLogBase {
     }
 
     setData(data: ExplLogData) {
-        let roundNum = data.data;
+        const roundNum = data.data;
         this.numSp.setNum(roundNum);
 
         let curX = 0;

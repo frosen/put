@@ -17,9 +17,9 @@ export class LogNumSprite extends cc.Component {
     }
 
     setNum(num: number) {
-        let numStr = String(num);
-        let childrenCount = this.node.childrenCount;
-        let children = this.node.children;
+        const numStr = String(num);
+        const childrenCount = this.node.childrenCount;
+        const children = this.node.children;
         for (let index = 0; index < numStr.length; index++) {
             const letter = numStr[index];
 
@@ -27,7 +27,7 @@ export class LogNumSprite extends cc.Component {
             if (index < childrenCount) {
                 sp = children[index].getComponent(cc.Sprite);
             } else {
-                let newNode = new cc.Node();
+                const newNode = new cc.Node();
                 newNode.parent = this.node;
                 newNode.setAnchorPoint(0, 0.5);
                 sp = newNode.addComponent(cc.Sprite);
@@ -36,7 +36,7 @@ export class LogNumSprite extends cc.Component {
         }
 
         for (let index = numStr.length; index < childrenCount; index++) {
-            let sp = children[index].getComponent(cc.Sprite);
+            const sp = children[index].getComponent(cc.Sprite);
             this.lvd.setSpByString(sp, null);
         }
 

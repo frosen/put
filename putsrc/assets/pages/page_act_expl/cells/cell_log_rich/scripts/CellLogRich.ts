@@ -15,7 +15,7 @@ export class CellLogRich extends CellLogBase {
     logLbl: cc.RichText = null;
 
     setData(data: ExplLogData) {
-        let str = data.data;
+        const str = data.data;
         this.logLbl.string = str;
     }
 }

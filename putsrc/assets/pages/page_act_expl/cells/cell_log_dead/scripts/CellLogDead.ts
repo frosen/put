@@ -29,7 +29,7 @@ export class CellLogDead extends CellLogBase {
     setData(data: ExplLogData) {
         // `${petModelDict[battlePet.pet.id].cnName}被击败`
 
-        let petName = data.data;
+        const petName = data.data;
         this.lvd.setSpByString(this.petNameSp, petName);
 
         let curX = 0;

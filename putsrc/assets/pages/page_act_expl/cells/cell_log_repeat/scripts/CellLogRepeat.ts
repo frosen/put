@@ -15,7 +15,7 @@ export class CellLogRepeat extends CellLogBase {
     logSp: cc.Sprite = null;
 
     setData(data: ExplLogData) {
-        let str = data.data;
+        const str = data.data;
         this.lvd.setSpByString(this.logSp, str);
     }
 }

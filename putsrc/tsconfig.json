@@ -8,5 +8,5 @@
         "skipLibCheck": true,
         "baseUrl": "./assets"
     },
-    "exclude": ["node_modules", "library", "local", "temp", "build", "settings", "extensions"]
+    "exclude": ["node_modules", "library", "local", "temp", "build", "settings"]
 }

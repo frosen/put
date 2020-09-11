@@ -104,15 +104,15 @@ export class PageActExpl extends BattlePageBase {
         this.lvd.page = this;
 
         for (let index = 0; index < BattlePetLenMax; index++) {
-            let y = BattleUnitYs[index];
+            const y = BattleUnitYs[index];
 
-            let selfPetNode = cc.instantiate(this.selfPetPrefab);
+            const selfPetNode = cc.instantiate(this.selfPetPrefab);
             selfPetNode.y = y;
             selfPetNode.parent = this.selfPetsLayer;
             this.selfPetUIs.push(selfPetNode.getComponent(PetUI));
             selfPetNode.active = false;
 
-            let enemyPetNode = cc.instantiate(this.enemyPetPrefab);
+            const enemyPetNode = cc.instantiate(this.enemyPetPrefab);
             enemyPetNode.y = y;
             enemyPetNode.parent = this.enemyPetsLayer;
             this.enemyPetUIs.push(enemyPetNode.getComponent(PetUI));
@@ -120,7 +120,7 @@ export class PageActExpl extends BattlePageBase {
         }
 
         for (let index = 0; index < 30; index++) {
-            let dmgLblNode = cc.instantiate(this.dmgPrefab);
+            const dmgLblNode = cc.instantiate(this.dmgPrefab);
             dmgLblNode.parent = this.node;
             dmgLblNode.opacity = 0;
             this.dmgLbls.push(dmgLblNode.getComponent(cc.Label));
@@ -130,8 +130,8 @@ export class PageActExpl extends BattlePageBase {
     }
 
     initPADExpl() {
-        let gameData = this.ctrlr.memory.gameData;
-        let posId = gameData.curPosId;
+        const gameData = this.ctrlr.memory.gameData;
+        const posId = gameData.curPosId;
         GameDataTool.addPA(gameData, posId, PAKey.expl);
     }
 
@@ -151,18 +151,18 @@ export class PageActExpl extends BattlePageBase {
             return false;
         });
 
-        let posId = this.ctrlr.memory.gameData.curPosId; // 宠物和主人pos不一致无法进入该page，因此此处可用主人pos
-        let posName = actPosModelDict[posId].cnName;
+        const posId = this.ctrlr.memory.gameData.curPosId; // 宠物和主人pos不一致无法进入该page，因此此处可用主人pos
+        const posName = actPosModelDict[posId].cnName;
         navBar.setTitle('探索' + posName);
     }
 
     onClickBack(key: number) {
         if (key === 1) this.ctrlr.popPage();
         else if (key === 2) {
-            let gameData = this.ctrlr.memory.gameData;
-            let pets = GameDataTool.getReadyPets(gameData);
+            const gameData = this.ctrlr.memory.gameData;
+            const pets = GameDataTool.getReadyPets(gameData);
             for (const pet of pets) {
-                let prvty = PetDataTool.getRealPrvty(pet);
+                const prvty = PetDataTool.getRealPrvty(pet);
                 if (prvty < 50) {
                     this.ctrlr.popToast(`all pets prvty need 50 at least but ${petModelDict[pet.id].cnName}`);
                     return;
@@ -194,7 +194,7 @@ export class PageActExpl extends BattlePageBase {
 
     preloadLVDData() {
         for (const sPet of GameDataTool.getReadyPets(this.ctrlr.memory.gameData)) {
-            let name = petModelDict[sPet.id].cnName;
+            const name = petModelDict[sPet.id].cnName;
             this.lvd.getFrameDataByString(name);
         }
 
@@ -225,18 +225,18 @@ export class PageActExpl extends BattlePageBase {
     setExplStepUI() {
         if (this.ctrlr.getCurPage() !== this) return;
 
-        let curExpl = this.ctrlr.memory.gameData.curExpl;
+        const curExpl = this.ctrlr.memory.gameData.curExpl;
         if (!curExpl) return this.navBar.setSubTitle('');
 
-        let posId = curExpl.curPosId;
-        let curPosModel = actPosModelDict[posId];
-        let explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
+        const posId = curExpl.curPosId;
+        const curPosModel = actPosModelDict[posId];
+        const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
 
-        let stepMax = explModel.stepMax;
-        let step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
-        let stepType = StepTypesByMax[stepMax][step];
-        let stepName = ExplStepNames[stepType];
-        let percent = this.updater.explStepPercent;
+        const stepMax = explModel.stepMax;
+        const step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
+        const stepType = StepTypesByMax[stepMax][step];
+        const stepName = ExplStepNames[stepType];
+        const percent = this.updater.explStepPercent;
         let percentStr: string;
         if (percent >= 10) percentStr = '.' + String(percent);
         else if (percent > 0) percentStr = '.0' + String(percent);
@@ -248,7 +248,7 @@ export class PageActExpl extends BattlePageBase {
     // ui -----------------------------------------------------------------
 
     setUIofSelfPet(index: number) {
-        let pets = this.updater.battleCtrlr.realBattle.selfTeam.pets;
+        const pets = this.updater.battleCtrlr.realBattle.selfTeam.pets;
         if (index === -1) {
             let petIdx = 0;
             for (; petIdx < pets.length; petIdx++) this.setUIofSelfPet(petIdx);
@@ -259,7 +259,7 @@ export class PageActExpl extends BattlePageBase {
     }
 
     setUIofEnemyPet(index: number) {
-        let pets = this.updater.battleCtrlr.realBattle.enemyTeam.pets;
+        const pets = this.updater.battleCtrlr.realBattle.enemyTeam.pets;
         if (index === -1) {
             for (let petIdx = 0; petIdx < pets.length; petIdx++) this.setUIofEnemyPet(petIdx);
         } else {
@@ -269,8 +269,8 @@ export class PageActExpl extends BattlePageBase {
 
     setUIofPet(battlePet: BattlePet, ui: PetUI) {
         ui.node.active = true;
-        let pet = battlePet.pet;
-        let petModel = petModelDict[pet.id];
+        const pet = battlePet.pet;
+        const petModel = petModelDict[pet.id];
         ui.petName.string = petModel.cnName;
         ui.petLv.string = `L${pet.lv}${PetRankNames[pet.rank]}`;
         ui.bar.progress = battlePet.hp / battlePet.hpMax;
@@ -288,9 +288,9 @@ export class PageActExpl extends BattlePageBase {
     }
 
     doAttack(beEnemy: boolean, idx: number, combo: number) {
-        let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        let ui = uis[idx];
-        let node = ui.node;
+        const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        const ui = uis[idx];
+        const node = ui.node;
         node.stopAllActions();
         cc.tween(node)
             .delay((combo - 1) * 0.05)
@@ -300,8 +300,8 @@ export class PageActExpl extends BattlePageBase {
     }
 
     doHurt(beEnemy: boolean, idx: number, hp: number, hpMax: number, dmg: number, crit: boolean, combo: number) {
-        let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        let ui = uis[idx];
+        const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        const ui = uis[idx];
 
         ui.bar.progress = hp / hpMax;
         ui.petHP.string = `${Math.ceil(hp * 0.1)} / ${Math.ceil(hpMax * 0.1)}`;
@@ -318,22 +318,22 @@ export class PageActExpl extends BattlePageBase {
     }
 
     showLbl(str: string, beEnemy: boolean, idx: number, big: boolean, delay: number, color: cc.Color) {
-        let dmgLbl = this.dmgLbls[this.dmgIdx];
-        let params = DmgLblActParams[this.dmgIdx % 10];
+        const dmgLbl = this.dmgLbls[this.dmgIdx];
+        const params = DmgLblActParams[this.dmgIdx % 10];
         this.dmgIdx++;
         if (this.dmgIdx >= this.dmgLbls.length) this.dmgIdx = 0;
 
         dmgLbl.string = str;
 
-        let node = dmgLbl.node;
+        const node = dmgLbl.node;
         node.x = beEnemy ? 1080 - 25 - 435 : 25 + 435;
         node.y = BattleUnitYs[idx] - 68;
         node.scale = big ? 1.2 : 1;
         node.color = color;
 
-        let dir = beEnemy ? 1 : -1;
-        let p = cc.v2(params[0] * dir, 0);
-        let h = 35 + params[1];
+        const dir = beEnemy ? 1 : -1;
+        const p = cc.v2(params[0] * dir, 0);
+        const h = 35 + params[1];
 
         node.stopAllActions();
         node.runAction(cc.sequence(cc.delayTime(delay), cc.jumpBy(1, p, h, 1).easing(cc.easeSineOut())));
@@ -341,14 +341,14 @@ export class PageActExpl extends BattlePageBase {
     }
 
     addBuff(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
-        let buffModel = buffModelDict[buffId] as BuffModel;
-        let buffBrief = buffModel.brief;
-        let buffStr = buffBrief + String(buffTime);
+        const buffModel = buffModelDict[buffId] as BuffModel;
+        const buffBrief = buffModel.brief;
+        const buffStr = buffBrief + String(buffTime);
         this.addBuffByStr(beEnemy, idx, buffStr, this.getBuffColor(buffModel));
     }
 
     getBuffColor(buffModel: BuffModel): cc.Color {
-        let de = buffModel.buffType === BuffType.debuff;
+        const de = buffModel.buffType === BuffType.debuff;
         switch (buffModel.eleType) {
             case EleType.fire:
                 return de ? cc.color(200, 0, 0) : cc.color(255, 100, 100);
@@ -366,11 +366,11 @@ export class PageActExpl extends BattlePageBase {
     }
 
     addBuffByStr(beEnemy: boolean, idx: number, buffStr: string, color: cc.Color) {
-        let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        let ui = uis[idx];
+        const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        const ui = uis[idx];
 
-        let realBuffStr = '[' + buffStr + ']';
-        let buffNode = cc.instantiate(this.buffPrefab);
+        const realBuffStr = '[' + buffStr + ']';
+        const buffNode = cc.instantiate(this.buffPrefab);
         buffNode.getComponent(cc.Label).string = realBuffStr;
         buffNode.color = color;
         buffNode.parent = ui.buffNode;
@@ -383,13 +383,13 @@ export class PageActExpl extends BattlePageBase {
     }
 
     resetBuffTime(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
-        let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        let ui = uis[idx];
-        let buffBrief = (buffModelDict[buffId] as BuffModel).brief;
-        let buffStrTest = new RegExp('\\[' + buffBrief + '[0-9]*\\]');
+        const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        const ui = uis[idx];
+        const buffBrief = (buffModelDict[buffId] as BuffModel).brief;
+        const buffStrTest = new RegExp('\\[' + buffBrief + '[0-9]*\\]');
         for (const child of ui.buffNode.children) {
             if (buffStrTest.test(child.getComponent(cc.Label).string)) {
-                let newBuffStr = '[' + buffBrief + String(buffTime) + ']';
+                const newBuffStr = '[' + buffBrief + String(buffTime) + ']';
                 child.getComponent(cc.Label).string = newBuffStr;
                 break;
             }
@@ -397,11 +397,11 @@ export class PageActExpl extends BattlePageBase {
     }
 
     removeBuff(beEnemy: boolean, idx: number, buffId: string) {
-        let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        let ui = uis[idx];
+        const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        const ui = uis[idx];
         if (buffId) {
-            let buffBrief = (buffModelDict[buffId] as BuffModel).brief;
-            let buffStrTest = new RegExp('\\[' + buffBrief + '[0-9]*\\]');
+            const buffBrief = (buffModelDict[buffId] as BuffModel).brief;
+            const buffStrTest = new RegExp('\\[' + buffBrief + '[0-9]*\\]');
             for (const child of ui.buffNode.children) {
                 if (buffStrTest.test(child.getComponent(cc.Label).string)) {
                     child.removeFromParent();
@@ -422,9 +422,9 @@ export class PageActExpl extends BattlePageBase {
     }
 
     removeBuffByStr(beEnemy: boolean, idx: number, str: string) {
-        let uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        let ui = uis[idx];
-        let buffStr = '[' + str + ']';
+        const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        const ui = uis[idx];
+        const buffStr = '[' + str + ']';
         for (const child of ui.buffNode.children) {
             if (child.getComponent(cc.Label).string === buffStr) {
                 child.removeFromParent();
@@ -446,7 +446,7 @@ export class PageActExpl extends BattlePageBase {
 
     onClickCatch() {
         if (!this.ctrlr.memory.gameData.curExpl.catcherId) {
-            let idxs = [];
+            const idxs = [];
             PagePkg.getoutItemIdxsByType(this.ctrlr.memory.gameData.items, idxs, ItemType.cnsum, CnsumType.catcher);
             this.ctrlr.pushPage(PagePkgSelection, {
                 name: '选择捕捉器',
@@ -489,10 +489,10 @@ export class PageActExpl extends BattlePageBase {
     }
 
     handleLog() {
-        let newLogCount = this.updater.newLogCount;
+        const newLogCount = this.updater.newLogCount;
         if (newLogCount === 0) return;
         if (this.autoShowLog) {
-            let logCount = Math.min(newLogCount, 10);
+            const logCount = Math.min(newLogCount, 10);
             this.listView.clearContent();
             this.listView.createContent(logCount * 70);
             this.autoMoveDis = logCount * 6;
@@ -514,7 +514,7 @@ export class PageActExpl extends BattlePageBase {
         }
 
         if (this.autoShowLog && this.autoMoveDis > 0) {
-            let newPos = this.listView.content.y - this.autoMoveDis;
+            const newPos = this.listView.content.y - this.autoMoveDis;
             if (newPos > 0) {
                 this.listView.content.y = newPos;
             } else {
@@ -526,7 +526,7 @@ export class PageActExpl extends BattlePageBase {
     }
 
     setNewLogTip(tipCount: number) {
-        let area = this.newLogTipLbl.node.parent;
+        const area = this.newLogTipLbl.node.parent;
         area.stopAllActions();
         if (tipCount <= 0) {
             cc.tween(area).to(0.2, { opacity: 0 }).start();

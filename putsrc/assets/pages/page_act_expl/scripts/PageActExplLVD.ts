@@ -39,7 +39,7 @@ export class PageActExplLVD extends ListViewDelegate {
 
     setSpByString(sp: cc.Sprite, str: string) {
         if (str) {
-            let data = this.getFrameDataByString(str);
+            const data = this.getFrameDataByString(str);
             sp.spriteFrame = data.frame;
             sp.node.width = data.width;
         } else {
@@ -50,16 +50,16 @@ export class PageActExplLVD extends ListViewDelegate {
 
     getFrameDataByString(str: string): LblFrameData {
         if (!this.lblFrameDict.hasOwnProperty(str)) {
-            let newNode = new cc.Node(str);
+            const newNode = new cc.Node(str);
             newNode.setAnchorPoint(0, 0.5);
             newNode.parent = this.lblFrameBaseNode;
 
-            let lbl = newNode.addComponent(cc.Label);
+            const lbl = newNode.addComponent(cc.Label);
             lbl.verticalAlign = cc.Label.VerticalAlign.CENTER;
             lbl.fontSize = 35;
             lbl.lineHeight = 50;
             lbl.string = str;
-            let frame = this.getLblFrame(lbl);
+            const frame = this.getLblFrame(lbl);
             cc.dynamicAtlasManager.insertSpriteFrame(frame);
             this.lblFrameDict[str] = { lbl, frame, width: newNode.width };
         }
@@ -71,10 +71,10 @@ export class PageActExplLVD extends ListViewDelegate {
         // @ts-ignore
         lbl._assembler.updateRenderData(lbl);
         // @ts-ignore
-        let frame = lbl._frame;
-        let texture = frame._texture;
+        const frame = lbl._frame;
+        const texture = frame._texture;
 
-        let newFrame = new cc.SpriteFrame();
+        const newFrame = new cc.SpriteFrame();
         newFrame.setTexture(texture);
 
         return newFrame;
@@ -117,12 +117,12 @@ export class PageActExplLVD extends ListViewDelegate {
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        let logList = this.page.getLogs();
+        const logList = this.page.getLogs();
         return CellIdsByLogType[logList[logList.length - rowIdx - 1].type];
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        let cell: CellLogBase = this.getCellClassByCellId(cellId);
+        const cell: CellLogBase = this.getCellClassByCellId(cellId);
         cell.init(this);
         return cell;
     }
@@ -152,7 +152,7 @@ export class PageActExplLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellLogBase) {
-        let logList = this.page.getLogs();
+        const logList = this.page.getLogs();
         cell.setData(logList[logList.length - rowIdx - 1]);
     }
 }
