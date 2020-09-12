@@ -9,11 +9,15 @@ const { ccclass, property } = cc._decorator;
 import { ListViewCell } from 'scripts/ListViewCell';
 import { CnsumModel } from 'scripts/DataModel';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
+import { MoneyTool } from 'scripts/Memory';
 
 @ccclass
 export class CellTransaction extends ListViewCell {
     @property(cc.Node)
     itemBaseNode: cc.Node = null;
+
+    @property(cc.Label)
+    priceLbl: cc.Label = null;
 
     @property(cc.Label)
     numLbl: cc.Label = null;
@@ -39,6 +43,11 @@ export class CellTransaction extends ListViewCell {
 
     setData(itemIdx: number, model: CnsumModel) {
         this.cell.setDataByModel(itemIdx, model);
+        this.setPrice(model.price);
+    }
+
+    setPrice(price: number) {
+        this.priceLbl.string = MoneyTool.getStr(price);
     }
 
     setCount(count: number) {

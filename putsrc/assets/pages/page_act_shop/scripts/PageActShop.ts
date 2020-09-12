@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool } from 'scripts/Memory';
+import { MoneyTool, CnsumDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { PageActShopLVD } from './PageActShopLVD';
@@ -20,6 +20,9 @@ export class PageActShop extends PageBase {
     @property(ListView)
     list: ListView = null;
 
+    @property(cc.SpriteFrame)
+    detailBtnSFrame: cc.SpriteFrame = null;
+
     totalPrice: number = 0;
 
     goodsIds: string[];
@@ -29,10 +32,10 @@ export class PageActShop extends PageBase {
         super.onLoad();
 
         if (CC_EDITOR) return;
-        let posId = this.ctrlr.memory.gameData.curPosId;
+        const posId = this.ctrlr.memory.gameData.curPosId;
         this.goodsIds = actPosModelDict[posId].goodsList;
 
-        let lvd = this.list.delegate as PageActShopLVD;
+        const lvd = this.list.delegate as PageActShopLVD;
         lvd.page = this;
     }
 
@@ -50,8 +53,14 @@ export class PageActShop extends PageBase {
 
     changeTotalPrice() {
         let tp = 0;
-        for (const count of object) {
+        for (let index = 0; index < this.goodsIds.length; index++) {
+            const goodsId = this.goodsIds[index];
+            const count = this.countList[index];
+            if (count <= 0) continue;
+            const price = CnsumDataTool.getModelById(goodsId).price;
+            tp += count * price;
         }
+
         this.totalPrice = tp;
         this.navBar.setSubTitle('总价 ' + MoneyTool.getStr(tp));
     }
@@ -63,4 +72,6 @@ export class PageActShop extends PageBase {
     onCellRdcCount(cell: CellTransaction) {}
 
     onCellClick(cell: CellPkgCnsum) {}
+
+    onCellClickDetailBtn(cell: CellPkgCnsum) {}
 }

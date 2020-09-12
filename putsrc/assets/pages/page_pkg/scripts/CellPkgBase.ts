@@ -8,11 +8,6 @@ const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from 'scripts/ListViewCell';
 
-export enum CellPkgType {
-    normal,
-    selection
-}
-
 @ccclass
 export class CellPkgBase extends ListViewCell {
     @property(cc.Label)

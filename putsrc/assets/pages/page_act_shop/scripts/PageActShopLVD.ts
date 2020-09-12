@@ -76,10 +76,9 @@ export class PageActShopLVD extends ListViewDelegate {
                 subCell = cc.instantiate(this.cellPkgMaterialPrefab).getComponent(CellPkgMaterial);
                 break;
         }
-        subCell.funcBtn.node.active = false;
-        subCell.countLbl.node.position = cc.v2(1057, -36);
-        subCell.countLbl.node.scale = 0.7;
-        subCell.clickCallback = this.page.onCellClick.bind(this.page);
+        subCell.setFuncBtnUI(this.page.detailBtnSFrame);
+        subCell.getComponent(cc.Button).interactable = false;
+        subCell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
 
         cell.init(subCell);
 
