@@ -59,29 +59,29 @@ export class PagePkg extends PagePkgBase {
         super.onLoad();
         if (CC_EDITOR) return;
 
-        let selections = this.selectionLayer.children;
+        const selections = this.selectionLayer.children;
         for (let index = 0; index < LIST_NAMES.length; index++) {
-            let listNode = cc.instantiate(this.listPrefab);
+            const listNode = cc.instantiate(this.listPrefab);
             listNode.parent = this.listLayer;
             listNode.x = index * WIDTH;
 
-            let list = listNode.getComponent(ListView);
-            let delegate = list.delegate as PagePkgLVD;
+            const list = listNode.getComponent(ListView);
+            const delegate = list.delegate as PagePkgLVD;
             delegate.page = this;
 
             this.listDatas.push({ dirtyToken: 0, list, delegate });
 
-            let selection = selections[index];
+            const selection = selections[index];
             selection.on('click', () => {
                 this.turnList(index);
             });
 
-            let lblNode = selection.children[0];
+            const lblNode = selection.children[0];
             lblNode.getComponent(cc.Label).string = LIST_NAMES[index];
             this.selectionLblNodes.push(lblNode);
         }
 
-        let funcBarNode = cc.instantiate(this.funcBarPrefab);
+        const funcBarNode = cc.instantiate(this.funcBarPrefab);
         funcBarNode.parent = this.node.getChildByName('root');
 
         this.funcBar = funcBarNode.getComponent(FuncBar);
@@ -100,26 +100,26 @@ export class PagePkg extends PagePkgBase {
     }
 
     onPageShow() {
-        let gameData = this.ctrlr.memory.gameData;
+        const gameData = this.ctrlr.memory.gameData;
         this.navBar.setSubTitle(`${gameData.weight}/${GameDataTool.getItemCountMax(gameData)}`);
 
         this.turnList(this.curListIdx);
     }
 
     resetCurList() {
-        let curDirtyToken = this.ctrlr.memory.dirtyToken;
-        let curData = this.listDatas[this.curListIdx];
+        const curDirtyToken = this.ctrlr.memory.dirtyToken;
+        const curData = this.listDatas[this.curListIdx];
         if (curData.dirtyToken !== curDirtyToken) {
             curData.dirtyToken = curDirtyToken;
-            let items = this.ctrlr.memory.gameData.items;
-            let idxs = PagePkg.getItemIdxsByListIdx(items, this.curListIdx);
+            const items = this.ctrlr.memory.gameData.items;
+            const idxs = PagePkg.getItemIdxsByListIdx(items, this.curListIdx);
             curData.delegate.initListData(items, idxs);
             curData.list.resetContent(true);
         }
     }
 
     static getItemIdxsByListIdx(items: Item[], listIdx: number): number[] {
-        let idxs: number[] = [];
+        const idxs: number[] = [];
         if (listIdx === 0) {
             for (let index = 0; index < items.length; index++) idxs[index] = index;
         } else if (listIdx === 1) {
@@ -137,7 +137,7 @@ export class PagePkg extends PagePkgBase {
 
     static getoutItemIdxsByType(items: Item[], idxsOut: number[], itemType: ItemType, cnsumType: CnsumType = null) {
         for (let index = 0; index < items.length; index++) {
-            let item = items[index];
+            const item = items[index];
             if (item.itemType === itemType && cnsumType && (item as Cnsum).cnsumType === cnsumType) {
                 idxsOut[idxsOut.length] = index;
             }
@@ -173,7 +173,7 @@ export class PagePkg extends PagePkgBase {
     }
 
     moveList(moveDis: number) {
-        let nextIdx = this.curListIdx + moveDis;
+        const nextIdx = this.curListIdx + moveDis;
         if (nextIdx < 0 || this.listDatas.length <= nextIdx) {
             cc.log('PUT can not move list to ', nextIdx);
             return;
@@ -195,25 +195,25 @@ export class PagePkg extends PagePkgBase {
     // -----------------------------------------------------------------
 
     onUseCell(cellIdx: number) {
-        let gameData = this.ctrlr.memory.gameData;
-        let idxList = this.listDatas[this.curListIdx].delegate.curItemIdxs;
-        let itemIdx = idxList[cellIdx];
-        let item = gameData.items[itemIdx];
+        const gameData = this.ctrlr.memory.gameData;
+        const idxList = this.listDatas[this.curListIdx].delegate.curItemIdxs;
+        const itemIdx = idxList[cellIdx];
+        const item = gameData.items[itemIdx];
         cc.log('PUT 使用道具：', item.id);
 
         // llytodo
         if (item.itemType === ItemType.cnsum) {
-            let cnsum = item as Cnsum;
+            const cnsum = item as Cnsum;
             if (cnsum.cnsumType === CnsumType.drink) {
                 this.ctrlr.pushPage(PagePet, {
                     cellPetType: PagePetCellType.selection,
                     name: '选择宠物',
                     callback: (cellIdx: number, curPet: Pet) => {
-                        let petModel = petModelDict[curPet.id];
-                        let drinkModel = drinkModelDict[cnsum.id];
+                        const petModel = petModelDict[curPet.id];
+                        const drinkModel = drinkModelDict[cnsum.id];
                         this.ctrlr.popAlert(`确定对“${petModel.cnName}”使用“${drinkModel.cnName}”吗？`, (key: number) => {
                             if (key === 1) {
-                                let rzt = GameDataTool.useDrinkToPet(gameData, curPet, cnsum);
+                                const rzt = GameDataTool.useDrinkToPet(gameData, curPet, cnsum);
                                 if (rzt === GameDataTool.SUC) {
                                     GameDataTool.deleteItem(gameData, itemIdx);
                                     this.ctrlr.popPage();
@@ -233,25 +233,25 @@ export class PagePkg extends PagePkgBase {
                             this.ctrlr.popToast('该武器成长等级已达到上限');
                             return;
                         }
-                        let equipModel = equipModelDict[equip.id];
-                        let eaModel = eqpAmplrModelDict[cnsum.id];
+                        const equipModel = equipModelDict[equip.id];
+                        const eaModel = eqpAmplrModelDict[cnsum.id];
                         if (equipModel.lv > eaModel.lvMax) {
                             this.ctrlr.popToast(`该武器等级超过“${eaModel.cnName}”等级上限Lv${eaModel.lvMax}\n无法使用`);
                             return;
                         }
-                        let needCount = Math.pow(2, equip.growth);
+                        const needCount = Math.pow(2, equip.growth);
                         if (needCount > cnsum.count) {
-                            let str = `该武器成长到${equip.growth + 1}需要${needCount}颗“${eaModel.cnName}”\n目前数量不足`;
+                            const str = `该武器成长到${equip.growth + 1}需要${needCount}颗“${eaModel.cnName}”\n目前数量不足`;
                             this.ctrlr.popToast(str);
                             return;
                         }
 
-                        let str =
+                        const str =
                             `确定使用${needCount}颗“${eaModel.cnName}”(共${cnsum.count}颗)\n` +
                             `提升“${equipModel.cnName}”的成长等级吗？`;
                         this.ctrlr.popAlert(str, (key: number) => {
                             if (key === 1) {
-                                let rzt = GameDataTool.growForEquip(gameData, equip);
+                                const rzt = GameDataTool.growForEquip(gameData, equip);
                                 if (rzt === GameDataTool.SUC) {
                                     GameDataTool.deleteItem(gameData, itemIdx);
                                     this.ctrlr.popToast(`“${equipModel.cnName}”的成长等级升至${equip.growth}级`);
@@ -267,8 +267,8 @@ export class PagePkg extends PagePkgBase {
         } else if (item.itemType === ItemType.equip) {
             this.ctrlr.pushPage(PagePkgEquip, { idx: itemIdx });
         } else if (item.itemType === ItemType.caughtPet) {
-            let caughtPet = item as CaughtPet;
-            let rzt = GameDataTool.addPet(gameData, caughtPet.petId, caughtPet.lv, caughtPet.rank, caughtPet.features);
+            const caughtPet = item as CaughtPet;
+            const rzt = GameDataTool.addPet(gameData, caughtPet.petId, caughtPet.lv, caughtPet.rank, caughtPet.features);
             if (rzt === GameDataTool.SUC) {
                 GameDataTool.deleteItem(gameData, itemIdx);
                 this.resetCurList();
@@ -277,22 +277,22 @@ export class PagePkg extends PagePkgBase {
     }
 
     onMoveUpCell(cellIdx: number) {
-        let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, cellIdx, cellIdx - 1);
+        const rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, cellIdx, cellIdx - 1);
         if (rzt === GameDataTool.SUC) this.resetCurList();
         else this.ctrlr.popToast(rzt);
     }
 
     onMoveDownCell(cellIdx: number) {
-        let rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, cellIdx, cellIdx + 1);
+        const rzt = GameDataTool.moveItemInList(this.ctrlr.memory.gameData, cellIdx, cellIdx + 1);
         if (rzt === GameDataTool.SUC) this.resetCurList();
         else if (rzt) this.ctrlr.popToast(rzt);
     }
 
     onRemoveCell(cellIdx: number) {
-        let gameData = this.ctrlr.memory.gameData;
-        let idxList = this.listDatas[this.curListIdx].delegate.curItemIdxs;
-        let itemIdx = idxList[cellIdx];
-        let item = gameData.items[itemIdx];
+        const gameData = this.ctrlr.memory.gameData;
+        const idxList = this.listDatas[this.curListIdx].delegate.curItemIdxs;
+        const itemIdx = idxList[cellIdx];
+        const item = gameData.items[itemIdx];
         cc.log('PUT 丢弃道具：', item.id);
 
         let name: string;
@@ -304,15 +304,15 @@ export class PagePkg extends PagePkgBase {
             name = '捕获中的' + petModelDict[(item as CaughtPet).petId].cnName;
         }
 
-        let str = `确定将“${name}”丢弃吗？\n` + '注意：丢弃后将无法找回哦！';
+        const str = `确定将“${name}”丢弃吗？\n` + '注意：丢弃后将无法找回哦！';
 
         if (item.itemType === ItemType.cnsum) {
             this.ctrlr.popAlert(
                 str,
                 (key: number) => {
                     if (key === 0) return;
-                    let count = key === 1 ? 1 : (item as Cnsum).count;
-                    let rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, itemIdx, count);
+                    const count = key === 1 ? 1 : (item as Cnsum).count;
+                    const rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, itemIdx, count);
                     if (rzt === GameDataTool.SUC) this.resetCurList();
                     else this.ctrlr.popToast(rzt);
                 },
@@ -322,7 +322,7 @@ export class PagePkg extends PagePkgBase {
         } else {
             this.ctrlr.popAlert(str, (key: number) => {
                 if (key === 1) {
-                    let rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, itemIdx);
+                    const rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, itemIdx);
                     if (rzt === GameDataTool.SUC) this.resetCurList();
                     else this.ctrlr.popToast(rzt);
                 }

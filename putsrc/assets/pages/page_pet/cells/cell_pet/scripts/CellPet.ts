@@ -58,7 +58,7 @@ export class CellPet extends ListViewCell {
 
     setData(pet: Pet) {
         this.curPet = pet;
-        let petModel: PetModel = petModelDict[pet.id];
+        const petModel: PetModel = petModelDict[pet.id];
 
         this.petNameLbl.string = petModel.cnName;
         this.lvLbl.string = `[L${pet.lv}${PetRankNames[pet.rank]}]`;
@@ -68,18 +68,18 @@ export class CellPet extends ListViewCell {
 
         this.petSp.node.color = EleColor[petModel.eleType];
 
-        let stateLbl = this.stateBtn.getComponentInChildren(cc.Label);
+        const stateLbl = this.stateBtn.getComponentInChildren(cc.Label);
         stateLbl.string = PetStateNames[pet.state];
         // llytodo stateLbl.node.color
 
         this.hideAllInfoNode();
         let index = 0;
-        let realPrvty = PetDataTool.getRealPrvty(pet);
+        const realPrvty = PetDataTool.getRealPrvty(pet);
         this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
         index++;
         for (const feature of pet.inbornFeatures) {
-            let cnName = featureModelDict[feature.id].cnBrief;
-            let lv = feature.lv;
+            const cnName = featureModelDict[feature.id].cnBrief;
+            const lv = feature.lv;
             this.setInfoNode(index, '天赋特性・' + cnName + String(lv), cc.Color.RED);
             index++;
         }
@@ -89,7 +89,7 @@ export class CellPet extends ListViewCell {
 
     hideAllInfoNode() {
         for (let index = 0; index < this.infoNodePool.length; index++) {
-            let node = this.infoNodePool[index];
+            const node = this.infoNodePool[index];
             if (node) node.opacity = 0;
         }
     }
@@ -104,7 +104,7 @@ export class CellPet extends ListViewCell {
         infoNode.opacity = 255;
 
         infoNode.color = color;
-        let lbl = infoNode.children[0].getComponent(cc.Label);
+        const lbl = infoNode.children[0].getComponent(cc.Label);
         lbl.string = str;
         CellPet.rerenderLbl(lbl);
         infoNode.getComponent(cc.Layout).updateLayout();

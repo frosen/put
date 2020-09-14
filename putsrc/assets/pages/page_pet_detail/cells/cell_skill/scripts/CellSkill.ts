@@ -45,13 +45,13 @@ export class CellSkill extends ListViewCell {
 
     setData(skillId: string) {
         this.skillId = skillId;
-        let skillModel: SkillModel = skillModelDict[skillId];
+        const skillModel: SkillModel = skillModelDict[skillId];
 
         this.nameLbl.string = skillModel.cnName;
-        let ele = EleTypeNames[skillModel.eleType];
-        let aim = SkillAimTypeCellNames[skillModel.aimType];
-        let dir = SkillDirTypeCellNames[skillModel.dirType];
-        let stp = SkillTypeCellNames[skillModel.skillType];
+        const ele = EleTypeNames[skillModel.eleType];
+        const aim = SkillAimTypeCellNames[skillModel.aimType];
+        const dir = SkillDirTypeCellNames[skillModel.dirType];
+        const stp = SkillTypeCellNames[skillModel.skillType];
         this.typeLbl.string = ele + aim + dir + stp;
         this.typeLbl.node.parent.color = EleColor[skillModel.eleType];
 
@@ -72,7 +72,7 @@ export class CellSkill extends ListViewCell {
 
         if (skillModel.mainBuffId) {
             this.buffLbl.node.parent.scaleX = 1;
-            let buffModel = buffModelDict[skillModel.mainBuffId];
+            const buffModel = buffModelDict[skillModel.mainBuffId];
             this.buffLbl.node.parent.color = EleColor[buffModel.eleType];
             this.buffLbl.string = buffModel.cnName;
         } else {

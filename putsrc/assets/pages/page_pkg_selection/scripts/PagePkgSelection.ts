@@ -56,7 +56,7 @@ export class PagePkgSelection extends PagePkgBase {
     }
 
     onPageShow() {
-        let items = this.ctrlr.memory.gameData.items;
+        const items = this.ctrlr.memory.gameData.items;
         this.lvd.initListData(items, this.curItemIdxs);
         this.list.resetContent(true);
     }
@@ -64,10 +64,10 @@ export class PagePkgSelection extends PagePkgBase {
     // -----------------------------------------------------------------
 
     onCellClick(cell: ListViewCell) {
-        let items = this.ctrlr.memory.gameData.items;
-        let cellIdx = cell.curCellIdx;
-        let itemIdx = this.curItemIdxs[cellIdx];
-        let item = items[itemIdx];
+        const items = this.ctrlr.memory.gameData.items;
+        const cellIdx = cell.curCellIdx;
+        const itemIdx = this.curItemIdxs[cellIdx];
+        const item = items[itemIdx];
         this.clickCallback(cellIdx, itemIdx, item);
     }
 

@@ -70,22 +70,22 @@ export class PagePkgEquip extends PageBase {
 
     resetList() {
         // set data
-        let items = this.ctrlr.memory.gameData.items;
-        let idxs = [];
+        const items = this.ctrlr.memory.gameData.items;
+        const idxs = [];
         PagePkg.getoutItemIdxsByType(items, idxs, ItemType.equip);
         idxs.push(GameDataTool.UNWIELD);
-        let itemDelegate = this.itemEquipList.delegate as PkgEquipItemLVD;
+        const itemDelegate = this.itemEquipList.delegate as PkgEquipItemLVD;
         itemDelegate.page = this;
         itemDelegate.initListData(items, idxs);
 
-        let pets = this.ctrlr.memory.gameData.pets;
-        let petDelegate = this.petEquipList.delegate as PkgEquipPetLVD;
+        const pets = this.ctrlr.memory.gameData.pets;
+        const petDelegate = this.petEquipList.delegate as PkgEquipPetLVD;
         petDelegate.page = this;
         petDelegate.initListData(pets);
 
         let cellIdx: number = -1;
         if (this.dataForInit) {
-            let selectedEquipIdx = this.dataForInit.idx;
+            const selectedEquipIdx = this.dataForInit.idx;
             if (!this.dataForInit.pet) {
                 for (let index = 0; index < idxs.length; index++) {
                     if (selectedEquipIdx === idxs[index]) {
@@ -95,8 +95,8 @@ export class PagePkgEquip extends PageBase {
                 }
                 if (cellIdx >= 0) this.itemEquipList.content.y = this.itemEquipList.getHeight(cellIdx);
             } else {
-                let petEquipDataList = petDelegate.dataList;
-                let curPet = this.dataForInit.pet;
+                const petEquipDataList = petDelegate.dataList;
+                const curPet = this.dataForInit.pet;
                 for (let index = 0; index < petEquipDataList.length; index++) {
                     const petEquipData = petEquipDataList[index];
                     if (petEquipData.pet === curPet && petEquipData.equipIndex === selectedEquipIdx) {
@@ -176,8 +176,8 @@ export class PagePkgEquip extends PageBase {
 
     setItemEquipCellPos() {
         if (!this.selectedItemEquipCell) return;
-        let wp = this.selectedItemEquipCell.node.convertToWorldSpaceAR(cc.v2(0, 0));
-        let realY = cc.v2(this.node.convertToNodeSpaceAR(wp)).y;
+        const wp = this.selectedItemEquipCell.node.convertToWorldSpaceAR(cc.v2(0, 0));
+        const realY = cc.v2(this.node.convertToNodeSpaceAR(wp)).y;
         this.itemEquipSelection.y = realY - 78;
     }
 
@@ -202,8 +202,8 @@ export class PagePkgEquip extends PageBase {
 
     setPetEquipCellPos() {
         if (!this.selectedPetEquipCell) return;
-        let wp = this.selectedPetEquipCell.node.convertToWorldSpaceAR(cc.v2(0, 0));
-        let realY = cc.v2(this.petEquipLayer.convertToNodeSpaceAR(wp)).y;
+        const wp = this.selectedPetEquipCell.node.convertToWorldSpaceAR(cc.v2(0, 0));
+        const realY = cc.v2(this.petEquipLayer.convertToNodeSpaceAR(wp)).y;
         this.petEquipSelection.y = realY - 78;
     }
 
@@ -220,10 +220,10 @@ export class PagePkgEquip extends PageBase {
 
     executeEquipChange(callback: () => void) {
         if (!this.selectedItemEquipCell || !this.selectedPetEquipCell) return;
-        let itemIdx = (this.selectedItemEquipCell as CellPkgEquip).curItemIdx || GameDataTool.UNWIELD;
-        let petLVD = this.petEquipList.delegate as PkgEquipPetLVD;
-        let data = petLVD.dataList[this.selectedPetEquipCell.curCellIdx];
-        let rzt = GameDataTool.wieldEquip(this.ctrlr.memory.gameData, itemIdx, data.pet, data.equipIndex);
+        const itemIdx = (this.selectedItemEquipCell as CellPkgEquip).curItemIdx || GameDataTool.UNWIELD;
+        const petLVD = this.petEquipList.delegate as PkgEquipPetLVD;
+        const data = petLVD.dataList[this.selectedPetEquipCell.curCellIdx];
+        const rzt = GameDataTool.wieldEquip(this.ctrlr.memory.gameData, itemIdx, data.pet, data.equipIndex);
         if (rzt === GameDataTool.SUC) {
             this.resetList();
             this.ctrlr.popToast('装备更新');

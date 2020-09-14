@@ -8,8 +8,9 @@ const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from 'scripts/ListViewCell';
 import { CnsumModel } from 'scripts/DataModel';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { MoneyTool } from 'scripts/Memory';
+import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
+import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 
 @ccclass
 export class CellTransaction extends ListViewCell {
@@ -28,7 +29,7 @@ export class CellTransaction extends ListViewCell {
     @property(cc.Button)
     rdcBtn: cc.Button = null;
 
-    cell: CellPkgCnsum;
+    cell: CellPkgBase;
 
     itemId: string;
     itemCount: number;
@@ -43,13 +44,18 @@ export class CellTransaction extends ListViewCell {
         this.rdcBtn.node.on(cc.Node.EventType.TOUCH_END, this.onRdcEnd.bind(this));
     }
 
-    init(cell: CellPkgCnsum) {
+    init(cell: CellPkgBase) {
         this.cell = cell;
         cell.node.parent = this.itemBaseNode;
     }
 
-    setData(itemIdx: number, model: CnsumModel) {
-        this.cell.setDataByModel(itemIdx, model);
+    setData(itemIdx: number, data: any, price: number) {
+        this.cell.setData(itemIdx, data);
+        this.setPrice(price);
+    }
+
+    setDataByModel(itemIdx: number, model: CnsumModel) {
+        (this.cell as CellPkgCnsum).setDataByModel(itemIdx, model);
         this.setPrice(model.price);
     }
 

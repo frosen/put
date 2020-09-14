@@ -45,7 +45,7 @@ export class PagePetLVD extends ListViewDelegate {
     }
 
     createCellForRow(listView: ListView, rowIdx: number): ListViewCell {
-        let cell = cc.instantiate(this.cellPetPrefab).getComponent(CellPet);
+        const cell = cc.instantiate(this.cellPetPrefab).getComponent(CellPet);
         if (this.cellType === PagePetCellType.normal) {
             cell.clickCallback = this.page.onCellClickDetailBtn.bind(this.page);
             cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
@@ -60,7 +60,7 @@ export class PagePetLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPet) {
-        let pet: Pet = this.curPets[rowIdx];
+        const pet: Pet = this.curPets[rowIdx];
         cell.setData(pet);
     }
 }

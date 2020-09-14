@@ -23,13 +23,13 @@ import { CellPkgMaterial } from '../cells/cell_pkg_material/scripts/CellPkgMater
 type CellPkg = CellPkgMoney & CellPkgDrink & CellPkgCatcher & CellPkgEqpAmplr & CellPkgEquip & CellPkgCaughtPet;
 type DataPkg = Money & Drink & Catcher & EqpAmplr & Equip & CaughtPet;
 
-let MONEY = 'M';
-let DRINK = 'D';
-let CATCHER = 'C';
-let EQPAMPLR = 'ea';
-let MATERIAL = 'ml';
-let EQUIP = 'E';
-let CPET = 'p';
+const MONEY = 'M';
+const DRINK = 'D';
+const CATCHER = 'C';
+const EQPAMPLR = 'ea';
+const MATERIAL = 'ml';
+const EQUIP = 'E';
+const CPET = 'p';
 
 export enum PagePkgCellType {
     normal = 1,
@@ -74,12 +74,12 @@ export class PagePkgLVD extends ListViewDelegate {
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        let item = this.curItems[this.curItemIdxs[rowIdx]];
+        const item = this.curItems[this.curItemIdxs[rowIdx]];
         switch (item.itemType) {
             case ItemType.money:
                 return MONEY;
             case ItemType.cnsum: {
-                let cnsumType = (item as Cnsum).cnsumType;
+                const cnsumType = (item as Cnsum).cnsumType;
                 if (cnsumType === CnsumType.drink) return DRINK;
                 else if (cnsumType === CnsumType.catcher) return CATCHER;
                 else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
@@ -131,7 +131,7 @@ export class PagePkgLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkg) {
-        let itemIdx = this.curItemIdxs[rowIdx];
+        const itemIdx = this.curItemIdxs[rowIdx];
         cell.setData(itemIdx, this.curItems[itemIdx] as DataPkg);
     }
 }

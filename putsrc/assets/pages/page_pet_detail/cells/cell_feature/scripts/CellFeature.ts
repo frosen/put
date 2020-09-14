@@ -40,13 +40,13 @@ export class CellFeature extends ListViewCell {
     setData(feature: Feature, type: FeatureGainType) {
         this.feature = feature;
         this.gainType = type;
-        let featureModel: FeatureModel = featureModelDict[feature.id];
+        const featureModel: FeatureModel = featureModelDict[feature.id];
 
         this.nameLbl.string = FeatureGainNames[type] + '特性・' + featureModel.cnBrief;
         this.lvLbl.string = `[L${feature.lv}]`;
 
-        let datas = FeatureDataTool.getDatas(feature.id, feature.lv);
-        let info = featureModel.getInfo(datas);
+        const datas = FeatureDataTool.getDatas(feature.id, feature.lv);
+        const info = featureModel.getInfo(datas);
         this.infoLbl.string = info;
     }
 

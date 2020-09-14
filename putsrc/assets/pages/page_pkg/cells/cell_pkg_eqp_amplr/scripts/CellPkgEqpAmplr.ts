@@ -22,7 +22,7 @@ export class CellPkgEqpAmplr extends CellPkgCnsum {
 
     setData(itemIdx: number, eqpAmplr: EqpAmplr) {
         super.setData(itemIdx, eqpAmplr);
-        let eqpAmplrModel = eqpAmplrModelDict[eqpAmplr.id];
+        const eqpAmplrModel = eqpAmplrModelDict[eqpAmplr.id];
         this.setModelData(eqpAmplrModel);
 
         this.setCount(eqpAmplr.count);

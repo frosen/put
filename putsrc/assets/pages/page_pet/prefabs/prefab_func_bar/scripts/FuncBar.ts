@@ -38,18 +38,18 @@ export class FuncBar extends cc.Component {
     }
 
     setBtns(datas: { str: string; callback: (cellIdx: number) => void }[]) {
-        let len = datas.length;
-        let startIdx = this.btns.length - len;
+        const len = datas.length;
+        const startIdx = this.btns.length - len;
         for (let index = 0; index < this.btns.length; index++) {
-            let btn = this.btns[index];
-            let lbl = this.lbls[index];
-            let baffle = this.baffles[index];
+            const btn = this.btns[index];
+            const lbl = this.lbls[index];
+            const baffle = this.baffles[index];
             if (index < startIdx) {
                 btn.scaleX = 0;
                 if (baffle) baffle.scaleX = 0;
             } else {
-                let dataIdx = index - startIdx;
-                let data = datas[dataIdx];
+                const dataIdx = index - startIdx;
+                const data = datas[dataIdx];
 
                 btn.scaleX = 1;
                 lbl.string = data.str;
@@ -67,14 +67,14 @@ export class FuncBar extends cc.Component {
 
     showFuncBar(cellIdx: number, cellNode: cc.Node) {
         this.funcBarShowIdx = cellIdx;
-        let wp = cellNode.convertToWorldSpaceAR(cc.v2(0, 0));
+        const wp = cellNode.convertToWorldSpaceAR(cc.v2(0, 0));
         let realY = cc.v2(this.node.convertToNodeSpaceAR(wp)).y;
 
         realY -= 85;
 
-        let changeBar = () => {
+        const changeBar = () => {
             this.funcBarNode.y = realY;
-            let atBottom = this.funcBarShowIdx < 5;
+            const atBottom = this.funcBarShowIdx < 5;
             this.arrow.scaleY = atBottom ? 1 : -1;
             this.bg.y = atBottom ? -90 : 90;
         };

@@ -39,7 +39,7 @@ export class PagePet extends PageBase {
         if (CC_EDITOR) return;
         this.getComponent(PagePetLVD).page = this;
 
-        let funcBarNode = cc.instantiate(this.funcBarPrefab);
+        const funcBarNode = cc.instantiate(this.funcBarPrefab);
         funcBarNode.parent = this.node.getChildByName('root');
 
         this.funcBar = funcBarNode.getComponent(FuncBar);
@@ -62,7 +62,7 @@ export class PagePet extends PageBase {
      */
     setData(data: any) {
         if (data) {
-            let lvd = this.list.delegate as PagePetLVD;
+            const lvd = this.list.delegate as PagePetLVD;
             lvd.cellType = data.cellPetType;
             this.specialPageName = data.name;
             this.clickCallback = data.callback;
@@ -80,9 +80,9 @@ export class PagePet extends PageBase {
     }
 
     onPageShow() {
-        let lvd = this.list.delegate as PagePetLVD;
+        const lvd = this.list.delegate as PagePetLVD;
         if (lvd.cellType === PagePetCellType.normal) {
-            let curDirtyToken = this.ctrlr.memory.dirtyToken;
+            const curDirtyToken = this.ctrlr.memory.dirtyToken;
             if (this.dirtyToken !== curDirtyToken) {
                 this.dirtyToken = curDirtyToken;
                 this.list.resetContent(true);
@@ -113,7 +113,7 @@ export class PagePet extends PageBase {
     // -----------------------------------------------------------------
 
     changePetState(pet: Pet) {
-        let gameData = this.ctrlr.memory.gameData;
+        const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
             this.ctrlr.popToast('无法改变状态！探索中，备战状态的宠物不得少于两只');
             return;
@@ -124,28 +124,28 @@ export class PagePet extends PageBase {
     }
 
     onMoveUpCell(cellIdx: number) {
-        let rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, cellIdx, cellIdx - 1);
+        const rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, cellIdx, cellIdx - 1);
         if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
     }
 
     onMoveDownCell(cellIdx: number) {
-        let rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, cellIdx, cellIdx + 1);
+        const rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, cellIdx, cellIdx + 1);
         if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
     }
 
     onRemoveCell(cellIdx: number) {
-        let pet = this.ctrlr.memory.gameData.pets[cellIdx];
-        let gameData = this.ctrlr.memory.gameData;
+        const pet = this.ctrlr.memory.gameData.pets[cellIdx];
+        const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
             this.ctrlr.popToast('无法改变状态！探索中，备战状态的宠物不得少于两只');
             return;
         }
 
-        let name = (petModelDict[pet.id] as PetModel).cnName;
-        let str = `确定放生宠物“${name}”？\n` + '注意：放生后将无法找回！';
+        const name = (petModelDict[pet.id] as PetModel).cnName;
+        const str = `确定放生宠物“${name}”？\n` + '注意：放生后将无法找回！';
         this.ctrlr.popAlert(str, (key: number) => {
             if (key === 1) {
-                let rzt = GameDataTool.deletePet(gameData, cellIdx);
+                const rzt = GameDataTool.deletePet(gameData, cellIdx);
                 if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
                 else this.ctrlr.popToast(rzt);
             }

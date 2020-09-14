@@ -439,7 +439,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '灵',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let selfTeam = bData.ctrlr.getTeam(pet);
+            const selfTeam = bData.ctrlr.getTeam(pet);
             selfTeam.mp = Math.min(selfTeam.mp + datas[0], selfTeam.mpMax);
         },
         getInfo(datas: number[]): string {
@@ -451,7 +451,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '猿',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let selfTeam = bData.ctrlr.getTeam(pet);
+            const selfTeam = bData.ctrlr.getTeam(pet);
             selfTeam.rage = Math.min(selfTeam.rage + datas[0], RageMax);
         },
         getInfo(datas: number[]): string {
@@ -627,7 +627,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '狼',
         dataAreas: [[0.02, 0.02]],
         onCasting(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let combo = bData.ctrlr.realBattle.combo - 1;
+            const combo = bData.ctrlr.realBattle.combo - 1;
             if (combo > 0) aim.hp -= bData.finalDmg * datas[0] * combo;
         },
         getInfo(datas: number[]): string {
@@ -675,7 +675,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '妖',
         dataAreas: [[1, 1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let team = bData.ctrlr.getTeam(pet);
+            const team = bData.ctrlr.getTeam(pet);
             team.mp = Math.min(team.mp + datas[0], team.mpMax);
         },
         getInfo(datas: number[]): string {
@@ -698,9 +698,9 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '橡',
         dataAreas: [[0.1, 0.09]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let team = bData.ctrlr.getTeam(pet);
-            let dmg = bData.finalDmg * datas[0];
-            let rdcMp = dmg / (2 * pet.pet.lv);
+            const team = bData.ctrlr.getTeam(pet);
+            const dmg = bData.finalDmg * datas[0];
+            const rdcMp = dmg / (2 * pet.pet.lv);
             if (team.mp >= rdcMp) {
                 team.mp -= rdcMp;
                 pet.hp += dmg;
@@ -715,7 +715,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '雀',
         dataAreas: [[0.02, 0.02]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let battleType = BattleController.getBattleType(caster, bData.skillModel);
+            const battleType = BattleController.getBattleType(caster, bData.skillModel);
             if (battleType === BattleType.shoot) pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
@@ -727,7 +727,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '松',
         dataAreas: [[0.02, 0.02]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let battleType = BattleController.getBattleType(caster, bData.skillModel);
+            const battleType = BattleController.getBattleType(caster, bData.skillModel);
             if (battleType === BattleType.assassinate) pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
@@ -800,7 +800,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '链',
         dataAreas: [[0.1, 0.05]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let petsAlive = bData.ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
+            const petsAlive = bData.ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
             if (petsAlive.length > 0) {
                 let dmg = bData.finalDmg * Math.min(datas[0], 1);
                 pet.hp += dmg;
@@ -843,7 +843,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '鹿',
         dataAreas: [[0.04, 0.04]],
         onHealing(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            let combo = bData.ctrlr.realBattle.combo - 1;
+            const combo = bData.ctrlr.realBattle.combo - 1;
             if (combo > 0) aim.hp += Math.abs(bData.finalDmg) * datas[0] * combo;
         },
         getInfo(datas: number[]): string {
@@ -904,7 +904,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         dataAreas: [[0.03, 0.02]],
         onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
             if (pet === caster) {
-                let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0);
+                const petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0);
                 for (const petAlive of petsAlive) {
                     petAlive.hp = Math.min(petAlive.hp + aim.hpMax * datas[0], petAlive.hpMax);
                     ctrlr.page.doHurt(petAlive.beEnemy, petAlive.idx, petAlive.hp, petAlive.hpMax, 0, false, 0);
@@ -920,7 +920,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '神',
         dataAreas: [[8, 8]],
         onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
-            let team = ctrlr.getTeam(pet);
+            const team = ctrlr.getTeam(pet);
             team.mp = Math.min(team.mp + datas[0], team.mpMax);
         },
         getInfo(datas: number[]): string {
@@ -932,7 +932,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '梦',
         dataAreas: [[1, 1]],
         onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
-            let cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 2 : 1;
+            const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 2 : 1;
             for (const skilllData of pet.skillDatas) skilllData.cd = Math.max(skilllData.cd - cd, 0);
         },
         getInfo(datas: number[]): string {
@@ -944,7 +944,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '尽',
         dataAreas: [[0.1, 0.05]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
-            let hp = pet.hpMax * rate(datas[0], 0.1, 0.4);
+            const hp = pet.hpMax * rate(datas[0], 0.1, 0.4);
             caster.hp = Math.min(caster.hp - hp, 1);
         },
         getInfo(datas: number[]): string {
@@ -956,8 +956,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '防',
         dataAreas: [[1, 1]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
-            let cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
-            let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
+            const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
+            const petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
             for (const petAlive of petsAlive) ctrlr.addBuff(petAlive, pet, 'FangHu', cd);
         },
         getInfo(datas: number[]): string {
@@ -969,8 +969,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '春',
         dataAreas: [[1, 1]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
-            let cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
-            let petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
+            const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
+            const petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
             for (const petAlive of petsAlive) ctrlr.addBuff(petAlive, pet, 'HuiChun', cd);
         },
         getInfo(datas: number[]): string {
@@ -979,4 +979,4 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     }
 };
 
-export let featureModelDict = FeatureModelDict as { [key: string]: FeatureModel };
+export const featureModelDict = FeatureModelDict as { [key: string]: FeatureModel };

@@ -73,26 +73,26 @@ export class PkgEquipPetLVD extends ListViewDelegate {
         if (cellId === PET_INFO) {
             return cc.instantiate(this.cellPetBriefPrefab).getComponent(CellPetBrief);
         } else if (cellId === EQUIP) {
-            let cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
+            const cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
             cell.setFuncBtnUI(this.page.detailBtnSFrame);
             cell.clickCallback = this.page.onPetCellClick.bind(this.page);
             cell.funcBtnCallback = this.page.onPetCellClickFuncBtn.bind(this.page);
             return cell;
         } else if (cellId === BLANK) {
-            let cell = cc.instantiate(this.cellPkgEquipBlankPrefab).getComponent(CellPkgEquipBlank);
+            const cell = cc.instantiate(this.cellPkgEquipBlankPrefab).getComponent(CellPkgEquipBlank);
             cell.clickCallback = this.page.onPetCellClick.bind(this.page);
             return cell;
         }
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkgEquip & CellPetBrief) {
-        let data = this.dataList[rowIdx];
+        const data = this.dataList[rowIdx];
         if (data.equipIndex === -1) {
-            let pet = data.pet;
-            let petModel = petModelDict[pet.id];
+            const pet = data.pet;
+            const petModel = petModelDict[pet.id];
             (cell as CellPetBrief).setData(petModel.cnName, pet.state);
         } else {
-            let equip = data.equip;
+            const equip = data.equip;
             if (equip) (cell as CellPkgEquip).setData(-1, equip);
         }
     }

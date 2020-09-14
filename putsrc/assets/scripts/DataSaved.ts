@@ -186,6 +186,11 @@ export class PADExpl extends PADBase {
     doneStep: number;
 }
 
+export class PADEqpMkt extends PADBase {
+    updateTime: number;
+    eqps: Equip[];
+}
+
 export class PosData {
     id: string;
     actDict: { [key: string]: PADBase };

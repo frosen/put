@@ -19,10 +19,10 @@ import { CellPkgMaterial } from 'pages/page_pkg/cells/cell_pkg_material/scripts/
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { PageActShop, ShopCountMax } from './PageActShop';
 
-let DRINK = 'D';
-let CATCHER = 'C';
-let EQPAMPLR = 'ea';
-let MATERIAL = 'ml';
+const DRINK = 'D';
+const CATCHER = 'C';
+const EQPAMPLR = 'ea';
+const MATERIAL = 'ml';
 
 @ccclass
 export class PageActShopLVD extends ListViewDelegate {
@@ -48,8 +48,8 @@ export class PageActShopLVD extends ListViewDelegate {
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        let goodsId = this.page.goodsIds[rowIdx];
-        let cnsumType = CnsumDataTool.getTypeById(goodsId);
+        const goodsId = this.page.goodsIds[rowIdx];
+        const cnsumType = CnsumDataTool.getTypeById(goodsId);
         if (cnsumType === CnsumType.drink) return DRINK;
         else if (cnsumType === CnsumType.catcher) return CATCHER;
         else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
@@ -57,7 +57,7 @@ export class PageActShopLVD extends ListViewDelegate {
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        let cell = cc.instantiate(this.cellTransPrefab).getComponent(CellTransaction);
+        const cell = cc.instantiate(this.cellTransPrefab).getComponent(CellTransaction);
         cell.addCallback = this.page.onCellAddCount.bind(this.page);
         cell.rdcCallback = this.page.onCellRdcCount.bind(this.page);
 
@@ -86,10 +86,10 @@ export class PageActShopLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellTransaction) {
-        let goodsId = this.page.goodsIds[rowIdx];
-        cell.setData(rowIdx, CnsumDataTool.getModelById(goodsId));
+        const goodsId = this.page.goodsIds[rowIdx];
+        cell.setDataByModel(rowIdx, CnsumDataTool.getModelById(goodsId));
 
-        let count = this.page.countList[rowIdx] || 0;
+        const count = this.page.countList[rowIdx] || 0;
         cell.setCount(count, ShopCountMax);
     }
 }

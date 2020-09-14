@@ -22,7 +22,7 @@ export class CellPkgMaterial extends CellPkgCnsum {
 
     setData(itemIdx: number, material: Material) {
         super.setData(itemIdx, material);
-        let materialModel = materialModelDict[material.id];
+        const materialModel = materialModelDict[material.id];
         this.setModelData(materialModel);
         this.setCount(material.count);
     }

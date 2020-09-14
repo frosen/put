@@ -4,7 +4,7 @@
  * luleyan
  */
 
-export let featureLvsByPetLv: number[][] = [
+export const featureLvsByPetLv: number[][] = [
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],

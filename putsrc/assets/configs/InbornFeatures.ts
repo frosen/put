@@ -4,7 +4,7 @@
  * luleyan
  */
 
-export let inbornFeatures: string[] = [
+export const inbornFeatures: string[] = [
     'baseStrength',
     'baseConcentration',
     'baseDurability',

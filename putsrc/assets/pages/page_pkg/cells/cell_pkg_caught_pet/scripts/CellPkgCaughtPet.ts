@@ -27,7 +27,7 @@ export class CellPkgCaughtPet extends CellPkgBase {
 
     setData(itemIdx: number, caughtPet: CaughtPet) {
         super.setData(itemIdx, caughtPet);
-        let petModel: PetModel = petModelDict[caughtPet.petId];
+        const petModel: PetModel = petModelDict[caughtPet.petId];
 
         this.nameLbl.string = '捕获：' + petModel.cnName;
         this.lvLbl.string = `[L${caughtPet.lv}${PetRankNames[caughtPet.rank]}]`;
@@ -35,8 +35,8 @@ export class CellPkgCaughtPet extends CellPkgBase {
         this.hideAllInfoNode();
         let index = 0;
         for (const feature of caughtPet.features) {
-            let cnName = featureModelDict[feature.id].cnBrief;
-            let lv = feature.lv;
+            const cnName = featureModelDict[feature.id].cnBrief;
+            const lv = feature.lv;
             this.setInfoNode(index, '天赋特性・' + cnName + String(lv), cc.Color.RED);
             index++;
         }
@@ -46,7 +46,7 @@ export class CellPkgCaughtPet extends CellPkgBase {
 
     hideAllInfoNode() {
         for (let index = 0; index < this.infoNodePool.length; index++) {
-            let node = this.infoNodePool[index];
+            const node = this.infoNodePool[index];
             if (node) node.opacity = 0;
         }
     }
@@ -61,7 +61,7 @@ export class CellPkgCaughtPet extends CellPkgBase {
         infoNode.opacity = 255;
 
         infoNode.color = color;
-        let lbl = infoNode.children[0].getComponent(cc.Label);
+        const lbl = infoNode.children[0].getComponent(cc.Label);
         lbl.string = str;
         CellPkgBase.rerenderLbl(lbl);
         infoNode.getComponent(cc.Layout).updateLayout();

@@ -122,7 +122,7 @@ export class PageActShop extends PageBase {
 
         if (this.totalCount + realCount + gameData.weight > GameDataTool.getItemCountMax(gameData)) {
             this.ctrlr.popToast('道具数量超限了');
-            let left = GameDataTool.getItemCountMax(gameData) - gameData.weight - this.totalCount;
+            const left = GameDataTool.getItemCountMax(gameData) - gameData.weight - this.totalCount;
             if (left === 0) return;
             realCount = left;
         }
@@ -141,8 +141,6 @@ export class PageActShop extends PageBase {
         cell.setCount(curCount, ShopCountMax);
         this.changeTotal();
     }
-
-    onCellClick(cell: CellPkgCnsum) {}
 
     onCellClickDetailBtn(cell: CellPkgCnsum) {}
 }

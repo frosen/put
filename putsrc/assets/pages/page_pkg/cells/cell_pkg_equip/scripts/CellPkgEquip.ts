@@ -61,14 +61,14 @@ export class CellPkgEquip extends CellPkgBase {
 
     setData(itemIdx: number, equip: Equip) {
         super.setData(itemIdx, equip);
-        let equipModel = equipModelDict[equip.id];
+        const equipModel = equipModelDict[equip.id];
         this.nameLbl.string = EquipDataTool.getCnName(equip);
         this.nameLbl.node.color = RankColor[equipModel.rank];
         this.lvLbl.string = `[L${equipModel.lv}${equip.growth > 0 ? `+${equip.growth}` : ''}]`;
 
         if (equip.skillId) {
-            let skillModel = skillModelDict[equip.skillId];
-            let typeStr = skillModel.skillType === SkillType.ultimate ? '绝・' : '技・';
+            const skillModel = skillModelDict[equip.skillId];
+            const typeStr = skillModel.skillType === SkillType.ultimate ? '绝・' : '技・';
             this.skillLbl.string = typeStr + skillModel.cnName;
 
             this.skillLbl.node.parent.opacity = 255;
@@ -82,22 +82,22 @@ export class CellPkgEquip extends CellPkgBase {
         CellPkgBase.rerenderLbl(this.skillLbl);
         for (const layout of this.layouts) layout.updateLayout();
 
-        let attriInfos = [];
-        let attris = EquipDataTool.getFinalAttris(equip);
+        const attriInfos = [];
+        const attris = EquipDataTool.getFinalAttris(equip);
         for (const key in attris) {
-            let value = attris[key];
+            const value = attris[key];
             if (value > 0) attriInfos.push({ str: AttriStrings[key] + getNumStr(value), c: AttriColors[key] });
         }
 
         for (let index = 0; index < equip.selfFeatureLvs.length; index++) {
             const id = equipModel.featureIds[index];
-            let featureModel = featureModelDict[id];
-            let cnName = featureModel.cnBrief;
+            const featureModel = featureModelDict[id];
+            const cnName = featureModel.cnBrief;
             const lv = equip.selfFeatureLvs[index];
             attriInfos.push({ str: cnName + String(lv), c: cc.Color.RED });
         }
         for (const feature of equip.affixes) {
-            let featureModel = featureModelDict[feature.id];
+            const featureModel = featureModelDict[feature.id];
             attriInfos.push({ str: featureModel.cnBrief + String(feature.lv), c: cc.Color.RED });
         }
 
@@ -106,7 +106,7 @@ export class CellPkgEquip extends CellPkgBase {
             const { str, c } = attriInfos[attriIndex];
             let infoNodeData = this.infoNodeDataPool[attriIndex];
             if (!infoNodeData) {
-                let infoNode = cc.instantiate(this.infoNodePrefab);
+                const infoNode = cc.instantiate(this.infoNodePrefab);
                 infoNode.parent = this.infoLayer;
                 infoNodeData = {
                     infoNode,
@@ -115,7 +115,7 @@ export class CellPkgEquip extends CellPkgBase {
                 };
                 this.infoNodeDataPool[attriIndex] = infoNodeData;
             }
-            let { infoNode, lbl, layout } = infoNodeData;
+            const { infoNode, lbl, layout } = infoNodeData;
 
             infoNode.opacity = 255;
             infoNode.color = c;

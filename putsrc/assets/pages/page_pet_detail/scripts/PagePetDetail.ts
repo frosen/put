@@ -33,10 +33,10 @@ export class PagePetDetail extends PageBase {
         super.onLoad();
         if (CC_EDITOR) return;
 
-        let lvd = this.getComponent(PagePetDetailLVD);
+        const lvd = this.getComponent(PagePetDetailLVD);
         lvd.page = this;
 
-        let funcBarNode = cc.instantiate(this.funcBarPrefab);
+        const funcBarNode = cc.instantiate(this.funcBarPrefab);
         funcBarNode.parent = this.node;
 
         this.funcBar = funcBarNode.getComponent(FuncBar);
@@ -57,20 +57,20 @@ export class PagePetDetail extends PageBase {
     }
 
     onPageShow() {
-        let lvd = this.getComponent(PagePetDetailLVD);
+        const lvd = this.getComponent(PagePetDetailLVD);
         lvd.curPet = this.curPet;
 
-        let pet2 = new Pet2();
+        const pet2 = new Pet2();
         pet2.setData(this.curPet);
         lvd.curPet2 = pet2;
 
-        let curDirtyToken = this.ctrlr.memory.dirtyToken;
+        const curDirtyToken = this.ctrlr.memory.dirtyToken;
         if (this.dirtyToken !== curDirtyToken) {
             this.dirtyToken = curDirtyToken;
 
-            let featureDatas: { feature: Feature; type: FeatureGainType }[] = [];
+            const featureDatas: { feature: Feature; type: FeatureGainType }[] = [];
             for (const feature of this.curPet.inbornFeatures) featureDatas.push({ feature, type: FeatureGainType.inborn });
-            let selfFeatures = PetDataTool.getSelfFeaturesByCurLv(this.curPet);
+            const selfFeatures = PetDataTool.getSelfFeaturesByCurLv(this.curPet);
             for (const feature of selfFeatures) featureDatas.push({ feature, type: FeatureGainType.self });
             for (const feature of this.curPet.learnedFeatures) featureDatas.push({ feature, type: FeatureGainType.learned });
             lvd.featureDatas = featureDatas;
@@ -103,7 +103,7 @@ export class PagePetDetail extends PageBase {
     }
 
     onMoveUpCell(cellIdx: number) {
-        let rzt = GameDataTool.moveEquipInPetList(
+        const rzt = GameDataTool.moveEquipInPetList(
             this.ctrlr.memory.gameData,
             this.curPet,
             this.curEquipIdx,
@@ -113,7 +113,7 @@ export class PagePetDetail extends PageBase {
     }
 
     onMoveDownCell(cellIdx: number) {
-        let rzt = GameDataTool.moveEquipInPetList(
+        const rzt = GameDataTool.moveEquipInPetList(
             this.ctrlr.memory.gameData,
             this.curPet,
             this.curEquipIdx,

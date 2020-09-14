@@ -88,8 +88,8 @@ function numStr(n: number): string {
 }
 
 function attriTip(attri: number, attriOri: number, tip: string): string {
-    let strO = numStr(attriOri);
-    let strD = numStr(attri - attriOri);
+    const strO = numStr(attriOri);
+    const strD = numStr(attri - attriOri);
     return `基础值 ${strO}\n装备特性加成 ${strD}\n${tip}`;
 }
 
@@ -213,9 +213,9 @@ export class PagePetDetailLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: DetailCell) {
-        let pet = this.curPet;
-        let pet2 = this.curPet2;
-        let petModel: PetModel = petModelDict[pet.id];
+        const pet = this.curPet;
+        const pet2 = this.curPet2;
+        const petModel: PetModel = petModelDict[pet.id];
 
         // 第一组
         if (rowIdx === 0) {
@@ -227,9 +227,9 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData1('默契值', String(PetDataTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
             let drinkStr: string;
             if (pet.drink) {
-                let drinkModel = drinkModelDict[pet.drink.id];
-                let endTime = pet.drinkTime + drinkModel.dura;
-                let leftMins = Math.floor((endTime - Date.now()) / 1000 / 60);
+                const drinkModel = drinkModelDict[pet.drink.id];
+                const endTime = pet.drinkTime + drinkModel.dura;
+                const leftMins = Math.floor((endTime - Date.now()) / 1000 / 60);
                 drinkStr = `${drinkModel.cnName} [${leftMins >= 1 ? leftMins : '<1'}min]`;
             } else drinkStr = '无';
             cell.setData2('饮品', drinkStr, DRINK_TIP);
@@ -284,8 +284,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData1('主人', pet.master);
             cell.setData2('唯一标识', String(pet.catchIdx));
         } else if (rowIdx === 16) {
-            let date = new Date(pet.catchTime);
-            let Y = date.getFullYear() % 100,
+            const date = new Date(pet.catchTime);
+            const Y = date.getFullYear() % 100,
                 m = date.getMonth() + 1,
                 d = date.getDate(),
                 H = date.getHours(),
@@ -297,9 +297,9 @@ export class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx === 17) {
             cell.setData('持有装备');
         } else if (rowIdx <= 20) {
-            let equips = this.curPet.equips;
-            let equipIndex = rowIdx - 18;
-            let equip = equips[equipIndex];
+            const equips = this.curPet.equips;
+            const equipIndex = rowIdx - 18;
+            const equip = equips[equipIndex];
             if (equip) {
                 (cell as CellPkgEquip).setData(-1, equip);
                 (cell as CellPkgEquip).clickCallback = (cell: CellPkgEquip) => {
@@ -318,8 +318,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx === 21) {
             cell.setData(`宠物技能（${this.curPet2.skillIds.length}）`);
         } else if (rowIdx <= 21 + this.curPet2.skillIds.length) {
-            let skillIdx = rowIdx - 22;
-            let skillId = this.curPet2.skillIds[skillIdx];
+            const skillIdx = rowIdx - 22;
+            const skillId = this.curPet2.skillIds[skillIdx];
             cell.setData(skillId);
             (cell as CellSkill).clickCallback = (cell: CellSkill) => {
                 this.page.onSkillCellClick(skillIdx, cell);
@@ -329,7 +329,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx === 21 + this.curPet2.skillIds.length + 1) {
             cell.setData(`宠物特性（${this.featureDatas.length}）`, FEATURE_TIP);
         } else if (rowIdx <= 21 + this.curPet2.skillIds.length + 1 + this.featureDatas.length) {
-            let featureData = this.featureDatas[rowIdx - 21 - this.curPet2.skillIds.length - 1 - 1];
+            const featureData = this.featureDatas[rowIdx - 21 - this.curPet2.skillIds.length - 1 - 1];
             cell.setData(featureData.feature, featureData.type);
         }
     }

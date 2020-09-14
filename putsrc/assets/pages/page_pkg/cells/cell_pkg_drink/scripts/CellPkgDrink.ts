@@ -31,7 +31,7 @@ export class CellPkgDrink extends CellPkgCnsum {
 
     setData(itemIdx: number, drink: Drink) {
         super.setData(itemIdx, drink);
-        let drinkModel = drinkModelDict[drink.id];
+        const drinkModel = drinkModelDict[drink.id];
         this.setModelData(drinkModel);
 
         this.setCount(drink.count);

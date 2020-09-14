@@ -40,8 +40,8 @@ export class PagePkgTouchLayer extends cc.Component {
 
     onGestureMoved(event: cc.Event.EventTouch) {
         if (this.touchId === null || event.getID() !== this.touchId) return;
-        let curX = event.getLocationX();
-        let curY = event.getLocationY();
+        const curX = event.getLocationX();
+        const curY = event.getLocationY();
         if (Math.abs(curY - this.lastY) > Math.abs(curX - this.lastX)) {
             this.touchId = null;
         }
@@ -51,7 +51,7 @@ export class PagePkgTouchLayer extends cc.Component {
         if (this.touchId === null || event.getID() !== this.touchId) return;
         this.touchId = null;
 
-        let curX = event.getLocationX();
+        const curX = event.getLocationX();
         if (curX < this.startedX - MOVE_DIS) {
             this.goRight();
         } else if (this.startedX + MOVE_DIS < curX) {
