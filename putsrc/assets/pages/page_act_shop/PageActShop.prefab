@@ -24,10 +24,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 28
+        "__id__": 29
       },
       {
-        "__id__": 29
+        "__id__": 25
       }
     ],
     "_prefab": {
@@ -98,11 +98,11 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 26
+        "__id__": 27
       }
     ],
     "_prefab": {
-      "__id__": 27
+      "__id__": 28
     },
     "_opacity": 255,
     "_color": {
@@ -330,7 +330,7 @@
       }
     ],
     "_prefab": {
-      "__id__": 25
+      "__id__": 26
     },
     "_opacity": 255,
     "_color": {
@@ -891,8 +891,35 @@
       "__id__": 8
     },
     "_enabled": true,
-    "delegate": null,
+    "delegate": {
+      "__id__": 25
+    },
     "fixedHeight": 220,
+    "_id": ""
+  },
+  {
+    "__type__": "d9dc8BDKxxD8K63yYoYwDD5",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "cellTransPrefab": {
+      "__uuid__": "d8c49788-73a5-4ac5-b802-ddf5a785ab57"
+    },
+    "cellPkgDrinkPrefab": {
+      "__uuid__": "d6eb18f8-4afe-48aa-8a1a-94199e9501c0"
+    },
+    "cellPkgCatcherPrefab": {
+      "__uuid__": "6fe1a8aa-0f3f-4ec4-b8cc-871b71820db9"
+    },
+    "cellPkgEqpAmplrPrefab": {
+      "__uuid__": "69b80add-31e8-4a6c-9521-31b471236021"
+    },
+    "cellPkgMaterialPrefab": {
+      "__uuid__": "922e4ea5-aa44-45d3-89ae-1dcfb7624677"
+    },
     "_id": ""
   },
   {
@@ -957,31 +984,6 @@
     },
     "detailBtnSFrame": {
       "__uuid__": "c71ebd49-c6f8-4cdb-9d4f-fd9880b27cc2"
-    },
-    "_id": ""
-  },
-  {
-    "__type__": "d9dc8BDKxxD8K63yYoYwDD5",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "cellTransPrefab": {
-      "__uuid__": "d8c49788-73a5-4ac5-b802-ddf5a785ab57"
-    },
-    "cellPkgDrinkPrefab": {
-      "__uuid__": "d6eb18f8-4afe-48aa-8a1a-94199e9501c0"
-    },
-    "cellPkgCatcherPrefab": {
-      "__uuid__": "6fe1a8aa-0f3f-4ec4-b8cc-871b71820db9"
-    },
-    "cellPkgEqpAmplrPrefab": {
-      "__uuid__": "69b80add-31e8-4a6c-9521-31b471236021"
-    },
-    "cellPkgMaterialPrefab": {
-      "__uuid__": "922e4ea5-aa44-45d3-89ae-1dcfb7624677"
     },
     "_id": ""
   },

@@ -17,7 +17,7 @@ import { CellPkgCatcher } from 'pages/page_pkg/cells/cell_pkg_catcher/scripts/Ce
 import { CellPkgEqpAmplr } from 'pages/page_pkg/cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
 import { CellPkgMaterial } from 'pages/page_pkg/cells/cell_pkg_material/scripts/CellPkgMaterial';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
-import { PageActShop } from './PageActShop';
+import { PageActShop, ShopCountMax } from './PageActShop';
 
 let DRINK = 'D';
 let CATCHER = 'C';
@@ -49,7 +49,7 @@ export class PageActShopLVD extends ListViewDelegate {
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
         let goodsId = this.page.goodsIds[rowIdx];
-        let cnsumType = CnsumDataTool.getTypeById[goodsId];
+        let cnsumType = CnsumDataTool.getTypeById(goodsId);
         if (cnsumType === CnsumType.drink) return DRINK;
         else if (cnsumType === CnsumType.catcher) return CATCHER;
         else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
@@ -89,7 +89,7 @@ export class PageActShopLVD extends ListViewDelegate {
         let goodsId = this.page.goodsIds[rowIdx];
         cell.setData(rowIdx, CnsumDataTool.getModelById(goodsId));
 
-        let count = this.page.countList[rowIdx];
-        cell.setCount(count);
+        let count = this.page.countList[rowIdx] || 0;
+        cell.setCount(count, ShopCountMax);
     }
 }

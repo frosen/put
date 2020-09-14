@@ -30,7 +30,10 @@ import {
     Material,
     UpdCntByStep,
     PosData,
-    PADExpl
+    PADExpl,
+    ZUAN,
+    JIN,
+    KUAI
 } from './DataSaved';
 import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType, CnsumModel } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
@@ -344,6 +347,7 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'CiLiPan1', 2);
         GameDataTool.addCnsum(this.gameData, 'DaMoShi', 2);
         GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 2);
+        GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += 1000));
 
         GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
 
@@ -539,20 +543,50 @@ export class CnsumDataTool {
 }
 
 export class MoneyTool {
-    static getStr(count: number): string {
+    static getEach(count: number): { zuan: number; jin: number; kuai: number } {
         const ZuanRate = 100000000;
         const JinRate = 10000;
         const zuan = Math.floor(count / ZuanRate);
-        const zuanStr = zuan > 0 ? String(zuan) + '钻' : '';
 
         count %= ZuanRate;
         const jin = Math.floor(count / JinRate);
-        const jinStr = jin > 0 ? '  ' + String(jin) + '金' : '';
 
         const kuai = count % JinRate;
-        const kuaiStr = kuai > 0 || (zuan === 0 && jin === 0) ? '  ' + String(kuai) + '块' : '';
 
+        return { zuan, jin, kuai };
+    }
+
+    static getStr(count: number): string {
+        let { zuan, jin, kuai } = MoneyTool.getEach(count);
+        const zuanStr = zuan > 0 ? String(zuan) + ZUAN : '';
+        const jinStr = jin > 0 ? '  ' + String(jin) + JIN : '';
+        const kuaiStr = kuai > 0 || (zuan === 0 && jin === 0) ? '  ' + String(kuai) + KUAI : '';
         return zuanStr + jinStr + kuaiStr;
+    }
+
+    static getSimpleStr(count: number): string {
+        let { zuan, jin, kuai } = MoneyTool.getEach(count);
+
+        const padding4 = function (num: number) {
+            const frac = String(num / 10000);
+            return frac.slice(1);
+        };
+
+        if (zuan > 0) {
+            if (jin > 0) {
+                return String(zuan) + padding4(jin) + ZUAN;
+            } else {
+                return String(zuan) + ZUAN;
+            }
+        } else if (jin > 0) {
+            if (kuai > 0) {
+                return String(jin) + padding4(kuai) + JIN;
+            } else {
+                return String(jin) + JIN;
+            }
+        } else {
+            return String(kuai) + KUAI;
+        }
     }
 }
 
@@ -880,7 +914,7 @@ export class GameDataTool {
     // -----------------------------------------------------------------
 
     static addCnsum(gameData: GameData, cnsumId: string, count: number = 1, callback: (cnsum: Cnsum) => void = null): string {
-        if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+        if (gameData.weight >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
         gameData.weight += count;
 
         let itemIdx: number = -1;
@@ -908,7 +942,7 @@ export class GameDataTool {
     }
 
     static addEquip(gameData: GameData, equip: Equip, callback: (equip: Equip) => void = null): string {
-        if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+        if (gameData.weight >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
         gameData.weight++;
 
         gameData.totalEquipCount++;
@@ -928,7 +962,7 @@ export class GameDataTool {
         features: Feature[],
         callback: (cp: CaughtPet) => void = null
     ): string {
-        if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+        if (gameData.weight >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
         gameData.weight++;
 
         const cp = CaughtPetDataTool.create(id, lv, rank, features);
@@ -986,7 +1020,7 @@ export class GameDataTool {
         callback(gameData.items[0] as Money);
     }
 
-    static getMoney(gameData: GameData) {
+    static getMoney(gameData: GameData): number {
         return (gameData.items[0] as Money).sum;
     }
 

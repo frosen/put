@@ -118,6 +118,10 @@ export class Item {
     itemType: ItemType;
 }
 
+export const ZUAN = '钻';
+export const JIN = '金';
+export const KUAI = '块';
+
 export class Money extends Item {
     itemType: ItemType = ItemType.money;
     id: string = 'money';

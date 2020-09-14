@@ -39,7 +39,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         petIdLists: [],
         itemIdLists: [],
         eqpIdLists: [],
-        goodsList: ['DaMoShi']
+        goodsList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1']
     },
     GuangJiDianDaDao: {
         id: 'GuangJiDianDaDao',

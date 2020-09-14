@@ -147,7 +147,7 @@ export class PageActExpl extends BattlePageBase {
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
-            this.ctrlr.popAlert('确定退出探索？', this.onClickBack.bind(this), 'yes', 'only master');
+            this.ctrlr.popAlert('确定退出探索？', this.onClickBack.bind(this), '确定', '仅主人自己离开，留宠物继续战斗');
             return false;
         });
 
@@ -164,7 +164,7 @@ export class PageActExpl extends BattlePageBase {
             for (const pet of pets) {
                 const prvty = PetDataTool.getRealPrvty(pet);
                 if (prvty < 50) {
-                    this.ctrlr.popToast(`all pets prvty need 50 at least but ${petModelDict[pet.id].cnName}`);
+                    this.ctrlr.popToast(`宠物独立战斗要求所有宠物默契值至少50，但目前${petModelDict[pet.id].cnName}未达到！`);
                     return;
                 }
             }
