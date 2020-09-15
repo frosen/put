@@ -1,28 +1,31 @@
 /*
- * PageActEqpMkt.ts
- * 装备市场页面
+ * PageActPetMkt.ts
+ * 宠物市场页面
  * luleyan
  */
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool, GameDataTool, EquipDataTool } from 'scripts/Memory';
+import { MoneyTool, GameDataTool, CaughtPetDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { ListView } from 'scripts/ListView';
-import { Money, Equip, PosData, PADEqpMkt } from 'scripts/DataSaved';
+import { Money, PetRankNames, PosData, PADPetMkt, CaughtPet } from 'scripts/DataSaved';
 import { PAKey, ActPosModel } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from 'scripts/Random';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { PageActEqpMktLVD } from './PageActEqpMktLVD';
+import { PageActPetMktLVD } from './PageActPetMktLVD';
+import { RealBattle } from 'scripts/DataOther';
+import { normalRandom } from 'scripts/Random';
+import { expModels } from 'configs/ExpModels';
 
-export const EqpMktCountMax: number = 1;
-export const EqpMktUpdataInterval: number = 24 * 60 * 60 * 1000; // 更新间隔毫秒
+export const PetMktCountMax: number = 1;
+export const PetMktUpdataInterval: number = 24 * 60 * 60 * 1000; // 更新间隔毫秒
 
 @ccclass
-export class PageActEqpMkt extends PageBase {
+export class PageActPetMkt extends PageBase {
     @property(ListView)
     list: ListView = null;
 
@@ -31,11 +34,11 @@ export class PageActEqpMkt extends PageBase {
 
     totalPrice: number = 0;
 
-    goodsList: Equip[] = [];
+    goodsList: CaughtPet[] = [];
     priceList: number[] = [];
     countList: number[] = [];
 
-    pADEqpMkt: PADEqpMkt;
+    pADPetMkt: PADPetMkt;
 
     onLoad() {
         super.onLoad();
@@ -43,48 +46,61 @@ export class PageActEqpMkt extends PageBase {
         if (CC_EDITOR) return;
         const gameData = this.ctrlr.memory.gameData;
         const posId = gameData.curPosId;
-        GameDataTool.addPA(gameData, posId, PAKey.eqpMkt);
+        GameDataTool.addPA(gameData, posId, PAKey.petMkt);
         const posData: PosData = gameData.posDataDict[posId];
-        const pADEqpMkt: PADEqpMkt = posData.actDict[PAKey.eqpMkt] as PADEqpMkt;
+        const pADPetMkt: PADPetMkt = posData.actDict[PAKey.petMkt] as PADPetMkt;
         const now = Date.now();
-        if (!pADEqpMkt.updateTime || now > pADEqpMkt.updateTime + EqpMktUpdataInterval) {
-            pADEqpMkt.updateTime = now;
-            this.resetMktGoods(pADEqpMkt, actPosModelDict[posId]);
+        if (!pADPetMkt.updateTime || now > pADPetMkt.updateTime + PetMktUpdataInterval) {
+            pADPetMkt.updateTime = now;
+            this.resetMktGoods(pADPetMkt, actPosModelDict[posId]);
         }
 
-        for (let index = 0; index < this.pADEqpMkt.eqps.length; index++) {
-            const goods = this.pADEqpMkt.eqps[index];
+        for (let index = 0; index < this.pADPetMkt.pets.length; index++) {
+            const goods = this.pADPetMkt.pets[index];
             this.goodsList[index] = goods;
-            const price = EquipDataTool.getPrice(goods);
+            const price = CaughtPetDataTool.getPrice(goods);
             this.priceList[index] = price;
             this.countList[index] = 0;
         }
-        this.pADEqpMkt = pADEqpMkt;
+        this.pADPetMkt = pADPetMkt;
 
-        const lvd = this.list.delegate as PageActEqpMktLVD;
+        const lvd = this.list.delegate as PageActPetMktLVD;
         lvd.page = this;
     }
 
-    resetMktGoods(pADEqpMkt: PADEqpMkt, posModel: ActPosModel) {
-        const eqpIdLists = posModel.eqpIdLists;
-        cc.assert(eqpIdLists && eqpIdLists.length === 5, `${posModel.id}的eqpIdLists有问题`);
-        const eqpCount = randomInt(7) + 6;
+    resetMktGoods(pADPetMkt: PADPetMkt, posModel: ActPosModel) {
+        const petIdLists = posModel.petIdLists;
+        cc.assert(petIdLists && petIdLists.length === 5, `${posModel.id}的petIdLists有问题`);
+        const petCount = randomInt(7) + 6;
 
-        const newEqps = [];
-        for (let index = 0; index < eqpCount; index++) {
-            let eqpList = getRandomOneInListWithRate(eqpIdLists, [0, 0.4, 0.7, 0.9]);
-            if (!eqpList) eqpList = eqpIdLists[1];
-            const eqpId = getRandomOneInList(eqpList);
-            const equip = EquipDataTool.createRandomById(eqpId);
-            newEqps.push(equip);
+        const newPets = [];
+        for (let index = 0; index < petCount; index++) {
+            let step = getRandomOneInListWithRate([0, 1, 2, 3, 4], [0, 0.4, 0.7, 0.9]);
+            let petList = petIdLists[step];
+            if (!petList) {
+                petList = petIdLists[1];
+                step = 1;
+            }
+            const petId = getRandomOneInList(petList);
+            const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(posModel, step);
+            const { base: rankBase, range: rankRange } = RealBattle.calcRankAreaByExplStep(step);
+
+            let lv = lvBase - lvRange + normalRandom(lvRange * 2);
+            lv = Math.min(Math.max(1, lv), expModels.length);
+            let rank = rankBase - rankRange + normalRandom(rankRange * 2);
+            rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
+            const features = RealBattle.getRandomFeatures(lv);
+
+            const cPet = CaughtPetDataTool.create(petId, lv, rank, features);
+            newPets.push(cPet);
         }
-        pADEqpMkt.eqps = newEqps;
+        pADPetMkt.pets = newPets;
     }
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
             this.ctrlr.popAlert(
-                `确定消费${MoneyTool.getStr(this.totalPrice)} 购买装备？`,
+                `确定消费${MoneyTool.getStr(this.totalPrice)} 购买宠物？`,
                 (key: number) => {
                     if (key === 1) {
                         if (this.buy()) this.ctrlr.popPage();
@@ -117,17 +133,17 @@ export class PageActEqpMkt extends PageBase {
             const count = this.countList[index];
             if (!count) continue;
             const goods = this.goodsList[index];
-            GameDataTool.addEquip(gameData, goods);
-            this.pADEqpMkt.eqps[index] = undefined;
+            GameDataTool.addCaughtPet(gameData, goods.id, goods.lv, goods.rank, goods.features);
+            this.pADPetMkt.pets[index] = undefined;
         }
         GameDataTool.handleMoney(gameData, (m: Money) => (m.sum -= this.totalPrice));
 
-        let newEqps = [];
-        for (let index = 0; index < this.pADEqpMkt.eqps.length; index++) {
-            const eqp = this.pADEqpMkt.eqps[index];
-            if (eqp) newEqps.push(eqp);
+        let newPets = [];
+        for (let index = 0; index < this.pADPetMkt.pets.length; index++) {
+            const pet = this.pADPetMkt.pets[index];
+            if (pet) newPets.push(pet);
         }
-        this.pADEqpMkt.eqps = newEqps;
+        this.pADPetMkt.pets = newPets;
 
         return true;
     }
@@ -170,13 +186,13 @@ export class PageActEqpMkt extends PageBase {
         }
 
         this.countList[cell.curCellIdx] = 1;
-        cell.setCount(1, EqpMktCountMax);
+        cell.setCount(1, PetMktCountMax);
         this.changeTotal();
     }
 
     onCellRdcCount(cell: CellTransaction, count: number) {
         this.countList[cell.curCellIdx] = 0;
-        cell.setCount(0, EqpMktCountMax);
+        cell.setCount(0, PetMktCountMax);
         this.changeTotal();
     }
 

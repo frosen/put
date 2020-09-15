@@ -506,10 +506,6 @@ export class PetDataTool {
             }
         }
     }
-
-    static getPrice(pet: Pet) {
-        return 100;
-    }
 }
 
 export class CnsumDataTool {
@@ -730,6 +726,10 @@ export class CaughtPetDataTool {
         cp.rank = rank;
         cp.features = features;
         return cp;
+    }
+
+    static getPrice(cpet: CaughtPet) {
+        return 100;
     }
 }
 

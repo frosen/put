@@ -191,6 +191,11 @@ export class PADEqpMkt extends PADBase {
     eqps: Equip[];
 }
 
+export class PADPetMkt extends PADBase {
+    updateTime: number;
+    pets: CaughtPet[];
+}
+
 export class PosData {
     id: string;
     actDict: { [key: string]: PADBase };

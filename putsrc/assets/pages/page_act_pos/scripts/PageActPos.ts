@@ -36,15 +36,15 @@ export class PageActPos extends PageBase {
     }
 
     onPageShow() {
-        let gameData = this.ctrlr.memory.gameData;
+        const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl) return;
 
-        let posId = gameData.curPosId;
+        const posId = gameData.curPosId;
 
         GameDataTool.addPos(gameData, posId);
-        let pd: PosData = gameData.posDataDict[posId];
+        const pd: PosData = gameData.posDataDict[posId];
 
-        let curDirtyToken = this.ctrlr.memory.dirtyToken;
+        const curDirtyToken = this.ctrlr.memory.dirtyToken;
         if (this.curPosId !== pd.id || this.dirtyToken !== curDirtyToken) {
             this.curPosId = pd.id;
             this.dirtyToken = curDirtyToken;
@@ -56,21 +56,21 @@ export class PageActPos extends PageBase {
         this.lvd.initData();
         this.listView.resetContent(true);
 
-        let y = PageActPos.ListViewPosDict[this.curPosId] || 0;
+        const y = PageActPos.ListViewPosDict[this.curPosId] || 0;
         this.listView.clearContent();
         this.listView.createContent(y);
         this.posInfo.onScrolling(y);
     }
 
     afterPageShowAnim() {
-        let gameData = this.ctrlr.memory.gameData;
+        const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl) this.ctrlr.pushPage(PageActExpl, null, false);
     }
 
     static ListViewPosDict: { [key: string]: number } = {};
 
     onScrolling() {
-        let y = this.listView.content.y;
+        const y = this.listView.content.y;
         if (this.curPosId) PageActPos.ListViewPosDict[this.curPosId] = y;
         this.posInfo.onScrolling(y);
     }
