@@ -19,6 +19,7 @@ import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel, EvtModel,
 import { GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { PageActShop } from 'pages/page_act_shop/scripts/PageActShop';
+import { PageActEqpMkt } from 'pages/page_act_eqpmkt/scripts/PageActEqpMkt';
 
 type CellActInfo = {
     cnName: string;
@@ -32,7 +33,7 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.work]: { cnName: '工作介绍所' },
     [PAKey.quest]: { cnName: '任务发布栏' },
     [PAKey.shop]: { cnName: '物资商店', page: PageActShop },
-    [PAKey.eqpMkt]: { cnName: '装备市场' },
+    [PAKey.eqpMkt]: { cnName: '装备市场', page: PageActEqpMkt },
     [PAKey.petMkt]: { cnName: '宠物市场' },
     [PAKey.recycler]: { cnName: '回收站' },
     [PAKey.store]: { cnName: '仓库' },

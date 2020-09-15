@@ -4,10 +4,11 @@
  * luleyan
  */
 
-const { ccclass, property, executeInEditMode } = cc._decorator;
+const { ccclass, property, executeInEditMode, disallowMultiple } = cc._decorator;
 
 @ccclass
 @executeInEditMode
+@disallowMultiple
 export class TempBase extends cc.Component {
     onLoad() {
         this.handleTemp();

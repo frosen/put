@@ -35,6 +35,8 @@ export class PageActEqpMkt extends PageBase {
     priceList: number[] = [];
     countList: number[] = [];
 
+    pADEqpMkt: PADEqpMkt;
+
     onLoad() {
         super.onLoad();
 
@@ -57,6 +59,7 @@ export class PageActEqpMkt extends PageBase {
             this.priceList[index] = price;
             this.countList[index] = 0;
         }
+        this.pADEqpMkt = pADEqpMkt;
 
         const lvd = this.list.delegate as PageActEqpMktLVD;
         lvd.page = this;
@@ -69,7 +72,7 @@ export class PageActEqpMkt extends PageBase {
         const eqpCount = randomInt(7) + 6;
 
         for (let index = 0; index < eqpCount; index++) {
-            const eqpList = getRandomOneInListWithRate(eqpIdLists, [0, 0.4, 0.7, 0.9]);
+            let eqpList = getRandomOneInListWithRate(eqpIdLists, [0, 0.4, 0.7, 0.9]);
             if (!eqpList) eqpList = eqpIdLists[1];
             const eqpId = getRandomOneInList(eqpList);
             const equip = EquipDataTool.createRandomById(eqpId);

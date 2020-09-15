@@ -12,6 +12,7 @@ import { ListViewCell } from 'scripts/ListViewCell';
 import { PageActEqpMkt, EqpMktCountMax } from './PageActEqpMkt';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { CellUpdateDisplay } from '../cells/cell_update_display/scripts/CellUpdateDisplay';
 
 @ccclass
 export class PageActEqpMktLVD extends ListViewDelegate {
@@ -20,6 +21,9 @@ export class PageActEqpMktLVD extends ListViewDelegate {
 
     @property(cc.Prefab)
     cellPkgEquipPrefab: cc.Prefab = null;
+
+    @property(cc.Prefab)
+    cellUpdateDisplay: cc.Prefab = null;
 
     page: PageActEqpMkt;
 
@@ -33,7 +37,7 @@ export class PageActEqpMktLVD extends ListViewDelegate {
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        if (rowIdx === 0) return null;
+        if (rowIdx === 0) return cc.instantiate(this.cellUpdateDisplay).getComponent(CellUpdateDisplay);
         else {
             const cell: CellTransaction = cc.instantiate(this.cellTransPrefab).getComponent(CellTransaction);
             cell.addCallback = this.page.onCellAddCount.bind(this.page);
@@ -50,8 +54,9 @@ export class PageActEqpMktLVD extends ListViewDelegate {
         }
     }
 
-    setCellForRow(listView: ListView, rowIdx: number, cell: CellTransaction) {
+    setCellForRow(listView: ListView, rowIdx: number, cell: CellUpdateDisplay & CellTransaction) {
         if (rowIdx === 0) {
+            cell.setData(this.page.pADEqpMkt.updateTime);
         } else {
             const idx = rowIdx - 1;
 
