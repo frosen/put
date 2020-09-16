@@ -20,6 +20,7 @@ import { GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { PageActShop } from 'pages/page_act_shop/scripts/PageActShop';
 import { PageActEqpMkt } from 'pages/page_act_eqpmkt/scripts/PageActEqpMkt';
+import { PageActPetMkt } from 'pages/page_act_petmkt/scripts/PageActPetMkt';
 
 type CellActInfo = {
     cnName: string;
@@ -34,10 +35,9 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.quest]: { cnName: '任务发布栏' },
     [PAKey.shop]: { cnName: '物资商店', page: PageActShop },
     [PAKey.eqpMkt]: { cnName: '装备市场', page: PageActEqpMkt },
-    [PAKey.petMkt]: { cnName: '宠物市场' },
-    [PAKey.recycler]: { cnName: '回收站' },
-    [PAKey.store]: { cnName: '仓库' },
-    [PAKey.aCenter]: { cnName: '奖励中心' },
+    [PAKey.petMkt]: { cnName: '宠物市场', page: PageActPetMkt },
+    [PAKey.rcclr]: { cnName: '回收站' },
+    [PAKey.aCntr]: { cnName: '奖励中心' },
     [PAKey.expl]: {
         cnName: '探索',
         getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {

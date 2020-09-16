@@ -13,16 +13,15 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         lv: 1,
         type: ActPosType.town,
         evts: [],
-        acts: [PAKey.work, PAKey.quest, PAKey.shop, PAKey.eqpMkt, PAKey.petMkt, PAKey.recycler, PAKey.store, PAKey.aCenter],
+        acts: [PAKey.work, PAKey.quest, PAKey.shop, PAKey.eqpMkt, PAKey.petMkt, PAKey.rcclr, PAKey.aCntr],
         actDict: {
             [PAKey.work]: null,
             [PAKey.quest]: null,
             [PAKey.shop]: null,
             [PAKey.eqpMkt]: null,
             [PAKey.petMkt]: null,
-            [PAKey.recycler]: null,
-            [PAKey.store]: null,
-            [PAKey.aCenter]: null
+            [PAKey.rcclr]: null,
+            [PAKey.aCntr]: null
         },
         movs: [
             { id: 'GuangJiDianDaDao', price: 0 },

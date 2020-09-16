@@ -218,9 +218,8 @@ export class PAKey {
     static shop = 'shop';
     static eqpMkt = 'equipMarket';
     static petMkt = 'petMarket';
-    static recycler = 'recycler';
-    static store = 'store';
-    static aCenter = 'awardsCenter';
+    static rcclr = 'recycler';
+    static aCntr = 'awardsCenter';
     static expl = 'exploration';
 }
 

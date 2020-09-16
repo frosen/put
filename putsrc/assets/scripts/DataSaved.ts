@@ -198,6 +198,7 @@ export class PADPetMkt extends PADBase {
 
 export class PosData {
     id: string;
+    reput: number;
     actDict: { [key: string]: PADBase };
 }
 

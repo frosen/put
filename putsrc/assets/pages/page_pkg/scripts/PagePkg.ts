@@ -24,7 +24,7 @@ import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
 import { NavBar } from 'scripts/NavBar';
 import { PagePkgTouchLayer } from './PagePkgTouchLayer';
 
-const LIST_NAMES = ['全部', '装备', '饮品', '捕捉', '强化', '其他'];
+export const LIST_NAMES = ['全部', '装备', '饮品', '捕捉', '强化', '其他'];
 const WIDTH = 1080;
 
 @ccclass
