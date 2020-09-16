@@ -7,6 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from 'scripts/ListViewCell';
+import { EqpMktUpdataInterval } from 'pages/page_act_eqpmkt/scripts/PageActEqpMkt';
 
 @ccclass
 export class CellUpdateDisplay extends ListViewCell {
@@ -14,17 +15,18 @@ export class CellUpdateDisplay extends ListViewCell {
     lbl: cc.Label = null;
 
     setData(updateTime: number) {
+        const nextUpdTime = updateTime + EqpMktUpdataInterval;
         const nowDate = new Date();
         const now = nowDate.getTime();
-        const diff = updateTime - now;
-        const updateDate = new Date(updateTime);
-
-        return `更新时间：${this.getDay(nowDate, updateDate)}${this.getHourMin(updateDate)}[剩余${this.getDiffStr(diff)}]`;
+        const diff = nextUpdTime - now;
+        const nextUpdDate = new Date(nextUpdTime);
+        const str = `更新时间：${this.getDay(nowDate, nextUpdDate)}${this.getHourMin(nextUpdDate)}[剩余${this.getDiffStr(diff)}]`;
+        this.lbl.string = str;
     }
 
     getDay(nowDate: Date, updateDate: Date): string {
         const nowDay = nowDate.getDate();
-        const updateDay = nowDate.getDate();
+        const updateDay = updateDate.getDate();
         const diff = updateDay - nowDay;
         if (diff === 0) return '今天';
         if (diff === 1) return '明天';

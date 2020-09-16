@@ -894,7 +894,7 @@
     "delegate": {
       "__id__": 25
     },
-    "fixedHeight": 220,
+    "fixedHeight": 0,
     "_id": ""
   },
   {
@@ -910,6 +910,9 @@
     },
     "cellPkgEquipPrefab": {
       "__uuid__": "e7956d4d-39b5-4382-ba28-e980fa49291a"
+    },
+    "cellUpdateDisplay": {
+      "__uuid__": "7eed6021-a01d-47a5-b519-a0ab72d02c91"
     },
     "_id": ""
   },

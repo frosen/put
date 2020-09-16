@@ -45,6 +45,7 @@ export class PageActShop extends PageBase {
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
+            if (this.totalPrice <= 0) return true;
             this.ctrlr.popAlert(
                 `确定消费${MoneyTool.getStr(this.totalPrice)} 购买物资？`,
                 (key: number) => {

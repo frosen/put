@@ -55,8 +55,8 @@ export class PageActPetMkt extends PageBase {
             this.resetMktGoods(pADPetMkt, actPosModelDict[posId]);
         }
 
-        for (let index = 0; index < this.pADPetMkt.pets.length; index++) {
-            const goods = this.pADPetMkt.pets[index];
+        for (let index = 0; index < pADPetMkt.pets.length; index++) {
+            const goods = pADPetMkt.pets[index];
             this.goodsList[index] = goods;
             const price = CaughtPetDataTool.getPrice(goods);
             this.priceList[index] = price;
@@ -99,6 +99,7 @@ export class PageActPetMkt extends PageBase {
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
+            if (this.totalPrice <= 0) return true;
             this.ctrlr.popAlert(
                 `确定消费${MoneyTool.getStr(this.totalPrice)} 购买宠物？`,
                 (key: number) => {

@@ -39,8 +39,8 @@ export class PageActEqpMkt extends PageBase {
 
     onLoad() {
         super.onLoad();
-
         if (CC_EDITOR) return;
+
         const gameData = this.ctrlr.memory.gameData;
         const posId = gameData.curPosId;
         GameDataTool.addPA(gameData, posId, PAKey.eqpMkt);
@@ -52,8 +52,8 @@ export class PageActEqpMkt extends PageBase {
             this.resetMktGoods(pADEqpMkt, actPosModelDict[posId]);
         }
 
-        for (let index = 0; index < this.pADEqpMkt.eqps.length; index++) {
-            const goods = this.pADEqpMkt.eqps[index];
+        for (let index = 0; index < pADEqpMkt.eqps.length; index++) {
+            const goods = pADEqpMkt.eqps[index];
             this.goodsList[index] = goods;
             const price = EquipDataTool.getPrice(goods);
             this.priceList[index] = price;
@@ -70,19 +70,27 @@ export class PageActEqpMkt extends PageBase {
         cc.assert(eqpIdLists && eqpIdLists.length === 5, `${posModel.id}的eqpIdLists有问题`);
         const eqpCount = randomInt(7) + 6;
 
-        const newEqps = [];
+        const newEqps: Equip[] = [];
         for (let index = 0; index < eqpCount; index++) {
             let eqpList = getRandomOneInListWithRate(eqpIdLists, [0, 0.4, 0.7, 0.9]);
             if (!eqpList) eqpList = eqpIdLists[1];
             const eqpId = getRandomOneInList(eqpList);
             const equip = EquipDataTool.createRandomById(eqpId);
-            newEqps.push(equip);
+            let need = true;
+            for (const eqpInList of newEqps) {
+                if (eqpInList.id === equip.id && eqpInList.skillId === equip.skillId) {
+                    need = false;
+                    break;
+                }
+            }
+            if (need) newEqps.push(equip);
         }
         pADEqpMkt.eqps = newEqps;
     }
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
+            if (this.totalPrice <= 0) return true;
             this.ctrlr.popAlert(
                 `确定消费${MoneyTool.getStr(this.totalPrice)} 购买装备？`,
                 (key: number) => {

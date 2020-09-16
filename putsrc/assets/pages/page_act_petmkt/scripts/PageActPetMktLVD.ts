@@ -31,6 +31,11 @@ export class PageActPetMktLVD extends ListViewDelegate {
         return 1 + this.page.goodsList.length;
     }
 
+    heightForRow(listView: ListView, rowIdx: number): number {
+        if (rowIdx === 0) return 100;
+        else return 220;
+    }
+
     cellIdForRow(listView: ListView, rowIdx: number): string {
         if (rowIdx === 0) return 'upd';
         else return 'pet';
