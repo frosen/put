@@ -59,9 +59,9 @@ export class PagePkgLVD extends ListViewDelegate {
     @property(cc.Prefab)
     cellPkgCaughtPetPrefab: cc.Prefab = null;
 
-    curItems: Item[] = [];
-    curItemIdxs: number[] = [];
-    page: PagePkgBase = null;
+    curItems: Item[];
+    curItemIdxs: number[];
+    page: PagePkgBase;
     cellType: PagePkgCellType = PagePkgCellType.normal;
 
     initListData(items: Item[], itemIdxs: number[]) {
