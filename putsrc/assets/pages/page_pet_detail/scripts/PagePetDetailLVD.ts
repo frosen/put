@@ -219,7 +219,9 @@ export class PagePetDetailLVD extends ListViewDelegate {
 
         // 第一组
         if (rowIdx === 0) {
-            cell.setData(PetDataTool.getCnName(pet), PetStateNames[pet.state], STATE_TIP);
+            const name = PetDataTool.getCnName(pet);
+            const subName = pet.nickname ? '(' + PetDataTool.getBaseCnName(pet) + ')' : '';
+            cell.setData(name, subName, PetStateNames[pet.state], STATE_TIP);
         } else if (rowIdx === 1) {
             cell.setData1('等级', String(pet.lv), LV_TIP);
             cell.setData2('品阶', PetRankNames[pet.rank], RANK_TIP);

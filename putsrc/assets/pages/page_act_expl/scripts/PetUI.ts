@@ -12,6 +12,9 @@ export class PetUI extends cc.Component {
     petName: cc.Label = null;
 
     @property(cc.Label)
+    subName: cc.Label = null;
+
+    @property(cc.Label)
     petLv: cc.Label = null;
 
     @property(cc.ProgressBar)

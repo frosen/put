@@ -14,6 +14,9 @@ export class CellPetName extends ListViewCell {
     petName: cc.Label = null;
 
     @property(cc.Label)
+    subName: cc.Label = null;
+
+    @property(cc.Label)
     state: cc.Label = null;
 
     tip: string = '';
@@ -25,13 +28,21 @@ export class CellPetName extends ListViewCell {
         this.state.node.on(cc.Node.EventType.TOUCH_END, this.onClickState.bind(this));
     }
 
-    setData(petName: string, masterName: string, stateTip: string) {
+    setData(petName: string, subName: string, masterName: string, stateTip: string) {
         this.petName.string = petName;
+        this.subName.string = subName;
         this.state.string = '状态：' + masterName;
         this.tip = stateTip;
     }
 
     onClickState() {
         this.ctrlr.popToast(this.tip);
+    }
+
+    onClickNameModifyBtn() {
+        if (this.subName.string) {
+            this.ctrlr.popToast('已经取过名字！\n如果打算修改，需要用道具移除当前名字');
+            return;
+        }
     }
 }

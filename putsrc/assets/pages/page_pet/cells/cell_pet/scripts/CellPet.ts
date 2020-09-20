@@ -19,6 +19,9 @@ export class CellPet extends ListViewCell {
     petNameLbl: cc.Label = null;
 
     @property(cc.Label)
+    subNameLbl: cc.Label = null;
+
+    @property(cc.Label)
     lvLbl: cc.Label = null;
 
     @property(cc.Node)
@@ -59,6 +62,7 @@ export class CellPet extends ListViewCell {
         this.curPet = pet;
 
         this.petNameLbl.string = PetDataTool.getCnName(pet, true);
+        this.subNameLbl.string = pet.nickname ? '(' + PetDataTool.getBaseCnName(pet) + ')' : '';
         this.lvLbl.string = `[L${pet.lv}${PetRankNames[pet.rank]}]`;
         CellPet.rerenderLbl(this.petNameLbl);
         CellPet.rerenderLbl(this.lvLbl);

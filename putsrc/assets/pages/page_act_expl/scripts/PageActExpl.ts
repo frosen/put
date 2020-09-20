@@ -269,6 +269,7 @@ export class PageActExpl extends BattlePageBase {
         ui.node.active = true;
         const pet = battlePet.pet;
         ui.petName.string = PetDataTool.getCnName(pet);
+        ui.subName.string = pet.nickname ? PetDataTool.getBaseCnName(pet) : '';
         ui.petLv.string = `L${pet.lv}${PetRankNames[pet.rank]}`;
         ui.bar.progress = battlePet.hp / battlePet.hpMax;
         ui.petHP.string = `${Math.ceil(battlePet.hp * 0.1)} / ${Math.ceil(battlePet.hpMax * 0.1)}`;

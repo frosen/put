@@ -70,6 +70,7 @@ export class Pet {
     /** 类型 */
     id: string;
 
+    nickname: string;
     master: string;
 
     catchTime: number;

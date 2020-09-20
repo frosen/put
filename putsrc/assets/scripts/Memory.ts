@@ -297,6 +297,7 @@ export class Memory {
 
         GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
+            pet.nickname = '妙妙';
             pet.prvty = 400000;
             pet.equips[0] = EquipDataTool.createRandomByLv(15, 20);
         });
@@ -397,6 +398,7 @@ export class PetDataTool {
         pet.equips = newList(equips);
 
         pet.id = id;
+        pet.nickname = null;
         pet.master = '';
 
         pet.catchTime = Date.now();
@@ -423,6 +425,11 @@ export class PetDataTool {
     }
 
     static getCnName(pet: Pet, needSpace: boolean = false): string {
+        if (pet.nickname) return pet.nickname;
+        else return PetDataTool.getBaseCnName(pet, needSpace);
+    }
+
+    static getBaseCnName(pet: Pet, needSpace: boolean = false): string {
         if (pet.inbornFeatures.length > 0) {
             let name = '';
             for (let index = 1; index >= 0; index--) {
