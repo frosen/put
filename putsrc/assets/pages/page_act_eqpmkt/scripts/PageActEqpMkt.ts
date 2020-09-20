@@ -80,7 +80,6 @@ export class PageActEqpMkt extends PageBase {
             for (const eqpInList of newEqps) {
                 if (equip.id !== eqpInList.id) continue;
                 if (equip.skillId !== eqpInList.skillId) continue;
-                if (!equip.selfFeatureLvs.equals(eqpInList.selfFeatureLvs, (a, b) => a === b)) continue;
                 if (!equip.affixes.equals(eqpInList.affixes, (a, b) => a.id === b.id)) continue;
                 need = false;
                 break;

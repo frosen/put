@@ -77,8 +77,6 @@ export class Pet {
     catchLv: number;
     catchRank: number;
 
-    nickName: string;
-
     state: PetState;
 
     /** 等级 */

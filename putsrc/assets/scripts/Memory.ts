@@ -297,30 +297,24 @@ export class Memory {
 
         GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
-            pet.prvty = 10000;
+            pet.prvty = 400000;
             pet.equips[0] = EquipDataTool.createRandomByLv(15, 20);
         });
 
         GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
+            pet.prvty = 400000;
             pet.drink = CnsumDataTool.create(Drink, 'LingGanYaoJi2');
             pet.drinkTime = Date.now();
         });
 
         GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
+            pet.prvty = 400000;
             const f = newInsWithChecker(Feature);
             f.id = 'hitWithDark';
             f.lv = 1;
             pet.learnedFeatures.push(f);
-        });
-
-        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], (pet: Pet) => {
-            pet.state = PetState.ready;
-        });
-
-        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], (pet: Pet) => {
-            pet.state = PetState.ready;
         });
 
         // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
@@ -410,8 +404,6 @@ export class PetDataTool {
         pet.catchLv = lv;
         pet.catchRank = rank;
 
-        pet.nickName = null;
-
         pet.state = PetState.rest;
 
         pet.lv = lv;
@@ -431,7 +423,6 @@ export class PetDataTool {
     }
 
     static getCnName(pet: Pet, needSpace: boolean = false): string {
-        if (pet.nickName) return pet.nickName;
         if (pet.inbornFeatures.length > 0) {
             let name = '';
             for (let index = 1; index >= 0; index--) {
