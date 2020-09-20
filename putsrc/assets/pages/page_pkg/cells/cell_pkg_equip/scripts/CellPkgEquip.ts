@@ -62,7 +62,7 @@ export class CellPkgEquip extends CellPkgBase {
     setData(itemIdx: number, equip: Equip) {
         super.setData(itemIdx, equip);
         const equipModel = equipModelDict[equip.id];
-        this.nameLbl.string = EquipDataTool.getCnName(equip);
+        this.nameLbl.string = EquipDataTool.getCnName(equip, true);
         this.nameLbl.node.color = RankColor[equipModel.rank];
         this.lvLbl.string = `[L${equipModel.lv}${equip.growth > 0 ? `+${equip.growth}` : ''}]`;
 

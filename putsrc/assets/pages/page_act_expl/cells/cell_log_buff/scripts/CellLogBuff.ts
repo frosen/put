@@ -32,9 +32,6 @@ export class CellLogBuff extends CellLogBase {
     }
 
     setData(data: ExplLogData) {
-        // const logStr = `${petModelDict[aim.pet.id].cnName}受到${name}效果`;
-        // this.logCallback(logStr);
-
         const petName = data.data[0];
         const buffName = data.data[1];
 

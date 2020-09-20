@@ -48,14 +48,6 @@ export class CellLogAtk extends CellLogBase {
     }
 
     setData(data: ExplLogData) {
-        // const logStr = `${petModelDict[battlePet.pet.id].cnName}对${petModelDict[aim.pet.id].cnName}使用${skillName}`;
-        // if (dmg > 0) {
-        //     if (beCombo) logStr += '连击';
-        //     logStr += `，造成${Math.floor(dmg * 0.1)}点${eleType ? EleTypeNames[eleType] : '物理'}伤害`;
-        // } else {
-        //     logStr += `，恢复血量${Math.floor(dmg * -0.1)}点`;
-        // }
-
         const petName = data.data[0];
         const aimName = data.data[1];
         const sklName = data.data[2];

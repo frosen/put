@@ -1,5 +1,5 @@
 /*
- * BuffModelDict.ts
+ * ProfTitleModelDict.ts
  * 持续效果
  * luleyan
  */

@@ -34,9 +34,6 @@ export class CellLogMiss extends CellLogBase {
     }
 
     setData(data: ExplLogData) {
-        // const logStr = `${petModelDict[aim.pet.id].cnName}避开了${petModelDict[battlePet.pet.id].cnName}的${skillName}`;
-        // this.logCallback(logStr);
-
         const petName = data.data[0];
         const atkerName = data.data[1];
         const sklName = data.data[2];

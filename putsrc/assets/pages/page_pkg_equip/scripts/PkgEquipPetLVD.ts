@@ -13,8 +13,8 @@ import { Equip, Pet } from 'scripts/DataSaved';
 import { PagePkgEquip } from './PagePkgEquip';
 import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { CellPetBrief } from '../cells/cell_pet_brief/scripts/CellPetBrief';
-import { petModelDict } from 'configs/PetModelDict';
 import { CellPkgEquipBlank } from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
+import { PetDataTool } from 'scripts/Memory';
 
 const PET_INFO = 'p';
 const EQUIP = 'e';
@@ -89,8 +89,7 @@ export class PkgEquipPetLVD extends ListViewDelegate {
         const data = this.dataList[rowIdx];
         if (data.equipIndex === -1) {
             const pet = data.pet;
-            const petModel = petModelDict[pet.id];
-            (cell as CellPetBrief).setData(petModel.cnName, pet.state);
+            (cell as CellPetBrief).setData(PetDataTool.getCnName(pet), pet.state);
         } else {
             const equip = data.equip;
             if (equip) (cell as CellPkgEquip).setData(-1, equip);

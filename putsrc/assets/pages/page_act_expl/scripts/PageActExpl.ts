@@ -8,7 +8,6 @@ const { ccclass, property, executionOrder } = cc._decorator;
 import { BattlePageBase } from 'scripts/BattlePageBase';
 import { ExplUpdater, ExplLogData } from 'scripts/ExplUpdater';
 import { PetUI } from './PetUI';
-import { petModelDict } from 'configs/PetModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { PageActExplLVD } from './PageActExplLVD';
 import { ListView } from 'scripts/ListView';
@@ -164,7 +163,7 @@ export class PageActExpl extends BattlePageBase {
             for (const pet of pets) {
                 const prvty = PetDataTool.getRealPrvty(pet);
                 if (prvty < 50) {
-                    this.ctrlr.popToast(`宠物独立战斗要求所有宠物默契值至少50，\n但目前${petModelDict[pet.id].cnName}未达到！`);
+                    this.ctrlr.popToast(`宠物独立战斗要求所有宠物默契值至少50，\n但目前${PetDataTool.getCnName(pet)}未达到！`);
                     return;
                 }
             }
@@ -194,8 +193,7 @@ export class PageActExpl extends BattlePageBase {
 
     preloadLVDData() {
         for (const sPet of GameDataTool.getReadyPets(this.ctrlr.memory.gameData)) {
-            const name = petModelDict[sPet.id].cnName;
-            this.lvd.getFrameDataByString(name);
+            this.lvd.getFrameDataByString(PetDataTool.getCnName(sPet));
         }
 
         for (let index = 0; index <= 9; index++) {
@@ -270,8 +268,7 @@ export class PageActExpl extends BattlePageBase {
     setUIofPet(battlePet: BattlePet, ui: PetUI) {
         ui.node.active = true;
         const pet = battlePet.pet;
-        const petModel = petModelDict[pet.id];
-        ui.petName.string = petModel.cnName;
+        ui.petName.string = PetDataTool.getCnName(pet);
         ui.petLv.string = `L${pet.lv}${PetRankNames[pet.rank]}`;
         ui.bar.progress = battlePet.hp / battlePet.hpMax;
         ui.petHP.string = `${Math.ceil(battlePet.hp * 0.1)} / ${Math.ceil(battlePet.hpMax * 0.1)}`;

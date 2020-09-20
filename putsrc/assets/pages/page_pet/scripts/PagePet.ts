@@ -8,9 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { ListView } from 'scripts/ListView';
 import { PagePetLVD, PagePetCellType } from './PagePetLVD';
-import { petModelDict } from 'configs/PetModelDict';
-import { GameDataTool } from 'scripts/Memory';
-import { PetModel } from 'scripts/DataModel';
+import { GameDataTool, PetDataTool } from 'scripts/Memory';
 import { Pet, PetState } from 'scripts/DataSaved';
 import { CellPet } from '../cells/cell_pet/scripts/CellPet';
 import { PagePetDetail } from 'pages/page_pet_detail/scripts/PagePetDetail';
@@ -141,7 +139,7 @@ export class PagePet extends PageBase {
             return;
         }
 
-        const name = (petModelDict[pet.id] as PetModel).cnName;
+        const name = PetDataTool.getCnName(pet);
         const str = `确定放生宠物“${name}”？\n` + '注意：放生后将无法找回！';
         this.ctrlr.popAlert(str, (key: number) => {
             if (key === 1) {

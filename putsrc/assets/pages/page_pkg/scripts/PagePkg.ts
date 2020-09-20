@@ -10,12 +10,11 @@ import { PagePkgBase } from './PagePkgBase';
 import { ListView } from 'scripts/ListView';
 import { PagePkgLVD } from './PagePkgLVD';
 import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet, Equip } from 'scripts/DataSaved';
-import { GameDataTool, CnsumDataTool } from 'scripts/Memory';
+import { GameDataTool, CnsumDataTool, PetDataTool, EquipDataTool, CaughtPetDataTool } from 'scripts/Memory';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import { ListViewCell } from 'scripts/ListViewCell';
 import { FuncBar } from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
 import { PagePet } from 'pages/page_pet/scripts/PagePet';
-import { petModelDict } from 'configs/PetModelDict';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
 import { equipModelDict } from 'configs/EquipModelDict';
@@ -209,17 +208,19 @@ export class PagePkg extends PagePkgBase {
                     cellPetType: PagePetCellType.selection,
                     name: '选择宠物',
                     callback: (cellIdx: number, curPet: Pet) => {
-                        const petModel = petModelDict[curPet.id];
                         const drinkModel = drinkModelDict[cnsum.id];
-                        this.ctrlr.popAlert(`确定对“${petModel.cnName}”使用“${drinkModel.cnName}”吗？`, (key: number) => {
-                            if (key === 1) {
-                                const rzt = GameDataTool.useDrinkToPet(gameData, curPet, cnsum);
-                                if (rzt === GameDataTool.SUC) {
-                                    GameDataTool.deleteItem(gameData, itemIdx);
-                                    this.ctrlr.popPage();
-                                } else this.ctrlr.popToast(rzt);
+                        this.ctrlr.popAlert(
+                            `确定对“${PetDataTool.getCnName(curPet)}”使用“${drinkModel.cnName}”吗？`,
+                            (key: number) => {
+                                if (key === 1) {
+                                    const rzt = GameDataTool.useDrinkToPet(gameData, curPet, cnsum);
+                                    if (rzt === GameDataTool.SUC) {
+                                        GameDataTool.deleteItem(gameData, itemIdx);
+                                        this.ctrlr.popPage();
+                                    } else this.ctrlr.popToast(rzt);
+                                }
                             }
-                        });
+                        );
                     }
                 });
             } else if (cnsum.cnsumType === CnsumType.catcher) {
@@ -234,27 +235,27 @@ export class PagePkg extends PagePkgBase {
                             return;
                         }
                         const equipModel = equipModelDict[equip.id];
-                        const eaModel = eqpAmplrModelDict[cnsum.id];
-                        if (equipModel.lv > eaModel.lvMax) {
-                            this.ctrlr.popToast(`该武器等级超过“${eaModel.cnName}”等级上限Lv${eaModel.lvMax}\n无法使用`);
+                        const eAModel = eqpAmplrModelDict[cnsum.id];
+                        if (equipModel.lv > eAModel.lvMax) {
+                            this.ctrlr.popToast(`该武器等级超过“${eAModel.cnName}”等级上限Lv${eAModel.lvMax}\n无法使用`);
                             return;
                         }
                         const needCount = Math.pow(2, equip.growth);
                         if (needCount > cnsum.count) {
-                            const str = `该武器成长到${equip.growth + 1}需要${needCount}颗“${eaModel.cnName}”\n目前数量不足`;
+                            const str = `该武器成长到${equip.growth + 1}需要${needCount}颗“${eAModel.cnName}”\n目前数量不足`;
                             this.ctrlr.popToast(str);
                             return;
                         }
 
                         const str =
-                            `确定使用${needCount}颗“${eaModel.cnName}”(共${cnsum.count}颗)\n` +
-                            `提升“${equipModel.cnName}”的成长等级吗？`;
+                            `确定使用${needCount}颗“${eAModel.cnName}”(共${cnsum.count}颗)\n` +
+                            `提升“${EquipDataTool.getCnName(equip)}”的成长等级吗？`;
                         this.ctrlr.popAlert(str, (key: number) => {
                             if (key === 1) {
                                 const rzt = GameDataTool.growForEquip(gameData, equip);
                                 if (rzt === GameDataTool.SUC) {
                                     GameDataTool.deleteItem(gameData, itemIdx);
-                                    this.ctrlr.popToast(`“${equipModel.cnName}”的成长等级升至${equip.growth}级`);
+                                    this.ctrlr.popToast(`“${EquipDataTool.getCnName(equip)}”的成长等级升至${equip.growth}级`);
                                     this.ctrlr.popPage();
                                 } else this.ctrlr.popToast(rzt);
                             }
@@ -299,9 +300,9 @@ export class PagePkg extends PagePkgBase {
         if (item.itemType === ItemType.cnsum) {
             name = CnsumDataTool.getModelById(item.id).cnName;
         } else if (item.itemType === ItemType.equip) {
-            name = equipModelDict[item.id].cnName;
+            name = EquipDataTool.getCnName(item as Equip);
         } else if (item.itemType === ItemType.caughtPet) {
-            name = '捕获中的' + petModelDict[(item as CaughtPet).petId].cnName;
+            name = CaughtPetDataTool.getCnName(item as CaughtPet);
         }
 
         const str = `确定将“${name}”丢弃吗？\n` + '注意：丢弃后将无法找回哦！';

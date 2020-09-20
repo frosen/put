@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { GameDataTool } from 'scripts/Memory';
+import { GameDataTool, PetDataTool } from 'scripts/Memory';
 import { BattlePageBase } from './BattlePageBase';
 
 import { skillModelDict } from 'configs/SkillModelDict';
@@ -13,7 +13,7 @@ import { petModelDict } from 'configs/PetModelDict';
 
 import { deepCopy } from 'scripts/Utils';
 import { SkillModel, SkillType, SkillAimtype, SkillDirType } from 'scripts/DataModel';
-import { Pet, EleType, BattleType, EleTypeNames, GameData, BattleMmr } from 'scripts/DataSaved';
+import { Pet, EleType, BattleType, GameData, BattleMmr } from 'scripts/DataSaved';
 import { RealBattle, BattleTeam, BattlePet, BattleBuff, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { battleSequence } from 'configs/BattleSequence';
 import { ExplUpdater, ExplLogType } from './ExplUpdater';
@@ -191,8 +191,7 @@ export class BattleController {
 
         const petNameDict = {};
         for (const ePet of this.realBattle.enemyTeam.pets) {
-            const petId = ePet.pet.id;
-            const cnName = petModelDict[petId].cnName;
+            const cnName = PetDataTool.getCnName(ePet.pet);
             petNameDict[cnName] = true;
         }
         const petNames = Object.keys(petNameDict);
@@ -811,8 +810,8 @@ export class BattleController {
 
     logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, beCombo: boolean, skillName: string, eleType: EleType = null) {
         const dataList = [
-            petModelDict[battlePet.pet.id].cnName,
-            petModelDict[aim.pet.id].cnName,
+            PetDataTool.getCnName(battlePet.pet),
+            PetDataTool.getCnName(aim.pet),
             skillName,
             beCombo,
             Math.floor(dmg * 0.1),
@@ -822,21 +821,21 @@ export class BattleController {
     }
 
     logMiss(battlePet: BattlePet, aim: BattlePet, skillName: string) {
-        const dataList = [petModelDict[battlePet.pet.id].cnName, petModelDict[aim.pet.id].cnName, skillName];
+        const dataList = [PetDataTool.getCnName(battlePet.pet), PetDataTool.getCnName(aim.pet), skillName];
         this.updater.log(ExplLogType.miss, dataList);
     }
 
     logBuff(aim: BattlePet, name: string) {
-        const dataList = [petModelDict[aim.pet.id].cnName, name];
+        const dataList = [PetDataTool.getCnName(aim.pet), name];
         this.updater.log(ExplLogType.buff, dataList);
     }
 
     logStop(battlePet: BattlePet) {
-        this.updater.log(ExplLogType.stop, petModelDict[battlePet.pet.id].cnName);
+        this.updater.log(ExplLogType.stop, PetDataTool.getCnName(battlePet.pet));
     }
 
     logDead(battlePet: BattlePet) {
-        this.updater.log(ExplLogType.dead, petModelDict[battlePet.pet.id].cnName);
+        this.updater.log(ExplLogType.dead, PetDataTool.getCnName(battlePet.pet));
     }
 
     ranSd() {

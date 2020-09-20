@@ -869,7 +869,7 @@ export class ExplUpdater {
             const equip = EquipDataTool.createRandomById(eqpId);
             if (equip) {
                 const rzt = GameDataTool.addEquip(this.gameData, equip);
-                if (rzt === GameDataTool.SUC) itemName = equipModelDict[equip.id].cnName;
+                if (rzt === GameDataTool.SUC) itemName = EquipDataTool.getCnName(equip);
                 else failRzt = rzt;
             } else failRzt = '竟然没有获取到装备';
         }
@@ -886,8 +886,8 @@ export class ExplUpdater {
                 const gainCnt = randomRound(this.gainCntRate);
                 const rzt = GameDataTool.addCnsum(this.gameData, itemId, gainCnt);
                 if (rzt === GameDataTool.SUC) {
-                    const model = CnsumDataTool.getModelById(itemId);
-                    itemName = model.cnName + (gainCnt > 1 ? 'x' + String(gainCnt) : '');
+                    const cnsumModel = CnsumDataTool.getModelById(itemId);
+                    itemName = cnsumModel.cnName + (gainCnt > 1 ? 'x' + String(gainCnt) : '');
                 } else failRzt = rzt;
             }
         }
@@ -952,7 +952,7 @@ export class ExplUpdater {
 
             const curExpPercent = PetDataTool.addExp(selfPet, curExp);
 
-            const petName = petModelDict[selfPet.id].cnName;
+            const petName = PetDataTool.getCnName(selfPet);
             if (curExpPercent <= 0) {
                 // 跳过
             } else if (curExpPercent >= 1) {
@@ -1012,7 +1012,7 @@ export class ExplUpdater {
                 const features: Feature[] = deepCopy(pet.inbornFeatures) as Feature[];
                 const rztStr = GameDataTool.addCaughtPet(gameData, pet.id, pet.lv, pet.rank, features);
                 if (rztStr === GameDataTool.SUC) {
-                    this.log(ExplLogType.rich, `成功捕获${petModelDict[pet.id].cnName}`);
+                    this.log(ExplLogType.rich, `成功捕获${PetDataTool.getCnName(pet)}`);
                     const catcher = this.memory.gameData.items[catcherIdx] as Catcher;
                     if (catcher.count === 1) {
                         gameData.curExpl.catcherId = null;

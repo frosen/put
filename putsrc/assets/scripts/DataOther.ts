@@ -622,7 +622,7 @@ export class RealBattle {
         const features = [];
         const featureR = Math.random();
         if (lv > 5 && featureR > 0.3) features.push(FeatureDataTool.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
-        if (lv > 10 && featureR > 0.8) features.push(FeatureDataTool.createInbornFeature());
+        if (lv > 15 && featureR > 0.7) features.push(FeatureDataTool.createInbornFeature());
         return features;
     }
 

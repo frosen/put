@@ -10,7 +10,6 @@ import { ListViewCell } from 'scripts/ListViewCell';
 import { petModelDict } from 'configs/PetModelDict';
 
 import { Pet, PetRankNames, PetStateNames, EleColor } from 'scripts/DataSaved';
-import { PetModel } from 'scripts/DataModel';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { PetDataTool } from 'scripts/Memory';
 
@@ -58,15 +57,14 @@ export class CellPet extends ListViewCell {
 
     setData(pet: Pet) {
         this.curPet = pet;
-        const petModel: PetModel = petModelDict[pet.id];
 
-        this.petNameLbl.string = petModel.cnName;
+        this.petNameLbl.string = PetDataTool.getCnName(pet, true);
         this.lvLbl.string = `[L${pet.lv}${PetRankNames[pet.rank]}]`;
         CellPet.rerenderLbl(this.petNameLbl);
         CellPet.rerenderLbl(this.lvLbl);
         this.petNameLbl.node.parent.getComponent(cc.Layout).updateLayout();
 
-        this.petSp.node.color = EleColor[petModel.eleType];
+        this.petSp.node.color = EleColor[petModelDict[pet.id].eleType];
 
         const stateLbl = this.stateBtn.getComponentInChildren(cc.Label);
         stateLbl.string = PetStateNames[pet.state];

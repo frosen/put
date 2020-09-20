@@ -410,6 +410,8 @@ export class PetDataTool {
         pet.catchLv = lv;
         pet.catchRank = rank;
 
+        pet.nickName = null;
+
         pet.state = PetState.rest;
 
         pet.lv = lv;
@@ -426,6 +428,25 @@ export class PetDataTool {
         for (const feature of features) pet.inbornFeatures.push(FeatureDataTool.clone(feature));
 
         return pet;
+    }
+
+    static getCnName(pet: Pet, needSpace: boolean = false): string {
+        if (pet.nickName) return pet.nickName;
+        if (pet.inbornFeatures.length > 0) {
+            let name = '';
+            for (let index = 1; index >= 0; index--) {
+                const feature = pet.inbornFeatures[index];
+                if (!feature) continue;
+                name += featureModelDict[feature.id].cnBrief;
+            }
+            return name + (needSpace ? ' 之 ' : '之') + PetDataTool.getOriNameById(pet.id);
+        } else {
+            return PetDataTool.getOriNameById(pet.id);
+        }
+    }
+
+    static getOriNameById(id: string): string {
+        return petModelDict[id].cnName;
     }
 
     static eachFeatures(pet: Pet, callback: (featureModel: FeatureModel, datas: number[]) => void) {
@@ -669,14 +690,14 @@ export class EquipDataTool {
         return equipModelDict[equip.id].lv + equip.growth;
     }
 
-    static getCnName(equip: Equip): string {
+    static getCnName(equip: Equip, needSpace: boolean = false): string {
         if (equip.affixes.length > 0) {
             let name = '';
             for (let index = equip.affixes.length - 1; index >= 0; index--) {
                 const affix = equip.affixes[index];
                 name += featureModelDict[affix.id].cnBrief;
             }
-            return name + '之' + equipModelDict[equip.id].cnName;
+            return name + (needSpace ? ' 之 ' : '之') + equipModelDict[equip.id].cnName;
         } else {
             return equipModelDict[equip.id].cnName;
         }
@@ -729,7 +750,25 @@ export class CaughtPetDataTool {
         return cp;
     }
 
-    static getPrice(cpet: CaughtPet) {
+    static getCnName(cpet: CaughtPet, needSpace: boolean = false): string {
+        const petId = cpet.id.slice(3);
+        let petName: string;
+        if (cpet.features.length > 0) {
+            let name = '';
+            for (let index = 1; index >= 0; index--) {
+                const feature = cpet.features[index];
+                if (!feature) continue;
+                name += featureModelDict[feature.id].cnBrief;
+            }
+            petName = name + (needSpace ? ' 之 ' : '之') + PetDataTool.getOriNameById(petId);
+        } else {
+            petName = PetDataTool.getOriNameById(petId);
+        }
+
+        return '捕获：' + petName;
+    }
+
+    static getPrice(cpet: CaughtPet): number {
         return 100;
     }
 }

@@ -8,9 +8,8 @@ const { ccclass, property } = cc._decorator;
 
 import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { CaughtPet, PetRankNames } from 'scripts/DataSaved';
-import { petModelDict } from 'configs/PetModelDict';
-import { PetModel } from 'scripts/DataModel';
 import { featureModelDict } from 'configs/FeatureModelDict';
+import { CaughtPetDataTool } from 'scripts/Memory';
 
 @ccclass
 export class CellPkgCaughtPet extends CellPkgBase {
@@ -27,9 +26,8 @@ export class CellPkgCaughtPet extends CellPkgBase {
 
     setData(itemIdx: number, caughtPet: CaughtPet) {
         super.setData(itemIdx, caughtPet);
-        const petModel: PetModel = petModelDict[caughtPet.petId];
 
-        this.nameLbl.string = '捕获：' + petModel.cnName;
+        this.nameLbl.string = CaughtPetDataTool.getCnName(caughtPet, true);
         this.lvLbl.string = `[L${caughtPet.lv}${PetRankNames[caughtPet.rank]}]`;
 
         this.hideAllInfoNode();
