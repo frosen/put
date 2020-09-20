@@ -648,7 +648,7 @@ export class EquipDataTool {
         for (let index = 0; index < equipModel.featureIds.length; index++) featureLvs.push(featureLvFrom + randomInt(3));
 
         const affixes = [];
-        if (lv >= 26 && randomRate(0.7)) {
+        if (randomRate(0.5)) {
             const featureIds = Object.keys(featureModelDict);
             const featureId = getRandomOneInList(featureIds);
             const feature = new Feature();
