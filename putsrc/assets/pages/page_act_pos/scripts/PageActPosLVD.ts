@@ -14,13 +14,14 @@ import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { PageActPos } from './PageActPos';
 import { PageSwitchAnim, BaseController } from 'scripts/BaseController';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
-import { PosData, PADExpl } from 'scripts/DataSaved';
+import { PosData, PADExpl, PADEqpMkt, PADPetMkt } from 'scripts/DataSaved';
 import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel, EvtModel, MovModel } from 'scripts/DataModel';
 import { GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { PageActShop } from 'pages/page_act_shop/scripts/PageActShop';
-import { PageActEqpMkt } from 'pages/page_act_eqpmkt/scripts/PageActEqpMkt';
+import { PageActEqpMkt, EqpMktUpdataInterval } from 'pages/page_act_eqpmkt/scripts/PageActEqpMkt';
 import { PageActPetMkt } from 'pages/page_act_petmkt/scripts/PageActPetMkt';
+import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
 
 type CellActInfo = {
     cnName: string;
@@ -34,8 +35,40 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.work]: { cnName: '工作介绍所' },
     [PAKey.quest]: { cnName: '任务发布栏' },
     [PAKey.shop]: { cnName: '物资商店', page: PageActShop },
-    [PAKey.eqpMkt]: { cnName: '装备市场', page: PageActEqpMkt },
-    [PAKey.petMkt]: { cnName: '宠物市场', page: PageActPetMkt },
+    [PAKey.eqpMkt]: {
+        cnName: '装备市场',
+        getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
+            const gameData = ctrlr.memory.gameData;
+            const posData = gameData.posDataDict[gameData.curPosId];
+
+            if (!posData.actDict.hasOwnProperty(PAKey.eqpMkt)) return null;
+            const pADEqpMkt = posData.actDict[PAKey.eqpMkt] as PADEqpMkt;
+            const nextTime = (pADEqpMkt.updateTime || 0) + EqpMktUpdataInterval;
+            const diff = nextTime - Date.now();
+            if (diff < 0) return null;
+
+            const str = `[${CellUpdateDisplay.getDiffStr(diff)}]`;
+            return { str, color: cc.color(120, 120, 120) };
+        },
+        page: PageActEqpMkt
+    },
+    [PAKey.petMkt]: {
+        cnName: '宠物市场',
+        getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
+            const gameData = ctrlr.memory.gameData;
+            const posData = gameData.posDataDict[gameData.curPosId];
+
+            if (!posData.actDict.hasOwnProperty(PAKey.petMkt)) return null;
+            const pADPetMkt = posData.actDict[PAKey.petMkt] as PADPetMkt;
+            const nextTime = (pADPetMkt.updateTime || 0) + EqpMktUpdataInterval;
+            const diff = nextTime - Date.now();
+            if (diff < 0) return null;
+
+            const str = `[${CellUpdateDisplay.getDiffStr(diff)}]`;
+            return { str, color: cc.color(120, 120, 120) };
+        },
+        page: PageActPetMkt
+    },
     [PAKey.rcclr]: { cnName: '回收站' },
     [PAKey.aCntr]: { cnName: '奖励中心' },
     [PAKey.expl]: {
@@ -251,7 +284,7 @@ export class PageActPosLVD extends ListViewDelegate {
 
     getSubInfo(actInfo: CellActInfo): { str: string; color?: cc.Color } {
         if (actInfo.hasOwnProperty('getSubInfo')) {
-            return actInfo.getSubInfo(this.ctrlr);
+            return actInfo.getSubInfo(this.ctrlr) || { str: null };
         } else return { str: null };
     }
 

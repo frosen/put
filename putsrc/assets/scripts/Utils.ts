@@ -89,3 +89,15 @@ Array.prototype.getMax = function (call: (a: any) => number) {
     for (const one of this) max = Math.max(max, call(one));
     return max;
 };
+
+// @ts-ignore
+Array.prototype.equals = function <T>(anotherList: T[], call: (a: T, b: T) => boolean): boolean {
+    if (this.length === anotherList.length) {
+        for (let index = 0; index < this.length; index++) {
+            const thisOne = this[index];
+            const another = anotherList[index];
+            if (!call(thisOne, another)) return false;
+        }
+        return true;
+    } else return false;
+};

@@ -908,7 +908,7 @@ export class ExplUpdater {
     async addCnsumSync(itemId: string) {
         return new Promise<string | Cnsum>(resolve => {
             const rzt = GameDataTool.addCnsum(this.gameData, itemId);
-            if (rzt != GameDataTool.SUC) resolve(rzt);
+            if (rzt !== GameDataTool.SUC) resolve(rzt);
         });
     }
 

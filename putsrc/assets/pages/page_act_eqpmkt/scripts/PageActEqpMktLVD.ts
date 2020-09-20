@@ -32,7 +32,7 @@ export class PageActEqpMktLVD extends ListViewDelegate {
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
-        if (rowIdx === 0) return 100;
+        if (rowIdx === 0) return 104;
         else return 220;
     }
 

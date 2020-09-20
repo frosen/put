@@ -20,11 +20,15 @@ export class CellUpdateDisplay extends ListViewCell {
         const now = nowDate.getTime();
         const diff = nextUpdTime - now;
         const nextUpdDate = new Date(nextUpdTime);
-        const str = `更新时间：${this.getDay(nowDate, nextUpdDate)}${this.getHourMin(nextUpdDate)}[剩余${this.getDiffStr(diff)}]`;
+
+        const dayStr = CellUpdateDisplay.getDay(nowDate, nextUpdDate);
+        const hourStr = CellUpdateDisplay.getHourMin(nextUpdDate);
+        const diffStr = CellUpdateDisplay.getDiffStr(diff);
+        const str = `更新时间：${dayStr}${hourStr}[剩余${diffStr}]`;
         this.lbl.string = str;
     }
 
-    getDay(nowDate: Date, updateDate: Date): string {
+    static getDay(nowDate: Date, updateDate: Date): string {
         const nowDay = nowDate.getDate();
         const updateDay = updateDate.getDate();
         const diff = updateDay - nowDay;
@@ -34,11 +38,11 @@ export class CellUpdateDisplay extends ListViewCell {
         return '?';
     }
 
-    getHourMin(updateDate: Date): string {
+    static getHourMin(updateDate: Date): string {
         return `${updateDate.getHours()}时${updateDate.getMinutes()}分`;
     }
 
-    getDiffStr(diff: number): string {
+    static getDiffStr(diff: number): string {
         const diffH = Math.floor(diff / (1000 * 60 * 60));
         if (diffH > 0) return String(diffH) + 'H';
 

@@ -47,6 +47,7 @@ interface Array<T> {
     getOne(callback: (item: T) => boolean): T;
     getAvg(call: (item: T) => number): number;
     getMax(call: (item: T) => number): number;
+    equals(anotherList: T[], call: (a: T, b: T) => boolean): boolean;
 }
 
 // -----------------------------------------------------------------

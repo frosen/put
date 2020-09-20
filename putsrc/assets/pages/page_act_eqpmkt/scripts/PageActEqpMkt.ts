@@ -68,7 +68,7 @@ export class PageActEqpMkt extends PageBase {
     resetMktGoods(pADEqpMkt: PADEqpMkt, posModel: ActPosModel) {
         const eqpIdLists = posModel.eqpIdLists;
         cc.assert(eqpIdLists && eqpIdLists.length === 5, `${posModel.id}的eqpIdLists有问题`);
-        const eqpCount = randomInt(7) + 6;
+        const eqpCount = randomInt(3) + 4;
 
         const newEqps: Equip[] = [];
         for (let index = 0; index < eqpCount; index++) {
@@ -78,10 +78,12 @@ export class PageActEqpMkt extends PageBase {
             const equip = EquipDataTool.createRandomById(eqpId);
             let need = true;
             for (const eqpInList of newEqps) {
-                if (eqpInList.id === equip.id && eqpInList.skillId === equip.skillId) {
-                    need = false;
-                    break;
-                }
+                if (equip.id !== eqpInList.id) continue;
+                if (equip.skillId !== eqpInList.skillId) continue;
+                if (!equip.selfFeatureLvs.equals(eqpInList.selfFeatureLvs, (a, b) => a === b)) continue;
+                if (!equip.affixes.equals(eqpInList.affixes, (a, b) => a.id === b.id)) continue;
+                need = false;
+                break;
             }
             if (need) newEqps.push(equip);
         }

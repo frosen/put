@@ -71,7 +71,7 @@ export class PageActPetMkt extends PageBase {
     resetMktGoods(pADPetMkt: PADPetMkt, posModel: ActPosModel) {
         const petIdLists = posModel.petIdLists;
         cc.assert(petIdLists && petIdLists.length === 5, `${posModel.id}的petIdLists有问题`);
-        const petCount = randomInt(7) + 6;
+        const petCount = randomInt(3) + 4;
 
         const newPets = [];
         for (let index = 0; index < petCount; index++) {
@@ -112,7 +112,7 @@ export class PageActPetMkt extends PageBase {
             );
             return false;
         });
-        navBar.setTitle('装备市场');
+        navBar.setTitle('宠物市场');
     }
 
     buy(): boolean {

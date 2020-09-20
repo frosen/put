@@ -368,7 +368,8 @@ export class FeatureDataTool {
     static createInbornFeature(): Feature {
         const feature = new Feature();
         feature.id = getRandomOneInList(inbornFeatures);
-        feature.lv = 1 + Math.floor(Math.pow(Math.random(), 3) * 10); // 使用3次方，使随机结果更小
+        const r = Math.random();
+        feature.lv = 1 + Math.floor(r * r * r * 10); // 使用3次方，使随机结果更小
         return feature;
     }
 

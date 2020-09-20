@@ -164,7 +164,7 @@ export class PageActExpl extends BattlePageBase {
             for (const pet of pets) {
                 const prvty = PetDataTool.getRealPrvty(pet);
                 if (prvty < 50) {
-                    this.ctrlr.popToast(`宠物独立战斗要求所有宠物默契值至少50，但目前${petModelDict[pet.id].cnName}未达到！`);
+                    this.ctrlr.popToast(`宠物独立战斗要求所有宠物默契值至少50，\n但目前${petModelDict[pet.id].cnName}未达到！`);
                     return;
                 }
             }
