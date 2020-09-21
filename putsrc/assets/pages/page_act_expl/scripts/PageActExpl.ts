@@ -234,7 +234,7 @@ export class PageActExpl extends BattlePageBase {
         const step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
         const stepType = StepTypesByMax[stepMax][step];
         const stepName = ExplStepNames[stepType];
-        const percent = this.updater.explStepPercent;
+        const percent = this.updater ? this.updater.explStepPercent : 0;
         let percentStr: string;
         if (percent >= 10) percentStr = '.' + String(percent);
         else if (percent > 0) percentStr = '.0' + String(percent);

@@ -12,6 +12,7 @@ import { PosData } from 'scripts/DataSaved';
 import { GameDataTool } from 'scripts/Memory';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
 import { PanelPosInfo } from './PanelPosInfo';
+import { ExplUpdater } from 'scripts/ExplUpdater';
 
 @ccclass
 export class PageActPos extends PageBase {
@@ -37,7 +38,7 @@ export class PageActPos extends PageBase {
 
     onPageShow() {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl) return;
+        if (gameData.curExpl && !ExplUpdater.haveUpdaterInBG()) return;
 
         const posId = gameData.curPosId;
 
@@ -64,7 +65,7 @@ export class PageActPos extends PageBase {
 
     afterPageShowAnim() {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl) this.ctrlr.pushPage(PageActExpl, null, false);
+        if (gameData.curExpl && !ExplUpdater.haveUpdaterInBG()) this.ctrlr.pushPage(PageActExpl, null, false);
     }
 
     static ListViewPosDict: { [key: string]: number } = {};

@@ -79,7 +79,7 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
             let curStep: number;
             if (posData.actDict.hasOwnProperty(PAKey.expl)) {
                 const pADExpl = posData.actDict[PAKey.expl] as PADExpl;
-                curStep = pADExpl.doneStep;
+                curStep = pADExpl.doneStep + 1;
             } else curStep = 0;
             const curPosModel = actPosModelDict[gameData.curPosId];
             const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
