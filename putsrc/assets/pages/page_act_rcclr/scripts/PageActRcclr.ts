@@ -8,8 +8,8 @@ const { ccclass, property } = cc._decorator;
 
 import { ListView } from 'scripts/ListView';
 import { PageActRcclrLVD } from './PageActRcclrLVD';
-import { Item, ItemType, Cnsum, CnsumType } from 'scripts/DataSaved';
-import { MoneyTool } from 'scripts/Memory';
+import { Item, ItemType, Cnsum, CnsumType, Money } from 'scripts/DataSaved';
+import { MoneyTool, GameDataTool } from 'scripts/Memory';
 import { NavBar } from 'scripts/NavBar';
 import { LIST_NAMES } from 'pages/page_pkg/scripts/PagePkg';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
@@ -90,6 +90,36 @@ export class PageActRcclr extends PageBase {
     }
 
     recycle(): boolean {
+        const gameData = this.ctrlr.memory.gameData;
+        let realTotalPrice = 0;
+
+        for (const id in this.countDict) {
+            if (!this.countDict.hasOwnProperty(id)) continue;
+            const count = this.countDict[id];
+            const items = gameData.items;
+            let itemIdx: number = -1;
+            for (let index = 0; index < items.length; index++) {
+                const item = items[index];
+                if (item.id === id) {
+                    itemIdx = index;
+                    break;
+                }
+            }
+
+            if (itemIdx === -1) continue;
+            const item = gameData.items[itemIdx];
+            const price = PageActRcclrLVD.getItemPrice(item);
+            const rzt = GameDataTool.deleteItem(gameData, itemIdx, count);
+            if (rzt === GameDataTool.SUC) {
+                realTotalPrice += count * price;
+            } else {
+                this.ctrlr.popToast(rzt);
+                break;
+            }
+        }
+
+        GameDataTool.handleMoney(gameData, (m: Money) => (m.sum += realTotalPrice));
+
         return true;
     }
 
