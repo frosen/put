@@ -9,9 +9,9 @@ const { ccclass, property } = cc._decorator;
 import { ListView } from 'scripts/ListView';
 import { PageActRcclrLVD } from './PageActRcclrLVD';
 import { Item, ItemType, Cnsum, CnsumType } from 'scripts/DataSaved';
-import { GameDataTool, MoneyTool } from 'scripts/Memory';
+import { MoneyTool } from 'scripts/Memory';
 import { NavBar } from 'scripts/NavBar';
-import { PagePkg, LIST_NAMES } from 'pages/page_pkg/scripts/PagePkg';
+import { LIST_NAMES } from 'pages/page_pkg/scripts/PagePkg';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { PageBase } from 'scripts/PageBase';
@@ -108,33 +108,33 @@ export class PageActRcclr extends PageBase {
         if (curData.dirtyToken !== curDirtyToken) {
             curData.dirtyToken = curDirtyToken;
             const items = this.ctrlr.memory.gameData.items;
-            const idxs = PagePkg.getItemIdxsByListIdx(items, this.curListIdx);
+            const idxs = PageActRcclr.getItemIdxsByListIdxWithoutMoney(items, this.curListIdx);
             curData.delegate.initListData(items, idxs);
             curData.list.resetContent(true);
         }
     }
 
-    static getItemIdxsByListIdx(items: Item[], listIdx: number): number[] {
+    static getItemIdxsByListIdxWithoutMoney(items: Item[], listIdx: number): number[] {
         const idxs: number[] = [];
         if (listIdx === 0) {
-            for (let index = 0; index < items.length; index++) idxs[index] = index;
+            for (let index = 1; index < items.length; index++) idxs[idxs.length] = index;
         } else if (listIdx === 1) {
-            this.getoutItemIdxsByType(items, idxs, ItemType.equip);
+            this.getoutItemIdxsByTypeWithoutMoney(items, idxs, ItemType.equip);
         } else if (listIdx === 2) {
-            this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.drink);
+            this.getoutItemIdxsByTypeWithoutMoney(items, idxs, ItemType.cnsum, CnsumType.drink);
         } else if (listIdx === 3) {
-            this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.catcher);
-            this.getoutItemIdxsByType(items, idxs, ItemType.caughtPet);
+            this.getoutItemIdxsByTypeWithoutMoney(items, idxs, ItemType.cnsum, CnsumType.catcher);
+            this.getoutItemIdxsByTypeWithoutMoney(items, idxs, ItemType.caughtPet);
         } else if (listIdx === 4) {
-            this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.eqpAmplr);
+            this.getoutItemIdxsByTypeWithoutMoney(items, idxs, ItemType.cnsum, CnsumType.eqpAmplr);
         }
         return idxs;
     }
 
-    static getoutItemIdxsByType(items: Item[], idxsOut: number[], itemType: ItemType, cnsumType: CnsumType = null) {
-        for (let index = 0; index < items.length; index++) {
+    static getoutItemIdxsByTypeWithoutMoney(items: Item[], idxsOut: number[], itemType: ItemType, cnsumType: CnsumType = null) {
+        for (let index = 1; index < items.length; index++) {
             const item = items[index];
-            if (item.itemType === itemType && cnsumType && (item as Cnsum).cnsumType === cnsumType) {
+            if (item.itemType === itemType && (cnsumType ? (item as Cnsum).cnsumType === cnsumType : true)) {
                 idxsOut[idxsOut.length] = index;
             }
         }

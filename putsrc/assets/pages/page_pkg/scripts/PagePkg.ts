@@ -137,7 +137,7 @@ export class PagePkg extends PagePkgBase {
     static getoutItemIdxsByType(items: Item[], idxsOut: number[], itemType: ItemType, cnsumType: CnsumType = null) {
         for (let index = 0; index < items.length; index++) {
             const item = items[index];
-            if (item.itemType === itemType && cnsumType && (item as Cnsum).cnsumType === cnsumType) {
+            if (item.itemType === itemType && (cnsumType ? (item as Cnsum).cnsumType === cnsumType : true)) {
                 idxsOut[idxsOut.length] = index;
             }
         }

@@ -22,6 +22,7 @@ import { PageActShop } from 'pages/page_act_shop/scripts/PageActShop';
 import { PageActEqpMkt, EqpMktUpdataInterval } from 'pages/page_act_eqpmkt/scripts/PageActEqpMkt';
 import { PageActPetMkt } from 'pages/page_act_petmkt/scripts/PageActPetMkt';
 import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
+import { PageActRcclr } from 'pages/page_act_rcclr/scripts/PageActRcclr';
 
 type CellActInfo = {
     cnName: string;
@@ -69,12 +70,13 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
         },
         page: PageActPetMkt
     },
-    [PAKey.rcclr]: { cnName: '回收站' },
+    [PAKey.rcclr]: { cnName: '回收站', page: PageActRcclr },
     [PAKey.aCntr]: { cnName: '奖励中心' },
     [PAKey.expl]: {
         cnName: '探索',
         getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
             const gameData = ctrlr.memory.gameData;
+            const ing = gameData.curExpl && gameData.curExpl.curPosId === gameData.curPosId ? 'ing' : '';
             const posData = gameData.posDataDict[gameData.curPosId];
             let curStep: number;
             if (posData.actDict.hasOwnProperty(PAKey.expl)) {
@@ -84,7 +86,7 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
             const curPosModel = actPosModelDict[gameData.curPosId];
             const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
             const stepMax = explModel.stepMax;
-            return { str: String(`[${curStep}/${stepMax}]`), color: cc.color(255, 102, 0) };
+            return { str: String(`${ing}[${curStep}/${stepMax}]`), color: cc.color(255, 102, 0) };
         },
         page: PageActExpl,
         check: (ctrlr: BaseController): string => {

@@ -95,11 +95,11 @@ export class CellTransaction extends ListViewCell {
     }
 
     addCount(count: number) {
-        this.addCallback(this, count);
+        if (this.addBtn.interactable) this.addCallback(this, count);
     }
 
     rdcCount(count: number) {
-        this.rdcCallback(this, count);
+        if (this.rdcBtn.interactable) this.rdcCallback(this, count);
     }
 
     updateState: number = 0;
