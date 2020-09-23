@@ -33,9 +33,13 @@ import {
     PADExpl,
     ZUAN,
     JIN,
-    KUAI
+    KUAI,
+    PADEqpMkt,
+    PADPetMkt,
+    PADACntr,
+    PADBase
 } from './DataSaved';
-import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType, CnsumModel } from './DataModel';
+import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType, CnsumModel, PAKey } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
@@ -822,6 +826,26 @@ export class PosDataTool {
         pADExpl.doneStep = 0;
         return pADExpl;
     }
+
+    static createPADEqpMkt(): PADEqpMkt {
+        const pADEqpMkt = newInsWithChecker(PADEqpMkt);
+        pADEqpMkt.eqps = [];
+        pADEqpMkt.updateTime = 0;
+        return pADEqpMkt;
+    }
+
+    static createPADPetMkt(): PADPetMkt {
+        const pADPetMkt = newInsWithChecker(PADPetMkt);
+        pADPetMkt.pets = [];
+        pADPetMkt.updateTime = 0;
+        return pADPetMkt;
+    }
+
+    static createPADACntr(): PADACntr {
+        const pADACntr = newInsWithChecker(PADACntr);
+        pADACntr.soldoutList = [];
+        return pADACntr;
+    }
 }
 
 export class MmrTool {
@@ -1174,19 +1198,25 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
-    static addPos(gameData: GameData, posId: string) {
+    static addPos(gameData: GameData, posId: string): PosData {
         if (!gameData.posDataDict.hasOwnProperty(posId)) {
             const pd = PosDataTool.create(posId);
             gameData.posDataDict[posId] = pd;
-        }
+            return pd;
+        } else return gameData.posDataDict[posId];
     }
 
-    static addPA(gameData: GameData, posId: string, paKey: string) {
+    static addPA(gameData: GameData, posId: string, paKey: string): PADBase {
         const pd = gameData.posDataDict[posId];
         if (!pd.actDict.hasOwnProperty(paKey)) {
-            const pADExpl = PosDataTool.createPADExpl();
-            pd.actDict[paKey] = pADExpl;
-        }
+            let pad: PADBase;
+            if (paKey === PAKey.expl) pad = PosDataTool.createPADExpl();
+            else if (paKey === PAKey.eqpMkt) pad = PosDataTool.createPADEqpMkt();
+            else if (paKey === PAKey.petMkt) pad = PosDataTool.createPADPetMkt();
+            else if (paKey === PAKey.aCntr) pad = PosDataTool.createPADACntr();
+            pd.actDict[paKey] = pad;
+            return pad;
+        } else return pd.actDict[paKey];
     }
 
     static createExpl(gameData: GameData, startStep: number) {

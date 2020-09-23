@@ -46,9 +46,7 @@ export class PageActPetMkt extends PageBase {
         if (CC_EDITOR) return;
         const gameData = this.ctrlr.memory.gameData;
         const posId = gameData.curPosId;
-        GameDataTool.addPA(gameData, posId, PAKey.petMkt);
-        const posData: PosData = gameData.posDataDict[posId];
-        const pADPetMkt: PADPetMkt = posData.actDict[PAKey.petMkt] as PADPetMkt;
+        const pADPetMkt: PADPetMkt = GameDataTool.addPA(gameData, posId, PAKey.petMkt) as PADPetMkt;
         const now = Date.now();
         if (!pADPetMkt.updateTime || now > pADPetMkt.updateTime + PetMktUpdataInterval) {
             pADPetMkt.updateTime = now;
@@ -73,7 +71,8 @@ export class PageActPetMkt extends PageBase {
         cc.assert(petIdLists && petIdLists.length === 5, `${posModel.id}的petIdLists有问题`);
         const petCount = randomInt(3) + 4;
 
-        const newPets = [];
+        const pets = pADPetMkt.pets;
+        pets.length = 0;
         for (let index = 0; index < petCount; index++) {
             let step = getRandomOneInListWithRate([0, 1, 2, 3, 4], [0, 0.4, 0.7, 0.9]);
             let petList = petIdLists[step];
@@ -92,9 +91,8 @@ export class PageActPetMkt extends PageBase {
             const features = RealBattle.getRandomFeatures(lv);
 
             const cPet = CaughtPetDataTool.create(petId, lv, rank, features);
-            newPets.push(cPet);
+            pets.push(cPet);
         }
-        pADPetMkt.pets = newPets;
     }
 
     onLoadNavBar(navBar: NavBar) {

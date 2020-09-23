@@ -15,7 +15,9 @@ import { actPosModelDict } from 'configs/ActPosModelDict';
 import { ListView } from 'scripts/ListView';
 import { Equip, Item, Money } from 'scripts/DataSaved';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { ReputAward } from 'scripts/DataModel';
+import { PAKey, ReputAward } from 'scripts/DataModel';
+
+const ACntrCountMax = 1;
 
 @ccclass
 export class PageActACntr extends PageBase {
@@ -36,15 +38,21 @@ export class PageActACntr extends PageBase {
         super.onLoad();
 
         if (CC_EDITOR) return;
-        const posId = this.ctrlr.memory.gameData.curPosId;
+        const gameData = this.ctrlr.memory.gameData;
+        const posId = gameData.curPosId;
         this.awardList = actPosModelDict[posId].awardList;
         for (const award of this.awardList) {
             if (CnsumDataTool.getTypeById(award.fullId)) {
                 this.itemList.push(award.fullId);
+                this.priceList.push(CnsumDataTool.getModelById(award.fullId).price);
             } else {
-                this.itemList.push(EquipDataTool.createByFullId(award.fullId));
+                const eqp = EquipDataTool.createByFullId(award.fullId);
+                this.itemList.push(eqp);
+                this.priceList.push(EquipDataTool.getPrice(eqp));
             }
         }
+
+        GameDataTool.addPA(gameData, posId, PAKey.aCntr);
 
         const lvd = this.list.delegate as PageActACntrLVD;
         lvd.page = this;
@@ -75,7 +83,9 @@ export class PageActACntr extends PageBase {
             return false;
         }
 
-        if (this.totalCount + gameData.weight > GameDataTool.getItemCountMax(gameData)) {
+        let totalCount = 0;
+        for (const count of this.countList) if (count > 0) totalCount++;
+        if (totalCount + gameData.weight > GameDataTool.getItemCountMax(gameData)) {
             this.ctrlr.popToast('道具数量超限了');
             return false;
         }
@@ -83,8 +93,9 @@ export class PageActACntr extends PageBase {
         for (let index = 0; index < this.countList.length; index++) {
             const count = this.countList[index];
             if (!count) continue;
-            const goodsId = this.goodsIds[index];
-            GameDataTool.addCnsum(gameData, goodsId, count);
+            const eqpOrId = this.itemList[index];
+            if (typeof eqpOrId === 'string') GameDataTool.addCnsum(gameData, eqpOrId);
+            else GameDataTool.addEquip(gameData, eqpOrId);
         }
         GameDataTool.handleMoney(gameData, (m: Money) => (m.sum -= this.totalPrice));
 
@@ -98,56 +109,43 @@ export class PageActACntr extends PageBase {
 
     changeTotal() {
         let tp = 0;
-        let tc = 0;
-        for (let index = 0; index < this.goodsIds.length; index++) {
-            const goodsId = this.goodsIds[index];
-            const count = this.countList[index] || 0;
+        for (let index = 0; index < this.countList.length; index++) {
+            const count = this.countList[index];
             if (count <= 0) continue;
-            const price = CnsumDataTool.getModelById(goodsId).price;
-            tp += count * price;
-            tc += count;
+            tp += this.priceList[index];
         }
 
         this.totalPrice = tp;
         this.navBar.setSubTitle('总价 ' + MoneyTool.getSimpleStr(tp));
-        this.totalCount = tc;
     }
 
     // -----------------------------------------------------------------
 
     onCellAddCount(cell: CellTransaction, count: number) {
         const gameData = this.ctrlr.memory.gameData;
-        const eqpOrId = this.itemList[cell.curCellIdx];
-        let price: number;
-        if (typeof eqpOrId === 'string') price = CnsumDataTool.getModelById(eqpOrId).price;
-        else price = EquipDataTool.getPrice(eqpOrId);
+        const price = this.priceList[cell.curCellIdx];
 
         const curMoney = GameDataTool.getMoney(gameData);
-
         if (this.totalPrice + price > curMoney) {
             this.ctrlr.popToast('钱不够啦');
             return;
         }
 
-        if (this.totalCount + realCount + gameData.weight > GameDataTool.getItemCountMax(gameData)) {
+        let totalCount = 0;
+        for (const count of this.countList) if (count > 0) totalCount++;
+        if (totalCount + 1 + gameData.weight > GameDataTool.getItemCountMax(gameData)) {
             this.ctrlr.popToast('道具数量超限了');
-            const left = GameDataTool.getItemCountMax(gameData) - gameData.weight - this.totalCount;
-            if (left === 0) return;
-            realCount = left;
+            return;
         }
 
-        let curCount = this.countList[cell.curCellIdx] || 0;
-        curCount = Math.min(curCount + realCount, 1);
-        this.countList[cell.curCellIdx] = curCount;
-        cell.setCount(curCount, 1);
+        this.countList[cell.curCellIdx] = 1;
+        cell.setCount(1, ACntrCountMax);
         this.changeTotal();
     }
 
     onCellRdcCount(cell: CellTransaction, count: number) {
-        let curCount = this.countList[cell.curCellIdx] || 0;
-        curCount = Math.max(curCount - count, 0);
-        this.countList[cell.curCellIdx] = curCount;
-        cell.setCount(curCount, 1);
+        this.countList[cell.curCellIdx] = 0;
+        cell.setCount(0, ACntrCountMax);
         this.changeTotal();
     }
 

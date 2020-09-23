@@ -43,9 +43,7 @@ export class PageActEqpMkt extends PageBase {
 
         const gameData = this.ctrlr.memory.gameData;
         const posId = gameData.curPosId;
-        GameDataTool.addPA(gameData, posId, PAKey.eqpMkt);
-        const posData: PosData = gameData.posDataDict[posId];
-        const pADEqpMkt: PADEqpMkt = posData.actDict[PAKey.eqpMkt] as PADEqpMkt;
+        const pADEqpMkt: PADEqpMkt = GameDataTool.addPA(gameData, posId, PAKey.eqpMkt) as PADEqpMkt;
         const now = Date.now();
         if (!pADEqpMkt.updateTime || now > pADEqpMkt.updateTime + EqpMktUpdataInterval) {
             pADEqpMkt.updateTime = now;
@@ -70,23 +68,23 @@ export class PageActEqpMkt extends PageBase {
         cc.assert(eqpIdLists && eqpIdLists.length === 5, `${posModel.id}的eqpIdLists有问题`);
         const eqpCount = randomInt(3) + 4;
 
-        const newEqps: Equip[] = [];
+        const eqps: Equip[] = pADEqpMkt.eqps;
+        eqps.length = 0;
         for (let index = 0; index < eqpCount; index++) {
             let eqpList = getRandomOneInListWithRate(eqpIdLists, [0, 0.4, 0.7, 0.9]);
             if (!eqpList) eqpList = eqpIdLists[1];
             const eqpId = getRandomOneInList(eqpList);
             const equip = EquipDataTool.createRandomById(eqpId);
             let need = true;
-            for (const eqpInList of newEqps) {
+            for (const eqpInList of eqps) {
                 if (equip.id !== eqpInList.id) continue;
                 if (equip.skillId !== eqpInList.skillId) continue;
                 if (!equip.affixes.equals(eqpInList.affixes, (a, b) => a.id === b.id)) continue;
                 need = false;
                 break;
             }
-            if (need) newEqps.push(equip);
+            if (need) eqps.push(equip);
         }
-        pADEqpMkt.eqps = newEqps;
     }
 
     onLoadNavBar(navBar: NavBar) {

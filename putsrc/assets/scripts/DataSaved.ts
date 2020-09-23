@@ -197,6 +197,10 @@ export class PADPetMkt extends PADBase {
     pets: CaughtPet[];
 }
 
+export class PADACntr extends PADBase {
+    soldoutList: boolean[];
+}
+
 export class PosData {
     id: string;
     reput: number;
