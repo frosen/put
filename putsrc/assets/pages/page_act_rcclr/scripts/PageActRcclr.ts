@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { ListView } from 'scripts/ListView';
 import { PageActRcclrLVD } from './PageActRcclrLVD';
-import { Item, ItemType, Cnsum, CnsumType, Money } from 'scripts/DataSaved';
+import { GameData, Item, ItemType, Cnsum, CnsumType, Money } from 'scripts/DataSaved';
 import { MoneyTool, GameDataTool } from 'scripts/Memory';
 import { NavBar } from 'scripts/NavBar';
 import { LIST_NAMES } from 'pages/page_pkg/scripts/PagePkg';
@@ -41,7 +41,7 @@ export class PageActRcclr extends PageBase {
 
     selectionLblNodes: cc.Node[] = [];
 
-    totalPrice: number = 0;
+    priceDict: { [key: string]: number } = {};
     countDict: { [key: string]: number } = {};
 
     onLoad() {
@@ -73,9 +73,10 @@ export class PageActRcclr extends PageBase {
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
-            if (this.totalPrice <= 0) return true;
+            const totalPrice = this.getTotalPrice();
+            if (totalPrice <= 0) return true;
             this.ctrlr.popAlert(
-                `确定回收资源并获得${MoneyTool.getStr(this.totalPrice)} ？`,
+                `确定回收资源并获得${MoneyTool.getStr(totalPrice)} ？`,
                 (key: number) => {
                     if (key === 1) {
                         if (this.recycle()) this.ctrlr.popPage();
@@ -96,19 +97,13 @@ export class PageActRcclr extends PageBase {
         for (const id in this.countDict) {
             if (!this.countDict.hasOwnProperty(id)) continue;
             const count = this.countDict[id];
-            const items = gameData.items;
-            let itemIdx: number = -1;
-            for (let index = 0; index < items.length; index++) {
-                const item = items[index];
-                if (item.id === id) {
-                    itemIdx = index;
-                    break;
-                }
-            }
+            if (count <= 0) continue;
 
+            const itemIdx = PageActRcclr.getItemIdxById(gameData, id);
             if (itemIdx === -1) continue;
+
             const item = gameData.items[itemIdx];
-            const price = PageActRcclrLVD.getItemPrice(item);
+            const price = this.priceDict[id] || PageActRcclrLVD.getItemPrice(item);
             const rzt = GameDataTool.deleteItem(gameData, itemIdx, count);
             if (rzt === GameDataTool.SUC) {
                 realTotalPrice += count * price;
@@ -123,13 +118,56 @@ export class PageActRcclr extends PageBase {
         return true;
     }
 
+    static getItemIdxById(gameData: GameData, id: string): number {
+        const items = gameData.items;
+        for (let index = 0; index < items.length; index++) {
+            const item = items[index];
+            if (item.id === id) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
     onPageShow() {
-        this.turnList(this.curListIdx);
+        this.checkCountData();
         this.resetSubTitle();
+        this.turnList(this.curListIdx);
+    }
+
+    checkCountData() {
+        const gameData = this.ctrlr.memory.gameData;
+
+        for (const id in this.countDict) {
+            if (!this.countDict.hasOwnProperty(id)) continue;
+            let count = this.countDict[id];
+            const itemIdx = PageActRcclr.getItemIdxById(gameData, id);
+
+            if (itemIdx === -1) {
+                this.countDict[id] = 0;
+                continue;
+            }
+
+            const item = gameData.items[itemIdx];
+            const realCount = item.itemType === ItemType.cnsum ? (item as Cnsum).count : 1;
+            if (realCount < count) {
+                count = realCount;
+                this.countDict[id] = realCount;
+            }
+        }
+    }
+
+    getTotalPrice(): number {
+        let totalPrice = 0;
+        for (const id in this.countDict) {
+            if (!this.countDict.hasOwnProperty(id)) continue;
+            totalPrice += this.countDict[id] * this.priceDict[id];
+        }
+        return totalPrice;
     }
 
     resetSubTitle() {
-        this.navBar.setSubTitle('总价 ' + MoneyTool.getSimpleStr(this.totalPrice));
+        this.navBar.setSubTitle('总价 ' + MoneyTool.getSimpleStr(this.getTotalPrice()));
     }
 
     resetCurList() {
@@ -215,12 +253,13 @@ export class PageActRcclr extends PageBase {
         const items = this.ctrlr.memory.gameData.items;
         const item = items[itemIdx];
 
-        const price = PageActRcclrLVD.getItemPrice(item);
-        this.countDict[item.id] = (this.countDict[item.id] || 0) + count;
-        this.totalPrice += price * count;
-
-        const newCount = this.countDict[item.id] || 0;
         const countMax = item.itemType === ItemType.cnsum ? (item as Cnsum).count : 1;
+        const curCount = this.countDict[item.id] || 0;
+        const newCount = Math.min(curCount + count, countMax);
+
+        if (!this.priceDict.hasOwnProperty(item.id)) this.priceDict[item.id] = PageActRcclrLVD.getItemPrice(item);
+        this.countDict[item.id] = newCount;
+
         cell.setCount(newCount, countMax);
         this.resetSubTitle();
     }
@@ -230,12 +269,13 @@ export class PageActRcclr extends PageBase {
         const items = this.ctrlr.memory.gameData.items;
         const item = items[itemIdx];
 
-        const price = PageActRcclrLVD.getItemPrice(item);
-        this.countDict[item.id] -= count;
-        this.totalPrice -= price * count;
-
-        const newCount = this.countDict[item.id] || 0;
         const countMax = item.itemType === ItemType.cnsum ? (item as Cnsum).count : 1;
+        const curCount = this.countDict[item.id] || 0;
+        const newCount = Math.max(curCount - count, 0);
+
+        if (!this.priceDict.hasOwnProperty(item.id)) this.priceDict[item.id] = PageActRcclrLVD.getItemPrice(item);
+        this.countDict[item.id] = newCount;
+
         cell.setCount(newCount, countMax);
         this.resetSubTitle();
     }
