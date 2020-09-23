@@ -5,7 +5,7 @@
  */
 
 import { BattleController } from './BattleController';
-import { EleType, BattleType, BioType, Pet, GameData } from './DataSaved';
+import { EleType, BattleType, BioType, Pet, GameData, Item } from './DataSaved';
 import { Pet2, BattlePet, BattleBuff, AmplAttriType } from './DataOther';
 
 // -----------------------------------------------------------------
@@ -275,6 +275,21 @@ export enum ActPosType {
     NoGA
 }
 
+export enum ReputRank {
+    ignoring = 1,
+    renown,
+    respect,
+    veneration,
+    worship
+}
+
+export const ReputNames = ['', '无视', '闻名', '尊敬', '崇敬', '崇拜'];
+
+export class ReputAward {
+    need: ReputRank;
+    fullId: string;
+}
+
 export class ActPosModel {
     id: string;
     cnName: string;
@@ -289,6 +304,7 @@ export class ActPosModel {
     itemIdLists: string[][];
     eqpIdLists: string[][];
     goodsList: string[];
+    awardList: ReputAward[];
 }
 
 // -----------------------------------------------------------------

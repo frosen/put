@@ -541,6 +541,7 @@ export class CnsumDataTool {
         else if (cnsumId in catcherModelDict) return CnsumType.catcher;
         else if (cnsumId in eqpAmplrModelDict) return CnsumType.eqpAmplr;
         else if (cnsumId in materialModelDict) return CnsumType.material;
+        else return null;
     }
 
     static getModelById(cnsumId: string): CnsumModel {
@@ -548,6 +549,7 @@ export class CnsumDataTool {
         else if (cnsumId in catcherModelDict) return catcherModelDict[cnsumId];
         else if (cnsumId in eqpAmplrModelDict) return eqpAmplrModelDict[cnsumId];
         else if (cnsumId in materialModelDict) return materialModelDict[cnsumId];
+        else return null;
     }
 
     static getClassById(cnsumId: string): { new (): Cnsum } {
@@ -555,6 +557,7 @@ export class CnsumDataTool {
         else if (cnsumId in catcherModelDict) return Catcher;
         else if (cnsumId in eqpAmplrModelDict) return EqpAmplr;
         else if (cnsumId in materialModelDict) return Material;
+        else return null;
     }
 }
 
@@ -647,7 +650,7 @@ export class EquipDataTool {
         const featureLvFrom = lv <= startLv ? 1 : Math.ceil((lv - startLv) * 0.1) + 1;
         for (let index = 0; index < equipModel.featureIds.length; index++) featureLvs.push(featureLvFrom + randomInt(3));
 
-        const affixes = [];
+        const affixes: Feature[] = [];
         if (randomRate(0.5)) {
             const featureIds = Object.keys(featureModelDict);
             const featureId = getRandomOneInList(featureIds);
@@ -682,6 +685,41 @@ export class EquipDataTool {
         }
         const equipId = getRandomOneInList(equipIds);
         return this.createRandomById(equipId);
+    }
+
+    static createByFullId(fullId: string): Equip {
+        const infos = fullId.split('-');
+
+        const fLvStrs = infos[2].split('$');
+        const fLvs: number[] = [];
+        for (const fLvStr of fLvStrs) fLvs.push(Number(fLvStr));
+
+        const afStrs = infos[3].split('$');
+        const afs: Feature[] = [];
+        for (const afStr of afStrs) {
+            const afInfo = afStr.split('#');
+            const feature = new Feature();
+            feature.id = afInfo[0];
+            feature.lv = Number(afInfo[1] || '1');
+            afs.push(feature);
+        }
+        return this.create(infos[0], infos[1], 0, fLvs, afs, 0);
+    }
+
+    static getFullId(equip: Equip): string {
+        const id = equip.id;
+        const skillId = equip.skillId;
+        let fLvStr = '';
+        for (const lv of equip.selfFeatureLvs) {
+            fLvStr += String(lv) + '$';
+        }
+        fLvStr = fLvStr.slice(0, -1);
+        let affixesStr = '';
+        for (const { id, lv } of equip.affixes) {
+            affixesStr += id + '#' + String(lv) + '$';
+        }
+        affixesStr = affixesStr.slice(0, -1);
+        return `${id}-${skillId}-${fLvStr}-${affixesStr}`;
     }
 
     static getLv(equip: Equip): number {
