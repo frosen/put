@@ -23,6 +23,7 @@ import { PageActEqpMkt, EqpMktUpdataInterval } from 'pages/page_act_eqpmkt/scrip
 import { PageActPetMkt } from 'pages/page_act_petmkt/scripts/PageActPetMkt';
 import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
 import { PageActRcclr } from 'pages/page_act_rcclr/scripts/PageActRcclr';
+import { PageActACntr } from 'pages/page_act_acntr/scripts/PageActACntr';
 
 type CellActInfo = {
     cnName: string;
@@ -71,7 +72,7 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
         page: PageActPetMkt
     },
     [PAKey.rcclr]: { cnName: '回收站', page: PageActRcclr },
-    [PAKey.aCntr]: { cnName: '奖励中心' },
+    [PAKey.aCntr]: { cnName: '奖励中心', page: PageActACntr },
     [PAKey.expl]: {
         cnName: '探索',
         getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
