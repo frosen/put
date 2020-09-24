@@ -1207,7 +1207,7 @@ export class GameDataTool {
     }
 
     static addPA(gameData: GameData, posId: string, paKey: string): PADBase {
-        const pd = gameData.posDataDict[posId];
+        const pd = GameDataTool.addPos(gameData, posId);
         if (!pd.actDict.hasOwnProperty(paKey)) {
             let pad: PADBase;
             if (paKey === PAKey.expl) pad = PosDataTool.createPADExpl();

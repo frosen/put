@@ -13,11 +13,11 @@ import { PageActACntrLVD } from './PageActACntrLVD';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { ListView } from 'scripts/ListView';
-import { Equip, Item, Money } from 'scripts/DataSaved';
+import { Equip, Money, PADACntr } from 'scripts/DataSaved';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { PAKey, ReputAward } from 'scripts/DataModel';
+import { PAKey } from 'scripts/DataModel';
 
-const ACntrCountMax = 1;
+export const ACntrCountMax = 1;
 
 @ccclass
 export class PageActACntr extends PageBase {
@@ -29,7 +29,7 @@ export class PageActACntr extends PageBase {
 
     totalPrice: number = 0;
 
-    awardList: ReputAward[] = [];
+    paIdxList: number[] = [];
     itemList: (Equip | string)[] = [];
     priceList: number[] = [];
     countList: number[] = [];
@@ -40,8 +40,16 @@ export class PageActACntr extends PageBase {
         if (CC_EDITOR) return;
         const gameData = this.ctrlr.memory.gameData;
         const posId = gameData.curPosId;
-        this.awardList = actPosModelDict[posId].awardList;
-        for (const award of this.awardList) {
+
+        const pADACntr = GameDataTool.addPA(gameData, posId, PAKey.aCntr) as PADACntr;
+        const soldoutList = pADACntr.soldoutList;
+
+        const awardList = actPosModelDict[posId].awardList;
+        for (let index = 0; index < awardList.length; index++) {
+            const award = awardList[index];
+            const soldout = soldoutList[index];
+            if (soldout === true) continue;
+            this.paIdxList.push(index);
             if (CnsumDataTool.getTypeById(award.fullId)) {
                 this.itemList.push(award.fullId);
                 this.priceList.push(CnsumDataTool.getModelById(award.fullId).price);
@@ -50,9 +58,8 @@ export class PageActACntr extends PageBase {
                 this.itemList.push(eqp);
                 this.priceList.push(EquipDataTool.getPrice(eqp));
             }
+            this.countList.push(0);
         }
-
-        GameDataTool.addPA(gameData, posId, PAKey.aCntr);
 
         const lvd = this.list.delegate as PageActACntrLVD;
         lvd.page = this;
@@ -90,12 +97,17 @@ export class PageActACntr extends PageBase {
             return false;
         }
 
+        const posData = gameData.posDataDict[gameData.curPosId];
+        const soldoutList = (posData.actDict[PAKey.aCntr] as PADACntr).soldoutList;
         for (let index = 0; index < this.countList.length; index++) {
             const count = this.countList[index];
             if (!count) continue;
             const eqpOrId = this.itemList[index];
             if (typeof eqpOrId === 'string') GameDataTool.addCnsum(gameData, eqpOrId);
             else GameDataTool.addEquip(gameData, eqpOrId);
+
+            const paIdx = this.paIdxList[index];
+            soldoutList[paIdx] = true;
         }
         GameDataTool.handleMoney(gameData, (m: Money) => (m.sum -= this.totalPrice));
 
