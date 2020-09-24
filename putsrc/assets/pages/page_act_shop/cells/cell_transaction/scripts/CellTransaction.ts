@@ -21,6 +21,9 @@ export class CellTransaction extends ListViewCell {
     priceLbl: cc.Label = null;
 
     @property(cc.Label)
+    subDataLbl: cc.Label = null;
+
+    @property(cc.Label)
     numLbl: cc.Label = null;
 
     @property(cc.Button)
@@ -59,8 +62,10 @@ export class CellTransaction extends ListViewCell {
         this.setPrice(model.price);
     }
 
-    setPrice(price: number) {
+    setPrice(price: number, subData: string = null, subLblColor: cc.Color = null) {
         this.priceLbl.string = '单价：' + MoneyTool.getSimpleStr(price);
+        this.subDataLbl.string = subData || '';
+        this.subDataLbl.node.color = subLblColor || cc.color(150, 150, 150);
     }
 
     setCount(count: number, maxCount: number) {
