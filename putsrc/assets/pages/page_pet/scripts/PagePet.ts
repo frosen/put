@@ -1,6 +1,6 @@
 /*
  * PagePet.ts
- * 宠物列表页面
+ * 精灵列表页面
  * luleyan
  */
 
@@ -64,9 +64,9 @@ export class PagePet extends PageBase {
             lvd.cellType = data.cellPetType;
             this.specialPageName = data.name;
             this.clickCallback = data.callback;
-            cc.assert(lvd.cellType, 'PUT 特别的宠物列表必须有类型');
-            cc.assert(this.specialPageName, 'PUT 特别的宠物列表必须有名字');
-            cc.assert(this.clickCallback, 'PUT 特别的宠物列表必须有回调');
+            cc.assert(lvd.cellType, 'PUT 特别的精灵列表必须有类型');
+            cc.assert(this.specialPageName, 'PUT 特别的精灵列表必须有名字');
+            cc.assert(this.clickCallback, 'PUT 特别的精灵列表必须有回调');
             this.needBackBtn = true;
             if (data.pets) lvd.setSpecialPets(data.pets);
         }
@@ -74,7 +74,7 @@ export class PagePet extends PageBase {
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(this.needBackBtn);
-        navBar.setTitle(this.specialPageName || '宠物');
+        navBar.setTitle(this.specialPageName || '精灵');
     }
 
     onPageShow() {
@@ -113,7 +113,7 @@ export class PagePet extends PageBase {
     changePetState(pet: Pet) {
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
-            this.ctrlr.popToast('无法改变状态！探索中，备战状态的宠物不得少于两只');
+            this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');
             return;
         }
         pet.state = pet.state === PetState.rest ? PetState.ready : PetState.rest;
@@ -135,12 +135,12 @@ export class PagePet extends PageBase {
         const pet = this.ctrlr.memory.gameData.pets[cellIdx];
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
-            this.ctrlr.popToast('无法改变状态！探索中，备战状态的宠物不得少于两只');
+            this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');
             return;
         }
 
         const name = PetDataTool.getCnName(pet);
-        const str = `确定放生宠物“${name}”？\n` + '注意：放生后将无法找回！';
+        const str = `确定放生精灵“${name}”？\n` + '注意：放生后将无法找回！';
         this.ctrlr.popAlert(str, (key: number) => {
             if (key === 1) {
                 const rzt = GameDataTool.deletePet(gameData, cellIdx);

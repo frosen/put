@@ -1,6 +1,6 @@
 /*
  * PagePetDetailLVD.ts
- * 宠物信息页面列表的代理
+ * 精灵信息页面列表的代理
  * luleyan
  */
 
@@ -38,7 +38,7 @@ const FEATURE = 'f';
 const STATE_TIP = `分为：
 备战中 跟随主人参与战斗
 休息中 跟随主人但不参与战斗
-是否参战可在宠物列表中点击状态按钮修改`;
+是否参战可在精灵列表中点击状态按钮修改`;
 
 const LV_TIP = '提高等级可以提高属性，增加特性\n10级和30级时可分别学会一个技能';
 const RANK_TIP = '提升可大幅度提高属性\n升阶时需消耗材料和一定默契值';
@@ -50,7 +50,7 @@ const DRINK_TIP =
 const BIO_TIP = '分为：\n人形生物 魔法生物\n机械生物 自然生物\n未知生物';
 const ELE_TIP =
     '分为：\n火 克空   水 克火   空 克地\n地 克水   光 克暗   暗 克光\n' +
-    '对克制宠物造成15%的额外伤害\n使用同种属性技能精神消耗减少10%，伤害增加5%';
+    '对克制精灵造成15%的额外伤害\n使用同种属性技能精神消耗减少10%，伤害增加5%';
 
 const BATTLE_TIP = `分为：
 近战 攻击正前面的目标
@@ -67,7 +67,7 @@ const CON_TIP = '每1点专注增加1点技能伤害\n每30点增加1点精神�
 const DUN_TIP = '每1点耐久增加25点血量上限';
 const AGI_TIP = '影响暴击率和闪躲率\n影响偷袭效果\n数据最高者影响潜行效率和避开陷阱的几率';
 const SEN_TIP = '影响制作物品成功的几率\n数据最高者影响察觉宝藏的几率';
-const ELG_TIP = '影响特殊工作的获取\n队伍中数据最高者影响声望上升速度和捕捉宠物的几率';
+const ELG_TIP = '影响特殊工作的获取\n队伍中数据最高者影响声望上升速度和捕捉精灵的几率';
 
 const HP_TIP = '这个用解释么';
 const MP_TIP = '释放技能所消耗的能量';
@@ -77,7 +77,7 @@ const SKL_TIP = '影响技能伤害（乘以技能的伤害系数）';
 
 const FEATURE_TIP = `分为：
 天赋特性 随机天生自带，各不相同
-生物特性 随等级提升获得，每种宠物固定
+生物特性 随等级提升获得，每种精灵固定
 习得特性 通过其他方式获取，数量不限
 每个特性都可以通过提升等级增强效果`;
 
@@ -318,7 +318,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         }
         // 第七组
         else if (rowIdx === 21) {
-            cell.setData(`宠物技能（${this.curPet2.skillIds.length}）`);
+            cell.setData(`精灵技能（${this.curPet2.skillIds.length}）`);
         } else if (rowIdx <= 21 + this.curPet2.skillIds.length) {
             const skillIdx = rowIdx - 22;
             const skillId = this.curPet2.skillIds[skillIdx];
@@ -329,7 +329,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         }
         // 第八组
         else if (rowIdx === 21 + this.curPet2.skillIds.length + 1) {
-            cell.setData(`宠物特性（${this.featureDatas.length}）`, FEATURE_TIP);
+            cell.setData(`精灵特性（${this.featureDatas.length}）`, FEATURE_TIP);
         } else if (rowIdx <= 21 + this.curPet2.skillIds.length + 1 + this.featureDatas.length) {
             const featureData = this.featureDatas[rowIdx - 21 - this.curPet2.skillIds.length - 1 - 1];
             cell.setData(featureData.feature, featureData.type);

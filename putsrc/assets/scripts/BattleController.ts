@@ -232,7 +232,7 @@ export class BattleController {
             this.gotoNextRound();
             nextOrderIdx = this.getNextOrderIndex();
             if (nextOrderIdx === -1) {
-                cc.error('错误的update，已经没有活着的宠物了');
+                cc.error('错误的update，已经没有活着的精灵了');
                 return;
             }
         }
@@ -243,7 +243,7 @@ export class BattleController {
         const startSequenceIdx = rb.sequnence[rb.curSequenceIdx];
         rb.combo = 1;
 
-        // 执行当前宠物的攻击
+        // 执行当前精灵的攻击
         const curExePet: BattlePet = rb.order[nextOrderIdx];
         this.attack(curExePet);
 

@@ -249,7 +249,7 @@ export class GameData {
     profTitleIds: string[];
 
     pets: Pet[];
-    totalPetCount: number; // 一共抓取过的宠物的总量，用于pet的索引
+    totalPetCount: number; // 一共抓取过的精灵的总量，用于pet的索引
 
     items: Item[];
     weight: number;

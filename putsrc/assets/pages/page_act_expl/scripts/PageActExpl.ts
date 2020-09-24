@@ -146,11 +146,11 @@ export class PageActExpl extends BattlePageBase {
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
-            this.ctrlr.popAlert('确定退出探索？', this.onClickBack.bind(this), '确定', '仅主人自己离开，留宠物继续战斗');
+            this.ctrlr.popAlert('确定退出探索？', this.onClickBack.bind(this), '确定', '仅主人自己离开，留精灵继续战斗');
             return false;
         });
 
-        const posId = this.ctrlr.memory.gameData.curPosId; // 宠物和主人pos不一致无法进入该page，因此此处可用主人pos
+        const posId = this.ctrlr.memory.gameData.curPosId; // 精灵和主人pos不一致无法进入该page，因此此处可用主人pos
         const posName = actPosModelDict[posId].cnName;
         navBar.setTitle('探索' + posName);
     }
@@ -163,7 +163,7 @@ export class PageActExpl extends BattlePageBase {
             for (const pet of pets) {
                 const prvty = PetDataTool.getRealPrvty(pet);
                 if (prvty < 50) {
-                    this.ctrlr.popToast(`宠物独立战斗要求所有宠物默契值至少50，\n但目前${PetDataTool.getCnName(pet)}未达到！`);
+                    this.ctrlr.popToast(`精灵独立战斗要求所有精灵默契值至少50，\n但目前${PetDataTool.getCnName(pet)}未达到！`);
                     return;
                 }
             }

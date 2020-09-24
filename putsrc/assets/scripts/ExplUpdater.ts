@@ -236,7 +236,7 @@ export class ExplUpdater {
                     if (!eqp) continue;
                     const eqpModel = equipModelDict[eqp.id];
                     const eqpLv = (eqpModel.lv + eqp.growth) * (1 + eqpModel.rank * 0.1);
-                    totalEqpLv += eqpLv * 0.15; // 每个装备属性大约等于同等级宠物的20%，但这里只x15%，少于20%
+                    totalEqpLv += eqpLv * 0.15; // 每个装备属性大约等于同等级精灵的20%，但这里只x15%，少于20%
                     for (const lv of eqp.selfFeatureLvs) featureLvs += lv;
                     for (const feature of eqp.affixes) featureLvs += feature.lv;
                 }
@@ -422,7 +422,7 @@ export class ExplUpdater {
             if (rankMin > rankMax) break;
 
             const petIdLists = curPosModel.petIdLists;
-            if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有宠物列表petIdLists，无法战斗`);
+            if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有精灵列表petIdLists，无法战斗`);
             const petIds = petIdLists[stepType];
             const realPetIds = [];
             for (const petId of petIds) {
@@ -1022,7 +1022,7 @@ export class ExplUpdater {
                 } else {
                     this.log(ExplLogType.rich, `捕获失败：${rztStr}`);
                 }
-                break; // 每场战斗只能捕捉一只宠物
+                break; // 每场战斗只能捕捉一只精灵
             }
         }
     }

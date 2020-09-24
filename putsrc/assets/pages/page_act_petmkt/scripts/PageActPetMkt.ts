@@ -1,6 +1,6 @@
 /*
  * PageActPetMkt.ts
- * 宠物市场页面
+ * 精灵市场页面
  * luleyan
  */
 
@@ -99,7 +99,7 @@ export class PageActPetMkt extends PageBase {
         navBar.setBackBtnEnabled(true, (): boolean => {
             if (this.totalPrice <= 0) return true;
             this.ctrlr.popAlert(
-                `确定消费${MoneyTool.getStr(this.totalPrice)} 购买宠物？`,
+                `确定消费${MoneyTool.getStr(this.totalPrice)} 购买精灵？`,
                 (key: number) => {
                     if (key === 1) {
                         if (this.buy()) this.ctrlr.popPage();
@@ -110,7 +110,7 @@ export class PageActPetMkt extends PageBase {
             );
             return false;
         });
-        navBar.setTitle('宠物市场');
+        navBar.setTitle('精灵市场');
     }
 
     buy(): boolean {

@@ -55,7 +55,7 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
         page: PageActEqpMkt
     },
     [PAKey.petMkt]: {
-        cnName: '宠物市场',
+        cnName: '精灵市场',
         getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
             const gameData = ctrlr.memory.gameData;
             const posData = gameData.posDataDict[gameData.curPosId];
@@ -95,11 +95,11 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
             if (gameData.curExpl) {
                 if (gameData.curPosId !== gameData.curExpl.curPosId) {
                     const name = actPosModelDict[gameData.curExpl.curPosId].cnName;
-                    return `宠物仍在${name}战斗`;
+                    return `精灵仍在${name}战斗`;
                 }
             }
             if (GameDataTool.getReadyPets(ctrlr.memory.gameData).length < 2) {
-                return '前方危险，请保证你队伍中有至少两只宠物，且处于备战状态！（宠物列表中点击状态按钮可变更状态）';
+                return '前方危险，请保证你队伍中有至少两只精灵，且处于备战状态！（精灵列表中点击状态按钮可变更状态）';
             }
             return '';
         },

@@ -938,7 +938,7 @@ export class GameDataTool {
         features: Feature[],
         callback: (pet: Pet) => void = null
     ): string {
-        if (gameData.pets.length >= this.getPetCountMax(gameData)) return '宠物数量到达上限';
+        if (gameData.pets.length >= this.getPetCountMax(gameData)) return '精灵数量到达上限';
 
         gameData.totalPetCount++;
 
@@ -965,7 +965,7 @@ export class GameDataTool {
         const curCatchIdx = gameData.pets[index].catchIdx;
         if (gameData.curExpl && gameData.curExpl.curBattle) {
             for (const petMmr of gameData.curExpl.curBattle.selfs) {
-                if (curCatchIdx === petMmr.catchIdx) return '当前宠物处于战斗状态，无法放生';
+                if (curCatchIdx === petMmr.catchIdx) return '当前精灵处于战斗状态，无法放生';
             }
         }
         gameData.pets.splice(index, 1);
@@ -987,7 +987,7 @@ export class GameDataTool {
             if (Date.now() - pet.drinkTime < 10 * 60 * 1000) return '10分钟内不能重复使用饮品';
         }
 
-        if (pet.lv > drinkModel.lvMax) return `${drinkModel.cnName}不能作用于等级高于${drinkModel.lvMax}的宠物`;
+        if (pet.lv > drinkModel.lvMax) return `${drinkModel.cnName}不能作用于等级高于${drinkModel.lvMax}的精灵`;
 
         GameJITDataTool.addAmplByDrink(pet, drinkModel);
 
@@ -1101,7 +1101,7 @@ export class GameDataTool {
                 const curEquipToken = EquipDataTool.getToken(curItem as Equip);
                 for (const petMmr of gameData.curExpl.curBattle.selfs) {
                     for (const itemToken of petMmr.eqpTokens) {
-                        if (curEquipToken === itemToken) return '该物品被战斗中宠物持有，无法丢弃';
+                        if (curEquipToken === itemToken) return '该物品被战斗中精灵持有，无法丢弃';
                     }
                 }
             }
@@ -1127,7 +1127,7 @@ export class GameDataTool {
     static UNWIELD: number = -666;
 
     static wieldEquip(gameData: GameData, itemIdx: number, pet: Pet, petEquipIdx: number): string {
-        if (petEquipIdx < 0 || PetEquipCountMax <= petEquipIdx) return '宠物装备栏索引错误';
+        if (petEquipIdx < 0 || PetEquipCountMax <= petEquipIdx) return '精灵装备栏索引错误';
         if (itemIdx !== this.UNWIELD) {
             const item = gameData.items[itemIdx];
             if (!item || item.itemType !== ItemType.equip) return '装备索引有误';
@@ -1138,7 +1138,7 @@ export class GameDataTool {
                 if (!equipHeld) continue;
                 if (equipModelDict[equipHeld.id].equipPosType !== equipPosType) continue;
                 const strs = ['', '武器', '防具', '饰品'];
-                return '一只宠物同时只能持有一件' + strs[equipPosType];
+                return '一只精灵同时只能持有一件' + strs[equipPosType];
             }
 
             const equipModel = equipModelDict[equip.id];
@@ -1148,7 +1148,7 @@ export class GameDataTool {
             const equipCalcLv = equipModel.lv + (sameBio ? lvReduce : 0);
             if (pet.lv < equipCalcLv) {
                 const sameBioStr = sameBio ? `\n（生物类型一致，需求${lvReduce}）` : '';
-                return `宠物等级L${pet.lv}不满足该装备需求等级L${equipCalcLv}${sameBioStr}`;
+                return `精灵等级L${pet.lv}不满足该装备需求等级L${equipCalcLv}${sameBioStr}`;
             }
 
             const oldEquip = pet.equips[petEquipIdx];

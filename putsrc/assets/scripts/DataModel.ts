@@ -300,7 +300,7 @@ export class ActPosModel {
     actDict: { [key: string]: AllPAType };
     movs: MovModel[];
     loc: Partial<cc.Vec2>;
-    petIdLists: string[][]; // 不同stepType对应的宠物列表
+    petIdLists: string[][]; // 不同stepType对应的精灵列表
     itemIdLists: string[][];
     eqpIdLists: string[][];
     goodsList: string[];

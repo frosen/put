@@ -1,6 +1,6 @@
 /*
  * PageActPetMktLVD.ts
- * 宠物市场页面列表的代理
+ * 精灵市场页面列表的代理
  * luleyan
  */
 

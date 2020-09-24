@@ -1,6 +1,6 @@
 /*
  * CellPetBrief.ts
- * 宠物名称项目
+ * 精灵名称项目
  * luleyan
  */
 

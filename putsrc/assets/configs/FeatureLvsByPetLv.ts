@@ -1,6 +1,6 @@
 /*
  * FeatureLvsByPetLv.ts
- * 宠物每个等级对应特性的等级数
+ * 精灵每个等级对应特性的等级数
  * luleyan
  */
 

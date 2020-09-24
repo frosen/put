@@ -206,7 +206,7 @@ export class PagePkg extends PagePkgBase {
             if (cnsum.cnsumType === CnsumType.drink) {
                 this.ctrlr.pushPage(PagePet, {
                     cellPetType: PagePetCellType.selection,
-                    name: '选择宠物',
+                    name: '选择精灵',
                     callback: (cellIdx: number, curPet: Pet) => {
                         const drinkModel = drinkModelDict[cnsum.id];
                         this.ctrlr.popAlert(

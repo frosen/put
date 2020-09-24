@@ -1,6 +1,6 @@
 /*
  * PagePetDetail.ts
- * 宠物信息页面
+ * 精灵信息页面
  * luleyan
  */
 
@@ -53,7 +53,7 @@ export class PagePetDetail extends PageBase {
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true);
-        navBar.setTitle('宠物详情');
+        navBar.setTitle('精灵详情');
     }
 
     onPageShow() {

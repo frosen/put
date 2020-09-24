@@ -813,7 +813,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `伤害的${rd(Math.min(datas[0], 1) * 100)}%由其他己方宠物承担`;
+            return `伤害的${rd(Math.min(datas[0], 1) * 100)}%由其他己方精灵承担`;
         }
     },
     heal: {
@@ -961,7 +961,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             for (const petAlive of petsAlive) ctrlr.addBuff(petAlive, pet, 'FangHu', cd);
         },
         getInfo(datas: number[]): string {
-            return `被击杀时，对己方其他宠物释放防护罩持续2回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率持续4回合`;
+            return `被击杀时，对己方其他精灵释放防护罩持续2回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率持续4回合`;
         }
     },
     deadHuiChun: {
@@ -974,7 +974,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             for (const petAlive of petsAlive) ctrlr.addBuff(petAlive, pet, 'HuiChun', cd);
         },
         getInfo(datas: number[]): string {
-            return `被击杀时，对己方其他宠物释放回春术持续2回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率持续4回合`;
+            return `被击杀时，对己方其他精灵释放回春术持续2回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率持续4回合`;
         }
     }
 };
