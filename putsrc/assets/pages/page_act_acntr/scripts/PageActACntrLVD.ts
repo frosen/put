@@ -19,6 +19,7 @@ import { PageActACntr, ACntrCountMax } from './PageActACntr';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { ReputNames } from 'scripts/DataModel';
 
 const DRINK = 'D';
 const CATCHER = 'C';
@@ -99,11 +100,13 @@ export class PageActACntrLVD extends ListViewDelegate {
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellTransaction) {
         const eqpOrId = this.page.itemList[rowIdx];
+        const award = this.page.awardDataList[rowIdx];
         if (typeof eqpOrId === 'string') {
-            cell.setDataByModel(rowIdx, CnsumDataTool.getModelById(eqpOrId));
+            cell.setDataByModel(rowIdx, CnsumDataTool.getModelById(eqpOrId), ACntrCountMax, award.price);
         } else {
-            cell.setData(rowIdx, eqpOrId, this.page.priceList[rowIdx]);
+            cell.setData(rowIdx, eqpOrId, award.price);
         }
+        cell.setSubData(`[声望需求：${ReputNames[award.need]}]`);
 
         const count = this.page.countList[rowIdx];
         cell.setCount(count, ACntrCountMax);

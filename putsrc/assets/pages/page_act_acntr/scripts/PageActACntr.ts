@@ -15,7 +15,7 @@ import { actPosModelDict } from 'configs/ActPosModelDict';
 import { ListView } from 'scripts/ListView';
 import { Equip, Money, PADACntr } from 'scripts/DataSaved';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { PAKey } from 'scripts/DataModel';
+import { PAKey, ReputAward } from 'scripts/DataModel';
 
 export const ACntrCountMax = 1;
 
@@ -31,7 +31,7 @@ export class PageActACntr extends PageBase {
 
     paIdxList: number[] = [];
     itemList: (Equip | string)[] = [];
-    priceList: number[] = [];
+    awardDataList: ReputAward[] = [];
     countList: number[] = [];
 
     onLoad() {
@@ -52,12 +52,11 @@ export class PageActACntr extends PageBase {
             this.paIdxList.push(index);
             if (CnsumDataTool.getTypeById(award.fullId)) {
                 this.itemList.push(award.fullId);
-                this.priceList.push(CnsumDataTool.getModelById(award.fullId).price);
             } else {
                 const eqp = EquipDataTool.createByFullId(award.fullId);
                 this.itemList.push(eqp);
-                this.priceList.push(EquipDataTool.getPrice(eqp));
             }
+            this.awardDataList.push(award);
             this.countList.push(0);
         }
 
@@ -124,7 +123,7 @@ export class PageActACntr extends PageBase {
         for (let index = 0; index < this.countList.length; index++) {
             const count = this.countList[index];
             if (count <= 0) continue;
-            tp += this.priceList[index];
+            tp += this.awardDataList[index].price;
         }
 
         this.totalPrice = tp;
@@ -135,7 +134,7 @@ export class PageActACntr extends PageBase {
 
     onCellAddCount(cell: CellTransaction, count: number) {
         const gameData = this.ctrlr.memory.gameData;
-        const price = this.priceList[cell.curCellIdx];
+        const price = this.awardDataList[cell.curCellIdx].price;
 
         const curMoney = GameDataTool.getMoney(gameData);
         if (this.totalPrice + price > curMoney) {

@@ -287,6 +287,7 @@ export const ReputNames = ['', '无视', '闻名', '尊敬', '崇敬', '崇拜']
 
 export class ReputAward {
     need: ReputRank;
+    price: number;
     fullId: string;
 }
 

@@ -28,10 +28,10 @@ export class CellPkgEqpAmplr extends CellPkgCnsum {
         this.setCount(eqpAmplr.count);
     }
 
-    setDataByModel(itemIdx: number, eqpAmplrModel: EqpAmplrModel) {
+    setDataByModel(itemIdx: number, eqpAmplrModel: EqpAmplrModel, count: number) {
         super.setData(itemIdx, null);
         this.setModelData(eqpAmplrModel);
-        this.setCount(-1);
+        this.setCount(count);
     }
 
     setModelData(eqpAmplrModel: EqpAmplrModel) {

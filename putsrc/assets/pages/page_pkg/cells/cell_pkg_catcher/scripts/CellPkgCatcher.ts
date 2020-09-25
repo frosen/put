@@ -44,10 +44,10 @@ export class CellPkgCatcher extends CellPkgCnsum {
         this.setCount(catcher.count);
     }
 
-    setDataByModel(itemIdx: number, catcherModel: CatcherModel) {
+    setDataByModel(itemIdx: number, catcherModel: CatcherModel, count: number) {
         super.setData(itemIdx, null);
         this.setModelData(catcherModel);
-        this.setCount(-1);
+        this.setCount(count);
     }
 
     setModelData(catcherModel: CatcherModel) {

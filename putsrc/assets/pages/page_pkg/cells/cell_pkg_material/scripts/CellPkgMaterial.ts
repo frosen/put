@@ -27,10 +27,10 @@ export class CellPkgMaterial extends CellPkgCnsum {
         this.setCount(material.count);
     }
 
-    setDataByModel(itemIdx: number, materialModel: MaterialModel) {
+    setDataByModel(itemIdx: number, materialModel: MaterialModel, count: number) {
         super.setData(itemIdx, null);
         this.setModelData(materialModel);
-        this.setCount(-1);
+        this.setCount(count);
     }
 
     setModelData(materialModel: MaterialModel) {

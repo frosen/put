@@ -46,10 +46,10 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         eqpIdLists: [null, ['DuanJian', 'ChangRenJian'], null, null, ['TieZhiYuGan', 'JingZhiYuGan']],
         goodsList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1'],
         awardList: [
-            { need: 1, fullId: 'xxx' },
-            { need: 1, fullId: 'xxx' },
-            { need: 1, fullId: 'xxx' },
-            { need: 1, fullId: 'xxx' }
+            { need: 1, price: 25000, fullId: 'DaMoShi' },
+            { need: 2, price: 250000000, fullId: 'DaMoShi' },
+            { need: 3, price: 25000, fullId: 'DaMoShi' },
+            { need: 4, price: 25000, fullId: 'DaMoShi' }
         ]
     },
     GuangJiDianDaDao: {

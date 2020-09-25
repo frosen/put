@@ -23,6 +23,9 @@ export class CellTransaction extends ListViewCell {
     @property(cc.Label)
     subDataLbl: cc.Label = null;
 
+    @property(cc.Layout)
+    layout: cc.Layout = null;
+
     @property(cc.Label)
     numLbl: cc.Label = null;
 
@@ -57,15 +60,23 @@ export class CellTransaction extends ListViewCell {
         this.setPrice(price);
     }
 
-    setDataByModel(itemIdx: number, model: CnsumModel) {
-        (this.cell as CellPkgCnsum).setDataByModel(itemIdx, model);
-        this.setPrice(model.price);
+    setDataByModel(itemIdx: number, model: CnsumModel, count: number, exPrice: number = 0) {
+        (this.cell as CellPkgCnsum).setDataByModel(itemIdx, model, count);
+        this.setPrice(exPrice || model.price);
     }
 
-    setPrice(price: number, subData: string = null, subLblColor: cc.Color = null) {
+    setPrice(price: number) {
         this.priceLbl.string = '单价：' + MoneyTool.getSimpleStr(price);
+    }
+
+    setSubData(subData: string, subLblColor: cc.Color = null) {
         this.subDataLbl.string = subData || '';
         this.subDataLbl.node.color = subLblColor || cc.color(150, 150, 150);
+        if (subData) {
+            // @ts-ignore
+            this.priceLbl._assembler.updateRenderData(this.priceLbl);
+            this.layout.updateLayout();
+        }
     }
 
     setCount(count: number, maxCount: number) {

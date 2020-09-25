@@ -37,10 +37,10 @@ export class CellPkgDrink extends CellPkgCnsum {
         this.setCount(drink.count);
     }
 
-    setDataByModel(itemIdx: number, drinkModel: DrinkModel) {
+    setDataByModel(itemIdx: number, drinkModel: DrinkModel, count: number) {
         super.setData(itemIdx, null);
         this.setModelData(drinkModel);
-        this.setCount(-1);
+        this.setCount(count);
     }
 
     setModelData(drinkModel: DrinkModel) {
