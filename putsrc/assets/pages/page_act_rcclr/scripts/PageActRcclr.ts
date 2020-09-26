@@ -8,8 +8,8 @@ const { ccclass, property } = cc._decorator;
 
 import { ListView } from 'scripts/ListView';
 import { PageActRcclrLVD } from './PageActRcclrLVD';
-import { GameData, Item, ItemType, Cnsum, CnsumType, Money } from 'scripts/DataSaved';
-import { MoneyTool, GameDataTool } from 'scripts/Memory';
+import { GameData, Item, ItemType, Cnsum, CnsumType, Money, Equip, CaughtPet } from 'scripts/DataSaved';
+import { MoneyTool, GameDataTool, CnsumDataTool, EquipDataTool, CaughtPetDataTool } from 'scripts/Memory';
 import { NavBar } from 'scripts/NavBar';
 import { LIST_NAMES } from 'pages/page_pkg/scripts/PagePkg';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
@@ -17,6 +17,7 @@ import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { PageBase } from 'scripts/PageBase';
 
 const WIDTH = 1080;
+const RcclPriceRate = 0.4;
 
 @ccclass
 export class PageActRcclr extends PageBase {
@@ -103,7 +104,7 @@ export class PageActRcclr extends PageBase {
             if (itemIdx === -1) continue;
 
             const item = gameData.items[itemIdx];
-            const price = this.priceDict[id] || PageActRcclrLVD.getItemPrice(item);
+            const price = this.priceDict[id] || PageActRcclr.getItemRcclPrice(item);
             const rzt = GameDataTool.deleteItem(gameData, itemIdx, count);
             if (rzt === GameDataTool.SUC) {
                 realTotalPrice += count * price;
@@ -257,7 +258,7 @@ export class PageActRcclr extends PageBase {
         const curCount = this.countDict[item.id] || 0;
         const newCount = Math.min(curCount + count, countMax);
 
-        if (!this.priceDict.hasOwnProperty(item.id)) this.priceDict[item.id] = PageActRcclrLVD.getItemPrice(item);
+        if (!this.priceDict.hasOwnProperty(item.id)) this.priceDict[item.id] = PageActRcclr.getItemRcclPrice(item);
         this.countDict[item.id] = newCount;
 
         cell.setCount(newCount, countMax);
@@ -273,7 +274,7 @@ export class PageActRcclr extends PageBase {
         const curCount = this.countDict[item.id] || 0;
         const newCount = Math.max(curCount - count, 0);
 
-        if (!this.priceDict.hasOwnProperty(item.id)) this.priceDict[item.id] = PageActRcclrLVD.getItemPrice(item);
+        if (!this.priceDict.hasOwnProperty(item.id)) this.priceDict[item.id] = PageActRcclr.getItemRcclPrice(item);
         this.countDict[item.id] = newCount;
 
         cell.setCount(newCount, countMax);
@@ -281,4 +282,19 @@ export class PageActRcclr extends PageBase {
     }
 
     onCellClickDetailBtn(cell: CellPkgCnsum) {}
+
+    static getItemPrice(item: Item): number {
+        switch (item.itemType) {
+            case ItemType.cnsum:
+                return CnsumDataTool.getModelById(item.id).price;
+            case ItemType.equip:
+                return EquipDataTool.getPrice(item as Equip);
+            case ItemType.caughtPet:
+                return CaughtPetDataTool.getPrice(item as CaughtPet);
+        }
+    }
+
+    static getItemRcclPrice(item: Item): number {
+        return PageActRcclr.getItemPrice(item) * RcclPriceRate;
+    }
 }

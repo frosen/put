@@ -134,7 +134,8 @@ export class PageActACntr extends PageBase {
 
     onCellAddCount(cell: CellTransaction, count: number) {
         const gameData = this.ctrlr.memory.gameData;
-        const price = this.awardDataList[cell.curCellIdx].price;
+        const award = this.awardDataList[cell.curCellIdx];
+        const price = award.price;
 
         const curMoney = GameDataTool.getMoney(gameData);
         if (this.totalPrice + price > curMoney) {
@@ -146,6 +147,12 @@ export class PageActACntr extends PageBase {
         for (const count of this.countList) if (count > 0) totalCount++;
         if (totalCount + 1 + gameData.weight > GameDataTool.getItemCountMax(gameData)) {
             this.ctrlr.popToast('道具数量超限了');
+            return;
+        }
+
+        const curReputRank = GameDataTool.getReputRank(gameData, gameData.curPosId);
+        if (curReputRank < award.need) {
+            this.ctrlr.popToast('声望不够，无法购买');
             return;
         }
 

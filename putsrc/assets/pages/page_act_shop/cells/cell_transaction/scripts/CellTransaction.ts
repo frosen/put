@@ -60,9 +60,9 @@ export class CellTransaction extends ListViewCell {
         this.setPrice(price);
     }
 
-    setDataByModel(itemIdx: number, model: CnsumModel, count: number, exPrice: number = 0) {
+    setDataByModel(itemIdx: number, model: CnsumModel, count: number, price: number) {
         (this.cell as CellPkgCnsum).setDataByModel(itemIdx, model, count);
-        this.setPrice(exPrice || model.price);
+        this.setPrice(price);
     }
 
     setPrice(price: number) {

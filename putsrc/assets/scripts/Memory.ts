@@ -39,7 +39,17 @@ import {
     PADACntr,
     PADBase
 } from './DataSaved';
-import { FeatureModel, PetModel, EquipPosType, EquipModel, DrinkModel, DrinkAimType, CnsumModel, PAKey } from './DataModel';
+import {
+    FeatureModel,
+    PetModel,
+    EquipPosType,
+    EquipModel,
+    DrinkModel,
+    DrinkAimType,
+    CnsumModel,
+    PAKey,
+    ReputRank
+} from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
@@ -1217,6 +1227,11 @@ export class GameDataTool {
             pd.actDict[paKey] = pad;
             return pad;
         } else return pd.actDict[paKey];
+    }
+
+    static getReputRank(gameData: GameData, posId: string): ReputRank {
+        const reput = gameData.posDataDict[posId].reput;
+        return ReputRank.renown;
     }
 
     static createExpl(gameData: GameData, startStep: number) {

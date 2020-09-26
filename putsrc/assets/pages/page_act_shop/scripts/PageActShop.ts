@@ -15,8 +15,10 @@ import { actPosModelDict } from 'configs/ActPosModelDict';
 import { ListView } from 'scripts/ListView';
 import { CellTransaction } from '../cells/cell_transaction/scripts/CellTransaction';
 import { Money } from 'scripts/DataSaved';
+import { CnsumModel } from 'scripts/DataModel';
 
 export const ShopCountMax: number = 9999;
+export const ReputDiscount: number[] = [1, 1, 0.95, 0.9, 0.85, 0.8];
 
 @ccclass
 export class PageActShop extends PageBase {
@@ -96,7 +98,7 @@ export class PageActShop extends PageBase {
             const goodsId = this.goodsIds[index];
             const count = this.countList[index] || 0;
             if (count <= 0) continue;
-            const price = CnsumDataTool.getModelById(goodsId).price;
+            const price = this.getCnsumReputPrice(CnsumDataTool.getModelById(goodsId));
             tp += count * price;
             tc += count;
         }
@@ -111,7 +113,7 @@ export class PageActShop extends PageBase {
     onCellAddCount(cell: CellTransaction, count: number) {
         const gameData = this.ctrlr.memory.gameData;
         const goodsId = this.goodsIds[cell.curCellIdx];
-        const price = CnsumDataTool.getModelById(goodsId).price;
+        const price = this.getCnsumReputPrice(CnsumDataTool.getModelById(goodsId));
         const curMoney = GameDataTool.getMoney(gameData);
         let realCount: number;
         if (this.totalPrice + price * count > curMoney) {
@@ -144,4 +146,10 @@ export class PageActShop extends PageBase {
     }
 
     onCellClickDetailBtn(cell: CellPkgCnsum) {}
+
+    getCnsumReputPrice(model: CnsumModel): number {
+        const gameData = this.ctrlr.memory.gameData;
+        const reputRank = GameDataTool.getReputRank(gameData, gameData.curPosId);
+        return model.price * ReputDiscount[reputRank];
+    }
 }

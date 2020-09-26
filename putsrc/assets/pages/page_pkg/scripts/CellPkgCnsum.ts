@@ -14,7 +14,7 @@ export class CellPkgCnsum extends CellPkgBase {
     @property(cc.Label)
     countLbl: cc.Label = null;
 
-    setDataByModel(itemIdx: number, model: CnsumModel) {}
+    setDataByModel(itemIdx: number, model: CnsumModel, count: number) {}
 
     setCount(count: number) {
         if (count >= 0) this.countLbl.string = 'x ' + String(count);

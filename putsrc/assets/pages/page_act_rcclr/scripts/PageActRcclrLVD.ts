@@ -9,9 +9,8 @@ const { ccclass, property } = cc._decorator;
 import { ListViewDelegate } from 'scripts/ListViewDelegate';
 import { ListView } from 'scripts/ListView';
 import { ListViewCell } from 'scripts/ListViewCell';
-import { CaughtPet, Cnsum, CnsumType, Equip, Item, ItemType } from 'scripts/DataSaved';
+import { Cnsum, CnsumType, Item, ItemType } from 'scripts/DataSaved';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { CaughtPetDataTool, CnsumDataTool, EquipDataTool } from 'scripts/Memory';
 import { CellPkgDrink } from 'pages/page_pkg/cells/cell_pkg_drink/scripts/CellPkgDrink';
 import { CellPkgCatcher } from 'pages/page_pkg/cells/cell_pkg_catcher/scripts/CellPkgCatcher';
 import { CellPkgEqpAmplr } from 'pages/page_pkg/cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
@@ -121,21 +120,10 @@ export class PageActRcclrLVD extends ListViewDelegate {
     setCellForRow(listView: ListView, rowIdx: number, cell: CellTransaction) {
         const itemIdx = this.curItemIdxs[rowIdx];
         const item = this.curItems[itemIdx];
-        cell.setData(itemIdx, item, PageActRcclrLVD.getItemPrice(item));
+        cell.setData(itemIdx, item, PageActRcclr.getItemRcclPrice(item));
 
         const count = this.page.countDict[item.id] || 0;
         const countMax = item.itemType === ItemType.cnsum ? (item as Cnsum).count : 1;
         cell.setCount(count, countMax);
-    }
-
-    static getItemPrice(item: Item): number {
-        switch (item.itemType) {
-            case ItemType.cnsum:
-                return CnsumDataTool.getModelById(item.id).price;
-            case ItemType.equip:
-                return EquipDataTool.getPrice(item as Equip);
-            case ItemType.caughtPet:
-                return CaughtPetDataTool.getPrice(item as CaughtPet);
-        }
     }
 }
