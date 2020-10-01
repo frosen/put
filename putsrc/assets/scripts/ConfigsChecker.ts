@@ -45,7 +45,7 @@ function checkActPosModelDict() {
             const petDictKeys = Object.keys(petModelDict);
             const eqpDictKeys = Object.keys(equipModelDict);
             if (pakey === PAKey.expl) {
-                need(actModel, ['stepMax', 'petIdLists', 'itemIdList', 'eqpIdLists'], key + 'expl');
+                need(actModel, ['stepMax', 'petIdLists', 'itemIdLists', 'eqpIdLists'], key + 'expl');
                 for (const petIdList of (actModel as ExplModel).petIdLists) {
                     if (!petIdList) continue;
                     for (const petId of petIdList) {
