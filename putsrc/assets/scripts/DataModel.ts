@@ -216,6 +216,66 @@ export class EquipModel {
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
+type CondFunc = (gd: GameData) => boolean;
+
+export class EvtModel {
+    id: string;
+    condFunc?: CondFunc;
+}
+
+// -----------------------------------------------------------------
+
+export class PAKey {
+    static expl = 'exploration';
+    static shop = 'shop';
+    static eqpMkt = 'equipMarket';
+    static petMkt = 'petMarket';
+    static work = 'work';
+    static quester = 'quester';
+    static aCntr = 'awardsCenter';
+    static rcclr = 'recycler';
+}
+
+export abstract class PAModel {
+    key: string;
+    condFunc?: CondFunc;
+}
+
+// -----------------------------------------------------------------
+
+export enum ExplStepType {
+    outer = 1,
+    passway,
+    deep,
+    center
+}
+
+export const ExplStepNames = ['', '外围', '走廊', '深处', '中心'];
+
+export const StepTypesByMax = [
+    [],
+    [ExplStepType.center],
+    [ExplStepType.outer, ExplStepType.center],
+    [ExplStepType.outer, ExplStepType.deep, ExplStepType.center],
+    [ExplStepType.outer, ExplStepType.passway, ExplStepType.deep, ExplStepType.center]
+];
+
+export class ExplModel extends PAModel {
+    stepMax: number;
+}
+
+// -----------------------------------------------------------------
+
+export class ShopModel extends PAModel {
+    goodsList: string[];
+}
+
+// -----------------------------------------------------------------
+
+export class WorkModel extends PAModel {}
+
+// -----------------------------------------------------------------
+
 export enum QuestType {
     support = 1,
     fight,
@@ -264,6 +324,12 @@ export class QuestModel {
     awardItem: string;
 }
 
+export class QuesterModel extends PAModel {
+    questDict: { [key: string]: QuestModel };
+}
+
+// -----------------------------------------------------------------
+
 export enum ReputRank {
     ignoring = 1,
     renown,
@@ -280,58 +346,13 @@ export class ReputAwardModel {
     fullId: string;
 }
 
+export class ACntrModel extends PAModel {
+    awardList: ReputAwardModel[];
+}
+
+type AllPAModel = ExplModel | ShopModel | WorkModel | QuesterModel | ACntrModel;
+
 // -----------------------------------------------------------------
-
-type CondFunc = (gd: GameData) => boolean;
-
-export class EvtModel {
-    id: string;
-    condFunc?: CondFunc;
-}
-
-export class PAKey {
-    static expl = 'exploration';
-    static shop = 'shop';
-    static eqpMkt = 'equipMarket';
-    static petMkt = 'petMarket';
-    static work = 'work';
-    static quest = 'quest';
-    static aCntr = 'awardsCenter';
-    static rcclr = 'recycler';
-}
-
-export abstract class PAModel {
-    key: string;
-    condFunc?: CondFunc;
-}
-
-export class WorkModel extends PAModel {
-    key: string = PAKey.work;
-}
-
-export enum ExplStepType {
-    outer = 1,
-    passway,
-    deep,
-    center
-}
-
-export const ExplStepNames = ['', '外围', '走廊', '深处', '中心'];
-
-export const StepTypesByMax = [
-    [],
-    [ExplStepType.center],
-    [ExplStepType.outer, ExplStepType.center],
-    [ExplStepType.outer, ExplStepType.deep, ExplStepType.center],
-    [ExplStepType.outer, ExplStepType.passway, ExplStepType.deep, ExplStepType.center]
-];
-
-export class ExplModel extends PAModel {
-    key: string = PAKey.expl;
-    stepMax: number;
-}
-
-type AllPAModel = WorkModel | ExplModel;
 
 export class MovModel {
     id: string;
@@ -359,9 +380,6 @@ export class ActPosModel {
     petIdLists: string[][]; // 不同stepType对应的精灵列表
     itemIdLists: string[][];
     eqpIdLists: string[][];
-    goodsList: string[];
-    questDict: { [key: string]: QuestModel };
-    awardList: ReputAwardModel[];
 }
 
 // -----------------------------------------------------------------

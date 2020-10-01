@@ -14,13 +14,24 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         type: ActPosType.town,
         evts: [],
         actMDict: {
-            [PAKey.shop]: null,
-            [PAKey.eqpMkt]: null,
-            [PAKey.petMkt]: null,
-            [PAKey.work]: null,
-            [PAKey.quest]: null,
-            [PAKey.aCntr]: null,
-            [PAKey.rcclr]: null
+            [PAKey.shop]: {
+                key: PAKey.shop,
+                goodsList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1']
+            },
+            [PAKey.eqpMkt]: { key: PAKey.eqpMkt },
+            [PAKey.petMkt]: { key: PAKey.petMkt },
+            [PAKey.work]: { key: PAKey.work },
+            [PAKey.quester]: { key: PAKey.quester },
+            [PAKey.aCntr]: {
+                key: PAKey.aCntr,
+                awardList: [
+                    { need: 1, price: 25, fullId: 'DaMoShi' },
+                    { need: 2, price: 250, fullId: 'DaMoShi' },
+                    { need: 3, price: 25, fullId: 'DaMoShi' },
+                    { need: 4, price: 250, fullId: 'DaMoShi' }
+                ]
+            },
+            [PAKey.rcclr]: { key: PAKey.rcclr }
         },
         movs: [
             { id: 'GuangJiDianDaDao', price: 0 },
@@ -42,14 +53,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             ['ShuiLengJiQiRen', 'DianZiShouWei']
         ],
         itemIdLists: [],
-        eqpIdLists: [null, ['DuanJian', 'ChangRenJian'], null, null, ['TieZhiYuGan', 'JingZhiYuGan']],
-        goodsList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1'],
-        awardList: [
-            { need: 1, price: 25, fullId: 'DaMoShi' },
-            { need: 2, price: 250, fullId: 'DaMoShi' },
-            { need: 3, price: 25, fullId: 'DaMoShi' },
-            { need: 4, price: 250, fullId: 'DaMoShi' }
-        ]
+        eqpIdLists: [null, ['DuanJian', 'ChangRenJian'], null, null, ['TieZhiYuGan', 'JingZhiYuGan']]
     },
     GuangJiDianDaDao: {
         id: 'GuangJiDianDaDao',
@@ -80,8 +84,6 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
         ],
         itemIdLists: [null, ['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
-        eqpIdLists: [],
-        goodsList: [],
-        awardList: []
+        eqpIdLists: []
     }
 };

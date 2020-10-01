@@ -132,7 +132,7 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
         page: PageActPetMkt
     },
     [PAKey.work]: { cnName: '工作介绍所' },
-    [PAKey.quest]: { cnName: '任务发布栏' },
+    [PAKey.quester]: { cnName: '任务发布栏' },
     [PAKey.aCntr]: { cnName: '奖励中心', page: PageActACntr },
     [PAKey.rcclr]: { cnName: '回收站', page: PageActRcclr }
 };

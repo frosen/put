@@ -228,7 +228,7 @@ export class PageActExpl extends BattlePageBase {
 
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
-        const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
+        const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
         const stepMax = explModel.stepMax;
         const step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);

@@ -197,7 +197,7 @@ export class PADPetMkt extends PADBase {
     pets: CaughtPet[];
 }
 
-export class PADQuest extends PADBase {
+export class PADQuester extends PADBase {
     updateTime: number;
 }
 

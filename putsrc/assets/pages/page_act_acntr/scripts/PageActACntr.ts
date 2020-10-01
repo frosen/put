@@ -15,7 +15,7 @@ import { actPosModelDict } from 'configs/ActPosModelDict';
 import { ListView } from 'scripts/ListView';
 import { Equip, Money, PADACntr } from 'scripts/DataSaved';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { PAKey, ReputAwardModel } from 'scripts/DataModel';
+import { ACntrModel, PAKey, ReputAwardModel } from 'scripts/DataModel';
 
 export const ACntrCountMax = 1;
 
@@ -44,7 +44,8 @@ export class PageActACntr extends PageBase {
         const pADACntr = GameDataTool.addPA(gameData, posId, PAKey.aCntr) as PADACntr;
         const soldoutList = pADACntr.soldoutList;
 
-        const awardList = actPosModelDict[posId].awardList;
+        const aCntrModel = actPosModelDict[posId].actMDict[PAKey.aCntr] as ACntrModel;
+        const awardList = aCntrModel.awardList;
         for (let index = 0; index < awardList.length; index++) {
             const award = awardList[index];
             const soldout = soldoutList[index];

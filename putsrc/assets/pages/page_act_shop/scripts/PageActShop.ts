@@ -15,7 +15,7 @@ import { actPosModelDict } from 'configs/ActPosModelDict';
 import { ListView } from 'scripts/ListView';
 import { CellTransaction } from '../cells/cell_transaction/scripts/CellTransaction';
 import { Money } from 'scripts/DataSaved';
-import { CnsumModel } from 'scripts/DataModel';
+import { CnsumModel, PAKey, ShopModel } from 'scripts/DataModel';
 
 export const ShopCountMax: number = 9999;
 export const ReputDiscount: number[] = [1, 1, 0.95, 0.9, 0.85, 0.8];
@@ -39,7 +39,8 @@ export class PageActShop extends PageBase {
 
         if (CC_EDITOR) return;
         const posId = this.ctrlr.memory.gameData.curPosId;
-        this.goodsIds = actPosModelDict[posId].goodsList;
+        const shopModel = actPosModelDict[posId].actMDict[PAKey.shop] as ShopModel;
+        this.goodsIds = shopModel.goodsList;
 
         const lvd = this.list.delegate as PageActShopLVD;
         lvd.page = this;

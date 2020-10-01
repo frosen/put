@@ -20,6 +20,11 @@ function checkActPosModelDict() {
         const model = actPosModelDict[key];
         if (model.id !== key) cc.error('ActPosModelDict中，id与dict的key不符', key, model.id);
 
+        for (const pakey in model.actMDict) {
+            const actModel = model.actMDict[pakey];
+            if (actModel.key !== pakey) cc.error('model.actMDict的key与key不相符', pakey, actModel.key);
+        }
+
         const petDictKeys = Object.keys(petModelDict);
         for (const petIdList of model.petIdLists) {
             if (petIdList) {
