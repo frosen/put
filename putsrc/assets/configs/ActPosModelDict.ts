@@ -18,10 +18,25 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                 key: PAKey.shop,
                 goodsList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1']
             },
-            [PAKey.eqpMkt]: { key: PAKey.eqpMkt },
-            [PAKey.petMkt]: { key: PAKey.petMkt },
+            [PAKey.eqpMkt]: {
+                key: PAKey.eqpMkt,
+                eqpIdLists: [null, ['DuanJian', 'ChangRenJian'], null, null, ['TieZhiYuGan', 'JingZhiYuGan']]
+            },
+            [PAKey.petMkt]: {
+                key: PAKey.petMkt,
+                petIdLists: [
+                    null,
+                    ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
+                    null,
+                    null,
+                    ['ShuiLengJiQiRen', 'DianZiShouWei']
+                ]
+            },
             [PAKey.work]: { key: PAKey.work },
-            [PAKey.quester]: { key: PAKey.quester },
+            [PAKey.quester]: {
+                key: PAKey.quester,
+                questDict: {}
+            },
             [PAKey.aCntr]: {
                 key: PAKey.aCntr,
                 awardList: [
@@ -44,16 +59,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             { id: 'GuangJiDianDaDao', price: 0 },
             { id: 'GuangJiDianDaDao', price: 0 }
         ],
-        loc: { x: 1000, y: 100 },
-        petIdLists: [
-            null,
-            ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
-            null,
-            null,
-            ['ShuiLengJiQiRen', 'DianZiShouWei']
-        ],
-        itemIdLists: [],
-        eqpIdLists: [null, ['DuanJian', 'ChangRenJian'], null, null, ['TieZhiYuGan', 'JingZhiYuGan']]
+        loc: { x: 1000, y: 100 }
     },
     GuangJiDianDaDao: {
         id: 'GuangJiDianDaDao',
@@ -64,7 +70,16 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         actMDict: {
             [PAKey.expl]: {
                 key: PAKey.expl,
-                stepMax: 2
+                stepMax: 2,
+                petIdLists: [
+                    null,
+                    ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
+                    null,
+                    null,
+                    ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
+                ],
+                itemIdLists: [null, ['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
+                eqpIdLists: []
             }
         },
         movs: [
@@ -75,15 +90,6 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             { id: 'YiZhuang', price: 0 },
             { id: 'YiZhuang', price: 0 }
         ],
-        loc: { x: 1100, y: 100 },
-        petIdLists: [
-            null,
-            ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
-            null,
-            null,
-            ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
-        ],
-        itemIdLists: [null, ['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
-        eqpIdLists: []
+        loc: { x: 1100, y: 100 }
     }
 };

@@ -262,12 +262,27 @@ export const StepTypesByMax = [
 
 export class ExplModel extends PAModel {
     stepMax: number;
+    petIdLists: string[][]; // 不同stepType对应的精灵列表
+    itemIdLists: string[][];
+    eqpIdLists: string[][];
 }
 
 // -----------------------------------------------------------------
 
 export class ShopModel extends PAModel {
     goodsList: string[];
+}
+
+// -----------------------------------------------------------------
+
+export class EqpMktModel extends PAModel {
+    eqpIdLists: string[][]; // 不同稀有度对应的装备列表
+}
+
+// -----------------------------------------------------------------
+
+export class PetMktModel extends PAModel {
+    petIdLists: string[][]; // 不同稀有度对应的精灵列表
 }
 
 // -----------------------------------------------------------------
@@ -350,7 +365,7 @@ export class ACntrModel extends PAModel {
     awardList: ReputAwardModel[];
 }
 
-type AllPAModel = ExplModel | ShopModel | WorkModel | QuesterModel | ACntrModel;
+type AllPAModel = ExplModel | ShopModel | EqpMktModel | PetMktModel | WorkModel | QuesterModel | ACntrModel;
 
 // -----------------------------------------------------------------
 
@@ -377,9 +392,6 @@ export class ActPosModel {
     actMDict: { [key: string]: AllPAModel };
     movs: MovModel[];
     loc: Partial<cc.Vec2>;
-    petIdLists: string[][]; // 不同stepType对应的精灵列表
-    itemIdLists: string[][];
-    eqpIdLists: string[][];
 }
 
 // -----------------------------------------------------------------

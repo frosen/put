@@ -12,7 +12,7 @@ import { NavBar } from 'scripts/NavBar';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { ListView } from 'scripts/ListView';
 import { Money, Equip, PosData, PADEqpMkt } from 'scripts/DataSaved';
-import { PAKey, ActPosModel } from 'scripts/DataModel';
+import { PAKey, ActPosModel, EqpMktModel } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from 'scripts/Random';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
@@ -64,7 +64,8 @@ export class PageActEqpMkt extends PageBase {
     }
 
     resetMktGoods(pADEqpMkt: PADEqpMkt, posModel: ActPosModel) {
-        const eqpIdLists = posModel.eqpIdLists;
+        const eqpMktModel = posModel.actMDict[PAKey.eqpMkt] as EqpMktModel;
+        const eqpIdLists = eqpMktModel.eqpIdLists;
         cc.assert(eqpIdLists && eqpIdLists.length === 5, `${posModel.id}的eqpIdLists有问题`);
         const eqpCount = randomInt(3) + 4;
 

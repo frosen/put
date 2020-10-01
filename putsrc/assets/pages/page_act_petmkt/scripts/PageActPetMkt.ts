@@ -12,7 +12,7 @@ import { NavBar } from 'scripts/NavBar';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { ListView } from 'scripts/ListView';
 import { Money, PetRankNames, PosData, PADPetMkt, CaughtPet } from 'scripts/DataSaved';
-import { PAKey, ActPosModel } from 'scripts/DataModel';
+import { PAKey, ActPosModel, PetMktModel } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from 'scripts/Random';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
@@ -67,7 +67,8 @@ export class PageActPetMkt extends PageBase {
     }
 
     resetMktGoods(pADPetMkt: PADPetMkt, posModel: ActPosModel) {
-        const petIdLists = posModel.petIdLists;
+        const petMktModel = posModel.actMDict[PAKey.petMkt] as PetMktModel;
+        const petIdLists = petMktModel.petIdLists;
         cc.assert(petIdLists && petIdLists.length === 5, `${posModel.id}的petIdLists有问题`);
         const petCount = randomInt(3) + 4;
 

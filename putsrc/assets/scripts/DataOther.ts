@@ -595,7 +595,7 @@ export class RealBattle {
         const stepMax = explModel.stepMax;
         const step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
         const stepType = StepTypesByMax[stepMax][step];
-        const petIdLists = curPosModel.petIdLists;
+        const petIdLists = explModel.petIdLists;
         if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有精灵列表petIdLists，无法战斗`);
         const petIds = petIdLists[stepType];
 

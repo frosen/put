@@ -421,7 +421,7 @@ export class ExplUpdater {
             rankMax = Math.min(rankMax, catcherModel.rankMax);
             if (rankMin > rankMax) break;
 
-            const petIdLists = curPosModel.petIdLists;
+            const petIdLists = explModel.petIdLists;
             if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有精灵列表petIdLists，无法战斗`);
             const petIds = petIdLists[stepType];
             const realPetIds = [];
@@ -457,8 +457,9 @@ export class ExplUpdater {
 
         // 计算获得的物品
         const gainTimes = explRdCnt * (eachExplRdCnt + eachHidingRdCnt);
-        const itemIds = curPosModel.itemIdLists[stepType];
-        const eqpIds = curPosModel.eqpIdLists[stepType];
+
+        const itemIds = explModel.itemIdLists[stepType];
+        const eqpIds = explModel.eqpIdLists[stepType];
 
         let itemTimes: number;
         if (eqpIds) {
@@ -677,9 +678,10 @@ export class ExplUpdater {
             const posId = curExpl.curPosId;
             const curPosModel = actPosModelDict[posId];
             const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
+            const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
             if (
-                curPosModel.eqpIdLists &&
-                curPosModel.eqpIdLists.length > 0 &&
+                curExplModel.eqpIdLists &&
+                curExplModel.eqpIdLists.length > 0 &&
                 randomRate(ExplUpdater.calcTreasureRate(sensRate))
             ) {
                 this.trsrFind = true;
@@ -863,7 +865,7 @@ export class ExplUpdater {
         let itemName: string = null;
         let failRzt: string = null;
         if (this.trsrFind) {
-            const eqpIdLists = curPosModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
+            const eqpIdLists = curExplModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
             const eqps = eqpIdLists[stepType];
             const eqpId = getRandomOneInList(eqps);
             const equip = EquipDataTool.createRandomById(eqpId);
@@ -880,7 +882,7 @@ export class ExplUpdater {
                 GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += moneyAdd));
                 itemName = '通古币' + MoneyTool.getStr(moneyAdd).trim();
             } else {
-                const itemIdLists = curPosModel.itemIdLists;
+                const itemIdLists = curExplModel.itemIdLists;
                 const itemIds = itemIdLists[stepType];
                 const itemId = getRandomOneInList(itemIds);
                 const gainCnt = randomRound(this.gainCntRate);

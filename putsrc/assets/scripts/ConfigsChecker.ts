@@ -14,6 +14,24 @@ import { inbornFeatures } from 'configs/InbornFeatures';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
+import { EqpMktModel, ExplModel, PAKey, PetMktModel, ShopModel } from './DataModel';
+import { CnsumDataTool } from './Memory';
+
+function need(ins: any, attris: string[], name: string) {
+    for (const attri of attris) {
+        if (!ins.hasOwnProperty(attri)) cc.error(`${name}中，缺少一个必要项目${attri}`);
+    }
+}
+
+function needAtLeast(ins: any, attris: string[], num: number, name: string) {
+    let noAttris = [];
+    for (const attri of attris) {
+        if (!ins.hasOwnProperty(attri)) noAttris.push(attri);
+    }
+    if (attris.length - noAttris.length < num) {
+        cc.error(`${name}中，至少需要${attris}中的${num}个，但现在缺少${noAttris}`);
+    }
+}
 
 function checkActPosModelDict() {
     for (const key in actPosModelDict) {
@@ -23,14 +41,59 @@ function checkActPosModelDict() {
         for (const pakey in model.actMDict) {
             const actModel = model.actMDict[pakey];
             if (actModel.key !== pakey) cc.error('model.actMDict的key与key不相符', pakey, actModel.key);
-        }
 
-        const petDictKeys = Object.keys(petModelDict);
-        for (const petIdList of model.petIdLists) {
-            if (petIdList) {
-                for (const petId of petIdList) {
-                    if (!petDictKeys.includes(petId)) cc.error('ActPosModelDict中，petIdLists中的petId有误', key, petId);
+            const petDictKeys = Object.keys(petModelDict);
+            const eqpDictKeys = Object.keys(equipModelDict);
+            if (pakey === PAKey.expl) {
+                need(actModel, ['stepMax', 'petIdLists', 'itemIdList', 'eqpIdLists'], key + 'expl');
+                for (const petIdList of (actModel as ExplModel).petIdLists) {
+                    if (!petIdList) continue;
+                    for (const petId of petIdList) {
+                        if (!petDictKeys.includes(petId)) cc.error('ActPosModelDict expl中，petIdLists中的petId有误', key, petId);
+                    }
                 }
+                for (const eqpIdList of (actModel as ExplModel).eqpIdLists) {
+                    if (!eqpIdList) continue;
+                    for (const eqpId of eqpIdList) {
+                        if (!eqpDictKeys.includes(eqpId))
+                            cc.error('ActPosModelDict expl中，equipModelDict中的eqpId有误', key, eqpId);
+                    }
+                }
+                for (const itemIdList of (actModel as ExplModel).itemIdLists) {
+                    if (!itemIdList) continue;
+                    for (const itemId of itemIdList) {
+                        const type = CnsumDataTool.getTypeById(itemId);
+                        if (!type) cc.error('ActPosModelDict expl中，itemIdList中的itemId有误', key, itemId);
+                    }
+                }
+            } else if (pakey === PAKey.shop) {
+                need(actModel, ['goodsList'], key + 'shop');
+                for (const itemId of (actModel as ShopModel).goodsList) {
+                    const type = CnsumDataTool.getTypeById(itemId);
+                    if (!type) cc.error('ActPosModelDict shop中，itemIdList中的itemId有误', key, itemId);
+                }
+            } else if (pakey === PAKey.eqpMkt) {
+                need(actModel, ['eqpIdLists'], key + 'eqpMkt');
+                for (const eqpIdList of (actModel as EqpMktModel).eqpIdLists) {
+                    if (!eqpIdList) continue;
+                    for (const eqpId of eqpIdList) {
+                        if (!eqpDictKeys.includes(eqpId))
+                            cc.error('ActPosModelDict eqpMkt中，equipModelDict中的eqpId有误', key, eqpId);
+                    }
+                }
+            } else if (pakey === PAKey.petMkt) {
+                need(actModel, ['petIdLists'], key + 'petMkt');
+                for (const petIdList of (actModel as PetMktModel).petIdLists) {
+                    if (!petIdList) continue;
+                    for (const petId of petIdList) {
+                        if (!petDictKeys.includes(petId))
+                            cc.error('ActPosModelDict petMkt中，petIdLists中的petId有误', key, petId);
+                    }
+                }
+            } else if (pakey === PAKey.quester) {
+                need(actModel, ['questDict'], key + 'quester');
+            } else if (pakey === PAKey.aCntr) {
+                need(actModel, ['awardList'], key + 'aCntr');
             }
         }
 
@@ -69,22 +132,8 @@ function checkBuffModelDict() {
     for (const key in buffModelDict) {
         const model = buffModelDict[key];
         if (model.id !== key) cc.error('buffModelDict中，id与dict的key不符', key, model.id);
-        if (
-            model.hasOwnProperty('id') &&
-            model.hasOwnProperty('cnName') &&
-            model.hasOwnProperty('brief') &&
-            model.hasOwnProperty('buffType') &&
-            model.hasOwnProperty('eleType') &&
-            model.hasOwnProperty('getInfo')
-        ) {
-        } else {
-            cc.error('buffModelDict中，缺少一个必要项目', key);
-        }
-
-        if (model.hasOwnProperty('onStarted') || model.hasOwnProperty('onEnd') || model.hasOwnProperty('onTurnEnd')) {
-        } else {
-            cc.error('buffModelDict中，onStarted onEnd onTurnEnd 必有其一', key);
-        }
+        need(model, ['id', 'cnName', 'brief', 'buffType', 'eleType', 'getInfo'], 'buffModelDict');
+        needAtLeast(model, ['onStarted', 'onEnd', 'onTurnEnd'], 1, 'buffModelDict');
 
         if (buffBriefDict[model.brief] === true) cc.error('buffModelDict中，brief重复了', key);
         buffBriefDict[model.brief] = true;
@@ -97,10 +146,7 @@ function checkFeatureModelDict() {
     for (const key in featureModelDict) {
         const model = featureModelDict[key];
         if (model.id !== key) cc.error('featureModelDict中，id与dict的key不符：', key, model.id);
-        if (!model.hasOwnProperty('id')) cc.error('featureModelDict中，缺少id：', key);
-        if (!model.hasOwnProperty('dataAreas')) cc.error('featureModelDict中，缺少dataAreas：', key);
-        if (!model.hasOwnProperty('getInfo')) cc.error('featureModelDict中，缺少getInfo：', key);
-        if (!model.hasOwnProperty('cnBrief')) cc.error('featureModelDict中，缺少cnBrief：', key);
+        need(model, ['id', 'dataAreas', 'getInfo', 'cnBrief'], 'featureModelDict');
         if (briefDict[model.cnBrief] === true) cc.error('featureModelDict中，cnBrief重复了：', key);
         briefDict[model.cnBrief] = true;
     }
