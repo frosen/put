@@ -200,7 +200,7 @@ export class ExplUpdater {
         const realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
         let lastStepUpdCnt = realChngUpdCnt + 1;
 
-        const curExplModel = actPosModelDict[curExpl.curPosId].actDict[PAKey.expl] as ExplModel;
+        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const stepMaxIdx = curExplModel.stepMax - 1;
         let curStep = Math.min(MmrTool.getCurStep(curExpl), stepMaxIdx);
 
@@ -289,7 +289,7 @@ export class ExplUpdater {
         const startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
         const chngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
         const curStep = MmrTool.getCurStep(curExpl);
-        const curExplModel = actPosModelDict[curExpl.curPosId].actDict[PAKey.expl] as ExplModel;
+        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         if (curStep >= curExplModel.stepMax - 1) {
             this.explStepPercent = 0;
         } else {
@@ -394,7 +394,7 @@ export class ExplUpdater {
         }
         rztSt.exp += expTotal;
 
-        const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
+        const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
         const stepMax = explModel.stepMax;
         const stepType = StepTypesByMax[stepMax][step];
@@ -745,7 +745,7 @@ export class ExplUpdater {
     }
 
     static getPosSubAttriSbstValue(curExpl: ExplMmr) {
-        const curExplModel = actPosModelDict[curExpl.curPosId].actDict[PAKey.expl] as ExplModel;
+        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const stepMaxIdx = curExplModel.stepMax - 1;
         const curStep = Math.min(MmrTool.getCurStep(curExpl), stepMaxIdx);
         const curPosLv = actPosModelDict[curExpl.curPosId].lv;
@@ -773,7 +773,7 @@ export class ExplUpdater {
 
     doExploration() {
         const curExpl = this.gameData.curExpl;
-        const curExplModel = actPosModelDict[curExpl.curPosId].actDict[PAKey.expl] as ExplModel;
+        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         let curStep = MmrTool.getCurStep(curExpl);
         do {
             if (curExpl.chngUpdCnt === 0) {
@@ -852,7 +852,7 @@ export class ExplUpdater {
 
     gainRes() {
         const curExpl = this.gameData.curExpl;
-        const curExplModel = actPosModelDict[curExpl.curPosId].actDict[PAKey.expl] as ExplModel;
+        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
 
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];

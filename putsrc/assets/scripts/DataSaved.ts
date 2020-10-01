@@ -181,7 +181,7 @@ export class CaughtPet extends Item {
 
 // -----------------------------------------------------------------
 
-export class PADBase {}
+export abstract class PADBase {}
 
 export class PADExpl extends PADBase {
     doneStep: number;
@@ -195,6 +195,10 @@ export class PADEqpMkt extends PADBase {
 export class PADPetMkt extends PADBase {
     updateTime: number;
     pets: CaughtPet[];
+}
+
+export class PADQuest extends PADBase {
+    updateTime: number;
 }
 
 export class PADACntr extends PADBase {

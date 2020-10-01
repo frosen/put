@@ -34,8 +34,68 @@ type CellActInfo = {
 };
 
 const CellActInfoDict: { [key: string]: CellActInfo } = {
-    [PAKey.work]: { cnName: '工作介绍所' },
-    [PAKey.quest]: { cnName: '任务发布栏' },
+    [PAKey.expl]: {
+        cnName: '探索',
+        getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
+            const gameData = ctrlr.memory.gameData;
+            const ing = gameData.curExpl && gameData.curExpl.curPosId === gameData.curPosId ? 'ing' : '';
+            const posData = gameData.posDataDict[gameData.curPosId];
+            let curStep: number;
+            if (posData.actDict.hasOwnProperty(PAKey.expl)) {
+                const pADExpl = posData.actDict[PAKey.expl] as PADExpl;
+                curStep = pADExpl.doneStep + 1;
+            } else curStep = 0;
+            const curPosModel = actPosModelDict[gameData.curPosId];
+            const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
+            const stepMax = explModel.stepMax;
+            return { str: String(`${ing}[${curStep}/${stepMax}]`), color: cc.color(255, 102, 0) };
+        },
+        page: PageActExpl,
+        check: (ctrlr: BaseController): string => {
+            const gameData = ctrlr.memory.gameData;
+            if (gameData.curExpl) {
+                if (gameData.curPosId !== gameData.curExpl.curPosId) {
+                    const name = actPosModelDict[gameData.curExpl.curPosId].cnName;
+                    return `精灵仍在${name}战斗`;
+                }
+            }
+            if (GameDataTool.getReadyPets(ctrlr.memory.gameData).length < 2) {
+                return '前方危险，请保证你队伍中有至少两只精灵，且处于备战状态！（精灵列表中点击状态按钮可变更状态）';
+            }
+            return '';
+        },
+        beforeEnter: (ctrlr: BaseController, callback: (data: any) => void): any => {
+            const gameData = ctrlr.memory.gameData;
+            if (gameData.curExpl) return callback(null);
+            const posData = gameData.posDataDict[gameData.curPosId];
+            if (!posData.actDict.hasOwnProperty(PAKey.expl)) return callback(null);
+            const pADExpl = posData.actDict[PAKey.expl] as PADExpl;
+            if (pADExpl.doneStep === 0) return callback(null);
+
+            const posId = gameData.curPosId;
+            const curPosModel = actPosModelDict[posId];
+            const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
+
+            const stepMax = explModel.stepMax;
+            const stepTypes = StepTypesByMax[stepMax];
+
+            const btns = [];
+            for (let index = 0; index <= pADExpl.doneStep; index++) {
+                const stepName = ExplStepNames[stepTypes[index]];
+                btns.push(stepName);
+            }
+
+            ctrlr.popAlert(
+                '请选择出发位置',
+                (key: number) => {
+                    if (key > 0) {
+                        return callback({ startStep: key - 1 });
+                    }
+                },
+                ...btns
+            );
+        }
+    },
     [PAKey.shop]: { cnName: '物资商店', page: PageActShop },
     [PAKey.eqpMkt]: {
         cnName: '装备市场',
@@ -71,70 +131,10 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
         },
         page: PageActPetMkt
     },
-    [PAKey.rcclr]: { cnName: '回收站', page: PageActRcclr },
+    [PAKey.work]: { cnName: '工作介绍所' },
+    [PAKey.quest]: { cnName: '任务发布栏' },
     [PAKey.aCntr]: { cnName: '奖励中心', page: PageActACntr },
-    [PAKey.expl]: {
-        cnName: '探索',
-        getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
-            const gameData = ctrlr.memory.gameData;
-            const ing = gameData.curExpl && gameData.curExpl.curPosId === gameData.curPosId ? 'ing' : '';
-            const posData = gameData.posDataDict[gameData.curPosId];
-            let curStep: number;
-            if (posData.actDict.hasOwnProperty(PAKey.expl)) {
-                const pADExpl = posData.actDict[PAKey.expl] as PADExpl;
-                curStep = pADExpl.doneStep + 1;
-            } else curStep = 0;
-            const curPosModel = actPosModelDict[gameData.curPosId];
-            const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
-            const stepMax = explModel.stepMax;
-            return { str: String(`${ing}[${curStep}/${stepMax}]`), color: cc.color(255, 102, 0) };
-        },
-        page: PageActExpl,
-        check: (ctrlr: BaseController): string => {
-            const gameData = ctrlr.memory.gameData;
-            if (gameData.curExpl) {
-                if (gameData.curPosId !== gameData.curExpl.curPosId) {
-                    const name = actPosModelDict[gameData.curExpl.curPosId].cnName;
-                    return `精灵仍在${name}战斗`;
-                }
-            }
-            if (GameDataTool.getReadyPets(ctrlr.memory.gameData).length < 2) {
-                return '前方危险，请保证你队伍中有至少两只精灵，且处于备战状态！（精灵列表中点击状态按钮可变更状态）';
-            }
-            return '';
-        },
-        beforeEnter: (ctrlr: BaseController, callback: (data: any) => void): any => {
-            const gameData = ctrlr.memory.gameData;
-            if (gameData.curExpl) return callback(null);
-            const posData = gameData.posDataDict[gameData.curPosId];
-            if (!posData.actDict.hasOwnProperty(PAKey.expl)) return callback(null);
-            const pADExpl = posData.actDict[PAKey.expl] as PADExpl;
-            if (pADExpl.doneStep === 0) return callback(null);
-
-            const posId = gameData.curPosId;
-            const curPosModel = actPosModelDict[posId];
-            const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
-
-            const stepMax = explModel.stepMax;
-            const stepTypes = StepTypesByMax[stepMax];
-
-            const btns = [];
-            for (let index = 0; index <= pADExpl.doneStep; index++) {
-                const stepName = ExplStepNames[stepTypes[index]];
-                btns.push(stepName);
-            }
-
-            ctrlr.popAlert(
-                '请选择出发位置',
-                (key: number) => {
-                    if (key > 0) {
-                        return callback({ startStep: key - 1 });
-                    }
-                },
-                ...btns
-            );
-        }
-    }
+    [PAKey.rcclr]: { cnName: '回收站', page: PageActRcclr }
 };
 
 @ccclass
@@ -177,8 +177,9 @@ export class PageActPosLVD extends ListViewDelegate {
             } else this.curEvts.push(evtModel);
         }
 
-        for (const pakey of this.curActPosModel.acts) {
-            const actModel = this.curActPosModel.actDict[pakey];
+        for (const pakey in this.curActPosModel.actMDict) {
+            if (!this.curActPosModel.actMDict.hasOwnProperty(pakey)) continue;
+            const actModel = this.curActPosModel.actMDict[pakey];
             if (actModel && actModel.hasOwnProperty('condFunc')) {
                 if (actModel.condFunc(gameData)) this.curActKeys.push(pakey);
             } else this.curActKeys.push(pakey);

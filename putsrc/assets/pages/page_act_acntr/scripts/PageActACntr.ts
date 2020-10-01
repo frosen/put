@@ -15,7 +15,7 @@ import { actPosModelDict } from 'configs/ActPosModelDict';
 import { ListView } from 'scripts/ListView';
 import { Equip, Money, PADACntr } from 'scripts/DataSaved';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { PAKey, ReputAward } from 'scripts/DataModel';
+import { PAKey, ReputAwardModel } from 'scripts/DataModel';
 
 export const ACntrCountMax = 1;
 
@@ -31,7 +31,7 @@ export class PageActACntr extends PageBase {
 
     paIdxList: number[] = [];
     itemList: (Equip | string)[] = [];
-    awardDataList: ReputAward[] = [];
+    awardDataList: ReputAwardModel[] = [];
     countList: number[] = [];
 
     onLoad() {

@@ -9,6 +9,7 @@ import { EleType, BattleType, BioType, Pet, GameData, Item } from './DataSaved';
 import { Pet2, BattlePet, BattleBuff, AmplAttriType } from './DataOther';
 
 // -----------------------------------------------------------------
+// -----------------------------------------------------------------
 
 export class BuffOutput {
     hp?: number;
@@ -135,6 +136,8 @@ export class PetModel {
 }
 
 // -----------------------------------------------------------------
+// -----------------------------------------------------------------
+
 export class CnsumModel {
     id: string;
     cnName: string;
@@ -211,21 +214,93 @@ export class EquipModel {
 }
 
 // -----------------------------------------------------------------
+// -----------------------------------------------------------------
 
-export class PAKey {
-    static work = 'work';
-    static quest = 'quest';
-    static shop = 'shop';
-    static eqpMkt = 'equipMarket';
-    static petMkt = 'petMarket';
-    static rcclr = 'recycler';
-    static aCntr = 'awardsCenter';
-    static expl = 'exploration';
+export enum QuestType {
+    support = 1,
+    fight,
+    fightRandom,
+    gather,
+    search
 }
+
+export abstract class QuestNeed {}
+
+export class SupportQuestNeed extends QuestNeed {
+    itemId: string;
+    count: number;
+}
+
+export class FightQuestNeed extends QuestNeed {
+    petIds: string[];
+    name: string;
+    count: number;
+}
+
+export class GatherQuestNeed extends QuestNeed {
+    posId: string;
+    step: number;
+    name: string;
+    count: number;
+}
+
+export class SearchQuestNeed extends QuestNeed {
+    posId: string;
+    step: number;
+    name: string;
+    time: number;
+}
+
+export class QuestModel {
+    id: string;
+    type: QuestType;
+    cnName: string;
+    desc: string;
+    posId: string;
+    evtId: string;
+    need: QuestNeed;
+    awardReput: number;
+    awardMoney: number;
+    awardItem: string;
+}
+
+export enum ReputRank {
+    ignoring = 1,
+    renown,
+    respect,
+    veneration,
+    worship
+}
+
+export const ReputNames = ['', '无视', '闻名', '尊敬', '崇敬', '崇拜'];
+
+export class ReputAwardModel {
+    need: ReputRank;
+    price: number;
+    fullId: string;
+}
+
+// -----------------------------------------------------------------
 
 type CondFunc = (gd: GameData) => boolean;
 
-export class PAModel {
+export class EvtModel {
+    id: string;
+    condFunc?: CondFunc;
+}
+
+export class PAKey {
+    static expl = 'exploration';
+    static shop = 'shop';
+    static eqpMkt = 'equipMarket';
+    static petMkt = 'petMarket';
+    static work = 'work';
+    static quest = 'quest';
+    static aCntr = 'awardsCenter';
+    static rcclr = 'recycler';
+}
+
+export abstract class PAModel {
     key: string;
     condFunc?: CondFunc;
 }
@@ -256,12 +331,7 @@ export class ExplModel extends PAModel {
     stepMax: number;
 }
 
-type AllPAType = WorkModel | ExplModel;
-
-export class EvtModel {
-    id: string;
-    condFunc?: CondFunc;
-}
+type AllPAModel = WorkModel | ExplModel;
 
 export class MovModel {
     id: string;
@@ -269,26 +339,12 @@ export class MovModel {
     condFunc?: CondFunc;
 }
 
+// -----------------------------------------------------------------
+
 export enum ActPosType {
     town = 1,
     wild,
-    NoGA
-}
-
-export enum ReputRank {
-    ignoring = 1,
-    renown,
-    respect,
-    veneration,
-    worship
-}
-
-export const ReputNames = ['', '无视', '闻名', '尊敬', '崇敬', '崇拜'];
-
-export class ReputAward {
-    need: ReputRank;
-    price: number;
-    fullId: string;
+    NoGA // 无政府管辖区
 }
 
 export class ActPosModel {
@@ -297,17 +353,18 @@ export class ActPosModel {
     lv: number;
     type: ActPosType;
     evts: EvtModel[];
-    acts: string[];
-    actDict: { [key: string]: AllPAType };
+    actMDict: { [key: string]: AllPAModel };
     movs: MovModel[];
     loc: Partial<cc.Vec2>;
     petIdLists: string[][]; // 不同stepType对应的精灵列表
     itemIdLists: string[][];
     eqpIdLists: string[][];
     goodsList: string[];
-    awardList: ReputAward[];
+    questDict: { [key: string]: QuestModel };
+    awardList: ReputAwardModel[];
 }
 
+// -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
 export class ProfTitleModel {

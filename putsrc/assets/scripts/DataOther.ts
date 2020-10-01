@@ -589,7 +589,7 @@ export class RealBattle {
     static createRandomPetData(curExpl: ExplMmr, count: number): { id: string; lv: number; rank: number; features: Feature[] }[] {
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
-        const explModel: ExplModel = curPosModel.actDict[PAKey.expl] as ExplModel;
+        const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
         const petCount = randomRate(0.5) ? count : count - 1;
         const stepMax = explModel.stepMax;

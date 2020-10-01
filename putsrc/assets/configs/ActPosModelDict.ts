@@ -13,15 +13,14 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         lv: 1,
         type: ActPosType.town,
         evts: [],
-        acts: [PAKey.work, PAKey.quest, PAKey.shop, PAKey.eqpMkt, PAKey.petMkt, PAKey.rcclr, PAKey.aCntr],
-        actDict: {
-            [PAKey.work]: null,
-            [PAKey.quest]: null,
+        actMDict: {
             [PAKey.shop]: null,
             [PAKey.eqpMkt]: null,
             [PAKey.petMkt]: null,
-            [PAKey.rcclr]: null,
-            [PAKey.aCntr]: null
+            [PAKey.work]: null,
+            [PAKey.quest]: null,
+            [PAKey.aCntr]: null,
+            [PAKey.rcclr]: null
         },
         movs: [
             { id: 'GuangJiDianDaDao', price: 0 },
@@ -58,8 +57,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         lv: 1,
         type: ActPosType.wild,
         evts: [],
-        acts: [PAKey.expl],
-        actDict: {
+        actMDict: {
             [PAKey.expl]: {
                 key: PAKey.expl,
                 stepMax: 2
