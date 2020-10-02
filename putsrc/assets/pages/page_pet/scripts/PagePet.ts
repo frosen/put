@@ -105,7 +105,7 @@ export class PagePet extends PageBase {
     }
 
     onCellClickDetailBtn(cell: CellPet) {
-        this.ctrlr.pushPage(PagePetDetail, cell.curPet);
+        this.ctrlr.pushPage(PagePetDetail, { pet: cell.curPet });
     }
 
     // -----------------------------------------------------------------

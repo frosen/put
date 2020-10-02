@@ -68,13 +68,13 @@ export class PageActRcclrLVD extends ListViewDelegate {
     cellIdForRow(listView: ListView, rowIdx: number): string {
         const item = this.curItems[this.curItemIdxs[rowIdx]];
         switch (item.itemType) {
-            case ItemType.cnsum: {
+            case ItemType.cnsum:
                 const cnsumType = (item as Cnsum).cnsumType;
                 if (cnsumType === CnsumType.drink) return DRINK;
                 else if (cnsumType === CnsumType.catcher) return CATCHER;
                 else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
                 else if (cnsumType === CnsumType.material) return MATERIAL;
-            }
+                else return null;
             case ItemType.equip:
                 return EQUIP;
             case ItemType.caughtPet:

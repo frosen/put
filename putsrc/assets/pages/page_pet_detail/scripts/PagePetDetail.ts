@@ -24,6 +24,8 @@ export class PagePetDetail extends PageBase {
 
     curPet: Pet = null;
 
+    immutable: boolean = false; // 是否允许更改
+
     @property(cc.Prefab)
     funcBarPrefab: cc.Prefab = null;
 
@@ -47,8 +49,10 @@ export class PagePetDetail extends PageBase {
         ]);
     }
 
-    setData(data: Pet) {
-        this.curPet = data;
+    setData(data: { pet: Pet; immutable: boolean }) {
+        cc.assert(data && data.pet, 'PUT 精灵详情必有精灵属性');
+        this.curPet = data.pet;
+        this.immutable = data.immutable || false;
     }
 
     onLoadNavBar(navBar: NavBar) {

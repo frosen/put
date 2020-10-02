@@ -302,18 +302,28 @@ export class PagePetDetailLVD extends ListViewDelegate {
             const equips = this.curPet.equips;
             const equipIndex = rowIdx - 18;
             const equip = equips[equipIndex];
+            const eqpCell = cell as CellPkgEquip;
             if (equip) {
-                (cell as CellPkgEquip).setData(-1, equip);
-                (cell as CellPkgEquip).clickCallback = (cell: CellPkgEquip) => {
+                eqpCell.setData(-1, equip);
+                eqpCell.clickCallback = (cell: CellPkgEquip) => {
                     this.page.onEquipCellClick(equipIndex, cell);
                 };
-                (cell as CellPkgEquip).funcBtnCallback = (cell: CellPkgEquip) => {
-                    this.page.onEquipCellClickFuncBtn(equipIndex, cell);
-                };
+                if (!this.page.immutable) {
+                    eqpCell.funcBtn.node.active = true;
+                    eqpCell.funcBtnCallback = (cell: CellPkgEquip) => {
+                        this.page.onEquipCellClickFuncBtn(equipIndex, cell);
+                    };
+                } else {
+                    eqpCell.funcBtn.node.active = false;
+                }
             } else {
-                (cell as CellPkgEquipBlank).clickCallback = (cell: CellPkgEquipBlank) => {
-                    this.page.onEquipBlankCellClick(equipIndex, cell);
-                };
+                if (!this.page.immutable) {
+                    eqpCell.clickCallback = (cell: CellPkgEquipBlank) => {
+                        this.page.onEquipBlankCellClick(equipIndex, cell);
+                    };
+                } else {
+                    eqpCell.clickCallback = (cell: CellPkgEquipBlank) => {};
+                }
             }
         }
         // 第七组

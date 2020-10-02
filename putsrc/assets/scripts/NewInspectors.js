@@ -229,24 +229,22 @@ let refactorCompDict = {
                                 prop.splice(modifyIndex, 1);
                                 break;
                             case 'mv':
-                                {
-                                    let modifyIndex2 = Number(commandDatas[2]);
-                                    if (isNaN(modifyIndex2) || modifyIndex2 === modifyIndex) {
-                                        cc.warn('PUT 数组调整值有误，请把鼠标hover到输入框上看详情：', this.commandStr);
-                                        this.resetCommandStr();
-                                        return;
-                                    }
-
-                                    if (modifyIndex2 > modifyIndex) modifyIndex2 -= 1;
-                                    if (modifyIndex2 < 0 || modifyIndex2 >= this.target.value.length) {
-                                        cc.warn('STORM 数组调整值有误，请把鼠标hover到输入框上看详情：', this.commandStr);
-                                        this.resetCommandStr();
-                                        return;
-                                    }
-                                    let data = prop[modifyIndex];
-                                    prop.splice(modifyIndex, 1);
-                                    prop.splice(modifyIndex2, 0, data);
+                                let modifyIndex2 = Number(commandDatas[2]);
+                                if (isNaN(modifyIndex2) || modifyIndex2 === modifyIndex) {
+                                    cc.warn('PUT 数组调整值有误，请把鼠标hover到输入框上看详情：', this.commandStr);
+                                    this.resetCommandStr();
+                                    return;
                                 }
+
+                                if (modifyIndex2 > modifyIndex) modifyIndex2 -= 1;
+                                if (modifyIndex2 < 0 || modifyIndex2 >= this.target.value.length) {
+                                    cc.warn('STORM 数组调整值有误，请把鼠标hover到输入框上看详情：', this.commandStr);
+                                    this.resetCommandStr();
+                                    return;
+                                }
+                                let data = prop[modifyIndex];
+                                prop.splice(modifyIndex, 1);
+                                prop.splice(modifyIndex2, 0, data);
                                 break;
                             default:
                                 break;
