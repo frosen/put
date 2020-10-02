@@ -36,6 +36,7 @@ import {
     KUAI,
     PADEqpMkt,
     PADPetMkt,
+    PADQuester,
     PADACntr,
     PADBase
 } from './DataSaved';
@@ -841,6 +842,7 @@ export class PosDataTool {
         const pADEqpMkt = newInsWithChecker(PADEqpMkt);
         pADEqpMkt.eqps = [];
         pADEqpMkt.updateTime = 0;
+        pADEqpMkt.refreshCnt = 0;
         return pADEqpMkt;
     }
 
@@ -848,7 +850,15 @@ export class PosDataTool {
         const pADPetMkt = newInsWithChecker(PADPetMkt);
         pADPetMkt.pets = [];
         pADPetMkt.updateTime = 0;
+        pADPetMkt.refreshCnt = 0;
         return pADPetMkt;
+    }
+
+    static createPADQuester(): PADQuester {
+        const pADQuester = newInsWithChecker(PADQuester);
+        pADQuester.updateTime = 0;
+        pADQuester.questIds = [];
+        return pADQuester;
     }
 
     static createPADACntr(): PADACntr {

@@ -211,8 +211,10 @@ export class PageActPetMkt extends PageBase {
         if (curReputRank < ReputRank.renown) {
             this.ctrlr.popToast('需要renown');
         } else {
-            const refreshPrice = 1;
-            this.ctrlr.popAlert('aaaaa', (key: number) => {
+            const gameData = this.ctrlr.memory.gameData;
+            const pADPetMkt = GameDataTool.addPA(gameData, gameData.curPosId, PAKey.petMkt) as PADPetMkt;
+            const refreshPrice = Math.pow(2, pADPetMkt.refreshCnt) * 100;
+            this.ctrlr.popAlert(`确定消费${MoneyTool.getStr(refreshPrice)} 刷新列表？`, (key: number) => {
                 if (key === 1) {
                     const curMoney = GameDataTool.getMoney(gameData);
                     if (refreshPrice > curMoney) {
@@ -231,6 +233,7 @@ export class PageActPetMkt extends PageBase {
         const posId = gameData.curPosId;
         const pADPetMkt: PADPetMkt = GameDataTool.addPA(gameData, posId, PAKey.petMkt) as PADPetMkt;
         pADPetMkt.updateTime = Date.now();
+        pADPetMkt.refreshCnt++;
         this.resetMktGoods(pADPetMkt, actPosModelDict[posId]);
         this.resetCurData(pADPetMkt);
 

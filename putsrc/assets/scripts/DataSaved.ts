@@ -189,16 +189,19 @@ export class PADExpl extends PADBase {
 
 export class PADEqpMkt extends PADBase {
     updateTime: number;
+    refreshCnt: number;
     eqps: Equip[];
 }
 
 export class PADPetMkt extends PADBase {
     updateTime: number;
+    refreshCnt: number;
     pets: CaughtPet[];
 }
 
 export class PADQuester extends PADBase {
     updateTime: number;
+    questIds: string[];
 }
 
 export class PADACntr extends PADBase {
