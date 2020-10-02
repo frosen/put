@@ -252,6 +252,14 @@ export class ExplMmr {
 
 // -----------------------------------------------------------------
 
+class Quest {
+    questId: string;
+    posId: string;
+    progress: number;
+}
+
+// -----------------------------------------------------------------
+
 export class GameData {
     profTitleIds: string[];
 
@@ -266,4 +274,6 @@ export class GameData {
     posDataDict: { [key: string]: PosData };
 
     curExpl: ExplMmr;
+
+    quests: Quest[];
 }

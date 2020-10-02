@@ -15,7 +15,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         evts: [],
         actMDict: {
             [PAKey.shop]: {
-                goodsList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1']
+                goodsIdList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1']
             },
             [PAKey.eqpMkt]: {
                 eqpIdLists: [null, ['DuanJian', 'ChangRenJian'], null, null, ['TieZhiYuGan', 'JingZhiYuGan']]
@@ -31,7 +31,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             },
             [PAKey.work]: {},
             [PAKey.quester]: {
-                questDict: {}
+                questIdList: []
             },
             [PAKey.aCntr]: {
                 awardList: [

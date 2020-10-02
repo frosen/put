@@ -269,7 +269,7 @@ export class ExplModel extends PAModel {
 // -----------------------------------------------------------------
 
 export class ShopModel extends PAModel {
-    goodsList: string[];
+    goodsIdList: string[];
 }
 
 // -----------------------------------------------------------------
@@ -325,21 +325,21 @@ export class SearchQuestNeed extends QuestNeed {
     time: number;
 }
 
+type AllQuestNeed = SupportQuestNeed | FightQuestNeed | GatherQuestNeed | SearchQuestNeed;
+
 export class QuestModel {
     id: string;
     type: QuestType;
     cnName: string;
     desc: string;
-    posId: string;
-    evtId: string;
-    need: QuestNeed;
+    need: AllQuestNeed;
     awardReput: number;
     awardMoney: number;
     awardItem: string;
 }
 
 export class QuesterModel extends PAModel {
-    questDict: { [key: string]: QuestModel };
+    questIdList: string[];
 }
 
 // -----------------------------------------------------------------

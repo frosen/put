@@ -40,7 +40,7 @@ export class PageActShop extends PageBase {
         if (CC_EDITOR) return;
         const posId = this.ctrlr.memory.gameData.curPosId;
         const shopModel = actPosModelDict[posId].actMDict[PAKey.shop] as ShopModel;
-        this.goodsIds = shopModel.goodsList;
+        this.goodsIds = shopModel.goodsIdList;
 
         const lvd = this.list.delegate as PageActShopLVD;
         lvd.page = this;

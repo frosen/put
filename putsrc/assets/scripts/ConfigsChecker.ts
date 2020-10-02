@@ -66,8 +66,8 @@ function checkActPosModelDict() {
                     }
                 }
             } else if (pakey === PAKey.shop) {
-                need(actModel, ['goodsList'], key + 'shop');
-                for (const itemId of (actModel as ShopModel).goodsList) {
+                need(actModel, ['goodsIdList'], key + 'shop');
+                for (const itemId of (actModel as ShopModel).goodsIdList) {
                     const type = CnsumDataTool.getTypeById(itemId);
                     if (!type) cc.error('ActPosModelDict shop中，itemIdList中的itemId有误', key, itemId);
                 }
@@ -90,7 +90,7 @@ function checkActPosModelDict() {
                     }
                 }
             } else if (pakey === PAKey.quester) {
-                need(actModel, ['questDict'], key + 'quester');
+                need(actModel, ['questIdList'], key + 'quester');
             } else if (pakey === PAKey.aCntr) {
                 need(actModel, ['awardList'], key + 'aCntr');
             }
