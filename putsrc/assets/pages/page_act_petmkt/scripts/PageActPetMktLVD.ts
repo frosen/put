@@ -42,8 +42,11 @@ export class PageActPetMktLVD extends ListViewDelegate {
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        if (rowIdx === 0) return cc.instantiate(this.cellUpdateDisplay).getComponent(CellUpdateDisplay);
-        else {
+        if (rowIdx === 0) {
+            const cell = cc.instantiate(this.cellUpdateDisplay).getComponent(CellUpdateDisplay);
+            cell.onRefreshCallback = this.page.onRefresh.bind(this.page);
+            return cell;
+        } else {
             const cell: CellTransaction = cc.instantiate(this.cellTransPrefab).getComponent(CellTransaction);
             cell.addCallback = this.page.onCellAddCount.bind(this.page);
             cell.rdcCallback = this.page.onCellRdcCount.bind(this.page);

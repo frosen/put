@@ -12,7 +12,7 @@ import { NavBar } from 'scripts/NavBar';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { ListView } from 'scripts/ListView';
 import { Money, Equip, PosData, PADEqpMkt } from 'scripts/DataSaved';
-import { PAKey, ActPosModel, EqpMktModel } from 'scripts/DataModel';
+import { PAKey, ActPosModel, EqpMktModel, ReputRank } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from 'scripts/Random';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
@@ -50,14 +50,7 @@ export class PageActEqpMkt extends PageBase {
             this.resetMktGoods(pADEqpMkt, actPosModelDict[posId]);
         }
 
-        for (let index = 0; index < pADEqpMkt.eqps.length; index++) {
-            const goods = pADEqpMkt.eqps[index];
-            this.goodsList[index] = goods;
-            const price = EquipDataTool.getPrice(goods);
-            this.priceList[index] = price;
-            this.countList[index] = 0;
-        }
-        this.pADEqpMkt = pADEqpMkt;
+        this.resetCurData(pADEqpMkt);
 
         const lvd = this.list.delegate as PageActEqpMktLVD;
         lvd.page = this;
@@ -86,6 +79,21 @@ export class PageActEqpMkt extends PageBase {
             }
             if (need) eqps.push(equip);
         }
+    }
+
+    resetCurData(pADEqpMkt: PADEqpMkt) {
+        this.goodsList.length = 0;
+        this.priceList.length = 0;
+        this.countList.length = 0;
+
+        for (let index = 0; index < pADEqpMkt.eqps.length; index++) {
+            const goods = pADEqpMkt.eqps[index];
+            this.goodsList[index] = goods;
+            const price = EquipDataTool.getPrice(goods);
+            this.priceList[index] = price;
+            this.countList[index] = 0;
+        }
+        this.pADEqpMkt = pADEqpMkt;
     }
 
     onLoadNavBar(navBar: NavBar) {
@@ -189,4 +197,36 @@ export class PageActEqpMkt extends PageBase {
     }
 
     onCellClickDetailBtn(cell: CellPkgCnsum) {}
+
+    onRefresh() {
+        const gameData = this.ctrlr.memory.gameData;
+        const curReputRank = GameDataTool.getReputRank(gameData, gameData.curPosId);
+        if (curReputRank < ReputRank.renown) {
+            this.ctrlr.popToast('需要renown');
+        } else {
+            const refreshPrice = 1;
+            this.ctrlr.popAlert('aaaaa', (key: number) => {
+                if (key === 1) {
+                    const curMoney = GameDataTool.getMoney(gameData);
+                    if (refreshPrice > curMoney) {
+                        this.ctrlr.popToast('钱不够啦');
+                        return;
+                    }
+                    GameDataTool.handleMoney(gameData, (m: Money) => (m.sum -= refreshPrice));
+                    this.refresh();
+                }
+            });
+        }
+    }
+
+    refresh() {
+        const gameData = this.ctrlr.memory.gameData;
+        const pADEqpMkt: PADEqpMkt = GameDataTool.addPA(gameData, gameData.curPosId, PAKey.eqpMkt) as PADEqpMkt;
+        pADEqpMkt.updateTime = Date.now();
+        this.resetMktGoods(pADEqpMkt, actPosModelDict[gameData.curPosId]);
+        this.resetCurData(pADEqpMkt);
+
+        this.list.resetContent();
+        this.changeTotal();
+    }
 }

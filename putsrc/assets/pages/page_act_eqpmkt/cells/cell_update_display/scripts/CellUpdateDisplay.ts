@@ -14,6 +14,17 @@ export class CellUpdateDisplay extends ListViewCell {
     @property(cc.Label)
     lbl: cc.Label = null;
 
+    @property(cc.Button)
+    refreshBtn: cc.Button = null;
+
+    onRefreshCallback: () => void = null;
+
+    onLoad() {
+        super.onLoad();
+        if (CC_EDITOR) return;
+        this.refreshBtn.node.on(cc.Node.EventType.TOUCH_END, this.onRefresh.bind(this));
+    }
+
     setData(updateTime: number) {
         const nextUpdTime = updateTime + EqpMktUpdataInterval;
         const nowDate = new Date();
@@ -50,5 +61,9 @@ export class CellUpdateDisplay extends ListViewCell {
         if (diffM > 0) return String(diffM) + 'm';
 
         return '<1m';
+    }
+
+    onRefresh() {
+        if (this.onRefreshCallback) this.onRefreshCallback();
     }
 }

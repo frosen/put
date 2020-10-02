@@ -12,7 +12,7 @@ import { NavBar } from 'scripts/NavBar';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { ListView } from 'scripts/ListView';
 import { Money, PetRankNames, PosData, PADPetMkt, CaughtPet } from 'scripts/DataSaved';
-import { PAKey, ActPosModel, PetMktModel } from 'scripts/DataModel';
+import { PAKey, ActPosModel, PetMktModel, ReputRank } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from 'scripts/Random';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
@@ -52,15 +52,7 @@ export class PageActPetMkt extends PageBase {
             pADPetMkt.updateTime = now;
             this.resetMktGoods(pADPetMkt, actPosModelDict[posId]);
         }
-
-        for (let index = 0; index < pADPetMkt.pets.length; index++) {
-            const goods = pADPetMkt.pets[index];
-            this.goodsList[index] = goods;
-            const price = CaughtPetDataTool.getPrice(goods);
-            this.priceList[index] = price;
-            this.countList[index] = 0;
-        }
-        this.pADPetMkt = pADPetMkt;
+        this.resetCurData(pADPetMkt);
 
         const lvd = this.list.delegate as PageActPetMktLVD;
         lvd.page = this;
@@ -94,6 +86,21 @@ export class PageActPetMkt extends PageBase {
             const cPet = CaughtPetDataTool.create(petId, lv, rank, features);
             pets.push(cPet);
         }
+    }
+
+    resetCurData(pADPetMkt: PADPetMkt) {
+        this.goodsList.length = 0;
+        this.priceList.length = 0;
+        this.countList.length = 0;
+
+        for (let index = 0; index < pADPetMkt.pets.length; index++) {
+            const goods = pADPetMkt.pets[index];
+            this.goodsList[index] = goods;
+            const price = CaughtPetDataTool.getPrice(goods);
+            this.priceList[index] = price;
+            this.countList[index] = 0;
+        }
+        this.pADPetMkt = pADPetMkt;
     }
 
     onLoadNavBar(navBar: NavBar) {
@@ -197,4 +204,37 @@ export class PageActPetMkt extends PageBase {
     }
 
     onCellClickDetailBtn(cell: CellPkgCnsum) {}
+
+    onRefresh() {
+        const gameData = this.ctrlr.memory.gameData;
+        const curReputRank = GameDataTool.getReputRank(gameData, gameData.curPosId);
+        if (curReputRank < ReputRank.renown) {
+            this.ctrlr.popToast('需要renown');
+        } else {
+            const refreshPrice = 1;
+            this.ctrlr.popAlert('aaaaa', (key: number) => {
+                if (key === 1) {
+                    const curMoney = GameDataTool.getMoney(gameData);
+                    if (refreshPrice > curMoney) {
+                        this.ctrlr.popToast('钱不够啦');
+                        return;
+                    }
+                    GameDataTool.handleMoney(gameData, (m: Money) => (m.sum -= refreshPrice));
+                    this.refresh();
+                }
+            });
+        }
+    }
+
+    refresh() {
+        const gameData = this.ctrlr.memory.gameData;
+        const posId = gameData.curPosId;
+        const pADPetMkt: PADPetMkt = GameDataTool.addPA(gameData, posId, PAKey.petMkt) as PADPetMkt;
+        pADPetMkt.updateTime = Date.now();
+        this.resetMktGoods(pADPetMkt, actPosModelDict[posId]);
+        this.resetCurData(pADPetMkt);
+
+        this.list.resetContent();
+        this.changeTotal();
+    }
 }
