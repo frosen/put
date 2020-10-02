@@ -15,15 +15,12 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         evts: [],
         actMDict: {
             [PAKey.shop]: {
-                key: PAKey.shop,
                 goodsList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1']
             },
             [PAKey.eqpMkt]: {
-                key: PAKey.eqpMkt,
                 eqpIdLists: [null, ['DuanJian', 'ChangRenJian'], null, null, ['TieZhiYuGan', 'JingZhiYuGan']]
             },
             [PAKey.petMkt]: {
-                key: PAKey.petMkt,
                 petIdLists: [
                     null,
                     ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
@@ -32,13 +29,11 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                     ['ShuiLengJiQiRen', 'DianZiShouWei']
                 ]
             },
-            [PAKey.work]: { key: PAKey.work },
+            [PAKey.work]: {},
             [PAKey.quester]: {
-                key: PAKey.quester,
                 questDict: {}
             },
             [PAKey.aCntr]: {
-                key: PAKey.aCntr,
                 awardList: [
                     { need: 1, price: 25, fullId: 'DaMoShi' },
                     { need: 2, price: 250, fullId: 'DaMoShi' },
@@ -46,7 +41,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                     { need: 4, price: 250, fullId: 'DaMoShi' }
                 ]
             },
-            [PAKey.rcclr]: { key: PAKey.rcclr }
+            [PAKey.rcclr]: {}
         },
         movs: [
             { id: 'GuangJiDianDaDao', price: 0 },
@@ -69,7 +64,6 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         evts: [],
         actMDict: {
             [PAKey.expl]: {
-                key: PAKey.expl,
                 stepMax: 2,
                 petIdLists: [
                     null,

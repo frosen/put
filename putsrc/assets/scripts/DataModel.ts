@@ -237,7 +237,6 @@ export class PAKey {
 }
 
 export abstract class PAModel {
-    key: string;
     condFunc?: CondFunc;
 }
 
