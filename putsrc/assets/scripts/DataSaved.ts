@@ -252,7 +252,7 @@ export class ExplMmr {
 
 // -----------------------------------------------------------------
 
-class Quest {
+export class Quest {
     questId: string;
     posId: string;
     progress: number;

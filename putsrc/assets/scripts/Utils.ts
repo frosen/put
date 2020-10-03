@@ -5,10 +5,11 @@
  */
 
 /** 深拷贝 */
-export function deepCopy(o: object): object {
+export function deepCopy<T>(o: T): T {
+    //先判断Array
     if (o instanceof Array) {
-        //先判断Array
-        const n = [];
+        // @ts-ignore
+        const n: T = [];
         for (let i = 0; i < o.length; ++i) n[i] = deepCopy(o[i]);
         return n;
     } else if (o instanceof Object) {
@@ -16,7 +17,8 @@ export function deepCopy(o: object): object {
             // @ts-ignore
             return o.clone();
         } else {
-            const n = {};
+            // @ts-ignore
+            const n: T = {};
             for (const i in o) n[i] = deepCopy(o[i]);
             return n;
         }
