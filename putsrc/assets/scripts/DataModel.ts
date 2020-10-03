@@ -331,11 +331,11 @@ export class QuestModel {
     id: string;
     type: QuestType;
     cnName: string;
-    desc: string;
+    descs: string[];
     need: AllQuestNeed;
     awardReput: number;
     awardMoney: number;
-    awardItem: string;
+    awardItems: string[];
 }
 
 export class QuesterModel extends PAModel {

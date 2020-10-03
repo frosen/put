@@ -19,7 +19,7 @@ convert('../put.xls', '../../putsrc/assets/configs/QuestModelDict.ts', 'quest', 
             need.itemId = rowData[3];
             need.count = Number(rowData[5]);
         } else if (type === 2 || type === 3) {
-            need.petIds = rowData[3].split(',');
+            need.petIds = rowData[3].split('/');
             need.name = rowData[4];
             need.count = Number(rowData[5]);
         } else if (type === 4) {
@@ -40,20 +40,20 @@ convert('../put.xls', '../../putsrc/assets/configs/QuestModelDict.ts', 'quest', 
 
         let awardReput = Number(rowData[6]);
         let awardMoney = Number(rowData[7]);
-        let awardItem = rowData[8].split(',');
+        let awardItems = rowData[8] ? rowData[8].split(',') : [];
 
-        let desc = rowData[9] + '\n' + rowData[10];
+        let descs = [rowData[9], rowData[10]];
 
         let baseData = {
             id,
             type,
             cnName,
-            desc,
+            descs,
             need,
 
             awardReput,
             awardMoney,
-            awardItem
+            awardItems
         };
 
         questJson[id] = baseData;

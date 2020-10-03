@@ -7,9 +7,9 @@
 import { ActPosModel, PAKey, ActPosType } from 'scripts/DataModel';
 
 export const actPosModelDict: { [key: string]: ActPosModel } = {
-    YiZhuang: {
-        id: 'YiZhuang',
-        cnName: '易庄',
+    YiZhuangJiDi: {
+        id: 'YiZhuangJiDi',
+        cnName: '易庄基地',
         lv: 1,
         type: ActPosType.town,
         evts: [],
@@ -31,7 +31,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             },
             [PAKey.work]: {},
             [PAKey.quester]: {
-                questIdList: []
+                questIdList: ['LingJianHuiShou', 'CeShiBaoGao', 'GuiXunYuChengFa', 'AnQuanSongDa', 'HuiYiTongZhi']
             },
             [PAKey.aCntr]: {
                 awardList: [
@@ -44,21 +44,21 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             [PAKey.rcclr]: {}
         },
         movs: [
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 },
-            { id: 'GuangJiDianDaDao', price: 0 }
+            { id: 'GuangJiDianZhiLu', price: 0 },
+            { id: 'GuangJiDianZhiLu', price: 0 },
+            { id: 'GuangJiDianZhiLu', price: 0 },
+            { id: 'GuangJiDianZhiLu', price: 0 },
+            { id: 'GuangJiDianZhiLu', price: 0 },
+            { id: 'GuangJiDianZhiLu', price: 0 },
+            { id: 'GuangJiDianZhiLu', price: 0 },
+            { id: 'GuangJiDianZhiLu', price: 0 },
+            { id: 'GuangJiDianZhiLu', price: 0 }
         ],
         loc: { x: 1000, y: 100 }
     },
-    GuangJiDianDaDao: {
-        id: 'GuangJiDianDaDao',
-        cnName: '光机电大道',
+    GuangJiDianZhiLu: {
+        id: 'GuangJiDianZhiLu',
+        cnName: '光机电之路',
         lv: 1,
         type: ActPosType.wild,
         evts: [],
@@ -77,12 +77,12 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             }
         },
         movs: [
-            { id: 'YiZhuang', price: 0 },
-            { id: 'YiZhuang', price: 0 },
-            { id: 'YiZhuang', price: 0 },
-            { id: 'YiZhuang', price: 0 },
-            { id: 'YiZhuang', price: 0 },
-            { id: 'YiZhuang', price: 0 }
+            { id: 'YiZhuangJiDi', price: 0 },
+            { id: 'YiZhuangJiDi', price: 0 },
+            { id: 'YiZhuangJiDi', price: 0 },
+            { id: 'YiZhuangJiDi', price: 0 },
+            { id: 'YiZhuangJiDi', price: 0 },
+            { id: 'YiZhuangJiDi', price: 0 }
         ],
         loc: { x: 1100, y: 100 }
     }

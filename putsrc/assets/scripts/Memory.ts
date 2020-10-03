@@ -308,7 +308,7 @@ export class Memory {
     // -----------------------------------------------------------------
 
     test() {
-        this.gameData.curPosId = 'YiZhuang';
+        this.gameData.curPosId = 'YiZhuangJiDi';
 
         GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
@@ -361,7 +361,7 @@ export class Memory {
 
         GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
 
-        // this.gameData.curPosId = 'GuangJiDianDaDao';
+        // this.gameData.curPosId = 'GuangJiDianZhiLu';
         // GameDataTool.createExpl(this.gameData, 0);
         // this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 60 * 24 * 2;
         // this.gameData.curExpl.catcherId = 'PuTongXianJing1';
