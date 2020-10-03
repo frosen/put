@@ -31,9 +31,6 @@ export class CellQuest extends ListViewCell {
     @property(cc.Label)
     detailLbl: cc.Label = null;
 
-    @property(cc.Node)
-    infoLayer: cc.Node = null;
-
     @property(cc.Sprite)
     questSp: cc.Sprite = null;
 
