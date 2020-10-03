@@ -9,11 +9,12 @@ const { ccclass, property } = cc._decorator;
 import { ListViewDelegate } from 'scripts/ListViewDelegate';
 import { ListView } from 'scripts/ListView';
 import { ListViewCell } from 'scripts/ListViewCell';
-import { PageActPetMkt, PetMktCountMax } from './PageActPetMkt';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
 import { CellPkgCaughtPet } from 'pages/page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
 import { PageActQuester } from './PageActQuester';
+import { CellQuest } from '../cells/cell_quest/scripts/CellQuest';
+import { questModelDict } from 'configs/QuestModelDict';
 
 @ccclass
 export class PageActQuesterLVD extends ListViewDelegate {
@@ -45,33 +46,22 @@ export class PageActQuesterLVD extends ListViewDelegate {
             cell.refreshBtn.node.active = false;
             return cell;
         } else {
-            const cell: CellTransaction = cc.instantiate(this.cellTransPrefab).getComponent(CellTransaction);
-            cell.addCallback = this.page.onCellAddCount.bind(this.page);
-            cell.rdcCallback = this.page.onCellRdcCount.bind(this.page);
-
-            const subCell = cc.instantiate(this.cellPkgCPetPrefab).getComponent(CellPkgCaughtPet);
-            subCell.setFuncBtnUI(this.page.detailBtnSFrame);
-            subCell.getComponent(cc.Button).interactable = false;
-            subCell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
-
-            cell.init(subCell);
-
+            const cell: CellQuest = cc.instantiate(this.cellQuestPrefab).getComponent(CellQuest);
+            cell.clickCallback = this.page.onCellClick.bind(this.page);
+            cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
             return cell;
         }
     }
 
-    setCellForRow(listView: ListView, rowIdx: number, cell: CellUpdateDisplay & CellTransaction) {
+    setCellForRow(listView: ListView, rowIdx: number, cell: CellUpdateDisplay & CellQuest) {
         if (rowIdx === 0) {
-            cell.setData(this.page.pADPetMkt.updateTime);
+            cell.setData(this.page.pADQuester.updateTime);
         } else {
             const idx = rowIdx - 1;
-
-            const goods = this.page.goodsList[idx];
-            const price = this.page.priceList[idx];
-            cell.setData(idx, goods, price);
-
-            const count = this.page.countList[idx] || 0;
-            cell.setCount(count, PetMktCountMax);
+            const questId = this.page.pADQuester.questIds[idx];
+            const questModel = questModelDict[questId];
+            const quest = this.page.acceptedQuestDict[questId];
+            cell.setData(questModel, quest);
         }
     }
 }

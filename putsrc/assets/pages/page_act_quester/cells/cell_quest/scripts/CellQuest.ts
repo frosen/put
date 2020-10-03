@@ -46,6 +46,9 @@ export class CellQuest extends ListViewCell {
     clickCallback: (cell: CellQuest) => void = null;
     funcBtnCallback: (cell: CellQuest) => void = null;
 
+    questModel: QuestModel;
+    quest: Quest;
+
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
@@ -54,71 +57,44 @@ export class CellQuest extends ListViewCell {
     }
 
     setData(questModel: QuestModel, quest: Quest) {
-        this.curPet = pet;
+        this.questModel = questModel;
+        this.quest = quest;
 
-        this.petNameLbl.string = PetDataTool.getCnName(pet, true);
-        this.subNameLbl.string = pet.nickname ? '(' + PetDataTool.getBaseCnName(pet) + ')' : '';
-        this.lvLbl.string = `[L${pet.lv}${PetRankNames[pet.rank]}]`;
-        CellPet.rerenderLbl(this.petNameLbl);
-        CellPet.rerenderLbl(this.lvLbl);
-        this.petNameLbl.node.parent.getComponent(cc.Layout).updateLayout();
+        // this.petNameLbl.string = PetDataTool.getCnName(pet, true);
+        // this.subNameLbl.string = pet.nickname ? '(' + PetDataTool.getBaseCnName(pet) + ')' : '';
+        // this.lvLbl.string = `[L${pet.lv}${PetRankNames[pet.rank]}]`;
+        // CellPet.rerenderLbl(this.petNameLbl);
+        // CellPet.rerenderLbl(this.lvLbl);
+        // this.petNameLbl.node.parent.getComponent(cc.Layout).updateLayout();
 
-        this.petSp.node.color = EleColor[petModelDict[pet.id].eleType];
+        // this.petSp.node.color = EleColor[petModelDict[pet.id].eleType];
 
-        const stateLbl = this.stateBtn.getComponentInChildren(cc.Label);
-        stateLbl.string = PetStateNames[pet.state];
-        // llytodo stateLbl.node.color
+        // const stateLbl = this.stateBtn.getComponentInChildren(cc.Label);
+        // stateLbl.string = PetStateNames[pet.state];
+        // // llytodo stateLbl.node.color
 
-        this.hideAllInfoNode();
-        let index = 0;
-        const realPrvty = PetDataTool.getRealPrvty(pet);
-        this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
-        index++;
-        for (const feature of pet.inbornFeatures) {
-            const cnName = featureModelDict[feature.id].cnBrief;
-            const lv = feature.lv;
-            this.setInfoNode(index, '天赋特性・' + cnName + String(lv), cc.Color.RED);
-            index++;
-        }
+        // this.hideAllInfoNode();
+        // let index = 0;
+        // const realPrvty = PetDataTool.getRealPrvty(pet);
+        // this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
+        // index++;
+        // for (const feature of pet.inbornFeatures) {
+        //     const cnName = featureModelDict[feature.id].cnBrief;
+        //     const lv = feature.lv;
+        //     this.setInfoNode(index, '天赋特性・' + cnName + String(lv), cc.Color.RED);
+        //     index++;
+        // }
 
-        this.infoLayer.getComponent(cc.Layout).updateLayout();
-    }
-
-    hideAllInfoNode() {
-        for (let index = 0; index < this.infoNodePool.length; index++) {
-            const node = this.infoNodePool[index];
-            if (node) node.opacity = 0;
-        }
-    }
-
-    setInfoNode(index: number, str: string, color: cc.Color) {
-        let infoNode = this.infoNodePool[index];
-        if (!infoNode) {
-            infoNode = cc.instantiate(this.infoNodePrefab);
-            this.infoNodePool[index] = infoNode;
-            infoNode.parent = this.infoLayer;
-        }
-        infoNode.opacity = 255;
-
-        infoNode.color = color;
-        const lbl = infoNode.children[0].getComponent(cc.Label);
-        lbl.string = str;
-        CellPet.rerenderLbl(lbl);
-        infoNode.getComponent(cc.Layout).updateLayout();
-    }
-
-    static rerenderLbl(lbl: cc.Label) {
-        // @ts-ignore
-        lbl._assembler.updateRenderData(lbl);
+        // this.infoLayer.getComponent(cc.Layout).updateLayout();
     }
 
     onClick() {
-        cc.log('PUT cell click: ', this.petNameLbl.string, this.curCellIdx);
+        cc.log('PUT cell click: ', this.questModel.id, this.curCellIdx);
         if (this.clickCallback) this.clickCallback(this);
     }
 
     onClickFuncBtn() {
-        cc.log('PUT show pet cell func: ', this.petNameLbl.string, this.curCellIdx);
+        cc.log('PUT show pet cell func: ', this.questModel.id, this.curCellIdx);
         if (this.funcBtnCallback) this.funcBtnCallback(this);
     }
 }

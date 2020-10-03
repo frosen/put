@@ -6,22 +6,17 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool, GameDataTool, CaughtPetDataTool } from 'scripts/Memory';
+import { GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { ListView } from 'scripts/ListView';
-import { Money, PADPetMkt, PADQuester, GameData, Quest } from 'scripts/DataSaved';
-import { PAKey, ActPosModel, PetMktModel, ReputRank, QuesterModel, QuestModel } from 'scripts/DataModel';
+import { PADQuester, Quest } from 'scripts/DataSaved';
+import { PAKey, ActPosModel, QuesterModel } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
-import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from 'scripts/Random';
-import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { PageActPetMktLVD } from './PageActPetMktLVD';
-import { RealBattle } from 'scripts/DataOther';
-import { normalRandom } from 'scripts/Random';
-import { expModels } from 'configs/ExpModels';
+import { randomInt } from 'scripts/Random';
 import { deepCopy } from 'scripts/Utils';
 import { PageActQuesterLVD } from './PageActQuesterLVD';
+import { CellQuest } from '../cells/cell_quest/scripts/CellQuest';
 
 export const QuesterUpdataInterval: number = 24 * 60 * 60 * 1000; // 更新间隔毫秒
 
@@ -82,34 +77,7 @@ export class PageActQuester extends PageBase {
 
     // -----------------------------------------------------------------
 
-    onCellAddCount(cell: CellTransaction) {
-        const gameData = this.ctrlr.memory.gameData;
-        const price = this.priceList[cell.curCellIdx];
-        const curMoney = GameDataTool.getMoney(gameData);
+    onCellClick(cell: CellQuest) {}
 
-        if (this.totalPrice + price > curMoney) {
-            this.ctrlr.popToast('钱不够啦');
-            return;
-        }
-
-        let totalCount = 0;
-        for (const count of this.countList) if (count > 0) totalCount++;
-
-        if (totalCount + 1 + gameData.weight > GameDataTool.getItemCountMax(gameData)) {
-            this.ctrlr.popToast('道具数量超限了');
-            return;
-        }
-
-        this.countList[cell.curCellIdx] = 1;
-        cell.setCount(1, PetMktCountMax);
-        this.changeTotal();
-    }
-
-    onCellRdcCount(cell: CellTransaction, count: number) {
-        this.countList[cell.curCellIdx] = 0;
-        cell.setCount(0, PetMktCountMax);
-        this.changeTotal();
-    }
-
-    onCellClickDetailBtn(cell: CellPkgCnsum) {}
+    onCellClickFuncBtn(cell: CellQuest) {}
 }
