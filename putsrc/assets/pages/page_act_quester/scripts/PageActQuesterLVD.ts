@@ -32,7 +32,7 @@ export class PageActQuesterLVD extends ListViewDelegate {
 
     heightForRow(listView: ListView, rowIdx: number): number {
         if (rowIdx === 0) return 104;
-        else return 304;
+        else return 334;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
@@ -49,6 +49,7 @@ export class PageActQuesterLVD extends ListViewDelegate {
             const cell: CellQuest = cc.instantiate(this.cellQuestPrefab).getComponent(CellQuest);
             cell.clickCallback = this.page.onCellClick.bind(this.page);
             cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+            cell.atQuester = true;
             return cell;
         }
     }
@@ -60,7 +61,7 @@ export class PageActQuesterLVD extends ListViewDelegate {
             const idx = rowIdx - 1;
             const questId = this.page.pADQuester.questIds[idx];
             const questModel = questModelDict[questId];
-            const quest = this.page.acceptedQuestDict[questId];
+            const quest = this.page.acceptedQuestDict[questId] || null;
             cell.setData(questModel, quest);
         }
     }

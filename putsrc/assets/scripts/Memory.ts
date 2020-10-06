@@ -933,19 +933,24 @@ export class GameDataTool {
     static SUC: string = 'K';
 
     static init(gameData: GameData) {
-        gameData.posDataDict = newDict();
-        gameData.pets = newList();
-        gameData.items = newList();
+        gameData.profTitleIds = newList();
 
+        gameData.pets = newList();
+        gameData.totalPetCount = 0;
+
+        gameData.items = newList();
         const money = newInsWithChecker(Money);
         money.sum = 0;
         gameData.items.push(money);
-
         gameData.weight = 0;
-        gameData.totalPetCount = 0;
+        gameData.totalEquipCount = 0;
 
         gameData.curPosId = '';
+        gameData.posDataDict = newDict();
+
         gameData.curExpl = null;
+
+        gameData.quests = newList();
     }
 
     // -----------------------------------------------------------------
@@ -1233,6 +1238,7 @@ export class GameDataTool {
             if (paKey === PAKey.expl) pad = PosDataTool.createPADExpl();
             else if (paKey === PAKey.eqpMkt) pad = PosDataTool.createPADEqpMkt();
             else if (paKey === PAKey.petMkt) pad = PosDataTool.createPADPetMkt();
+            else if (paKey === PAKey.quester) pad = PosDataTool.createPADQuester();
             else if (paKey === PAKey.aCntr) pad = PosDataTool.createPADACntr();
             pd.actDict[paKey] = pad;
             return pad;

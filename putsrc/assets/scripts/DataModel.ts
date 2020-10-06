@@ -298,31 +298,29 @@ export enum QuestType {
     search
 }
 
-export abstract class QuestNeed {}
+export abstract class QuestNeed {
+    count: number;
+}
 
 export class SupportQuestNeed extends QuestNeed {
     itemId: string;
-    count: number;
 }
 
 export class FightQuestNeed extends QuestNeed {
     petIds: string[];
     name: string;
-    count: number;
 }
 
 export class GatherQuestNeed extends QuestNeed {
     posId: string;
     step: number;
     name: string;
-    count: number;
 }
 
 export class SearchQuestNeed extends QuestNeed {
     posId: string;
     step: number;
     name: string;
-    time: number;
 }
 
 type AllQuestNeed = SupportQuestNeed | FightQuestNeed | GatherQuestNeed | SearchQuestNeed;
@@ -335,7 +333,7 @@ export class QuestModel {
     need: AllQuestNeed;
     awardReput: number;
     awardMoney: number;
-    awardItems: string[];
+    awardItemIds: string[];
 }
 
 export class QuesterModel extends PAModel {

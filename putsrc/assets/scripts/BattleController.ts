@@ -752,7 +752,7 @@ export class BattleController {
                     aim = BattleController.getPetAlive(aimPets[battlePet.idx] || aimPets[aimPets.length - 1]);
                 }
                 break;
-            case BattleType.chaos:
+            case BattleType.chaos: {
                 let anotherSidePets: BattlePet[];
                 if (toSelf) {
                     anotherSidePets = battlePet.beEnemy ? rb.selfTeam.pets : rb.enemyTeam.pets;
@@ -762,6 +762,7 @@ export class BattleController {
                 const pets = ranSd() > 0.5 ? aimPets : anotherSidePets;
                 aim = BattleController.getPetAlive(pets[ranSdInt(pets.length)]);
                 break;
+            }
             default:
                 aim = null;
                 break;

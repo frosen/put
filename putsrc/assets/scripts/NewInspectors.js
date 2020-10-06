@@ -228,7 +228,7 @@ let refactorCompDict = {
                             case 'd':
                                 prop.splice(modifyIndex, 1);
                                 break;
-                            case 'mv':
+                            case 'mv': {
                                 let modifyIndex2 = Number(commandDatas[2]);
                                 if (isNaN(modifyIndex2) || modifyIndex2 === modifyIndex) {
                                     cc.warn('PUT 数组调整值有误，请把鼠标hover到输入框上看详情：', this.commandStr);
@@ -246,8 +246,7 @@ let refactorCompDict = {
                                 prop.splice(modifyIndex, 1);
                                 prop.splice(modifyIndex2, 0, data);
                                 break;
-                            default:
-                                break;
+                            }
                         }
 
                         this.resetCommandStr();

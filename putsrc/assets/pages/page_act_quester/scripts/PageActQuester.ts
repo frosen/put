@@ -30,25 +30,29 @@ export class PageActQuester extends PageBase {
 
     onLoad() {
         super.onLoad();
-
         if (CC_EDITOR) return;
-        const gameData = this.ctrlr.memory.gameData;
-        const posId = gameData.curPosId;
+        try {
+            const gameData = this.ctrlr.memory.gameData;
+            const posId = gameData.curPosId;
 
-        const acceptedQuestDict: { [key: string]: Quest } = {};
-        for (const usingQuest of gameData.quests) {
-            if (usingQuest.posId === posId) acceptedQuestDict[usingQuest.questId] = usingQuest;
+            const acceptedQuestDict: { [key: string]: Quest } = {};
+            for (const usingQuest of gameData.quests) {
+                if (usingQuest.posId === posId) acceptedQuestDict[usingQuest.questId] = usingQuest;
+            }
+            this.acceptedQuestDict = acceptedQuestDict;
+
+            const pADQuester: PADQuester = GameDataTool.addPA(gameData, posId, PAKey.quester) as PADQuester;
+            const now = Date.now();
+            if (!pADQuester.updateTime || now > pADQuester.updateTime + QuesterUpdataInterval) {
+                pADQuester.updateTime = now;
+                this.resetCurQuestList(pADQuester, actPosModelDict[posId]);
+            }
+            this.pADQuester = pADQuester;
+        } catch (error) {
+            cc.warn(error);
         }
-        this.acceptedQuestDict = acceptedQuestDict;
 
-        const pADQuester: PADQuester = GameDataTool.addPA(gameData, posId, PAKey.quester) as PADQuester;
-        const now = Date.now();
-        if (!pADQuester.updateTime || now > pADQuester.updateTime + QuesterUpdataInterval) {
-            pADQuester.updateTime = now;
-            this.resetCurQuestList(pADQuester, actPosModelDict[posId]);
-        }
-        this.pADQuester = pADQuester;
-
+        cc.log('^_^!1111');
         const lvd = this.list.delegate as PageActQuesterLVD;
         lvd.page = this;
     }
@@ -57,7 +61,7 @@ export class PageActQuester extends PageBase {
         const questerModel = posModel.actMDict[PAKey.quester] as QuesterModel;
         const questIdList = deepCopy(questerModel.questIdList);
         cc.assert(questIdList, `${posModel.id}的questIdList有问题`);
-        const questCount = randomInt(2) + 3;
+        const questCount = 5; //randomInt(2) + 3;
 
         pADQuester.questIds = Object.keys(this.acceptedQuestDict); // 已经接受的任务不会消失
         for (let index = 0; index < questCount; index++) {
@@ -72,6 +76,7 @@ export class PageActQuester extends PageBase {
     }
 
     onPageShow() {
+        cc.log('^_^!1112222');
         this.list.resetContent(true);
     }
 

@@ -17,30 +17,27 @@ convert('../put.xls', '../../putsrc/assets/configs/QuestModelDict.ts', 'quest', 
         let need = {};
         if (type === 1) {
             need.itemId = rowData[3];
-            need.count = Number(rowData[5]);
         } else if (type === 2 || type === 3) {
             need.petIds = rowData[3].split('/');
             need.name = rowData[4];
-            need.count = Number(rowData[5]);
         } else if (type === 4) {
             const posData = rowData[3].split('-');
             need.posId = posData[0];
             need.step = Number(posData[1]);
             need.name = rowData[4];
-            need.count = Number(rowData[5]);
         } else if (type === 5) {
             const posData = rowData[3].split('-');
             need.posId = posData[0];
             need.step = Number(posData[1]);
             need.name = rowData[4];
-            need.time = Number(rowData[5]);
         } else {
             throw 'error type';
         }
+        need.count = Number(rowData[5]);
 
         let awardReput = Number(rowData[6]);
         let awardMoney = Number(rowData[7]);
-        let awardItems = rowData[8] ? rowData[8].split(',') : [];
+        let awardItemIds = rowData[8] ? rowData[8].split(',') : [];
 
         let descs = [rowData[9], rowData[10]];
 
@@ -53,7 +50,7 @@ convert('../put.xls', '../../putsrc/assets/configs/QuestModelDict.ts', 'quest', 
 
             awardReput,
             awardMoney,
-            awardItems
+            awardItemIds
         };
 
         questJson[id] = baseData;

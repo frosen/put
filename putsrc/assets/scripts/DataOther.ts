@@ -705,8 +705,6 @@ export class SkillInfo {
                 case BattleType.assassinate:
                     aim = '敌方血量最少目标';
                     break;
-                default:
-                    break;
             }
         } else {
             switch (skl.spBattleType) {
@@ -724,8 +722,6 @@ export class SkillInfo {
                     break;
                 case BattleType.assassinate:
                     aim = '己方血量最少目标';
-                    break;
-                default:
                     break;
             }
         }
@@ -749,8 +745,6 @@ export class SkillInfo {
                     break;
                 case SkillAimtype.oneAndSelf:
                     subAim = '自己';
-                default:
-                    break;
             }
 
             if (skl.subDmg || skl.subBuffId) {

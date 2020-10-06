@@ -78,13 +78,14 @@ export class PagePkgLVD extends ListViewDelegate {
         switch (item.itemType) {
             case ItemType.money:
                 return MONEY;
-            case ItemType.cnsum:
+            case ItemType.cnsum: {
                 const cnsumType = (item as Cnsum).cnsumType;
                 if (cnsumType === CnsumType.drink) return DRINK;
                 else if (cnsumType === CnsumType.catcher) return CATCHER;
                 else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
                 else if (cnsumType === CnsumType.material) return MATERIAL;
                 else return null;
+            }
             case ItemType.equip:
                 return EQUIP;
             case ItemType.caughtPet:

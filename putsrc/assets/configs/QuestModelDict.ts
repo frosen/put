@@ -21,7 +21,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
         },
         awardReput: 100,
         awardMoney: 100,
-        awardItems: []
+        awardItemIds: []
     },
     CeShiBaoGao: {
         id: 'CeShiBaoGao',
@@ -42,7 +42,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
         },
         awardReput: 100,
         awardMoney: 100,
-        awardItems: []
+        awardItemIds: []
     },
     GuiXunYuChengFa: {
         id: 'GuiXunYuChengFa',
@@ -61,7 +61,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
         },
         awardReput: 100,
         awardMoney: 100,
-        awardItems: []
+        awardItemIds: []
     },
     AnQuanSongDa: {
         id: 'AnQuanSongDa',
@@ -79,7 +79,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
         },
         awardReput: 100,
         awardMoney: 100,
-        awardItems: []
+        awardItemIds: []
     },
     HuiYiTongZhi: {
         id: 'HuiYiTongZhi',
@@ -93,10 +93,10 @@ export const questModelDict: { [key: string]: QuestModel } = {
             posId: 'GuangJiDianZhiLu',
             step: 2,
             name: '电气工程师',
-            time: 800
+            count: 800
         },
         awardReput: 100,
         awardMoney: 50,
-        awardItems: []
+        awardItemIds: []
     }
 };

@@ -145,8 +145,6 @@ export class PageActExplLVD extends ListViewDelegate {
                 return cc.instantiate(this.deadLogCellPrefab).getComponent(CellLogBase);
             case RdLog:
                 return cc.instantiate(this.roundLogCellPrefab).getComponent(CellLogBase);
-            default:
-                break;
         }
     }
 

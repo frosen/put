@@ -11,8 +11,18 @@ import { petModelDict } from 'configs/PetModelDict';
 
 import { Pet, PetRankNames, PetStateNames, EleColor, Quest } from 'scripts/DataSaved';
 import { featureModelDict } from 'configs/FeatureModelDict';
-import { PetDataTool } from 'scripts/Memory';
-import { QuestModel } from 'scripts/DataModel';
+import { CnsumDataTool, MoneyTool, PetDataTool } from 'scripts/Memory';
+import {
+    ExplStepNames,
+    ExplStepType,
+    FightQuestNeed,
+    GatherQuestNeed,
+    QuestModel,
+    QuestType,
+    SearchQuestNeed,
+    SupportQuestNeed
+} from 'scripts/DataModel';
+import { actPosModelDict } from 'configs/ActPosModelDict';
 
 @ccclass
 export class CellQuest extends ListViewCell {
@@ -22,11 +32,11 @@ export class CellQuest extends ListViewCell {
     @property(cc.Label)
     stateLbl: cc.Label = null;
 
-    @property(cc.RichText)
-    needLbl: cc.RichText = null;
+    @property([cc.Label])
+    needLbls: cc.Label[] = [];
 
-    @property(cc.RichText)
-    awardLbl: cc.RichText = null;
+    @property([cc.Label])
+    awardLbls: cc.Label[] = [];
 
     @property(cc.Label)
     detailLbl: cc.Label = null;
@@ -38,10 +48,12 @@ export class CellQuest extends ListViewCell {
     funcBtn: cc.Button = null;
 
     @property(cc.Layout)
-    layout: cc.Layout = null;
+    layouts: cc.Layout[] = [];
 
     clickCallback: (cell: CellQuest) => void = null;
     funcBtnCallback: (cell: CellQuest) => void = null;
+
+    atQuester: boolean = false;
 
     questModel: QuestModel;
     quest: Quest;
@@ -57,32 +69,102 @@ export class CellQuest extends ListViewCell {
         this.questModel = questModel;
         this.quest = quest;
 
-        // this.petNameLbl.string = PetDataTool.getCnName(pet, true);
-        // this.subNameLbl.string = pet.nickname ? '(' + PetDataTool.getBaseCnName(pet) + ')' : '';
-        // this.lvLbl.string = `[L${pet.lv}${PetRankNames[pet.rank]}]`;
-        // CellPet.rerenderLbl(this.petNameLbl);
-        // CellPet.rerenderLbl(this.lvLbl);
-        // this.petNameLbl.node.parent.getComponent(cc.Layout).updateLayout();
+        this.nameLbl.string = questModel.cnName;
+        CellQuest.getQuestNeedStr(questModel, this.needLbls);
+        CellQuest.getQuestAwardStr(questModel, this.awardLbls);
+        this.detailLbl.string = questModel.descs[0] + '\n' + questModel.descs[1];
 
-        // this.petSp.node.color = EleColor[petModelDict[pet.id].eleType];
+        if (!quest) {
+            this.stateLbl.string = '（点击接受）';
+        } else if (quest.progress >= questModel.need.count) {
+            this.stateLbl.string = this.atQuester ? '（完成 点击提交）' : '（完成）';
+        } else if (questModel.type === QuestType.support) {
+            this.stateLbl.string = `${quest.progress}/${questModel.need.count}（点击刷新）`;
+        } else {
+            this.stateLbl.string = `${quest.progress}/${questModel.need.count}`;
+        }
 
-        // const stateLbl = this.stateBtn.getComponentInChildren(cc.Label);
-        // stateLbl.string = PetStateNames[pet.state];
-        // // llytodo stateLbl.node.color
+        CellQuest.rerenderLbl(this.nameLbl);
+        for (const layout of this.layouts) layout.updateLayout();
+    }
 
-        // this.hideAllInfoNode();
-        // let index = 0;
-        // const realPrvty = PetDataTool.getRealPrvty(pet);
-        // this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
-        // index++;
-        // for (const feature of pet.inbornFeatures) {
-        //     const cnName = featureModelDict[feature.id].cnBrief;
-        //     const lv = feature.lv;
-        //     this.setInfoNode(index, '天赋特性・' + cnName + String(lv), cc.Color.RED);
-        //     index++;
-        // }
+    static getQuestNeedStr(questModel: QuestModel, lbls: cc.Label[]) {
+        switch (questModel.type) {
+            case QuestType.support: {
+                const need = questModel.need as SupportQuestNeed;
+                const itemModel = CnsumDataTool.getModelById(need.itemId);
 
-        // this.infoLayer.getComponent(cc.Layout).updateLayout();
+                lbls[0].string = '提供';
+                CellQuest.lbl(lbls[1], itemModel.cnName, cc.Color.BLUE);
+                CellQuest.lbl(lbls[2], 'x ' + String(need.count), cc.Color.ORANGE);
+                lbls[3].string = '';
+                lbls[4].string = '';
+                lbls[5].string = '';
+                break;
+            }
+            case QuestType.fight:
+            case QuestType.fightRandom: {
+                const need = questModel.need as FightQuestNeed;
+
+                let petStr = '';
+                for (let index = 0; index < need.petIds.length; index++) {
+                    const petId = need.petIds[index];
+                    const petModel = petModelDict[petId];
+                    petStr += petModel.cnName;
+                    if (index === need.petIds.length - 1) break;
+                    petStr += ', ';
+                }
+
+                lbls[0].string = '击败';
+                CellQuest.lbl(lbls[1], petStr, cc.Color.BLUE);
+                CellQuest.lbl(lbls[2], '获取', cc.color(173, 173, 173));
+                CellQuest.lbl(lbls[3], need.name, cc.Color.BLUE);
+                CellQuest.lbl(lbls[4], 'x ' + String(need.count), cc.Color.ORANGE);
+                lbls[5].string = '';
+                break;
+            }
+            case QuestType.gather: {
+                const need = questModel.need as GatherQuestNeed;
+                const posModel = actPosModelDict[need.posId];
+
+                lbls[0].string = '在';
+                CellQuest.lbl(lbls[1], posModel.cnName, cc.Color.BLUE);
+                CellQuest.lbl(lbls[2], ExplStepNames[need.step], cc.Color.RED);
+                CellQuest.lbl(lbls[3], need.step === ExplStepType.center ? '收集' : '或更远 收集', cc.color(173, 173, 173));
+                CellQuest.lbl(lbls[4], need.name, cc.Color.BLUE);
+                CellQuest.lbl(lbls[5], 'x ' + String(need.count), cc.Color.ORANGE);
+                break;
+            }
+            case QuestType.search: {
+                const need = questModel.need as SearchQuestNeed;
+                const posModel = actPosModelDict[need.posId];
+                lbls[0].string = '在';
+                CellQuest.lbl(lbls[1], posModel.cnName, cc.Color.BLUE);
+                CellQuest.lbl(lbls[2], ExplStepNames[need.step], cc.Color.RED);
+                CellQuest.lbl(lbls[3], need.step === ExplStepType.center ? '搜寻' : '或更远 搜寻', cc.color(173, 173, 173));
+                CellQuest.lbl(lbls[4], need.name, cc.Color.BLUE);
+                lbls[5].string = '';
+                break;
+            }
+        }
+    }
+
+    static lbl(lbl: cc.Label, str: string, c: cc.Color) {
+        lbl.string = str;
+        lbl.node.color = c;
+    }
+
+    static getQuestAwardStr(questModel: QuestModel, lbls: cc.Label[]) {
+        lbls[1].string = `声望${String(questModel.awardReput)}`;
+        lbls[2].string = `通古币${MoneyTool.getSimpleStr(questModel.awardMoney)}`;
+        if (questModel.awardItemIds.length > 0) {
+            // llytodo
+        }
+    }
+
+    static rerenderLbl(lbl: cc.Label) {
+        // @ts-ignore
+        lbl._assembler.updateRenderData(lbl);
     }
 
     onClick() {
