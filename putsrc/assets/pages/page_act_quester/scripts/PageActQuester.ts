@@ -52,7 +52,6 @@ export class PageActQuester extends PageBase {
             cc.warn(error);
         }
 
-        cc.log('^_^!1111');
         const lvd = this.list.delegate as PageActQuesterLVD;
         lvd.page = this;
     }
@@ -76,7 +75,6 @@ export class PageActQuester extends PageBase {
     }
 
     onPageShow() {
-        cc.log('^_^!1112222');
         this.list.resetContent(true);
     }
 

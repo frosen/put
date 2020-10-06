@@ -1582,7 +1582,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 208.68,
+      "width": 182.68,
       "height": 40
     },
     "_anchorPoint": {
@@ -1646,7 +1646,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 78,
+      "width": 52,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -1697,8 +1697,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "奖励：",
-    "_N$string": "奖励：",
+    "_string": "奖励",
+    "_N$string": "奖励",
     "_fontSize": 26,
     "_lineHeight": 40,
     "_enableWrapText": true,
@@ -1763,7 +1763,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        83,
+        57,
         0,
         0,
         0,
@@ -1868,7 +1868,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        145.84,
+        119.84,
         0,
         0,
         0,
@@ -1973,7 +1973,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        208.68,
+        182.68,
         0,
         0,
         0,
@@ -2049,7 +2049,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 208.68,
+      "width": 182.68,
       "height": 40
     },
     "_resize": 1,

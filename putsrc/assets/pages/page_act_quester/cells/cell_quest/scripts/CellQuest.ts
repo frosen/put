@@ -127,7 +127,7 @@ export class CellQuest extends ListViewCell {
                 const need = questModel.need as GatherQuestNeed;
                 const posModel = actPosModelDict[need.posId];
 
-                lbls[0].string = '在';
+                lbls[0].string = '前往';
                 CellQuest.lbl(lbls[1], posModel.cnName, cc.Color.BLUE);
                 CellQuest.lbl(lbls[2], ExplStepNames[need.step], cc.Color.RED);
                 CellQuest.lbl(lbls[3], need.step === ExplStepType.center ? '收集' : '或更远 收集', cc.color(173, 173, 173));
@@ -138,7 +138,7 @@ export class CellQuest extends ListViewCell {
             case QuestType.search: {
                 const need = questModel.need as SearchQuestNeed;
                 const posModel = actPosModelDict[need.posId];
-                lbls[0].string = '在';
+                lbls[0].string = '前往';
                 CellQuest.lbl(lbls[1], posModel.cnName, cc.Color.BLUE);
                 CellQuest.lbl(lbls[2], ExplStepNames[need.step], cc.Color.RED);
                 CellQuest.lbl(lbls[3], need.step === ExplStepType.center ? '搜寻' : '或更远 搜寻', cc.color(173, 173, 173));
