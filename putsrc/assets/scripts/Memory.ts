@@ -38,7 +38,8 @@ import {
     PADPetMkt,
     PADQuester,
     PADACntr,
-    PADBase
+    PADBase,
+    Quest
 } from './DataSaved';
 import {
     FeatureModel,
@@ -49,7 +50,8 @@ import {
     DrinkAimType,
     CnsumModel,
     PAKey,
-    ReputRank
+    ReputRank,
+    QuesterModel
 } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
@@ -356,7 +358,7 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'PuTongXianJing1', 20);
         GameDataTool.addCnsum(this.gameData, 'CiLiPan1', 2);
         GameDataTool.addCnsum(this.gameData, 'DaMoShi', 2);
-        GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 2);
+        GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 33);
         GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += 1000));
 
         GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
@@ -929,6 +931,16 @@ export class MmrTool {
     }
 }
 
+export class QuestDataTool {
+    static create(questId: string, posId: string): Quest {
+        const quest = newInsWithChecker(Quest);
+        quest.questId = questId;
+        quest.posId = posId;
+        quest.progress = 0;
+        return quest;
+    }
+}
+
 export class GameDataTool {
     static SUC: string = 'K';
 
@@ -1245,10 +1257,16 @@ export class GameDataTool {
         } else return pd.actDict[paKey];
     }
 
+    static addReput(gameData: GameData, posId: string, reput: number) {
+        gameData.posDataDict[posId].reput += reput;
+    }
+
     static getReputRank(gameData: GameData, posId: string): ReputRank {
         const reput = gameData.posDataDict[posId].reput;
         return ReputRank.renown;
     }
+
+    // -----------------------------------------------------------------
 
     static createExpl(gameData: GameData, startStep: number) {
         if (gameData.curExpl) return;
@@ -1285,6 +1303,25 @@ export class GameDataTool {
     static deleteBattle(gameData: GameData) {
         cc.assert(gameData.curExpl, '删除battle前必有Expl');
         gameData.curExpl.curBattle = null;
+    }
+
+    // -----------------------------------------------------------------
+
+    static addQuest(gameData: GameData, questId: string, posId: string) {
+        const quest = QuestDataTool.create(questId, posId);
+        gameData.quests.push(quest);
+    }
+
+    static deleteQuest(gameData: GameData, questId: string, posId: string) {
+        const quest = QuestDataTool.create(questId, posId);
+        gameData.quests.push(quest);
+        for (let index = 0; index < gameData.quests.length; index++) {
+            const quest = gameData.quests[index];
+            if (quest.posId === posId && quest.questId === questId) {
+                gameData.quests.splice(index, 1);
+                return;
+            }
+        }
     }
 
     // -----------------------------------------------------------------

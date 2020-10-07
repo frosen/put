@@ -663,7 +663,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 150,
+      "width": 180,
       "height": 31.5
     },
     "_anchorPoint": {
@@ -716,7 +716,7 @@
     "_useOriginalSize": false,
     "_string": "（点击提交）",
     "_N$string": "（点击提交）",
-    "_fontSize": 25,
+    "_fontSize": 30,
     "_lineHeight": 25,
     "_enableWrapText": true,
     "_N$file": null,

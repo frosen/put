@@ -9,9 +9,8 @@ const { ccclass, property } = cc._decorator;
 import { ListViewCell } from 'scripts/ListViewCell';
 import { petModelDict } from 'configs/PetModelDict';
 
-import { Pet, PetRankNames, PetStateNames, EleColor, Quest } from 'scripts/DataSaved';
-import { featureModelDict } from 'configs/FeatureModelDict';
-import { CnsumDataTool, MoneyTool, PetDataTool } from 'scripts/Memory';
+import { Quest } from 'scripts/DataSaved';
+import { CnsumDataTool, EquipDataTool, MoneyTool, PetDataTool } from 'scripts/Memory';
 import {
     ExplStepNames,
     ExplStepType,
@@ -23,6 +22,13 @@ import {
     SupportQuestNeed
 } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
+
+export enum QuestState {
+    toAccept = 1,
+    toRefresh,
+    toFinish,
+    toSubmit
+}
 
 @ccclass
 export class CellQuest extends ListViewCell {
@@ -58,6 +64,8 @@ export class CellQuest extends ListViewCell {
     questModel: QuestModel;
     quest: Quest;
 
+    state: QuestState;
+
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
@@ -75,16 +83,27 @@ export class CellQuest extends ListViewCell {
         this.detailLbl.string = questModel.descs[0] + '\n' + questModel.descs[1];
 
         if (!quest) {
+            this.state = QuestState.toAccept;
             this.stateLbl.string = '（点击接受）';
         } else if (quest.progress >= questModel.need.count) {
+            this.state = QuestState.toSubmit;
             this.stateLbl.string = this.atQuester ? '（完成 点击提交）' : '（完成）';
         } else if (questModel.type === QuestType.support) {
-            this.stateLbl.string = `${quest.progress}/${questModel.need.count}（点击刷新）`;
+            this.state = QuestState.toRefresh;
+            this.stateLbl.string = `  ${quest.progress} / ${questModel.need.count}（点击刷新）`;
+        } else if (questModel.type === QuestType.search) {
+            this.state = QuestState.toFinish;
+            this.stateLbl.string = `  0 / 1`;
         } else {
-            this.stateLbl.string = `${quest.progress}/${questModel.need.count}`;
+            this.state = QuestState.toFinish;
+            this.stateLbl.string = `  ${quest.progress} / ${questModel.need.count}`;
         }
 
         CellQuest.rerenderLbl(this.nameLbl);
+        CellQuest.rerenderLbl(this.stateLbl);
+        for (const lbl of this.needLbls) CellQuest.rerenderLbl(lbl);
+        for (const lbl of this.awardLbls) CellQuest.rerenderLbl(lbl);
+
         for (const layout of this.layouts) layout.updateLayout();
     }
 
@@ -107,7 +126,7 @@ export class CellQuest extends ListViewCell {
                 const need = questModel.need as FightQuestNeed;
 
                 let petStr = '';
-                for (let index = 0; index < need.petIds.length; index++) {
+                for (let index = 0; ; index++) {
                     const petId = need.petIds[index];
                     const petModel = petModelDict[petId];
                     petStr += petModel.cnName;
@@ -155,10 +174,24 @@ export class CellQuest extends ListViewCell {
     }
 
     static getQuestAwardStr(questModel: QuestModel, lbls: cc.Label[]) {
-        lbls[1].string = `声望${String(questModel.awardReput)}`;
+        lbls[1].string = `声望${questModel.awardReput}`;
         lbls[2].string = `通古币${MoneyTool.getSimpleStr(questModel.awardMoney)}`;
-        if (questModel.awardItemIds.length > 0) {
-            // llytodo
+        let itemNames = '';
+        const awardItemIds = questModel.awardItemIds;
+        if (awardItemIds.length > 0) {
+            for (let index = 0; ; index++) {
+                const itemId = awardItemIds[index];
+                const model = CnsumDataTool.getModelById(itemId);
+                if (model) {
+                    itemNames += model.cnName;
+                } else {
+                    const equip = EquipDataTool.createByFullId(itemId);
+                    itemNames += EquipDataTool.getCnName(equip);
+                }
+                if (index === awardItemIds.length - 1) break;
+                itemNames += ', ';
+            }
+            lbls[3].string = itemNames;
         }
     }
 
