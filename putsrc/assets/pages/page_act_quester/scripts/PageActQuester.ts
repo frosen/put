@@ -154,9 +154,9 @@ export class PageActQuester extends PageBase {
 
     showFinishQuestTip(questModel: QuestModel) {
         if (questModel.type === QuestType.fight || questModel.type === QuestType.fightRandom) {
-            this.ctrlr.popToast('请击败对应精灵获取道具并完成任务');
+            this.ctrlr.popToast('请击败对应精灵 获取道具 完成任务');
         } else {
-            this.ctrlr.popToast('请前往对应地点进行探索并完成任务');
+            this.ctrlr.popToast('请前往对应地点 进行探索 完成任务');
         }
     }
 
@@ -164,7 +164,7 @@ export class PageActQuester extends PageBase {
         const gameData = this.ctrlr.memory.gameData;
         GameDataTool.handleMoney(gameData, money => (money.sum += questModel.awardMoney));
         GameDataTool.addReput(gameData, gameData.curPosId, questModel.awardReput);
-        let tip = `声望 ${questModel.awardMoney}\n通古币 ${MoneyTool.getSimpleStr(questModel.awardMoney)}`;
+        let tip = `声望 ${questModel.awardMoney}\n通用币 ${MoneyTool.getSimpleStr(questModel.awardMoney)}`;
         for (const itemId of questModel.awardItemIds) {
             const cnsumModel = CnsumDataTool.getModelById(itemId);
             if (cnsumModel) {

@@ -175,7 +175,7 @@ export class CellQuest extends ListViewCell {
 
     static getQuestAwardStr(questModel: QuestModel, lbls: cc.Label[]) {
         lbls[1].string = `声望${questModel.awardReput}`;
-        lbls[2].string = `通古币${MoneyTool.getSimpleStr(questModel.awardMoney)}`;
+        lbls[2].string = `通用币${MoneyTool.getSimpleStr(questModel.awardMoney)}`;
         let itemNames = '';
         const awardItemIds = questModel.awardItemIds;
         if (awardItemIds.length > 0) {

@@ -880,7 +880,7 @@ export class ExplUpdater {
             if (randomRate(0.6)) {
                 const moneyAdd = this.getMoneyGain(curPosModel.lv, step, this.gainCntRate);
                 GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += moneyAdd));
-                itemName = '通古币' + MoneyTool.getStr(moneyAdd).trim();
+                itemName = '通用币' + MoneyTool.getStr(moneyAdd).trim();
             } else {
                 const itemIdLists = curExplModel.itemIdLists;
                 const itemIds = itemIdLists[stepType];
