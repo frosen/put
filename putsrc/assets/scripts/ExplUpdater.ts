@@ -679,11 +679,7 @@ export class ExplUpdater {
             const curPosModel = actPosModelDict[posId];
             const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
             const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
-            if (
-                curExplModel.eqpIdLists &&
-                curExplModel.eqpIdLists.length > 0 &&
-                randomRate(ExplUpdater.calcTreasureRate(sensRate))
-            ) {
+            if (curExplModel.eqpIdLists.length > 0 && randomRate(ExplUpdater.calcTreasureRate(sensRate))) {
                 this.trsrFind = true;
                 this.prefindCnt = randomInt(3);
             } else {
@@ -818,22 +814,17 @@ export class ExplUpdater {
         if (this.prefindCnt > 0) {
             this.prefindCnt--;
             this.log(ExplLogType.repeat, '探索中......');
-        } else if (this.trsrFind) {
-            if (this.prefindCnt === 0) {
-                this.prefindCnt = -1;
-                this.log(ExplLogType.repeat, '发现远古宝箱');
-            } else this.log(ExplLogType.repeat, '宝箱解锁中......');
-        } else if (this.enemyFind) {
-            if (this.prefindCnt === 0) {
-                this.prefindCnt = -1;
-                this.log(ExplLogType.repeat, '发现附近似乎有威胁存在');
-            } else this.log(ExplLogType.repeat, '潜行接近中......');
-        } else if (this.unusedEvtIdx >= 0) {
-            if (this.prefindCnt === 0) {
-                this.prefindCnt = -1;
-                this.log(ExplLogType.repeat, this.unusedEvts[this.unusedEvtIdx]);
-            } else this.log(ExplLogType.repeat, '探索中......');
-        } else this.log(ExplLogType.repeat, '探索中......');
+        } else if (this.prefindCnt === 0) {
+            this.prefindCnt = -1;
+            if (this.trsrFind) this.log(ExplLogType.repeat, '发现远古宝箱');
+            else if (this.enemyFind) this.log(ExplLogType.repeat, '发现附近似乎有威胁存在');
+            else if (this.unusedEvtIdx >= 0) this.log(ExplLogType.repeat, this.unusedEvts[this.unusedEvtIdx]);
+            else this.log(ExplLogType.repeat, '探索中......');
+        } else {
+            if (this.trsrFind) this.log(ExplLogType.repeat, '宝箱解锁中......');
+            else if (this.enemyFind) this.log(ExplLogType.repeat, '潜行接近中......');
+            else this.log(ExplLogType.repeat, '探索中......');
+        }
     }
 
     saveNewStep(step: number) {
