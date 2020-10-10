@@ -176,7 +176,7 @@ export class ExplUpdater {
         const lastTime = curExpl.startTime + chngSpan;
 
         // MockSpan用于模拟日志，这部分时间靠update恢复，这样就可以保有日志了
-        const MockSpan = 15 * ExplInterval; // llytodo 15变成15到50随机，但要考虑会不会超出范围
+        const MockSpan = (15 + randomInt(35)) * ExplInterval; // 使用一个随机数，让进入位置能分配到各个阶段，感觉更自然
         if (nowTime - lastTime <= MockSpan) {
             this.updCnt = curExpl.chngUpdCnt;
             this.lastTime = lastTime;
@@ -192,7 +192,7 @@ export class ExplUpdater {
         // 计算step
         const HangMaxSpan = 1000 * 60 * 60 * 24;
         const timeIn = nowTime - lastTime <= HangMaxSpan;
-        const diffSpan = timeIn ? nowTime - curExpl.startTime : HangMaxSpan + chngSpan;
+        const diffSpan = timeIn ? nowTime - curExpl.startTime : HangMaxSpan + chngSpan; // diffSpan是从开始到最新位置的跨度
 
         const curUpdCnt = Math.floor(diffSpan / ExplInterval);
         const startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
@@ -200,7 +200,9 @@ export class ExplUpdater {
         const realChngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
         let lastStepUpdCnt = realChngUpdCnt + 1;
 
-        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const posId = curExpl.curPosId;
+        const curPosModel = actPosModelDict[posId];
+        const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
         let curStep = MmrTool.getCurStep(curExpl, curExplModel);
 
         // 捕捉状态
@@ -221,8 +223,6 @@ export class ExplUpdater {
         };
 
         const selfPets = GameDataTool.getReadyPets(this.gameData);
-        const posId = curExpl.curPosId;
-        const curPosModel = actPosModelDict[posId];
 
         while (true) {
             // 战斗状态
@@ -370,18 +370,21 @@ export class ExplUpdater {
         const selfPets = GameDataTool.getReadyPets(this.gameData);
 
         // 计算回合数和胜利数量 ------------------------------------------
-        let eachUpdCnt = ExplUpdater.calcBtlDuraUpdCnt(petSt.selfPwr, petSt.enemyPwr);
-        const eachExplRdCnt = 2;
+        let eachBigRdUpdCnt = 0; // 一个大轮次中包括了战斗和探索，恢复的时间
+        eachBigRdUpdCnt += ExplUpdater.calcBtlDuraUpdCnt(petSt.selfPwr, petSt.enemyPwr);
+        const AvgExplRdCnt = 3; // 根据 startExpl 中数据得来
+        const AvgUpdCntForEachExplRd = 8; // 根据 startExpl 中数据得来
         const eachHidingRdCnt = curExpl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
-        eachUpdCnt += ExplUpdater.calcExplUpdCntByRdCnt(eachExplRdCnt + eachHidingRdCnt);
-        eachUpdCnt += 10; // 恢复10跳，长于非挂机
+        const realExplRdCnt = AvgExplRdCnt + eachHidingRdCnt;
+        eachBigRdUpdCnt += realExplRdCnt * AvgUpdCntForEachExplRd;
+        eachBigRdUpdCnt += 10; // 恢复10跳，长于非挂机
 
         const diffUpdCnt = toUpdCnt - fromUpdCnt + 1;
-        let explRdCnt = Math.floor(diffUpdCnt / eachUpdCnt);
-        if (explRdCnt > 10) explRdCnt = randomAreaInt(explRdCnt, 0.1); // 增加随机范围
+        let bigRdCnt = Math.floor(diffUpdCnt / eachBigRdUpdCnt);
+        if (bigRdCnt > 10) bigRdCnt = randomAreaInt(bigRdCnt, 0.1); // 增加随机范围
         const winRate = ExplUpdater.calcWinRate(petSt.selfPwr, petSt.enemyPwr);
-        let winCount = Math.ceil(explRdCnt * randomArea(winRate, 0.1));
-        winCount = Math.max(Math.min(winCount, explRdCnt), 0);
+        let winCount = Math.ceil(bigRdCnt * randomArea(winRate, 0.1));
+        winCount = Math.max(Math.min(winCount, bigRdCnt), 0);
 
         // 计算获取的经验 ------------------------------------------
         const exp = ExplUpdater.calcExpByLvRank(petSt.selfLv, petSt.enemyLv, petSt.selfRank, petSt.enemyRank);
@@ -456,7 +459,7 @@ export class ExplUpdater {
         } while (false);
 
         // 计算获得的物品
-        const gainTimes = explRdCnt * (eachExplRdCnt + eachHidingRdCnt);
+        const gainTimes = bigRdCnt * (realExplRdCnt - 1);
 
         const itemIds = explModel.itemIdLists[stepType];
         const eqpIds = explModel.eqpIdLists[stepType];
@@ -522,10 +525,6 @@ export class ExplUpdater {
                 if (rzt === GameDataTool.SUC) saveItemRzt(itemId, itemLeft);
             }
         }
-    }
-
-    static calcExplUpdCntByRdCnt(RdCnt: number): number {
-        return RdCnt * 6;
     }
 
     static calcBtlDuraUpdCnt(selfPwr: number, enemyPwr: number): number {
@@ -648,13 +647,19 @@ export class ExplUpdater {
     /** 潜行发现敌人 */
     enemyFind: boolean = false;
     /** 随机不重要事件 */
-    unusedEvts: string[] = ['发现远古宝箱，但你们无法打开', '陷阱被触发，但你们轻松避过', '你们似乎发现四周有些异样'];
+    unusedEvts: string[] = [
+        '发现远古宝箱，但你们无法打开',
+        '陷阱被触发，但你们轻松避过',
+        '你们似乎发现四周有些异样',
+        '随着探索深入，你们逐渐加快了步伐',
+        '不知不觉中，天气在慢慢产生变化'
+    ];
     unusedEvtIdx: number = -1;
 
     /** 事件前跳数 */
     prefindCnt: number = -1;
 
-    // 一轮是平均5+1乘以0.75 = 4.5 平均2+1轮 也就是13.5s
+    // 一轮是平均7+1跳 平均2+1轮 也就是24轮 18s
     startExpl() {
         this.handleSelfTeamChange();
 
@@ -663,7 +668,7 @@ export class ExplUpdater {
         const enter = this.state !== ExplState.explore;
         this.state = ExplState.explore;
 
-        this.explTime = 3 + randomInt(5); // 3-7个空隙
+        this.explTime = 5 + randomInt(5); // 5-9跳
 
         if (enter) {
             this.explRdCnt = randomInt(5);
@@ -695,7 +700,7 @@ export class ExplUpdater {
                     this.gainCnt = randomRound(gainCntRate);
                 }
 
-                if (randomRate(0.35)) {
+                if (randomRate(0.5)) {
                     this.unusedEvtIdx = randomInt(this.unusedEvts.length);
                     this.prefindCnt = randomInt(3);
                 } else {
