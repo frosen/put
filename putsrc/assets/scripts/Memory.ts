@@ -51,8 +51,9 @@ import {
     CnsumModel,
     PAKey,
     ReputRank,
-    QuesterModel,
-    ExplModel
+    ExplModel,
+    QuestType,
+    QuestModel
 } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
@@ -65,6 +66,7 @@ import { expModels } from 'configs/ExpModels';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { materialModelDict } from 'configs/MaterialModelDict';
+import { questModelDict } from 'configs/QuestModelDict';
 import Tea = require('./Tea');
 
 let memoryDirtyToken: number = -1;
@@ -1323,6 +1325,17 @@ export class GameDataTool {
                 gameData.quests.splice(index, 1);
                 return;
             }
+        }
+    }
+
+    static handleQuestsByType(
+        gameData: GameData,
+        questType: QuestType,
+        callback: (quest: Quest, questModel: QuestModel) => void
+    ) {
+        for (const quest of gameData.quests) {
+            const model = questModelDict[quest.questId];
+            if (model.type === questType) callback(quest, model);
         }
     }
 

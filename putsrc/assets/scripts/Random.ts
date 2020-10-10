@@ -23,12 +23,16 @@ export function randomRound(n: number): number {
 }
 
 /** c值的正负r范围 */
-export function randomArea(c: number, r: number) {
-    return c * (1 + Math.random() * 2 * r - r);
+export function randomArea(c: number, r: number): number {
+    return c * (1 - r + Math.random() * 2 * r);
 }
 
-export function randomAreaInt(c: number, r: number) {
+export function randomAreaInt(c: number, r: number): number {
     return Math.floor(randomArea(c, r));
+}
+
+export function randomAreaByIntRange(c: number, n: number): number {
+    return c - n + Math.floor(Math.random() * (2 * n + 1));
 }
 
 export function getRandomOneInList<T>(list: Array<T>): T {

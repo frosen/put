@@ -7,15 +7,25 @@
 import { BattlePageBase } from './BattlePageBase';
 import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool, MmrTool, MoneyTool } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import { GameData, ExplMmr, Catcher, Pet, Feature, BattleMmr, Money, PosData, PADExpl, Cnsum } from 'scripts/DataSaved';
+import { GameData, ExplMmr, Catcher, Pet, Feature, BattleMmr, Money, PosData, PADExpl, Cnsum, Quest } from 'scripts/DataSaved';
 import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
-import { randomInt, randomArea, randomRate, getRandomOneInList, randomAreaInt, random, randomRound } from './Random';
-import { ExplModel, StepTypesByMax, ExplStepNames, CatcherModel, PAKey } from './DataModel';
+import {
+    randomInt,
+    randomArea,
+    randomRate,
+    getRandomOneInList,
+    randomAreaInt,
+    random,
+    randomRound,
+    randomAreaByIntRange
+} from './Random';
+import { ExplModel, StepTypesByMax, ExplStepNames, CatcherModel, PAKey, QuestType, QuestModel } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { petModelDict } from 'configs/PetModelDict';
 import { deepCopy } from './Utils';
+import { questModelDict } from 'configs/QuestModelDict';
 
 export enum ExplState {
     none,
@@ -34,6 +44,10 @@ enum ExplResult {
 const ExplIntervalNormal = 750;
 const ExplIntervalFast = 150;
 let ExplInterval = ExplIntervalNormal;
+
+const AvgExplRdCnt = 3;
+const AvgUpdCntForEachExplRd = 8;
+const MoneyGainRdEnterRate = 0.6;
 
 export enum ExplLogType {
     repeat = 1,
@@ -372,8 +386,7 @@ export class ExplUpdater {
         // 计算回合数和胜利数量 ------------------------------------------
         let eachBigRdUpdCnt = 0; // 一个大轮次中包括了战斗和探索，恢复的时间
         eachBigRdUpdCnt += ExplUpdater.calcBtlDuraUpdCnt(petSt.selfPwr, petSt.enemyPwr);
-        const AvgExplRdCnt = 3; // 根据 startExpl 中数据得来
-        const AvgUpdCntForEachExplRd = 8; // 根据 startExpl 中数据得来
+
         const eachHidingRdCnt = curExpl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
         const realExplRdCnt = AvgExplRdCnt + eachHidingRdCnt;
         eachBigRdUpdCnt += realExplRdCnt * AvgUpdCntForEachExplRd;
@@ -484,7 +497,7 @@ export class ExplUpdater {
         const gainMoreRate = ExplUpdater.calcGainCntRate(petSt.sensRate);
 
         // 计算钱
-        const moneyTimes = Math.floor(itemTimes * 0.6);
+        const moneyTimes = Math.floor(itemTimes * MoneyGainRdEnterRate);
         if (moneyTimes > 0) {
             const eachMoneyCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, step, gainMoreRate);
             const moneyAdd = randomAreaInt(eachMoneyCnt * moneyTimes, 0.2);
@@ -668,10 +681,10 @@ export class ExplUpdater {
         const enter = this.state !== ExplState.explore;
         this.state = ExplState.explore;
 
-        this.explTime = 5 + randomInt(5); // 5-9跳
+        this.explTime = randomAreaByIntRange(AvgUpdCntForEachExplRd, 2); // 6-10跳
 
         if (enter) {
-            this.explRdCnt = randomInt(5);
+            this.explRdCnt = randomAreaByIntRange(AvgExplRdCnt, 2);
             if (curExpl.hiding) {
                 const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
                 this.explRdCnt += ExplUpdater.calcHideExplRdCnt(agiRate);
@@ -681,7 +694,7 @@ export class ExplUpdater {
             this.explRdCnt--;
         }
 
-        if (this.explRdCnt > 0) {
+        if (this.explRdCnt > 1) {
             const posId = curExpl.curPosId;
             const curPosModel = actPosModelDict[posId];
             const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
@@ -692,7 +705,7 @@ export class ExplUpdater {
             } else {
                 this.trsrFind = false;
                 const gainCntRate = ExplUpdater.calcGainCntRate(sensRate);
-                this.moneyGain = randomRate(0.6);
+                this.moneyGain = randomRate(MoneyGainRdEnterRate);
                 if (this.moneyGain) {
                     const curStep = MmrTool.getCurStep(curExpl, curExplModel);
                     this.gainCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curStep, gainCntRate);
@@ -775,17 +788,23 @@ export class ExplUpdater {
 
     updateExpl() {
         const result = this.getExplResult();
-        if (result === ExplResult.doing) this.doExploration();
-        else if (result === ExplResult.gain) this.gainRes();
-        else if (result === ExplResult.battle) this.startBattle();
+        if (result === ExplResult.doing) {
+            this.doExploration();
+            this.doSearchQuest();
+        } else if (result === ExplResult.gain) {
+            this.gainRes();
+            this.doGatherQuest();
+        } else if (result === ExplResult.battle) {
+            this.startBattle();
+        }
     }
 
     getExplResult(): ExplResult {
-        if (this.explTime > 0) {
+        if (this.explTime > 1) {
             this.explTime--;
             return ExplResult.doing;
         } else {
-            if (this.explRdCnt > 0) return ExplResult.gain;
+            if (this.explRdCnt > 1) return ExplResult.gain;
             else return ExplResult.battle;
         }
     }
@@ -856,6 +875,8 @@ export class ExplUpdater {
         if (step > pADExpl.doneStep) pADExpl.doneStep = step;
     }
 
+    doSearchQuest() {}
+
     gainRes() {
         const curExpl = this.gameData.curExpl;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
@@ -914,6 +935,8 @@ export class ExplUpdater {
         });
     }
 
+    doGatherQuest() {}
+
     startBattle(spcBtlId: number = 0) {
         this.handleSelfTeamChange();
 
@@ -932,6 +955,7 @@ export class ExplUpdater {
         if (win) {
             this.receiveExp();
             this.catchPet();
+            this.doFightQuest();
         }
         this.startRecover();
     }
@@ -1045,6 +1069,12 @@ export class ExplUpdater {
         const realEleRate = Math.min(Math.max(eleRate, 1), 2) - 1;
         catchRate *= 0.5 + realEleRate * 0.5;
         return catchRate;
+    }
+
+    doFightQuest() {
+        GameDataTool.handleQuestsByType(this.gameData, QuestType.fight, (quest: Quest, questModel: QuestModel) => {});
+
+        GameDataTool.handleQuestsByType(this.gameData, QuestType.fightRandom, (quest: Quest, questModel: QuestModel) => {});
     }
 
     // -----------------------------------------------------------------
