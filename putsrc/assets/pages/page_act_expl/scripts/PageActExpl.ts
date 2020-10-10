@@ -230,8 +230,8 @@ export class PageActExpl extends BattlePageBase {
         const curPosModel = actPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
+        const step = MmrTool.getCurStep(curExpl, explModel);
         const stepMax = explModel.stepMax;
-        const step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
         const stepType = StepTypesByMax[stepMax][step];
         const stepName = ExplStepNames[stepType];
         const percent = this.updater ? this.updater.explStepPercent : 0;

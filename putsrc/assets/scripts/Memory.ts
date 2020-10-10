@@ -51,7 +51,8 @@ import {
     CnsumModel,
     PAKey,
     ReputRank,
-    QuesterModel
+    QuesterModel,
+    ExplModel
 } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
@@ -925,9 +926,10 @@ export class MmrTool {
         return updCnt;
     }
 
-    static getCurStep(curExpl: ExplMmr) {
+    static getCurStep(curExpl: ExplMmr, curExplModel: ExplModel = null) {
         const startUpdCnt = this.getUpdCntFromExplStep(curExpl.startStep);
-        return this.getExplStepFromUpdCnt(startUpdCnt + curExpl.chngUpdCnt);
+        const step = this.getExplStepFromUpdCnt(startUpdCnt + curExpl.chngUpdCnt);
+        return curExplModel ? Math.min(step, curExplModel.stepMax - 1) : step;
     }
 }
 

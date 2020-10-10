@@ -176,7 +176,7 @@ export class ExplUpdater {
         const lastTime = curExpl.startTime + chngSpan;
 
         // MockSpan用于模拟日志，这部分时间靠update恢复，这样就可以保有日志了
-        const MockSpan = 15 * ExplInterval;
+        const MockSpan = 15 * ExplInterval; // llytodo 15变成15到50随机，但要考虑会不会超出范围
         if (nowTime - lastTime <= MockSpan) {
             this.updCnt = curExpl.chngUpdCnt;
             this.lastTime = lastTime;
@@ -201,8 +201,7 @@ export class ExplUpdater {
         let lastStepUpdCnt = realChngUpdCnt + 1;
 
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-        const stepMaxIdx = curExplModel.stepMax - 1;
-        let curStep = Math.min(MmrTool.getCurStep(curExpl), stepMaxIdx);
+        let curStep = MmrTool.getCurStep(curExpl, curExplModel);
 
         // 捕捉状态
         let catcherIdx = -1;
@@ -256,7 +255,7 @@ export class ExplUpdater {
             const petSt = { selfLv, selfRank, selfPwr, enemyLv, enemyRank, enemyPwr, agiRate, sensRate, eleRate };
 
             // 计算探索
-            if (curStep >= stepMaxIdx) {
+            if (curStep >= curExplModel.stepMax - 1) {
                 this.recoverExplInExpl(curStep, lastStepUpdCnt, realCurUpdCnt, petSt, catchSt, rztSt);
                 break;
             }
@@ -288,8 +287,9 @@ export class ExplUpdater {
     recoverExplStepPercent(curExpl: ExplMmr) {
         const startUpdCnt = MmrTool.getUpdCntFromExplStep(curExpl.startStep);
         const chngUpdCnt = curExpl.chngUpdCnt + startUpdCnt;
-        const curStep = MmrTool.getCurStep(curExpl);
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const curStep = MmrTool.getCurStep(curExpl, curExplModel);
+
         if (curStep >= curExplModel.stepMax - 1) {
             this.explStepPercent = 0;
         } else {
@@ -483,7 +483,7 @@ export class ExplUpdater {
         // 计算钱
         const moneyTimes = Math.floor(itemTimes * 0.6);
         if (moneyTimes > 0) {
-            const eachMoneyCnt = this.getMoneyGain(curPosModel.lv, step, gainMoreRate);
+            const eachMoneyCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, step, gainMoreRate);
             const moneyAdd = randomAreaInt(eachMoneyCnt * moneyTimes, 0.2);
             GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += moneyAdd));
             rztSt.money += moneyAdd;
@@ -638,8 +638,10 @@ export class ExplUpdater {
     explTime: number = 0;
     explRdCnt: number = 0;
 
-    /** 本次获取道具的数量的几率数 */
-    gainCntRate: number = 1;
+    /** 本次获取道具的数量 */
+    gainCnt: number = 1;
+    /** 本次获取的是否是货币 */
+    moneyGain: boolean = false;
 
     /** 发现宝藏 */
     trsrFind: boolean = false;
@@ -684,7 +686,14 @@ export class ExplUpdater {
                 this.prefindCnt = randomInt(3);
             } else {
                 this.trsrFind = false;
-                this.gainCntRate = ExplUpdater.calcGainCntRate(sensRate);
+                const gainCntRate = ExplUpdater.calcGainCntRate(sensRate);
+                this.moneyGain = randomRate(0.6);
+                if (this.moneyGain) {
+                    const curStep = MmrTool.getCurStep(curExpl, curExplModel);
+                    this.gainCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curStep, gainCntRate);
+                } else {
+                    this.gainCnt = randomRound(gainCntRate);
+                }
 
                 if (randomRate(0.35)) {
                     this.unusedEvtIdx = randomInt(this.unusedEvts.length);
@@ -724,6 +733,16 @@ export class ExplUpdater {
         return cntRate + 0.1;
     }
 
+    static calcMoneyGain(lv: number, step: number, gainRate: number): number {
+        let moneyAdd = (lv + step * 2) * (1 + step * 0.1);
+        moneyAdd = randomAreaInt(moneyAdd, 0.2);
+        moneyAdd = moneyAdd - 3 + randomInt(7); // +-20% +-3
+        moneyAdd *= GameJITDataTool.getAmplPercent(null, AmplAttriType.expl);
+        moneyAdd *= 1 + gainRate * 0.1;
+        moneyAdd = Math.max(Math.ceil(moneyAdd), 1);
+        return moneyAdd;
+    }
+
     static getPosPetAgiRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
         const posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
         const petValue = battleCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.agility);
@@ -744,8 +763,7 @@ export class ExplUpdater {
 
     static getPosSubAttriSbstValue(curExpl: ExplMmr) {
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-        const stepMaxIdx = curExplModel.stepMax - 1;
-        const curStep = Math.min(MmrTool.getCurStep(curExpl), stepMaxIdx);
+        const curStep = MmrTool.getCurStep(curExpl, curExplModel);
         const curPosLv = actPosModelDict[curExpl.curPosId].lv;
         return (100 + curPosLv * 15) * (1 + curStep * 0.4);
     }
@@ -772,7 +790,7 @@ export class ExplUpdater {
     doExploration() {
         const curExpl = this.gameData.curExpl;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-        let curStep = MmrTool.getCurStep(curExpl);
+        let curStep = MmrTool.getCurStep(curExpl, curExplModel);
         do {
             if (curExpl.chngUpdCnt === 0) {
                 this.updateChgUpdCnt();
@@ -833,25 +851,12 @@ export class ExplUpdater {
         if (step > pADExpl.doneStep) pADExpl.doneStep = step;
     }
 
-    getMoneyGain(lv: number, step: number, gainRate: number): number {
-        let moneyAdd = (lv + step * 2) * (1 + step * 0.1);
-        moneyAdd = randomAreaInt(moneyAdd, 0.2);
-        moneyAdd = moneyAdd - 3 + randomInt(7); // +-20% +-3
-        moneyAdd *= GameJITDataTool.getAmplPercent(null, AmplAttriType.expl);
-        moneyAdd *= 1 + gainRate * 0.1;
-        moneyAdd = Math.max(Math.ceil(moneyAdd), 1);
-        return moneyAdd;
-    }
-
     gainRes() {
         const curExpl = this.gameData.curExpl;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
 
-        const posId = curExpl.curPosId;
-        const curPosModel = actPosModelDict[posId];
-        const stepMax = curExplModel.stepMax;
-        const step = Math.min(MmrTool.getCurStep(curExpl), stepMax - 1);
-        const stepType = StepTypesByMax[stepMax][step];
+        const step = MmrTool.getCurStep(curExpl, curExplModel);
+        const stepType = StepTypesByMax[curExplModel.stepMax][step];
 
         let itemName: string = null;
         let failRzt: string = null;
@@ -868,19 +873,18 @@ export class ExplUpdater {
         }
 
         if (!failRzt && !itemName) {
-            if (randomRate(0.6)) {
-                const moneyAdd = this.getMoneyGain(curPosModel.lv, step, this.gainCntRate);
-                GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += moneyAdd));
-                itemName = '通用币' + MoneyTool.getStr(moneyAdd).trim();
+            if (this.moneyGain) {
+                GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += this.gainCnt));
+                itemName = '可用物资，折合通用币' + MoneyTool.getStr(this.gainCnt).trim();
             } else {
                 const itemIdLists = curExplModel.itemIdLists;
                 const itemIds = itemIdLists[stepType];
                 const itemId = getRandomOneInList(itemIds);
-                const gainCnt = randomRound(this.gainCntRate);
-                const rzt = GameDataTool.addCnsum(this.gameData, itemId, gainCnt);
+
+                const rzt = GameDataTool.addCnsum(this.gameData, itemId, this.gainCnt);
                 if (rzt === GameDataTool.SUC) {
                     const cnsumModel = CnsumDataTool.getModelById(itemId);
-                    itemName = cnsumModel.cnName + (gainCnt > 1 ? 'x' + String(gainCnt) : '');
+                    itemName = cnsumModel.cnName + (this.gainCnt > 1 ? 'x' + String(this.gainCnt) : '');
                 } else failRzt = rzt;
             }
         }
