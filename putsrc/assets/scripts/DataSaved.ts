@@ -202,6 +202,7 @@ export class PADPetMkt extends PADBase {
 export class PADQuester extends PADBase {
     updateTime: number;
     questIds: string[];
+    doneTimeDict: { [key: string]: number };
 }
 
 export class PADACntr extends PADBase {

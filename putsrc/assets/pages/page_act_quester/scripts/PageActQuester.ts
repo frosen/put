@@ -10,11 +10,10 @@ import { CnsumDataTool, EquipDataTool, GameDataTool, MoneyTool } from 'scripts/M
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { ListView } from 'scripts/ListView';
-import { Cnsum, GameData, ItemType, PADQuester, Quest } from 'scripts/DataSaved';
+import { Cnsum, GameData, PADQuester, Quest } from 'scripts/DataSaved';
 import { PAKey, ActPosModel, QuesterModel, QuestModel, QuestType, SupportQuestNeed } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt } from 'scripts/Random';
-import { deepCopy } from 'scripts/Utils';
 import { PageActQuesterLVD } from './PageActQuesterLVD';
 import { CellQuest, QuestState } from '../cells/cell_quest/scripts/CellQuest';
 
@@ -25,8 +24,8 @@ export class PageActQuester extends PageBase {
     @property(ListView)
     list: ListView = null;
 
-    pADQuester: PADQuester;
     acceptedQuestDict: { [key: string]: Quest };
+    pADQuester: PADQuester;
 
     onLoad() {
         super.onLoad();
@@ -52,6 +51,13 @@ export class PageActQuester extends PageBase {
         const posId = gameData.curPosId;
         const pADQuester: PADQuester = GameDataTool.addPA(gameData, posId, PAKey.quester) as PADQuester;
         const now = Date.now();
+
+        const doneTimeDict = pADQuester.doneTimeDict;
+        for (const questId in doneTimeDict) {
+            if (!doneTimeDict.hasOwnProperty(questId)) continue;
+            if (now > doneTimeDict[questId] + QuesterUpdataInterval) delete doneTimeDict[questId];
+        }
+
         if (!pADQuester.updateTime || now > pADQuester.updateTime + QuesterUpdataInterval) {
             pADQuester.updateTime = now;
             this.resetCurQuestList(pADQuester, actPosModelDict[posId]);
@@ -61,12 +67,19 @@ export class PageActQuester extends PageBase {
 
     resetCurQuestList(pADQuester: PADQuester, posModel: ActPosModel) {
         const questerModel = posModel.actMDict[PAKey.quester] as QuesterModel;
-        const questIdList = deepCopy(questerModel.questIdList);
+        const doneTimeDict = pADQuester.doneTimeDict;
+        const questIdList = [];
+        for (const questId of questerModel.questIdList) {
+            if (doneTimeDict.hasOwnProperty(questId)) continue;
+            questIdList.push(questId);
+        }
         cc.assert(questIdList, `${posModel.id}的questIdList有问题`);
-        const questCount = 5; //randomInt(2) + 3;
+
+        const questCount = randomInt(4) + 3;
 
         pADQuester.questIds = Object.keys(this.acceptedQuestDict); // 已经接受的任务不会消失
         for (let index = 0; index < questCount; index++) {
+            if (questIdList.length === 0) break;
             const questId = questIdList.splice(randomInt(questIdList.length), 1)[0];
             pADQuester.questIds.push(questId);
         }
@@ -104,7 +117,11 @@ export class PageActQuester extends PageBase {
 
     acceptQuest(questModel: QuestModel) {
         const gameData = this.ctrlr.memory.gameData;
-        GameDataTool.addQuest(gameData, questModel.id, gameData.curPosId);
+        const rzt = GameDataTool.addQuest(gameData, questModel.id, gameData.curPosId);
+        if (rzt !== GameDataTool.SUC) {
+            this.ctrlr.popToast(rzt);
+            return;
+        }
         this.resetAcceptedQuestDict(gameData);
         this.list.resetContent(true);
 
@@ -178,6 +195,7 @@ export class PageActQuester extends PageBase {
         }
         GameDataTool.deleteQuest(gameData, questModel.id, gameData.curPosId);
         this.pADQuester.questIds.splice(this.pADQuester.questIds.indexOf(questModel.id), 1);
+        this.pADQuester.doneTimeDict[questModel.id] = Date.now();
 
         this.resetAcceptedQuestDict(gameData);
         this.list.resetContent(true);

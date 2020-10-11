@@ -863,6 +863,7 @@ export class PosDataTool {
         const pADQuester = newInsWithChecker(PADQuester);
         pADQuester.updateTime = 0;
         pADQuester.questIds = [];
+        pADQuester.doneTimeDict = {};
         return pADQuester;
     }
 
@@ -1311,9 +1312,11 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
-    static addQuest(gameData: GameData, questId: string, posId: string) {
+    static addQuest(gameData: GameData, questId: string, posId: string): string {
+        if (gameData.quests.length >= 10) return '任务数量已达到最大值\n请先完成已经接受了的任务';
         const quest = QuestDataTool.create(questId, posId);
         gameData.quests.push(quest);
+        return GameDataTool.SUC;
     }
 
     static deleteQuest(gameData: GameData, questId: string, posId: string) {
