@@ -20,12 +20,20 @@ import {
     randomRound,
     randomAreaByIntRange
 } from './Random';
-import { ExplModel, StepTypesByMax, ExplStepNames, CatcherModel, PAKey, QuestType, QuestModel } from './DataModel';
+import {
+    ExplModel,
+    StepTypesByMax,
+    ExplStepNames,
+    CatcherModel,
+    PAKey,
+    QuestType,
+    QuestModel,
+    FightQuestNeed
+} from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { petModelDict } from 'configs/PetModelDict';
 import { deepCopy } from './Utils';
-import { questModelDict } from 'configs/QuestModelDict';
 
 export enum ExplState {
     none,
@@ -1072,9 +1080,41 @@ export class ExplUpdater {
     }
 
     doFightQuest() {
-        GameDataTool.handleQuestsByType(this.gameData, QuestType.fight, (quest: Quest, questModel: QuestModel) => {});
+        const gameData = this.gameData;
+        const done = GameDataTool.handleQuestsByType(gameData, QuestType.fight, (quest: Quest, model: QuestModel): boolean => {
+            if (quest.progress === model.need.count) return;
+            const need = model.need as FightQuestNeed;
+            let gain = 0;
+            for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
+                if (need.petIds.includes(ePet.pet.id)) gain += 1;
+            }
+            if (gain > 0) {
+                this.log(ExplLogType.rich, '获得');
+                quest.progress += gain;
+                if (quest.progress >= model.need.count) {
+                    quest.progress = model.need.count;
+                    this.log(ExplLogType.rich, '任务完成');
+                }
+            }
+        });
+        if (done) return;
 
-        GameDataTool.handleQuestsByType(this.gameData, QuestType.fightRandom, (quest: Quest, questModel: QuestModel) => {});
+        GameDataTool.handleQuestsByType(gameData, QuestType.fightRandom, (quest: Quest, questModel: QuestModel): boolean => {
+            if (quest.progress === questModel.need.count) return;
+            const need = questModel.need as FightQuestNeed;
+            let gain = 0;
+            for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
+                if (need.petIds.includes(ePet.pet.id) && randomRate(0.35)) gain += 1;
+            }
+            if (gain > 0) {
+                this.log(ExplLogType.rich, '获得');
+                quest.progress += gain;
+                if (quest.progress >= questModel.need.count) {
+                    quest.progress = questModel.need.count;
+                    this.log(ExplLogType.rich, '任务完成');
+                }
+            }
+        });
     }
 
     // -----------------------------------------------------------------
