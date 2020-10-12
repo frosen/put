@@ -28,7 +28,8 @@ import {
     PAKey,
     QuestType,
     QuestModel,
-    FightQuestNeed
+    FightQuestNeed,
+    GatherQuestNeed
 } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
@@ -661,12 +662,14 @@ export class ExplUpdater {
     /** 本次获取道具的数量 */
     gainCnt: number = 1;
     /** 本次获取的是否是货币 */
-    moneyGain: boolean = false;
+    moneyGaining: boolean = false;
 
-    /** 发现宝藏 */
-    trsrFind: boolean = false;
+    /** 采集任务执行中 */
+    gatherQuestDoing: boolean = false;
+    /** 宝藏发现中 */
+    trsrFinding: boolean = false;
     /** 潜行发现敌人 */
-    enemyFind: boolean = false;
+    enemyFinding: boolean = false;
     /** 随机不重要事件 */
     unusedEvts: string[] = [
         '发现远古宝箱，但你们无法打开',
@@ -678,7 +681,7 @@ export class ExplUpdater {
     unusedEvtIdx: number = -1;
 
     /** 事件前跳数 */
-    prefindCnt: number = -1;
+    prefindCnt: number = 0;
 
     // 一轮是平均7+1跳 平均2+1轮 也就是24轮 18s
     startExpl() {
@@ -702,19 +705,37 @@ export class ExplUpdater {
             this.explRdCnt--;
         }
 
+        this.gatherQuestDoing = false;
+        this.trsrFinding = false;
+        this.enemyFinding = false;
+
         if (this.explRdCnt > 1) {
             const posId = curExpl.curPosId;
             const curPosModel = actPosModelDict[posId];
-            const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
             const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
-            if (curExplModel.eqpIdLists.length > 0 && randomRate(ExplUpdater.calcTreasureRate(sensRate))) {
-                this.trsrFind = true;
-                this.prefindCnt = randomInt(3);
+            const curStep = MmrTool.getCurStep(curExpl, curExplModel);
+            const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
+
+            const gQuestData = GameDataTool.getOneQuestByType(
+                this.gameData,
+                QuestType.gather,
+                (quest: Quest, model: QuestModel): boolean => {
+                    const need = model.need as GatherQuestNeed;
+                    if (quest.progress >= need.count) return false;
+                    if (posId !== need.posId || curStep < need.step) return false;
+                    return true;
+                }
+            );
+
+            if (gQuestData && randomRate(0.2)) {
+                this.gatherQuestDoing = true;
+            } else if (curExplModel.eqpIdLists.length > 0 && randomRate(ExplUpdater.calcTreasureRate(sensRate))) {
+                this.trsrFinding = true;
+                this.prefindCnt = 1 + randomInt(3);
             } else {
-                this.trsrFind = false;
                 const gainCntRate = ExplUpdater.calcGainCntRate(sensRate);
-                this.moneyGain = randomRate(MoneyGainRdEnterRate);
-                if (this.moneyGain) {
+                this.moneyGaining = randomRate(MoneyGainRdEnterRate);
+                if (this.moneyGaining) {
                     const curStep = MmrTool.getCurStep(curExpl, curExplModel);
                     this.gainCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curStep, gainCntRate);
                 } else {
@@ -723,16 +744,15 @@ export class ExplUpdater {
 
                 if (randomRate(0.5)) {
                     this.unusedEvtIdx = randomInt(this.unusedEvts.length);
-                    this.prefindCnt = randomInt(3);
+                    this.prefindCnt = 1 + randomInt(3);
                 } else {
                     this.unusedEvtIdx = -1;
                 }
             }
         } else {
-            this.trsrFind = false;
             if (curExpl.hiding) {
-                this.enemyFind = true;
-                this.prefindCnt = randomInt(3);
+                this.enemyFinding = true;
+                this.prefindCnt = 1 + randomInt(3);
             }
         }
 
@@ -796,15 +816,9 @@ export class ExplUpdater {
 
     updateExpl() {
         const result = this.getExplResult();
-        if (result === ExplResult.doing) {
-            this.doExploration();
-            this.doSearchQuest();
-        } else if (result === ExplResult.gain) {
-            this.gainRes();
-            this.doGatherQuest();
-        } else if (result === ExplResult.battle) {
-            this.startBattle();
-        }
+        if (result === ExplResult.doing) this.doExploration();
+        else if (result === ExplResult.gain) this.gainRes();
+        else if (result === ExplResult.battle) this.startBattle();
     }
 
     getExplResult(): ExplResult {
@@ -861,19 +875,22 @@ export class ExplUpdater {
             return;
         } while (0);
 
-        if (this.prefindCnt > 0) {
+        if (this.prefindCnt > 1) {
             this.prefindCnt--;
             this.log(ExplLogType.repeat, '探索中......');
-        } else if (this.prefindCnt === 0) {
-            this.prefindCnt = -1;
-            if (this.trsrFind) this.log(ExplLogType.repeat, '发现远古宝箱');
-            else if (this.enemyFind) this.log(ExplLogType.repeat, '发现附近似乎有威胁存在');
+        } else if (this.prefindCnt === 1) {
+            this.prefindCnt = 0;
+            if (this.trsrFinding) this.log(ExplLogType.repeat, '发现远古宝箱');
+            else if (this.enemyFinding) this.log(ExplLogType.repeat, '发现附近似乎有威胁存在');
             else if (this.unusedEvtIdx >= 0) this.log(ExplLogType.repeat, this.unusedEvts[this.unusedEvtIdx]);
             else this.log(ExplLogType.repeat, '探索中......');
         } else {
-            if (this.trsrFind) this.log(ExplLogType.repeat, '宝箱解锁中......');
-            else if (this.enemyFind) this.log(ExplLogType.repeat, '潜行接近中......');
-            else this.log(ExplLogType.repeat, '探索中......');
+            if (this.trsrFinding) this.log(ExplLogType.repeat, '宝箱解锁中......');
+            else if (this.enemyFinding) this.log(ExplLogType.repeat, '潜行接近中......');
+            else {
+                this.log(ExplLogType.repeat, '探索中......');
+                this.doSearchQuest();
+            }
         }
     }
 
@@ -889,25 +906,49 @@ export class ExplUpdater {
         const curExpl = this.gameData.curExpl;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
 
-        const step = MmrTool.getCurStep(curExpl, curExplModel);
-        const stepType = StepTypesByMax[curExplModel.stepMax][step];
+        const curStep = MmrTool.getCurStep(curExpl, curExplModel);
+        const stepType = StepTypesByMax[curExplModel.stepMax][curStep];
 
-        let itemName: string = null;
-        let failRzt: string = null;
-        if (this.trsrFind) {
+        if (this.gatherQuestDoing) {
+            const gQuestData = GameDataTool.getOneQuestByType(
+                this.gameData,
+                QuestType.gather,
+                (quest: Quest, model: QuestModel): boolean => {
+                    if (quest.progress >= model.need.count) return false;
+                    const need = model.need as GatherQuestNeed;
+                    if (curExpl.curPosId !== need.posId || curStep < need.step) return false;
+                    return true;
+                }
+            );
+            if (gQuestData) {
+                const { quest, model } = gQuestData;
+                const need = model.need as GatherQuestNeed;
+                quest.progress++;
+                this.log(ExplLogType.rich, `采集到${need.name} 任务${model.cnName} ${quest.progress}/${need.count}`);
+                if (quest.progress >= need.count) this.log(ExplLogType.rich, '任务完成');
+            }
+        } else if (this.trsrFinding) {
             const eqpIdLists = curExplModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
             const eqps = eqpIdLists[stepType];
             const eqpId = getRandomOneInList(eqps);
             const equip = EquipDataTool.createRandomById(eqpId);
-            if (equip) {
-                const rzt = GameDataTool.addEquip(this.gameData, equip);
-                if (rzt === GameDataTool.SUC) itemName = EquipDataTool.getCnName(equip);
-                else failRzt = rzt;
-            } else failRzt = '竟然没有获取到装备';
-        }
+            if (!equip) {
+                cc.error('PUT 竟然没有获取到装备');
+                return;
+            }
+            const rzt = GameDataTool.addEquip(this.gameData, equip);
+            if (rzt !== GameDataTool.SUC) {
+                cc.error(rzt);
+                return;
+            }
 
-        if (!failRzt && !itemName) {
-            if (this.moneyGain) {
+            const itemName = EquipDataTool.getCnName(equip);
+            this.log(ExplLogType.repeat, '宝箱成功被打开');
+            this.log(ExplLogType.rich, '获得' + itemName);
+        } else {
+            let itemName: string = null;
+            let failRzt: string = null;
+            if (this.moneyGaining) {
                 GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += this.gainCnt));
                 itemName = '可用物资，折合通用币' + MoneyTool.getStr(this.gainCnt).trim();
             } else {
@@ -921,13 +962,9 @@ export class ExplUpdater {
                     itemName = cnsumModel.cnName + (this.gainCnt > 1 ? 'x' + String(this.gainCnt) : '');
                 } else failRzt = rzt;
             }
-        }
 
-        if (failRzt) {
-            this.log(ExplLogType.rich, failRzt);
-        } else {
-            if (this.trsrFind) this.log(ExplLogType.repeat, '宝箱成功被打开');
-            this.log(ExplLogType.rich, '获得' + itemName);
+            if (failRzt) cc.error(failRzt);
+            else this.log(ExplLogType.rich, '获得' + itemName);
         }
 
         this.updateChgUpdCnt();
@@ -935,15 +972,6 @@ export class ExplUpdater {
         // 继续探索
         this.startExpl();
     }
-
-    async addCnsumSync(itemId: string) {
-        return new Promise<string | Cnsum>(resolve => {
-            const rzt = GameDataTool.addCnsum(this.gameData, itemId);
-            if (rzt !== GameDataTool.SUC) resolve(rzt);
-        });
-    }
-
-    doGatherQuest() {}
 
     startBattle(spcBtlId: number = 0) {
         this.handleSelfTeamChange();
@@ -1080,41 +1108,47 @@ export class ExplUpdater {
     }
 
     doFightQuest() {
-        const gameData = this.gameData;
-        const done = GameDataTool.handleQuestsByType(gameData, QuestType.fight, (quest: Quest, model: QuestModel): boolean => {
-            if (quest.progress === model.need.count) return;
+        const fQuestData = GameDataTool.getOneQuestByType(
+            this.gameData,
+            QuestType.fight,
+            (quest: Quest, model: QuestModel): boolean => {
+                const need = model.need as FightQuestNeed;
+                if (quest.progress >= need.count) return false;
+                for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
+                    if (need.petIds.includes(ePet.pet.id)) return true;
+                }
+                return false;
+            }
+        );
+        if (fQuestData) {
+            const { quest, model } = fQuestData;
             const need = model.need as FightQuestNeed;
-            let gain = 0;
-            for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
-                if (need.petIds.includes(ePet.pet.id)) gain += 1;
-            }
-            if (gain > 0) {
-                this.log(ExplLogType.rich, '获得');
-                quest.progress += gain;
-                if (quest.progress >= model.need.count) {
-                    quest.progress = model.need.count;
-                    this.log(ExplLogType.rich, '任务完成');
-                }
-            }
-        });
-        if (done) return;
+            quest.progress++;
+            this.log(ExplLogType.rich, `获得${need.name} 任务 ${model.cnName} ${quest.progress}/${need.count}`);
+            if (quest.progress >= need.count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
 
-        GameDataTool.handleQuestsByType(gameData, QuestType.fightRandom, (quest: Quest, questModel: QuestModel): boolean => {
-            if (quest.progress === questModel.need.count) return;
-            const need = questModel.need as FightQuestNeed;
-            let gain = 0;
-            for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
-                if (need.petIds.includes(ePet.pet.id) && randomRate(0.35)) gain += 1;
-            }
-            if (gain > 0) {
-                this.log(ExplLogType.rich, '获得');
-                quest.progress += gain;
-                if (quest.progress >= questModel.need.count) {
-                    quest.progress = questModel.need.count;
-                    this.log(ExplLogType.rich, '任务完成');
+            return;
+        }
+
+        const fRQuestData = GameDataTool.getOneQuestByType(
+            this.gameData,
+            QuestType.fightRandom,
+            (quest: Quest, model: QuestModel): boolean => {
+                const need = model.need as FightQuestNeed;
+                if (quest.progress >= need.count) return false;
+                for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
+                    if (need.petIds.includes(ePet.pet.id)) return true;
                 }
+                return false;
             }
-        });
+        );
+        if (fRQuestData && randomRate(0.35)) {
+            const { quest, model } = fRQuestData;
+            const need = model.need as FightQuestNeed;
+            quest.progress++;
+            this.log(ExplLogType.rich, `获得${need.name} 任务 ${model.cnName} ${quest.progress}/${need.count}`);
+            if (quest.progress >= model.need.count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
+        }
     }
 
     // -----------------------------------------------------------------

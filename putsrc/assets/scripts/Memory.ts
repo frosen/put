@@ -1331,19 +1331,18 @@ export class GameDataTool {
         }
     }
 
-    static handleQuestsByType(
+    static getOneQuestByType(
         gameData: GameData,
         questType: QuestType,
-        callback: (quest: Quest, questModel: QuestModel) => boolean
-    ): boolean {
+        check: (quest: Quest, model: QuestModel) => boolean
+    ): { quest: Quest; model: QuestModel } {
         for (const quest of gameData.quests) {
             const model = questModelDict[quest.questId];
-            if (model.type === questType) {
-                const done = callback(quest, model);
-                if (done) return true;
+            if (model.type === questType && check(quest, model)) {
+                return { quest, model };
             }
         }
-        return false;
+        return null;
     }
 
     // -----------------------------------------------------------------
