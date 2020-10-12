@@ -29,7 +29,8 @@ import {
     QuestType,
     QuestModel,
     FightQuestNeed,
-    GatherQuestNeed
+    GatherQuestNeed,
+    SearchQuestNeed
 } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
@@ -885,8 +886,29 @@ export class ExplUpdater {
             if (this.trsrFinding) this.log(ExplLogType.repeat, '宝箱解锁中......');
             else if (this.enemyFinding) this.log(ExplLogType.repeat, '潜行接近中......');
             else {
-                this.log(ExplLogType.repeat, '探索中......');
-                this.doSearchQuest();
+                const sQuestData = GameDataTool.getOneQuestByType(
+                    this.gameData,
+                    QuestType.gather,
+                    (quest: Quest, model: QuestModel): boolean => {
+                        if (quest.progress >= model.need.count) return false;
+                        const need = model.need as SearchQuestNeed;
+                        if (curExpl.curPosId !== need.posId || curStep < need.step) return false;
+                        const realUpdCnt = this.updCnt + MmrTool.getUpdCntFromExplStep(curExpl.startStep);
+                        const needStepUpdCnt = MmrTool.getUpdCntFromExplStep(need.step);
+                        const updCntPass = realUpdCnt - needStepUpdCnt;
+                        if (updCntPass < need.count) return false;
+                        return true;
+                    }
+                );
+
+                if (sQuestData && randomRate(0.1)) {
+                    const { quest, model } = sQuestData;
+                    const need = model.need as GatherQuestNeed;
+                    quest.progress = need.count;
+                    this.log(ExplLogType.rich, `找到${need.name} 任务 ${model.cnName} 完成`);
+                } else {
+                    this.log(ExplLogType.repeat, '探索中......');
+                }
             }
         }
     }
@@ -896,8 +918,6 @@ export class ExplUpdater {
         const pADExpl: PADExpl = posData.actDict[PAKey.expl] as PADExpl;
         if (step > pADExpl.doneStep) pADExpl.doneStep = step;
     }
-
-    doSearchQuest() {}
 
     gainRes() {
         const curExpl = this.gameData.curExpl;
@@ -919,8 +939,8 @@ export class ExplUpdater {
                 const { quest, model } = gQuestData;
                 const need = model.need as GatherQuestNeed;
                 quest.progress++;
-                this.log(ExplLogType.rich, `采集到${need.name} 任务${model.cnName} ${quest.progress}/${need.count}`);
-                if (quest.progress >= need.count) this.log(ExplLogType.rich, '任务完成');
+                this.log(ExplLogType.rich, `采集到${need.name} 任务 ${model.cnName} ${quest.progress}/${need.count}`);
+                if (quest.progress >= need.count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
             }
         } else if (this.trsrFinding) {
             const eqpIdLists = curExplModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
