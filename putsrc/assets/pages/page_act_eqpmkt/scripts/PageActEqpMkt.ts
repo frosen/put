@@ -65,8 +65,8 @@ export class PageActEqpMkt extends PageBase {
         const eqps: Equip[] = pADEqpMkt.eqps;
         eqps.length = 0;
         for (let index = 0; index < eqpCount; index++) {
-            let eqpList = getRandomOneInListWithRate(eqpIdLists, [0, 0.4, 0.7, 0.9]);
-            if (!eqpList) eqpList = eqpIdLists[1];
+            let eqpList = getRandomOneInListWithRate(eqpIdLists, [0.4, 0.7, 0.9]);
+            if (!eqpList) eqpList = eqpIdLists[0];
             const eqpId = getRandomOneInList(eqpList);
             const equip = EquipDataTool.createRandomById(eqpId);
             let need = true;

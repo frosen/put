@@ -67,10 +67,10 @@ export class PageActPetMkt extends PageBase {
         const pets = pADPetMkt.pets;
         pets.length = 0;
         for (let index = 0; index < petCount; index++) {
-            let step = getRandomOneInListWithRate([0, 1, 2, 3, 4], [0, 0.4, 0.7, 0.9]);
+            let step = getRandomOneInListWithRate([0, 1, 2, 3], [0.4, 0.7, 0.9]);
             let petList = petIdLists[step];
             if (!petList) {
-                petList = petIdLists[1];
+                petList = petIdLists[0];
                 step = 1;
             }
             const petId = getRandomOneInList(petList);

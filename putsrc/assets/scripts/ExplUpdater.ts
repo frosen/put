@@ -421,9 +421,6 @@ export class ExplUpdater {
 
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
-        const stepMax = explModel.stepMax;
-        const stepType = StepTypesByMax[stepMax][step];
-
         // 计算捕获
         do {
             const catcherIdx = catchSt.catcherIdx;
@@ -448,7 +445,7 @@ export class ExplUpdater {
 
             const petIdLists = explModel.petIdLists;
             if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有精灵列表petIdLists，无法战斗`);
-            const petIds = petIdLists[stepType];
+            const petIds = petIdLists[step];
             const realPetIds = [];
             for (const petId of petIds) {
                 const petModel = petModelDict[petId];
@@ -483,8 +480,8 @@ export class ExplUpdater {
         // 计算获得的物品
         const gainTimes = bigRdCnt * (realExplRdCnt - 1);
 
-        const itemIds = explModel.itemIdLists[stepType];
-        const eqpIds = explModel.eqpIdLists[stepType];
+        const itemIds = explModel.itemIdLists[step];
+        const eqpIds = explModel.eqpIdLists[step];
 
         let itemTimes: number;
         if (eqpIds) {
@@ -905,9 +902,7 @@ export class ExplUpdater {
     gainRes() {
         const curExpl = this.gameData.curExpl;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-
         const curStep = MmrTool.getCurStep(curExpl, curExplModel);
-        const stepType = StepTypesByMax[curExplModel.stepMax][curStep];
 
         if (this.gatherQuestDoing) {
             const gQuestData = GameDataTool.getOneQuestByType(
@@ -929,7 +924,7 @@ export class ExplUpdater {
             }
         } else if (this.trsrFinding) {
             const eqpIdLists = curExplModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
-            const eqps = eqpIdLists[stepType];
+            const eqps = eqpIdLists[curStep];
             const eqpId = getRandomOneInList(eqps);
             const equip = EquipDataTool.createRandomById(eqpId);
             if (!equip) {
@@ -953,7 +948,7 @@ export class ExplUpdater {
                 itemName = '可用物资，折合通用币' + MoneyTool.getStr(this.gainCnt).trim();
             } else {
                 const itemIdLists = curExplModel.itemIdLists;
-                const itemIds = itemIdLists[stepType];
+                const itemIds = itemIdLists[curStep];
                 const itemId = getRandomOneInList(itemIds);
 
                 const rzt = GameDataTool.addCnsum(this.gameData, itemId, this.gainCnt);

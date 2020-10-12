@@ -18,14 +18,11 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                 goodsIdList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1']
             },
             [PAKey.eqpMkt]: {
-                eqpIdLists: [null, ['DuanJian', 'ChangRenJian'], null, null, ['TieZhiYuGan', 'JingZhiYuGan']]
+                eqpIdLists: [['DuanJian', 'ChangRenJian'], ['TieZhiYuGan', 'JingZhiYuGan']]
             },
             [PAKey.petMkt]: {
                 petIdLists: [
-                    null,
                     ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
-                    null,
-                    null,
                     ['ShuiLengJiQiRen', 'DianZiShouWei']
                 ]
             },
@@ -66,13 +63,10 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             [PAKey.expl]: {
                 stepMax: 2,
                 petIdLists: [
-                    null,
                     ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
-                    null,
-                    null,
                     ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
                 ],
-                itemIdLists: [null, ['DaMoShi'], ['DaMoShi'], ['DaMoShi'], ['DaMoShi']],
+                itemIdLists: [['DaMoShi'], ['DaMoShi']],
                 eqpIdLists: []
             }
         },

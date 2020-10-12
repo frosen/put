@@ -593,11 +593,9 @@ export class RealBattle {
 
         const petCount = randomRate(0.5) ? count : count - 1;
         const step = MmrTool.getCurStep(curExpl, explModel);
-        const stepMax = explModel.stepMax;
-        const stepType = StepTypesByMax[stepMax][step];
         const petIdLists = explModel.petIdLists;
         if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有精灵列表petIdLists，无法战斗`);
-        const petIds = petIdLists[stepType];
+        const petIds = petIdLists[step];
 
         const enmeyPetType1 = getRandomOneInList(petIds);
         const enmeyPetType2 = getRandomOneInList(petIds);
