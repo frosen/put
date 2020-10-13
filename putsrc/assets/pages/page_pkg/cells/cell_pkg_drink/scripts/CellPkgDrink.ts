@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { Drink } from 'scripts/DataSaved';
-import { DrinkAimType, DrinkModel } from 'scripts/DataModel';
+import { DrinkModel } from 'scripts/DataModel';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { AmplAttriNames } from 'scripts/DataOther';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
@@ -22,9 +22,6 @@ export class CellPkgDrink extends CellPkgCnsum {
 
     @property(cc.Label)
     subAttri: cc.Label = null;
-
-    @property(cc.Node)
-    aimTypeNode: cc.Node = null;
 
     @property([cc.Layout])
     layouts: cc.Layout[] = [];
@@ -57,8 +54,6 @@ export class CellPkgDrink extends CellPkgCnsum {
         } else {
             this.subAttri.node.parent.scaleX = 0;
         }
-
-        this.aimTypeNode.opacity = drinkModel.aim === DrinkAimType.all ? 255 : 0;
 
         CellPkgDrink.rerenderLbl(this.mainAttri);
         CellPkgDrink.rerenderLbl(this.subAttri);

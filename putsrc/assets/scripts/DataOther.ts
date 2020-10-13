@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { PetDataTool, EquipDataTool, FeatureDataTool, MmrTool, GameDataTool } from './Memory';
+import { PetDataTool, EquipDataTool, FeatureDataTool, GameDataTool } from './Memory';
 import {
     FeatureModel,
     PetModel,
@@ -13,9 +13,7 @@ import {
     SkillDirType,
     SkillAimtype,
     DrinkModel,
-    DrinkAimType,
     ExplModel,
-    StepTypesByMax,
     ActPosModel,
     PAKey
 } from './DataModel';
@@ -58,7 +56,7 @@ export enum AmplAttriType {
     durability
 }
 
-const All = 'all';
+const NotNeedPetType = [AmplAttriType.expl, AmplAttriType.reput];
 
 /** 运行时游戏数据 */
 export class GameJITDataTool {
@@ -74,44 +72,50 @@ export class GameJITDataTool {
         data[drinkModel.mainAttri] = drinkModel.mainPercent;
         if (drinkModel.subAttri) data[drinkModel.subAttri] = drinkModel.subPercent;
 
-        if (drinkModel.aim === DrinkAimType.one) {
-            this.addAmpl(pet, drinkModel.id, data);
-        } else {
-            this.addAmpl(null, `${pet.catchIdx}_${drinkModel.id}`, data);
-        }
+        this.addAmpl(pet, drinkModel.id, data);
     }
 
-    static addAmpl(pet: Pet, key: string, data: { [key: number]: number }) {
-        const petId = pet ? String(pet.catchIdx) : All;
+    static addAmpl(pet: Pet, drinkId: string, data: { [key: number]: number }) {
+        const petId = String(pet.catchIdx);
         if (!this.attriGainAmplDict[petId]) this.attriGainAmplDict[petId] = {};
-        this.attriGainAmplDict[petId][key] = data;
+        this.attriGainAmplDict[petId][drinkId] = data;
     }
 
-    static removeAmpl(pet: Pet, key: string) {
-        const petId = pet ? String(pet.catchIdx) : All;
+    static removeAmpl(pet: Pet, drinkId: string) {
+        const petId = String(pet.catchIdx);
         if (this.attriGainAmplDict[petId]) {
-            delete this.attriGainAmplDict[petId][key];
+            delete this.attriGainAmplDict[petId][drinkId];
         }
     }
 
     static getAmplPercent(pet: Pet, attri: AmplAttriType) {
+        if (NotNeedPetType.includes(attri)) cc.assert(!pet, 'PUT need no pet');
+        else cc.assert(pet, 'PUT need pet');
+
         let ampl = 1;
+        let cnt = 0;
         if (pet) {
             const petDataDict = this.attriGainAmplDict[String(pet.catchIdx)];
             if (petDataDict) {
-                for (const key in petDataDict) {
-                    const petData = petDataDict[key];
-                    const value = petData[attri];
-                    if (value) ampl += value * 0.01;
+                for (const drinkId in petDataDict) {
+                    if (!petDataDict.hasOwnProperty(drinkId)) continue;
+                    const petData = petDataDict[drinkId];
+                    if (petData.hasOwnProperty(attri)) {
+                        ampl += petData[attri] * 0.01 * Math.pow(0.5, cnt);
+                        cnt++;
+                    }
                 }
             }
         } else {
-            const allPetDataDict = this.attriGainAmplDict[All];
-            if (allPetDataDict) {
-                for (const key in allPetDataDict) {
-                    const petData = allPetDataDict[key];
-                    const value = petData[attri];
-                    if (value) ampl += value * 0.01;
+            for (const petId in this.attriGainAmplDict) {
+                if (!this.attriGainAmplDict.hasOwnProperty(petId)) continue;
+                const petDataDict = this.attriGainAmplDict[petId];
+                for (const drinkId in petDataDict) {
+                    const petData = petDataDict[drinkId];
+                    if (petData.hasOwnProperty(attri)) {
+                        ampl += petData[attri] * 0.01 * Math.pow(0.5, cnt);
+                        cnt++;
+                    }
                 }
             }
         }

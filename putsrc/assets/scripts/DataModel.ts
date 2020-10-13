@@ -144,12 +144,6 @@ export class CnsumModel {
     price: number;
 }
 
-export enum DrinkAimType {
-    none,
-    one,
-    all
-}
-
 export class DrinkModel extends CnsumModel {
     lvMax: number;
     rank: number;
@@ -157,7 +151,6 @@ export class DrinkModel extends CnsumModel {
     mainPercent: number;
     subAttri: AmplAttriType;
     subPercent: number;
-    aim: DrinkAimType;
     dura: number;
 }
 

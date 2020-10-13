@@ -46,11 +46,9 @@ import {
     EquipPosType,
     EquipModel,
     DrinkModel,
-    DrinkAimType,
     CnsumModel,
     PAKey,
     ReputRank,
-    ExplModel,
     QuestType,
     QuestModel
 } from './DataModel';
@@ -1023,12 +1021,7 @@ export class GameDataTool {
     static clearDrinkFromPet(pet: Pet) {
         const drink = pet.drink;
         const drinkModel: DrinkModel = drinkModelDict[drink.id];
-
-        if (drinkModel.aim === DrinkAimType.one) {
-            GameJITDataTool.removeAmpl(pet, drinkModel.id);
-        } else {
-            GameJITDataTool.removeAmpl(null, `${pet.catchIdx}_${drinkModel.id}`);
-        }
+        GameJITDataTool.removeAmpl(pet, drinkModel.id);
 
         pet.drink = null;
         pet.drinkTime = 0;

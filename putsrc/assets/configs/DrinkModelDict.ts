@@ -16,7 +16,6 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 15,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
         dura: 10800000,
         price: 100
     },
@@ -29,8 +28,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 17,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 14400000,
+        dura: 21600000,
         price: 200
     },
     LingGanYaoJi3: {
@@ -42,8 +40,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 18,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 21600000,
+        dura: 32400000,
         price: 300
     },
     ZhiHuiYaoJi1: {
@@ -55,7 +52,6 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 30,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
         dura: 10800000,
         price: 100
     },
@@ -68,8 +64,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 32,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 14400000,
+        dura: 21600000,
         price: 200
     },
     ZhiHuiYaoJi3: {
@@ -81,8 +76,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 33,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 21600000,
+        dura: 32400000,
         price: 300
     },
     MoXingKaFei1: {
@@ -94,7 +88,6 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 15,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
         dura: 10800000,
         price: 100
     },
@@ -107,8 +100,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 17,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 14400000,
+        dura: 21600000,
         price: 200
     },
     MoXingKaFei3: {
@@ -120,8 +112,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 18,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 21600000,
+        dura: 32400000,
         price: 300
     },
     QingCaoCha1: {
@@ -133,7 +124,6 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 30,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
         dura: 10800000,
         price: 100
     },
@@ -146,8 +136,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 32,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 14400000,
+        dura: 21600000,
         price: 200
     },
     QingCaoCha3: {
@@ -159,8 +148,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 33,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 21600000,
+        dura: 32400000,
         price: 300
     },
     MiJiu1: {
@@ -172,7 +160,6 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 15,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
         dura: 10800000,
         price: 100
     },
@@ -185,8 +172,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 17,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 14400000,
+        dura: 21600000,
         price: 200
     },
     MiJiu3: {
@@ -198,8 +184,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 18,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 21600000,
+        dura: 32400000,
         price: 300
     },
     YueGuangJiu1: {
@@ -211,7 +196,6 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 30,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
         dura: 10800000,
         price: 100
     },
@@ -224,8 +208,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 32,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 14400000,
+        dura: 21600000,
         price: 200
     },
     YueGuangJiu3: {
@@ -237,8 +220,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 33,
         subAttri: 0,
         subPercent: 0,
-        aim: 1,
-        dura: 21600000,
+        dura: 32400000,
         price: 300
     },
     QingShuangMoShui1: {
@@ -250,7 +232,6 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 15,
         subAttri: 0,
         subPercent: 0,
-        aim: 2,
         dura: 10800000,
         price: 100
     },
@@ -263,8 +244,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 17,
         subAttri: 0,
         subPercent: 0,
-        aim: 2,
-        dura: 14400000,
+        dura: 21600000,
         price: 200
     },
     QingShuangMoShui3: {
@@ -276,8 +256,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 18,
         subAttri: 0,
         subPercent: 0,
-        aim: 2,
-        dura: 21600000,
+        dura: 32400000,
         price: 300
     },
     MeiLiMoShui1: {
@@ -289,7 +268,6 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 30,
         subAttri: 0,
         subPercent: 0,
-        aim: 2,
         dura: 10800000,
         price: 100
     },
@@ -302,8 +280,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 32,
         subAttri: 0,
         subPercent: 0,
-        aim: 2,
-        dura: 14400000,
+        dura: 21600000,
         price: 200
     },
     MeiLiMoShui3: {
@@ -315,8 +292,7 @@ export const drinkModelDict: { [key: string]: DrinkModel } = {
         mainPercent: 33,
         subAttri: 0,
         subPercent: 0,
-        aim: 2,
-        dura: 21600000,
+        dura: 32400000,
         price: 300
     }
 };

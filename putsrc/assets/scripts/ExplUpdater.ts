@@ -319,8 +319,10 @@ export class ExplUpdater {
             this.explStepPercent = 0;
         } else {
             const nextStepUpdCnt = NeedUpdCntByStep[curStep];
-            let percent = Math.floor((this.updCnt * 100) / nextStepUpdCnt);
+            const updCntWithAgi = this.calcUpdCntWithAgi();
+            let percent = Math.floor((updCntWithAgi * 100) / nextStepUpdCnt);
             if (percent > 99) percent = 99; // 百分比在UI上需要禁止超过99%
+            this.explStepPercent = percent;
         }
 
         if (this.page) this.page.setExplStepUI();
@@ -386,16 +388,11 @@ export class ExplUpdater {
         catchSt: { catcherIdx: number },
         rztSt: { exp: number; money: number; eqps: any[]; pets: any[]; itemDict: {} }
     ) {
-        const curExpl = this.gameData.curExpl;
-        const posId = curExpl.curPosId;
-        const curPosModel = actPosModelDict[posId];
-
-        const selfPets = GameDataTool.getReadyPets(this.gameData);
-
         // 计算回合数和胜利数量 ------------------------------------------
         let eachBigRdUpdCnt = 0; // 一个大轮次中包括了战斗和探索，恢复的时间
         eachBigRdUpdCnt += ExplUpdater.calcBtlDuraUpdCnt(petSt.selfPwr, petSt.enemyPwr);
 
+        const curExpl = this.gameData.curExpl;
         const eachHidingRdCnt = curExpl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
         const realExplRdCnt = AvgExplRdCnt + eachHidingRdCnt;
         eachBigRdUpdCnt += realExplRdCnt * AvgUpdCntForEachExplRd;
@@ -413,12 +410,15 @@ export class ExplUpdater {
         let expTotal = exp * winCount;
         expTotal = randomAreaInt(expTotal, 0.05);
 
+        const selfPets = GameDataTool.getReadyPets(this.gameData);
         for (const pet of selfPets) {
             const expEach = expTotal * GameJITDataTool.getAmplPercent(pet, AmplAttriType.exp); // 计算饮品的加成
             PetDataTool.addExp(pet, Math.ceil(expEach));
         }
         rztSt.exp += expTotal;
 
+        const posId = curExpl.curPosId;
+        const curPosModel = actPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
         // 计算捕获
@@ -544,6 +544,8 @@ export class ExplUpdater {
                 if (rzt === GameDataTool.SUC) saveItemRzt(itemId, itemLeft);
             }
         }
+
+        // 计算任务
 
         // 计算饮品
     }
@@ -856,7 +858,8 @@ export class ExplUpdater {
             return;
         } else if (curStep < curExplModel.stepMax - 1) {
             const nextStepUpdCnt = NeedUpdCntByStep[curStep];
-            let percent = Math.floor((this.updCnt * 100) / nextStepUpdCnt);
+            const updCntWithAgi = this.calcUpdCntWithAgi();
+            let percent = Math.floor((updCntWithAgi * 100) / nextStepUpdCnt);
             if (percent > 99) percent = 99; // 百分比在UI上需要禁止超过99%
             if (percent !== this.explStepPercent) {
                 this.explStepPercent = percent;
@@ -880,6 +883,7 @@ export class ExplUpdater {
             if (this.trsrFinding) this.log(ExplLogType.repeat, '宝箱解锁中......');
             else if (this.enemyFinding) this.log(ExplLogType.repeat, '潜行接近中......');
             else {
+                const updCntWithAgi = this.calcUpdCntWithAgi();
                 const sQuestData = GameDataTool.getOneQuestByType(
                     this.gameData,
                     QuestType.gather,
@@ -887,7 +891,7 @@ export class ExplUpdater {
                         if (quest.progress >= model.need.count) return false;
                         const need = model.need as SearchQuestNeed;
                         if (curExpl.curPosId !== need.posId || curStep !== need.step) return false;
-                        return this.updCnt >= need.count;
+                        return updCntWithAgi >= need.count;
                     }
                 );
 
@@ -901,12 +905,6 @@ export class ExplUpdater {
                 }
             }
         }
-    }
-
-    stepEntering: boolean = false;
-
-    enterNextStep() {
-        this.stepEntering = true;
     }
 
     logEnter() {
@@ -924,6 +922,21 @@ export class ExplUpdater {
         const posData: PosData = this.gameData.posDataDict[this.gameData.curExpl.curPosId];
         const pADExpl: PADExpl = posData.actDict[PAKey.expl] as PADExpl;
         if (step > pADExpl.doneStep) pADExpl.doneStep = step;
+    }
+
+    calcUpdCntWithAgi(): number {
+        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.battleCtrlr);
+        let speedRate: number;
+        if (agiRate > 2) speedRate = 1.5;
+        else if (agiRate >= 1) speedRate = 1 + (agiRate - 1) * 0.5;
+        else speedRate = 0.5 + agiRate * 0.5;
+        return this.updCnt * speedRate;
+    }
+
+    stepEntering: boolean = false;
+
+    enterNextStep() {
+        this.stepEntering = true;
     }
 
     gainRes() {
