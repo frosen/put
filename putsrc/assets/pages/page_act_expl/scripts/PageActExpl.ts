@@ -230,9 +230,9 @@ export class PageActExpl extends BattlePageBase {
         const curPosModel = actPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
-        const step = MmrTool.getCurStep(curExpl, explModel);
+        const curStep = curExpl.curStep;
         const stepMax = explModel.stepMax;
-        const stepType = StepTypesByMax[stepMax][step];
+        const stepType = StepTypesByMax[stepMax][curStep];
         const stepName = ExplStepNames[stepType];
         const percent = this.updater ? this.updater.explStepPercent : 0;
         let percentStr: string;
@@ -240,8 +240,10 @@ export class PageActExpl extends BattlePageBase {
         else if (percent > 0) percentStr = '.0' + String(percent);
         else percentStr = '';
 
-        this.navBar.setSubTitle(`${stepName} ${step + 1}${percentStr}/${stepMax}`);
+        this.navBar.setSubTitle(`${stepName} ${curStep + 1}${percentStr}/${stepMax}`);
     }
+
+    showEnterNextTip() {}
 
     // ui -----------------------------------------------------------------
 

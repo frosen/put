@@ -28,7 +28,6 @@ import {
     EqpAmplr,
     CnsumType,
     Material,
-    UpdCntByStep,
     PosData,
     PADExpl,
     ZUAN,
@@ -878,8 +877,10 @@ export class MmrTool {
     static createExplMmr(startStep: number): ExplMmr {
         const expl = newInsWithChecker(ExplMmr);
         expl.startTime = Date.now();
-        expl.chngUpdCnt = 0;
         expl.startStep = startStep;
+        expl.stepEnterTime = expl.startTime;
+        expl.curStep = startStep;
+        expl.chngUpdCnt = 0;
         expl.hiding = false;
         expl.catcherId = null;
         return expl;
@@ -913,26 +914,6 @@ export class MmrTool {
         p.features = newList();
         for (const feature of features) p.features.push(FeatureDataTool.clone(feature));
         return p;
-    }
-
-    static getExplStepFromUpdCnt(updCnt: number): number {
-        for (let idx = 0; idx < UpdCntByStep.length; idx++) {
-            if (updCnt < UpdCntByStep[idx]) return idx;
-        }
-        return UpdCntByStep.length;
-    }
-
-    static getUpdCntFromExplStep(step: number): number {
-        if (step >= UpdCntByStep.length) return 999999999;
-        let updCnt = 0;
-        for (let idx = 0; idx < step; idx++) updCnt += UpdCntByStep[idx];
-        return updCnt;
-    }
-
-    static getCurStep(curExpl: ExplMmr, curExplModel: ExplModel = null) {
-        const startUpdCnt = this.getUpdCntFromExplStep(curExpl.startStep);
-        const step = this.getExplStepFromUpdCnt(startUpdCnt + curExpl.chngUpdCnt);
-        return curExplModel ? Math.min(step, curExplModel.stepMax - 1) : step;
     }
 }
 

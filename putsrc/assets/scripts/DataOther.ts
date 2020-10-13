@@ -592,16 +592,16 @@ export class RealBattle {
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
         const petCount = randomRate(0.5) ? count : count - 1;
-        const step = MmrTool.getCurStep(curExpl, explModel);
+        const curStep = curExpl.curStep;
         const petIdLists = explModel.petIdLists;
         if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有精灵列表petIdLists，无法战斗`);
-        const petIds = petIdLists[step];
+        const petIds = petIdLists[curStep];
 
         const enmeyPetType1 = getRandomOneInList(petIds);
         const enmeyPetType2 = getRandomOneInList(petIds);
 
-        const { base: lvBase, range: lvRange } = this.calcLvArea(curPosModel, step);
-        const { base: rankBase, range: rankRange } = this.calcRankAreaByExplStep(step);
+        const { base: lvBase, range: lvRange } = this.calcLvArea(curPosModel, curStep);
+        const { base: rankBase, range: rankRange } = this.calcRankAreaByExplStep(curStep);
 
         const petDatas: { id: string; lv: number; rank: number; features: Feature[] }[] = [];
         for (let index = 0; index < petCount; index++) {

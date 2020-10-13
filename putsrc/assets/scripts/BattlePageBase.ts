@@ -32,4 +32,5 @@ export abstract class BattlePageBase extends PageBase {
     abstract handleLog(): void;
 
     abstract setExplStepUI(): void;
+    abstract showEnterNextTip(): void;
 }

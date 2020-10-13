@@ -24,7 +24,7 @@ convert('../put.xls', '../../putsrc/assets/configs/DrinkModelDict.ts', 'drink', 
         const cnNameByRank = ['', '', 'Ⅱ', 'Ⅲ'];
         const lvByRank = [0, 0, 1, 3];
         const attrByRank = [0, 0, 2, 3];
-        const duraHByRank = [0, 3, 4, 6];
+        const duraHByRank = [0, 3, 6, 6];
 
         for (let index = 1; index <= 3; index++) {
             let newId = id + String(index);
