@@ -264,35 +264,32 @@ export class Memory {
     static lastUpdateTime: number = 0;
 
     static updateGameData(gameData: GameData) {
-        if (this.lastUpdateTime === 0) {
-            this.lastUpdateTime = Date.now();
-            return;
-        }
         const curTime = Date.now();
-        const diff = curTime - this.lastUpdateTime;
-        const INTERVAL = 60000;
-        if (diff >= INTERVAL) {
-            this.lastUpdateTime += INTERVAL;
-            for (const pet of gameData.pets) this.updatePet(pet, curTime);
+        const Interval = 60 * 1000; // 每1分钟检测一次
+        if (curTime - this.lastUpdateTime >= Interval) {
+            this.lastUpdateTime = curTime;
+            this.updateGameDataReal(gameData, curTime);
         }
     }
 
-    static updatePet(pet: Pet, curTime: number) {
-        if (pet.prvty < PrvtyMax) {
-            const range = 600000; // 默契值 10min1点(10 * 60 * 1000)
-            if (curTime - pet.prvtyTime > range) {
-                const count = Math.floor((curTime - pet.prvtyTime) / range);
-                if (pet.state === PetState.ready || pet.state === PetState.rest) {
-                    pet.prvty += 100 * GameJITDataTool.getAmplPercent(pet, AmplAttriType.prvty) * count;
-                    pet.prvty = Math.min(pet.prvty, PrvtyMax);
+    static updateGameDataReal(gameData: GameData, curTime: number) {
+        for (const pet of gameData.pets) {
+            if (pet.prvty < PrvtyMax) {
+                const Range = 10 * 60 * 1000; // 默契值 10min1点
+                if (curTime - pet.prvtyTime > Range) {
+                    const count = Math.floor((curTime - pet.prvtyTime) / Range);
+                    if (pet.state === PetState.ready || pet.state === PetState.rest) {
+                        pet.prvty += 100 * GameJITDataTool.getAmplPercent(pet, AmplAttriType.prvty) * count;
+                        pet.prvty = Math.min(pet.prvty, PrvtyMax);
+                    }
+                    pet.prvtyTime += Range * count;
                 }
-                pet.prvtyTime += range * count;
             }
-        }
 
-        if (pet.drink) {
-            if (curTime - pet.drinkTime >= drinkModelDict[pet.drink.id].dura) {
-                GameDataTool.clearDrinkFromPet(pet);
+            if (pet.drink) {
+                if (curTime - pet.drinkTime >= drinkModelDict[pet.drink.id].dura) {
+                    GameDataTool.clearDrinkFromPet(pet);
+                }
             }
         }
     }

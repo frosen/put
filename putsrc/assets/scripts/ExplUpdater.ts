@@ -71,6 +71,9 @@ const AvgExplRdCnt = 3;
 const AvgUpdCntForEachExplRd = 8;
 const MoneyGainRdEnterRate = 0.6;
 
+const GatherQuestRate = 0.1;
+const GatherQuestRateWhenHiding = 0.3;
+
 export enum ExplLogType {
     repeat = 1,
     rich,
@@ -286,11 +289,11 @@ export class ExplUpdater {
             const nextTime = nextUpdCnt * ExplInterval + curExpl.stepEnterTime;
 
             if (nextTime < nowTime) {
-                this.recoverExplInExpl(curStep, curExpl.chngUpdCnt, nextUpdCnt, petSt, catchSt, rztSt);
+                this.recoverExplInExpl(curExpl.chngUpdCnt, nextUpdCnt, petSt, catchSt, rztSt, nextTime);
                 curExpl.chngUpdCnt = nextUpdCnt;
             } else {
                 const curUpdCnt = Math.floor((nowTime - curExpl.stepEnterTime) / ExplInterval);
-                this.recoverExplInExpl(curStep, curExpl.chngUpdCnt, curUpdCnt, petSt, catchSt, rztSt);
+                this.recoverExplInExpl(curExpl.chngUpdCnt, curUpdCnt, petSt, catchSt, rztSt, nowTime);
                 curExpl.chngUpdCnt = curUpdCnt;
                 this.updCnt = curUpdCnt;
                 this.lastTime = curUpdCnt * ExplInterval + curExpl.stepEnterTime;
@@ -319,7 +322,7 @@ export class ExplUpdater {
             this.explStepPercent = 0;
         } else {
             const nextStepUpdCnt = NeedUpdCntByStep[curStep];
-            const updCntWithAgi = this.calcUpdCntWithAgi();
+            const updCntWithAgi = this.calcUpdCntWithAgi(this.updCnt);
             let percent = Math.floor((updCntWithAgi * 100) / nextStepUpdCnt);
             if (percent > 99) percent = 99; // 百分比在UI上需要禁止超过99%
             this.explStepPercent = percent;
@@ -371,7 +374,6 @@ export class ExplUpdater {
     }
 
     recoverExplInExpl(
-        step: number,
         fromUpdCnt: number,
         toUpdCnt: number,
         petSt: {
@@ -386,7 +388,8 @@ export class ExplUpdater {
             eleRate: number;
         },
         catchSt: { catcherIdx: number },
-        rztSt: { exp: number; money: number; eqps: any[]; pets: any[]; itemDict: {} }
+        rztSt: { exp: number; money: number; eqps: any[]; pets: any[]; itemDict: {} },
+        spanEndTime: number
     ) {
         // 计算回合数和胜利数量 ------------------------------------------
         let eachBigRdUpdCnt = 0; // 一个大轮次中包括了战斗和探索，恢复的时间
@@ -417,6 +420,7 @@ export class ExplUpdater {
         }
         rztSt.exp += expTotal;
 
+        const curStep = curExpl.curStep;
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
@@ -428,8 +432,8 @@ export class ExplUpdater {
             const catcher = this.gameData.items[catcherIdx] as Catcher;
             const catcherModel: CatcherModel = catcherModelDict[catcher.id];
 
-            const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, step);
-            const { base: rankBase, range: rankRange } = RealBattle.calcRankAreaByExplStep(step);
+            const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
+            const { base: rankBase, range: rankRange } = RealBattle.calcRankAreaByExplStep(curStep);
             let lvMin = lvBase - lvRange;
             let lvMax = lvBase + lvRange;
             let rankMin = rankBase - rankRange;
@@ -445,7 +449,7 @@ export class ExplUpdater {
 
             const petIdLists = explModel.petIdLists;
             if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有精灵列表petIdLists，无法战斗`);
-            const petIds = petIdLists[step];
+            const petIds = petIdLists[curStep];
             const realPetIds = [];
             for (const petId of petIds) {
                 const petModel = petModelDict[petId];
@@ -480,8 +484,8 @@ export class ExplUpdater {
         // 计算获得的物品
         const gainTimes = bigRdCnt * (realExplRdCnt - 1);
 
-        const itemIds = explModel.itemIdLists[step];
-        const eqpIds = explModel.eqpIdLists[step];
+        const itemIds = explModel.itemIdLists[curStep];
+        const eqpIds = explModel.eqpIdLists[curStep];
 
         let itemTimes: number;
         if (eqpIds) {
@@ -505,7 +509,7 @@ export class ExplUpdater {
         // 计算钱
         const moneyTimes = Math.floor(itemTimes * MoneyGainRdEnterRate);
         if (moneyTimes > 0) {
-            const eachMoneyCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, step, gainMoreRate);
+            const eachMoneyCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curStep, gainMoreRate);
             const moneyAdd = randomAreaInt(eachMoneyCnt * moneyTimes, 0.2);
             GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += moneyAdd));
             rztSt.money += moneyAdd;
@@ -545,9 +549,8 @@ export class ExplUpdater {
             }
         }
 
-        // 计算任务
-
-        // 计算饮品
+        // 计算饮品和默契
+        Memory.updateGameDataReal(this.gameData, spanEndTime);
     }
 
     static calcBtlDuraUpdCnt(selfPwr: number, enemyPwr: number): number {
@@ -728,7 +731,8 @@ export class ExplUpdater {
                 }
             );
 
-            if (gQuestData && randomRate(0.2)) {
+            const gQuestRate = curExpl.hiding ? GatherQuestRateWhenHiding : GatherQuestRate;
+            if (gQuestData && randomRate(gQuestRate)) {
                 this.gatherQuestDoing = true;
             } else if (curExplModel.eqpIdLists.length > 0 && randomRate(ExplUpdater.calcTreasureRate(sensRate))) {
                 this.trsrFinding = true;
@@ -858,7 +862,7 @@ export class ExplUpdater {
             return;
         } else if (curStep < curExplModel.stepMax - 1) {
             const nextStepUpdCnt = NeedUpdCntByStep[curStep];
-            const updCntWithAgi = this.calcUpdCntWithAgi();
+            const updCntWithAgi = this.calcUpdCntWithAgi(this.updCnt);
             let percent = Math.floor((updCntWithAgi * 100) / nextStepUpdCnt);
             if (percent > 99) percent = 99; // 百分比在UI上需要禁止超过99%
             if (percent !== this.explStepPercent) {
@@ -883,7 +887,7 @@ export class ExplUpdater {
             if (this.trsrFinding) this.log(ExplLogType.repeat, '宝箱解锁中......');
             else if (this.enemyFinding) this.log(ExplLogType.repeat, '潜行接近中......');
             else {
-                const updCntWithAgi = this.calcUpdCntWithAgi();
+                const updCntWithAgi = this.calcUpdCntWithAgi(this.updCnt);
                 const sQuestData = GameDataTool.getOneQuestByType(
                     this.gameData,
                     QuestType.gather,
@@ -924,13 +928,13 @@ export class ExplUpdater {
         if (step > pADExpl.doneStep) pADExpl.doneStep = step;
     }
 
-    calcUpdCntWithAgi(): number {
+    calcUpdCntWithAgi(updCnt: number): number {
         const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.battleCtrlr);
         let speedRate: number;
         if (agiRate > 2) speedRate = 1.5;
         else if (agiRate >= 1) speedRate = 1 + (agiRate - 1) * 0.5;
         else speedRate = 0.5 + agiRate * 0.5;
-        return this.updCnt * speedRate;
+        return updCnt * speedRate;
     }
 
     stepEntering: boolean = false;
