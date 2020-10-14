@@ -415,8 +415,8 @@ export class ExplUpdater {
 
         const selfPets = GameDataTool.getReadyPets(this.gameData);
         for (const pet of selfPets) {
-            const expEach = expTotal * GameJITDataTool.getAmplPercent(pet, AmplAttriType.exp); // 计算饮品的加成
-            PetDataTool.addExp(pet, Math.ceil(expEach));
+            const expEach = Math.ceil(expTotal * GameJITDataTool.getAmplRate(pet, AmplAttriType.exp)); // 计算饮品的加成
+            PetDataTool.addExp(pet, expEach);
         }
         rztSt.exp += expTotal;
 
@@ -787,7 +787,7 @@ export class ExplUpdater {
         let moneyAdd = (lv + step * 2) * (1 + step * 0.1);
         moneyAdd = randomAreaInt(moneyAdd, 0.2);
         moneyAdd = moneyAdd - 3 + randomInt(7); // +-20% +-3
-        moneyAdd *= GameJITDataTool.getAmplPercent(null, AmplAttriType.expl);
+        moneyAdd *= GameJITDataTool.getAmplRate(null, AmplAttriType.expl);
         moneyAdd *= 1 + gainRate * 0.1;
         moneyAdd = Math.max(Math.ceil(moneyAdd), 1);
         return moneyAdd;
@@ -1048,9 +1048,7 @@ export class ExplUpdater {
         for (const selfBPet of rb.selfTeam.pets) {
             const selfPet = selfBPet.pet;
 
-            let curExp = exp * GameJITDataTool.getAmplPercent(selfBPet.pet, AmplAttriType.exp);
-            curExp = Math.ceil(curExp);
-
+            const curExp = Math.ceil(exp * GameJITDataTool.getAmplRate(selfBPet.pet, AmplAttriType.exp));
             const curExpPercent = PetDataTool.addExp(selfPet, curExp);
 
             const petName = PetDataTool.getCnName(selfPet);

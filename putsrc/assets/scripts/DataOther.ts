@@ -88,7 +88,7 @@ export class GameJITDataTool {
         }
     }
 
-    static getAmplPercent(pet: Pet, attri: AmplAttriType) {
+    static getAmplRate(pet: Pet, attri: AmplAttriType) {
         if (NotNeedPetType.includes(attri)) cc.assert(!pet, 'PUT need no pet');
         else cc.assert(pet, 'PUT need pet');
 
@@ -226,9 +226,9 @@ export class Pet2 {
 
         // 饮品加成
         if (pet.drink) {
-            this.strength *= GameJITDataTool.getAmplPercent(pet, AmplAttriType.strength);
-            this.concentration *= GameJITDataTool.getAmplPercent(pet, AmplAttriType.concentration);
-            this.durability *= GameJITDataTool.getAmplPercent(pet, AmplAttriType.durability);
+            this.strength *= GameJITDataTool.getAmplRate(pet, AmplAttriType.strength);
+            this.concentration *= GameJITDataTool.getAmplRate(pet, AmplAttriType.concentration);
+            this.durability *= GameJITDataTool.getAmplRate(pet, AmplAttriType.durability);
         }
 
         // 二级原始属性

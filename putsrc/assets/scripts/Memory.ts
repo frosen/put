@@ -279,7 +279,7 @@ export class Memory {
                 if (curTime - pet.prvtyTime > Range) {
                     const count = Math.floor((curTime - pet.prvtyTime) / Range);
                     if (pet.state === PetState.ready || pet.state === PetState.rest) {
-                        pet.prvty += 100 * GameJITDataTool.getAmplPercent(pet, AmplAttriType.prvty) * count;
+                        pet.prvty += Math.floor(100 * GameJITDataTool.getAmplRate(pet, AmplAttriType.prvty) * count);
                         pet.prvty = Math.min(pet.prvty, PrvtyMax);
                     }
                     pet.prvtyTime += Range * count;
