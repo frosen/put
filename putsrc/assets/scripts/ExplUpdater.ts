@@ -311,6 +311,14 @@ export class ExplUpdater {
         }
 
         // 加速
+        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.battleCtrlr);
+        const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
+        const speedChangeCnt = rztSt.moveCnt * speedUpCnt;
+        if (speedUpCnt !== 0) {
+            this.updCnt += speedUpCnt;
+            this.updateChgUpdCnt();
+            this.gameData.curExpl.stepEnterTime -= speedUpCnt * ExplInterval;
+        }
 
         // 调查类任务
         GameDataTool.eachNeedQuest(gameData, QuestType.search, (quest: Quest, model: QuestModel) => {
@@ -492,6 +500,8 @@ export class ExplUpdater {
             GameDataTool.deleteItem(gameData, catcherIdx, catchIdx);
         } while (false);
 
+        // 战斗类任务
+
         // 计算获得的物品
         let gainCnt = bigRdCnt * (realExplRdCnt - 1);
 
@@ -500,12 +510,20 @@ export class ExplUpdater {
         const gQuestCntMax = Math.floor(gainCnt * gQuestRate);
         let gQuestCnt = 0;
         GameDataTool.eachNeedQuest(gameData, QuestType.gather, (quest: Quest, model: QuestModel) => {
+            if (gQuestCnt === gQuestCntMax) return;
             const need = model.need as GatherQuestNeed;
             if (curExpl.curPosId === need.posId && curStep === need.step) {
                 quest.progress = need.count;
+                let diff = need.count - quest.progress;
+                if (gQuestCnt + diff >= gQuestCntMax) diff = gQuestCntMax - gQuestCnt;
+
+                gQuestCnt += diff;
+                quest.progress += diff;
             }
         });
+        gainCnt -= gQuestCnt;
 
+        // 装备
         const eqpIds = explModel.eqpIdLists[curStep];
         if (eqpIds) {
             const treasureRate = ExplUpdater.calcTreasureRate(petSt.sensRate);
@@ -570,6 +588,9 @@ export class ExplUpdater {
 
         // 计算饮品和默契
         Memory.updateGameDataReal(gameData, spanEndTime);
+
+        // 用于调整速度而记录移动次数
+        rztSt.moveCnt += bigRdCnt * realExplRdCnt;
     }
 
     static calcBtlDuraUpdCnt(selfPwr: number, enemyPwr: number): number {
