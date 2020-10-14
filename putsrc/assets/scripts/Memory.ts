@@ -1302,18 +1302,28 @@ export class GameDataTool {
         }
     }
 
-    static getOneQuestByType(
+    static getNeedQuest(
         gameData: GameData,
         questType: QuestType,
-        check: (quest: Quest, model: QuestModel) => boolean
+        check: (model: QuestModel) => boolean
     ): { quest: Quest; model: QuestModel } {
         for (const quest of gameData.quests) {
             const model = questModelDict[quest.questId];
-            if (model.type === questType && check(quest, model)) {
-                return { quest, model };
-            }
+            if (model.type !== questType) continue;
+            if (quest.progress < model.need.count) continue;
+            if (!check(model)) continue;
+            return { quest, model };
         }
         return null;
+    }
+
+    static eachNeedQuest(gameData: GameData, questType: QuestType, call: (quest: Quest, model: QuestModel) => void) {
+        for (const quest of gameData.quests) {
+            const model = questModelDict[quest.questId];
+            if (model.type !== questType) continue;
+            if (quest.progress < model.need.count) continue;
+            call(quest, model);
+        }
     }
 
     // -----------------------------------------------------------------

@@ -241,7 +241,8 @@ export class ExplUpdater {
             money: 0,
             eqps: [],
             pets: [],
-            itemDict: {}
+            itemDict: {},
+            moveCnt: 0
         };
 
         const selfPets = GameDataTool.getReadyPets(this.gameData);
@@ -309,6 +310,16 @@ export class ExplUpdater {
             }
         }
 
+        // 加速
+
+        // 调查类任务
+        GameDataTool.eachNeedQuest(gameData, QuestType.search, (quest: Quest, model: QuestModel) => {
+            const need = model.need as SearchQuestNeed;
+            if (curExpl.curPosId === need.posId && curStep === need.step && this.updCnt >= need.count) {
+                quest.progress = need.count;
+            }
+        });
+
         this.recoverExplStepPercent(curExpl);
         this.saveNewStep(curStep);
         this.startExpl();
@@ -322,8 +333,7 @@ export class ExplUpdater {
             this.explStepPercent = 0;
         } else {
             const nextStepUpdCnt = NeedUpdCntByStep[curStep];
-            const updCntWithAgi = this.calcUpdCntWithAgi(this.updCnt);
-            let percent = Math.floor((updCntWithAgi * 100) / nextStepUpdCnt);
+            let percent = Math.floor((this.updCnt * 100) / nextStepUpdCnt);
             if (percent > 99) percent = 99; // 百分比在UI上需要禁止超过99%
             this.explStepPercent = percent;
         }
@@ -388,14 +398,15 @@ export class ExplUpdater {
             eleRate: number;
         },
         catchSt: { catcherIdx: number },
-        rztSt: { exp: number; money: number; eqps: any[]; pets: any[]; itemDict: {} },
+        rztSt: { exp: number; money: number; eqps: any[]; pets: any[]; itemDict: {}; moveCnt: number },
         spanEndTime: number
     ) {
         // 计算回合数和胜利数量 ------------------------------------------
         let eachBigRdUpdCnt = 0; // 一个大轮次中包括了战斗和探索，恢复的时间
         eachBigRdUpdCnt += ExplUpdater.calcBtlDuraUpdCnt(petSt.selfPwr, petSt.enemyPwr);
 
-        const curExpl = this.gameData.curExpl;
+        const gameData = this.gameData;
+        const curExpl = gameData.curExpl;
         const eachHidingRdCnt = curExpl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
         const realExplRdCnt = AvgExplRdCnt + eachHidingRdCnt;
         eachBigRdUpdCnt += realExplRdCnt * AvgUpdCntForEachExplRd;
@@ -413,7 +424,7 @@ export class ExplUpdater {
         let expTotal = exp * winCount;
         expTotal = randomAreaInt(expTotal, 0.05);
 
-        const selfPets = GameDataTool.getReadyPets(this.gameData);
+        const selfPets = GameDataTool.getReadyPets(gameData);
         for (const pet of selfPets) {
             const expEach = Math.ceil(expTotal * GameJITDataTool.getAmplRate(pet, AmplAttriType.exp)); // 计算饮品的加成
             PetDataTool.addExp(pet, expEach);
@@ -429,7 +440,7 @@ export class ExplUpdater {
         do {
             const catcherIdx = catchSt.catcherIdx;
             if (catcherIdx === -1) break;
-            const catcher = this.gameData.items[catcherIdx] as Catcher;
+            const catcher = gameData.items[catcherIdx] as Catcher;
             const catcherModel: CatcherModel = catcherModelDict[catcher.id];
 
             const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
@@ -469,7 +480,7 @@ export class ExplUpdater {
                 const lv = lvMin + randomInt(lvMax - lvMin);
                 const rank = rankMin + randomInt(rankMax - rankMin);
                 const features = RealBattle.getRandomFeatures(lv);
-                const rztStr = GameDataTool.addCaughtPet(this.gameData, petId, lv, rank, features);
+                const rztStr = GameDataTool.addCaughtPet(gameData, petId, lv, rank, features);
                 if (rztStr !== GameDataTool.SUC) break;
                 rztSt.pets.push(petId);
             }
@@ -478,39 +489,50 @@ export class ExplUpdater {
                 catchSt.catcherIdx = -1;
                 curExpl.catcherId = null;
             }
-            GameDataTool.deleteItem(this.gameData, catcherIdx, catchIdx);
+            GameDataTool.deleteItem(gameData, catcherIdx, catchIdx);
         } while (false);
 
         // 计算获得的物品
-        let gainTimes = bigRdCnt * (realExplRdCnt - 1);
+        let gainCnt = bigRdCnt * (realExplRdCnt - 1);
+
+        // 采集类任务
+        const gQuestRate = curExpl.hiding ? GatherQuestRateWhenHiding : GatherQuestRate;
+        const gQuestCntMax = Math.floor(gainCnt * gQuestRate);
+        let gQuestCnt = 0;
+        GameDataTool.eachNeedQuest(gameData, QuestType.gather, (quest: Quest, model: QuestModel) => {
+            const need = model.need as GatherQuestNeed;
+            if (curExpl.curPosId === need.posId && curStep === need.step) {
+                quest.progress = need.count;
+            }
+        });
 
         const eqpIds = explModel.eqpIdLists[curStep];
         if (eqpIds) {
             const treasureRate = ExplUpdater.calcTreasureRate(petSt.sensRate);
-            const eqpTimes = Math.floor(gainTimes * treasureRate);
-            if (eqpTimes > 0) {
-                for (let index = 0; index < eqpTimes; index++) {
+            const eqpGainCnt = Math.floor(gainCnt * treasureRate);
+            if (eqpGainCnt > 0) {
+                for (let index = 0; index < eqpGainCnt; index++) {
                     const eqpId = getRandomOneInList(eqpIds);
                     const equip = EquipDataTool.createRandomById(eqpId);
                     if (!equip) break;
-                    const rzt = GameDataTool.addEquip(this.gameData, equip);
+                    const rzt = GameDataTool.addEquip(gameData, equip);
                     if (rzt !== GameDataTool.SUC) break;
                     rztSt.eqps.push(eqpId);
                 }
-                gainTimes -= eqpTimes;
+                gainCnt -= eqpGainCnt;
             }
         }
 
         const gainMoreRate = ExplUpdater.calcGainCntRate(petSt.sensRate);
 
         // 计算钱
-        const moneyTimes = Math.floor(gainTimes * MoneyGainRdEnterRate);
-        if (moneyTimes > 0) {
+        const moneyGainCnt = Math.floor(gainCnt * MoneyGainRdEnterRate);
+        if (moneyGainCnt > 0) {
             const eachMoneyCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curStep, gainMoreRate);
-            const moneyAdd = randomAreaInt(eachMoneyCnt * moneyTimes, 0.2);
-            GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += moneyAdd));
+            const moneyAdd = randomAreaInt(eachMoneyCnt * moneyGainCnt, 0.2);
+            GameDataTool.handleMoney(gameData, (money: Money) => (money.sum += moneyAdd));
             rztSt.money += moneyAdd;
-            gainTimes -= moneyTimes;
+            gainCnt -= moneyGainCnt;
         }
 
         // 计算其他道具
@@ -519,18 +541,18 @@ export class ExplUpdater {
             else rztSt.itemDict[itemId] = cnt;
         }
 
-        if (gainTimes > 0) {
-            const itemMax = GameDataTool.getItemCountMax(this.gameData);
-            const itemTimes = Math.min(Math.ceil(gainTimes * gainMoreRate), itemMax);
+        if (gainCnt > 0) {
+            const itemMax = GameDataTool.getItemCountMax(gameData);
+            const itemCnt = Math.min(Math.ceil(gainCnt * gainMoreRate), itemMax);
 
             const itemIds = explModel.itemIdLists[curStep];
             const eachItemRate = 2 / itemIds.length;
-            let itemLeft = itemTimes;
+            let itemLeft = itemCnt;
             for (let index = 0; index < itemIds.length; index++) {
                 const curRate = random(eachItemRate);
-                const curCnt = Math.min(Math.floor(itemTimes * curRate), itemLeft);
+                const curCnt = Math.min(Math.floor(itemCnt * curRate), itemLeft);
                 const itemId = itemIds[index];
-                const rzt = GameDataTool.addCnsum(this.gameData, itemId, curCnt);
+                const rzt = GameDataTool.addCnsum(gameData, itemId, curCnt);
                 if (rzt !== GameDataTool.SUC) {
                     itemLeft = 0;
                     break;
@@ -541,13 +563,13 @@ export class ExplUpdater {
             }
             if (itemLeft > 0) {
                 const itemId = itemIds[0];
-                const rzt = GameDataTool.addCnsum(this.gameData, itemId, itemLeft);
+                const rzt = GameDataTool.addCnsum(gameData, itemId, itemLeft);
                 if (rzt === GameDataTool.SUC) saveItemRzt(itemId, itemLeft);
             }
         }
 
         // 计算饮品和默契
-        Memory.updateGameDataReal(this.gameData, spanEndTime);
+        Memory.updateGameDataReal(gameData, spanEndTime);
     }
 
     static calcBtlDuraUpdCnt(selfPwr: number, enemyPwr: number): number {
@@ -657,7 +679,7 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
-    explTime: number = 0;
+    explUpdCnt: number = 0;
     explRdCnt: number = 0;
 
     /** 本次获取道具的数量 */
@@ -693,7 +715,7 @@ export class ExplUpdater {
         const enter = this.state !== ExplState.explore;
         this.state = ExplState.explore;
 
-        this.explTime = randomAreaByIntRange(AvgUpdCntForEachExplRd, 2); // 6-10跳
+        this.explUpdCnt = randomAreaByIntRange(AvgUpdCntForEachExplRd, 2);
 
         if (enter) {
             this.explRdCnt = randomAreaByIntRange(AvgExplRdCnt, 2);
@@ -717,19 +739,13 @@ export class ExplUpdater {
             const curStep = curExpl.curStep;
             const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
 
-            const gQuestData = GameDataTool.getOneQuestByType(
-                this.gameData,
-                QuestType.gather,
-                (quest: Quest, model: QuestModel): boolean => {
-                    const need = model.need as GatherQuestNeed;
-                    if (quest.progress >= need.count) return false;
-                    if (posId !== need.posId || curStep !== need.step) return false;
-                    return true;
-                }
-            );
+            const gQData = GameDataTool.getNeedQuest(this.gameData, QuestType.gather, (model: QuestModel): boolean => {
+                const need = model.need as GatherQuestNeed;
+                return posId === need.posId && curStep === need.step;
+            });
 
             const gQuestRate = curExpl.hiding ? GatherQuestRateWhenHiding : GatherQuestRate;
-            if (gQuestData && randomRate(gQuestRate)) {
+            if (gQData && randomRate(gQuestRate)) {
                 this.gatherQuestDoing = true;
             } else if (curExplModel.eqpIdLists.length > 0 && randomRate(ExplUpdater.calcTreasureRate(sensRate))) {
                 this.trsrFinding = true;
@@ -757,7 +773,19 @@ export class ExplUpdater {
             }
         }
 
-        cc.log('PUT 探索次数和本次时间: ', this.explRdCnt, this.explTime);
+        cc.log('PUT 探索次数和本次跳数: ', this.explRdCnt, this.explUpdCnt);
+
+        this.handleSpeedUp();
+    }
+
+    handleSpeedUp() {
+        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.battleCtrlr);
+        const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
+        if (speedUpCnt !== 0) {
+            this.updCnt += speedUpCnt;
+            this.updateChgUpdCnt();
+            this.gameData.curExpl.stepEnterTime -= speedUpCnt * ExplInterval;
+        }
     }
 
     static calcHideExplRdCnt(rate: number): number {
@@ -788,6 +816,15 @@ export class ExplUpdater {
         moneyAdd *= 1 + gainRate * 0.1;
         moneyAdd = Math.max(Math.ceil(moneyAdd), 1);
         return moneyAdd;
+    }
+
+    static calcSpeedChangeCnt(agiRate: number): number {
+        if (agiRate >= 1.5) return 3;
+        else if (agiRate >= 1.3) return 2;
+        else if (agiRate >= 1.1) return 1;
+        else if (agiRate >= 0.9) return 0;
+        else if (agiRate >= 0.7) return -1;
+        else return 2;
     }
 
     static getPosPetAgiRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
@@ -821,8 +858,8 @@ export class ExplUpdater {
     }
 
     getExplResult(): ExplResult {
-        if (this.explTime > 1) {
-            this.explTime--;
+        if (this.explUpdCnt > 1) {
+            this.explUpdCnt--;
             return ExplResult.doing;
         } else {
             if (this.explRdCnt > 1) return ExplResult.gain;
@@ -859,8 +896,7 @@ export class ExplUpdater {
             return;
         } else if (curStep < curExplModel.stepMax - 1) {
             const nextStepUpdCnt = NeedUpdCntByStep[curStep];
-            const updCntWithAgi = this.calcUpdCntWithAgi(this.updCnt);
-            let percent = Math.floor((updCntWithAgi * 100) / nextStepUpdCnt);
+            let percent = Math.floor((this.updCnt * 100) / nextStepUpdCnt);
             if (percent > 99) percent = 99; // 百分比在UI上需要禁止超过99%
             if (percent !== this.explStepPercent) {
                 this.explStepPercent = percent;
@@ -884,20 +920,13 @@ export class ExplUpdater {
             if (this.trsrFinding) this.log(ExplLogType.repeat, '宝箱解锁中......');
             else if (this.enemyFinding) this.log(ExplLogType.repeat, '潜行接近中......');
             else {
-                const updCntWithAgi = this.calcUpdCntWithAgi(this.updCnt);
-                const sQuestData = GameDataTool.getOneQuestByType(
-                    this.gameData,
-                    QuestType.gather,
-                    (quest: Quest, model: QuestModel): boolean => {
-                        if (quest.progress >= model.need.count) return false;
-                        const need = model.need as SearchQuestNeed;
-                        if (curExpl.curPosId !== need.posId || curStep !== need.step) return false;
-                        return updCntWithAgi >= need.count;
-                    }
-                );
+                const sQData = GameDataTool.getNeedQuest(this.gameData, QuestType.search, (model: QuestModel): boolean => {
+                    const need = model.need as SearchQuestNeed;
+                    return curExpl.curPosId === need.posId && curStep === need.step && this.updCnt >= need.count;
+                });
 
-                if (sQuestData && randomRate(0.1)) {
-                    const { quest, model } = sQuestData;
+                if (sQData && randomRate(0.1)) {
+                    const { quest, model } = sQData;
                     const need = model.need as GatherQuestNeed;
                     quest.progress = need.count;
                     this.log(ExplLogType.rich, `找到${need.name} 任务 ${model.cnName} 完成`);
@@ -925,15 +954,6 @@ export class ExplUpdater {
         if (step > pADExpl.doneStep) pADExpl.doneStep = step;
     }
 
-    calcUpdCntWithAgi(updCnt: number): number {
-        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.battleCtrlr);
-        let speedRate: number;
-        if (agiRate > 2) speedRate = 1.5;
-        else if (agiRate >= 1) speedRate = 1 + (agiRate - 1) * 0.5;
-        else speedRate = 0.5 + agiRate * 0.5;
-        return updCnt * speedRate;
-    }
-
     stepEntering: boolean = false;
 
     enterNextStep() {
@@ -946,18 +966,12 @@ export class ExplUpdater {
         const curStep = curExpl.curStep;
 
         if (this.gatherQuestDoing) {
-            const gQuestData = GameDataTool.getOneQuestByType(
-                this.gameData,
-                QuestType.gather,
-                (quest: Quest, model: QuestModel): boolean => {
-                    if (quest.progress >= model.need.count) return false;
-                    const need = model.need as GatherQuestNeed;
-                    if (curExpl.curPosId !== need.posId || curStep < need.step) return false;
-                    return true;
-                }
-            );
-            if (gQuestData) {
-                const { quest, model } = gQuestData;
+            const gQData = GameDataTool.getNeedQuest(this.gameData, QuestType.gather, (model: QuestModel): boolean => {
+                const need = model.need as GatherQuestNeed;
+                return curExpl.curPosId === need.posId && curStep === need.step;
+            });
+            if (gQData) {
+                const { quest, model } = gQData;
                 const need = model.need as GatherQuestNeed;
                 quest.progress++;
                 this.log(ExplLogType.rich, `采集到${need.name} 任务 ${model.cnName} ${quest.progress}/${need.count}`);
@@ -1142,20 +1156,15 @@ export class ExplUpdater {
     }
 
     doFightQuest() {
-        const fRQuestData = GameDataTool.getOneQuestByType(
-            this.gameData,
-            QuestType.fightRandom,
-            (quest: Quest, model: QuestModel): boolean => {
-                const need = model.need as FightQuestNeed;
-                if (quest.progress >= need.count) return false;
-                for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
-                    if (need.petIds.includes(ePet.pet.id)) return true;
-                }
-                return false;
+        const fRQData = GameDataTool.getNeedQuest(this.gameData, QuestType.fightRandom, (model: QuestModel): boolean => {
+            const need = model.need as FightQuestNeed;
+            for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
+                if (need.petIds.includes(ePet.pet.id)) return true;
             }
-        );
-        if (fRQuestData && randomRate(0.35)) {
-            const { quest, model } = fRQuestData;
+            return false;
+        });
+        if (fRQData && randomRate(0.35)) {
+            const { quest, model } = fRQData;
             const need = model.need as FightQuestNeed;
             quest.progress++;
             this.log(ExplLogType.rich, `获得${need.name} 任务 ${model.cnName} ${quest.progress}/${need.count}`);
@@ -1164,20 +1173,15 @@ export class ExplUpdater {
             return;
         }
 
-        const fQuestData = GameDataTool.getOneQuestByType(
-            this.gameData,
-            QuestType.fight,
-            (quest: Quest, model: QuestModel): boolean => {
-                const need = model.need as FightQuestNeed;
-                if (quest.progress >= need.count) return false;
-                for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
-                    if (need.petIds.includes(ePet.pet.id)) return true;
-                }
-                return false;
+        const fQData = GameDataTool.getNeedQuest(this.gameData, QuestType.fight, (model: QuestModel): boolean => {
+            const need = model.need as FightQuestNeed;
+            for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
+                if (need.petIds.includes(ePet.pet.id)) return true;
             }
-        );
-        if (fQuestData) {
-            const { quest, model } = fQuestData;
+            return false;
+        });
+        if (fQData) {
+            const { quest, model } = fQData;
             const need = model.need as FightQuestNeed;
             quest.progress++;
             this.log(ExplLogType.rich, `获得${need.name} 任务 ${model.cnName} ${quest.progress}/${need.count}`);
