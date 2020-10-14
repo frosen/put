@@ -286,7 +286,6 @@ export class WorkModel extends PAModel {}
 export enum QuestType {
     support = 1,
     fight,
-    fightRandom,
     gather,
     search
 }

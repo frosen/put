@@ -17,15 +17,15 @@ convert('../put.xls', '../../putsrc/assets/configs/QuestModelDict.ts', 'quest', 
         let need = {};
         if (type === 1) {
             need.itemId = rowData[3];
-        } else if (type === 2 || type === 3) {
+        } else if (type === 2) {
             need.petIds = rowData[3].split('/');
             need.name = rowData[4];
-        } else if (type === 4) {
+        } else if (type === 3) {
             const posData = rowData[3].split('-');
             need.posId = posData[0];
             need.step = Number(posData[1]);
             need.name = rowData[4];
-        } else if (type === 5) {
+        } else if (type === 4) {
             const posData = rowData[3].split('-');
             need.posId = posData[0];
             need.step = Number(posData[1]);

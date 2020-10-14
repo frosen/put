@@ -467,7 +467,6 @@ export class ExplUpdater {
             if (rankMin > rankMax) break;
 
             const petIdLists = explModel.petIdLists;
-            if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有精灵列表petIdLists，无法战斗`);
             const petIds = petIdLists[curStep];
             const realPetIds = [];
             for (const petId of petIds) {
@@ -501,6 +500,18 @@ export class ExplUpdater {
         } while (false);
 
         // 战斗类任务
+        let fQCnt = 0;
+        GameDataTool.eachNeedQuest(gameData, QuestType.fight, (quest: Quest, model: QuestModel) => {
+            if (gQuestCnt === gQuestCntMax) return;
+            let petHaving = false;
+            for (const petId of explModel.petIdLists[curStep]) {
+                if ((model.need as FightQuestNeed).petIds.includes(petId)) {
+                    petHaving = true;
+                    break;
+                }
+            }
+            if (!petHaving) return;
+        });
 
         // 计算获得的物品
         let gainCnt = bigRdCnt * (realExplRdCnt - 1);
@@ -1177,23 +1188,6 @@ export class ExplUpdater {
     }
 
     doFightQuest() {
-        const fRQData = GameDataTool.getNeedQuest(this.gameData, QuestType.fightRandom, (model: QuestModel): boolean => {
-            const need = model.need as FightQuestNeed;
-            for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
-                if (need.petIds.includes(ePet.pet.id)) return true;
-            }
-            return false;
-        });
-        if (fRQData && randomRate(0.35)) {
-            const { quest, model } = fRQData;
-            const need = model.need as FightQuestNeed;
-            quest.progress++;
-            this.log(ExplLogType.rich, `获得${need.name} 任务 ${model.cnName} ${quest.progress}/${need.count}`);
-            if (quest.progress >= model.need.count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
-
-            return;
-        }
-
         const fQData = GameDataTool.getNeedQuest(this.gameData, QuestType.fight, (model: QuestModel): boolean => {
             const need = model.need as FightQuestNeed;
             for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {

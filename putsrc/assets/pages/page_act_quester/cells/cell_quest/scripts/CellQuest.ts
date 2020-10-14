@@ -121,8 +121,7 @@ export class CellQuest extends ListViewCell {
                 lbls[5].string = '';
                 break;
             }
-            case QuestType.fight:
-            case QuestType.fightRandom: {
+            case QuestType.fight: {
                 const need = questModel.need as FightQuestNeed;
 
                 let petStr = '';

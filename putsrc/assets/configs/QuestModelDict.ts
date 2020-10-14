@@ -46,7 +46,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
     },
     GuiXunYuChengFa: {
         id: 'GuiXunYuChengFa',
-        type: 3,
+        type: 2,
         cnName: '规训与惩罚',
         descs: [
             '内燃机兽是一种脾气暴躁的机械精灵，最近更是时常失控，四处捣乱；',
@@ -65,7 +65,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
     },
     AnQuanSongDa: {
         id: 'AnQuanSongDa',
-        type: 4,
+        type: 3,
         cnName: '安全送达',
         descs: [
             '有一批不稳定状态的原料需要从车间运回基地，但如果只派精灵执行，我们又不太放心原料的安全；',
@@ -83,7 +83,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
     },
     HuiYiTongZhi: {
         id: 'HuiYiTongZhi',
-        type: 5,
+        type: 4,
         cnName: '会议通知',
         descs: [
             '我们的电气工程师又去车间检修电路了，打电话也不接，每次都这样，我也真是服了；',

@@ -170,7 +170,7 @@ export class PageActQuester extends PageBase {
     }
 
     showFinishQuestTip(questModel: QuestModel) {
-        if (questModel.type === QuestType.fight || questModel.type === QuestType.fightRandom) {
+        if (questModel.type === QuestType.fight) {
             this.ctrlr.popToast('请击败对应精灵 获取道具 完成任务');
         } else {
             this.ctrlr.popToast('请前往对应地点 进行探索 完成任务');
