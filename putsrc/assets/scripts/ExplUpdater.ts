@@ -482,51 +482,48 @@ export class ExplUpdater {
         } while (false);
 
         // 计算获得的物品
-        const gainTimes = bigRdCnt * (realExplRdCnt - 1);
+        let gainTimes = bigRdCnt * (realExplRdCnt - 1);
 
-        const itemIds = explModel.itemIdLists[curStep];
         const eqpIds = explModel.eqpIdLists[curStep];
-
-        let itemTimes: number;
         if (eqpIds) {
             const treasureRate = ExplUpdater.calcTreasureRate(petSt.sensRate);
             const eqpTimes = Math.floor(gainTimes * treasureRate);
-            itemTimes = gainTimes - eqpTimes;
-            for (let index = 0; index < eqpTimes; index++) {
-                const eqpId = getRandomOneInList(eqpIds);
-                const equip = EquipDataTool.createRandomById(eqpId);
-                if (!equip) break;
-                const rzt = GameDataTool.addEquip(this.gameData, equip);
-                if (rzt !== GameDataTool.SUC) break;
-                rztSt.eqps.push(eqpId);
+            if (eqpTimes > 0) {
+                for (let index = 0; index < eqpTimes; index++) {
+                    const eqpId = getRandomOneInList(eqpIds);
+                    const equip = EquipDataTool.createRandomById(eqpId);
+                    if (!equip) break;
+                    const rzt = GameDataTool.addEquip(this.gameData, equip);
+                    if (rzt !== GameDataTool.SUC) break;
+                    rztSt.eqps.push(eqpId);
+                }
+                gainTimes -= eqpTimes;
             }
-        } else {
-            itemTimes = gainTimes;
         }
 
         const gainMoreRate = ExplUpdater.calcGainCntRate(petSt.sensRate);
 
         // 计算钱
-        const moneyTimes = Math.floor(itemTimes * MoneyGainRdEnterRate);
+        const moneyTimes = Math.floor(gainTimes * MoneyGainRdEnterRate);
         if (moneyTimes > 0) {
             const eachMoneyCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curStep, gainMoreRate);
             const moneyAdd = randomAreaInt(eachMoneyCnt * moneyTimes, 0.2);
             GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += moneyAdd));
             rztSt.money += moneyAdd;
+            gainTimes -= moneyTimes;
         }
 
         // 计算其他道具
-        itemTimes -= moneyTimes;
-        itemTimes = Math.ceil(itemTimes * gainMoreRate);
-        const itemMax = GameDataTool.getItemCountMax(this.gameData);
-        itemTimes = Math.min(itemTimes, itemMax);
-
         function saveItemRzt(itemId: string, cnt: number) {
             if (rztSt.itemDict.hasOwnProperty(itemId)) rztSt.itemDict[itemId] += cnt;
             else rztSt.itemDict[itemId] = cnt;
         }
 
-        if (itemTimes > 0) {
+        if (gainTimes > 0) {
+            const itemMax = GameDataTool.getItemCountMax(this.gameData);
+            const itemTimes = Math.min(Math.ceil(gainTimes * gainMoreRate), itemMax);
+
+            const itemIds = explModel.itemIdLists[curStep];
             const eachItemRate = 2 / itemIds.length;
             let itemLeft = itemTimes;
             for (let index = 0; index < itemIds.length; index++) {
