@@ -501,16 +501,22 @@ export class ExplUpdater {
 
         // 战斗类任务
         let fQCnt = 0;
+        const curStepPetIdLists = explModel.petIdLists[curStep];
+        const curStepPetLen = curStepPetIdLists.length;
         GameDataTool.eachNeedQuest(gameData, QuestType.fight, (quest: Quest, model: QuestModel) => {
-            if (gQuestCnt === gQuestCntMax) return;
-            let petHaving = false;
-            for (const petId of explModel.petIdLists[curStep]) {
-                if ((model.need as FightQuestNeed).petIds.includes(petId)) {
-                    petHaving = true;
-                    break;
-                }
-            }
-            if (!petHaving) return;
+            if (fQCnt === winCount) return;
+            const need = model.need as FightQuestNeed;
+            const needPetIds = need.petIds;
+            let petHaveCnt = 0;
+            for (const petId of curStepPetIdLists) if (needPetIds.includes(petId)) petHaveCnt++;
+            const meetRate = 1 - Math.pow((curStepPetLen - petHaveCnt) / curStepPetLen, 2); // llytodo 测试运算是否正确
+            const meetCnt = Math.floor(winCount * meetRate);
+            if (meetCnt <= 0) return;
+            let diff = Math.min(need.count - quest.progress, meetCnt);
+            if (fQCnt + diff >= winCount) diff = winCount - fQCnt;
+
+            fQCnt += diff;
+            quest.progress += diff;
         });
 
         // 计算获得的物品
@@ -524,7 +530,6 @@ export class ExplUpdater {
             if (gQuestCnt === gQuestCntMax) return;
             const need = model.need as GatherQuestNeed;
             if (curExpl.curPosId === need.posId && curStep === need.step) {
-                quest.progress = need.count;
                 let diff = need.count - quest.progress;
                 if (gQuestCnt + diff >= gQuestCntMax) diff = gQuestCntMax - gQuestCnt;
 
