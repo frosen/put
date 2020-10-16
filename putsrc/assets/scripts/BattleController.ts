@@ -597,7 +597,7 @@ export class BattleController {
 
         let finalDmg = BattleController.getAtkDmg(battlePet, aim);
         finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
-        if (this.realBattle.atkRound > 100) finalDmg *= 1.5; // 时间太长时增加伤害快速结束
+        if (this.realBattle.atkRound > 100) finalDmg *= 10; // 时间太长时增加伤害快速结束
         finalDmg = Math.floor(finalDmg);
         aim.hp -= finalDmg;
 
