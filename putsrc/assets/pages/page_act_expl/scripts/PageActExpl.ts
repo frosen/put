@@ -71,15 +71,15 @@ export class PageActExpl extends BattlePageBase {
     @property(cc.Label) rageLbl: cc.Label = null;
 
     @property(cc.Button) btnCatch: cc.Button = null;
-    @property(cc.Button) btnEscape: cc.Button = null;
     @property(cc.Button) btnHide: cc.Button = null;
+    @property(cc.Button) btnEnter: cc.Button = null;
 
     @property(cc.Label)
     newLogTipLbl: cc.Label = null;
 
     lblBtnCatch: cc.Label = null;
-    lblBtnEscape: cc.Label = null;
     lblBtnHide: cc.Label = null;
+    lblBtnEnter: cc.Label = null;
 
     listView: ListView = null;
     lvd: PageActExplLVD = null;
@@ -91,12 +91,12 @@ export class PageActExpl extends BattlePageBase {
         if (CC_EDITOR) return;
 
         this.lblBtnCatch = this.btnCatch.getComponentInChildren(cc.Label);
-        this.lblBtnEscape = this.btnEscape.getComponentInChildren(cc.Label);
         this.lblBtnHide = this.btnHide.getComponentInChildren(cc.Label);
+        this.lblBtnEnter = this.btnEnter.getComponentInChildren(cc.Label);
 
         this.btnCatch.node.on('click', this.onClickCatch, this);
-        this.btnEscape.node.on('click', this.onClickEscape, this);
         this.btnHide.node.on('click', this.onClickHide, this);
+        this.btnEnter.node.on('click', this.onClickEnter, this);
 
         this.listView = this.getComponentInChildren(ListView);
         this.lvd = this.getComponent(PageActExplLVD);
@@ -463,12 +463,17 @@ export class PageActExpl extends BattlePageBase {
         }
     }
 
-    onClickEscape() {
-        this.updater.executeEscape();
-    }
-
     onClickHide() {
         this.updater.executeHide();
+    }
+
+    onClickEnter() {
+        if (this.enterIsReady) {
+            this.updater.enterNextStep();
+            this.setEnterReady(false);
+        } else {
+            this.ctrlr.popToast('当前阶段探索度高于99%后才可进入下一阶段');
+        }
     }
 
     setCatchActive(b: boolean) {
@@ -477,6 +482,18 @@ export class PageActExpl extends BattlePageBase {
 
     setHideActive(b: boolean) {
         this.lblBtnHide.string = b ? '潜行中' : '潜行';
+    }
+
+    enterIsReady: boolean = false;
+
+    setEnterReady(b: boolean) {
+        if (this.enterIsReady === b) return;
+        this.enterIsReady = b;
+        if (b) {
+            this.lblBtnEnter.node.color = cc.Color.BLACK;
+        } else {
+            this.lblBtnEnter.node.color = cc.color(175, 175, 175);
+        }
     }
 
     // list -----------------------------------------------------------------

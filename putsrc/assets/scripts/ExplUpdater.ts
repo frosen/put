@@ -220,6 +220,7 @@ export class ExplUpdater {
             this.lastTime = lastTime;
 
             this.recoverExplStepPercent(curExpl);
+            this.resetAllUI();
             this.startExpl();
             return;
         }
@@ -315,7 +316,7 @@ export class ExplUpdater {
         const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
         const speedChangeCnt = rztSt.moveCnt * speedUpCnt;
         if (speedUpCnt !== 0) {
-            this.updCnt += speedUpCnt;
+            this.updCnt += speedChangeCnt;
             this.updateChgUpdCnt();
             this.gameData.curExpl.stepEnterTime -= speedUpCnt * ExplInterval;
         }
@@ -328,8 +329,9 @@ export class ExplUpdater {
             }
         });
 
+        this.resetAllUI();
         this.recoverExplStepPercent(curExpl);
-        this.saveNewStep(curStep);
+
         this.startExpl();
     }
 
@@ -639,8 +641,11 @@ export class ExplUpdater {
             this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
         }
 
-        this.page.setCatchActive(this.gameData.curExpl.catcherId !== null);
-        this.page.setHideActive(this.gameData.curExpl.hiding);
+        const curExpl = this.gameData.curExpl;
+        this.page.setCatchActive(curExpl.catcherId !== null);
+        this.page.setHideActive(curExpl.hiding);
+
+        this.page.setEnterReady(this.updCnt >= NeedUpdCntByStep[curExpl.curStep]);
     }
 
     // -----------------------------------------------------------------
@@ -940,7 +945,7 @@ export class ExplUpdater {
                 if (this.page) this.page.setExplStepUI();
             }
             if (this.updCnt >= nextStepUpdCnt) {
-                if (this.page) this.page.showEnterNextTip();
+                if (this.page) this.page.setEnterReady(true);
             }
         }
 
@@ -1258,15 +1263,13 @@ export class ExplUpdater {
         if (this.page) this.page.setCatchActive(catcherId !== null);
     }
 
-    executeEscape() {
-        this.battleCtrlr.escape();
-    }
-
     executeHide() {
         const cur = !this.gameData.curExpl.hiding;
         this.gameData.curExpl.hiding = cur;
         if (this.page) this.page.setHideActive(cur);
     }
+
+    executeEnter() {}
 
     // -----------------------------------------------------------------
 

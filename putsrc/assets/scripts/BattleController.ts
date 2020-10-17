@@ -252,11 +252,10 @@ export class BattleController {
             if (rb.start === false) break;
             const nextNextId = this.getNextOrderIndex();
             if (nextNextId === -1) break;
+            if (rb.sequnence[rb.curSequenceIdx + 1] !== startSequenceIdx) break;
 
             rb.curOrderIdx = nextNextId;
             rb.curSequenceIdx++;
-            if (rb.sequnence[rb.curSequenceIdx] !== startSequenceIdx) break;
-
             rb.combo++;
 
             const nextPet = rb.order[nextNextId];
@@ -689,11 +688,6 @@ export class BattleController {
     endBattle(selfWin: boolean) {
         this.updater.log(ExplLogType.repeat, selfWin ? '战斗胜利' : '战斗失败');
         this.exitBattle(selfWin);
-    }
-
-    escape() {
-        this.updater.log(ExplLogType.repeat, '撤退');
-        this.exitBattle(false);
     }
 
     exitBattle(selfWin: boolean) {

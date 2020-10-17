@@ -2562,7 +2562,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "button_escape",
+    "_name": "button_hide",
     "_objFlags": 0,
     "_parent": {
       "__id__": 32
@@ -2777,8 +2777,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "撤退",
-    "_N$string": "撤退",
+    "_string": "潜行",
+    "_N$string": "潜行",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": false,
@@ -2969,7 +2969,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "button_hide",
+    "_name": "button_enter",
     "_objFlags": 0,
     "_parent": {
       "__id__": 32
@@ -3126,9 +3126,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 0,
-      "g": 0,
-      "b": 0,
+      "r": 175,
+      "g": 175,
+      "b": 175,
       "a": 255
     },
     "_contentSize": {
@@ -3184,8 +3184,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "潜行",
-    "_N$string": "潜行",
+    "_string": "前进",
+    "_N$string": "前进",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": false,
@@ -3712,10 +3712,10 @@
     "btnCatch": {
       "__id__": 67
     },
-    "btnEscape": {
+    "btnHide": {
       "__id__": 77
     },
-    "btnHide": {
+    "btnEnter": {
       "__id__": 87
     },
     "newLogTipLbl": {
