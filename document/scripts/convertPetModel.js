@@ -32,11 +32,11 @@ convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.ts', 'pet', 'pet
         let baseConcentration = Number(rowData[8]);
         let addConcentration = Number(rowData[9]);
 
-        let baseDurability = Number(rowData[12]);
-        let addDurability = Number(rowData[13]);
+        let baseDurability = Number(rowData[10]);
+        let addDurability = Number(rowData[11]);
 
-        let baseAgility = Number(rowData[10]);
-        let addAgility = Number(rowData[11]);
+        let baseAgility = Number(rowData[12]);
+        let addAgility = Number(rowData[13]);
 
         let baseSensitivity = Number(rowData[14]);
         let addSensitivity = Number(rowData[15]);
