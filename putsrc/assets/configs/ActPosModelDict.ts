@@ -18,7 +18,10 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                 goodsIdList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1']
             },
             [PAKey.eqpMkt]: {
-                eqpIdLists: [['DuanJian', 'ChangRenJian'], ['TieZhiYuGan', 'JingZhiYuGan']]
+                eqpIdLists: [
+                    ['DuanJian', 'ChangRenJian'],
+                    ['TieZhiYuGan', 'JingZhiYuGan']
+                ]
             },
             [PAKey.petMkt]: {
                 petIdLists: [

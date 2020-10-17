@@ -1310,7 +1310,7 @@ export class GameDataTool {
         for (const quest of gameData.quests) {
             const model = questModelDict[quest.questId];
             if (model.type !== questType) continue;
-            if (quest.progress < model.need.count) continue;
+            if (quest.progress >= model.need.count) continue;
             if (!check(model)) continue;
             return { quest, model };
         }
@@ -1321,7 +1321,7 @@ export class GameDataTool {
         for (const quest of gameData.quests) {
             const model = questModelDict[quest.questId];
             if (model.type !== questType) continue;
-            if (quest.progress < model.need.count) continue;
+            if (quest.progress >= model.need.count) continue;
             call(quest, model);
         }
     }
