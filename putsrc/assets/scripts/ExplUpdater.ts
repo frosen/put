@@ -933,6 +933,8 @@ export class ExplUpdater {
             this.explStepPercent = 0;
 
             this.logEnter();
+            this.popToastForEnter();
+
             if (this.page) this.page.setExplStepUI();
             this.startExpl(); // 重新开始探索
             return;
@@ -982,12 +984,15 @@ export class ExplUpdater {
     logEnter() {
         const curExpl = this.gameData.curExpl;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-        const curStep = curExpl.curStep;
+        const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
+        this.log(ExplLogType.rich, `进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`);
+    }
 
-        const posName = actPosModelDict[curExpl.curPosId].cnName;
-        const stepType = StepTypesByMax[curExplModel.stepMax][curStep];
-        const stepName = ExplStepNames[stepType];
-        this.log(ExplLogType.rich, '进入' + posName + stepName);
+    popToastForEnter() {
+        const curExpl = this.gameData.curExpl;
+        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
+        this.page.ctrlr.popToast(`进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`);
     }
 
     saveNewStep(step: number) {
@@ -1000,6 +1005,12 @@ export class ExplUpdater {
 
     enterNextStep() {
         this.stepEntering = true;
+        if (this.page && this.state !== ExplState.explore) {
+            const curExpl = this.gameData.curExpl;
+            const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+            const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep + 1] || 0;
+            this.page.ctrlr.popToast(`准备进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`);
+        }
     }
 
     gainRes() {

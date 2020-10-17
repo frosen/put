@@ -74,6 +74,10 @@ export class PageActExpl extends BattlePageBase {
     @property(cc.Button) btnHide: cc.Button = null;
     @property(cc.Button) btnEnter: cc.Button = null;
 
+    @property(cc.Node) enterTipNode: cc.Node = null;
+    @property(cc.Label) enterTipLbl1: cc.Label = null;
+    @property(cc.Label) enterTipLbl2: cc.Label = null;
+
     @property(cc.Label)
     newLogTipLbl: cc.Label = null;
 
@@ -489,10 +493,26 @@ export class PageActExpl extends BattlePageBase {
     setEnterReady(b: boolean) {
         if (this.enterIsReady === b) return;
         this.enterIsReady = b;
+        this.enterTipNode.stopAllActions();
+
         if (b) {
             this.lblBtnEnter.node.color = cc.Color.BLACK;
+            cc.tween(this.enterTipNode).to(0.3, { opacity: 255 }).start();
+
+            const curExpl = this.ctrlr.memory.gameData.curExpl;
+            const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+            const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep + 1] || 0;
+            this.enterTipLbl1.string = actPosModelDict[curExpl.curPosId].cnName;
+            this.enterTipLbl2.string = ExplStepNames[stepType];
+
+            // @ts-ignore
+            this.enterTipLbl1._assembler.updateRenderData(this.enterTipLbl1);
+            // @ts-ignore
+            this.enterTipLbl2._assembler.updateRenderData(this.enterTipLbl2);
+            this.enterTipNode.getComponent(cc.Layout).updateLayout();
         } else {
             this.lblBtnEnter.node.color = cc.color(175, 175, 175);
+            cc.tween(this.enterTipNode).to(0.3, { opacity: 0 }).start();
         }
     }
 
