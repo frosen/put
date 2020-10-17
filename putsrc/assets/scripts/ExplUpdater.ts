@@ -1285,16 +1285,13 @@ export class ExplUpdater {
     // -----------------------------------------------------------------
 
     logList: ExplLogData[] = [];
-    newLogCount: number = 0;
 
     log(type: ExplLogType, data: any) {
         cc.log('PUT EXPL: ', type, data);
         this.logList[this.logList.length] = { type, data };
-        if (this.logList.length > 200) this.logList = this.logList.slice(100);
-        this.newLogCount++;
     }
 
-    clearNewLogCount() {
-        this.newLogCount = 0;
+    clearLogList() {
+        this.logList.length = 0;
     }
 }
