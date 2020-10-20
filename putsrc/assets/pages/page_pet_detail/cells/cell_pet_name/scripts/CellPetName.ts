@@ -16,8 +16,17 @@ export class CellPetName extends ListViewCell {
     @property(cc.Label)
     subName: cc.Label = null;
 
+    @property(cc.Node)
+    editBtn: cc.Node = null;
+
     @property(cc.Label)
     state: cc.Label = null;
+
+    @property(cc.Layout)
+    layout: cc.Layout = null;
+
+    @property(cc.EditBox)
+    editBox: cc.EditBox = null;
 
     tip: string = '';
 
@@ -26,11 +35,15 @@ export class CellPetName extends ListViewCell {
         if (CC_EDITOR) return;
 
         this.state.node.on(cc.Node.EventType.TOUCH_END, this.onClickState.bind(this));
+        this.editBtn.on(cc.Node.EventType.TOUCH_END, this.onClickNameModifyBtn.bind(this));
     }
 
     setData(petName: string, subName: string, masterName: string, stateTip: string) {
         this.petName.string = petName;
         this.subName.string = subName;
+        ListViewCell.rerenderLbl(this.petName);
+        ListViewCell.rerenderLbl(this.subName);
+        this.layout.updateLayout();
         this.state.string = '状态：' + masterName;
         this.tip = stateTip;
     }
