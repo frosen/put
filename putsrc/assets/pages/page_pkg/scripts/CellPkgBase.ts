@@ -34,11 +34,6 @@ export class CellPkgBase extends ListViewCell {
         this.curItemIdx = itemIdx;
     }
 
-    static rerenderLbl(lbl: cc.Label) {
-        // @ts-ignore
-        lbl._assembler.updateRenderData(lbl);
-    }
-
     onClick() {
         cc.log('PUT click eqpAmplr cell: ', this.curCellIdx, this.curItemIdx);
         if (this.clickCallback) this.clickCallback(this);

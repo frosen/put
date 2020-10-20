@@ -11,6 +11,7 @@ import { Material } from 'scripts/DataSaved';
 import { materialModelDict } from 'configs/MaterialModelDict';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { MaterialModel } from 'scripts/DataModel';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
 export class CellPkgMaterial extends CellPkgCnsum {
@@ -37,8 +38,8 @@ export class CellPkgMaterial extends CellPkgCnsum {
         this.nameLbl.string = materialModel.cnName;
         this.lvLbl.string = `[MaxL${materialModel.lvMax}]`;
 
-        CellPkgBase.rerenderLbl(this.nameLbl);
-        CellPkgBase.rerenderLbl(this.lvLbl);
+        ListViewCell.rerenderLbl(this.nameLbl);
+        ListViewCell.rerenderLbl(this.lvLbl);
 
         for (const layout of this.layouts) layout.updateLayout();
     }

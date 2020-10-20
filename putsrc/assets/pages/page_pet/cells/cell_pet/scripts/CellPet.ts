@@ -64,8 +64,8 @@ export class CellPet extends ListViewCell {
         this.petNameLbl.string = PetDataTool.getCnName(pet, true);
         this.subNameLbl.string = pet.nickname ? '(' + PetDataTool.getBaseCnName(pet) + ')' : '';
         this.lvLbl.string = `[L${pet.lv}${PetRankNames[pet.rank]}]`;
-        CellPet.rerenderLbl(this.petNameLbl);
-        CellPet.rerenderLbl(this.lvLbl);
+        ListViewCell.rerenderLbl(this.petNameLbl);
+        ListViewCell.rerenderLbl(this.lvLbl);
         this.petNameLbl.node.parent.getComponent(cc.Layout).updateLayout();
 
         this.petSp.node.color = EleColor[petModelDict[pet.id].eleType];
@@ -108,13 +108,8 @@ export class CellPet extends ListViewCell {
         infoNode.color = color;
         const lbl = infoNode.children[0].getComponent(cc.Label);
         lbl.string = str;
-        CellPet.rerenderLbl(lbl);
+        ListViewCell.rerenderLbl(lbl);
         infoNode.getComponent(cc.Layout).updateLayout();
-    }
-
-    static rerenderLbl(lbl: cc.Label) {
-        // @ts-ignore
-        lbl._assembler.updateRenderData(lbl);
     }
 
     onClick() {

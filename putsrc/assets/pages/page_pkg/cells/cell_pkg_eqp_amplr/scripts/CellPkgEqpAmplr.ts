@@ -11,6 +11,7 @@ import { EqpAmplr } from 'scripts/DataSaved';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { EqpAmplrModel } from 'scripts/DataModel';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
 export class CellPkgEqpAmplr extends CellPkgCnsum {
@@ -38,8 +39,8 @@ export class CellPkgEqpAmplr extends CellPkgCnsum {
         this.nameLbl.string = eqpAmplrModel.cnName;
         this.lvLbl.string = `[MaxL${eqpAmplrModel.lvMax}]`;
 
-        CellPkgBase.rerenderLbl(this.nameLbl);
-        CellPkgBase.rerenderLbl(this.lvLbl);
+        ListViewCell.rerenderLbl(this.nameLbl);
+        ListViewCell.rerenderLbl(this.lvLbl);
 
         for (const layout of this.layouts) layout.updateLayout();
     }

@@ -11,6 +11,7 @@ import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { Catcher, BioTypeNames, EleTypeNames, BattleTypeNames, PetRankNames } from 'scripts/DataSaved';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { CatcherModel } from 'scripts/DataModel';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
 export class CellPkgCatcher extends CellPkgCnsum {
@@ -55,12 +56,12 @@ export class CellPkgCatcher extends CellPkgCnsum {
         this.lvLbl.string = `[L${catcherModel.lvMin}~${catcherModel.lvMax}]`;
         this.rankLbl.string = `[${PetRankNames[catcherModel.rankMin]}~${PetRankNames[catcherModel.rankMax]}]`;
 
-        CellPkgBase.rerenderLbl(this.nameLbl);
-        CellPkgBase.rerenderLbl(this.lvLbl);
-        CellPkgBase.rerenderLbl(this.rankLbl);
+        ListViewCell.rerenderLbl(this.nameLbl);
+        ListViewCell.rerenderLbl(this.lvLbl);
+        ListViewCell.rerenderLbl(this.rankLbl);
 
         this.rateLbl.string = `成功率${Math.round(catcherModel.rate * 0.5)}-${catcherModel.rate}%`;
-        CellPkgBase.rerenderLbl(this.rateLbl);
+        ListViewCell.rerenderLbl(this.rateLbl);
         CellPkgCatcher.setTypeName(catcherModel.bioType, BioTypeNames, this.bioLbl, this.bioLbl.node.parent);
         CellPkgCatcher.setTypeName(catcherModel.eleType, EleTypeNames, this.eleLbl, this.eleLbl.node.parent);
         CellPkgCatcher.setTypeName(catcherModel.battleType, BattleTypeNames, this.btlTypeLbl, this.btlTypeLbl.node.parent);
@@ -72,7 +73,7 @@ export class CellPkgCatcher extends CellPkgCnsum {
         if (data) {
             baseNode.scaleX = 1;
             lbl.string = names[data];
-            CellPkgBase.rerenderLbl(lbl);
+            ListViewCell.rerenderLbl(lbl);
         } else {
             baseNode.scaleX = 0;
         }

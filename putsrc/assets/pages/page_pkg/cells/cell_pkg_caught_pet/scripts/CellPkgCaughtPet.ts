@@ -10,6 +10,7 @@ import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { CaughtPet, PetRankNames } from 'scripts/DataSaved';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { CaughtPetDataTool } from 'scripts/Memory';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
 export class CellPkgCaughtPet extends CellPkgBase {
@@ -61,7 +62,7 @@ export class CellPkgCaughtPet extends CellPkgBase {
         infoNode.color = color;
         const lbl = infoNode.children[0].getComponent(cc.Label);
         lbl.string = str;
-        CellPkgBase.rerenderLbl(lbl);
+        ListViewCell.rerenderLbl(lbl);
         infoNode.getComponent(cc.Layout).updateLayout();
     }
 }

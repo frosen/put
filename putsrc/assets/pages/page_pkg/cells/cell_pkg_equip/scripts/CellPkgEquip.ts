@@ -13,6 +13,7 @@ import { skillModelDict } from 'configs/SkillModelDict';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { SkillType } from 'scripts/DataModel';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 const RankColor = [null, cc.Color.BLACK, cc.Color.BLUE, cc.color(153, 50, 205)];
 
@@ -77,9 +78,9 @@ export class CellPkgEquip extends CellPkgBase {
             this.skillLbl.node.parent.opacity = 0;
         }
 
-        CellPkgBase.rerenderLbl(this.nameLbl);
-        CellPkgBase.rerenderLbl(this.lvLbl);
-        CellPkgBase.rerenderLbl(this.skillLbl);
+        ListViewCell.rerenderLbl(this.nameLbl);
+        ListViewCell.rerenderLbl(this.lvLbl);
+        ListViewCell.rerenderLbl(this.skillLbl);
         for (const layout of this.layouts) layout.updateLayout();
 
         const attriInfos = [];
@@ -120,7 +121,7 @@ export class CellPkgEquip extends CellPkgBase {
             infoNode.opacity = 255;
             infoNode.color = c;
             lbl.string = str;
-            CellPkgBase.rerenderLbl(lbl);
+            ListViewCell.rerenderLbl(lbl);
             layout.updateLayout();
         }
 

@@ -73,8 +73,7 @@ export class CellTransaction extends ListViewCell {
         this.subDataLbl.string = subData || '';
         this.subDataLbl.node.color = subLblColor || cc.color(150, 150, 150);
         if (subData) {
-            // @ts-ignore
-            this.priceLbl._assembler.updateRenderData(this.priceLbl);
+            ListViewCell.rerenderLbl(this.priceLbl);
             this.layout.updateLayout();
         }
     }

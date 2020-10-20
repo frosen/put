@@ -11,6 +11,7 @@ import { DrinkModel } from 'scripts/DataModel';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { AmplAttriNames } from 'scripts/DataOther';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
+import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
 export class CellPkgDrink extends CellPkgCnsum {
@@ -44,8 +45,8 @@ export class CellPkgDrink extends CellPkgCnsum {
         this.nameLbl.string = drinkModel.cnName;
         this.lvLbl.string = `[MaxL${drinkModel.lvMax}]`;
 
-        CellPkgDrink.rerenderLbl(this.nameLbl);
-        CellPkgDrink.rerenderLbl(this.lvLbl);
+        ListViewCell.rerenderLbl(this.nameLbl);
+        ListViewCell.rerenderLbl(this.lvLbl);
 
         this.mainAttri.string = `${AmplAttriNames[drinkModel.mainAttri]}+${drinkModel.mainPercent}%`;
         if (drinkModel.subAttri) {
@@ -55,8 +56,8 @@ export class CellPkgDrink extends CellPkgCnsum {
             this.subAttri.node.parent.scaleX = 0;
         }
 
-        CellPkgDrink.rerenderLbl(this.mainAttri);
-        CellPkgDrink.rerenderLbl(this.subAttri);
+        ListViewCell.rerenderLbl(this.mainAttri);
+        ListViewCell.rerenderLbl(this.subAttri);
 
         for (const layout of this.layouts) layout.updateLayout();
     }

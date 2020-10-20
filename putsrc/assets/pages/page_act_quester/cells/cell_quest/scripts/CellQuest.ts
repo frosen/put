@@ -99,10 +99,10 @@ export class CellQuest extends ListViewCell {
             this.stateLbl.string = `  ${quest.progress} / ${questModel.need.count}`;
         }
 
-        CellQuest.rerenderLbl(this.nameLbl);
-        CellQuest.rerenderLbl(this.stateLbl);
-        for (const lbl of this.needLbls) CellQuest.rerenderLbl(lbl);
-        for (const lbl of this.awardLbls) CellQuest.rerenderLbl(lbl);
+        ListViewCell.rerenderLbl(this.nameLbl);
+        ListViewCell.rerenderLbl(this.stateLbl);
+        for (const lbl of this.needLbls) ListViewCell.rerenderLbl(lbl);
+        for (const lbl of this.awardLbls) ListViewCell.rerenderLbl(lbl);
 
         for (const layout of this.layouts) layout.updateLayout();
     }
@@ -192,11 +192,6 @@ export class CellQuest extends ListViewCell {
             }
             lbls[3].string = itemNames;
         }
-    }
-
-    static rerenderLbl(lbl: cc.Label) {
-        // @ts-ignore
-        lbl._assembler.updateRenderData(lbl);
     }
 
     onClick() {
