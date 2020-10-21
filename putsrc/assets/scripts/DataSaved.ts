@@ -199,9 +199,33 @@ export class PADPetMkt extends PADBase {
     pets: CaughtPet[];
 }
 
+export enum QuestDLineType {
+    in3h = 1,
+    in6h
+}
+
+export const QuestDLines = [0, 3 * 60 * 60 * 1000, 6 * 60 * 60 * 1000];
+export const QuestDLineAwardRates = [0, 1.2, 1.5];
+
+export enum QuestAmplType {
+    ampl = 1,
+    double
+}
+
+export const QuestAmplRates = [0, 1.5, 2];
+export const QuestAmplAwardRates = [0, 1.2, 1.5];
+
+export class Quest {
+    id: string;
+    startTime: number;
+    progress: number;
+    dLine: QuestDLineType;
+    ampl: QuestAmplType;
+}
+
 export class PADQuester extends PADBase {
     updateTime: number;
-    questIds: string[];
+    quests: Quest[];
     doneTimeDict: { [key: string]: number };
 }
 
@@ -255,10 +279,9 @@ export class ExplMmr {
 
 // -----------------------------------------------------------------
 
-export class Quest {
-    questId: string;
+export class AcceQuestInfo {
     posId: string;
-    progress: number;
+    questId: string;
 }
 
 // -----------------------------------------------------------------
@@ -278,5 +301,5 @@ export class GameData {
 
     curExpl: ExplMmr;
 
-    quests: Quest[];
+    acceQuestInfos: AcceQuestInfo[]; // 已经接受了的quest
 }

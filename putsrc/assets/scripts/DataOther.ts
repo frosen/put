@@ -42,7 +42,6 @@ import { randomRate, getRandomOneInList, normalRandom } from './Random';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { expModels } from 'configs/ExpModels';
 
-export const AmplAttriNames = ['', '经验', '探索受益', '工作受益', '默契', '声望', '力量', '专注', '耐久'];
 export enum AmplAttriType {
     none,
     exp,
@@ -55,6 +54,8 @@ export enum AmplAttriType {
     concentration,
     durability
 }
+
+export const AmplAttriNames = ['', '经验', '探索受益', '工作受益', '默契', '声望', '力量', '专注', '耐久'];
 
 const NotNeedPetType = [AmplAttriType.expl, AmplAttriType.reput];
 

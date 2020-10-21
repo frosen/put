@@ -38,7 +38,13 @@ import {
     PADQuester,
     PADACntr,
     PADBase,
-    Quest
+    Quest,
+    AcceQuestInfo,
+    QuestDLineType,
+    QuestAmplType,
+    QuestAmplRates,
+    QuestAmplAwardRates,
+    QuestDLineAwardRates
 } from './DataSaved';
 import {
     FeatureModel,
@@ -856,7 +862,7 @@ export class PosDataTool {
     static createPADQuester(): PADQuester {
         const pADQuester = newInsWithChecker(PADQuester);
         pADQuester.updateTime = 0;
-        pADQuester.questIds = [];
+        pADQuester.quests = [];
         pADQuester.doneTimeDict = {};
         return pADQuester;
     }
@@ -865,6 +871,36 @@ export class PosDataTool {
         const pADACntr = newInsWithChecker(PADACntr);
         pADACntr.soldoutList = [];
         return pADACntr;
+    }
+}
+
+export class QuestDataTool {
+    static create(id: string, dLine: QuestDLineType, ampl: QuestAmplType): Quest {
+        const quest = newInsWithChecker(Quest);
+        quest.id = id;
+        quest.startTime = Date.now();
+        quest.progress = 0;
+        quest.dLine = dLine;
+        quest.ampl = ampl;
+        return quest;
+    }
+
+    static getRealCount(quest: Quest): number {
+        const model = questModelDict[quest.id];
+        const count = model.need.count;
+        return Math.floor(count * (1 + QuestAmplRates[quest.ampl]));
+    }
+
+    static getRealReput(quest: Quest): number {
+        const model = questModelDict[quest.id];
+        const reput = model.awardReput;
+        return Math.floor(reput * (1 + QuestAmplAwardRates[quest.ampl]) * (1 + QuestDLineAwardRates[quest.dLine]));
+    }
+
+    static getRealMoney(quest: Quest): number {
+        const model = questModelDict[quest.id];
+        const money = model.awardMoney;
+        return Math.floor(money * (1 + QuestAmplAwardRates[quest.ampl]) * (1 + QuestDLineAwardRates[quest.dLine]));
     }
 }
 
@@ -912,13 +948,12 @@ export class MmrTool {
     }
 }
 
-export class QuestDataTool {
-    static create(questId: string, posId: string): Quest {
-        const quest = newInsWithChecker(Quest);
-        quest.questId = questId;
-        quest.posId = posId;
-        quest.progress = 0;
-        return quest;
+export class AcceQuestInfoTool {
+    static create(questId: string, posId: string): AcceQuestInfo {
+        const questInfo = newInsWithChecker(AcceQuestInfo);
+        questInfo.questId = questId;
+        questInfo.posId = posId;
+        return questInfo;
     }
 }
 
@@ -943,7 +978,7 @@ export class GameDataTool {
 
         gameData.curExpl = null;
 
-        gameData.quests = newList();
+        gameData.acceQuestInfos = newList();
     }
 
     // -----------------------------------------------------------------
@@ -1283,21 +1318,19 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
-    static addQuest(gameData: GameData, questId: string, posId: string): string {
-        if (gameData.quests.length >= 10) return '任务数量已达到最大值\n请先完成已经接受了的任务';
-        const quest = QuestDataTool.create(questId, posId);
-        gameData.quests.push(quest);
+    static addAcceQuest(gameData: GameData, questId: string, posId: string): string {
+        if (gameData.acceQuestInfos.length >= 10) return '任务数量已达到最大值\n请先完成已经接受了的任务';
+        const quest = AcceQuestInfoTool.create(questId, posId);
+        gameData.acceQuestInfos.push(quest);
         return GameDataTool.SUC;
     }
 
-    static deleteQuest(gameData: GameData, questId: string, posId: string) {
-        const quest = QuestDataTool.create(questId, posId);
-        gameData.quests.push(quest);
-        for (let index = 0; index < gameData.quests.length; index++) {
-            const quest = gameData.quests[index];
+    static deleteAcceQuest(gameData: GameData, questId: string, posId: string) {
+        for (let index = 0; index < gameData.acceQuestInfos.length; index++) {
+            const quest = gameData.acceQuestInfos[index];
             if (quest.posId === posId && quest.questId === questId) {
-                gameData.quests.splice(index, 1);
-                return;
+                gameData.acceQuestInfos.splice(index, 1);
+                break;
             }
         }
     }
@@ -1305,24 +1338,32 @@ export class GameDataTool {
     static getNeedQuest(
         gameData: GameData,
         questType: QuestType,
-        check: (model: QuestModel) => boolean
+        check: (quest: Quest, model: QuestModel) => boolean
     ): { quest: Quest; model: QuestModel } {
-        for (const quest of gameData.quests) {
-            const model = questModelDict[quest.questId];
+        for (const questInfo of gameData.acceQuestInfos) {
+            const model = questModelDict[questInfo.questId];
             if (model.type !== questType) continue;
-            if (quest.progress >= model.need.count) continue;
-            if (!check(model)) continue;
-            return { quest, model };
+            const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
+            for (const quest of quests) {
+                if (quest.id !== questInfo.questId) continue;
+                if (quest.progress >= QuestDataTool.getRealCount(quest)) continue;
+                if (!check(quest, model)) continue;
+                return { quest, model };
+            }
         }
         return null;
     }
 
     static eachNeedQuest(gameData: GameData, questType: QuestType, call: (quest: Quest, model: QuestModel) => void) {
-        for (const quest of gameData.quests) {
-            const model = questModelDict[quest.questId];
+        for (const questInfo of gameData.acceQuestInfos) {
+            const model = questModelDict[questInfo.questId];
             if (model.type !== questType) continue;
-            if (quest.progress >= model.need.count) continue;
-            call(quest, model);
+            const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
+            for (const quest of quests) {
+                if (quest.id !== questInfo.questId) continue;
+                if (quest.progress >= QuestDataTool.getRealCount(quest)) continue;
+                call(quest, model);
+            }
         }
     }
 

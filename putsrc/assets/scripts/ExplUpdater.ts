@@ -5,7 +5,16 @@
  */
 
 import { BattlePageBase } from './BattlePageBase';
-import { Memory, GameDataTool, PetDataTool, EquipDataTool, CnsumDataTool, MmrTool, MoneyTool } from 'scripts/Memory';
+import {
+    Memory,
+    GameDataTool,
+    PetDataTool,
+    EquipDataTool,
+    CnsumDataTool,
+    MmrTool,
+    MoneyTool,
+    QuestDataTool
+} from 'scripts/Memory';
 import { BattleController } from './BattleController';
 import {
     GameData,
@@ -324,8 +333,9 @@ export class ExplUpdater {
         // 调查类任务
         GameDataTool.eachNeedQuest(gameData, QuestType.search, (quest: Quest, model: QuestModel) => {
             const need = model.need as SearchQuestNeed;
-            if (curExpl.curPosId === need.posId && curStep === need.step && this.updCnt >= need.count) {
-                quest.progress = need.count;
+            const count = QuestDataTool.getRealCount(quest);
+            if (curExpl.curPosId === need.posId && curStep === need.step && this.updCnt >= count) {
+                quest.progress = count;
             }
         });
 
@@ -514,7 +524,8 @@ export class ExplUpdater {
             const meetRate = 1 - Math.pow((curStepPetLen - petHaveCnt) / curStepPetLen, 2); // llytodo 测试运算是否正确
             const meetCnt = Math.floor(winCount * meetRate);
             if (meetCnt <= 0) return;
-            let diff = Math.min(need.count - quest.progress, meetCnt);
+            const count = QuestDataTool.getRealCount(quest);
+            let diff = Math.min(count - quest.progress, meetCnt);
             if (fQCnt + diff >= winCount) diff = winCount - fQCnt;
 
             fQCnt += diff;
@@ -532,7 +543,7 @@ export class ExplUpdater {
             if (gQuestCnt === gQuestCntMax) return;
             const need = model.need as GatherQuestNeed;
             if (curExpl.curPosId === need.posId && curStep === need.step) {
-                let diff = need.count - quest.progress;
+                let diff = QuestDataTool.getRealCount(quest) - quest.progress;
                 if (gQuestCnt + diff >= gQuestCntMax) diff = gQuestCntMax - gQuestCnt;
 
                 gQuestCnt += diff;
@@ -781,10 +792,14 @@ export class ExplUpdater {
             const curStep = curExpl.curStep;
             const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
 
-            const gQData = GameDataTool.getNeedQuest(this.gameData, QuestType.gather, (model: QuestModel): boolean => {
-                const need = model.need as GatherQuestNeed;
-                return posId === need.posId && curStep === need.step;
-            });
+            const gQData = GameDataTool.getNeedQuest(
+                this.gameData,
+                QuestType.gather,
+                (quest: Quest, model: QuestModel): boolean => {
+                    const need = model.need as GatherQuestNeed;
+                    return posId === need.posId && curStep === need.step;
+                }
+            );
 
             const gQuestRate = curExpl.hiding ? GatherQuestRateWhenHiding : GatherQuestRate;
             if (gQData && randomRate(gQuestRate)) {
@@ -964,15 +979,23 @@ export class ExplUpdater {
             if (this.trsrFinding) this.log(ExplLogType.repeat, '宝箱解锁中......');
             else if (this.enemyFinding) this.log(ExplLogType.repeat, '潜行接近中......');
             else {
-                const sQData = GameDataTool.getNeedQuest(this.gameData, QuestType.search, (model: QuestModel): boolean => {
-                    const need = model.need as SearchQuestNeed;
-                    return curExpl.curPosId === need.posId && curStep === need.step && this.updCnt >= need.count;
-                });
+                const sQData = GameDataTool.getNeedQuest(
+                    this.gameData,
+                    QuestType.search,
+                    (quest: Quest, model: QuestModel): boolean => {
+                        const need = model.need as SearchQuestNeed;
+                        return (
+                            curExpl.curPosId === need.posId &&
+                            curStep === need.step &&
+                            this.updCnt >= QuestDataTool.getRealCount(quest)
+                        );
+                    }
+                );
 
                 if (sQData && randomRate(0.1)) {
                     const { quest, model } = sQData;
                     const need = model.need as GatherQuestNeed;
-                    quest.progress = need.count;
+                    quest.progress = QuestDataTool.getRealCount(quest);
                     this.log(ExplLogType.rich, `找到${need.name} 任务 ${model.cnName} 完成`);
                 } else {
                     this.log(ExplLogType.repeat, '探索中......');
@@ -1019,16 +1042,21 @@ export class ExplUpdater {
         const curStep = curExpl.curStep;
 
         if (this.gatherQuestDoing) {
-            const gQData = GameDataTool.getNeedQuest(this.gameData, QuestType.gather, (model: QuestModel): boolean => {
-                const need = model.need as GatherQuestNeed;
-                return curExpl.curPosId === need.posId && curStep === need.step;
-            });
+            const gQData = GameDataTool.getNeedQuest(
+                this.gameData,
+                QuestType.gather,
+                (quest: Quest, model: QuestModel): boolean => {
+                    const need = model.need as GatherQuestNeed;
+                    return curExpl.curPosId === need.posId && curStep === need.step;
+                }
+            );
             if (gQData) {
                 const { quest, model } = gQData;
-                const need = model.need as GatherQuestNeed;
                 quest.progress++;
-                this.log(ExplLogType.rich, `采集到${need.name} 任务 ${model.cnName} ${quest.progress}/${need.count}`);
-                if (quest.progress >= need.count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
+                const need = model.need as GatherQuestNeed;
+                const count = QuestDataTool.getRealCount(quest);
+                this.log(ExplLogType.rich, `采集到${need.name} 任务 ${model.cnName} ${quest.progress}/${count}`);
+                if (quest.progress >= count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
             }
         } else if (this.trsrFinding) {
             const eqpIdLists = curExplModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
@@ -1209,7 +1237,7 @@ export class ExplUpdater {
     }
 
     doFightQuest() {
-        const fQData = GameDataTool.getNeedQuest(this.gameData, QuestType.fight, (model: QuestModel): boolean => {
+        const fQData = GameDataTool.getNeedQuest(this.gameData, QuestType.fight, (quest: Quest, model: QuestModel): boolean => {
             const need = model.need as FightQuestNeed;
             for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
                 if (need.petIds.includes(ePet.pet.id)) return true;
@@ -1220,8 +1248,9 @@ export class ExplUpdater {
             const { quest, model } = fQData;
             const need = model.need as FightQuestNeed;
             quest.progress++;
-            this.log(ExplLogType.rich, `获得${need.name} 任务 ${model.cnName} ${quest.progress}/${need.count}`);
-            if (quest.progress >= need.count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
+            const count = QuestDataTool.getRealCount(quest);
+            this.log(ExplLogType.rich, `获得${need.name} 任务 ${model.cnName} ${quest.progress}/${count}`);
+            if (quest.progress >= count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
         }
     }
 

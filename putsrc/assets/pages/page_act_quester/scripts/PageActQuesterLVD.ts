@@ -9,9 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { ListViewDelegate } from 'scripts/ListViewDelegate';
 import { ListView } from 'scripts/ListView';
 import { ListViewCell } from 'scripts/ListViewCell';
-import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
-import { CellPkgCaughtPet } from 'pages/page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
 import { PageActQuester } from './PageActQuester';
 import { CellQuest } from '../cells/cell_quest/scripts/CellQuest';
 import { questModelDict } from 'configs/QuestModelDict';
@@ -27,7 +25,7 @@ export class PageActQuesterLVD extends ListViewDelegate {
     page: PageActQuester;
 
     numberOfRows(listView: ListView): number {
-        return 1 + this.page.pADQuester.questIds.length;
+        return 1 + this.page.pADQuester.quests.length;
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
@@ -59,10 +57,10 @@ export class PageActQuesterLVD extends ListViewDelegate {
             cell.setData(this.page.pADQuester.updateTime);
         } else {
             const idx = rowIdx - 1;
-            const questId = this.page.pADQuester.questIds[idx];
-            const questModel = questModelDict[questId];
-            const quest = this.page.acceptedQuestDict[questId] || null;
-            cell.setData(questModel, quest);
+            const quest = this.page.pADQuester.quests[idx];
+            const questModel = questModelDict[quest.id];
+            const questInfo = this.page.acceQuestDict[quest.id] || null;
+            cell.setData(questModel, quest, questInfo);
         }
     }
 }

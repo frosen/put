@@ -6,25 +6,26 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CnsumDataTool, EquipDataTool, GameDataTool, MoneyTool } from 'scripts/Memory';
+import { CnsumDataTool, EquipDataTool, GameDataTool, MoneyTool, QuestDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { ListView } from 'scripts/ListView';
-import { Cnsum, GameData, PADQuester, Quest } from 'scripts/DataSaved';
+import { AcceQuestInfo, Cnsum, GameData, PADQuester, Quest, QuestAmplType, QuestDLineType } from 'scripts/DataSaved';
 import { PAKey, ActPosModel, QuesterModel, QuestModel, QuestType, SupportQuestNeed } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
-import { randomInt } from 'scripts/Random';
+import { getRandomOneInList, randomInt, randomRate } from 'scripts/Random';
 import { PageActQuesterLVD } from './PageActQuesterLVD';
 import { CellQuest, QuestState } from '../cells/cell_quest/scripts/CellQuest';
 
-export const QuesterUpdataInterval: number = 24 * 60 * 60 * 1000; // 更新间隔毫秒
+export const QuesterUpdateInterval: number = 12 * 60 * 60 * 1000; // 更新间隔毫秒
+export const QuesterReuseInterval: number = 24 * 60 * 60 * 1000; // 重新可用间隔毫秒
 
 @ccclass
 export class PageActQuester extends PageBase {
     @property(ListView)
     list: ListView = null;
 
-    acceptedQuestDict: { [key: string]: Quest };
+    acceQuestDict: { [key: string]: AcceQuestInfo };
     pADQuester: PADQuester;
 
     onLoad() {
@@ -40,11 +41,11 @@ export class PageActQuester extends PageBase {
     }
 
     resetAcceptedQuestDict(gameData: GameData) {
-        const acceptedQuestDict: { [key: string]: Quest } = {};
-        for (const usingQuest of gameData.quests) {
-            if (usingQuest.posId === gameData.curPosId) acceptedQuestDict[usingQuest.questId] = usingQuest;
+        const acceptedQuestDict: { [key: string]: AcceQuestInfo } = {};
+        for (const acceQuestInfo of gameData.acceQuestInfos) {
+            if (acceQuestInfo.posId === gameData.curPosId) acceptedQuestDict[acceQuestInfo.questId] = acceQuestInfo;
         }
-        this.acceptedQuestDict = acceptedQuestDict;
+        this.acceQuestDict = acceptedQuestDict;
     }
 
     resetPADQuester(gameData: GameData) {
@@ -55,10 +56,10 @@ export class PageActQuester extends PageBase {
         const doneTimeDict = pADQuester.doneTimeDict;
         for (const questId in doneTimeDict) {
             if (!doneTimeDict.hasOwnProperty(questId)) continue;
-            if (now > doneTimeDict[questId] + QuesterUpdataInterval) delete doneTimeDict[questId];
+            if (now > doneTimeDict[questId] + QuesterReuseInterval) delete doneTimeDict[questId];
         }
 
-        if (!pADQuester.updateTime || now > pADQuester.updateTime + QuesterUpdataInterval) {
+        if (!pADQuester.updateTime || now > pADQuester.updateTime + QuesterUpdateInterval) {
             pADQuester.updateTime = now;
             this.resetCurQuestList(pADQuester, actPosModelDict[posId]);
         }
@@ -73,15 +74,25 @@ export class PageActQuester extends PageBase {
             if (doneTimeDict.hasOwnProperty(questId)) continue;
             questIdList.push(questId);
         }
-        cc.assert(questIdList, `${posModel.id}的questIdList有问题`);
+
+        const savedQuests = [];
+        for (let index = 0; index < pADQuester.quests.length; index++) {
+            const quest = pADQuester.quests[index];
+            if (this.acceQuestDict.hasOwnProperty(quest.id)) savedQuests.push(quest);
+        }
+        pADQuester.quests = savedQuests; // 已经接受的任务不会消失
 
         const questCount = randomInt(4) + 3;
-
-        pADQuester.questIds = Object.keys(this.acceptedQuestDict); // 已经接受的任务不会消失
         for (let index = 0; index < questCount; index++) {
             if (questIdList.length === 0) break;
             const questId = questIdList.splice(randomInt(questIdList.length), 1)[0];
-            pADQuester.questIds.push(questId);
+            let dLine: QuestDLineType;
+            if (randomRate(0.3)) dLine = getRandomOneInList([QuestDLineType.in3h, QuestDLineType.in6h]);
+            else dLine = 0;
+            let ampl: QuestAmplType;
+            if (randomRate(0.3)) ampl = getRandomOneInList([QuestAmplType.ampl, QuestAmplType.double]);
+            else ampl = 0;
+            pADQuester.quests.push(QuestDataTool.create(questId, dLine, ampl));
         }
     }
 
@@ -117,7 +128,7 @@ export class PageActQuester extends PageBase {
 
     acceptQuest(questModel: QuestModel) {
         const gameData = this.ctrlr.memory.gameData;
-        const rzt = GameDataTool.addQuest(gameData, questModel.id, gameData.curPosId);
+        const rzt = GameDataTool.addAcceQuest(gameData, questModel.id, gameData.curPosId);
         if (rzt !== GameDataTool.SUC) {
             this.ctrlr.popToast(rzt);
             return;
@@ -133,7 +144,8 @@ export class PageActQuester extends PageBase {
         const gameData = this.ctrlr.memory.gameData;
 
         const model = CnsumDataTool.getModelById(need.itemId);
-        this.ctrlr.popAlert(`确定使用${need.count}个“${model.cnName}”\n完成任务 ${questModel.cnName}？`, (key: number) => {
+        const count = QuestDataTool.getRealCount(quest);
+        this.ctrlr.popAlert(`确定使用${count}个“${model.cnName}”\n完成任务 ${questModel.cnName}？`, (key: number) => {
             if (key !== 1) return;
             let needItem: Cnsum;
             let needItemIdx: number;
@@ -149,7 +161,7 @@ export class PageActQuester extends PageBase {
                 return;
             }
 
-            const realCount = Math.min(need.count, needItem.count);
+            const realCount = Math.min(count, needItem.count);
             const rzt = GameDataTool.deleteItem(gameData, needItemIdx, realCount);
             if (rzt !== GameDataTool.SUC) {
                 this.ctrlr.popToast(rzt);
@@ -158,10 +170,10 @@ export class PageActQuester extends PageBase {
 
             quest.progress += realCount;
 
-            if (quest.progress >= need.count) {
+            if (quest.progress >= count) {
                 this.ctrlr.popToast(`完成任务 ${questModel.cnName}`);
             } else {
-                this.ctrlr.popToast(`任务完成度 ${quest.progress} / ${need.count}`);
+                this.ctrlr.popToast(`任务完成度 ${quest.progress} / ${count}`);
             }
 
             this.resetAcceptedQuestDict(gameData);
@@ -179,9 +191,12 @@ export class PageActQuester extends PageBase {
 
     submitQuest(questModel: QuestModel, quest: Quest) {
         const gameData = this.ctrlr.memory.gameData;
-        GameDataTool.handleMoney(gameData, money => (money.sum += questModel.awardMoney));
-        GameDataTool.addReput(gameData, gameData.curPosId, questModel.awardReput);
-        let tip = `声望 ${questModel.awardMoney}\n通用币 ${MoneyTool.getSimpleStr(questModel.awardMoney)}`;
+
+        const awardMoney = QuestDataTool.getRealMoney(quest);
+        const awardReput = QuestDataTool.getRealReput(quest);
+        GameDataTool.handleMoney(gameData, money => (money.sum += awardMoney));
+        GameDataTool.addReput(gameData, gameData.curPosId, awardReput);
+        let tip = `声望 ${questModel.awardReput}\n通用币 ${MoneyTool.getSimpleStr(questModel.awardMoney)}`;
         for (const itemId of questModel.awardItemIds) {
             const cnsumModel = CnsumDataTool.getModelById(itemId);
             if (cnsumModel) {
@@ -193,8 +208,15 @@ export class PageActQuester extends PageBase {
                 tip += EquipDataTool.getCnName(equip) + '\n';
             }
         }
-        GameDataTool.deleteQuest(gameData, questModel.id, gameData.curPosId);
-        this.pADQuester.questIds.splice(this.pADQuester.questIds.indexOf(questModel.id), 1);
+
+        GameDataTool.deleteAcceQuest(gameData, questModel.id, gameData.curPosId);
+        for (let index = 0; index < this.pADQuester.quests.length; index++) {
+            const quest = this.pADQuester.quests[index];
+            if (quest.id === questModel.id) {
+                this.pADQuester.quests.splice(index, 1);
+                break;
+            }
+        }
         this.pADQuester.doneTimeDict[questModel.id] = Date.now();
 
         this.resetAcceptedQuestDict(gameData);

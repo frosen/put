@@ -9,8 +9,8 @@ const { ccclass, property } = cc._decorator;
 import { ListViewCell } from 'scripts/ListViewCell';
 import { petModelDict } from 'configs/PetModelDict';
 
-import { Quest } from 'scripts/DataSaved';
-import { CnsumDataTool, EquipDataTool, MoneyTool, PetDataTool } from 'scripts/Memory';
+import { AcceQuestInfo, Quest, QuestDLines } from 'scripts/DataSaved';
+import { CnsumDataTool, EquipDataTool, MoneyTool, QuestDataTool } from 'scripts/Memory';
 import {
     ExplStepNames,
     ExplStepType,
@@ -22,6 +22,7 @@ import {
     SupportQuestNeed
 } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
+import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
 
 export enum QuestState {
     toAccept = 1,
@@ -37,6 +38,9 @@ export class CellQuest extends ListViewCell {
 
     @property(cc.Label)
     stateLbl: cc.Label = null;
+
+    @property(cc.Label)
+    tipLbl: cc.Label = null;
 
     @property([cc.Label])
     needLbls: cc.Label[] = [];
@@ -63,6 +67,7 @@ export class CellQuest extends ListViewCell {
 
     questModel: QuestModel;
     quest: Quest;
+    acceQuestInfo: AcceQuestInfo;
 
     state: QuestState;
 
@@ -73,41 +78,58 @@ export class CellQuest extends ListViewCell {
         this.funcBtn.node.on('click', this.onClickFuncBtn, this);
     }
 
-    setData(questModel: QuestModel, quest: Quest) {
+    setData(questModel: QuestModel, quest: Quest, acceQuestInfo: AcceQuestInfo) {
         this.questModel = questModel;
         this.quest = quest;
+        this.acceQuestInfo = acceQuestInfo;
 
         this.nameLbl.string = questModel.cnName;
-        CellQuest.getQuestNeedStr(questModel, this.needLbls);
-        CellQuest.getQuestAwardStr(questModel, this.awardLbls);
+        CellQuest.getQuestNeedStr(quest, questModel, this.needLbls);
+        CellQuest.getQuestAwardStr(quest, questModel, this.awardLbls);
         this.detailLbl.string = questModel.descs[0] + '\n' + questModel.descs[1];
 
-        if (!quest) {
+        let stateStr: string;
+        let tipStr: string;
+        if (!acceQuestInfo) {
             this.state = QuestState.toAccept;
-            this.stateLbl.string = '（点击接受）';
-        } else if (quest.progress >= questModel.need.count) {
+            stateStr = '';
+            tipStr = '（点击接受）';
+        } else if (quest.progress >= QuestDataTool.getRealCount(quest)) {
             this.state = QuestState.toSubmit;
-            this.stateLbl.string = this.atQuester ? '（完成 点击提交）' : '（完成）';
+            stateStr = '  完成';
+            tipStr = this.atQuester ? '（点击提交）' : '';
         } else if (questModel.type === QuestType.support) {
             this.state = QuestState.toRefresh;
-            this.stateLbl.string = `  ${quest.progress} / ${questModel.need.count}（点击刷新）`;
+            stateStr = `  ${quest.progress} / ${QuestDataTool.getRealCount(quest)}`;
+            tipStr = '（点击刷新）';
         } else if (questModel.type === QuestType.search) {
             this.state = QuestState.toFinish;
-            this.stateLbl.string = `  0 / 1`;
+            stateStr = `  0 / 1`;
+            tipStr = '';
         } else {
             this.state = QuestState.toFinish;
-            this.stateLbl.string = `  ${quest.progress} / ${questModel.need.count}`;
+            stateStr = `  ${quest.progress} / ${QuestDataTool.getRealCount(quest)}`;
+            tipStr = '';
         }
+
+        if (quest.dLine) {
+            const diff = Date.now() - quest.startTime + QuestDLines[quest.dLine];
+            stateStr += ' [提交时限' + CellUpdateDisplay.getDiffStr(diff) + ']';
+        }
+
+        this.stateLbl.string = stateStr;
+        this.tipLbl.string = tipStr;
 
         ListViewCell.rerenderLbl(this.nameLbl);
         ListViewCell.rerenderLbl(this.stateLbl);
+        ListViewCell.rerenderLbl(this.tipLbl);
         for (const lbl of this.needLbls) ListViewCell.rerenderLbl(lbl);
         for (const lbl of this.awardLbls) ListViewCell.rerenderLbl(lbl);
 
         for (const layout of this.layouts) layout.updateLayout();
     }
 
-    static getQuestNeedStr(questModel: QuestModel, lbls: cc.Label[]) {
+    static getQuestNeedStr(quest: Quest, questModel: QuestModel, lbls: cc.Label[]) {
         switch (questModel.type) {
             case QuestType.support: {
                 const need = questModel.need as SupportQuestNeed;
@@ -115,7 +137,7 @@ export class CellQuest extends ListViewCell {
 
                 lbls[0].string = '提供';
                 CellQuest.lbl(lbls[1], itemModel.cnName, cc.Color.BLUE);
-                CellQuest.lbl(lbls[2], 'x ' + String(need.count), cc.Color.ORANGE);
+                CellQuest.lbl(lbls[2], 'x ' + String(QuestDataTool.getRealCount(quest)), cc.Color.ORANGE);
                 lbls[3].string = '';
                 lbls[4].string = '';
                 lbls[5].string = '';
@@ -137,7 +159,7 @@ export class CellQuest extends ListViewCell {
                 CellQuest.lbl(lbls[1], petStr, cc.Color.BLUE);
                 CellQuest.lbl(lbls[2], '获取', cc.color(173, 173, 173));
                 CellQuest.lbl(lbls[3], need.name, cc.Color.BLUE);
-                CellQuest.lbl(lbls[4], 'x ' + String(need.count), cc.Color.ORANGE);
+                CellQuest.lbl(lbls[4], 'x ' + String(QuestDataTool.getRealCount(quest)), cc.Color.ORANGE);
                 lbls[5].string = '';
                 break;
             }
@@ -150,7 +172,7 @@ export class CellQuest extends ListViewCell {
                 CellQuest.lbl(lbls[2], ExplStepNames[need.step], cc.Color.RED);
                 CellQuest.lbl(lbls[3], need.step === ExplStepType.center ? '收集' : '或更远 收集', cc.color(173, 173, 173));
                 CellQuest.lbl(lbls[4], need.name, cc.Color.BLUE);
-                CellQuest.lbl(lbls[5], 'x ' + String(need.count), cc.Color.ORANGE);
+                CellQuest.lbl(lbls[5], 'x ' + String(QuestDataTool.getRealCount(quest)), cc.Color.ORANGE);
                 break;
             }
             case QuestType.search: {
@@ -172,9 +194,9 @@ export class CellQuest extends ListViewCell {
         lbl.node.color = c;
     }
 
-    static getQuestAwardStr(questModel: QuestModel, lbls: cc.Label[]) {
-        lbls[1].string = `声望${questModel.awardReput}`;
-        lbls[2].string = `通用币${MoneyTool.getSimpleStr(questModel.awardMoney)}`;
+    static getQuestAwardStr(quest: Quest, questModel: QuestModel, lbls: cc.Label[]) {
+        lbls[1].string = `声望${QuestDataTool.getRealReput(quest)}`;
+        lbls[2].string = `通用币${MoneyTool.getSimpleStr(QuestDataTool.getRealMoney(quest))}`;
         let itemNames = '';
         const awardItemIds = questModel.awardItemIds;
         if (awardItemIds.length > 0) {
