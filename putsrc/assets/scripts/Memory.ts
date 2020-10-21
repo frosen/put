@@ -888,19 +888,19 @@ export class QuestDataTool {
     static getRealCount(quest: Quest): number {
         const model = questModelDict[quest.id];
         const count = model.need.count;
-        return Math.floor(count * (1 + QuestAmplRates[quest.ampl]));
+        return Math.floor(count * QuestAmplRates[quest.ampl]);
     }
 
     static getRealReput(quest: Quest): number {
         const model = questModelDict[quest.id];
         const reput = model.awardReput;
-        return Math.floor(reput * (1 + QuestAmplAwardRates[quest.ampl]) * (1 + QuestDLineAwardRates[quest.dLine]));
+        return Math.floor(reput * QuestAmplAwardRates[quest.ampl] * QuestDLineAwardRates[quest.dLine]);
     }
 
     static getRealMoney(quest: Quest): number {
         const model = questModelDict[quest.id];
         const money = model.awardMoney;
-        return Math.floor(money * (1 + QuestAmplAwardRates[quest.ampl]) * (1 + QuestDLineAwardRates[quest.dLine]));
+        return Math.floor(money * QuestAmplAwardRates[quest.ampl] * QuestDLineAwardRates[quest.dLine]);
     }
 }
 

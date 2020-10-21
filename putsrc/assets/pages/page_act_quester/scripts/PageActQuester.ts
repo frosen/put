@@ -10,7 +10,7 @@ import { CnsumDataTool, EquipDataTool, GameDataTool, MoneyTool, QuestDataTool } 
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { ListView } from 'scripts/ListView';
-import { AcceQuestInfo, Cnsum, GameData, PADQuester, Quest, QuestAmplType, QuestDLineType } from 'scripts/DataSaved';
+import { AcceQuestInfo, Cnsum, GameData, PADQuester, Quest, QuestAmplType, QuestDLines, QuestDLineType } from 'scripts/DataSaved';
 import { PAKey, ActPosModel, QuesterModel, QuestModel, QuestType, SupportQuestNeed } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { getRandomOneInList, randomInt, randomRate } from 'scripts/Random';
@@ -207,11 +207,18 @@ export class PageActQuester extends PageBase {
     submitQuest(questModel: QuestModel, quest: Quest) {
         const gameData = this.ctrlr.memory.gameData;
 
-        const awardMoney = QuestDataTool.getRealMoney(quest);
-        const awardReput = QuestDataTool.getRealReput(quest);
+        let awardMoney = QuestDataTool.getRealMoney(quest);
+        let awardReput = QuestDataTool.getRealReput(quest);
+
+        const timeOut = quest.dLine ? Date.now() - quest.startTime > QuestDLines[quest.dLine] : false;
+        if (timeOut) {
+            awardMoney = Math.floor(awardMoney * 0.1);
+            awardReput = Math.floor(awardReput * 0.1);
+        }
+
         GameDataTool.handleMoney(gameData, money => (money.sum += awardMoney));
         GameDataTool.addReput(gameData, gameData.curPosId, awardReput);
-        let tip = `声望 ${questModel.awardReput}\n通用币 ${MoneyTool.getSimpleStr(questModel.awardMoney)}`;
+        let tip = `声望 ${awardReput}\n通用币 ${MoneyTool.getSimpleStr(awardMoney)}`;
         for (const itemId of questModel.awardItemIds) {
             const cnsumModel = CnsumDataTool.getModelById(itemId);
             if (cnsumModel) {
@@ -237,7 +244,7 @@ export class PageActQuester extends PageBase {
         this.resetAcceptedQuestDict(gameData);
         this.list.resetContent(true);
 
-        this.ctrlr.popToast(`完成任务 ${questModel.cnName}\n获得\n` + tip);
+        this.ctrlr.popToast(`${timeOut ? '超时！！\n' : ''}完成任务 ${questModel.cnName}\n获得\n` + tip);
     }
 
     deleteQuest(cellIdx: number) {

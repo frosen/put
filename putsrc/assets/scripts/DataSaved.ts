@@ -205,15 +205,15 @@ export enum QuestDLineType {
 }
 
 export const QuestDLines = [0, 3 * 60 * 60 * 1000, 6 * 60 * 60 * 1000];
-export const QuestDLineAwardRates = [0, 1.2, 1.5];
+export const QuestDLineAwardRates = [1, 1.2, 1.5];
 
 export enum QuestAmplType {
     ampl = 1,
     double
 }
 
-export const QuestAmplRates = [0, 1.5, 2];
-export const QuestAmplAwardRates = [0, 1.2, 1.5];
+export const QuestAmplRates = [1, 1.5, 2];
+export const QuestAmplAwardRates = [1, 1.2, 1.5];
 
 export class Quest {
     id: string;
