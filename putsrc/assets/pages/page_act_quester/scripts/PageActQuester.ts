@@ -16,6 +16,8 @@ import { actPosModelDict } from 'configs/ActPosModelDict';
 import { getRandomOneInList, randomInt, randomRate } from 'scripts/Random';
 import { PageActQuesterLVD } from './PageActQuesterLVD';
 import { CellQuest, QuestState } from '../cells/cell_quest/scripts/CellQuest';
+import { FuncBar } from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
+import { questModelDict } from 'configs/QuestModelDict';
 
 export const QuesterUpdateInterval: number = 12 * 60 * 60 * 1000; // 更新间隔毫秒
 export const QuesterReuseInterval: number = 24 * 60 * 60 * 1000; // 重新可用间隔毫秒
@@ -25,12 +27,23 @@ export class PageActQuester extends PageBase {
     @property(ListView)
     list: ListView = null;
 
+    @property(cc.Prefab)
+    funcBarPrefab: cc.Prefab = null;
+
+    funcBar: FuncBar = null;
+
     acceQuestDict: { [key: string]: AcceQuestInfo };
     pADQuester: PADQuester;
 
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
+
+        const funcBarNode = cc.instantiate(this.funcBarPrefab);
+        funcBarNode.parent = this.node.getChildByName('root');
+
+        this.funcBar = funcBarNode.getComponent(FuncBar);
+        this.funcBar.setBtns([{ str: '删除', callback: this.deleteQuest.bind(this) }]);
 
         const gameData = this.ctrlr.memory.gameData;
         this.resetAcceptedQuestDict(gameData);
@@ -124,7 +137,9 @@ export class PageActQuester extends PageBase {
         }
     }
 
-    onCellClickFuncBtn(cell: CellQuest) {}
+    onCellClickFuncBtn(cell: CellQuest) {
+        this.funcBar.showFuncBar(cell.curCellIdx, cell.node);
+    }
 
     acceptQuest(questModel: QuestModel) {
         const gameData = this.ctrlr.memory.gameData;
@@ -223,5 +238,28 @@ export class PageActQuester extends PageBase {
         this.list.resetContent(true);
 
         this.ctrlr.popToast(`完成任务 ${questModel.cnName}\n获得\n` + tip);
+    }
+
+    deleteQuest(cellIdx: number) {
+        const gameData = this.ctrlr.memory.gameData;
+        const quest = this.pADQuester.quests[cellIdx - 1];
+        const questId = quest.id;
+        const model = questModelDict[questId];
+        this.ctrlr.popAlert(`确定删除任务 ${model.cnName} 吗`, (key: number) => {
+            if (key === 1) {
+                GameDataTool.deleteAcceQuest(gameData, questId, gameData.curPosId);
+                // 根据id重新查找，以免出现冲突
+                for (let index = 0; index < this.pADQuester.quests.length; index++) {
+                    const qInList = this.pADQuester.quests[index];
+                    if (qInList.id === questId) {
+                        this.pADQuester.quests.splice(index, 1);
+                        break;
+                    }
+                }
+
+                this.resetAcceptedQuestDict(gameData);
+                this.list.resetContent(true);
+            }
+        });
     }
 }
