@@ -10,7 +10,7 @@ import { ListViewDelegate } from 'scripts/ListViewDelegate';
 import { ListView } from 'scripts/ListView';
 import { ListViewCell } from 'scripts/ListViewCell';
 import { CnsumType } from 'scripts/DataSaved';
-import { CnsumDataTool } from 'scripts/Memory';
+import { CnsumTool } from 'scripts/Memory';
 import { CellPkgDrink } from 'pages/page_pkg/cells/cell_pkg_drink/scripts/CellPkgDrink';
 import { CellPkgCatcher } from 'pages/page_pkg/cells/cell_pkg_catcher/scripts/CellPkgCatcher';
 import { CellPkgEqpAmplr } from 'pages/page_pkg/cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
@@ -56,7 +56,7 @@ export class PageActACntrLVD extends ListViewDelegate {
     cellIdForRow(listView: ListView, rowIdx: number): string {
         const eqpOrId = this.page.itemList[rowIdx];
         if (typeof eqpOrId === 'string') {
-            const cnsumType = CnsumDataTool.getTypeById(eqpOrId);
+            const cnsumType = CnsumTool.getTypeById(eqpOrId);
             if (cnsumType === CnsumType.drink) return DRINK;
             else if (cnsumType === CnsumType.catcher) return CATCHER;
             else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
@@ -102,7 +102,7 @@ export class PageActACntrLVD extends ListViewDelegate {
         const eqpOrId = this.page.itemList[rowIdx];
         const award = this.page.awardDataList[rowIdx];
         if (typeof eqpOrId === 'string') {
-            cell.setDataByModel(rowIdx, CnsumDataTool.getModelById(eqpOrId), ACntrCountMax, award.price);
+            cell.setDataByModel(rowIdx, CnsumTool.getModelById(eqpOrId), ACntrCountMax, award.price);
         } else {
             cell.setData(rowIdx, eqpOrId, award.price);
         }

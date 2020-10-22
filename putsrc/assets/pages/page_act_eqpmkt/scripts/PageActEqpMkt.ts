@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool, GameDataTool, EquipDataTool } from 'scripts/Memory';
+import { MoneyTool, GameDataTool, EquipTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
@@ -68,7 +68,7 @@ export class PageActEqpMkt extends PageBase {
             let eqpList = getRandomOneInListWithRate(eqpIdLists, [0.4, 0.7, 0.9]);
             if (!eqpList) eqpList = eqpIdLists[0];
             const eqpId = getRandomOneInList(eqpList);
-            const equip = EquipDataTool.createRandomById(eqpId);
+            const equip = EquipTool.createRandomById(eqpId);
             let need = true;
             for (const eqpInList of eqps) {
                 if (equip.id !== eqpInList.id) continue;
@@ -89,7 +89,7 @@ export class PageActEqpMkt extends PageBase {
         for (let index = 0; index < pADEqpMkt.eqps.length; index++) {
             const goods = pADEqpMkt.eqps[index];
             this.goodsList[index] = goods;
-            const price = EquipDataTool.getPrice(goods);
+            const price = EquipTool.getPrice(goods);
             this.priceList[index] = price;
             this.countList[index] = 0;
         }

@@ -10,7 +10,7 @@ import { ListViewCell } from 'scripts/ListViewCell';
 import { petModelDict } from 'configs/PetModelDict';
 
 import { AcceQuestInfo, Quest, QuestDLines } from 'scripts/DataSaved';
-import { CnsumDataTool, EquipDataTool, MoneyTool, QuestDataTool } from 'scripts/Memory';
+import { CnsumTool, EquipTool, MoneyTool, QuestTool } from 'scripts/Memory';
 import {
     ExplStepNames,
     ExplStepType,
@@ -94,13 +94,13 @@ export class CellQuest extends ListViewCell {
             this.state = QuestState.toAccept;
             stateStr = '';
             tipStr = '（点击接受）';
-        } else if (quest.progress >= QuestDataTool.getRealCount(quest)) {
+        } else if (quest.progress >= QuestTool.getRealCount(quest)) {
             this.state = QuestState.toSubmit;
             stateStr = '  完成';
             tipStr = this.atQuester ? '（点击提交）' : '';
         } else if (questModel.type === QuestType.support) {
             this.state = QuestState.toRefresh;
-            stateStr = `  ${quest.progress} / ${QuestDataTool.getRealCount(quest)}`;
+            stateStr = `  ${quest.progress} / ${QuestTool.getRealCount(quest)}`;
             tipStr = '（点击刷新）';
         } else if (questModel.type === QuestType.search) {
             this.state = QuestState.toFinish;
@@ -108,7 +108,7 @@ export class CellQuest extends ListViewCell {
             tipStr = '';
         } else {
             this.state = QuestState.toFinish;
-            stateStr = `  ${quest.progress} / ${QuestDataTool.getRealCount(quest)}`;
+            stateStr = `  ${quest.progress} / ${QuestTool.getRealCount(quest)}`;
             tipStr = '';
         }
 
@@ -133,11 +133,11 @@ export class CellQuest extends ListViewCell {
         switch (questModel.type) {
             case QuestType.support: {
                 const need = questModel.need as SupportQuestNeed;
-                const itemModel = CnsumDataTool.getModelById(need.itemId);
+                const itemModel = CnsumTool.getModelById(need.itemId);
 
                 lbls[0].string = '提供';
                 CellQuest.lbl(lbls[1], itemModel.cnName, cc.Color.BLUE);
-                CellQuest.lbl(lbls[2], 'x ' + String(QuestDataTool.getRealCount(quest)), cc.Color.ORANGE);
+                CellQuest.lbl(lbls[2], 'x ' + String(QuestTool.getRealCount(quest)), cc.Color.ORANGE);
                 lbls[3].string = '';
                 lbls[4].string = '';
                 lbls[5].string = '';
@@ -159,7 +159,7 @@ export class CellQuest extends ListViewCell {
                 CellQuest.lbl(lbls[1], petStr, cc.Color.BLUE);
                 CellQuest.lbl(lbls[2], '获取', cc.color(173, 173, 173));
                 CellQuest.lbl(lbls[3], need.name, cc.Color.BLUE);
-                CellQuest.lbl(lbls[4], 'x ' + String(QuestDataTool.getRealCount(quest)), cc.Color.ORANGE);
+                CellQuest.lbl(lbls[4], 'x ' + String(QuestTool.getRealCount(quest)), cc.Color.ORANGE);
                 lbls[5].string = '';
                 break;
             }
@@ -172,7 +172,7 @@ export class CellQuest extends ListViewCell {
                 CellQuest.lbl(lbls[2], ExplStepNames[need.step], cc.Color.RED);
                 CellQuest.lbl(lbls[3], '收集', cc.color(173, 173, 173));
                 CellQuest.lbl(lbls[4], need.name, cc.Color.BLUE);
-                CellQuest.lbl(lbls[5], 'x ' + String(QuestDataTool.getRealCount(quest)), cc.Color.ORANGE);
+                CellQuest.lbl(lbls[5], 'x ' + String(QuestTool.getRealCount(quest)), cc.Color.ORANGE);
                 break;
             }
             case QuestType.search: {
@@ -195,19 +195,19 @@ export class CellQuest extends ListViewCell {
     }
 
     static getQuestAwardStr(quest: Quest, questModel: QuestModel, lbls: cc.Label[]) {
-        lbls[1].string = `声望${QuestDataTool.getRealReput(quest)}`;
-        lbls[2].string = `通用币${MoneyTool.getSimpleStr(QuestDataTool.getRealMoney(quest))}`;
+        lbls[1].string = `声望${QuestTool.getRealReput(quest)}`;
+        lbls[2].string = `通用币${MoneyTool.getSimpleStr(QuestTool.getRealMoney(quest))}`;
         let itemNames = '';
         const awardItemIds = questModel.awardItemIds;
         if (awardItemIds.length > 0) {
             for (let index = 0; ; index++) {
                 const itemId = awardItemIds[index];
-                const model = CnsumDataTool.getModelById(itemId);
+                const model = CnsumTool.getModelById(itemId);
                 if (model) {
                     itemNames += model.cnName;
                 } else {
-                    const equip = EquipDataTool.createByFullId(itemId);
-                    itemNames += EquipDataTool.getCnName(equip);
+                    const equip = EquipTool.createByFullId(itemId);
+                    itemNames += EquipTool.getCnName(equip);
                 }
                 if (index === awardItemIds.length - 1) break;
                 itemNames += ', ';

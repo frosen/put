@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { PetDataTool, EquipDataTool, FeatureDataTool, GameDataTool } from './Memory';
+import { PetTool, EquipTool, FeatureTool, GameDataTool } from './Memory';
 import {
     FeatureModel,
     PetModel,
@@ -214,7 +214,7 @@ export class Pet2 {
         this.armor = 0;
 
         // 特性加成
-        PetDataTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
+        PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
             if (model.hasOwnProperty('onBaseSetting')) model.onBaseSetting(this, datas);
         });
 
@@ -222,7 +222,7 @@ export class Pet2 {
         const equips = exEquips || pet.equips;
         for (const equip of equips) {
             if (!equip) continue;
-            EquipDataTool.getFinalAttris(equip, this);
+            EquipTool.getFinalAttris(equip, this);
         }
 
         // 饮品加成
@@ -254,7 +254,7 @@ export class Pet2 {
         this.exBattleTypes = [];
 
         // 其他属性
-        const realPrvty = PetDataTool.getRealPrvty(pet, exPrvty);
+        const realPrvty = PetTool.getRealPrvty(pet, exPrvty);
         const prvtyPercent = realPrvty * 0.01;
         this.critRate = prvtyPercent * 0.1;
         this.critDmgRate = 0.5 + prvtyPercent * 0.5;
@@ -263,7 +263,7 @@ export class Pet2 {
         this.dfsRate = 0;
 
         // 特性加成
-        PetDataTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
+        PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
             if (model.hasOwnProperty('onSetting')) model.onSetting(this, datas);
         });
 
@@ -286,7 +286,7 @@ export class Pet2 {
             this.skillIds[skillIdx] = skillId;
             skillIdx++;
         }
-        const selfSkillIds = PetDataTool.getSelfSkillIdByCurLv(pet); // 自带技能
+        const selfSkillIds = PetTool.getSelfSkillIdByCurLv(pet); // 自带技能
         for (let index = selfSkillIds.length - 1; index >= 0; index--) {
             const skillId = selfSkillIds[index];
             this.skillIds[skillIdx] = skillId;
@@ -385,7 +385,7 @@ export class BattlePet {
         this.enemyDeadFeatures.length = 0;
         this.deadFeatures.length = 0;
 
-        PetDataTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
+        PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
             BattlePet.addFeatureFunc(this, 'startingBattleFeatures', 'onStartingBattle', model, datas);
             BattlePet.addFeatureFunc(this, 'attackingFeatures', 'onAttacking', model, datas);
             BattlePet.addFeatureFunc(this, 'castingFeatures', 'onCasting', model, datas);
@@ -507,7 +507,7 @@ export class RealBattle {
                     if (!item) continue;
                     if (item.itemType !== ItemType.equip) continue;
                     const equip = item as Equip;
-                    if (EquipDataTool.getToken(equip) === token) {
+                    if (EquipTool.getToken(equip) === token) {
                         equipsOutput.push(equip);
                         return true;
                     }
@@ -553,7 +553,7 @@ export class RealBattle {
         if (ePetMmrs) {
             this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetMmr = ePetMmrs[petIdx];
-                const petData = PetDataTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.rank, ePetMmr.features, null);
+                const petData = PetTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.rank, ePetMmr.features, null);
                 if (spcBtlId) petData.master = 'spcBtl';
                 bPet.init(petData, null, null);
             });
@@ -563,7 +563,7 @@ export class RealBattle {
             const ePetsData = RealBattle.createRandomPetData(createData.curExpl, createData.petCount);
             this.enemyTeam.reset(ePetsData.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetData = ePetsData[petIdx];
-                const petData = PetDataTool.create(ePetData.id, ePetData.lv, ePetData.rank, ePetData.features, null);
+                const petData = PetTool.create(ePetData.id, ePetData.lv, ePetData.rank, ePetData.features, null);
                 if (spcBtlId) petData.master = 'spcBtl';
                 bPet.init(petData, null, null);
             });
@@ -624,8 +624,8 @@ export class RealBattle {
     static getRandomFeatures(lv: number): Feature[] {
         const features = [];
         const featureR = Math.random();
-        if (lv > 5 && featureR > 0.3) features.push(FeatureDataTool.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
-        if (lv > 15 && featureR > 0.7) features.push(FeatureDataTool.createInbornFeature());
+        if (lv > 5 && featureR > 0.3) features.push(FeatureTool.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
+        if (lv > 15 && featureR > 0.7) features.push(FeatureTool.createInbornFeature());
         return features;
     }
 

@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CnsumDataTool, EquipDataTool, GameDataTool, MoneyTool, QuestDataTool } from 'scripts/Memory';
+import { CnsumTool, EquipTool, GameDataTool, MoneyTool, QuestTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { ListView } from 'scripts/ListView';
@@ -105,7 +105,7 @@ export class PageActQuester extends PageBase {
             let ampl: QuestAmplType;
             if (randomRate(0.3)) ampl = getRandomOneInList([QuestAmplType.ampl, QuestAmplType.double]);
             else ampl = 0;
-            pADQuester.quests.push(QuestDataTool.create(questId, dLine, ampl));
+            pADQuester.quests.push(QuestTool.create(questId, dLine, ampl));
         }
     }
 
@@ -158,8 +158,8 @@ export class PageActQuester extends PageBase {
         const need = questModel.need as SupportQuestNeed;
         const gameData = this.ctrlr.memory.gameData;
 
-        const model = CnsumDataTool.getModelById(need.itemId);
-        const count = QuestDataTool.getRealCount(quest);
+        const model = CnsumTool.getModelById(need.itemId);
+        const count = QuestTool.getRealCount(quest);
         this.ctrlr.popAlert(`确定使用${count}个“${model.cnName}”\n完成任务 ${questModel.cnName}？`, (key: number) => {
             if (key !== 1) return;
             let needItem: Cnsum;
@@ -207,8 +207,8 @@ export class PageActQuester extends PageBase {
     submitQuest(questModel: QuestModel, quest: Quest) {
         const gameData = this.ctrlr.memory.gameData;
 
-        let awardMoney = QuestDataTool.getRealMoney(quest);
-        let awardReput = QuestDataTool.getRealReput(quest);
+        let awardMoney = QuestTool.getRealMoney(quest);
+        let awardReput = QuestTool.getRealReput(quest);
 
         const timeOut = quest.dLine ? Date.now() - quest.startTime > QuestDLines[quest.dLine] : false;
         if (timeOut) {
@@ -220,14 +220,14 @@ export class PageActQuester extends PageBase {
         GameDataTool.addReput(gameData, gameData.curPosId, awardReput);
         let tip = `声望 ${awardReput}\n通用币 ${MoneyTool.getSimpleStr(awardMoney)}`;
         for (const itemId of questModel.awardItemIds) {
-            const cnsumModel = CnsumDataTool.getModelById(itemId);
+            const cnsumModel = CnsumTool.getModelById(itemId);
             if (cnsumModel) {
                 GameDataTool.addCnsum(gameData, itemId);
                 tip += cnsumModel.cnName + '\n';
             } else {
-                const equip = EquipDataTool.createByFullId(itemId);
+                const equip = EquipTool.createByFullId(itemId);
                 GameDataTool.addEquip(gameData, equip);
-                tip += EquipDataTool.getCnName(equip) + '\n';
+                tip += EquipTool.getCnName(equip) + '\n';
             }
         }
 

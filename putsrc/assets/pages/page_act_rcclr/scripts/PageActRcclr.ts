@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { ListView } from 'scripts/ListView';
 import { PageActRcclrLVD } from './PageActRcclrLVD';
 import { GameData, Item, ItemType, Cnsum, CnsumType, Money, Equip, CaughtPet } from 'scripts/DataSaved';
-import { MoneyTool, GameDataTool, CnsumDataTool, EquipDataTool, CaughtPetDataTool } from 'scripts/Memory';
+import { MoneyTool, GameDataTool, CnsumTool, EquipTool, CaughtPetTool } from 'scripts/Memory';
 import { NavBar } from 'scripts/NavBar';
 import { LIST_NAMES } from 'pages/page_pkg/scripts/PagePkg';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
@@ -286,11 +286,11 @@ export class PageActRcclr extends PageBase {
     static getItemPrice(item: Item): number {
         switch (item.itemType) {
             case ItemType.cnsum:
-                return CnsumDataTool.getModelById(item.id).price;
+                return CnsumTool.getModelById(item.id).price;
             case ItemType.equip:
-                return EquipDataTool.getPrice(item as Equip);
+                return EquipTool.getPrice(item as Equip);
             case ItemType.caughtPet:
-                return CaughtPetDataTool.getPrice(item as CaughtPet);
+                return CaughtPetTool.getPrice(item as CaughtPet);
         }
     }
 

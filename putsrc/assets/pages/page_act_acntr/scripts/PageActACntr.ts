@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool, CnsumDataTool, GameDataTool, EquipDataTool } from 'scripts/Memory';
+import { MoneyTool, CnsumTool, GameDataTool, EquipTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { PageActACntrLVD } from './PageActACntrLVD';
@@ -51,10 +51,10 @@ export class PageActACntr extends PageBase {
             const soldout = soldoutList[index];
             if (soldout === true) continue;
             this.paIdxList.push(index);
-            if (CnsumDataTool.getTypeById(award.fullId)) {
+            if (CnsumTool.getTypeById(award.fullId)) {
                 this.itemList.push(award.fullId);
             } else {
-                const eqp = EquipDataTool.createByFullId(award.fullId);
+                const eqp = EquipTool.createByFullId(award.fullId);
                 this.itemList.push(eqp);
             }
             this.awardDataList.push(award);

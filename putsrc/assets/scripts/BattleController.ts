@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { GameDataTool, PetDataTool } from 'scripts/Memory';
+import { GameDataTool, PetTool } from 'scripts/Memory';
 import { BattlePageBase } from './BattlePageBase';
 
 import { skillModelDict } from 'configs/SkillModelDict';
@@ -191,7 +191,7 @@ export class BattleController {
 
         const petNameDict = {};
         for (const ePet of this.realBattle.enemyTeam.pets) {
-            const cnName = PetDataTool.getCnName(ePet.pet);
+            const cnName = PetTool.getCnName(ePet.pet);
             petNameDict[cnName] = true;
         }
         const petNames = Object.keys(petNameDict);
@@ -805,8 +805,8 @@ export class BattleController {
 
     logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, beCombo: boolean, skillName: string, eleType: EleType = null) {
         const dataList = [
-            PetDataTool.getCnName(battlePet.pet),
-            PetDataTool.getCnName(aim.pet),
+            PetTool.getCnName(battlePet.pet),
+            PetTool.getCnName(aim.pet),
             skillName,
             beCombo,
             Math.floor(dmg * 0.1),
@@ -816,21 +816,21 @@ export class BattleController {
     }
 
     logMiss(battlePet: BattlePet, aim: BattlePet, skillName: string) {
-        const dataList = [PetDataTool.getCnName(battlePet.pet), PetDataTool.getCnName(aim.pet), skillName];
+        const dataList = [PetTool.getCnName(battlePet.pet), PetTool.getCnName(aim.pet), skillName];
         this.updater.log(ExplLogType.miss, dataList);
     }
 
     logBuff(aim: BattlePet, name: string) {
-        const dataList = [PetDataTool.getCnName(aim.pet), name];
+        const dataList = [PetTool.getCnName(aim.pet), name];
         this.updater.log(ExplLogType.buff, dataList);
     }
 
     logStop(battlePet: BattlePet) {
-        this.updater.log(ExplLogType.stop, PetDataTool.getCnName(battlePet.pet));
+        this.updater.log(ExplLogType.stop, PetTool.getCnName(battlePet.pet));
     }
 
     logDead(battlePet: BattlePet) {
-        this.updater.log(ExplLogType.dead, PetDataTool.getCnName(battlePet.pet));
+        this.updater.log(ExplLogType.dead, PetTool.getCnName(battlePet.pet));
     }
 
     ranSd() {

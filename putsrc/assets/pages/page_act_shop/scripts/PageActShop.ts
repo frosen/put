@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool, CnsumDataTool, GameDataTool } from 'scripts/Memory';
+import { MoneyTool, CnsumTool, GameDataTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { PageActShopLVD } from './PageActShopLVD';
@@ -99,7 +99,7 @@ export class PageActShop extends PageBase {
             const goodsId = this.goodsIds[index];
             const count = this.countList[index] || 0;
             if (count <= 0) continue;
-            const price = this.getCnsumReputPrice(CnsumDataTool.getModelById(goodsId));
+            const price = this.getCnsumReputPrice(CnsumTool.getModelById(goodsId));
             tp += count * price;
             tc += count;
         }
@@ -114,7 +114,7 @@ export class PageActShop extends PageBase {
     onCellAddCount(cell: CellTransaction, count: number) {
         const gameData = this.ctrlr.memory.gameData;
         const goodsId = this.goodsIds[cell.curCellIdx];
-        const price = this.getCnsumReputPrice(CnsumDataTool.getModelById(goodsId));
+        const price = this.getCnsumReputPrice(CnsumTool.getModelById(goodsId));
         const curMoney = GameDataTool.getMoney(gameData);
         let realCount: number;
         if (this.totalPrice + price * count > curMoney) {

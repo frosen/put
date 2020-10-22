@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool, GameDataTool, CaughtPetDataTool } from 'scripts/Memory';
+import { MoneyTool, GameDataTool, CaughtPetTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
@@ -83,7 +83,7 @@ export class PageActPetMkt extends PageBase {
             rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
             const features = RealBattle.getRandomFeatures(lv);
 
-            const cPet = CaughtPetDataTool.create(petId, lv, rank, features);
+            const cPet = CaughtPetTool.create(petId, lv, rank, features);
             pets.push(cPet);
         }
     }
@@ -96,7 +96,7 @@ export class PageActPetMkt extends PageBase {
         for (let index = 0; index < pADPetMkt.pets.length; index++) {
             const goods = pADPetMkt.pets[index];
             this.goodsList[index] = goods;
-            const price = CaughtPetDataTool.getPrice(goods);
+            const price = CaughtPetTool.getPrice(goods);
             this.priceList[index] = price;
             this.countList[index] = 0;
         }

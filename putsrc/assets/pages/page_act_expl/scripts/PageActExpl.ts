@@ -17,7 +17,7 @@ import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
 import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
-import { MmrTool, GameDataTool, PetDataTool } from 'scripts/Memory';
+import { MmrTool, GameDataTool, PetTool } from 'scripts/Memory';
 import { NavBar } from 'scripts/NavBar';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
@@ -165,9 +165,9 @@ export class PageActExpl extends BattlePageBase {
             const gameData = this.ctrlr.memory.gameData;
             const pets = GameDataTool.getReadyPets(gameData);
             for (const pet of pets) {
-                const prvty = PetDataTool.getRealPrvty(pet);
+                const prvty = PetTool.getRealPrvty(pet);
                 if (prvty < 50) {
-                    this.ctrlr.popToast(`精灵独立战斗要求所有精灵默契值至少50，\n但目前${PetDataTool.getCnName(pet)}未达到！`);
+                    this.ctrlr.popToast(`精灵独立战斗要求所有精灵默契值至少50，\n但目前${PetTool.getCnName(pet)}未达到！`);
                     return;
                 }
             }
@@ -197,7 +197,7 @@ export class PageActExpl extends BattlePageBase {
 
     preloadLVDData() {
         for (const sPet of GameDataTool.getReadyPets(this.ctrlr.memory.gameData)) {
-            this.lvd.getFrameDataByString(PetDataTool.getCnName(sPet));
+            this.lvd.getFrameDataByString(PetTool.getCnName(sPet));
         }
 
         for (let index = 0; index <= 9; index++) {
@@ -274,8 +274,8 @@ export class PageActExpl extends BattlePageBase {
     setUIofPet(battlePet: BattlePet, ui: PetUI) {
         ui.node.active = true;
         const pet = battlePet.pet;
-        ui.petName.string = PetDataTool.getCnName(pet);
-        ui.subName.string = pet.nickname ? PetDataTool.getBaseCnName(pet) : '';
+        ui.petName.string = PetTool.getCnName(pet);
+        ui.subName.string = pet.nickname ? PetTool.getBaseCnName(pet) : '';
         ui.petLv.string = `L${pet.lv}${PetRankNames[pet.rank]}`;
         ui.bar.progress = battlePet.hp / battlePet.hpMax;
         ui.petHP.string = `${Math.ceil(battlePet.hp * 0.1)} / ${Math.ceil(battlePet.hpMax * 0.1)}`;

@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 import { Equip, EleColor } from 'scripts/DataSaved';
-import { EquipDataTool } from 'scripts/Memory';
+import { EquipTool } from 'scripts/Memory';
 import { skillModelDict } from 'configs/SkillModelDict';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
@@ -63,7 +63,7 @@ export class CellPkgEquip extends CellPkgBase {
     setData(itemIdx: number, equip: Equip) {
         super.setData(itemIdx, equip);
         const equipModel = equipModelDict[equip.id];
-        this.nameLbl.string = EquipDataTool.getCnName(equip, true);
+        this.nameLbl.string = EquipTool.getCnName(equip, true);
         this.nameLbl.node.color = RankColor[equipModel.rank];
         this.lvLbl.string = `[L${equipModel.lv}${equip.growth > 0 ? `+${equip.growth}` : ''}]`;
 
@@ -84,7 +84,7 @@ export class CellPkgEquip extends CellPkgBase {
         for (const layout of this.layouts) layout.updateLayout();
 
         const attriInfos = [];
-        const attris = EquipDataTool.getFinalAttris(equip);
+        const attris = EquipTool.getFinalAttris(equip);
         for (const key in attris) {
             const value = attris[key];
             if (value > 0) attriInfos.push({ str: AttriStrings[key] + getNumStr(value), c: AttriColors[key] });

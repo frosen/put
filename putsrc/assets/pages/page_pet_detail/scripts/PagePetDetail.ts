@@ -12,7 +12,7 @@ import { PagePetDetailLVD } from './PagePetDetailLVD';
 import { Pet, Feature } from 'scripts/DataSaved';
 import { Pet2 } from 'scripts/DataOther';
 import { ListViewCell } from 'scripts/ListViewCell';
-import { PetDataTool, GameDataTool } from 'scripts/Memory';
+import { PetTool, GameDataTool } from 'scripts/Memory';
 import { FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import { FuncBar } from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
@@ -74,7 +74,7 @@ export class PagePetDetail extends PageBase {
 
             const featureDatas: { feature: Feature; type: FeatureGainType }[] = [];
             for (const feature of this.curPet.inbornFeatures) featureDatas.push({ feature, type: FeatureGainType.inborn });
-            const selfFeatures = PetDataTool.getSelfFeaturesByCurLv(this.curPet);
+            const selfFeatures = PetTool.getSelfFeaturesByCurLv(this.curPet);
             for (const feature of selfFeatures) featureDatas.push({ feature, type: FeatureGainType.self });
             for (const feature of this.curPet.learnedFeatures) featureDatas.push({ feature, type: FeatureGainType.learned });
             lvd.featureDatas = featureDatas;

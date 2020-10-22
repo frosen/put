@@ -15,7 +15,7 @@ import { drinkModelDict } from 'configs/DrinkModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { EqpMktModel, ExplModel, PAKey, PetMktModel, ShopModel } from './DataModel';
-import { CnsumDataTool } from './Memory';
+import { CnsumTool } from './Memory';
 
 function need(ins: any, attris: string[], name: string) {
     for (const attri of attris) {
@@ -61,14 +61,14 @@ function checkActPosModelDict() {
                 for (const itemIdList of (actModel as ExplModel).itemIdLists) {
                     if (!itemIdList) continue;
                     for (const itemId of itemIdList) {
-                        const type = CnsumDataTool.getTypeById(itemId);
+                        const type = CnsumTool.getTypeById(itemId);
                         if (!type) cc.error('ActPosModelDict expl中，itemIdList中的itemId有误', key, itemId);
                     }
                 }
             } else if (pakey === PAKey.shop) {
                 need(actModel, ['goodsIdList'], key + 'shop');
                 for (const itemId of (actModel as ShopModel).goodsIdList) {
-                    const type = CnsumDataTool.getTypeById(itemId);
+                    const type = CnsumTool.getTypeById(itemId);
                     if (!type) cc.error('ActPosModelDict shop中，itemIdList中的itemId有误', key, itemId);
                 }
             } else if (pakey === PAKey.eqpMkt) {

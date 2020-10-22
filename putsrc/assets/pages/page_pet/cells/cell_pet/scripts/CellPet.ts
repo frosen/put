@@ -11,7 +11,7 @@ import { petModelDict } from 'configs/PetModelDict';
 
 import { Pet, PetRankNames, PetStateNames, EleColor } from 'scripts/DataSaved';
 import { featureModelDict } from 'configs/FeatureModelDict';
-import { PetDataTool } from 'scripts/Memory';
+import { PetTool } from 'scripts/Memory';
 
 @ccclass
 export class CellPet extends ListViewCell {
@@ -61,8 +61,8 @@ export class CellPet extends ListViewCell {
     setData(pet: Pet) {
         this.curPet = pet;
 
-        this.petNameLbl.string = PetDataTool.getCnName(pet, true);
-        this.subNameLbl.string = pet.nickname ? '(' + PetDataTool.getBaseCnName(pet) + ')' : '';
+        this.petNameLbl.string = PetTool.getCnName(pet, true);
+        this.subNameLbl.string = pet.nickname ? '(' + PetTool.getBaseCnName(pet) + ')' : '';
         this.lvLbl.string = `[L${pet.lv}${PetRankNames[pet.rank]}]`;
         ListViewCell.rerenderLbl(this.petNameLbl);
         ListViewCell.rerenderLbl(this.lvLbl);
@@ -76,7 +76,7 @@ export class CellPet extends ListViewCell {
 
         this.hideAllInfoNode();
         let index = 0;
-        const realPrvty = PetDataTool.getRealPrvty(pet);
+        const realPrvty = PetTool.getRealPrvty(pet);
         this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
         index++;
         for (const feature of pet.inbornFeatures) {

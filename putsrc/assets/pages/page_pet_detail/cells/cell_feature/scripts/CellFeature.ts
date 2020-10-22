@@ -10,7 +10,7 @@ import { ListViewCell } from 'scripts/ListViewCell';
 import { Feature } from 'scripts/DataSaved';
 import { FeatureModel } from 'scripts/DataModel';
 import { featureModelDict } from 'configs/FeatureModelDict';
-import { FeatureDataTool } from 'scripts/Memory';
+import { FeatureTool } from 'scripts/Memory';
 
 export enum FeatureGainType {
     inborn = 1,
@@ -45,7 +45,7 @@ export class CellFeature extends ListViewCell {
         this.nameLbl.string = FeatureGainNames[type] + '特性・' + featureModel.cnBrief;
         this.lvLbl.string = `[L${feature.lv}]`;
 
-        const datas = FeatureDataTool.getDatas(feature.id, feature.lv);
+        const datas = FeatureTool.getDatas(feature.id, feature.lv);
         const info = featureModel.getInfo(datas);
         this.infoLbl.string = info;
     }

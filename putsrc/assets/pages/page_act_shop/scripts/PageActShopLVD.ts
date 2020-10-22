@@ -11,7 +11,7 @@ import { ListView } from 'scripts/ListView';
 import { ListViewCell } from 'scripts/ListViewCell';
 import { CnsumType } from 'scripts/DataSaved';
 import { CellTransaction } from '../cells/cell_transaction/scripts/CellTransaction';
-import { CnsumDataTool } from 'scripts/Memory';
+import { CnsumTool } from 'scripts/Memory';
 import { CellPkgDrink } from 'pages/page_pkg/cells/cell_pkg_drink/scripts/CellPkgDrink';
 import { CellPkgCatcher } from 'pages/page_pkg/cells/cell_pkg_catcher/scripts/CellPkgCatcher';
 import { CellPkgEqpAmplr } from 'pages/page_pkg/cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
@@ -49,7 +49,7 @@ export class PageActShopLVD extends ListViewDelegate {
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
         const goodsId = this.page.goodsIds[rowIdx];
-        const cnsumType = CnsumDataTool.getTypeById(goodsId);
+        const cnsumType = CnsumTool.getTypeById(goodsId);
         if (cnsumType === CnsumType.drink) return DRINK;
         else if (cnsumType === CnsumType.catcher) return CATCHER;
         else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
@@ -87,7 +87,7 @@ export class PageActShopLVD extends ListViewDelegate {
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellTransaction) {
         const goodsId = this.page.goodsIds[rowIdx];
-        const model = CnsumDataTool.getModelById(goodsId);
+        const model = CnsumTool.getModelById(goodsId);
         const price = this.page.getCnsumReputPrice(model);
         cell.setDataByModel(rowIdx, model, -1, price);
 

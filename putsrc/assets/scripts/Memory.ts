@@ -319,13 +319,13 @@ export class Memory {
             pet.state = PetState.ready;
             pet.nickname = '妙妙';
             pet.prvty = 400000;
-            pet.equips[0] = EquipDataTool.createRandomByLv(15, 20);
+            pet.equips[0] = EquipTool.createRandomByLv(15, 20);
         });
 
         GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, 1, [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
-            pet.drink = CnsumDataTool.create(Drink, 'LingGanYaoJi2');
+            pet.drink = CnsumTool.create(Drink, 'LingGanYaoJi2');
             pet.drinkTime = Date.now();
         });
 
@@ -340,21 +340,21 @@ export class Memory {
 
         // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
 
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(21, 25));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(21, 25));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(21, 25));
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(21, 25));
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(21, 25));
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(21, 25));
 
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(11, 15));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(11, 15));
-        GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(11, 15));
 
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(30, 33));
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(30, 33));
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(30, 33));
+        // GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(30, 33));
+        // GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(30, 33));
+        // GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(30, 33));
 
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(15, 20));
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(15, 20));
-        // GameDataTool.addEquip(this.gameData, EquipDataTool.createRandomByLv(15, 20));
+        // GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(15, 20));
+        // GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(15, 20));
+        // GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(15, 20));
 
         GameDataTool.addCnsum(this.gameData, 'LingGanYaoJi1', 2);
 
@@ -364,7 +364,7 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 33);
         GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += 1000));
 
-        GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureDataTool.createInbornFeature()]);
+        GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureTool.createInbornFeature()]);
 
         // this.gameData.curPosId = 'GuangJiDianZhiLu';
         // GameDataTool.createExpl(this.gameData, 0);
@@ -379,7 +379,7 @@ export class Memory {
     }
 }
 
-export class FeatureDataTool {
+export class FeatureTool {
     static createInbornFeature(): Feature {
         const feature = new Feature();
         feature.id = getRandomOneInList(inbornFeatures);
@@ -406,7 +406,7 @@ export class FeatureDataTool {
     }
 }
 
-export class PetDataTool {
+export class PetTool {
     static create(id: string, lv: number, rank: number, features: Feature[], gameData: GameData): Pet {
         const pet = newInsWithChecker(Pet);
 
@@ -439,14 +439,14 @@ export class PetDataTool {
 
         pet.exp = 0;
 
-        for (const feature of features) pet.inbornFeatures.push(FeatureDataTool.clone(feature));
+        for (const feature of features) pet.inbornFeatures.push(FeatureTool.clone(feature));
 
         return pet;
     }
 
     static getCnName(pet: Pet, needSpace: boolean = false): string {
         if (pet.nickname) return pet.nickname;
-        else return PetDataTool.getBaseCnName(pet, needSpace);
+        else return PetTool.getBaseCnName(pet, needSpace);
     }
 
     static getBaseCnName(pet: Pet, needSpace: boolean = false): string {
@@ -457,9 +457,9 @@ export class PetDataTool {
                 if (!feature) continue;
                 name += featureModelDict[feature.id].cnBrief;
             }
-            return name + (needSpace ? ' 之 ' : '之') + PetDataTool.getOriNameById(pet.id);
+            return name + (needSpace ? ' 之 ' : '之') + PetTool.getOriNameById(pet.id);
         } else {
-            return PetDataTool.getOriNameById(pet.id);
+            return PetTool.getOriNameById(pet.id);
         }
     }
 
@@ -474,24 +474,24 @@ export class PetDataTool {
             for (let index = 0; index < equipModel.featureIds.length; index++) {
                 const featureId = equipModel.featureIds[index];
                 const lv = equip.selfFeatureLvs[index];
-                callback(featureModelDict[featureId], FeatureDataTool.getDatas(featureId, lv));
+                callback(featureModelDict[featureId], FeatureTool.getDatas(featureId, lv));
             }
             for (const feature of equip.affixes) {
-                callback(featureModelDict[feature.id], FeatureDataTool.getDatas(feature.id, feature.lv));
+                callback(featureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
             }
         }
 
         for (const feature of pet.learnedFeatures) {
-            callback(featureModelDict[feature.id], FeatureDataTool.getDatas(feature.id, feature.lv));
+            callback(featureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
         }
 
         for (const feature of pet.inbornFeatures) {
-            callback(featureModelDict[feature.id], FeatureDataTool.getDatas(feature.id, feature.lv));
+            callback(featureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
         }
 
-        const selfFeatures = PetDataTool.getSelfFeaturesByCurLv(pet);
+        const selfFeatures = PetTool.getSelfFeaturesByCurLv(pet);
         for (const feature of selfFeatures) {
-            callback(featureModelDict[feature.id], FeatureDataTool.getDatas(feature.id, feature.lv));
+            callback(featureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
         }
     }
 
@@ -548,7 +548,7 @@ export class PetDataTool {
     }
 }
 
-export class CnsumDataTool {
+export class CnsumTool {
     static create<T extends Cnsum>(cls: { new (): T }, id: string, count: number = 1): T {
         const cnsum = newInsWithChecker(cls);
         cnsum.id = id;
@@ -629,7 +629,7 @@ export class MoneyTool {
     }
 }
 
-export class EquipDataTool {
+export class EquipTool {
     static create(
         id: string,
         skillId: string,
@@ -646,7 +646,7 @@ export class EquipDataTool {
         equip.selfFeatureLvs = newList();
         for (const lv of featureLvs) equip.selfFeatureLvs.push(lv);
         equip.affixes = newList();
-        for (const feature of affixes) equip.affixes.push(FeatureDataTool.clone(feature));
+        for (const feature of affixes) equip.affixes.push(FeatureTool.clone(feature));
         equip.learnTimes = learnTimes;
 
         return equip;
@@ -795,7 +795,7 @@ export class EquipDataTool {
     }
 }
 
-export class CaughtPetDataTool {
+export class CaughtPetTool {
     static create(id: string, lv: number, rank: number, features: Feature[]): CaughtPet {
         const cp = newInsWithChecker(CaughtPet);
         cp.id = 'cp_' + id;
@@ -816,9 +816,9 @@ export class CaughtPetDataTool {
                 if (!feature) continue;
                 name += featureModelDict[feature.id].cnBrief;
             }
-            petName = name + (needSpace ? ' 之 ' : '之') + PetDataTool.getOriNameById(petId);
+            petName = name + (needSpace ? ' 之 ' : '之') + PetTool.getOriNameById(petId);
         } else {
-            petName = PetDataTool.getOriNameById(petId);
+            petName = PetTool.getOriNameById(petId);
         }
 
         return '捕获：' + petName;
@@ -874,7 +874,7 @@ export class PosDataTool {
     }
 }
 
-export class QuestDataTool {
+export class QuestTool {
     static create(id: string, dLine: QuestDLineType, ampl: QuestAmplType): Quest {
         const quest = newInsWithChecker(Quest);
         quest.id = id;
@@ -932,7 +932,7 @@ export class MmrTool {
         selfPetMmr.catchIdx = pet.catchIdx;
         selfPetMmr.prvty = pet.prvty;
         const tokens = [];
-        for (const equip of pet.equips) tokens.push(EquipDataTool.getToken(equip));
+        for (const equip of pet.equips) tokens.push(EquipTool.getToken(equip));
         selfPetMmr.eqpTokens = newList(tokens);
         return selfPetMmr;
     }
@@ -943,7 +943,7 @@ export class MmrTool {
         p.lv = lv;
         p.rank = rank;
         p.features = newList();
-        for (const feature of features) p.features.push(FeatureDataTool.clone(feature));
+        for (const feature of features) p.features.push(FeatureTool.clone(feature));
         return p;
     }
 }
@@ -995,7 +995,7 @@ export class GameDataTool {
 
         gameData.totalPetCount++;
 
-        const pet = PetDataTool.create(id, lv, rank, features, gameData);
+        const pet = PetTool.create(id, lv, rank, features, gameData);
         gameData.pets.push(pet);
 
         this.sortPetsByState(gameData);
@@ -1044,7 +1044,7 @@ export class GameDataTool {
 
         GameJITDataTool.addAmplByDrink(pet, drinkModel);
 
-        pet.drink = CnsumDataTool.create(Drink, drink.id); // 不用 pet.drink = drink，是因为drink内部有count代表多个
+        pet.drink = CnsumTool.create(Drink, drink.id); // 不用 pet.drink = drink，是因为drink内部有count代表多个
         pet.drinkTime = curTime || Date.now();
 
         return this.SUC;
@@ -1076,8 +1076,8 @@ export class GameDataTool {
         }
 
         if (itemIdx === -1) {
-            const cnsumClass = CnsumDataTool.getClassById(cnsumId);
-            const realCnsum: Cnsum = CnsumDataTool.create(cnsumClass, cnsumId, count);
+            const cnsumClass = CnsumTool.getClassById(cnsumId);
+            const realCnsum: Cnsum = CnsumTool.create(cnsumClass, cnsumId, count);
             gameData.items.push(realCnsum);
             if (callback) callback(realCnsum);
         } else {
@@ -1113,7 +1113,7 @@ export class GameDataTool {
         if (gameData.weight >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
         gameData.weight++;
 
-        const cp = CaughtPetDataTool.create(id, lv, rank, features);
+        const cp = CaughtPetTool.create(id, lv, rank, features);
         gameData.items.push(cp);
 
         if (callback) callback(cp);
@@ -1146,7 +1146,7 @@ export class GameDataTool {
             }
         } else if (curItem.itemType === ItemType.equip) {
             if (gameData.curExpl && gameData.curExpl.curBattle) {
-                const curEquipToken = EquipDataTool.getToken(curItem as Equip);
+                const curEquipToken = EquipTool.getToken(curItem as Equip);
                 for (const petMmr of gameData.curExpl.curBattle.selfs) {
                     for (const itemToken of petMmr.eqpTokens) {
                         if (curEquipToken === itemToken) return '该物品被战斗中精灵持有，无法丢弃';
@@ -1346,7 +1346,7 @@ export class GameDataTool {
             const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
             for (const quest of quests) {
                 if (quest.id !== questInfo.questId) continue;
-                if (quest.progress >= QuestDataTool.getRealCount(quest)) continue;
+                if (quest.progress >= QuestTool.getRealCount(quest)) continue;
                 if (!check(quest, model)) continue;
                 return { quest, model };
             }
@@ -1361,7 +1361,7 @@ export class GameDataTool {
             const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
             for (const quest of quests) {
                 if (quest.id !== questInfo.questId) continue;
-                if (quest.progress >= QuestDataTool.getRealCount(quest)) continue;
+                if (quest.progress >= QuestTool.getRealCount(quest)) continue;
                 call(quest, model);
             }
         }

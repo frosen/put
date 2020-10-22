@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { ListView } from 'scripts/ListView';
 import { PagePetLVD, PagePetCellType } from './PagePetLVD';
-import { GameDataTool, PetDataTool } from 'scripts/Memory';
+import { GameDataTool, PetTool } from 'scripts/Memory';
 import { Pet, PetState } from 'scripts/DataSaved';
 import { CellPet } from '../cells/cell_pet/scripts/CellPet';
 import { PagePetDetail } from 'pages/page_pet_detail/scripts/PagePetDetail';
@@ -139,7 +139,7 @@ export class PagePet extends PageBase {
             return;
         }
 
-        const name = PetDataTool.getCnName(pet);
+        const name = PetTool.getCnName(pet);
         const str = `确定放生精灵“${name}”？\n` + '注意：放生后将无法找回！';
         this.ctrlr.popAlert(str, (key: number) => {
             if (key === 1) {

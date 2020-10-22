@@ -23,7 +23,7 @@ import { PagePetDetail } from './PagePetDetail';
 import { CellPkgEquipBlank } from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
-import { PetDataTool } from 'scripts/Memory';
+import { PetTool } from 'scripts/Memory';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 
 const PETNAME = 'p';
@@ -219,14 +219,14 @@ export class PagePetDetailLVD extends ListViewDelegate {
 
         // 第一组
         if (rowIdx === 0) {
-            const name = PetDataTool.getCnName(pet);
-            const subName = pet.nickname ? '(' + PetDataTool.getBaseCnName(pet) + ')' : '';
+            const name = PetTool.getCnName(pet);
+            const subName = pet.nickname ? '(' + PetTool.getBaseCnName(pet) + ')' : '';
             cell.setData(name, subName, PetStateNames[pet.state], STATE_TIP);
         } else if (rowIdx === 1) {
             cell.setData1('等级', String(pet.lv), LV_TIP);
             cell.setData2('品阶', PetRankNames[pet.rank], RANK_TIP);
         } else if (rowIdx === 2) {
-            cell.setData1('默契值', String(PetDataTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
+            cell.setData1('默契值', String(PetTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
             let drinkStr: string;
             if (pet.drink) {
                 const drinkModel = drinkModelDict[pet.drink.id];
