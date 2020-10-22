@@ -170,7 +170,7 @@ export class CellQuest extends ListViewCell {
                 lbls[0].string = '前往';
                 CellQuest.lbl(lbls[1], posModel.cnName, cc.Color.BLUE);
                 CellQuest.lbl(lbls[2], ExplStepNames[need.step], cc.Color.RED);
-                CellQuest.lbl(lbls[3], need.step === ExplStepType.center ? '收集' : '或更远 收集', cc.color(173, 173, 173));
+                CellQuest.lbl(lbls[3], '收集', cc.color(173, 173, 173));
                 CellQuest.lbl(lbls[4], need.name, cc.Color.BLUE);
                 CellQuest.lbl(lbls[5], 'x ' + String(QuestDataTool.getRealCount(quest)), cc.Color.ORANGE);
                 break;
@@ -181,7 +181,7 @@ export class CellQuest extends ListViewCell {
                 lbls[0].string = '前往';
                 CellQuest.lbl(lbls[1], posModel.cnName, cc.Color.BLUE);
                 CellQuest.lbl(lbls[2], ExplStepNames[need.step], cc.Color.RED);
-                CellQuest.lbl(lbls[3], need.step === ExplStepType.center ? '搜寻' : '或更远 搜寻', cc.color(173, 173, 173));
+                CellQuest.lbl(lbls[3], '搜寻', cc.color(173, 173, 173));
                 CellQuest.lbl(lbls[4], need.name, cc.Color.BLUE);
                 lbls[5].string = '';
                 break;
