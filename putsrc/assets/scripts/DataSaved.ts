@@ -96,10 +96,12 @@ export class Pet {
     /** 当前经验 */
     exp: number;
 
+    /** 专精特性id */
+    exFeatureIds: string[];
     /** 天赋特性 */
-    inbornFeatures: Feature[];
-    /** 学习了的特性 */
-    learnedFeatures: Feature[];
+    inbFeatures: Feature[];
+    /** 习得特性 */
+    lndFeatures: Feature[];
 
     /** 装备 */
     equips: Equip[];
@@ -176,6 +178,7 @@ export class CaughtPet extends Item {
     petId: string;
     lv: number;
     rank: number;
+    exFeatureIds: string[];
     features: Feature[];
 }
 
@@ -245,6 +248,7 @@ export class PetMmr {
     id: string;
     lv: number;
     rank: number;
+    exFeatureIds: string[];
     features: Feature[];
 }
 

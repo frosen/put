@@ -553,7 +553,14 @@ export class RealBattle {
         if (ePetMmrs) {
             this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetMmr = ePetMmrs[petIdx];
-                const petData = PetTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.rank, ePetMmr.features, null);
+                const petData = PetTool.create(
+                    ePetMmr.id,
+                    ePetMmr.lv,
+                    ePetMmr.rank,
+                    ePetMmr.exFeatureIds,
+                    ePetMmr.features,
+                    null
+                );
                 if (spcBtlId) petData.master = 'spcBtl';
                 bPet.init(petData, null, null);
             });
@@ -563,9 +570,9 @@ export class RealBattle {
             const ePetsData = RealBattle.createRandomPetData(createData.curExpl, createData.petCount);
             this.enemyTeam.reset(ePetsData.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetData = ePetsData[petIdx];
-                const petData = PetTool.create(ePetData.id, ePetData.lv, ePetData.rank, ePetData.features, null);
-                if (spcBtlId) petData.master = 'spcBtl';
-                bPet.init(petData, null, null);
+                const ePet = PetTool.createWithRandomFeature(ePetData.id, ePetData.lv, ePetData.rank, null);
+                if (spcBtlId) ePet.master = 'spcBtl';
+                bPet.init(ePet, null, null);
             });
         }
 
@@ -591,7 +598,7 @@ export class RealBattle {
         this.start = true;
     }
 
-    static createRandomPetData(curExpl: ExplMmr, count: number): { id: string; lv: number; rank: number; features: Feature[] }[] {
+    static createRandomPetData(curExpl: ExplMmr, count: number): { id: string; lv: number; rank: number }[] {
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
@@ -608,25 +615,16 @@ export class RealBattle {
         const { base: lvBase, range: lvRange } = this.calcLvArea(curPosModel, curStep);
         const { base: rankBase, range: rankRange } = this.calcRankAreaByExplStep(curStep);
 
-        const petDatas: { id: string; lv: number; rank: number; features: Feature[] }[] = [];
+        const petDatas: { id: string; lv: number; rank: number }[] = [];
         for (let index = 0; index < petCount; index++) {
             const id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
             let lv = lvBase - lvRange + normalRandom(lvRange * 2);
             lv = Math.min(Math.max(1, lv), expModels.length);
             let rank = rankBase - rankRange + normalRandom(rankRange * 2);
             rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
-            const features = this.getRandomFeatures(lv);
-            petDatas.push({ id, lv, rank, features });
+            petDatas.push({ id, lv, rank });
         }
         return petDatas;
-    }
-
-    static getRandomFeatures(lv: number): Feature[] {
-        const features = [];
-        const featureR = Math.random();
-        if (lv > 5 && featureR > 0.3) features.push(FeatureTool.createInbornFeature()); // 有一定等级的野外怪物才会有天赋
-        if (lv > 15 && featureR > 0.7) features.push(FeatureTool.createInbornFeature());
-        return features;
     }
 
     static calcLvArea(posModel: ActPosModel, step: number): { base: number; range: number } {

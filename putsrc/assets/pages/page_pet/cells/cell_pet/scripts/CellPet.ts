@@ -79,10 +79,9 @@ export class CellPet extends ListViewCell {
         const realPrvty = PetTool.getRealPrvty(pet);
         this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
         index++;
-        for (const feature of pet.inbornFeatures) {
-            const cnName = featureModelDict[feature.id].cnBrief;
-            const lv = feature.lv;
-            this.setInfoNode(index, '天赋特性・' + cnName + String(lv), cc.Color.RED);
+        for (const featureId of pet.exFeatureIds) {
+            const cnName = featureModelDict[featureId].cnBrief;
+            this.setInfoNode(index, '专精特性・' + cnName, cc.Color.RED);
             index++;
         }
 

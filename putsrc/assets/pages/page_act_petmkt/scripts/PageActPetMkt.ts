@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool, GameDataTool, CaughtPetTool } from 'scripts/Memory';
+import { MoneyTool, GameDataTool, CaughtPetTool, PetTool } from 'scripts/Memory';
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
@@ -81,9 +81,9 @@ export class PageActPetMkt extends PageBase {
             lv = Math.min(Math.max(1, lv), expModels.length);
             let rank = rankBase - rankRange + normalRandom(rankRange * 2);
             rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
-            const features = RealBattle.getRandomFeatures(lv);
 
-            const cPet = CaughtPetTool.create(petId, lv, rank, features);
+            const pet = PetTool.createWithRandomFeature(petId, lv, rank, null);
+            const cPet = CaughtPetTool.createByPet(pet);
             pets.push(cPet);
         }
     }
@@ -140,7 +140,7 @@ export class PageActPetMkt extends PageBase {
             const count = this.countList[index];
             if (!count) continue;
             const goods = this.goodsList[index];
-            GameDataTool.addCaughtPet(gameData, goods.id, goods.lv, goods.rank, goods.features);
+            GameDataTool.addCaughtPet(gameData, goods);
             this.pADPetMkt.pets[index] = undefined;
         }
         GameDataTool.handleMoney(gameData, (m: Money) => (m.sum -= this.totalPrice));

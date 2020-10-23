@@ -10,7 +10,6 @@ import { skillModelDict } from 'configs/SkillModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { equipModelDict } from 'configs/EquipModelDict';
-import { inbornFeatures } from 'configs/InbornFeatures';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
@@ -151,11 +150,7 @@ function checkFeatureModelDict() {
     }
 }
 
-function checkFeatureInBorn() {
-    for (const featureId of inbornFeatures) {
-        if (!featureModelDict.hasOwnProperty(featureId)) cc.error('inBornFeatures中有错误id：', featureId);
-    }
-}
+function checkFeatureInBorn() {}
 
 function checkEquipModelDict() {
     for (const key in equipModelDict) {

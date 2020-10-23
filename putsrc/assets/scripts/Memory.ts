@@ -6,7 +6,6 @@
 
 import { petModelDict } from 'configs/PetModelDict';
 import { featureModelDict } from 'configs/FeatureModelDict';
-import { featureLvsByPetLv } from 'configs/FeatureLvsByPetLv';
 import {
     Feature,
     Pet,
@@ -64,7 +63,6 @@ import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
 import { GameJITDataTool, AmplAttriType } from './DataOther';
 import { drinkModelDict } from 'configs/DrinkModelDict';
-import { inbornFeatures } from 'configs/InbornFeatures';
 import { expModels } from 'configs/ExpModels';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
@@ -315,27 +313,27 @@ export class Memory {
     test() {
         this.gameData.curPosId = 'YiZhuangJiDi';
 
-        GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, 1, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, 1, [], [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.nickname = '妙妙';
             pet.prvty = 400000;
             pet.equips[0] = EquipTool.createRandomByLv(15, 20);
         });
 
-        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, 1, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, 1, [], [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
             pet.drink = CnsumTool.create(Drink, 'LingGanYaoJi2');
             pet.drinkTime = Date.now();
         });
 
-        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
             const f = newInsWithChecker(Feature);
             f.id = 'hitWithDark';
             f.lv = 1;
-            pet.learnedFeatures.push(f);
+            pet.lndFeatures.push(f);
         });
 
         // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
@@ -364,7 +362,9 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 33);
         GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += 1000));
 
-        GameDataTool.addCaughtPet(this.gameData, 'BaiLanYuYan', 3, 6, [FeatureTool.createInbornFeature()]);
+        const pet = PetTool.createWithRandomFeature('BaiLanYuYan', 3, 6, null);
+        const cPet = CaughtPetTool.createByPet(pet);
+        GameDataTool.addCaughtPet(this.gameData, cPet);
 
         // this.gameData.curPosId = 'GuangJiDianZhiLu';
         // GameDataTool.createExpl(this.gameData, 0);
@@ -380,12 +380,18 @@ export class Memory {
 }
 
 export class FeatureTool {
-    static createInbornFeature(): Feature {
-        const feature = new Feature();
-        feature.id = getRandomOneInList(inbornFeatures);
-        const r = Math.random();
-        feature.lv = 1 + Math.floor(r * r * r * 10); // 使用3次方，使随机结果更小
-        return feature;
+    static create(id: string, lv: number): Feature {
+        const newFeature = newInsWithChecker(Feature);
+        newFeature.id = id;
+        newFeature.lv = lv;
+        return newFeature;
+    }
+
+    static clone(feature: Feature): Feature {
+        const newFeature = newInsWithChecker(Feature);
+        newFeature.id = feature.id;
+        newFeature.lv = feature.lv;
+        return newFeature;
     }
 
     static getDatas(featureId: string, lv: number) {
@@ -397,21 +403,15 @@ export class FeatureTool {
         }
         return datas;
     }
-
-    static clone(feature: Feature): Feature {
-        const newFeature = newInsWithChecker(Feature);
-        newFeature.id = feature.id;
-        newFeature.lv = feature.lv;
-        return newFeature;
-    }
 }
 
 export class PetTool {
-    static create(id: string, lv: number, rank: number, features: Feature[], gameData: GameData): Pet {
+    static create(id: string, lv: number, rank: number, exFeatureIds: string[], features: Feature[], gameData: GameData): Pet {
         const pet = newInsWithChecker(Pet);
 
-        pet.inbornFeatures = newList();
-        pet.learnedFeatures = newList();
+        pet.exFeatureIds = newList();
+        pet.inbFeatures = newList();
+        pet.lndFeatures = newList();
 
         const equips = [];
         for (let index = 0; index < PetEquipCountMax; index++) equips.push(null);
@@ -439,9 +439,39 @@ export class PetTool {
 
         pet.exp = 0;
 
-        for (const feature of features) pet.inbornFeatures.push(FeatureTool.clone(feature));
+        for (const featureId of exFeatureIds) pet.exFeatureIds.push(featureId);
+        for (const feature of features) pet.inbFeatures.push(FeatureTool.clone(feature));
 
         return pet;
+    }
+
+    static createWithRandomFeature(id: string, lv: number, rank: number, gameData: GameData): Pet {
+        const model = petModelDict[id];
+        const selfFeatureIds = model.selfFeatureIds;
+
+        const exFeatureIds = [];
+        const exFR = Math.random();
+        if (lv > 10 && exFR > 0.4) exFeatureIds.push(getRandomOneInList(selfFeatureIds)); // 有一定等级的怪物才会有天赋
+        if (lv > 20 && exFR > 0.8) exFeatureIds.push(getRandomOneInList(selfFeatureIds));
+
+        const features = [];
+        for (const exFId of exFeatureIds) {
+            const feature = FeatureTool.create(exFId, 1 + randomInt(3));
+            features.push(feature);
+        }
+
+        const pet = PetTool.create(id, lv, rank, exFeatureIds, features, gameData);
+        for (let curLv = 0; curLv <= lv; curLv++) {
+            PetTool.addFeatureByLvUp(pet, curLv);
+        }
+
+        return pet;
+    }
+
+    static getRandomFeatures(lv: number): Feature[] {
+        const features = [];
+
+        return features;
     }
 
     static getCnName(pet: Pet, needSpace: boolean = false): string {
@@ -450,12 +480,11 @@ export class PetTool {
     }
 
     static getBaseCnName(pet: Pet, needSpace: boolean = false): string {
-        if (pet.inbornFeatures.length > 0) {
+        if (pet.exFeatureIds.length > 0) {
             let name = '';
             for (let index = 1; index >= 0; index--) {
-                const feature = pet.inbornFeatures[index];
-                if (!feature) continue;
-                name += featureModelDict[feature.id].cnBrief;
+                const id = pet.exFeatureIds[index];
+                name += featureModelDict[id].cnBrief;
             }
             return name + (needSpace ? ' 之 ' : '之') + PetTool.getOriNameById(pet.id);
         } else {
@@ -481,35 +510,13 @@ export class PetTool {
             }
         }
 
-        for (const feature of pet.learnedFeatures) {
+        for (const feature of pet.inbFeatures) {
             callback(featureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
         }
 
-        for (const feature of pet.inbornFeatures) {
+        for (const feature of pet.lndFeatures) {
             callback(featureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
         }
-
-        const selfFeatures = PetTool.getSelfFeaturesByCurLv(pet);
-        for (const feature of selfFeatures) {
-            callback(featureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
-        }
-    }
-
-    static getSelfFeaturesByCurLv(pet: Pet) {
-        const selfFeatureIds = (petModelDict[pet.id] as PetModel).selfFeatureIds;
-        const featureLvs = featureLvsByPetLv[pet.lv];
-        const features: Feature[] = [];
-
-        for (let index = 0; index < selfFeatureIds.length; index++) {
-            const featureLv = featureLvs[index];
-            if (featureLv === 0) continue;
-
-            const newFeature = new Feature();
-            newFeature.id = selfFeatureIds[index];
-            newFeature.lv = featureLv;
-            features.push(newFeature);
-        }
-        return features;
     }
 
     static getSelfSkillIdByCurLv(pet: Pet): string[] {
@@ -538,12 +545,39 @@ export class PetTool {
             if (newExp < curExpMax) {
                 pet.exp = newExp;
                 const lvDiff = lv - pet.lv;
-                pet.lv = lv;
+                PetTool.lvUp(pet, lv);
+
                 return lvDiff + newExp / curExpMax;
             } else {
                 lv++;
                 newExp -= curExpMax;
             }
+        }
+    }
+
+    static lvUp(pet: Pet, newLv: number) {
+        const oldLv = pet.lv;
+        pet.lv = newLv;
+        for (let curLv = oldLv + 1; curLv <= newLv; curLv++) {
+            PetTool.addFeatureByLvUp(pet, curLv);
+        }
+    }
+
+    static addFeatureByLvUp(pet: Pet, curLv: number) {
+        if (curLv >= 11 && (curLv - 11) % 3 === 0) {
+            const addLv = 1;
+            const model = petModelDict[pet.id];
+            // 相邻次获取不一样的，不让一个feature格外的大
+            const fromFront = (curLv - 11) % 6 === 0;
+            const selfFeatureIds = fromFront ? model.selfFeatureIds.slice(0, 3) : model.selfFeatureIds.slice(3, 6);
+            const id = getRandomOneInList(selfFeatureIds);
+            for (const feature of pet.inbFeatures) {
+                if (feature.id === id) {
+                    feature.lv += addLv;
+                    return;
+                }
+            }
+            pet.inbFeatures.push(FeatureTool.create(id, addLv));
         }
     }
 }
@@ -796,14 +830,19 @@ export class EquipTool {
 }
 
 export class CaughtPetTool {
-    static create(id: string, lv: number, rank: number, features: Feature[]): CaughtPet {
+    static create(id: string, lv: number, rank: number, exFeatureIds: string[], features: Feature[]): CaughtPet {
         const cp = newInsWithChecker(CaughtPet);
         cp.id = 'cp_' + id;
         cp.petId = id;
         cp.lv = lv;
         cp.rank = rank;
+        cp.exFeatureIds = exFeatureIds;
         cp.features = features;
         return cp;
+    }
+
+    static createByPet(pet: Pet): CaughtPet {
+        return CaughtPetTool.create(pet.id, pet.lv, pet.rank, pet.exFeatureIds, pet.inbFeatures);
     }
 
     static getCnName(cpet: CaughtPet, needSpace: boolean = false): string {
@@ -937,12 +976,14 @@ export class MmrTool {
         return selfPetMmr;
     }
 
-    static createPetMmr(id: string, lv: number, rank: number, features: Feature[]): PetMmr {
+    static createPetMmr(id: string, lv: number, rank: number, exFeatureIds: string[], features: Feature[]): PetMmr {
         const p = newInsWithChecker(PetMmr);
         p.id = id;
         p.lv = lv;
         p.rank = rank;
+        p.exFeatureIds = newList();
         p.features = newList();
+        for (const featureId of exFeatureIds) p.exFeatureIds.push(featureId);
         for (const feature of features) p.features.push(FeatureTool.clone(feature));
         return p;
     }
@@ -988,6 +1029,7 @@ export class GameDataTool {
         id: string,
         lv: number,
         rank: number,
+        exFeatureIds: string[],
         features: Feature[],
         callback: (pet: Pet) => void = null
     ): string {
@@ -995,7 +1037,7 @@ export class GameDataTool {
 
         gameData.totalPetCount++;
 
-        const pet = PetTool.create(id, lv, rank, features, gameData);
+        const pet = PetTool.create(id, lv, rank, exFeatureIds, features, gameData);
         gameData.pets.push(pet);
 
         this.sortPetsByState(gameData);
@@ -1102,18 +1144,10 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static addCaughtPet(
-        gameData: GameData,
-        id: string,
-        lv: number,
-        rank: number,
-        features: Feature[],
-        callback: (cp: CaughtPet) => void = null
-    ): string {
+    static addCaughtPet(gameData: GameData, cp: CaughtPet, callback: (cp: CaughtPet) => void = null): string {
         if (gameData.weight >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
         gameData.weight++;
 
-        const cp = CaughtPetTool.create(id, lv, rank, features);
         gameData.items.push(cp);
 
         if (callback) callback(cp);
@@ -1297,7 +1331,9 @@ export class GameDataTool {
         const battle = MmrTool.createBattleMmr(seed, startUpdCnt, spcBtlId);
 
         for (const pet of this.getReadyPets(gameData)) battle.selfs.push(MmrTool.createSelfPetMmr(pet));
-        for (const pet of ePets) battle.enemys.push(MmrTool.createPetMmr(pet.id, pet.lv, pet.rank, pet.inbornFeatures));
+        for (const pet of ePets) {
+            battle.enemys.push(MmrTool.createPetMmr(pet.id, pet.lv, pet.rank, pet.exFeatureIds, pet.inbFeatures));
+        }
 
         curExpl.curBattle = battle;
     }

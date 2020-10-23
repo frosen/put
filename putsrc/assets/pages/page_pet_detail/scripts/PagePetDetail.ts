@@ -72,11 +72,13 @@ export class PagePetDetail extends PageBase {
         if (this.dirtyToken !== curDirtyToken) {
             this.dirtyToken = curDirtyToken;
 
+            const exFeatureIds = this.curPet.exFeatureIds;
             const featureDatas: { feature: Feature; type: FeatureGainType }[] = [];
-            for (const feature of this.curPet.inbornFeatures) featureDatas.push({ feature, type: FeatureGainType.inborn });
-            const selfFeatures = PetTool.getSelfFeaturesByCurLv(this.curPet);
-            for (const feature of selfFeatures) featureDatas.push({ feature, type: FeatureGainType.self });
-            for (const feature of this.curPet.learnedFeatures) featureDatas.push({ feature, type: FeatureGainType.learned });
+            for (const feature of this.curPet.inbFeatures) {
+                const type = exFeatureIds.includes(feature.id) ? FeatureGainType.expert : FeatureGainType.inborn;
+                featureDatas.push({ feature, type });
+            }
+            for (const feature of this.curPet.lndFeatures) featureDatas.push({ feature, type: FeatureGainType.learned });
             lvd.featureDatas = featureDatas;
 
             this.getComponentInChildren(ListView).resetContent(true);

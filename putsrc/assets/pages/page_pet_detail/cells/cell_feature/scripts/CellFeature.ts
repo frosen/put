@@ -14,11 +14,11 @@ import { FeatureTool } from 'scripts/Memory';
 
 export enum FeatureGainType {
     inborn = 1,
-    self = 2,
+    expert,
     learned
 }
 
-const FeatureGainNames = ['', '天赋', '生物', '习得'];
+const FeatureGainNames = ['', '天赋', '专精', '习得'];
 
 @ccclass
 export class CellFeature extends ListViewCell {

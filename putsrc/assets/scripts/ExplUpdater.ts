@@ -5,7 +5,17 @@
  */
 
 import { BattlePageBase } from './BattlePageBase';
-import { Memory, GameDataTool, PetTool, EquipTool, CnsumTool, MmrTool, MoneyTool, QuestTool } from 'scripts/Memory';
+import {
+    Memory,
+    GameDataTool,
+    PetTool,
+    EquipTool,
+    CnsumTool,
+    MmrTool,
+    MoneyTool,
+    QuestTool,
+    CaughtPetTool
+} from 'scripts/Memory';
 import { BattleController } from './BattleController';
 import {
     GameData,
@@ -272,7 +282,7 @@ export class ExplUpdater {
                     for (const lv of eqp.selfFeatureLvs) featureLvs += lv;
                     for (const feature of eqp.affixes) featureLvs += feature.lv;
                 }
-                for (const feature of pet.learnedFeatures) featureLvs += feature.lv;
+                for (const feature of pet.lndFeatures) featureLvs += feature.lv;
 
                 const realPrvty = PetTool.getRealPrvty(pet);
                 let curPower = pet.lv * AttriRatioByRank[pet.rank] + totalEqpLv;
@@ -489,8 +499,10 @@ export class ExplUpdater {
                 const petId = getRandomOneInList(realPetIds);
                 const lv = lvMin + randomInt(lvMax - lvMin);
                 const rank = rankMin + randomInt(rankMax - rankMin);
-                const features = RealBattle.getRandomFeatures(lv);
-                const rztStr = GameDataTool.addCaughtPet(gameData, petId, lv, rank, features);
+
+                const pet = PetTool.createWithRandomFeature(petId, lv, rank, null);
+                const cPet = CaughtPetTool.createByPet(pet);
+                const rztStr = GameDataTool.addCaughtPet(gameData, cPet);
                 if (rztStr !== GameDataTool.SUC) break;
                 rztSt.pets.push(petId);
             }
@@ -1191,8 +1203,8 @@ export class ExplUpdater {
             const suc = randomRate(catchRate);
 
             if (suc) {
-                const features: Feature[] = deepCopy(pet.inbornFeatures) as Feature[];
-                const rztStr = GameDataTool.addCaughtPet(gameData, pet.id, pet.lv, pet.rank, features);
+                const cPet = CaughtPetTool.createByPet(pet);
+                const rztStr = GameDataTool.addCaughtPet(gameData, cPet);
                 if (rztStr === GameDataTool.SUC) {
                     this.log(ExplLogType.rich, `成功捕获${PetTool.getCnName(pet)}`);
                     const catcher = this.memory.gameData.items[catcherIdx] as Catcher;
