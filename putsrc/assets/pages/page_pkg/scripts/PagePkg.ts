@@ -269,7 +269,7 @@ export class PagePkg extends PagePkgBase {
             this.ctrlr.pushPage(PagePkgEquip, { idx: itemIdx });
         } else if (item.itemType === ItemType.caughtPet) {
             const cPet = item as CaughtPet;
-            const rzt = GameDataTool.addPet(gameData, cPet.petId, cPet.lv, cPet.rank, cPet.exFeatureIds, cPet.features);
+            const rzt = GameDataTool.addPet(gameData, cPet.petId, cPet.lv, cPet.exFeatureIds, cPet.features);
             if (rzt === GameDataTool.SUC) {
                 GameDataTool.deleteItem(gameData, itemIdx);
                 this.resetCurList();

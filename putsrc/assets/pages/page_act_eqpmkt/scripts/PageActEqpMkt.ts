@@ -11,7 +11,7 @@ import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { ListView } from 'scripts/ListView';
-import { Money, Equip, PosData, PADEqpMkt } from 'scripts/DataSaved';
+import { Money, Equip, PADEqpMkt } from 'scripts/DataSaved';
 import { PAKey, ActPosModel, EqpMktModel, ReputRank } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from 'scripts/Random';

@@ -157,8 +157,6 @@ export class DrinkModel extends CnsumModel {
 export class CatcherModel extends CnsumModel {
     lvMin: number;
     lvMax: number;
-    rankMin: number;
-    rankMax: number;
     bioType: BioType;
     eleType: EleType;
     battleType: BattleType;

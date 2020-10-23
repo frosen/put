@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
-import { CaughtPet, PetRankNames } from 'scripts/DataSaved';
+import { CaughtPet } from 'scripts/DataSaved';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { CaughtPetTool } from 'scripts/Memory';
 import { ListViewCell } from 'scripts/ListViewCell';
@@ -29,7 +29,7 @@ export class CellPkgCaughtPet extends CellPkgBase {
         super.setData(itemIdx, caughtPet);
 
         this.nameLbl.string = CaughtPetTool.getCnName(caughtPet, true);
-        this.lvLbl.string = `[L${caughtPet.lv}${PetRankNames[caughtPet.rank]}]`;
+        this.lvLbl.string = `[L${caughtPet.lv}]`;
 
         this.hideAllInfoNode();
         let index = 0;

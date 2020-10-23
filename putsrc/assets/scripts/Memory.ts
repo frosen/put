@@ -47,7 +47,6 @@ import {
 } from './DataSaved';
 import {
     FeatureModel,
-    PetModel,
     EquipPosType,
     EquipModel,
     DrinkModel,
@@ -313,21 +312,21 @@ export class Memory {
     test() {
         this.gameData.curPosId = 'YiZhuangJiDi';
 
-        GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, 1, [], [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, [], [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.nickname = '妙妙';
             pet.prvty = 400000;
             pet.equips[0] = EquipTool.createRandomByLv(15, 20);
         });
 
-        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, 1, [], [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, [], [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
             pet.drink = CnsumTool.create(Drink, 'LingGanYaoJi2');
             pet.drinkTime = Date.now();
         });
 
-        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, 1, [], [], (pet: Pet) => {
+        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, [], [], (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
             const f = newInsWithChecker(Feature);
@@ -362,7 +361,7 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 33);
         GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += 1000));
 
-        const pet = PetTool.createWithRandomFeature('BaiLanYuYan', 3, 6, null);
+        const pet = PetTool.createWithRandomFeature('BaiLanYuYan', 3);
         const cPet = CaughtPetTool.createByPet(pet);
         GameDataTool.addCaughtPet(this.gameData, cPet);
 
@@ -406,7 +405,7 @@ export class FeatureTool {
 }
 
 export class PetTool {
-    static create(id: string, lv: number, rank: number, exFeatureIds: string[], features: Feature[], gameData: GameData): Pet {
+    static create(id: string, lv: number, exFeatureIds: string[], features: Feature[]): Pet {
         const pet = newInsWithChecker(Pet);
 
         pet.exFeatureIds = newList();
@@ -421,15 +420,13 @@ export class PetTool {
         pet.nickname = null;
         pet.master = '';
 
-        pet.catchTime = Date.now();
-        pet.catchIdx = gameData ? gameData.totalPetCount : -99;
-        pet.catchLv = lv;
-        pet.catchRank = rank;
+        pet.catchTime = 0;
+        pet.catchIdx = 0;
+        pet.catchLv = 0;
 
         pet.state = PetState.rest;
 
         pet.lv = lv;
-        pet.rank = rank;
 
         pet.prvty = 0;
         pet.prvtyTime = pet.catchTime;
@@ -445,7 +442,7 @@ export class PetTool {
         return pet;
     }
 
-    static createWithRandomFeature(id: string, lv: number, rank: number, gameData: GameData): Pet {
+    static createWithRandomFeature(id: string, lv: number): Pet {
         const model = petModelDict[id];
         const selfFeatureIds = model.selfFeatureIds;
 
@@ -460,7 +457,7 @@ export class PetTool {
             features.push(feature);
         }
 
-        const pet = PetTool.create(id, lv, rank, exFeatureIds, features, gameData);
+        const pet = PetTool.create(id, lv, exFeatureIds, features);
         for (let curLv = 0; curLv <= lv; curLv++) {
             PetTool.addFeatureByLvUp(pet, curLv);
         }
@@ -830,19 +827,18 @@ export class EquipTool {
 }
 
 export class CaughtPetTool {
-    static create(id: string, lv: number, rank: number, exFeatureIds: string[], features: Feature[]): CaughtPet {
+    static create(id: string, lv: number, exFeatureIds: string[], features: Feature[]): CaughtPet {
         const cp = newInsWithChecker(CaughtPet);
         cp.id = 'cp_' + id;
         cp.petId = id;
         cp.lv = lv;
-        cp.rank = rank;
         cp.exFeatureIds = exFeatureIds;
         cp.features = features;
         return cp;
     }
 
     static createByPet(pet: Pet): CaughtPet {
-        return CaughtPetTool.create(pet.id, pet.lv, pet.rank, pet.exFeatureIds, pet.inbFeatures);
+        return CaughtPetTool.create(pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures);
     }
 
     static getCnName(cpet: CaughtPet, needSpace: boolean = false): string {
@@ -976,11 +972,10 @@ export class MmrTool {
         return selfPetMmr;
     }
 
-    static createPetMmr(id: string, lv: number, rank: number, exFeatureIds: string[], features: Feature[]): PetMmr {
+    static createPetMmr(id: string, lv: number, exFeatureIds: string[], features: Feature[]): PetMmr {
         const p = newInsWithChecker(PetMmr);
         p.id = id;
         p.lv = lv;
-        p.rank = rank;
         p.exFeatureIds = newList();
         p.features = newList();
         for (const featureId of exFeatureIds) p.exFeatureIds.push(featureId);
@@ -1028,7 +1023,6 @@ export class GameDataTool {
         gameData: GameData,
         id: string,
         lv: number,
-        rank: number,
         exFeatureIds: string[],
         features: Feature[],
         callback: (pet: Pet) => void = null
@@ -1037,7 +1031,11 @@ export class GameDataTool {
 
         gameData.totalPetCount++;
 
-        const pet = PetTool.create(id, lv, rank, exFeatureIds, features, gameData);
+        const pet = PetTool.create(id, lv, exFeatureIds, features);
+        pet.master = 'XXX'; // llytodo 自己的名字
+        pet.catchTime = Date.now();
+        pet.catchIdx = gameData.totalPetCount;
+        pet.catchLv = pet.lv;
         gameData.pets.push(pet);
 
         this.sortPetsByState(gameData);
@@ -1332,7 +1330,7 @@ export class GameDataTool {
 
         for (const pet of this.getReadyPets(gameData)) battle.selfs.push(MmrTool.createSelfPetMmr(pet));
         for (const pet of ePets) {
-            battle.enemys.push(MmrTool.createPetMmr(pet.id, pet.lv, pet.rank, pet.exFeatureIds, pet.inbFeatures));
+            battle.enemys.push(MmrTool.createPetMmr(pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures));
         }
 
         curExpl.curBattle = battle;

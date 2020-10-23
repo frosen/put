@@ -56,8 +56,6 @@ export enum PetState {
 
 export const PetStateNames = ['', '备战中', '休息中'];
 
-export const PetRankNames = ['?', 'D', 'C', 'B', 'B+', 'A', 'A+', 'S', 'SS', 'N', 'T', 'Z'];
-
 export class Feature {
     id: string;
     lv: number;
@@ -76,14 +74,11 @@ export class Pet {
     catchTime: number;
     catchIdx: number;
     catchLv: number;
-    catchRank: number;
 
     state: PetState;
 
     /** 等级 */
     lv: number;
-    /** 品阶 */
-    rank: number;
 
     /** 默契值 */
     prvty: number;
@@ -105,6 +100,9 @@ export class Pet {
 
     /** 装备 */
     equips: Equip[];
+
+    // mergeLv: number;
+    // mergeIds: string[];
 }
 
 // -----------------------------------------------------------------
@@ -177,7 +175,6 @@ export class CaughtPet extends Item {
     itemType: ItemType = ItemType.caughtPet;
     petId: string;
     lv: number;
-    rank: number;
     exFeatureIds: string[];
     features: Feature[];
 }
@@ -247,7 +244,6 @@ export class PosData {
 export class PetMmr {
     id: string;
     lv: number;
-    rank: number;
     exFeatureIds: string[];
     features: Feature[];
 }

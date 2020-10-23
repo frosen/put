@@ -16,13 +16,10 @@ convert('../put.xls', '../../putsrc/assets/configs/CatcherModelDict.ts', 'catche
         let lvMin = Number(rowData[2]);
         let lvMax = Number(rowData[3]);
 
-        let rankMin = Number(rowData[4]);
-        let rankMax = Number(rowData[5]);
-
-        let bioType = Number(rowData[6].substr(0, 1));
-        let eleType = Number(rowData[7].substr(0, 1));
-        let battleType = Number(rowData[8].substr(0, 1));
-        let price = Number(rowData[9]);
+        let bioType = Number(rowData[4].substr(0, 1));
+        let eleType = Number(rowData[5].substr(0, 1));
+        let battleType = Number(rowData[6].substr(0, 1));
+        let price = Number(rowData[7]);
 
         const cnNameByRank = ['', '', 'Ⅱ'];
         const rateByRank = [0, 6, 16];
@@ -34,8 +31,6 @@ convert('../put.xls', '../../putsrc/assets/configs/CatcherModelDict.ts', 'catche
                 cnName: cnName + cnNameByRank[index],
                 lvMin,
                 lvMax,
-                rankMin,
-                rankMax,
                 bioType,
                 eleType,
                 battleType,

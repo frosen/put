@@ -15,7 +15,7 @@ import { CellPetName } from '../cells/cell_pet_name/scripts/CellPetName';
 import { CellTitle } from '../cells/cell_title/scripts/CellTitle';
 import { petModelDict } from 'configs/PetModelDict';
 import { expModels } from 'configs/ExpModels';
-import { Pet, PetStateNames, PetRankNames, BioTypeNames, EleTypeNames, BattleTypeNames, Feature } from 'scripts/DataSaved';
+import { Pet, PetStateNames, BioTypeNames, EleTypeNames, BattleTypeNames, Feature } from 'scripts/DataSaved';
 import { Pet2 } from 'scripts/DataOther';
 import { PetModel } from 'scripts/DataModel';
 import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
@@ -41,7 +41,7 @@ const STATE_TIP = `分为：
 是否参战可在精灵列表中点击状态按钮修改`;
 
 const LV_TIP = '提高等级可以提高属性，增加特性\n10级和30级时可分别学会一个技能';
-const RANK_TIP = '提升可大幅度提高属性\n升阶时需消耗材料和一定默契值';
+const MERGE_TIP = ''; // llytodo
 const PRVTY_TIP = '数值 0-100 随时间自行提高\n数字越大上升越慢\n可提高基础暴击率，暴击伤害，命中，闪躲';
 const DRINK_TIP =
     '使用道具中的“饮品”获得\n可以在一定时间内提升获得某种效果\n' +
@@ -224,7 +224,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData(name, subName, PetStateNames[pet.state], STATE_TIP);
         } else if (rowIdx === 1) {
             cell.setData1('等级', String(pet.lv), LV_TIP);
-            cell.setData2('品阶', PetRankNames[pet.rank], RANK_TIP);
+            cell.setData2('融合层数', String(0), MERGE_TIP); // llytodo
         } else if (rowIdx === 2) {
             cell.setData1('默契值', String(PetTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
             let drinkStr: string;
@@ -234,7 +234,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
                 const leftMins = Math.floor((endTime - Date.now()) / 1000 / 60);
                 drinkStr = `${drinkModel.cnName} [${leftMins >= 1 ? leftMins : '<1'}min]`;
             } else drinkStr = '无';
-            cell.setData2('饮品', drinkStr, DRINK_TIP);
+            cell.setData2('增益', drinkStr, DRINK_TIP);
         } else if (rowIdx === 3) {
             let exp: number, expMax: number;
             if (pet.lv >= expModels.length) {
@@ -283,17 +283,23 @@ export class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx === 14) {
             cell.setData('身份信息');
         } else if (rowIdx === 15) {
-            cell.setData1('主人', pet.master);
+            const masterStr = pet.master || '无';
+            cell.setData1('主人', masterStr);
             cell.setData2('唯一标识', String(pet.catchIdx));
         } else if (rowIdx === 16) {
-            const date = new Date(pet.catchTime);
-            const Y = date.getFullYear() % 100,
-                m = date.getMonth() + 1,
-                d = date.getDate(),
-                H = date.getHours(),
-                i = date.getMinutes();
-            cell.setData1('捕获时间', `${Y}-${m}-${d} ${H}:${i}`);
-            cell.setData2('初始实力', 'L' + String(pet.catchLv) + PetRankNames[pet.catchRank]);
+            let timeStr: string;
+            if (pet.catchTime) {
+                const date = new Date(pet.catchTime);
+                const Y = date.getFullYear() % 100,
+                    m = date.getMonth() + 1,
+                    d = date.getDate(),
+                    H = date.getHours(),
+                    i = date.getMinutes();
+                timeStr = `${Y}-${m}-${d} ${H}:${i}`;
+            } else timeStr = '-';
+
+            cell.setData1('捕获时间', timeStr);
+            cell.setData2('初始实力', pet.catchLv ? `L${pet.catchLv}` : '-');
         }
         // 第六组
         else if (rowIdx === 17) {

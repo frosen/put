@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { ListViewCell } from 'scripts/ListViewCell';
 import { petModelDict } from 'configs/PetModelDict';
 
-import { Pet, PetRankNames, PetStateNames, EleColor } from 'scripts/DataSaved';
+import { Pet, PetStateNames, EleColor } from 'scripts/DataSaved';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { PetTool } from 'scripts/Memory';
 
@@ -63,7 +63,7 @@ export class CellPet extends ListViewCell {
 
         this.petNameLbl.string = PetTool.getCnName(pet, true);
         this.subNameLbl.string = pet.nickname ? '(' + PetTool.getBaseCnName(pet) + ')' : '';
-        this.lvLbl.string = `[L${pet.lv}${PetRankNames[pet.rank]}]`;
+        this.lvLbl.string = `[L${pet.lv}R${0}]`; // r是融合层数 llytodo
         ListViewCell.rerenderLbl(this.petNameLbl);
         ListViewCell.rerenderLbl(this.lvLbl);
         this.petNameLbl.node.parent.getComponent(cc.Layout).updateLayout();

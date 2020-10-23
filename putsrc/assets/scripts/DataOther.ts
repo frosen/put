@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { PetTool, EquipTool, FeatureTool, GameDataTool } from './Memory';
+import { PetTool, EquipTool, GameDataTool } from './Memory';
 import {
     FeatureModel,
     PetModel,
@@ -17,21 +17,7 @@ import {
     ActPosModel,
     PAKey
 } from './DataModel';
-import {
-    BioType,
-    EleType,
-    BattleType,
-    Pet,
-    EleTypeNames,
-    ExplMmr,
-    PetRankNames,
-    PetMmr,
-    Equip,
-    GameData,
-    Item,
-    ItemType,
-    Feature
-} from './DataSaved';
+import { BioType, EleType, BattleType, Pet, EleTypeNames, ExplMmr, PetMmr, Equip, GameData, Item, ItemType } from './DataSaved';
 
 import { petModelDict } from 'configs/PetModelDict';
 import { skillModelDict } from 'configs/SkillModelDict';
@@ -127,7 +113,6 @@ export class GameJITDataTool {
 
 // -----------------------------------------------------------------
 
-export const AttriRatioByRank = [0, 1, 1.2, 1.4, 1.6, 1.8, 2.1, 2.4, 2.7, 3.1, 3.5, 3.9];
 const DmgRangeByBio = [[], [0.85, 1.15], [0.6, 1.4], [1, 1], [0.85, 1.15], [0.85, 1.15]];
 
 export class Pet2 {
@@ -189,19 +174,17 @@ export class Pet2 {
         const petModel: PetModel = petModelDict[pet.id];
 
         const lv = pet.lv;
-        const rank = pet.rank;
         const bioType = petModel.bioType;
 
-        const rankRatio = AttriRatioByRank[rank];
         const dmgRange = DmgRangeByBio[bioType];
 
         // 一级原始属性
-        this.strengthOri = (petModel.baseStrength + petModel.addStrength * lv) * rankRatio;
-        this.concentrationOri = (petModel.baseConcentration + petModel.addConcentration * lv) * rankRatio;
-        this.durabilityOri = (petModel.baseDurability + petModel.addDurability * lv) * rankRatio;
-        this.agilityOri = (petModel.baseAgility + petModel.addAgility * lv) * rankRatio;
-        this.sensitivityOri = (petModel.baseSensitivity + petModel.addSensitivity * lv) * rankRatio;
-        this.elegantOri = (petModel.baseElegant + petModel.addElegant * lv) * rankRatio;
+        this.strengthOri = petModel.baseStrength + petModel.addStrength * lv;
+        this.concentrationOri = petModel.baseConcentration + petModel.addConcentration * lv;
+        this.durabilityOri = petModel.baseDurability + petModel.addDurability * lv;
+        this.agilityOri = petModel.baseAgility + petModel.addAgility * lv;
+        this.sensitivityOri = petModel.baseSensitivity + petModel.addSensitivity * lv;
+        this.elegantOri = petModel.baseElegant + petModel.addElegant * lv;
 
         // 一级属性
         this.strength = this.strengthOri;
@@ -553,15 +536,8 @@ export class RealBattle {
         if (ePetMmrs) {
             this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetMmr = ePetMmrs[petIdx];
-                const petData = PetTool.create(
-                    ePetMmr.id,
-                    ePetMmr.lv,
-                    ePetMmr.rank,
-                    ePetMmr.exFeatureIds,
-                    ePetMmr.features,
-                    null
-                );
-                if (spcBtlId) petData.master = 'spcBtl';
+                const petData = PetTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.exFeatureIds, ePetMmr.features);
+                if (spcBtlId) petData.master = 'spcBtl'; // llytodo master不配拥有名称吗
                 bPet.init(petData, null, null);
             });
         } else if (spcBtlId) {
@@ -570,7 +546,7 @@ export class RealBattle {
             const ePetsData = RealBattle.createRandomPetData(createData.curExpl, createData.petCount);
             this.enemyTeam.reset(ePetsData.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetData = ePetsData[petIdx];
-                const ePet = PetTool.createWithRandomFeature(ePetData.id, ePetData.lv, ePetData.rank, null);
+                const ePet = PetTool.createWithRandomFeature(ePetData.id, ePetData.lv);
                 if (spcBtlId) ePet.master = 'spcBtl';
                 bPet.init(ePet, null, null);
             });
@@ -598,7 +574,7 @@ export class RealBattle {
         this.start = true;
     }
 
-    static createRandomPetData(curExpl: ExplMmr, count: number): { id: string; lv: number; rank: number }[] {
+    static createRandomPetData(curExpl: ExplMmr, count: number): { id: string; lv: number }[] {
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
@@ -613,33 +589,19 @@ export class RealBattle {
         const enmeyPetType2 = getRandomOneInList(petIds);
 
         const { base: lvBase, range: lvRange } = this.calcLvArea(curPosModel, curStep);
-        const { base: rankBase, range: rankRange } = this.calcRankAreaByExplStep(curStep);
 
-        const petDatas: { id: string; lv: number; rank: number }[] = [];
+        const petDatas: { id: string; lv: number }[] = [];
         for (let index = 0; index < petCount; index++) {
             const id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
             let lv = lvBase - lvRange + normalRandom(lvRange * 2);
             lv = Math.min(Math.max(1, lv), expModels.length);
-            let rank = rankBase - rankRange + normalRandom(rankRange * 2);
-            rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
-            petDatas.push({ id, lv, rank });
+            petDatas.push({ id, lv });
         }
         return petDatas;
     }
 
     static calcLvArea(posModel: ActPosModel, step: number): { base: number; range: number } {
-        return { base: posModel.lv + step, range: 2 };
-    }
-
-    static RankByExplStep: { base: number; range: number }[] = [
-        { base: 1, range: 2 },
-        { base: 3, range: 2 },
-        { base: 4, range: 3 },
-        { base: 5, range: 3 }
-    ];
-
-    static calcRankAreaByExplStep(step: number): { base: number; range: number } {
-        return this.RankByExplStep[step];
+        return { base: posModel.lv + step * 2, range: 2 };
     }
 
     clone() {

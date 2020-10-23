@@ -17,20 +17,8 @@ import {
     CaughtPetTool
 } from 'scripts/Memory';
 import { BattleController } from './BattleController';
-import {
-    GameData,
-    ExplMmr,
-    Catcher,
-    Pet,
-    Feature,
-    BattleMmr,
-    Money,
-    PosData,
-    PADExpl,
-    Quest,
-    NeedUpdCntByStep
-} from 'scripts/DataSaved';
-import { AttriRatioByRank, AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
+import { GameData, ExplMmr, Catcher, Pet, BattleMmr, Money, PosData, PADExpl, Quest, NeedUpdCntByStep } from 'scripts/DataSaved';
+import { AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import {
     randomInt,
@@ -57,7 +45,6 @@ import {
 import { equipModelDict } from 'configs/EquipModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { petModelDict } from 'configs/PetModelDict';
-import { deepCopy } from './Utils';
 
 export enum ExplState {
     none,
@@ -270,7 +257,6 @@ export class ExplUpdater {
         while (true) {
             // 战斗状态
             const selfLv = selfPets.getAvg((pet: Pet) => pet.lv);
-            const selfRank = selfPets.getAvg((pet: Pet) => pet.rank);
             const selfPwr = selfPets.getAvg((pet: Pet) => {
                 let totalEqpLv = 0;
                 let featureLvs = 0;
@@ -285,17 +271,16 @@ export class ExplUpdater {
                 for (const feature of pet.lndFeatures) featureLvs += feature.lv;
 
                 const realPrvty = PetTool.getRealPrvty(pet);
-                let curPower = pet.lv * AttriRatioByRank[pet.rank] + totalEqpLv;
+                let curPower = pet.lv + totalEqpLv;
                 curPower *= 1 + (featureLvs + realPrvty * 0.01 * 20) * 0.01;
                 return curPower;
             });
             const enemyLv: number = RealBattle.calcLvArea(curPosModel, curStep).base;
-            const enemyRank: number = RealBattle.calcRankAreaByExplStep(curStep).base;
-            const enemyPwr = enemyLv * AttriRatioByRank[enemyRank];
+            const enemyPwr = enemyLv;
             const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
             const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
             const eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.battleCtrlr);
-            const petSt = { selfLv, selfRank, selfPwr, enemyLv, enemyRank, enemyPwr, agiRate, sensRate, eleRate };
+            const petSt = { selfLv, selfPwr, enemyLv, enemyPwr, agiRate, sensRate, eleRate };
 
             const nextUpdCnt = curExpl.chngUpdCnt + EachSpanUpdCnt;
             const nextTime = nextUpdCnt * ExplInterval + curExpl.stepEnterTime;
@@ -409,10 +394,8 @@ export class ExplUpdater {
         toUpdCnt: number,
         petSt: {
             selfLv: number;
-            selfRank: number;
             selfPwr: number;
             enemyLv: number;
-            enemyRank: number;
             enemyPwr: number;
             agiRate: number;
             sensRate: number;
@@ -441,7 +424,7 @@ export class ExplUpdater {
         winCount = Math.max(Math.min(winCount, bigRdCnt), 0);
 
         // 计算获取的经验 ------------------------------------------
-        const exp = ExplUpdater.calcExpByLvRank(petSt.selfLv, petSt.enemyLv, petSt.selfRank, petSt.enemyRank);
+        const exp = ExplUpdater.calcExpByLv(petSt.selfLv, petSt.enemyLv);
         let expTotal = exp * winCount;
         expTotal = randomAreaInt(expTotal, 0.05);
 
@@ -465,19 +448,12 @@ export class ExplUpdater {
             const catcherModel: CatcherModel = catcherModelDict[catcher.id];
 
             const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
-            const { base: rankBase, range: rankRange } = RealBattle.calcRankAreaByExplStep(curStep);
             let lvMin = lvBase - lvRange;
             let lvMax = lvBase + lvRange;
-            let rankMin = rankBase - rankRange;
-            let rankMax = rankBase + rankRange;
 
             lvMin = Math.max(lvMin, catcherModel.lvMin);
             lvMax = Math.min(lvMax, catcherModel.lvMax);
             if (lvMin > lvMax) break;
-
-            rankMin = Math.max(rankMin, catcherModel.rankMin);
-            rankMax = Math.min(rankMax, catcherModel.rankMax);
-            if (rankMin > rankMax) break;
 
             const petIdLists = explModel.petIdLists;
             const petIds = petIdLists[curStep];
@@ -498,9 +474,8 @@ export class ExplUpdater {
             for (; catchIdx < catchCount; catchIdx++) {
                 const petId = getRandomOneInList(realPetIds);
                 const lv = lvMin + randomInt(lvMax - lvMin);
-                const rank = rankMin + randomInt(rankMax - rankMin);
 
-                const pet = PetTool.createWithRandomFeature(petId, lv, rank, null);
+                const pet = PetTool.createWithRandomFeature(petId, lv);
                 const cPet = CaughtPetTool.createByPet(pet);
                 const rztStr = GameDataTool.addCaughtPet(gameData, cPet);
                 if (rztStr !== GameDataTool.SUC) break;
@@ -1136,9 +1111,7 @@ export class ExplUpdater {
         let exp: number;
         const selfLv = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
         const enemyLv = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
-        const selfRank = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
-        const enemyRank = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.rank));
-        exp = ExplUpdater.calcExpByLvRank(selfLv, enemyLv, selfRank, enemyRank);
+        exp = ExplUpdater.calcExpByLv(selfLv, enemyLv);
 
         for (const selfBPet of rb.selfTeam.pets) {
             const selfPet = selfBPet.pet;
@@ -1158,7 +1131,7 @@ export class ExplUpdater {
         }
     }
 
-    static calcExpByLvRank(selfLv: number, enemyLv: number, selfRank: number, enemyRank: number): number {
+    static calcExpByLv(selfLv: number, enemyLv: number): number {
         let exp: number;
         if (selfLv <= enemyLv) {
             exp = 8 + 5 * selfLv;
@@ -1166,7 +1139,6 @@ export class ExplUpdater {
             exp = 8 + 5 * enemyLv;
             exp *= 1 - Math.min(selfLv - enemyLv, 8) / 8;
         }
-        exp *= AttriRatioByRank[enemyRank] / AttriRatioByRank[selfRank];
 
         return exp;
     }
@@ -1194,7 +1166,6 @@ export class ExplUpdater {
             const pet = battlePet.pet;
             const petModel = petModelDict[pet.id];
             if (pet.lv < catcherModel.lvMin || catcherModel.lvMax < pet.lv) continue;
-            if (pet.rank < catcherModel.rankMin || catcherModel.rankMax < pet.rank) continue;
             if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;
             if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) continue;
             if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) continue;

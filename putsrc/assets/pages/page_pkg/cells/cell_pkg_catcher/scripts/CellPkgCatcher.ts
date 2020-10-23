@@ -7,8 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
-import { Catcher, BioTypeNames, EleTypeNames, BattleTypeNames, PetRankNames } from 'scripts/DataSaved';
+import { Catcher, BioTypeNames, EleTypeNames, BattleTypeNames } from 'scripts/DataSaved';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { CatcherModel } from 'scripts/DataModel';
 import { ListViewCell } from 'scripts/ListViewCell';
@@ -17,9 +16,6 @@ import { ListViewCell } from 'scripts/ListViewCell';
 export class CellPkgCatcher extends CellPkgCnsum {
     @property(cc.Label)
     lvLbl: cc.Label = null;
-
-    @property(cc.Label)
-    rankLbl: cc.Label = null;
 
     @property(cc.Label)
     rateLbl: cc.Label = null;
@@ -54,11 +50,9 @@ export class CellPkgCatcher extends CellPkgCnsum {
     setModelData(catcherModel: CatcherModel) {
         this.nameLbl.string = catcherModel.cnName;
         this.lvLbl.string = `[L${catcherModel.lvMin}~${catcherModel.lvMax}]`;
-        this.rankLbl.string = `[${PetRankNames[catcherModel.rankMin]}~${PetRankNames[catcherModel.rankMax]}]`;
 
         ListViewCell.rerenderLbl(this.nameLbl);
         ListViewCell.rerenderLbl(this.lvLbl);
-        ListViewCell.rerenderLbl(this.rankLbl);
 
         this.rateLbl.string = `成功率${Math.round(catcherModel.rate * 0.5)}-${catcherModel.rate}%`;
         ListViewCell.rerenderLbl(this.rateLbl);

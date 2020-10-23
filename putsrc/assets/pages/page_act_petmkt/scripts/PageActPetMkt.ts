@@ -11,7 +11,7 @@ import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { ListView } from 'scripts/ListView';
-import { Money, PetRankNames, PosData, PADPetMkt, CaughtPet } from 'scripts/DataSaved';
+import { Money, PADPetMkt, CaughtPet } from 'scripts/DataSaved';
 import { PAKey, ActPosModel, PetMktModel, ReputRank } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from 'scripts/Random';
@@ -75,14 +75,11 @@ export class PageActPetMkt extends PageBase {
             }
             const petId = getRandomOneInList(petList);
             const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(posModel, step);
-            const { base: rankBase, range: rankRange } = RealBattle.calcRankAreaByExplStep(step);
 
             let lv = lvBase - lvRange + normalRandom(lvRange * 2);
             lv = Math.min(Math.max(1, lv), expModels.length);
-            let rank = rankBase - rankRange + normalRandom(rankRange * 2);
-            rank = Math.min(Math.max(1, rank), PetRankNames.length - 1);
 
-            const pet = PetTool.createWithRandomFeature(petId, lv, rank, null);
+            const pet = PetTool.createWithRandomFeature(petId, lv);
             const cPet = CaughtPetTool.createByPet(pet);
             pets.push(cPet);
         }

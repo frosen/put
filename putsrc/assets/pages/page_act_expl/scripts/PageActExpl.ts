@@ -11,13 +11,13 @@ import { PetUI } from './PetUI';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { PageActExplLVD } from './PageActExplLVD';
 import { ListView } from 'scripts/ListView';
-import { PetRankNames, EleType, ItemType, CnsumType, Catcher } from 'scripts/DataSaved';
+import { EleType, ItemType, CnsumType, Catcher } from 'scripts/DataSaved';
 import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, PAKey } from 'scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
 import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
-import { MmrTool, GameDataTool, PetTool } from 'scripts/Memory';
+import { GameDataTool, PetTool } from 'scripts/Memory';
 import { NavBar } from 'scripts/NavBar';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
@@ -276,7 +276,7 @@ export class PageActExpl extends BattlePageBase {
         const pet = battlePet.pet;
         ui.petName.string = PetTool.getCnName(pet);
         ui.subName.string = pet.nickname ? PetTool.getBaseCnName(pet) : '';
-        ui.petLv.string = `L${pet.lv}${PetRankNames[pet.rank]}`;
+        ui.petLv.string = `L${pet.lv}`;
         ui.bar.progress = battlePet.hp / battlePet.hpMax;
         ui.petHP.string = `${Math.ceil(battlePet.hp * 0.1)} / ${Math.ceil(battlePet.hpMax * 0.1)}`;
         ui.node.stopAllActions();

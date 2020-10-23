@@ -629,7 +629,7 @@ export class BattleController {
     }
 
     addMp(battlePet: BattlePet, aim: BattlePet) {
-        const mp = 3 + (aim.pet.lv > battlePet.pet.lv ? 1 : 0) + (aim.pet.rank > battlePet.pet.rank ? 1 : 0);
+        const mp = 3 + (aim.pet.lv > battlePet.pet.lv ? 1 : 0);
 
         const team = this.getTeam(battlePet);
         team.mp += mp;
