@@ -61,13 +61,12 @@ export class PageActPetMkt extends PageBase {
     resetMktGoods(pADPetMkt: PADPetMkt, posModel: ActPosModel) {
         const petMktModel = posModel.actMDict[PAKey.petMkt] as PetMktModel;
         const petIdLists = petMktModel.petIdLists;
-        cc.assert(petIdLists && petIdLists.length === 5, `${posModel.id}的petIdLists有问题`);
         const petCount = randomInt(3) + 4;
 
         const pets = pADPetMkt.pets;
         pets.length = 0;
         for (let index = 0; index < petCount; index++) {
-            let step = getRandomOneInListWithRate([0, 1, 2, 3], [0.4, 0.7, 0.9]);
+            let step = getRandomOneInListWithRate([0, 1, 2, 3], [0.5, 0.75, 0.9]);
             let petList = petIdLists[step];
             if (!petList) {
                 petList = petIdLists[0];

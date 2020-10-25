@@ -218,10 +218,10 @@ export class Pet2 {
         // 二级原始属性
         this.hpMaxOri = this.durability * 25;
         this.mpMaxOri = 100 + Math.floor(this.concentration / 30);
-        this.atkDmgFromOri = this.strength * dmgRange[0] + 5;
-        this.atkDmgToOri = this.strength * dmgRange[1] + 15;
-        this.sklDmgFromOri = this.concentration * dmgRange[0] + 15;
-        this.sklDmgToOri = this.concentration * dmgRange[1] + 30;
+        this.atkDmgFromOri = this.strength * dmgRange[0] + 10;
+        this.atkDmgToOri = this.strength * dmgRange[1] + 150;
+        this.sklDmgFromOri = this.concentration * dmgRange[0] + 10;
+        this.sklDmgToOri = this.concentration * dmgRange[1] + 50;
 
         // 二级属性
         this.hpMax = this.hpMaxOri;

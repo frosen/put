@@ -250,7 +250,7 @@ export class ExplUpdater {
         const curPosModel = actPosModelDict[posId];
         const curStep = curExpl.curStep;
 
-        const EachSpanUpdCnt = (1000 * 60 * 60 * 3 * 4) / 3; // 3小时的跳数
+        const EachSpanUpdCnt = (1000 * 60 * 60 * 3) / ExplIntervalNormal; // 3小时的跳数
         const HangMaxSpan = 8; // 3*8=24小时
         let spanCnt = 0;
 

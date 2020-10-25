@@ -59,13 +59,12 @@ export class PageActEqpMkt extends PageBase {
     resetMktGoods(pADEqpMkt: PADEqpMkt, posModel: ActPosModel) {
         const eqpMktModel = posModel.actMDict[PAKey.eqpMkt] as EqpMktModel;
         const eqpIdLists = eqpMktModel.eqpIdLists;
-        cc.assert(eqpIdLists && eqpIdLists.length === 5, `${posModel.id}的eqpIdLists有问题`);
         const eqpCount = randomInt(3) + 4;
 
         const eqps: Equip[] = pADEqpMkt.eqps;
         eqps.length = 0;
         for (let index = 0; index < eqpCount; index++) {
-            let eqpList = getRandomOneInListWithRate(eqpIdLists, [0.4, 0.7, 0.9]);
+            let eqpList = getRandomOneInListWithRate(eqpIdLists, [0.5, 0.75, 0.9]);
             if (!eqpList) eqpList = eqpIdLists[0];
             const eqpId = getRandomOneInList(eqpList);
             const equip = EquipTool.createRandomById(eqpId);
