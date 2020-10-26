@@ -17,7 +17,7 @@ import {
     ActPosModel,
     PAKey
 } from './DataModel';
-import { BioType, EleType, BattleType, Pet, EleTypeNames, ExplMmr, PetMmr, Equip, GameData, Item, ItemType } from './DataSaved';
+import { BioType, EleType, BattleType, Pet, EleTypeNames, ExplMmr, EPetMmr, Equip, GameData, Item, ItemType } from './DataSaved';
 
 import { petModelDict } from 'configs/PetModelDict';
 import { skillModelDict } from 'configs/SkillModelDict';
@@ -530,7 +530,7 @@ export class RealBattle {
         });
     }
 
-    resetBattle(ePetMmrs: PetMmr[], spcBtlId: number, createData: { curExpl: ExplMmr; petCount: number }) {
+    resetBattle(ePetMmrs: EPetMmr[], spcBtlId: number, createData: { curExpl: ExplMmr; petCount: number }) {
         if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
 
         if (ePetMmrs) {

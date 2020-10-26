@@ -247,24 +247,24 @@ export class PosData {
 
 // -----------------------------------------------------------------
 
-export class PetMmr {
+export class SPetMmr {
+    catchIdx: number; // 战斗开始后，可能会变化的只有如下几项
+    prvty: number;
+    eqpTokens: string[];
+}
+
+export class EPetMmr {
     id: string;
     lv: number;
     exFeatureIds: string[];
     features: Feature[];
 }
 
-export class SelfPetMmr {
-    catchIdx: number; // 战斗开始后，可能会变化的只有如下几项
-    prvty: number;
-    eqpTokens: string[];
-}
-
 export class BattleMmr {
     startUpdCnt: number;
     seed: number;
-    selfs: SelfPetMmr[];
-    enemys: PetMmr[];
+    selfs: SPetMmr[];
+    enemys: EPetMmr[];
     spcBtlId: number; // 特殊战斗的id
 }
 

@@ -11,9 +11,9 @@ import {
     Pet,
     ExplMmr,
     PetState,
-    SelfPetMmr,
+    SPetMmr,
     BattleMmr,
-    PetMmr,
+    EPetMmr,
     GameData,
     Equip,
     ItemType,
@@ -964,8 +964,8 @@ export class MmrTool {
         return battle;
     }
 
-    static createSelfPetMmr(pet: Pet): SelfPetMmr {
-        const selfPetMmr = newInsWithChecker(SelfPetMmr);
+    static createSPetMmr(pet: Pet): SPetMmr {
+        const selfPetMmr = newInsWithChecker(SPetMmr);
         selfPetMmr.catchIdx = pet.catchIdx;
         selfPetMmr.prvty = pet.prvty;
         const tokens = [];
@@ -974,8 +974,8 @@ export class MmrTool {
         return selfPetMmr;
     }
 
-    static createPetMmr(id: string, lv: number, exFeatureIds: string[], features: Feature[]): PetMmr {
-        const p = newInsWithChecker(PetMmr);
+    static createEPetMmr(id: string, lv: number, exFeatureIds: string[], features: Feature[]): EPetMmr {
+        const p = newInsWithChecker(EPetMmr);
         p.id = id;
         p.lv = lv;
         p.exFeatureIds = newList();
@@ -1330,9 +1330,9 @@ export class GameDataTool {
         if (curExpl.curBattle) return;
         const battle = MmrTool.createBattleMmr(seed, startUpdCnt, spcBtlId);
 
-        for (const pet of this.getReadyPets(gameData)) battle.selfs.push(MmrTool.createSelfPetMmr(pet));
+        for (const pet of this.getReadyPets(gameData)) battle.selfs.push(MmrTool.createSPetMmr(pet));
         for (const pet of ePets) {
-            battle.enemys.push(MmrTool.createPetMmr(pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures));
+            battle.enemys.push(MmrTool.createEPetMmr(pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures));
         }
 
         curExpl.curBattle = battle;
