@@ -545,9 +545,14 @@ export class BattleController {
     }
 
     static getEleDmgRate(skillEleType: EleType, aim: BattlePet, caster: BattlePet) {
-        const eleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
-        const dmgGain = caster && petModelDict[caster.pet.id].eleType === skillEleType ? 1.05 : 1;
-        const dmgRestricts = EleReinforceRelation[skillEleType] === eleType ? 1.15 : 1;
+        let dmgGain: number;
+        if (caster) {
+            const casterEleType = caster.pet2.exEleTypes.getLast() || petModelDict[caster.pet.id].eleType;
+            dmgGain = casterEleType === skillEleType ? 1.05 : 1;
+        } else dmgGain = 1;
+
+        const aimEleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
+        const dmgRestricts = EleReinforceRelation[skillEleType] === aimEleType ? 1.15 : 1;
         return dmgGain * dmgRestricts;
     }
 
