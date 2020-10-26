@@ -46,7 +46,7 @@ let sklJson = convert(
             let hpLimit = Number(rowData[16]) || 0;
 
             if (skillType === 3) {
-                if (rage === 0) console.log('绝技需要怒气', cnName);
+                if (rage === 0) console.log('绝技需要斗志', cnName);
             } else {
                 if (isNaN(Number(rowData[13]))) console.log('普通技能需要冷却', cnName);
                 if (mp === 0) console.log('普通技能需要精神消耗', cnName);

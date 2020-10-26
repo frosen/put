@@ -428,10 +428,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '雕',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            bData.ctrlr.getTeam(aim).rage = Math.min(bData.ctrlr.getTeam(aim).rage - datas[0], 0);
+            const eTeam = bData.ctrlr.getTeam(aim);
+            const rage = bData.ctrlr.ranSd() < rate(datas[0], 0.05, 0.9) ? 2 : 1;
+            eTeam.rage = Math.min(eTeam.rage - rage, 0);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人减少${datas[0]}点怒气`;
+            return `普攻击中时，敌人减少1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率减少2点`;
         }
     },
     hitAddMp: {
@@ -439,8 +441,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '灵',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            const selfTeam = bData.ctrlr.getTeam(pet);
-            selfTeam.mp = Math.min(selfTeam.mp + datas[0], selfTeam.mpMax);
+            const sTeam = bData.ctrlr.getTeam(pet);
+            sTeam.mp = Math.min(sTeam.mp + datas[0], sTeam.mpMax);
         },
         getInfo(datas: number[]): string {
             return `普攻击中时，额外获得${datas[0]}点精神`;
@@ -451,11 +453,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '猿',
         dataAreas: [[1, 1]],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            const selfTeam = bData.ctrlr.getTeam(pet);
-            selfTeam.rage = Math.min(selfTeam.rage + datas[0], RageMax);
+            const sTeam = bData.ctrlr.getTeam(pet);
+            const rage = bData.ctrlr.ranSd() < rate(datas[0], 0.05, 0.9) ? 2 : 1;
+            sTeam.rage = Math.min(sTeam.rage + rage, RageMax);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，额外获得${datas[0]}点怒气`;
+            return `普攻击中时，额外获得1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率获得2点`;
         }
     },
     hitKill: {
@@ -480,7 +483,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.ctrlr.getTeam(pet).rage > Math.max(datas[0], 50)) aim.hp -= bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
-            return `如果怒气大于${Math.max(datas[0], 50)}点，则普攻伤害提高${rd(datas[1] * 100)}%`;
+            return `如果斗志大于${Math.max(datas[0], 50)}点，则普攻伤害提高${rd(datas[1] * 100)}%`;
         }
     },
     hitByHp: {
@@ -648,15 +651,15 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     castFullRage: {
         id: 'castFullRage',
         cnBrief: '皇',
-        dataAreas: [[100, 1]],
+        dataAreas: [[0.08, 0.08]],
         onCasting(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            if (bData.ctrlr.getTeam(pet).rage === RageMax) {
-                pet.hp -= bData.finalDmg * 2;
-                bData.ctrlr.getTeam(pet).rage -= Math.max(datas[0], 50);
+            if (bData.ctrlr.getTeam(pet).rage > 100) {
+                aim.hp -= bData.finalDmg * datas[0];
+                bData.ctrlr.getTeam(pet).rage -= 10;
             }
         },
         getInfo(datas: number[]): string {
-            return `当怒气满槽时，消耗${Math.max(datas[0], 50)}点怒气，伤害提高200%`;
+            return `当斗志大于100时，消耗10点斗志，伤害提高${rd(datas[0] * 100)}%`;
         }
     },
     hurtAndHurt: {
@@ -675,8 +678,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '妖',
         dataAreas: [[1, 1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            const team = bData.ctrlr.getTeam(pet);
-            team.mp = Math.min(team.mp + datas[0], team.mpMax);
+            const sTeam = bData.ctrlr.getTeam(pet);
+            sTeam.mp = Math.min(sTeam.mp + datas[0], sTeam.mpMax);
         },
         getInfo(datas: number[]): string {
             return `受伤时，额外获得${datas[0]}点精神`;
@@ -687,10 +690,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '熊',
         dataAreas: [[1, 1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            bData.ctrlr.getTeam(pet).rage = Math.min(bData.ctrlr.getTeam(pet).rage + datas[0], RageMax);
+            const sTeam = bData.ctrlr.getTeam(pet);
+            const rage = bData.ctrlr.ranSd() < rate(datas[0], 0.05, 0.9) ? 2 : 1;
+            sTeam.rage = Math.min(sTeam.rage + rage, RageMax);
         },
         getInfo(datas: number[]): string {
-            return `受伤时，额外获得${datas[0]}点怒气`;
+            return `受伤时，额外获得1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率获得2点`;
         }
     },
     hurtRdcMp: {
@@ -698,11 +703,11 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '橡',
         dataAreas: [[0.1, 0.09]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            const team = bData.ctrlr.getTeam(pet);
+            const sTeam = bData.ctrlr.getTeam(pet);
             const dmg = bData.finalDmg * datas[0];
             const rdcMp = dmg / (2 * pet.pet.lv);
-            if (team.mp >= rdcMp) {
-                team.mp -= rdcMp;
+            if (sTeam.mp >= rdcMp) {
+                sTeam.mp -= rdcMp;
                 pet.hp += dmg;
             }
         },
@@ -784,15 +789,15 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     hurtFullRage: {
         id: 'hurtFullRage',
         cnBrief: '羽',
-        dataAreas: [[100, -1]],
+        dataAreas: [[0.05, 0.05]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
-            if (bData.ctrlr.getTeam(pet).rage === RageMax) {
-                pet.hp += bData.finalDmg * 5;
-                bData.ctrlr.getTeam(pet).rage -= Math.max(datas[0], 50);
+            if (bData.ctrlr.getTeam(pet).rage > 100) {
+                pet.hp += bData.finalDmg * datas[0];
+                bData.ctrlr.getTeam(pet).rage -= 5;
             }
         },
         getInfo(datas: number[]): string {
-            return `当怒气满槽时，消耗${Math.max(datas[0], 50)}点怒气，抵消500%伤害`;
+            return `当斗志大于100时，消耗5点斗志，抵消${rd(datas[0] * 100)}%伤害`;
         }
     },
     hurtOthers: {
@@ -868,12 +873,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     beginAddRage: {
         id: 'beginAddRage',
         cnBrief: '阳',
-        dataAreas: [[5, 5]],
+        dataAreas: [[5, 2]],
         onStartingBattle(pet: BattlePet, datas: number[], ctrlr: BattleController): void {
             ctrlr.getTeam(pet).rage = Math.min(ctrlr.getTeam(pet).rage + datas[0], RageMax);
         },
         getInfo(datas: number[]): string {
-            return `战斗开始时，直接获取${Math.min(datas[0], RageMax)}点怒气`;
+            return `战斗开始时，直接获取${Math.min(datas[0], RageMax)}点斗志`;
         }
     },
     beginReLi: {
@@ -884,7 +889,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (ctrlr.ranSd() < rate(datas[0], 0.05, 0.9)) ctrlr.addBuff(pet, pet, 'ReLi', 3);
         },
         getInfo(datas: number[]): string {
-            return `战斗开始时，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率获得热力，持续3回合`;
+            return `战斗开始时，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率获得热力，持续3回合`;
         }
     },
     killAddHp: {
@@ -920,8 +925,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '神',
         dataAreas: [[8, 8]],
         onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void {
-            const team = ctrlr.getTeam(pet);
-            team.mp = Math.min(team.mp + datas[0], team.mpMax);
+            const sTeam = ctrlr.getTeam(pet);
+            sTeam.mp = Math.min(sTeam.mp + datas[0], sTeam.mpMax);
         },
         getInfo(datas: number[]): string {
             return `敌人被击杀时，精神恢复${datas[0]}点`;
