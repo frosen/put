@@ -34,7 +34,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'addAtkDmg',
             'hurtGotRage',
             'baseDurability',
-            'deadFangHu'
+            'deadFangHu',
+            'addHpMax',
+            'hitWithEarth'
         ]
     },
     NeiRanJiShou: {
@@ -64,7 +66,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'baseStrength',
             'addCritRate',
             'addCritDmgRate',
-            'castUlti'
+            'castUlti',
+            'castFire',
+            'hurtWithAss'
         ]
     },
     FangShengJiXieBi: {
@@ -94,7 +98,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'addAtkMax',
             'beginReLi',
             'hitKill',
-            'killAddHp'
+            'killAddHp',
+            'addEvdRate',
+            'baseAgility'
         ]
     },
     YaHuHanJuRen: {
@@ -124,7 +130,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'addSklDmg',
             'hitWithFire',
             'castByPetCount',
-            'castByCombo'
+            'castByCombo',
+            'hurtRdcMp',
+            'addSklMax'
         ]
     },
     ZiJingMieHuoQi: {
@@ -154,7 +162,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'hitRdcRg',
             'baseSensitivity',
             'killAddAllHp',
-            'hitRdcMp'
+            'hitRdcMp',
+            'hitWithWater',
+            'hurtWithAtk'
         ]
     },
     ShuiLengJiQiRen: {
@@ -184,7 +194,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'castWater',
             'addByLuck',
             'hurtByHp',
-            'killRdcCD'
+            'killRdcCD',
+            'hitByHp',
+            'baseConcentration'
         ]
     },
     JiXieMaoMi: {
@@ -214,7 +226,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'addMpMax',
             'baseElegant',
             'addAtkBySkl',
-            'hurtGotMp'
+            'hurtGotMp',
+            'hurtWithShoot',
+            'hitAddMp'
         ]
     },
     HeiFengWuRenJi: {
@@ -244,7 +258,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'addHitRate',
             'addDmgRdcHp',
             'baseAgility',
-            'hitByHp'
+            'hitByHp',
+            'hitWithAir',
+            'killAddAllHp'
         ]
     },
     CiHuaYouLing: {
@@ -274,7 +290,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'hitWithLight',
             'castLight',
             'addDfsRate',
-            'addHpRdcMp'
+            'addHpRdcMp',
+            'baseDurability',
+            'castConDmg'
         ]
     },
     DianZiShouWei: {
@@ -304,7 +322,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'addHpMax',
             'beginAddRage',
             'hurtAndHurt',
-            'hurt'
+            'hurt',
+            'addAtkMax',
+            'hurtOthers'
         ]
     },
     CaoPingShouGeZhe: {
@@ -334,7 +354,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'killAddMp',
             'addEvdRate',
             'deadHurt',
-            'hurtFullRage'
+            'hurtFullRage',
+            'addCritDmgRate',
+            'baseSensitivity'
         ]
     },
     JiXieXiuLiShi: {
@@ -364,7 +386,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'addSklMax',
             'healByCombo',
             'hitWithFire',
-            'baseConcentration'
+            'baseConcentration',
+            'addMpMax',
+            'hurtByHp'
         ]
     },
     HuoHuoTu: {
@@ -394,7 +418,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'castFire',
             'hurtWithCast',
             'castEleRein',
-            'hitAddRg'
+            'hitAddRg',
+            'castByPetCount',
+            'baseStrength'
         ]
     },
     BaiLanYuYan: {
@@ -424,7 +450,9 @@ export const petModelDict: { [key: string]: PetModel } = {
             'heal',
             'hurtWithAss',
             'healByHp',
-            'deadHuiChun'
+            'deadHuiChun',
+            'addCritRate',
+            'hurtGotMp'
         ]
     }
 };

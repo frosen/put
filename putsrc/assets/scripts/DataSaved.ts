@@ -64,6 +64,12 @@ export class Feature {
 export const PetEquipCountMax: number = 3;
 export const PrvtyMax: number = 1000000;
 
+export class Merge {
+    petId: string;
+    featureId: string;
+    num: number;
+}
+
 export class Pet {
     /** 类型 */
     id: string;
@@ -101,8 +107,8 @@ export class Pet {
     /** 装备 */
     equips: Equip[];
 
-    // mergeLv: number;
-    // mergeIds: string[];
+    /** 融合 */
+    merges: Merge[];
 }
 
 // -----------------------------------------------------------------
@@ -251,7 +257,6 @@ export class PetMmr {
 export class SelfPetMmr {
     catchIdx: number; // 战斗开始后，可能会变化的只有如下几项
     prvty: number;
-    // drinks: llytodo
     eqpTokens: string[];
 }
 

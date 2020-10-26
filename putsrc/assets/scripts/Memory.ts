@@ -408,14 +408,6 @@ export class PetTool {
     static create(id: string, lv: number, exFeatureIds: string[], features: Feature[]): Pet {
         const pet = newInsWithChecker(Pet);
 
-        pet.exFeatureIds = newList();
-        pet.inbFeatures = newList();
-        pet.lndFeatures = newList();
-
-        const equips = [];
-        for (let index = 0; index < PetEquipCountMax; index++) equips.push(null);
-        pet.equips = newList(equips);
-
         pet.id = id;
         pet.nickname = null;
         pet.master = '';
@@ -436,8 +428,18 @@ export class PetTool {
 
         pet.exp = 0;
 
+        pet.exFeatureIds = newList();
+        pet.inbFeatures = newList();
+        pet.lndFeatures = newList();
+
         for (const featureId of exFeatureIds) pet.exFeatureIds.push(featureId);
         for (const feature of features) pet.inbFeatures.push(FeatureTool.clone(feature));
+
+        const equips = [];
+        for (let index = 0; index < PetEquipCountMax; index++) equips.push(null);
+        pet.equips = newList(equips);
+
+        pet.merges = newList();
 
         return pet;
     }
