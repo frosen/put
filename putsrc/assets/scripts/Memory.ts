@@ -219,7 +219,7 @@ export class Memory {
     curSaveDataId: number = 1;
 
     saveMemory() {
-        cc.log('STORM cc ^_^ 保存 ');
+        cc.log('STORM 保存 ');
         if (!checkDataCorrect()) return;
 
         const savedData = {

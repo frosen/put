@@ -409,7 +409,6 @@ export class BattleController {
 
             const castSuc = this.cast(battlePet, skillModel);
             if (castSuc) {
-                team.rage -= rageNeed;
                 skillData.cd = 999;
                 done = true;
                 break;
@@ -504,6 +503,7 @@ export class BattleController {
             finalDmg = BattleController.getSklDmg(battlePet, aim) * dmgRate * 0.01;
         }
 
+        finalDmg = this.handleDmgByRage(finalDmg, battlePet);
         finalDmg = Math.floor(finalDmg);
 
         const lastHp = aim.hp;
@@ -530,13 +530,7 @@ export class BattleController {
         if (this.page) this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
         this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
 
-        if (dmgRate > 0) {
-            let baseRage: number;
-            if (skillModel.aimType === SkillAimtype.oneAndOthers) baseRage = 1;
-            else if (skillModel.aimType === SkillAimtype.oneAndNext) baseRage = 2;
-            else baseRage = 3;
-            this.addRageToAim(battlePet, aim, baseRage);
-        }
+        if (dmgRate > 0) this.addRage(battlePet);
 
         if (aim.hp === 0) {
             this.dead(aim, battlePet);
@@ -596,7 +590,7 @@ export class BattleController {
 
         let finalDmg = BattleController.getAtkDmg(battlePet, aim);
         finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
-        if (this.realBattle.atkRound > 140) finalDmg *= 10; // 时间太长时增加伤害快速结束
+        finalDmg = this.handleDmgByRage(finalDmg, battlePet);
         finalDmg = Math.floor(finalDmg);
         aim.hp -= finalDmg;
 
@@ -612,7 +606,7 @@ export class BattleController {
         if (this.page) this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
         this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, '普攻');
 
-        this.addRageToAim(battlePet, aim, 2);
+        this.addRage(battlePet);
         this.addMp(battlePet, aim);
 
         if (aim.hp === 0) this.dead(aim, battlePet);
@@ -620,17 +614,22 @@ export class BattleController {
         return true;
     }
 
-    addRageToAim(battlePet: BattlePet, aim: BattlePet, baseRage: number) {
-        const rage = baseRage + (aim.pet.lv < battlePet.pet.lv ? 1 : 0);
+    handleDmgByRage(dmg: number, battlePet: BattlePet): number {
+        const rage = this.getTeam(battlePet).rage;
+        if (rage < RageMax * 0.3) return dmg;
+        else if (rage < RageMax * 0.6) return Math.floor(dmg * 1.1);
+        else if (rage < RageMax) return Math.floor(dmg * 1.25);
+        else return Math.floor(dmg * 1.8);
+    }
 
-        const team = this.getTeam(aim);
-        team.rage += rage;
+    addRage(battlePet: BattlePet) {
+        const team = this.getTeam(battlePet);
+        team.rage += 1; // 每次攻击命中+1，一回合一般5点，10回合50，20回合100
         if (team.rage > RageMax) team.rage = RageMax;
     }
 
     addMp(battlePet: BattlePet, aim: BattlePet) {
         const mp = 3 + (aim.pet.lv > battlePet.pet.lv ? 1 : 0);
-
         const team = this.getTeam(battlePet);
         team.mp += mp;
         if (team.mp > team.mpMax) team.mp = team.mpMax;

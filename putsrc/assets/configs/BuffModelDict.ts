@@ -342,10 +342,10 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         buffType: BuffType.debuff,
         eleType: EleType.water,
         onTurnEnd(thisPet: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BattleController): BuffOutput | void {
-            return { rage: 15 };
+            return { rage: 3 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `每回合减少目标15点怒气`;
+            return `每回合减少目标3点斗志`;
         }
     },
     QiangJi: {
