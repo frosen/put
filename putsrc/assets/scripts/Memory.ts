@@ -579,6 +579,19 @@ export class PetTool {
             pet.inbFeatures.push(FeatureTool.create(id, addLv));
         }
     }
+
+    static merge(pet: Pet, feature: Feature) {
+        let petFeature: Feature = null;
+        for (const lndFeature of pet.lndFeatures) {
+            if (lndFeature.id === feature.id) {
+                petFeature = lndFeature;
+                break;
+            }
+        }
+
+        if (petFeature) petFeature.lv += feature.lv;
+        else pet.lndFeatures.push(FeatureTool.clone(feature));
+    }
 }
 
 export class CnsumTool {
@@ -1074,6 +1087,44 @@ export class GameDataTool {
         });
     }
 
+    static mergePet(gameData: GameData, petIdx: number, caughtPetIdx: number, featureId: string): string {
+        const pet = gameData.pets[petIdx];
+        const curCatchIdx = pet.catchIdx;
+        if (gameData.curExpl && gameData.curExpl.curBattle) {
+            for (const petMmr of gameData.curExpl.curBattle.selfs) {
+                if (curCatchIdx === petMmr.catchIdx) return '当前精灵处于战斗状态，无法融合';
+            }
+        }
+
+        if (pet.lv < 10) return '精灵等级低于10级，无法融合';
+
+        const canCnt = Math.floor((pet.lv - 5) * 0.2); // 10级后每5级可有一次
+
+        if (pet.merges.length >= canCnt) return '融合层数已满，每5级可增加一次';
+
+        const caughtPet = gameData.items[caughtPetIdx] as CaughtPet;
+
+        for (const merged of pet.merges) {
+            if (merged.petId === caughtPet.petId) return '不得融入2只同种类精灵';
+        }
+
+        let mergeFeature: Feature = null;
+        for (const cFeature of caughtPet.features) {
+            if (cFeature.id === featureId) {
+                mergeFeature = cFeature;
+                break;
+            }
+        }
+        if (!mergeFeature) return `${caughtPet.id}不具备${featureId}`;
+
+        const rzt = GameDataTool.deleteItem(gameData, caughtPetIdx);
+        if (rzt !== this.SUC) return rzt;
+
+        PetTool.merge(pet, mergeFeature);
+
+        return this.SUC;
+    }
+
     // -----------------------------------------------------------------
 
     static useDrinkToPet(gameData: GameData, pet: Pet, drink: Drink, curTime: number = null): string {
@@ -1359,7 +1410,7 @@ export class GameDataTool {
         if (gameData.acceQuestInfos.length >= 10) return '任务数量已达到最大值\n请先完成已经接受了的任务';
         const quest = AcceQuestInfoTool.create(questId, posId);
         gameData.acceQuestInfos.push(quest);
-        return GameDataTool.SUC;
+        return this.SUC;
     }
 
     static deleteAcceQuest(gameData: GameData, questId: string, posId: string) {
