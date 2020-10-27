@@ -491,7 +491,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '末',
         dataAreas: [
             [0.1, 0.01],
-            [0.8, 0.03]
+            [0.08, 0.03]
         ],
         onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void {
             if (pet.hp < pet.hpMax * Math.min(datas[0], 0.3)) aim.hp -= bData.finalDmg * datas[1];
@@ -659,7 +659,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `当斗志大于100时，消耗10点斗志，伤害提高${rd(datas[0] * 100)}%`;
+            return `当斗志大于100时，消耗10点斗志，技能伤害提高${rd(datas[0] * 100)}%`;
         }
     },
     hurtAndHurt: {
@@ -713,6 +713,18 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         },
         getInfo(datas: number[]): string {
             return `受伤时，如果有足够的精神，则${rd(datas[0] * 100)}%伤害由消耗精神抵消（1MP=2HP*lv）`;
+        }
+    },
+    hurtWithMelee: {
+        id: 'hurtWithMelee',
+        cnBrief: '云',
+        dataAreas: [[0.02, 0.02]],
+        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void {
+            const battleType = BattleController.getBattleType(caster, bData.skillModel);
+            if (battleType === BattleType.melee) pet.hp += bData.finalDmg * datas[0];
+        },
+        getInfo(datas: number[]): string {
+            return `近战伤害减少${rd(datas[0] * 100)}%`;
         }
     },
     hurtWithShoot: {

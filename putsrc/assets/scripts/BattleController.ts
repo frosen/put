@@ -13,7 +13,7 @@ import { petModelDict } from 'configs/PetModelDict';
 
 import { deepCopy } from 'scripts/Utils';
 import { SkillModel, SkillType, SkillAimtype, SkillDirType } from 'scripts/DataModel';
-import { Pet, EleType, BattleType, GameData, BattleMmr } from 'scripts/DataSaved';
+import { Pet, EleType, BattleType, GameData, BattleMmr, BioType } from 'scripts/DataSaved';
 import { RealBattle, BattleTeam, BattlePet, BattleBuff, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { battleSequence } from 'configs/BattleSequence';
 import { ExplUpdater, ExplLogType } from './ExplUpdater';
@@ -546,12 +546,10 @@ export class BattleController {
 
     static getEleDmgRate(skillEleType: EleType, aim: BattlePet, caster: BattlePet) {
         let dmgGain: number;
-        if (caster) {
-            const casterEleType = caster.pet2.exEleTypes.getLast() || petModelDict[caster.pet.id].eleType;
-            dmgGain = casterEleType === skillEleType ? 1.05 : 1;
-        } else dmgGain = 1;
+        if (caster) dmgGain = BattleController.getEleType(caster) === skillEleType ? 1.05 : 1;
+        else dmgGain = 1;
 
-        const aimEleType = aim.pet2.exEleTypes.getLast() || petModelDict[aim.pet.id].eleType;
+        const aimEleType = BattleController.getEleType(aim);
         const dmgRestricts = EleReinforceRelation[skillEleType] === aimEleType ? 1.15 : 1;
         return dmgGain * dmgRestricts;
     }
@@ -769,9 +767,17 @@ export class BattleController {
         return aim;
     }
 
-    static getBattleType(battlePet: BattlePet, skillModel: SkillModel = null) {
+    static getBioType(casterBPet: BattlePet): BioType {
+        return casterBPet.pet2.exBioTypes.getLast() || petModelDict[casterBPet.pet.id].bioType;
+    }
+
+    static getEleType(casterBPet: BattlePet): EleType {
+        return casterBPet.pet2.exEleTypes.getLast() || petModelDict[casterBPet.pet.id].eleType;
+    }
+
+    static getBattleType(casterBPet: BattlePet, skillModel: SkillModel = null): BattleType {
         const spBT = skillModel ? skillModel.spBattleType : null;
-        return spBT || battlePet.pet2.exBattleTypes.getLast() || petModelDict[battlePet.pet.id].battleType;
+        return spBT || casterBPet.pet2.exBattleTypes.getLast() || petModelDict[casterBPet.pet.id].battleType;
     }
 
     static getPetAlive(battlePet: BattlePet) {
