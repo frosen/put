@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { BaseController } from './BaseController';
+import { BaseCtrlr } from './BaseCtrlr';
 
 const { ccclass, property } = cc._decorator;
 
@@ -22,7 +22,7 @@ export class NavBar extends cc.Component {
     @property(cc.Label)
     subTitle: cc.Label = null;
 
-    ctrlr: BaseController = null;
+    ctrlr: BaseCtrlr = null;
 
     setTitle(title: string) {
         this.title.string = title;

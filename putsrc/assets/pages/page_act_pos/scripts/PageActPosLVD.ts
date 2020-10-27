@@ -12,7 +12,7 @@ import { ListViewCell } from 'scripts/ListViewCell';
 import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { PageActPos } from './PageActPos';
-import { PageSwitchAnim, BaseController } from 'scripts/BaseController';
+import { PageSwitchAnim, BaseCtrlr } from 'scripts/BaseCtrlr';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
 import { PosData, PADExpl, PADEqpMkt, PADPetMkt } from 'scripts/DataSaved';
 import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel, EvtModel, MovModel } from 'scripts/DataModel';
@@ -28,16 +28,16 @@ import { PageActQuester } from 'pages/page_act_quester/scripts/PageActQuester';
 
 type CellActInfo = {
     cnName: string;
-    getSubInfo?: (ctrlr: BaseController) => { str: string; color?: cc.Color };
+    getSubInfo?: (ctrlr: BaseCtrlr) => { str: string; color?: cc.Color };
     page?: { new (): PageBase };
-    check?: (ctrlr: BaseController) => string;
-    beforeEnter?: (ctrlr: BaseController, callback: (data: any) => void) => void;
+    check?: (ctrlr: BaseCtrlr) => string;
+    beforeEnter?: (ctrlr: BaseCtrlr, callback: (data: any) => void) => void;
 };
 
 const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.expl]: {
         cnName: '探索',
-        getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
+        getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } => {
             const gameData = ctrlr.memory.gameData;
             const ing = gameData.curExpl && gameData.curExpl.curPosId === gameData.curPosId ? 'ing' : '';
             const posData = gameData.posDataDict[gameData.curPosId];
@@ -52,7 +52,7 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
             return { str: String(`${ing}[${curStep}/${stepMax}]`), color: cc.color(255, 102, 0) };
         },
         page: PageActExpl,
-        check: (ctrlr: BaseController): string => {
+        check: (ctrlr: BaseCtrlr): string => {
             const gameData = ctrlr.memory.gameData;
             if (gameData.curExpl) {
                 if (gameData.curPosId !== gameData.curExpl.curPosId) {
@@ -65,7 +65,7 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
             }
             return '';
         },
-        beforeEnter: (ctrlr: BaseController, callback: (data: any) => void): any => {
+        beforeEnter: (ctrlr: BaseCtrlr, callback: (data: any) => void): any => {
             const gameData = ctrlr.memory.gameData;
             if (gameData.curExpl) return callback(null);
             const posData = gameData.posDataDict[gameData.curPosId];
@@ -100,7 +100,7 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.shop]: { cnName: '物资商店', page: PageActShop },
     [PAKey.eqpMkt]: {
         cnName: '装备市场',
-        getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
+        getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } => {
             const gameData = ctrlr.memory.gameData;
             const posData = gameData.posDataDict[gameData.curPosId];
 
@@ -117,7 +117,7 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
     },
     [PAKey.petMkt]: {
         cnName: '精灵市场',
-        getSubInfo: (ctrlr: BaseController): { str: string; color?: cc.Color } => {
+        getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } => {
             const gameData = ctrlr.memory.gameData;
             const posData = gameData.posDataDict[gameData.curPosId];
 

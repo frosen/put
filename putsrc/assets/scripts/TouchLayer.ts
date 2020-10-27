@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { BaseController } from './BaseController';
+import { BaseCtrlr } from './BaseCtrlr';
 
 const BACK_MARK_BUFFER: number = 50;
 
@@ -22,9 +22,9 @@ export class TouchLayer extends cc.Component {
 
     readyX: number;
 
-    ctrlr: BaseController = null;
+    ctrlr: BaseCtrlr = null;
 
-    init(ctrlr: BaseController) {
+    init(ctrlr: BaseCtrlr) {
         this.ctrlr = ctrlr;
     }
 

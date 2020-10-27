@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { BattleController } from './BattleController';
+import { BtlCtrlr } from './BtlCtrlr';
 import { EleType, BattleType, BioType, Pet, GameData, Item } from './DataSaved';
 import { Pet2, BattlePet, BattleBuff, AmplAttriType } from './DataOther';
 
@@ -30,9 +30,9 @@ export abstract class BuffModel {
     abstract brief: string;
     abstract buffType: BuffType;
     abstract eleType: EleType;
-    abstract onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BattleController): any;
-    abstract onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BattleController, data: any): void;
-    abstract onTurnEnd(thisPet: BattlePet, buff: BattleBuff, ctrlr: BattleController): BuffOutput | void;
+    abstract onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any;
+    abstract onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any): void;
+    abstract onTurnEnd(thisPet: BattlePet, buff: BattleBuff, ctrlr: BtlCtrlr): BuffOutput | void;
     abstract getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string;
 }
 
@@ -81,7 +81,7 @@ export class SkillModel {
     hpLimit: number;
 }
 
-export type BattleDataForFeature = { ctrlr: BattleController; finalDmg: number; skillModel: SkillModel };
+export type FeatureBtlData = { ctrlr: BtlCtrlr; finalDmg: number; skillModel: SkillModel };
 
 export abstract class FeatureModel {
     abstract id: string;
@@ -89,13 +89,13 @@ export abstract class FeatureModel {
     abstract dataAreas: number[][];
     abstract onBaseSetting(pet: Pet2, datas: number[]): void;
     abstract onSetting(pet: Pet2, datas: number[]): void;
-    abstract onStartingBattle(pet: BattlePet, datas: number[], ctrlr: BattleController): void;
-    abstract onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void;
-    abstract onCasting(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void;
-    abstract onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature): void;
-    abstract onHealing(pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature): void;
-    abstract onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void;
-    abstract onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController): void;
+    abstract onStartingBattle(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
+    abstract onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
+    abstract onCasting(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
+    abstract onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void;
+    abstract onHealing(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
+    abstract onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
+    abstract onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
     abstract getInfo(datas: number[]): string;
 }
 

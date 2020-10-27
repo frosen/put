@@ -23,7 +23,7 @@ import { petModelDict } from 'configs/PetModelDict';
 import { skillModelDict } from 'configs/SkillModelDict';
 import { deepCopy } from './Utils';
 import { buffModelDict } from 'configs/BuffModelDict';
-import { BattleController } from './BattleController';
+import { BtlCtrlr } from './BtlCtrlr';
 import { randomRate, getRandomOneInList, normalRandom } from './Random';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { expModels } from 'configs/ExpModels';
@@ -746,8 +746,8 @@ export class SkillInfo {
     }
 
     static getSklDmgStr(pet2: Pet2, rate: number) {
-        const from = BattleController.getCastRealDmg(pet2.sklDmgFrom, rate, pet2.atkDmgFrom) * 0.1;
-        const to = BattleController.getCastRealDmg(pet2.sklDmgTo, rate, pet2.atkDmgTo) * 0.1;
+        const from = BtlCtrlr.getCastRealDmg(pet2.sklDmgFrom, rate, pet2.atkDmgFrom) * 0.1;
+        const to = BtlCtrlr.getCastRealDmg(pet2.sklDmgTo, rate, pet2.atkDmgTo) * 0.1;
         return `${from.toFixed(1)}到${to.toFixed(1)}`;
     }
 

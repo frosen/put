@@ -8,16 +8,16 @@ const { ccclass, property } = cc._decorator;
 
 import { ListView } from './ListView';
 import { ListViewCell } from './ListViewCell';
-import { BaseController } from './BaseController';
+import { BaseCtrlr } from './BaseCtrlr';
 
 @ccclass
 export abstract class ListViewDelegate extends cc.Component {
-    get ctrlr(): BaseController {
+    get ctrlr(): BaseCtrlr {
         // @ts-ignore
         if (!this._ctrlr) this._ctrlr = window.baseCtrlr;
         return this._ctrlr;
     }
-    _ctrlr: BaseController = null;
+    _ctrlr: BaseCtrlr = null;
 
     abstract numberOfRows(listView: ListView): number;
     heightForRow(listView: ListView, rowIdx: number): number {

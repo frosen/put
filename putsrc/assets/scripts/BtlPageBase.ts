@@ -1,6 +1,6 @@
 /*
- * BattlePageBase.ts
- * 可以使用BattleController和ExplUpdater的页面的基类
+ * BtlPageBase.ts
+ * 可以使用BtlCtrlr和ExplUpdater的页面的基类
  * luleyan
  */
 
@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 import { PageBase } from './PageBase';
 
 @ccclass
-export abstract class BattlePageBase extends PageBase {
+export abstract class BtlPageBase extends PageBase {
     abstract setUIofSelfPet(index: number): void;
     abstract setUIofEnemyPet(index: number): void;
     abstract clearUIofSelfPet(index: number): void;

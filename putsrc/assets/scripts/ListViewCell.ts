@@ -5,17 +5,17 @@
  */
 
 const { ccclass, property, executeInEditMode } = cc._decorator;
-import { BaseController } from './BaseController';
+import { BaseCtrlr } from './BaseCtrlr';
 
 @ccclass
 @executeInEditMode
 export class ListViewCell extends cc.Component {
-    get ctrlr(): BaseController {
+    get ctrlr(): BaseCtrlr {
         // @ts-ignore
         if (!this._ctrlr) this._ctrlr = window.baseCtrlr;
         return this._ctrlr;
     }
-    _ctrlr: BaseController = null;
+    _ctrlr: BaseCtrlr = null;
 
     curCellIdx: number = -1;
 

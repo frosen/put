@@ -1,5 +1,5 @@
 /*
- * BaseController.ts
+ * BaseCtrlr.ts
  * 基础控制器
  * luleyan
  */
@@ -56,7 +56,7 @@ export enum PageSwitchAnim {
 
 @ccclass
 @executeInEditMode
-export class BaseController extends cc.Component {
+export class BaseCtrlr extends cc.Component {
     @property(cc.Node)
     pageBed: cc.Node = null;
 

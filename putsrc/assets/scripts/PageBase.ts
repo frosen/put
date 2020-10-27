@@ -6,18 +6,18 @@
 
 const { ccclass, property, executeInEditMode } = cc._decorator;
 
-import { BaseController } from './BaseController';
+import { BaseCtrlr } from './BaseCtrlr';
 import { NavBar } from './NavBar';
 
 @ccclass
 @executeInEditMode
 export class PageBase extends cc.Component {
-    get ctrlr(): BaseController {
+    get ctrlr(): BaseCtrlr {
         // @ts-ignore
         if (!this._ctrlr) this._ctrlr = window.baseCtrlr;
         return this._ctrlr;
     }
-    _ctrlr: BaseController = null;
+    _ctrlr: BaseCtrlr = null;
 
     init() {
         this.node.height = this.ctrlr.pageBed.height;

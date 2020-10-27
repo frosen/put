@@ -53,43 +53,43 @@ interface Array<T> {
 // -----------------------------------------------------------------
 
 declare interface StartingBattleFeature {
-    func: (pet: BattlePet, datas: number[], ctrlr: BattleController) => void;
+    func: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
     datas: number[];
     id: string;
 }
 
 declare interface AttackingFeature {
-    func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
     datas: number[];
     id: string;
 }
 
 declare interface CastingFeature {
-    func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
     datas: number[];
     id: string;
 }
 
 declare interface HurtFeature {
-    func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
     datas: number[];
     id: string;
 }
 
 declare interface HealingFeature {
-    func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: BattleDataForFeature) => void;
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
     datas: number[];
     id: string;
 }
 
 declare interface EnemyDeadFeature {
-    func: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController) => void;
+    func: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
     datas: number[];
     id: string;
 }
 
 declare interface DeadFeature {
-    func: (pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BattleController) => void;
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
     datas: number[];
     id: string;
 }

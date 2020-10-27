@@ -1,11 +1,11 @@
 /*
- * BattleController.ts
+ * BtlCtrlr.ts
  * 战斗处理类
  * luleyan
  */
 
 import { GameDataTool, PetTool } from 'scripts/Memory';
-import { BattlePageBase } from './BattlePageBase';
+import { BtlPageBase } from './BtlPageBase';
 
 import { skillModelDict } from 'configs/SkillModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
@@ -49,9 +49,9 @@ const ComboHitRate = [0, 1, 1.1, 1.2]; // combo从1开始
 const FormationHitRate = [1, 0.95, 0.9, 0.9, 0.85]; // 阵型顺序从0开始
 const EleReinforceRelation = [0, 3, 1, 4, 2, 6, 5]; // 元素相克表
 
-export class BattleController {
+export class BtlCtrlr {
     updater: ExplUpdater = null;
-    page: BattlePageBase = null;
+    page: BtlPageBase = null;
     gameData: GameData = null;
 
     endCallback: (win: boolean) => void = null;
@@ -203,7 +203,7 @@ export class BattleController {
                 if (index >= rb.selfTeam.pets.length || index >= rb.enemyTeam.pets.length) break;
                 const selfPet = rb.selfTeam.pets[index];
                 const enemyPet = rb.enemyTeam.pets[index];
-                const times = BattleController.calcSneakAttackTimes(selfPet, enemyPet);
+                const times = BtlCtrlr.calcSneakAttackTimes(selfPet, enemyPet);
                 this.addBuff(enemyPet, selfPet, 'JingZhi', times);
             }
         }
@@ -332,7 +332,7 @@ export class BattleController {
                         if (buffOutput.hp) {
                             let dmg = buffOutput.hp;
                             if (dmg > 0) {
-                                dmg *= BattleController.getEleDmgRate(buffModel.eleType, pet, buffData.caster);
+                                dmg *= BtlCtrlr.getEleDmgRate(buffModel.eleType, pet, buffData.caster);
                                 dmg *= (1 - pet.pet2.dfsRate) * FormationHitRate[pet.fromationIdx];
                             }
                             dmg = Math.floor(dmg);
@@ -486,21 +486,21 @@ export class BattleController {
         let finalDmg: number;
         let hitResult = 1;
         if (dmgRate > 0) {
-            hitResult = BattleController.getHitResult(battlePet, aim);
+            hitResult = BtlCtrlr.getHitResult(battlePet, aim);
             if (hitResult === 0) {
                 if (this.page) this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
                 this.logMiss(battlePet, aim, skillModel.cnName);
                 return false;
             }
 
-            const sklRealDmg = BattleController.getSklDmg(battlePet, aim);
-            const atkRealDmg = BattleController.getAtkDmg(battlePet, aim);
-            finalDmg = BattleController.getCastRealDmg(sklRealDmg, dmgRate * 0.01, atkRealDmg);
+            const sklRealDmg = BtlCtrlr.getSklDmg(battlePet, aim);
+            const atkRealDmg = BtlCtrlr.getAtkDmg(battlePet, aim);
+            finalDmg = BtlCtrlr.getCastRealDmg(sklRealDmg, dmgRate * 0.01, atkRealDmg);
 
-            finalDmg *= BattleController.getEleDmgRate(skillModel.eleType, aim, battlePet);
+            finalDmg *= BtlCtrlr.getEleDmgRate(skillModel.eleType, aim, battlePet);
             finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         } else {
-            finalDmg = BattleController.getSklDmg(battlePet, aim) * dmgRate * 0.01;
+            finalDmg = BtlCtrlr.getSklDmg(battlePet, aim) * dmgRate * 0.01;
         }
 
         finalDmg = this.handleDmgByRage(finalDmg, battlePet);
@@ -546,10 +546,10 @@ export class BattleController {
 
     static getEleDmgRate(skillEleType: EleType, aim: BattlePet, caster: BattlePet) {
         let dmgGain: number;
-        if (caster) dmgGain = BattleController.getEleType(caster) === skillEleType ? 1.05 : 1;
+        if (caster) dmgGain = BtlCtrlr.getEleType(caster) === skillEleType ? 1.05 : 1;
         else dmgGain = 1;
 
-        const aimEleType = BattleController.getEleType(aim);
+        const aimEleType = BtlCtrlr.getEleType(aim);
         const dmgRestricts = EleReinforceRelation[skillEleType] === aimEleType ? 1.15 : 1;
         return dmgGain * dmgRestricts;
     }
@@ -584,14 +584,14 @@ export class BattleController {
         const aim: BattlePet = this.getAim(battlePet, false);
         if (!aim) return false;
 
-        const hitResult = BattleController.getHitResult(battlePet, aim);
+        const hitResult = BtlCtrlr.getHitResult(battlePet, aim);
         if (hitResult === 0) {
             if (this.page) this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
             this.logMiss(battlePet, aim, '普攻');
             return true;
         }
 
-        let finalDmg = BattleController.getAtkDmg(battlePet, aim);
+        let finalDmg = BtlCtrlr.getAtkDmg(battlePet, aim);
         finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         finalDmg = this.handleDmgByRage(finalDmg, battlePet);
         finalDmg = Math.floor(finalDmg);
@@ -716,7 +716,7 @@ export class BattleController {
 
     getAim(battlePet: BattlePet, toSelf: boolean, spBattleType: BattleType = null): BattlePet {
         const rb = this.realBattle;
-        const battleType = spBattleType || BattleController.getBattleType(battlePet);
+        const battleType = spBattleType || BtlCtrlr.getBattleType(battlePet);
 
         let aimPets: BattlePet[];
         if (toSelf) {
@@ -728,13 +728,13 @@ export class BattleController {
         let aim: BattlePet;
         switch (battleType) {
             case BattleType.melee:
-                aim = BattleController.getPetAlive(aimPets[battlePet.idx] || aimPets.getLast());
+                aim = BtlCtrlr.getPetAlive(aimPets[battlePet.idx] || aimPets.getLast());
                 break;
             case BattleType.shoot:
-                aim = BattleController.getPetAlive(aimPets[ranSdInt(aimPets.length)]);
+                aim = BtlCtrlr.getPetAlive(aimPets[ranSdInt(aimPets.length)]);
                 break;
             case BattleType.charge:
-                aim = BattleController.getPetAlive(aimPets[0]);
+                aim = BtlCtrlr.getPetAlive(aimPets[0]);
                 break;
             case BattleType.assassinate:
                 for (const enemyPet of aimPets) {
@@ -743,9 +743,9 @@ export class BattleController {
                 break;
             case BattleType.combo:
                 if (rb.lastAim && rb.lastAim.beEnemy === aimPets[0].beEnemy) {
-                    aim = BattleController.getPetAlive(rb.lastAim);
+                    aim = BtlCtrlr.getPetAlive(rb.lastAim);
                 } else {
-                    aim = BattleController.getPetAlive(aimPets[battlePet.idx] || aimPets[aimPets.length - 1]);
+                    aim = BtlCtrlr.getPetAlive(aimPets[battlePet.idx] || aimPets[aimPets.length - 1]);
                 }
                 break;
             case BattleType.chaos: {
@@ -756,7 +756,7 @@ export class BattleController {
                     anotherSidePets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
                 }
                 const pets = ranSd() > 0.5 ? aimPets : anotherSidePets;
-                aim = BattleController.getPetAlive(pets[ranSdInt(pets.length)]);
+                aim = BtlCtrlr.getPetAlive(pets[ranSdInt(pets.length)]);
                 break;
             }
             default:

@@ -5,7 +5,7 @@
  */
 
 const { ccclass, property, executionOrder } = cc._decorator;
-import { BattlePageBase } from 'scripts/BattlePageBase';
+import { BtlPageBase } from 'scripts/BtlPageBase';
 import { ExplUpdater, ExplLogData } from 'scripts/ExplUpdater';
 import { PetUI } from './PetUI';
 import { buffModelDict } from 'configs/BuffModelDict';
@@ -37,7 +37,7 @@ const DmgLblActParams: number[][] = [
 
 @ccclass
 @executionOrder(1) // 为了start在scrollview的start之后进行，保证对scrollview的content.y设置正确
-export class PageActExpl extends BattlePageBase {
+export class PageActExpl extends BtlPageBase {
     updater: ExplUpdater = null;
 
     @property(cc.Node)

@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { BattlePageBase } from './BattlePageBase';
+import { BtlPageBase } from './BtlPageBase';
 import {
     Memory,
     GameDataTool,
@@ -16,7 +16,7 @@ import {
     QuestTool,
     CaughtPetTool
 } from 'scripts/Memory';
-import { BattleController } from './BattleController';
+import { BtlCtrlr } from './BtlCtrlr';
 import { GameData, ExplMmr, Catcher, Pet, BattleMmr, Money, PosData, PADExpl, Quest, NeedUpdCntByStep } from 'scripts/DataSaved';
 import { AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
@@ -88,10 +88,10 @@ export class ExplLogData {
 }
 
 export class ExplUpdater {
-    page: BattlePageBase = null;
+    page: BtlPageBase = null;
     memory: Memory = null;
     gameData: GameData = null;
-    battleCtrlr: BattleController = null;
+    battleCtrlr: BtlCtrlr = null;
 
     _id: string = 'expl'; // 用于cc.Scheduler.update
 
@@ -100,7 +100,7 @@ export class ExplUpdater {
     inited: boolean = false;
     pausing: boolean = false;
 
-    init(page: BattlePageBase, spcBtlId: number, startStep: number) {
+    init(page: BtlPageBase, spcBtlId: number, startStep: number) {
         this.page = page;
         this.memory = this.page.ctrlr.memory;
         this.gameData = this.memory.gameData;
@@ -111,7 +111,7 @@ export class ExplUpdater {
         this.page.ctrlr.debugTool.setShortCut('gg', this.goNext.bind(this));
         this.page.ctrlr.debugTool.setShortCut('ff', this.fastUpdate.bind(this));
 
-        this.battleCtrlr = new BattleController();
+        this.battleCtrlr = new BtlCtrlr();
         this.battleCtrlr.init(this, this.onBattleEnd.bind(this));
 
         const curExpl = this.gameData.curExpl;
@@ -146,7 +146,7 @@ export class ExplUpdater {
     // -----------------------------------------------------------------
 
     /** 如果为null，则表示后台运行 */
-    runAt(page: BattlePageBase) {
+    runAt(page: BtlPageBase) {
         this.page = page;
         this.battleCtrlr.page = page;
     }
@@ -862,19 +862,19 @@ export class ExplUpdater {
         else return 2;
     }
 
-    static getPosPetAgiRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
+    static getPosPetAgiRate(curExpl: ExplMmr, battleCtrlr: BtlCtrlr) {
         const posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
         const petValue = battleCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.agility);
         return petValue / posValue;
     }
 
-    static getPosPetSensRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
+    static getPosPetSensRate(curExpl: ExplMmr, battleCtrlr: BtlCtrlr) {
         const posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
         const petValue = battleCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.sensitivity);
         return petValue / posValue;
     }
 
-    static getPosPetEleRate(curExpl: ExplMmr, battleCtrlr: BattleController) {
+    static getPosPetEleRate(curExpl: ExplMmr, battleCtrlr: BtlCtrlr) {
         const posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
         const petValue = battleCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.elegant);
         return petValue / posValue;
