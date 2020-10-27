@@ -417,7 +417,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '鬼',
         dataAreas: [[1, 1]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            bData.ctrlr.getTeam(aim).mp = Math.min(bData.ctrlr.getTeam(aim).mp - datas[0], 0);
+            bData.ctrlr.getTeam(aim).mp = Math.max(bData.ctrlr.getTeam(aim).mp - datas[0], 0);
         },
         getInfo(datas: number[]): string {
             return `普攻击中时，敌人减少${datas[0]}点精神`;
@@ -428,12 +428,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '雕',
         dataAreas: [[1, 1]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            const eTeam = bData.ctrlr.getTeam(aim);
-            const rage = bData.ctrlr.ranSd() < rate(datas[0], 0.05, 0.9) ? 2 : 1;
-            eTeam.rage = Math.min(eTeam.rage - rage, 0);
+            if (bData.ctrlr.ranSd() < rate(datas[0], 0.5, 0.5)) {
+                bData.ctrlr.getTeam(aim).rage = Math.max(bData.ctrlr.getTeam(aim).rage - 1, 0);
+            }
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人减少1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率减少2点`;
+            return `普攻击中时，敌人${rd(rate(datas[0], 0.5, 0.5) * 100)}%概率减少1点斗志`;
         }
     },
     hitAddMp: {
@@ -453,12 +453,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '猿',
         dataAreas: [[1, 1]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            const sTeam = bData.ctrlr.getTeam(pet);
-            const rage = bData.ctrlr.ranSd() < rate(datas[0], 0.05, 0.9) ? 2 : 1;
-            sTeam.rage = Math.min(sTeam.rage + rage, RageMax);
+            if (bData.ctrlr.ranSd() < rate(datas[0], 0.5, 0.5)) {
+                bData.ctrlr.getTeam(pet).rage = Math.min(bData.ctrlr.getTeam(pet).rage + 1, RageMax);
+            }
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，额外获得1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率获得2点`;
+            return `普攻击中时，${rd(rate(datas[0], 0.5, 0.5) * 100)}%概率额外获得1点斗志`;
         }
     },
     hitKill: {
@@ -690,12 +690,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '熊',
         dataAreas: [[1, 1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            const sTeam = bData.ctrlr.getTeam(pet);
-            const rage = bData.ctrlr.ranSd() < rate(datas[0], 0.05, 0.9) ? 2 : 1;
-            sTeam.rage = Math.min(sTeam.rage + rage, RageMax);
+            if (bData.ctrlr.ranSd() < rate(datas[0], 0.5, 0.5)) {
+                bData.ctrlr.getTeam(pet).rage = Math.min(bData.ctrlr.getTeam(pet).rage + 1, RageMax);
+            }
         },
         getInfo(datas: number[]): string {
-            return `受伤时，额外获得1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率获得2点`;
+            return `受伤时，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率额外获得1点斗志`;
         }
     },
     hurtRdcMp: {
@@ -790,7 +790,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
     },
     hurtWithAtk: {
         id: 'hurtWithAtk',
-        cnBrief: '挡',
+        cnBrief: '障',
         dataAreas: [[0.02, 0.02]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
             if (!bData.skillModel) pet.hp += bData.finalDmg * datas[0];
@@ -835,10 +835,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
                 pet.hp += dmg;
 
                 dmg /= petsAlive.length;
-                for (const petAlive of petsAlive) {
-                    petAlive.hp = Math.max(petAlive.hp - dmg, 1);
-                    bData.ctrlr.page.doHurt(petAlive.beEnemy, petAlive.idx, petAlive.hp, petAlive.hpMax, dmg, false, 0);
-                }
+                for (const petAlive of petsAlive) petAlive.hp = Math.max(petAlive.hp - dmg, 1);
             }
         },
         getInfo(datas: number[]): string {
@@ -891,7 +888,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hp = Math.max(pet.hp - bData.finalDmg * datas[1], 1);
         },
         getInfo(datas: number[]): string {
-            return `治疗效果提高${rd(datas[0] * 100)}%，但施法者会受到${rd(datas[1] * 100)}%的伤害`;
+            return `治疗效果提高${rd(datas[0] * 100)}%，但施法者会受到${rd(datas[1] * 100)}%的伤害（不会致死）`;
         }
     },
     beginAddRage: {
@@ -899,10 +896,11 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '阳',
         dataAreas: [[5, 2]],
         onBtlStart(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
-            ctrlr.getTeam(pet).rage = Math.min(ctrlr.getTeam(pet).rage + datas[0], RageMax);
+            const rage = Math.min(datas[0], 20);
+            ctrlr.getTeam(pet).rage += rage; // 因为是在btlstart，最多执行5次，每次最高20的话，不会超过Max
         },
         getInfo(datas: number[]): string {
-            return `战斗开始时，直接获取${Math.min(datas[0], RageMax)}点斗志`;
+            return `战斗开始时，直接获取${Math.min(datas[0], 20)}点斗志`;
         }
     },
     beginReLi: {
@@ -934,10 +932,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         onEDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             if (pet === caster) {
                 const petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0);
-                for (const petAlive of petsAlive) {
-                    petAlive.hp = Math.min(petAlive.hp + aim.hpMax * datas[0], petAlive.hpMax);
-                    ctrlr.page.doHurt(petAlive.beEnemy, petAlive.idx, petAlive.hp, petAlive.hpMax, 0, false, 0);
-                }
+                for (const petA of petsAlive) petA.hp = Math.min(petA.hp + aim.hpMax * datas[0], petA.hpMax);
             }
         },
         getInfo(datas: number[]): string {
@@ -974,7 +969,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         dataAreas: [[0.1, 0.05]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             const hp = pet.hpMax * rate(datas[0], 0.1, 0.4);
-            caster.hp = Math.min(caster.hp - hp, 1);
+            caster.hp = Math.max(caster.hp - hp, 1);
         },
         getInfo(datas: number[]): string {
             return `被击杀时，对敌人造成自己最大血量${rd(rate(datas[0], 0.1, 0.4) * 100)}%的伤害（不会致死）`;
