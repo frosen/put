@@ -369,12 +369,12 @@ export class BattlePet {
         this.deadFeatures.length = 0;
 
         PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
-            BattlePet.addFeatureFunc(this, 'startFeatures', 'onStartingBattle', model, datas);
-            BattlePet.addFeatureFunc(this, 'atkFeatures', 'onAttacking', model, datas);
-            BattlePet.addFeatureFunc(this, 'castFeatures', 'onCasting', model, datas);
+            BattlePet.addFeatureFunc(this, 'startFeatures', 'onBtlStart', model, datas);
+            BattlePet.addFeatureFunc(this, 'atkFeatures', 'onAtk', model, datas);
+            BattlePet.addFeatureFunc(this, 'castFeatures', 'onCast', model, datas);
             BattlePet.addFeatureFunc(this, 'hurtFeatures', 'onHurt', model, datas);
-            BattlePet.addFeatureFunc(this, 'healFeatures', 'onHealing', model, datas);
-            BattlePet.addFeatureFunc(this, 'eDeadFeatures', 'onEnemyDead', model, datas);
+            BattlePet.addFeatureFunc(this, 'healFeatures', 'onHeal', model, datas);
+            BattlePet.addFeatureFunc(this, 'eDeadFeatures', 'onEDead', model, datas);
             BattlePet.addFeatureFunc(this, 'deadFeatures', 'onDead', model, datas);
         });
 

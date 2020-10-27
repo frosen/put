@@ -89,12 +89,12 @@ export abstract class FeatureModel {
     abstract dataAreas: number[][];
     abstract onBaseSetting(pet: Pet2, datas: number[]): void;
     abstract onSetting(pet: Pet2, datas: number[]): void;
-    abstract onStartingBattle(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
-    abstract onAttacking(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
-    abstract onCasting(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
+    abstract onBtlStart(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
+    abstract onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
+    abstract onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
     abstract onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void;
-    abstract onHealing(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
-    abstract onEnemyDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
+    abstract onHeal(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
+    abstract onEDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
     abstract onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
     abstract getInfo(datas: number[]): string;
 }
