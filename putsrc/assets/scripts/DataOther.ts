@@ -537,17 +537,17 @@ export class RealBattle {
             this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetMmr = ePetMmrs[petIdx];
                 const petData = PetTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.exFeatureIds, ePetMmr.features);
-                if (spcBtlId) petData.master = 'spcBtl'; // llytodo master不配拥有名称吗
+                if (spcBtlId > 0) petData.master = 'spcBtl'; // llytodo master不配拥有名称吗
                 bPet.init(petData, null, null);
             });
-        } else if (spcBtlId) {
+        } else if (spcBtlId > 0) {
             // llytodo
         } else {
             const ePetsData = RealBattle.createRandomPetData(createData.curExpl, createData.petCount);
             this.enemyTeam.reset(ePetsData.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetData = ePetsData[petIdx];
                 const ePet = PetTool.createWithRandomFeature(ePetData.id, ePetData.lv);
-                if (spcBtlId) ePet.master = 'spcBtl';
+                if (spcBtlId > 0) ePet.master = 'spcBtl';
                 bPet.init(ePet, null, null);
             });
         }

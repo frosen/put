@@ -421,7 +421,7 @@ export class PetTool {
         pet.lv = lv;
 
         pet.prvty = 0;
-        pet.prvtyTime = pet.catchTime;
+        pet.prvtyTime = 0;
 
         pet.drink = null;
         pet.drinkTime = 0;
@@ -481,7 +481,7 @@ export class PetTool {
     static getBaseCnName(pet: Pet, needSpace: boolean = false): string {
         if (pet.exFeatureIds.length > 0) {
             let name = '';
-            for (let index = 1; index >= 0; index--) {
+            for (let index = pet.exFeatureIds.length - 1; index >= 0; index--) {
                 const id = pet.exFeatureIds[index];
                 name += featureModelDict[id].cnBrief;
             }
@@ -1038,6 +1038,7 @@ export class GameDataTool {
         pet.catchTime = Date.now();
         pet.catchIdx = gameData.totalPetCount;
         pet.catchLv = pet.lv;
+        pet.prvtyTime = pet.catchTime;
         gameData.pets.push(pet);
 
         this.sortPetsByState(gameData);
