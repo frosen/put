@@ -52,19 +52,19 @@ interface Array<T> {
 
 // -----------------------------------------------------------------
 
-declare interface StartingBattleFeature {
+declare interface StartFeature {
     func: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
     datas: number[];
     id: string;
 }
 
-declare interface AttackingFeature {
+declare interface AtkFeature {
     func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
     datas: number[];
     id: string;
 }
 
-declare interface CastingFeature {
+declare interface CastFeature {
     func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
     datas: number[];
     id: string;
@@ -76,13 +76,13 @@ declare interface HurtFeature {
     id: string;
 }
 
-declare interface HealingFeature {
+declare interface HealFeature {
     func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
     datas: number[];
     id: string;
 }
 
-declare interface EnemyDeadFeature {
+declare interface EDeadFeature {
     func: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
     datas: number[];
     id: string;

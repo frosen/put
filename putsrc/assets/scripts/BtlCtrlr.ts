@@ -210,7 +210,7 @@ export class BtlCtrlr {
 
         // 触发进入战斗特性
         for (const pet of rb.order) {
-            pet.startingBattleFeatures.forEach((value: StartingBattleFeature) => {
+            pet.startFeatures.forEach((value: StartFeature) => {
                 value.func(pet, value.datas, this);
             });
         }
@@ -510,7 +510,7 @@ export class BtlCtrlr {
         aim.hp -= finalDmg;
 
         if (dmgRate > 0) {
-            battlePet.castingFeatures.forEach((value: AttackingFeature) => {
+            battlePet.castFeatures.forEach((value: AtkFeature) => {
                 value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel });
             });
             aim.hurtFeatures.forEach((value: HurtFeature) => {
@@ -519,7 +519,7 @@ export class BtlCtrlr {
             if (aim.hp < 0) aim.hp = 0;
             else if (aim.hp > lastHp - 1) aim.hp = lastHp - 1;
         } else {
-            battlePet.healingFeatures.forEach((value: HealingFeature) => {
+            battlePet.healFeatures.forEach((value: HealFeature) => {
                 value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel });
             });
             if (aim.hp > aim.hpMax) aim.hp = aim.hpMax;
@@ -597,7 +597,7 @@ export class BtlCtrlr {
         finalDmg = Math.floor(finalDmg);
         aim.hp -= finalDmg;
 
-        battlePet.attackingFeatures.forEach((value: AttackingFeature) => {
+        battlePet.atkFeatures.forEach((value: AtkFeature) => {
             value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel: null });
         });
         aim.hurtFeatures.forEach((value: HurtFeature) => {
@@ -668,7 +668,7 @@ export class BtlCtrlr {
             });
             const petsAlive = this.getTeam(caster).pets.filter((value: BattlePet) => value.hp > 0);
             for (const petAlive of petsAlive) {
-                petAlive.enemyDeadFeatures.forEach((value: EnemyDeadFeature) => {
+                petAlive.eDeadFeatures.forEach((value: EDeadFeature) => {
                     value.func(petAlive, battlePet, caster, value.datas, this);
                 });
             }

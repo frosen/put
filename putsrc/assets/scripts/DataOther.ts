@@ -312,12 +312,12 @@ export class BattlePet {
     hp: number = 0;
     hpMax: number = 0;
 
-    startingBattleFeatures: StartingBattleFeature[] = [];
-    attackingFeatures: AttackingFeature[] = [];
-    castingFeatures: CastingFeature[] = [];
+    startFeatures: StartFeature[] = [];
+    atkFeatures: AtkFeature[] = [];
+    castFeatures: CastFeature[] = [];
     hurtFeatures: HurtFeature[] = [];
-    healingFeatures: HealingFeature[] = [];
-    enemyDeadFeatures: EnemyDeadFeature[] = [];
+    healFeatures: HealFeature[] = [];
+    eDeadFeatures: EDeadFeature[] = [];
     deadFeatures: DeadFeature[] = [];
 
     skillDatas: BattleSkill[] = [];
@@ -360,21 +360,21 @@ export class BattlePet {
         this.hpMax = this.pet2.hpMax;
 
         // 特性
-        this.startingBattleFeatures.length = 0;
-        this.attackingFeatures.length = 0;
-        this.castingFeatures.length = 0;
+        this.startFeatures.length = 0;
+        this.atkFeatures.length = 0;
+        this.castFeatures.length = 0;
         this.hurtFeatures.length = 0;
-        this.healingFeatures.length = 0;
-        this.enemyDeadFeatures.length = 0;
+        this.healFeatures.length = 0;
+        this.eDeadFeatures.length = 0;
         this.deadFeatures.length = 0;
 
         PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
-            BattlePet.addFeatureFunc(this, 'startingBattleFeatures', 'onStartingBattle', model, datas);
-            BattlePet.addFeatureFunc(this, 'attackingFeatures', 'onAttacking', model, datas);
-            BattlePet.addFeatureFunc(this, 'castingFeatures', 'onCasting', model, datas);
+            BattlePet.addFeatureFunc(this, 'startFeatures', 'onStartingBattle', model, datas);
+            BattlePet.addFeatureFunc(this, 'atkFeatures', 'onAttacking', model, datas);
+            BattlePet.addFeatureFunc(this, 'castFeatures', 'onCasting', model, datas);
             BattlePet.addFeatureFunc(this, 'hurtFeatures', 'onHurt', model, datas);
-            BattlePet.addFeatureFunc(this, 'healingFeatures', 'onHealing', model, datas);
-            BattlePet.addFeatureFunc(this, 'enemyDeadFeatures', 'onEnemyDead', model, datas);
+            BattlePet.addFeatureFunc(this, 'healFeatures', 'onHealing', model, datas);
+            BattlePet.addFeatureFunc(this, 'eDeadFeatures', 'onEnemyDead', model, datas);
             BattlePet.addFeatureFunc(this, 'deadFeatures', 'onDead', model, datas);
         });
 
