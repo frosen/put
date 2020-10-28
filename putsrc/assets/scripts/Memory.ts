@@ -68,6 +68,7 @@ import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { materialModelDict } from 'configs/MaterialModelDict';
 import { questModelDict } from 'configs/QuestModelDict';
 import Tea = require('./Tea');
+import { actPosModelDict } from 'configs/ActPosModelDict';
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = -1;
@@ -312,21 +313,24 @@ export class Memory {
     test() {
         this.gameData.curPosId = 'YiZhuangJiDi';
 
-        GameDataTool.addPet(this.gameData, 'FaTiaoWa', 1, [], [], (pet: Pet) => {
+        let pet = PetTool.createWithRandomFeature('FaTiaoWa', 30);
+        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
             pet.state = PetState.ready;
             pet.nickname = '妙妙';
             pet.prvty = 400000;
             pet.equips[0] = EquipTool.createRandomByLv(15, 20);
         });
 
-        GameDataTool.addPet(this.gameData, 'YaHuHanJuRen', 1, [], [], (pet: Pet) => {
+        pet = PetTool.createWithRandomFeature('YaHuHanJuRen', 30);
+        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
             pet.drink = CnsumTool.create(Drink, 'LingGanYaoJi2');
             pet.drinkTime = Date.now();
         });
 
-        GameDataTool.addPet(this.gameData, 'BaiLanYuYan', 1, [], [], (pet: Pet) => {
+        pet = PetTool.createWithRandomFeature('BaiLanYuYan', 30);
+        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
             const f = newInsWithChecker(Feature);
@@ -334,6 +338,14 @@ export class Memory {
             f.lv = 1;
             pet.lndFeatures.push(f);
         });
+
+        pet = PetTool.createWithRandomFeature('HeiFengWuRenJi', 30);
+        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures);
+
+        pet = PetTool.createWithRandomFeature('CiHuaYouLing', 29);
+        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures);
+
+        cc.log('^_^!>>>', this.gameData.pets);
 
         // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
 
@@ -361,11 +373,11 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 33);
         GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += 1000));
 
-        const pet = PetTool.createWithRandomFeature('BaiLanYuYan', 3);
-        const cPet = CaughtPetTool.createByPet(pet);
+        const cPet = CaughtPetTool.createByPet(PetTool.createWithRandomFeature('BaiLanYuYan', 3));
         GameDataTool.addCaughtPet(this.gameData, cPet);
 
-        // this.gameData.curPosId = 'GuangJiDianZhiLu';
+        this.gameData.curPosId = 'GuangJiDianZhiLu';
+        actPosModelDict[this.gameData.curPosId].lv = 30;
         // GameDataTool.createExpl(this.gameData, 0);
         // this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 60 * 24 * 2;
         // this.gameData.curExpl.catcherId = 'PuTongXianJing1';
