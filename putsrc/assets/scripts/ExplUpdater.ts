@@ -650,7 +650,7 @@ export class ExplUpdater {
 
             let updCnt = 0;
             const win = this.mockBattle(mockBattle, (realBattle: RealBattle): boolean => {
-                if (this.battleCtrlr.realBattle.start === false) return true;
+                if (realBattle.start === false) return true;
                 updCnt++;
                 return false;
             });

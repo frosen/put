@@ -601,6 +601,7 @@ export class BtlCtrlr {
         let finalDmg = BtlCtrlr.getAtkDmg(battlePet, aim);
         finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         finalDmg *= BtlCtrlr.getRageDmgRate(this.getTeam(battlePet));
+        if (this.realBattle.atkRound > 150) finalDmg *= 10; // 时间太长则增加伤害尽快结束
         finalDmg = Math.floor(finalDmg);
         aim.hp -= finalDmg;
 
