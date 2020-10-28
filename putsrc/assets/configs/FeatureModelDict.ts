@@ -428,12 +428,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '雕',
         dataAreas: [[1, 1]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.ctrlr.ranSd() < rate(datas[0], 0.5, 0.5)) {
-                bData.ctrlr.getTeam(aim).rage = Math.max(bData.ctrlr.getTeam(aim).rage - 1, 0);
-            }
+            const eTeam = bData.ctrlr.getTeam(aim);
+            const rage = bData.ctrlr.ranSd() < rate(datas[0], 0.05, 0.9) ? 2 : 1;
+            eTeam.rage = Math.max(eTeam.rage - rage, 0);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人${rd(rate(datas[0], 0.5, 0.5) * 100)}%概率减少1点斗志`;
+            return `普攻击中时，敌人减少1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率减少2点`;
         }
     },
     hitAddMp: {
@@ -453,12 +453,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '猿',
         dataAreas: [[1, 1]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.ctrlr.ranSd() < rate(datas[0], 0.5, 0.5)) {
-                bData.ctrlr.getTeam(pet).rage = Math.min(bData.ctrlr.getTeam(pet).rage + 1, RageMax);
-            }
+            const sTeam = bData.ctrlr.getTeam(pet);
+            const rage = bData.ctrlr.ranSd() < rate(datas[0], 0.05, 0.9) ? 2 : 1;
+            sTeam.rage = Math.min(sTeam.rage + rage, RageMax);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，${rd(rate(datas[0], 0.5, 0.5) * 100)}%概率额外获得1点斗志`;
+            return `普攻击中时，额外获得1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率获得2点`;
         }
     },
     hitKill: {
@@ -690,12 +690,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '熊',
         dataAreas: [[1, 1]],
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.ctrlr.ranSd() < rate(datas[0], 0.5, 0.5)) {
-                bData.ctrlr.getTeam(pet).rage = Math.min(bData.ctrlr.getTeam(pet).rage + 1, RageMax);
-            }
+            const sTeam = bData.ctrlr.getTeam(pet);
+            const rage = bData.ctrlr.ranSd() < rate(datas[0], 0.05, 0.9) ? 2 : 1;
+            sTeam.rage = Math.min(sTeam.rage + rage, RageMax);
         },
         getInfo(datas: number[]): string {
-            return `受伤时，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率额外获得1点斗志`;
+            return `受伤时，额外获得1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率获得2点`;
         }
     },
     hurtRdcMp: {
@@ -896,11 +896,10 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '阳',
         dataAreas: [[5, 2]],
         onBtlStart(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
-            const rage = Math.min(datas[0], 20);
-            ctrlr.getTeam(pet).rage += rage; // 因为是在btlstart，最多执行5次，每次最高20的话，不会超过Max
+            ctrlr.getTeam(pet).rage = Math.min(ctrlr.getTeam(pet).rage + datas[0], RageMax);
         },
         getInfo(datas: number[]): string {
-            return `战斗开始时，直接获取${Math.min(datas[0], 20)}点斗志`;
+            return `战斗开始时，直接获取${Math.min(datas[0], RageMax)}点斗志`;
         }
     },
     beginReLi: {

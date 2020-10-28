@@ -503,7 +503,7 @@ export class BtlCtrlr {
             finalDmg = BtlCtrlr.getSklDmg(battlePet, aim) * dmgRate * 0.01;
         }
 
-        finalDmg = this.handleDmgByRage(finalDmg, battlePet);
+        finalDmg *= BtlCtrlr.getRageDmgRate(this.getTeam(battlePet));
         finalDmg = Math.floor(finalDmg);
 
         const lastHp = aim.hp;
@@ -554,6 +554,13 @@ export class BtlCtrlr {
         return dmgGain * dmgRestricts;
     }
 
+    static getRageDmgRate(team: BattleTeam): number {
+        const rage = team.rage;
+        if (rage < 50) return 1;
+        else if (rage < 100) return 1.1;
+        else return 1.25;
+    }
+
     castBuff(battlePet: BattlePet, aim: BattlePet, skillModel: SkillModel, beMain: boolean) {
         const buffId = beMain ? skillModel.mainBuffId : skillModel.subBuffId;
         const buffTime = beMain ? skillModel.mainBuffTime : skillModel.subBuffTime;
@@ -593,7 +600,7 @@ export class BtlCtrlr {
 
         let finalDmg = BtlCtrlr.getAtkDmg(battlePet, aim);
         finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
-        finalDmg = this.handleDmgByRage(finalDmg, battlePet);
+        finalDmg *= BtlCtrlr.getRageDmgRate(this.getTeam(battlePet));
         finalDmg = Math.floor(finalDmg);
         aim.hp -= finalDmg;
 
@@ -615,14 +622,6 @@ export class BtlCtrlr {
         if (aim.hp === 0) this.dead(aim, battlePet);
 
         return true;
-    }
-
-    handleDmgByRage(dmg: number, battlePet: BattlePet): number {
-        const rage = this.getTeam(battlePet).rage;
-        if (rage < RageMax * 0.3) return dmg;
-        else if (rage < RageMax * 0.6) return Math.floor(dmg * 1.1);
-        else if (rage < RageMax) return Math.floor(dmg * 1.25);
-        else return Math.floor(dmg * 1.8);
     }
 
     addRage(battlePet: BattlePet) {
