@@ -17,7 +17,20 @@ import {
     ActPosModel,
     PAKey
 } from './DataModel';
-import { BioType, EleType, BattleType, Pet, EleTypeNames, ExplMmr, EPetMmr, Equip, GameData, Item, ItemType } from './DataSaved';
+import {
+    BioType,
+    EleType,
+    BattleType,
+    Pet,
+    EleTypeNames,
+    ExplMmr,
+    EPetMmr,
+    Equip,
+    GameData,
+    Item,
+    ItemType,
+    SPetMmr
+} from './DataSaved';
 
 import { petModelDict } from 'configs/PetModelDict';
 import { skillModelDict } from 'configs/SkillModelDict';
@@ -475,15 +488,14 @@ export class RealBattle {
     lastAim: BattlePet = null;
     combo: number = 1;
 
-    resetSelf(gameData: GameData, byMmr: boolean) {
+    resetSelf(gameData: GameData, sPetMmrs: SPetMmr[] = null) {
         if (!this.selfTeam) this.selfTeam = new BattleTeam();
 
         let sPets: Pet[];
         const exPrvtys: number[] = [];
         const exEquips: Equip[][] = [];
-        if (byMmr) {
+        if (sPetMmrs) {
             sPets = [];
-            const sPetMmrs = gameData.curExpl.curBattle.selfs;
 
             const checkEquipToken = (token: string, items: Item[], equipsOutput: Equip[]): boolean => {
                 for (const item of items) {
@@ -530,7 +542,7 @@ export class RealBattle {
         });
     }
 
-    resetBattle(ePetMmrs: EPetMmr[], spcBtlId: number, createData: { curExpl: ExplMmr; petCount: number }) {
+    reset(ePetMmrs: EPetMmr[], spcBtlId: number, createData: { curExpl: ExplMmr; petCount: number }) {
         if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
 
         if (ePetMmrs) {

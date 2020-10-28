@@ -5,19 +5,21 @@
  */
 
 import { BtlPageBase } from './BtlPageBase';
-import {
-    Memory,
-    GameDataTool,
-    PetTool,
-    EquipTool,
-    CnsumTool,
-    MmrTool,
-    MoneyTool,
-    QuestTool,
-    CaughtPetTool
-} from 'scripts/Memory';
+import { Memory, GameDataTool, PetTool, EquipTool, CnsumTool, MoneyTool, QuestTool, CaughtPetTool } from 'scripts/Memory';
 import { BtlCtrlr } from './BtlCtrlr';
-import { GameData, ExplMmr, Catcher, Pet, BattleMmr, Money, PosData, PADExpl, Quest, NeedUpdCntByStep } from 'scripts/DataSaved';
+import {
+    GameData,
+    ExplMmr,
+    Catcher,
+    Pet,
+    BattleMmr,
+    Money,
+    PosData,
+    PADExpl,
+    Quest,
+    NeedUpdCntByStep,
+    EPetMmr
+} from 'scripts/DataSaved';
 import { AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import {
@@ -351,42 +353,46 @@ export class ExplUpdater {
         curBattle: BattleMmr,
         stepEnterTime: number
     ): { inBattle: boolean; win: boolean; updCnt: number; lastTime: number } {
-        let inBattle = true;
-        let timePtr = curBattle.startUpdCnt * ExplInterval + stepEnterTime;
+        let lastTime = curBattle.startUpdCnt * ExplInterval + stepEnterTime;
+        let updCnt = curBattle.startUpdCnt;
 
+        const win = this.mockBattle(curBattle, (realBattle: RealBattle): boolean => {
+            if (realBattle.start === false) return true;
+            if (lastTime + ExplInterval > Date.now()) return true;
+
+            lastTime += ExplInterval;
+            updCnt++;
+
+            return false;
+        });
+
+        return {
+            inBattle: win === null,
+            win,
+            updCnt,
+            lastTime
+        };
+    }
+
+    mockBattle(mmr: BattleMmr, updCallback: (realBattle: RealBattle) => boolean): boolean {
         const oldPage = this.page;
         const endCall = this.battleCtrlr.endCallback;
-        let win: boolean = false;
+        let win: boolean = null;
         this.page = null;
         this.battleCtrlr.page = null;
         this.battleCtrlr.endCallback = bw => (win = bw);
 
-        this.battleCtrlr.resetSelfTeam(true);
-        this.battleCtrlr.resetBattle(curBattle);
-
-        let updCnt = curBattle.startUpdCnt;
+        this.battleCtrlr.resetSelfTeam(mmr);
+        this.battleCtrlr.resetBattle(mmr);
         while (true) {
-            if (this.battleCtrlr.realBattle.start === false) {
-                inBattle = false;
-                break;
-            }
-            if (timePtr + ExplInterval > Date.now()) break;
-
-            timePtr += ExplInterval;
-            updCnt++;
+            if (updCallback(this.battleCtrlr.realBattle)) break;
             this.battleCtrlr.update();
         }
 
         this.page = oldPage;
         this.battleCtrlr.page = oldPage;
         this.battleCtrlr.endCallback = endCall;
-
-        return {
-            inBattle,
-            win,
-            updCnt,
-            lastTime: timePtr
-        };
+        return win;
     }
 
     recoverExplInExpl(
@@ -608,6 +614,59 @@ export class ExplUpdater {
          * 计算出如下公式
          */
         return (enemyPwr / selfPwr) * 50;
+    }
+
+    calcBtlDuraUpdCntAndWinRate(gameData: GameData): { updCnt: number; winRate: number } {
+        const curExpl = gameData.curExpl;
+        const posId = curExpl.curPosId;
+        const curPosModel = actPosModelDict[posId];
+        const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
+        const curStep = curExpl.curStep;
+        const petList = curExplModel.petIdLists[curStep];
+        const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
+        const petLen = GameDataTool.getReadyPets(this.gameData).length;
+
+        let updCnts = [];
+        let winRates = [];
+        let curLv = lvBase - lvRange;
+        for (let index = 0; index < 3; index++) {
+            const enemys: EPetMmr[] = [];
+            for (let index = 0; index < petLen; index++) {
+                const ePet = PetTool.createWithRandomFeature(petList[index], curLv);
+                enemys.push({
+                    id: ePet.id,
+                    lv: ePet.lv,
+                    exFeatureIds: ePet.exFeatureIds,
+                    features: ePet.inbFeatures
+                });
+            }
+            const mockBattle: BattleMmr = {
+                startUpdCnt: 0,
+                seed: 0,
+                selfs: null,
+                enemys,
+                spcBtlId: 0
+            };
+
+            let updCnt = 0;
+            const win = this.mockBattle(mockBattle, (realBattle: RealBattle): boolean => {
+                if (this.battleCtrlr.realBattle.start === false) return true;
+                updCnt++;
+                return false;
+            });
+
+            let winRate = 1;
+
+            curLv += lvRange;
+        }
+
+        let updCnt = 0;
+        let winRate = 0;
+
+        return {
+            updCnt,
+            winRate
+        };
     }
 
     static calcWinRate(selfPwr: number, enemyPwr: number): number {

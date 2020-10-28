@@ -705,7 +705,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
             const sTeam = bData.ctrlr.getTeam(pet);
             const dmg = bData.finalDmg * datas[0];
-            const rdcMp = Math.ceil(dmg / (2 * pet.pet.lv));
+            const rdcMp = Math.ceil(dmg / (20 * pet.pet.lv));
             if (sTeam.mp >= rdcMp) {
                 sTeam.mp -= rdcMp;
                 pet.hp += dmg;

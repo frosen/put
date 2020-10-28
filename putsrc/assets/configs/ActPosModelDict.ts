@@ -67,7 +67,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                 stepMax: 2,
                 petIdLists: [
                     ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
-                    ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
+                    ['NeiRanJiShou', 'FangShengJiXieBi', 'ZiJingMieHuoQi', 'ShuiLengJiQiRen', 'DianZiShouWei']
                 ],
                 itemIdLists: [['DaMoShi'], ['DaMoShi']],
                 eqpIdLists: []

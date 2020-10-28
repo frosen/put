@@ -130,8 +130,8 @@ export class BtlCtrlr {
         this.page.ctrlr.debugTool.removeShortCut('bb');
     }
 
-    resetSelfTeam(byMmr: boolean = false) {
-        this.realBattle.resetSelf(this.gameData, byMmr);
+    resetSelfTeam(mmr: BattleMmr = null) {
+        this.realBattle.resetSelf(this.gameData, mmr.selfs);
         if (this.page) {
             this.page.setUIofSelfPet(-1);
             const mpMax = this.realBattle.selfTeam.mpMax;
@@ -146,7 +146,7 @@ export class BtlCtrlr {
         // 更新battle
         const curExpl = this.gameData.curExpl;
         const petCount = GameDataTool.getReadyPets(this.gameData).length;
-        this.realBattle.resetBattle(null, spcBtlId, { curExpl, petCount });
+        this.realBattle.reset(null, spcBtlId, { curExpl, petCount });
         if (this.debugMode) {
             this.realBattleCopys.length = 0;
             this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(this.realBattle) });
@@ -173,7 +173,7 @@ export class BtlCtrlr {
         setSeed(battleMmr.seed);
 
         // 更新battle
-        this.realBattle.resetBattle(battleMmr.enemys, null, null);
+        this.realBattle.reset(battleMmr.enemys, null, null);
         if (this.debugMode) {
             this.realBattleCopys.length = 0;
             this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(this.realBattle) });
