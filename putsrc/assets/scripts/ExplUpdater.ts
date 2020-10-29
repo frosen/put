@@ -93,7 +93,7 @@ export class ExplUpdater {
     page: BtlPageBase = null;
     memory: Memory = null;
     gameData: GameData = null;
-    battleCtrlr: BtlCtrlr = null;
+    btlCtrlr: BtlCtrlr = null;
 
     _id: string = 'expl'; // 用于cc.Scheduler.update
 
@@ -113,8 +113,8 @@ export class ExplUpdater {
         this.page.ctrlr.debugTool.setShortCut('gg', this.goNext.bind(this));
         this.page.ctrlr.debugTool.setShortCut('ff', this.fastUpdate.bind(this));
 
-        this.battleCtrlr = new BtlCtrlr();
-        this.battleCtrlr.init(this, this.onBattleEnd.bind(this));
+        this.btlCtrlr = new BtlCtrlr();
+        this.btlCtrlr.init(this, this.onBattleEnd.bind(this));
 
         const curExpl = this.gameData.curExpl;
         if (!curExpl) this.createExpl(spcBtlId, startStep);
@@ -150,7 +150,7 @@ export class ExplUpdater {
     /** 如果为null，则表示后台运行 */
     runAt(page: BtlPageBase) {
         this.page = page;
-        this.battleCtrlr.page = page;
+        this.btlCtrlr.page = page;
     }
 
     static updaterInBG: ExplUpdater = null;
@@ -279,9 +279,9 @@ export class ExplUpdater {
             });
             const enemyLv: number = RealBattle.calcLvArea(curPosModel, curStep).base;
             const enemyPwr = enemyLv;
-            const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
-            const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
-            const eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.battleCtrlr);
+            const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.btlCtrlr);
+            const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.btlCtrlr);
+            const eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.btlCtrlr);
             const petSt = { selfLv, selfPwr, enemyLv, enemyPwr, agiRate, sensRate, eleRate };
 
             const nextUpdCnt = curExpl.chngUpdCnt + EachSpanUpdCnt;
@@ -309,7 +309,7 @@ export class ExplUpdater {
         }
 
         // 加速
-        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.battleCtrlr);
+        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.btlCtrlr);
         const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
         const speedChangeCnt = rztSt.moveCnt * speedUpCnt;
         if (speedUpCnt !== 0) {
@@ -356,7 +356,7 @@ export class ExplUpdater {
         let lastTime = curBattle.startUpdCnt * ExplInterval + stepEnterTime;
         let updCnt = curBattle.startUpdCnt;
 
-        const win = this.mockBattle(curBattle, (realBattle: RealBattle): boolean => {
+        const win = this.mockBattle(curBattle, true, (realBattle: RealBattle): boolean => {
             if (realBattle.start === false) return true;
             if (lastTime + ExplInterval > Date.now()) return true;
 
@@ -374,24 +374,26 @@ export class ExplUpdater {
         };
     }
 
-    mockBattle(mmr: BattleMmr, updCallback: (realBattle: RealBattle) => boolean): boolean {
+    mockBattle(mmr: BattleMmr, logging: boolean, updCallback: (realBattle: RealBattle) => boolean): boolean {
         const oldPage = this.page;
-        const endCall = this.battleCtrlr.endCallback;
+        const endCall = this.btlCtrlr.endCallback;
         let win: boolean = null;
         this.page = null;
-        this.battleCtrlr.page = null;
-        this.battleCtrlr.endCallback = bw => (win = bw);
+        this.btlCtrlr.page = null;
+        this.btlCtrlr.endCallback = bw => (win = bw);
+        this.btlCtrlr.logging = logging;
 
-        this.battleCtrlr.resetSelfTeam(mmr);
-        this.battleCtrlr.resetBattle(mmr);
+        this.btlCtrlr.resetSelfTeam(mmr);
+        this.btlCtrlr.resetBattle(mmr);
         while (true) {
-            if (updCallback(this.battleCtrlr.realBattle)) break;
-            this.battleCtrlr.update();
+            if (updCallback(this.btlCtrlr.realBattle)) break;
+            this.btlCtrlr.update();
         }
 
         this.page = oldPage;
-        this.battleCtrlr.page = oldPage;
-        this.battleCtrlr.endCallback = endCall;
+        this.btlCtrlr.page = oldPage;
+        this.btlCtrlr.endCallback = endCall;
+        this.btlCtrlr.logging = true;
         return win;
     }
 
@@ -626,10 +628,11 @@ export class ExplUpdater {
         const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
         const petLen = GameDataTool.getReadyPets(this.gameData).length;
 
-        let updCnts = [];
-        let winRates = [];
+        let updCntTotal: number = 0;
+        let winRateTotal: number = 0;
         let curLv = lvBase - lvRange;
-        for (let index = 0; index < 3; index++) {
+        const CalcCnt = 3;
+        for (let index = 0; index < CalcCnt; index++) {
             const enemys: EPetMmr[] = [];
             for (let index = 0; index < petLen; index++) {
                 const ePet = PetTool.createWithRandomFeature(petList[index], curLv);
@@ -648,20 +651,21 @@ export class ExplUpdater {
                 spcBtlId: 0
             };
 
-            let updCnt = 0;
-            const win = this.mockBattle(mockBattle, (realBattle: RealBattle): boolean => {
+            const win = this.mockBattle(mockBattle, false, (realBattle: RealBattle): boolean => {
                 if (realBattle.start === false) return true;
-                updCnt++;
+                updCntTotal++;
                 return false;
             });
 
-            let winRate = 1;
+            const rb = this.btlCtrlr.realBattle;
+            if (win) for (const bPet of rb.selfTeam.pets) winRateTotal += 0.5 + Math.min(1, bPet.hp / bPet.hpMax / 0.2) * 0.5;
+            else for (const bPet of rb.enemyTeam.pets) winRateTotal += 0.5 - Math.min(bPet.hp / bPet.hpMax / 0.2) * 0.5;
 
             curLv += lvRange;
         }
 
-        let updCnt = 0;
-        let winRate = 0;
+        const updCnt = Math.floor(updCntTotal / CalcCnt);
+        const winRate = winRateTotal / (CalcCnt * petLen);
 
         return {
             updCnt,
@@ -680,12 +684,12 @@ export class ExplUpdater {
     resetAllUI() {
         if (!this.page) return;
 
-        if (this.battleCtrlr.realBattle.start) {
-            this.battleCtrlr.resetAllUI();
+        if (this.btlCtrlr.realBattle.start) {
+            this.btlCtrlr.resetAllUI();
         } else {
             this.page.setUIofSelfPet(-1);
 
-            const team = this.battleCtrlr.realBattle.selfTeam;
+            const team = this.btlCtrlr.realBattle.selfTeam;
             this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
         }
 
@@ -705,7 +709,7 @@ export class ExplUpdater {
         this.page.ctrlr.debugTool.removeShortCut('ww');
         this.page.ctrlr.debugTool.removeShortCut('gg');
         this.page.ctrlr.debugTool.removeShortCut('ff');
-        this.battleCtrlr.destroy();
+        this.btlCtrlr.destroy();
     }
 
     lastTime: number = 0;
@@ -725,13 +729,13 @@ export class ExplUpdater {
             cc.log('PUT recover update in time');
             const oldPage = this.page;
             this.page = null;
-            this.battleCtrlr.page = null;
+            this.btlCtrlr.page = null;
 
             const turnCount = Math.floor(diff / ExplInterval);
             for (let index = 0; index < turnCount - 1; index++) this.updateReal();
 
             this.page = oldPage;
-            this.battleCtrlr.page = oldPage;
+            this.btlCtrlr.page = oldPage;
             this.resetAllUI();
 
             this.updateReal();
@@ -759,7 +763,7 @@ export class ExplUpdater {
 
     // 每个探索和探索结果前触发，除了gain
     handleSelfTeamChange() {
-        this.battleCtrlr.resetSelfTeam(); // 重置过程不消耗性能，且大概率会触发onMemoryDataChanged
+        this.btlCtrlr.resetSelfTeam(); // 重置过程不消耗性能，且大概率会触发onMemoryDataChanged
     }
 
     // 每个探索+探索结果(battle，gain)后
@@ -810,7 +814,7 @@ export class ExplUpdater {
         if (enter) {
             this.explRdCnt = randomAreaByIntRange(AvgExplRdCnt, 2);
             if (curExpl.hiding) {
-                const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.battleCtrlr);
+                const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.btlCtrlr);
                 this.explRdCnt += ExplUpdater.calcHideExplRdCnt(agiRate);
             }
             this.log(ExplLogType.repeat, '开始探索');
@@ -827,7 +831,7 @@ export class ExplUpdater {
             const curPosModel = actPosModelDict[posId];
             const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
             const curStep = curExpl.curStep;
-            const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.battleCtrlr);
+            const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.btlCtrlr);
 
             const gQData = GameDataTool.getNeedQuest(
                 this.gameData,
@@ -873,7 +877,7 @@ export class ExplUpdater {
     }
 
     handleSpeedUp() {
-        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.battleCtrlr);
+        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.btlCtrlr);
         const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
         if (speedUpCnt !== 0) {
             this.updCnt += speedUpCnt;
@@ -921,21 +925,21 @@ export class ExplUpdater {
         else return 2;
     }
 
-    static getPosPetAgiRate(curExpl: ExplMmr, battleCtrlr: BtlCtrlr) {
+    static getPosPetAgiRate(curExpl: ExplMmr, btlCtrlr: BtlCtrlr) {
         const posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
-        const petValue = battleCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.agility);
+        const petValue = btlCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.agility);
         return petValue / posValue;
     }
 
-    static getPosPetSensRate(curExpl: ExplMmr, battleCtrlr: BtlCtrlr) {
+    static getPosPetSensRate(curExpl: ExplMmr, btlCtrlr: BtlCtrlr) {
         const posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
-        const petValue = battleCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.sensitivity);
+        const petValue = btlCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.sensitivity);
         return petValue / posValue;
     }
 
-    static getPosPetEleRate(curExpl: ExplMmr, battleCtrlr: BtlCtrlr) {
+    static getPosPetEleRate(curExpl: ExplMmr, btlCtrlr: BtlCtrlr) {
         const posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
-        const petValue = battleCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.elegant);
+        const petValue = btlCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.elegant);
         return petValue / posValue;
     }
 
@@ -1145,13 +1149,13 @@ export class ExplUpdater {
         this.handleSelfTeamChange();
 
         this.state = ExplState.battle;
-        this.battleCtrlr.startBattle(this.updCnt, spcBtlId);
+        this.btlCtrlr.startBattle(this.updCnt, spcBtlId);
     }
 
     // -----------------------------------------------------------------
 
     updateBattle() {
-        this.battleCtrlr.update();
+        this.btlCtrlr.update();
     }
 
     onBattleEnd(win: boolean) {
@@ -1165,7 +1169,7 @@ export class ExplUpdater {
     }
 
     receiveExp() {
-        const rb = this.battleCtrlr.realBattle;
+        const rb = this.btlCtrlr.realBattle;
 
         let exp: number;
         const selfLv = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
@@ -1214,10 +1218,10 @@ export class ExplUpdater {
             return;
         }
 
-        const rb = this.battleCtrlr.realBattle;
+        const rb = this.btlCtrlr.realBattle;
 
         const catcherModel: CatcherModel = catcherModelDict[catcherId];
-        const eleRate = ExplUpdater.getPosPetEleRate(gameData.curExpl, this.battleCtrlr);
+        const eleRate = ExplUpdater.getPosPetEleRate(gameData.curExpl, this.btlCtrlr);
         const catchRate = ExplUpdater.calcCatchRateByEleRate(catcherModel, eleRate);
 
         for (const battlePet of rb.enemyTeam.pets) {
@@ -1272,7 +1276,7 @@ export class ExplUpdater {
     doFightQuest() {
         const fQData = GameDataTool.getNeedQuest(this.gameData, QuestType.fight, (quest: Quest, model: QuestModel): boolean => {
             const need = model.need as FightQuestNeed;
-            for (const ePet of this.battleCtrlr.realBattle.enemyTeam.pets) {
+            for (const ePet of this.btlCtrlr.realBattle.enemyTeam.pets) {
                 if (need.petIds.includes(ePet.pet.id)) return true;
             }
             return false;
@@ -1295,7 +1299,7 @@ export class ExplUpdater {
 
     updateRecover() {
         let done = true;
-        const selfTeam = this.battleCtrlr.realBattle.selfTeam;
+        const selfTeam = this.btlCtrlr.realBattle.selfTeam;
         const battlePets = selfTeam.pets;
         for (let index = 0; index < battlePets.length; index++) {
             const battlePet = battlePets[index];

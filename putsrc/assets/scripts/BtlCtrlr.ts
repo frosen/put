@@ -61,6 +61,8 @@ export class BtlCtrlr {
     debugMode: boolean = false;
     realBattleCopys: { seed: number; rb: RealBattle }[] = []; // 用于战斗重置
 
+    logging: boolean = true;
+
     init(updater: ExplUpdater, endCallback: (win: boolean) => void) {
         this.updater = updater;
         this.page = updater.page;
@@ -76,7 +78,7 @@ export class BtlCtrlr {
         if (CC_DEBUG) this.debugMode = true;
 
         // @ts-ignore
-        if (this.debugMode) window.battleCtrlr = this; // 便于测试
+        if (this.debugMode) window.btlCtrlr = this; // 便于测试
     }
 
     resetBattleDataToBegin() {
@@ -194,8 +196,12 @@ export class BtlCtrlr {
             const cnName = PetTool.getCnName(ePet.pet);
             petNameDict[cnName] = true;
         }
-        const petNames = Object.keys(petNameDict);
-        this.updater.log(ExplLogType.rich, '发现：' + petNames.join(', ') + (hiding ? '，偷袭成功' : '，进入战斗'));
+
+        if (this.logging) {
+            const petNames = Object.keys(petNameDict);
+            const str = '发现：' + petNames.join(', ') + (hiding ? '，偷袭成功' : '，进入战斗');
+            this.updater.log(ExplLogType.rich, str);
+        }
 
         // 偷袭
         if (hiding) {
@@ -306,7 +312,7 @@ export class BtlCtrlr {
         rb.battleRound++;
         rb.lastAim = null;
 
-        this.updater.log(ExplLogType.round, rb.battleRound);
+        if (this.logging) this.updater.log(ExplLogType.round, rb.battleRound);
     }
 
     handleCD(team: BattleTeam) {
@@ -388,7 +394,7 @@ export class BtlCtrlr {
             done = this.doNormalAttack(battlePet);
             if (done) break;
 
-            this.logStop(battlePet);
+            if (this.logging) this.logStop(battlePet);
             return false; // 未成功攻击
         } while (false);
 
@@ -489,7 +495,7 @@ export class BtlCtrlr {
             hitResult = BtlCtrlr.getHitResult(battlePet, aim);
             if (hitResult === 0) {
                 if (this.page) this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
-                this.logMiss(battlePet, aim, skillModel.cnName);
+                if (this.logging) this.logMiss(battlePet, aim, skillModel.cnName);
                 return false;
             }
 
@@ -528,7 +534,7 @@ export class BtlCtrlr {
         finalDmg = lastHp - aim.hp;
 
         if (this.page) this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
-        this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
+        if (this.logging) this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
 
         if (dmgRate > 0) this.addRage(battlePet);
 
@@ -583,7 +589,7 @@ export class BtlCtrlr {
         buffData.caster = caster;
         if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted(aim, caster, this);
         if (this.page) this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime);
-        this.logBuff(aim, buffModel.cnName);
+        if (this.logging) this.logBuff(aim, buffModel.cnName);
         aim.buffDatas.push(buffData);
     }
 
@@ -594,7 +600,7 @@ export class BtlCtrlr {
         const hitResult = BtlCtrlr.getHitResult(battlePet, aim);
         if (hitResult === 0) {
             if (this.page) this.page.doMiss(aim.beEnemy, aim.idx, this.realBattle.combo);
-            this.logMiss(battlePet, aim, '普攻');
+            if (this.logging) this.logMiss(battlePet, aim, '普攻');
             return true;
         }
 
@@ -615,7 +621,7 @@ export class BtlCtrlr {
         if (aim.hp < 0) aim.hp = 0;
 
         if (this.page) this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
-        this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, '普攻');
+        if (this.logging) this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, '普攻');
 
         this.addRage(battlePet);
         this.addMp(battlePet, aim);
@@ -651,7 +657,7 @@ export class BtlCtrlr {
     }
 
     dead(battlePet: BattlePet, caster: BattlePet) {
-        this.logDead(battlePet);
+        if (this.logging) this.logDead(battlePet);
 
         const curPets = this.getTeam(battlePet).pets;
         let alive = false;
@@ -688,7 +694,7 @@ export class BtlCtrlr {
     }
 
     endBattle(selfWin: boolean) {
-        this.updater.log(ExplLogType.repeat, selfWin ? '战斗胜利' : '战斗失败');
+        if (this.logging) this.updater.log(ExplLogType.repeat, selfWin ? '战斗胜利' : '战斗失败');
         this.exitBattle(selfWin);
     }
 

@@ -45,7 +45,9 @@ function checkActPosModelDict() {
             if (pakey === PAKey.expl) {
                 need(actModel, ['stepMax', 'petIdLists', 'itemIdLists', 'eqpIdLists'], key + 'expl');
                 for (const petIdList of (actModel as ExplModel).petIdLists) {
-                    if (!petIdList) continue;
+                    if (petIdList.length < 5) {
+                        cc.error('ActPosModelDict expl中，petIdList的len不能<5，否则影响恢复时回合数计算', key);
+                    }
                     for (const petId of petIdList) {
                         if (!petDictKeys.includes(petId)) cc.error('ActPosModelDict expl中，petIdLists中的petId有误', key, petId);
                     }
