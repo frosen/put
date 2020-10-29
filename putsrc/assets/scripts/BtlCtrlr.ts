@@ -327,8 +327,8 @@ export class BtlCtrlr {
         const newBuffDataList: { aim: BattlePet; caster: BattlePet; id: string; time: number }[] = [];
 
         for (const pet of team.pets) {
-            for (let index = 0; index < pet.buffDatas.length; index++) {
-                const buffData = pet.buffDatas[index];
+            for (let buffIdx = pet.buffDatas.length - 1; buffIdx >= 0; buffIdx--) {
+                const buffData = pet.buffDatas[buffIdx];
                 buffData.time--;
 
                 const buffModel = buffModelDict[buffData.id];
@@ -369,8 +369,7 @@ export class BtlCtrlr {
                 if (buffData.time === 0) {
                     if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(pet, buffData.caster, this, buffData.data);
                     if (this.page) this.page.removeBuff(pet.beEnemy, pet.idx, buffData.id);
-                    pet.buffDatas.splice(index, 1);
-                    index--;
+                    pet.buffDatas.splice(buffIdx, 1);
                 } else {
                     if (this.page) this.page.resetBuffTime(pet.beEnemy, pet.idx, buffData.id, buffData.time);
                 }
@@ -509,7 +508,7 @@ export class BtlCtrlr {
             finalDmg = BtlCtrlr.getSklDmg(battlePet, aim) * dmgRate * 0.01;
         }
 
-        finalDmg *= BtlCtrlr.getRageDmgRate(this.getTeam(battlePet));
+        finalDmg *= BtlCtrlr.getRageDmgRate(this.getTeam(battlePet).rage);
         finalDmg = Math.floor(finalDmg);
 
         const lastHp = aim.hp;
@@ -560,8 +559,7 @@ export class BtlCtrlr {
         return dmgGain * dmgRestricts;
     }
 
-    static getRageDmgRate(team: BattleTeam): number {
-        const rage = team.rage;
+    static getRageDmgRate(rage: number): number {
         if (rage < 50) return 1;
         else if (rage < 100) return 1.1;
         else return 1.25;
@@ -606,7 +604,7 @@ export class BtlCtrlr {
 
         let finalDmg = BtlCtrlr.getAtkDmg(battlePet, aim);
         finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
-        finalDmg *= BtlCtrlr.getRageDmgRate(this.getTeam(battlePet));
+        finalDmg *= BtlCtrlr.getRageDmgRate(this.getTeam(battlePet).rage);
         if (this.realBattle.atkRound > 150) finalDmg *= 10; // 时间太长则增加伤害尽快结束
         finalDmg = Math.floor(finalDmg);
         aim.hp -= finalDmg;
@@ -644,6 +642,22 @@ export class BtlCtrlr {
         if (team.mp > team.mpMax) team.mp = team.mpMax;
     }
 
+    static getHitResult(battlePet: BattlePet, aim: BattlePet): number {
+        const pet2 = battlePet.pet2;
+        let hitRate = pet2.hitRate;
+        const agiProportion = pet2.agility / aim.pet2.agility;
+        if (agiProportion > 1) hitRate = hitRate + 0.02 + (agiProportion - 1) * 0.1;
+        else if (agiProportion < 1) hitRate = hitRate - (1 - agiProportion) * 0.1;
+
+        let hitResult: number;
+        if (ranSd() < hitRate - aim.pet2.evdRate) {
+            if (ranSd() < pet2.critRate) hitResult = 1 + pet2.critDmgRate * (1 - aim.pet2.dfsRate);
+            else hitResult = 1 * (1 - aim.pet2.dfsRate);
+        } else hitResult = 0;
+
+        return hitResult;
+    }
+
     static getAtkDmg(thisPet: BattlePet, aim: BattlePet) {
         const pet2 = thisPet.pet2;
         const dmg = pet2.atkDmgFrom + ranSdInt(1 + pet2.atkDmgTo - pet2.atkDmgFrom);
@@ -672,12 +686,13 @@ export class BtlCtrlr {
             battlePet.deadFeatures.forEach((value: DeadFeature) => {
                 value.func(battlePet, caster, value.datas, this);
             });
-            const petsAlive = this.getTeam(caster).pets.filter((value: BattlePet) => value.hp > 0);
-            for (const petAlive of petsAlive) {
-                petAlive.eDeadFeatures.forEach((value: EDeadFeature) => {
-                    value.func(petAlive, battlePet, caster, value.datas, this);
-                });
-            }
+            this.getTeam(caster).pets.forEach((bPet: BattlePet) => {
+                if (bPet.hp > 0) {
+                    bPet.eDeadFeatures.forEach((value: EDeadFeature) => {
+                        value.func(bPet, battlePet, caster, value.datas, this);
+                    });
+                }
+            });
 
             battlePet.buffDatas.length = 0;
             if (this.page) this.page.removeBuff(battlePet.beEnemy, battlePet.idx, null);
@@ -773,19 +788,6 @@ export class BtlCtrlr {
         return aim;
     }
 
-    static getBioType(casterBPet: BattlePet): BioType {
-        return casterBPet.pet2.exBioTypes.getLast() || petModelDict[casterBPet.pet.id].bioType;
-    }
-
-    static getEleType(casterBPet: BattlePet): EleType {
-        return casterBPet.pet2.exEleTypes.getLast() || petModelDict[casterBPet.pet.id].eleType;
-    }
-
-    static getBattleType(casterBPet: BattlePet, skillModel: SkillModel = null): BattleType {
-        const spBT = skillModel ? skillModel.spBattleType : null;
-        return spBT || casterBPet.pet2.exBattleTypes.getLast() || petModelDict[casterBPet.pet.id].battleType;
-    }
-
     static getPetAlive(battlePet: BattlePet) {
         let usingNext = true;
         let curPet = battlePet;
@@ -800,23 +802,17 @@ export class BtlCtrlr {
         }
     }
 
-    static getHitResult(battlePet: BattlePet, aim: BattlePet): number {
-        let hitResult: number = 0;
-        const pet2 = battlePet.pet2;
-        let hitRate = pet2.hitRate;
-        const agiProportion = pet2.agility / aim.pet2.agility;
-        if (agiProportion > 1) hitRate = hitRate + 0.02 + (agiProportion - 1) * 0.1;
-        else if (agiProportion < 1) hitRate = hitRate - (1 - agiProportion) * 0.1;
+    static getBioType(casterBPet: BattlePet): BioType {
+        return casterBPet.pet2.exBioTypes.getLast() || petModelDict[casterBPet.pet.id].bioType;
+    }
 
-        if (ranSd() < hitRate - aim.pet2.evdRate) {
-            if (ranSd() < pet2.critRate) {
-                hitResult = 1 + pet2.critDmgRate * (1 - aim.pet2.dfsRate);
-            } else {
-                hitResult = 1 * (1 - aim.pet2.dfsRate);
-            }
-        }
+    static getEleType(casterBPet: BattlePet): EleType {
+        return casterBPet.pet2.exEleTypes.getLast() || petModelDict[casterBPet.pet.id].eleType;
+    }
 
-        return hitResult;
+    static getBattleType(casterBPet: BattlePet, skillModel: SkillModel = null): BattleType {
+        const spBT = skillModel ? skillModel.spBattleType : null;
+        return spBT || casterBPet.pet2.exBattleTypes.getLast() || petModelDict[casterBPet.pet.id].battleType;
     }
 
     logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, beCombo: boolean, skillName: string, eleType: EleType = null) {

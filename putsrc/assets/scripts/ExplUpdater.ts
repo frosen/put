@@ -413,11 +413,13 @@ export class ExplUpdater {
         rztSt: { exp: number; money: number; eqps: any[]; pets: any[]; itemDict: {}; moveCnt: number },
         spanEndTime: number
     ) {
+        const gameData = this.gameData;
+
         // 计算回合数和胜利数量 ------------------------------------------
         let eachBigRdUpdCnt = 0; // 一个大轮次中包括了战斗和探索，恢复的时间
-        eachBigRdUpdCnt += ExplUpdater.calcBtlDuraUpdCnt(petSt.selfPwr, petSt.enemyPwr);
+        const { btlDuraUpdCnt, winRate } = this.calcBtlDuraUpdCntAndWinRate(gameData);
+        eachBigRdUpdCnt += btlDuraUpdCnt;
 
-        const gameData = this.gameData;
         const curExpl = gameData.curExpl;
         const eachHidingRdCnt = curExpl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
         const realExplRdCnt = AvgExplRdCnt + eachHidingRdCnt;
@@ -425,11 +427,8 @@ export class ExplUpdater {
         eachBigRdUpdCnt += 10; // 恢复10跳，长于非挂机
 
         const diffUpdCnt = toUpdCnt - fromUpdCnt;
-        let bigRdCnt = Math.floor(diffUpdCnt / eachBigRdUpdCnt);
-        if (bigRdCnt > 10) bigRdCnt = randomAreaInt(bigRdCnt, 0.1); // 增加随机范围
-        const winRate = ExplUpdater.calcWinRate(petSt.selfPwr, petSt.enemyPwr);
-        let winCount = Math.ceil(bigRdCnt * randomArea(winRate, 0.1));
-        winCount = Math.max(Math.min(winCount, bigRdCnt), 0);
+        const bigRdCnt = Math.floor(diffUpdCnt / eachBigRdUpdCnt);
+        const winCount = Math.ceil(bigRdCnt * winRate);
 
         // 计算获取的经验 ------------------------------------------
         const exp = ExplUpdater.calcExpByLv(petSt.selfLv, petSt.enemyLv);
@@ -608,17 +607,7 @@ export class ExplUpdater {
         rztSt.moveCnt += bigRdCnt * realExplRdCnt;
     }
 
-    static calcBtlDuraUpdCnt(selfPwr: number, enemyPwr: number): number {
-        /**
-         * const enemyHp = enemyPwr * 30 * 25;
-         * const selfDmg = selfPwr * 30 * 2;
-         * return (enemyHp / selfDmg) * 4; // 敌人血量 / 己方攻击伤害+技能伤害 * 平均一回合攻击次数之和
-         * 计算出如下公式
-         */
-        return (enemyPwr / selfPwr) * 50;
-    }
-
-    calcBtlDuraUpdCntAndWinRate(gameData: GameData): { updCnt: number; winRate: number } {
+    calcBtlDuraUpdCntAndWinRate(gameData: GameData): { btlDuraUpdCnt: number; winRate: number } {
         const curExpl = gameData.curExpl;
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
@@ -664,21 +653,13 @@ export class ExplUpdater {
             curLv += lvRange;
         }
 
-        const updCnt = Math.floor(updCntTotal / CalcCnt);
+        const btlDuraUpdCnt = Math.floor(updCntTotal / CalcCnt);
         const winRate = winRateTotal / (CalcCnt * petLen);
 
         return {
-            updCnt,
+            btlDuraUpdCnt,
             winRate
         };
-    }
-
-    static calcWinRate(selfPwr: number, enemyPwr: number): number {
-        if (selfPwr >= enemyPwr) return 1;
-        else if (selfPwr <= enemyPwr * 0.75) return 0;
-        else {
-            return 4 * (selfPwr / enemyPwr) - 3; // (s - 0.75 * e) / (e - 0.75 * e)
-        }
     }
 
     resetAllUI() {
