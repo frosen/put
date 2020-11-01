@@ -15,6 +15,7 @@ import { PagePetDetail } from 'pages/page_pet_detail/scripts/PagePetDetail';
 import { PageBase } from 'scripts/PageBase';
 import { FuncBar } from '../prefabs/prefab_func_bar/scripts/FuncBar';
 import { NavBar } from 'scripts/NavBar';
+import { ExplUpdater } from 'scripts/ExplUpdater';
 
 @ccclass
 export class PagePet extends PageBase {
@@ -111,6 +112,11 @@ export class PagePet extends PageBase {
     // -----------------------------------------------------------------
 
     changePetState(pet: Pet) {
+        if (ExplUpdater.haveUpdaterInBG()) {
+            this.ctrlr.popToast('无法改变状态！主人未与战斗中的精灵在一起');
+            return;
+        }
+
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
             this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');
