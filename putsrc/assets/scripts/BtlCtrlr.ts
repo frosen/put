@@ -133,7 +133,7 @@ export class BtlCtrlr {
     }
 
     resetSelfTeam(mmr: BattleMmr = null) {
-        this.realBattle.resetSelf(this.gameData, mmr.selfs);
+        this.realBattle.resetSelf(this.gameData, mmr ? mmr.selfs : null);
         if (this.page) {
             this.page.setUIofSelfPet(-1);
             const mpMax = this.realBattle.selfTeam.mpMax;

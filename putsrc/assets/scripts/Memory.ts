@@ -1083,12 +1083,15 @@ export class GameDataTool {
     }
 
     static deletePet(gameData: GameData, index: number): string {
-        const curCatchIdx = gameData.pets[index].catchIdx;
+        const pet = gameData.pets[index];
+        const curCatchIdx = pet.catchIdx;
         if (gameData.curExpl && gameData.curExpl.curBattle) {
             for (const petMmr of gameData.curExpl.curBattle.selfs) {
                 if (curCatchIdx === petMmr.catchIdx) return '当前精灵处于战斗状态，无法放生';
             }
         }
+        if (pet.state !== PetState.ready && pet.state !== PetState.rest) return '当前精灵不在身边，无法放生';
+
         gameData.pets.splice(index, 1);
         return this.SUC;
     }
@@ -1107,6 +1110,7 @@ export class GameDataTool {
                 if (curCatchIdx === petMmr.catchIdx) return '当前精灵处于战斗状态，无法融合';
             }
         }
+        if (pet.state !== PetState.ready && pet.state !== PetState.rest) return '当前精灵不在身边，无法融合';
 
         if (pet.lv < 10) return '精灵等级低于10级，无法融合';
 
@@ -1129,10 +1133,15 @@ export class GameDataTool {
         }
         if (!mergeFeature) return `${caughtPet.id}不具备${featureId}`;
 
+        const PrvtyNeed = 30 * 30 * 100;
+        if (pet.prvty < PrvtyNeed) return '融合需要精灵默契值高于30';
+
         const rzt = GameDataTool.deleteItem(gameData, caughtPetIdx);
         if (rzt !== this.SUC) return rzt;
 
         PetTool.merge(pet, mergeFeature);
+
+        pet.prvty -= PrvtyNeed;
 
         return this.SUC;
     }

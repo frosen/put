@@ -1169,7 +1169,7 @@ export class ExplUpdater {
             } else if (curExpPercent >= 1) {
                 this.log(ExplLogType.rich, `${petName}升到了${selfPet.lv}级`);
             } else {
-                const expRate = (curExpPercent * 100).toFixed(1);
+                const expRate = (curExpPercent * 100).toFixed(2);
                 this.log(ExplLogType.rich, `${petName}获得${curExp}点经验，升级进度完成了${expRate}%`);
             }
         }

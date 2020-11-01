@@ -1,5 +1,5 @@
 /*
- * TouchLayer.ts
+ * TouchLayerForBack.ts
  * 触摸控制
  * luleyan
  */
@@ -11,7 +11,7 @@ import { BaseCtrlr } from './BaseCtrlr';
 const BACK_MARK_BUFFER: number = 50;
 
 @ccclass
-export class TouchLayer extends cc.Component {
+export class TouchLayerForBack extends cc.Component {
     @property(cc.Node)
     mark: cc.Node = null;
 

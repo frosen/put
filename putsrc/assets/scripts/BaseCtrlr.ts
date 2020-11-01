@@ -8,7 +8,8 @@ const { ccclass, property, executeInEditMode } = cc._decorator;
 import { PageBase } from './PageBase';
 import { Memory } from './Memory';
 import { DebugTool } from './DebugTool';
-import { TouchLayer } from './TouchLayer';
+import { TouchLayerForBack } from './TouchLayerForBack';
+import { TouchLayerForToast } from './TouchLayerForToast';
 import { checkConfigs } from './ConfigsChecker';
 import { NavBar } from './NavBar';
 
@@ -61,7 +62,10 @@ export class BaseCtrlr extends cc.Component {
     pageBed: cc.Node = null;
 
     @property(cc.Node)
-    touchLayer: cc.Node = null;
+    touchLayerForBack: cc.Node = null;
+
+    @property(cc.Node)
+    touchLayerForToast: cc.Node = null;
 
     @property(cc.Node)
     navBed: cc.Node = null;
@@ -110,7 +114,8 @@ export class BaseCtrlr extends cc.Component {
         window.baseCtrlr = this;
         this.setCorrectRootRect();
 
-        this.touchLayer.getComponent(TouchLayer).init(this);
+        this.touchLayerForBack.getComponent(TouchLayerForBack).init(this);
+        this.touchLayerForToast.getComponent(TouchLayerForToast).init(this);
 
         this.memory = new Memory();
         this.memory.init();
@@ -572,10 +577,33 @@ export class BaseCtrlr extends cc.Component {
         });
     }
 
+    toastEndFlag: number = 0;
+
     popToast(str: string) {
         this.toastNode.getComponentInChildren(cc.Label).string = str;
         this.toastNode.stopAllActions();
-        cc.tween(this.toastNode).to(0.3, { opacity: 255 }).delay(3).to(0.3, { opacity: 0 }).start();
+        this.toastEndFlag = 0;
+        cc.tween(this.toastNode)
+            .to(0.3, { opacity: 255 })
+            .delay(3)
+            .call(() => {
+                this.toastEndFlag |= 0b1;
+                this.closeToast();
+            })
+            .start();
+    }
+
+    closeToast() {
+        if (this.toastEndFlag === 0b11) {
+            this.toastEndFlag = 0;
+            this.toastNode.stopAllActions();
+            cc.tween(this.toastNode).to(0.3, { opacity: 0 }).start();
+        }
+    }
+
+    goReadyToEndToast() {
+        this.toastEndFlag |= 0b10;
+        this.closeToast();
     }
 
     popAlert(

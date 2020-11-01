@@ -252,7 +252,7 @@ export class PageActExpl extends BtlPageBase {
     // ui -----------------------------------------------------------------
 
     setUIofSelfPet(index: number) {
-        const pets = this.updater.battleCtrlr.realBattle.selfTeam.pets;
+        const pets = this.updater.btlCtrlr.realBattle.selfTeam.pets;
         if (index === -1) {
             let petIdx = 0;
             for (; petIdx < pets.length; petIdx++) this.setUIofSelfPet(petIdx);
@@ -263,7 +263,7 @@ export class PageActExpl extends BtlPageBase {
     }
 
     setUIofEnemyPet(index: number) {
-        const pets = this.updater.battleCtrlr.realBattle.enemyTeam.pets;
+        const pets = this.updater.btlCtrlr.realBattle.enemyTeam.pets;
         if (index === -1) {
             for (let petIdx = 0; petIdx < pets.length; petIdx++) this.setUIofEnemyPet(petIdx);
         } else {

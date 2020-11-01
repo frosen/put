@@ -40,12 +40,16 @@ const STATE_TIP = `分为：
 休息中 跟随主人但不参与战斗
 是否参战可在精灵列表中点击状态按钮修改`;
 
-const LV_TIP = '提高等级可以提高属性，增加特性\n10级和30级时可分别学会一个技能';
-const MERGE_TIP = ''; // llytodo
+const LV_TIP = `提高等级可以：
+提高属性
+从11级开始每3级随机获取一个特性
+10级和30级时可分别学会一个技能`;
+const MERGE_TIP = '将其他精灵的能力融合给当前精灵的次数\n每5级可获得一次融合的机会\n融合操作在“精灵融合中心”进行';
 const PRVTY_TIP = '数值 0-100 随时间自行提高\n数字越大上升越慢\n可提高基础暴击率，暴击伤害，命中，闪躲';
-const DRINK_TIP =
-    '使用道具中的“饮品”获得\n可以在一定时间内提升获得某种效果\n' +
-    '效果分成两种：\n提升某种资源的获取效率和提升非挂机状态的某项战力';
+const DRINK_TIP = `使用道具中的“饮品”获得
+可以在一定时间内提升获得某种效果
+效果大致分成两种：
+提升某种资源的获取效率和提升某项战力`;
 
 const BIO_TIP = '分为：\n人形生物 魔法生物\n机械生物 自然生物\n未知生物';
 const ELE_TIP =
@@ -126,7 +130,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
     page: PagePetDetail = null;
 
     numberOfRows(listView: ListView): number {
-        return 21 + 1 + this.curPet2.skillIds.length + 1 + this.featureDatas.length;
+        return 21 + 1 + this.curPet2.skillIds.length + 1 + this.featureDatas.length; // llytodo融合精灵的展示
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
@@ -224,7 +228,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData(name, subName, PetStateNames[pet.state], STATE_TIP);
         } else if (rowIdx === 1) {
             cell.setData1('等级', String(pet.lv), LV_TIP);
-            cell.setData2('融合层数', String(0), MERGE_TIP); // llytodo
+            cell.setData2('融合层数', String(pet.merges.length), MERGE_TIP);
         } else if (rowIdx === 2) {
             cell.setData1('默契值', String(PetTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
             let drinkStr: string;
