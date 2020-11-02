@@ -336,7 +336,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.atkDmgTo += pet.sklDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `普攻伤害增加，数值等于技能伤害的${rdP(datas[0])}%`;
+            return `普攻伤害增加，数值相当于技能伤害的${rdP(datas[0])}%`;
         }
     },
     hitWithFire: {
@@ -347,7 +347,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.fire, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的火系伤害`;
+            return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%技能攻击的火系伤害`;
         }
     },
     hitWithWater: {
@@ -358,7 +358,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.water, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的水系伤害`;
+            return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%技能攻击的水系伤害`;
         }
     },
     hitWithAir: {
@@ -369,7 +369,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.air, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的空系伤害`;
+            return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%技能攻击的空系伤害`;
         }
     },
     hitWithEarth: {
@@ -380,7 +380,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.earth, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的地系伤害`;
+            return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%技能攻击的地系伤害`;
         }
     },
     hitWithLight: {
@@ -391,7 +391,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.light, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的光系伤害`;
+            return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%技能攻击的光系伤害`;
         }
     },
     hitWithDark: {
@@ -402,7 +402,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.dark, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的暗系伤害`;
+            return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%技能攻击的暗系伤害`;
         }
     },
     hitStlHp: {
@@ -413,7 +413,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hp = Math.min(pet.hp + bData[0] * bData.finalDmg, pet.hpMax);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，偷取伤害${rdP(datas[0])}%的血量`;
+            return `普攻击中时偷取血量，数值相当于伤害的${rdP(datas[0])}%`;
         }
     },
     hitRdcMp: {
@@ -612,7 +612,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         dataAreas: [[0.03, 0.03]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
             aim.hp -= bData.finalDmg * datas[0];
-            pet.hp = Math.max(pet.hp - bData.finalDmg * datas[0], 1);
+            pet.hp = Math.max(pet.hp - Math.floor(bData.finalDmg * datas[0]), 1);
         },
         getInfo(datas: number[]): string {
             return `技能伤害提高${rdP(datas[0])}%，但自己也会受到等量伤害（不会致死）`;
@@ -670,8 +670,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtAndHurt',
         cnBrief: '荆',
         dataAreas: [[0.01, 0.01]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            caster.hp = Math.max(caster.hp - bData.finalDmg * datas[0], 1);
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+            caster.hp = Math.max(caster.hp - Math.floor(bData.finalDmg * datas[0]), 1);
         },
         getInfo(datas: number[]): string {
             return `受伤时，敌人受到伤害总量${rdP(datas[0])}%的物理伤害（不会致死）`;
@@ -681,8 +681,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtGotMp',
         cnBrief: '妖',
         dataAreas: [[1, 1]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            const sTeam = bData.ctrlr.getTeam(pet);
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+            const sTeam = bData.ctrlr.getTeam(aim);
             sTeam.mp = Math.min(sTeam.mp + datas[0], sTeam.mpMax);
         },
         getInfo(datas: number[]): string {
@@ -693,8 +693,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtGotRage',
         cnBrief: '熊',
         dataAreas: [[1, 1]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            const sTeam = bData.ctrlr.getTeam(pet);
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+            const sTeam = bData.ctrlr.getTeam(aim);
             const rage = bData.ctrlr.ranSd() < rate(datas[0], 0.05, 0.9) ? 2 : 1;
             sTeam.rage = Math.min(sTeam.rage + rage, RageMax);
         },
@@ -706,13 +706,13 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtRdcMp',
         cnBrief: '橡',
         dataAreas: [[0.1, 0.09]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            const sTeam = bData.ctrlr.getTeam(pet);
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+            const sTeam = bData.ctrlr.getTeam(aim);
             const dmg = bData.finalDmg * datas[0];
-            const rdcMp = Math.ceil(dmg / (20 * pet.pet.lv));
+            const rdcMp = Math.ceil(dmg / (20 * aim.pet.lv));
             if (sTeam.mp >= rdcMp) {
                 sTeam.mp -= rdcMp;
-                pet.hp += dmg;
+                aim.hp += dmg;
             }
         },
         getInfo(datas: number[]): string {
@@ -723,9 +723,9 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtWithMelee',
         cnBrief: '云',
         dataAreas: [[0.02, 0.02]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
             const battleType = BtlCtrlr.getBattleType(caster, bData.skillModel);
-            if (battleType === BattleType.melee) pet.hp += bData.finalDmg * datas[0];
+            if (battleType === BattleType.melee) aim.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `近战伤害减少${rdP(datas[0])}%`;
@@ -735,9 +735,9 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtWithShoot',
         cnBrief: '雀',
         dataAreas: [[0.02, 0.02]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
             const battleType = BtlCtrlr.getBattleType(caster, bData.skillModel);
-            if (battleType === BattleType.shoot) pet.hp += bData.finalDmg * datas[0];
+            if (battleType === BattleType.shoot) aim.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `射击伤害减少${rdP(datas[0])}%`;
@@ -747,9 +747,9 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtWithCharge',
         cnBrief: '山',
         dataAreas: [[0.02, 0.02]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
             const battleType = BtlCtrlr.getBattleType(caster, bData.skillModel);
-            if (battleType === BattleType.charge) pet.hp += bData.finalDmg * datas[0];
+            if (battleType === BattleType.charge) aim.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `冲锋减少${rdP(datas[0])}%`;
@@ -759,9 +759,9 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtWithAss',
         cnBrief: '松',
         dataAreas: [[0.02, 0.02]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
             const battleType = BtlCtrlr.getBattleType(caster, bData.skillModel);
-            if (battleType === BattleType.assassinate) pet.hp += bData.finalDmg * datas[0];
+            if (battleType === BattleType.assassinate) aim.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `刺杀伤害减少${rdP(datas[0])}%`;
@@ -774,8 +774,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             [0.8, -0.02],
             [0.02, 0.02]
         ],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            if (pet.hp > pet.hpMax * Math.max(datas[0], 0.5)) pet.hp += bData.finalDmg * datas[1];
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+            if (aim.hp > aim.hpMax * Math.max(datas[0], 0.5)) aim.hp += bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
             return `如果当前血量大于等于${rdP(Math.max(datas[0], 0.5))}%，则伤害减少${rdP(datas[1])}%`;
@@ -785,8 +785,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurt',
         cnBrief: '盾',
         dataAreas: [[0.01, 0.01]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            pet.hp += bData.finalDmg * datas[0];
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+            aim.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `伤害减少${rdP(datas[0])}%`;
@@ -796,8 +796,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtWithAtk',
         cnBrief: '障',
         dataAreas: [[0.02, 0.02]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            if (!bData.skillModel) pet.hp += bData.finalDmg * datas[0];
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+            if (!bData.skillModel) aim.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `普攻伤害减少${rdP(datas[0])}%`;
@@ -807,8 +807,8 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtWithCast',
         cnBrief: '屏',
         dataAreas: [[0.02, 0.02]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.skillModel) pet.hp += bData.finalDmg * datas[0];
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+            if (bData.skillModel) aim.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `技能伤害减少${rdP(datas[0])}%`;
@@ -818,10 +818,10 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtFullRage',
         cnBrief: '羽',
         dataAreas: [[0.05, 0.05]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.ctrlr.getTeam(pet).rage > 100) {
-                pet.hp += bData.finalDmg * datas[0];
-                bData.ctrlr.getTeam(pet).rage -= 5;
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+            if (bData.ctrlr.getTeam(aim).rage > 100) {
+                aim.hp += bData.finalDmg * datas[0];
+                bData.ctrlr.getTeam(aim).rage -= 5;
             }
         },
         getInfo(datas: number[]): string {
@@ -832,14 +832,14 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         id: 'hurtOthers',
         cnBrief: '链',
         dataAreas: [[0.1, 0.05]],
-        onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            const petsAlive = bData.ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
+        onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
+            const petsAlive = bData.ctrlr.getTeam(aim).pets.filter((value: BattlePet) => value !== aim && value.hp > 0);
             if (petsAlive.length > 0) {
-                let dmg = bData.finalDmg * Math.min(datas[0], 1);
-                pet.hp += dmg;
+                const dmg = bData.finalDmg * Math.min(datas[0], 1);
+                aim.hp += dmg;
 
-                dmg /= petsAlive.length;
-                for (const petAlive of petsAlive) petAlive.hp = Math.max(petAlive.hp - dmg, 1);
+                const eachDmg = Math.floor(dmg / petsAlive.length);
+                for (const petAlive of petsAlive) petAlive.hp = Math.max(petAlive.hp - eachDmg, 1);
             }
         },
         getInfo(datas: number[]): string {
@@ -888,8 +888,9 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             [0.03, 0.03]
         ],
         onHeal(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            aim.hp += Math.abs(bData.finalDmg) * datas[0];
-            pet.hp = Math.max(pet.hp - bData.finalDmg * datas[1], 1);
+            const pDmg = Math.abs(bData.finalDmg);
+            aim.hp += pDmg * datas[0];
+            pet.hp = Math.max(pet.hp - Math.floor(pDmg * datas[1]), 1);
         },
         getInfo(datas: number[]): string {
             return `治疗效果提高${rdP(datas[0])}%，但施法者会受到${rdP(datas[1])}%的伤害（不会致死）`;
@@ -922,7 +923,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '恶',
         dataAreas: [[0.02, 0.015]],
         onEDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
-            pet.hp = Math.min(pet.hp + aim.hpMax * datas[0], pet.hpMax);
+            pet.hp = Math.min(pet.hp + Math.floor(aim.hpMax * datas[0]), pet.hpMax);
         },
         getInfo(datas: number[]): string {
             return `敌人被击败时恢复血量，数值相当于敌人最大血量的${rdP(datas[0])}%`;
@@ -934,7 +935,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         dataAreas: [[0.03, 0.02]],
         onEDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             if (pet === caster) {
-                const hpAdd = aim.hpMax * datas[0];
+                const hpAdd = Math.floor(aim.hpMax * datas[0]);
                 for (const petIn of ctrlr.getTeam(pet).pets) {
                     if (petIn.hp > 0) petIn.hp = Math.min(petIn.hp + hpAdd, petIn.hpMax);
                 }
@@ -973,7 +974,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         cnBrief: '尽',
         dataAreas: [[0.02, 0.01]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
-            let hpRdc = pet.hpMax * Math.min(datas[0], 0.2);
+            const hpRdc = Math.floor(pet.hpMax * Math.min(datas[0], 0.2));
             for (const ePet of ctrlr.getTeam(caster).pets) ePet.hp = Math.max(ePet.hp - hpRdc, 1);
         },
         getInfo(datas: number[]): string {
@@ -987,7 +988,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
             for (const petIn of ctrlr.getTeam(pet).pets) {
-                if (petIn.hp > 0 && petIn !== pet) ctrlr.addBuff(petIn, pet, 'FangHu', cd);
+                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, 'FangHu', cd);
             }
         },
         getInfo(datas: number[]): string {
@@ -1001,7 +1002,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
             for (const petIn of ctrlr.getTeam(pet).pets) {
-                if (petIn.hp > 0 && petIn !== pet) ctrlr.addBuff(petIn, pet, 'HuiChun', cd);
+                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, 'HuiChun', cd);
             }
         },
         getInfo(datas: number[]): string {

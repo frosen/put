@@ -509,7 +509,6 @@ export class BtlCtrlr {
         }
 
         finalDmg *= BtlCtrlr.getRageDmgRate(this.getTeam(battlePet).rage);
-        finalDmg = Math.floor(finalDmg);
 
         const lastHp = aim.hp;
         aim.hp -= finalDmg;
@@ -521,12 +520,14 @@ export class BtlCtrlr {
             aim.hurtFeatures.forEach((value: HurtFeature) => {
                 value.func(aim, battlePet, value.datas, { ctrlr: this, finalDmg, skillModel });
             });
+            aim.hp = Math.floor(aim.hp);
             if (aim.hp < 0) aim.hp = 0;
             else if (aim.hp > lastHp - 1) aim.hp = lastHp - 1;
         } else {
             battlePet.healFeatures.forEach((value: HealFeature) => {
                 value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel });
             });
+            aim.hp = Math.floor(aim.hp);
             if (aim.hp > aim.hpMax) aim.hp = aim.hpMax;
         }
 
@@ -606,7 +607,7 @@ export class BtlCtrlr {
         finalDmg *= hitResult * ComboHitRate[this.realBattle.combo] * FormationHitRate[aim.fromationIdx];
         finalDmg *= BtlCtrlr.getRageDmgRate(this.getTeam(battlePet).rage);
         if (this.realBattle.atkRound > 150) finalDmg *= 10; // 时间太长则增加伤害尽快结束
-        finalDmg = Math.floor(finalDmg);
+
         aim.hp -= finalDmg;
 
         battlePet.atkFeatures.forEach((value: AtkFeature) => {
@@ -616,6 +617,7 @@ export class BtlCtrlr {
             value.func(aim, battlePet, value.datas, { ctrlr: this, finalDmg, skillModel: null });
         });
 
+        aim.hp = Math.floor(aim.hp);
         if (aim.hp < 0) aim.hp = 0;
 
         if (this.page) this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
