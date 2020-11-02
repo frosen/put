@@ -9,9 +9,13 @@ import { FeatureModel, FeatureBtlData, SkillType } from 'scripts/DataModel';
 import { Pet2, BattlePet, RageMax } from 'scripts/DataOther';
 import { EleType, BattleType } from 'scripts/DataSaved';
 
-function rd(n: number) {
+function rd(n: number): string {
     if (Math.round(n) * 10 === Math.round(n * 10)) return String(Math.round(n));
     else return n.toFixed(1);
+}
+
+function rdP(n: number): string {
+    return rd(n * 100);
 }
 
 function rate(data: number, from: number, range: number): number {
@@ -93,7 +97,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.strength += pet.strengthOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `基础力量增加${rd(datas[0] * 100)}%`;
+            return `基础力量增加${rdP(datas[0])}%`;
         }
     },
     baseConcentration: {
@@ -104,7 +108,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.concentration += pet.concentrationOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `基础专注增加${rd(datas[0] * 100)}%`;
+            return `基础专注增加${rdP(datas[0])}%`;
         }
     },
     baseDurability: {
@@ -115,7 +119,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.durability += pet.durabilityOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `基础耐久增加${rd(datas[0] * 100)}%`;
+            return `基础耐久增加${rdP(datas[0])}%`;
         }
     },
     baseAgility: {
@@ -126,7 +130,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.agility += pet.agilityOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `基础灵敏增加${rd(datas[0] * 100)}%`;
+            return `基础灵敏增加${rdP(datas[0])}%`;
         }
     },
     baseSensitivity: {
@@ -137,7 +141,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.sensitivity += pet.sensitivityOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `基础感知增加${rd(datas[0] * 100)}%`;
+            return `基础感知增加${rdP(datas[0])}%`;
         }
     },
     baseElegant: {
@@ -148,7 +152,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.elegant += pet.elegantOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `基础优雅增加${rd(datas[0] * 100)}%`;
+            return `基础优雅增加${rdP(datas[0])}%`;
         }
     },
     addHpMax: {
@@ -159,7 +163,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hpMax += pet.hpMaxOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `血量上限增加${rd(datas[0] * 100)}%`;
+            return `血量上限增加${rdP(datas[0])}%`;
         }
     },
     addMpMax: {
@@ -182,7 +186,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.atkDmgTo += pet.atkDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `攻击伤害增加${rd(datas[0] * 100)}%`;
+            return `攻击伤害增加${rdP(datas[0])}%`;
         }
     },
     addSklDmg: {
@@ -194,7 +198,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.sklDmgTo += pet.sklDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `技能伤害增加${rd(datas[0] * 100)}%`;
+            return `技能伤害增加${rdP(datas[0])}%`;
         }
     },
     addAtkMax: {
@@ -205,7 +209,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.atkDmgTo += pet.atkDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `攻击伤害最大值增加${rd(datas[0] * 100)}%`;
+            return `攻击伤害最大值增加${rdP(datas[0])}%`;
         }
     },
     addSklMax: {
@@ -216,7 +220,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.sklDmgTo += pet.sklDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `技能伤害最大值增加${rd(datas[0] * 100)}%`;
+            return `技能伤害最大值增加${rdP(datas[0])}%`;
         }
     },
     addCritRate: {
@@ -227,7 +231,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.critRate += datas[0];
         },
         getInfo(datas: number[]): string {
-            return `暴击率增加${rd(datas[0] * 100)}%`;
+            return `暴击率增加${rdP(datas[0])}%`;
         }
     },
     addCritDmgRate: {
@@ -238,7 +242,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.critDmgRate += datas[0];
         },
         getInfo(datas: number[]): string {
-            return `暴击伤害增加${rd(datas[0] * 100)}%`;
+            return `暴击伤害增加${rdP(datas[0])}%`;
         }
     },
     addEvdRate: {
@@ -249,7 +253,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.evdRate += datas[0];
         },
         getInfo(datas: number[]): string {
-            return `闪躲率增加${rd(datas[0] * 100)}%`;
+            return `闪躲率增加${rdP(datas[0])}%`;
         }
     },
     addHitRate: {
@@ -260,7 +264,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hitRate += datas[0];
         },
         getInfo(datas: number[]): string {
-            return `命中率增加${rd(datas[0] * 100)}%`;
+            return `命中率增加${rdP(datas[0])}%`;
         }
     },
     addDfsRate: {
@@ -271,7 +275,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.dfsRate += datas[0];
         },
         getInfo(datas: number[]): string {
-            return `免伤增加${rd(datas[0] * 100)}%`;
+            return `免伤增加${rdP(datas[0])}%`;
         }
     },
     addDmgRdcHp: {
@@ -289,7 +293,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hpMax = Math.max(pet.hpMax - pet.hpMaxOri * datas[1], 1);
         },
         getInfo(datas: number[]): string {
-            return `所有伤害提高${rd(datas[0] * 100)}%，但血量上限降低${rd(datas[1] * 100)}%`;
+            return `所有伤害提高${rdP(datas[0])}%，但血量上限降低${rdP(datas[1])}%`;
         }
     },
     addHpRdcMp: {
@@ -304,7 +308,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.mpMax = Math.max(pet.mpMax - datas[1], 0);
         },
         getInfo(datas: number[]): string {
-            return `血量上限提高${rd(datas[0] * 100)}%，但精神上限降低${datas[1]}点`;
+            return `血量上限提高${rdP(datas[0])}%，但精神上限降低${datas[1]}点`;
         }
     },
     addByLuck: {
@@ -320,7 +324,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (pet.elegantOri % 3 === 0) pet.elegant += pet.elegantOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `任意基础属性如果为3的倍数，则提高${rd(datas[0] * 100)}%`;
+            return `任意基础属性如果为3的倍数，则提高${rdP(datas[0])}%`;
         }
     },
     addAtkBySkl: {
@@ -332,7 +336,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.atkDmgTo += pet.sklDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `普攻伤害增加，数值等于技能伤害的${rd(datas[0] * 100)}%`;
+            return `普攻伤害增加，数值等于技能伤害的${rdP(datas[0])}%`;
         }
     },
     hitWithFire: {
@@ -343,7 +347,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.fire, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的火系伤害`;
+            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的火系伤害`;
         }
     },
     hitWithWater: {
@@ -354,7 +358,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.water, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的水系伤害`;
+            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的水系伤害`;
         }
     },
     hitWithAir: {
@@ -365,7 +369,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.air, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的空系伤害`;
+            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的空系伤害`;
         }
     },
     hitWithEarth: {
@@ -376,7 +380,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.earth, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的地系伤害`;
+            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的地系伤害`;
         }
     },
     hitWithLight: {
@@ -387,7 +391,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.light, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的光系伤害`;
+            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的光系伤害`;
         }
     },
     hitWithDark: {
@@ -398,7 +402,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp -= BtlCtrlr.getSklDmg(pet, aim) * datas[0] * BtlCtrlr.getEleDmgRate(EleType.dark, aim, pet);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人受到相当于${rd(datas[0] * 100)}%技能攻击的暗系伤害`;
+            return `普攻击中时，敌人受到相当于${rdP(datas[0])}%技能攻击的暗系伤害`;
         }
     },
     hitStlHp: {
@@ -409,7 +413,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hp = Math.min(pet.hp + bData[0] * bData.finalDmg, pet.hpMax);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，偷取伤害${rd(datas[0] * 100)}%的血量`;
+            return `普攻击中时，偷取伤害${rdP(datas[0])}%的血量`;
         }
     },
     hitRdcMp: {
@@ -433,7 +437,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             eTeam.rage = Math.max(eTeam.rage - rage, 0);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人减少1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率减少2点`;
+            return `普攻击中时，敌人减少1点斗志，${rdP(rate(datas[0], 0.05, 0.9))}%概率减少2点`;
         }
     },
     hitAddMp: {
@@ -458,7 +462,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             sTeam.rage = Math.min(sTeam.rage + rage, RageMax);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，额外获得1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率获得2点`;
+            return `普攻击中时，额外获得1点斗志，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得2点`;
         }
     },
     hitKill: {
@@ -469,7 +473,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (aim.hp < aim.hpMax * 0.2) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `如果敌人血量少于20%，则普攻伤害提高${rd(datas[0] * 100)}%`;
+            return `如果敌人血量少于20%，则普攻伤害提高${rdP(datas[0])}%`;
         }
     },
     hitByRage: {
@@ -483,7 +487,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.ctrlr.getTeam(pet).rage > Math.max(datas[0], 50)) aim.hp -= bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
-            return `如果斗志大于${Math.max(datas[0], 50)}点，则普攻伤害提高${rd(datas[1] * 100)}%`;
+            return `如果斗志大于${Math.max(datas[0], 50)}点，则普攻伤害提高${rdP(datas[1])}%`;
         }
     },
     hitByHp: {
@@ -497,7 +501,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (pet.hp < pet.hpMax * Math.min(datas[0], 0.3)) aim.hp -= bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
-            return `如果血量小于${rd(Math.min(datas[0], 0.3) * 100)}%，则普攻伤害提高${rd(datas[1] * 100)}%`;
+            return `如果血量小于${rdP(Math.min(datas[0], 0.3))}%，则普攻伤害提高${rdP(datas[1])}%`;
         }
     },
     castMpDmg: {
@@ -511,7 +515,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.ctrlr.getTeam(pet).mp > bData.ctrlr.getTeam(pet).mpMax * datas[0]) aim.hp -= bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
-            return `如果精神大于总量的${rd(datas[0] * 100)}%，则技能伤害提高${rd(datas[1] * 100)}%`;
+            return `如果精神大于总量的${rdP(datas[0])}%，则技能伤害提高${rdP(datas[1])}%`;
         }
     },
     castConDmg: {
@@ -522,7 +526,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (pet.pet2.concentration > aim.pet2.concentration) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `如果专注高于敌人，则技能伤害提高${rd(datas[0] * 100)}%`;
+            return `如果专注高于敌人，则技能伤害提高${rdP(datas[0])}%`;
         }
     },
     castFire: {
@@ -533,7 +537,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.skillModel.eleType === EleType.fire) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `火系伤害提高${rd(datas[0] * 100)}%`;
+            return `火系伤害提高${rdP(datas[0])}%`;
         }
     },
     castWater: {
@@ -544,7 +548,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.skillModel.eleType === EleType.water) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `水系伤害提高${rd(datas[0] * 100)}%`;
+            return `水系伤害提高${rdP(datas[0])}%`;
         }
     },
     castAir: {
@@ -555,7 +559,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.skillModel.eleType === EleType.air) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `空系伤害提高${rd(datas[0] * 100)}%`;
+            return `空系伤害提高${rdP(datas[0])}%`;
         }
     },
     castEarth: {
@@ -566,7 +570,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.skillModel.eleType === EleType.earth) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `地系伤害提高${rd(datas[0] * 100)}%`;
+            return `地系伤害提高${rdP(datas[0])}%`;
         }
     },
     castLight: {
@@ -577,7 +581,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.skillModel.eleType === EleType.light) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `光系伤害提高${rd(datas[0] * 100)}%`;
+            return `光系伤害提高${rdP(datas[0])}%`;
         }
     },
     castDark: {
@@ -588,7 +592,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.skillModel.eleType === EleType.dark) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `暗系伤害提高${rd(datas[0] * 100)}%`;
+            return `暗系伤害提高${rdP(datas[0])}%`;
         }
     },
     castEleRein: {
@@ -599,7 +603,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (BtlCtrlr.getEleDmgRate(bData.skillModel.eleType, aim, null) > 1) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `对被属性克制的敌人伤害提高${rd(datas[0] * 100)}%`;
+            return `对被属性克制的敌人伤害提高${rdP(datas[0])}%`;
         }
     },
     castHurtMe: {
@@ -611,7 +615,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hp = Math.max(pet.hp - bData.finalDmg * datas[0], 1);
         },
         getInfo(datas: number[]): string {
-            return `技能伤害提高${rd(datas[0] * 100)}%，但自己也会受到等量伤害（不会致死）`;
+            return `技能伤害提高${rdP(datas[0])}%，但自己也会受到等量伤害（不会致死）`;
         }
     },
     castUlti: {
@@ -622,7 +626,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.skillModel.skillType === SkillType.ultimate) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `必杀技伤害提高${rd(datas[0] * 100)}%`;
+            return `必杀技伤害提高${rdP(datas[0])}%`;
         }
     },
     castByCombo: {
@@ -634,7 +638,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (combo > 0) aim.hp -= bData.finalDmg * datas[0] * combo;
         },
         getInfo(datas: number[]): string {
-            return `技能的连击伤害提高${rd(datas[0] * 100)}%乘以连击次数`;
+            return `技能的连击伤害提高${rdP(datas[0])}%乘以连击次数`;
         }
     },
     castByPetCount: {
@@ -645,7 +649,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.ctrlr.getTeam(pet).pets.length < bData.ctrlr.getTeam(aim).pets.length) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `如果战场己方人数小于敌方，则技能伤害提高${rd(datas[0] * 100)}%`;
+            return `如果战场己方人数小于敌方，则技能伤害提高${rdP(datas[0])}%`;
         }
     },
     castFullRage: {
@@ -659,7 +663,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `当斗志大于100时，消耗10点斗志，技能伤害提高${rd(datas[0] * 100)}%`;
+            return `当斗志大于100时，消耗10点斗志，技能伤害提高${rdP(datas[0])}%`;
         }
     },
     hurtAndHurt: {
@@ -670,7 +674,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             caster.hp = Math.max(caster.hp - bData.finalDmg * datas[0], 1);
         },
         getInfo(datas: number[]): string {
-            return `受伤时，敌人受到伤害总量${rd(datas[0] * 100)}%的物理伤害（不会致死）`;
+            return `受伤时，敌人受到伤害总量${rdP(datas[0])}%的物理伤害（不会致死）`;
         }
     },
     hurtGotMp: {
@@ -695,7 +699,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             sTeam.rage = Math.min(sTeam.rage + rage, RageMax);
         },
         getInfo(datas: number[]): string {
-            return `受伤时，额外获得1点斗志，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率获得2点`;
+            return `受伤时，额外获得1点斗志，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得2点`;
         }
     },
     hurtRdcMp: {
@@ -712,7 +716,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `受伤时，如果有足够的精神，则${rd(datas[0] * 100)}%伤害由消耗精神抵消（1MP=2HP*lv）`;
+            return `受伤时，如果有足够的精神，则${rdP(datas[0])}%伤害由消耗精神抵消（1MP=2HP*lv）`;
         }
     },
     hurtWithMelee: {
@@ -724,7 +728,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (battleType === BattleType.melee) pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `近战伤害减少${rd(datas[0] * 100)}%`;
+            return `近战伤害减少${rdP(datas[0])}%`;
         }
     },
     hurtWithShoot: {
@@ -736,7 +740,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (battleType === BattleType.shoot) pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `射击伤害减少${rd(datas[0] * 100)}%`;
+            return `射击伤害减少${rdP(datas[0])}%`;
         }
     },
     hurtWithCharge: {
@@ -748,7 +752,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (battleType === BattleType.charge) pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `冲锋减少${rd(datas[0] * 100)}%`;
+            return `冲锋减少${rdP(datas[0])}%`;
         }
     },
     hurtWithAss: {
@@ -760,7 +764,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (battleType === BattleType.assassinate) pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `刺杀伤害减少${rd(datas[0] * 100)}%`;
+            return `刺杀伤害减少${rdP(datas[0])}%`;
         }
     },
     hurtByHp: {
@@ -774,7 +778,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (pet.hp > pet.hpMax * Math.max(datas[0], 0.5)) pet.hp += bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
-            return `如果当前血量大于等于${rd(Math.max(datas[0], 0.5) * 100)}%，则伤害减少${rd(datas[1] * 100)}%`;
+            return `如果当前血量大于等于${rdP(Math.max(datas[0], 0.5))}%，则伤害减少${rdP(datas[1])}%`;
         }
     },
     hurt: {
@@ -785,7 +789,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `伤害减少${rd(datas[0] * 100)}%`;
+            return `伤害减少${rdP(datas[0])}%`;
         }
     },
     hurtWithAtk: {
@@ -796,7 +800,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (!bData.skillModel) pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `普攻伤害减少${rd(datas[0] * 100)}%`;
+            return `普攻伤害减少${rdP(datas[0])}%`;
         }
     },
     hurtWithCast: {
@@ -807,7 +811,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.skillModel) pet.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `技能伤害减少${rd(datas[0] * 100)}%`;
+            return `技能伤害减少${rdP(datas[0])}%`;
         }
     },
     hurtFullRage: {
@@ -821,7 +825,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `当斗志大于100时，消耗5点斗志，抵消${rd(datas[0] * 100)}%伤害`;
+            return `当斗志大于100时，消耗5点斗志，抵消${rdP(datas[0])}%伤害`;
         }
     },
     hurtOthers: {
@@ -839,7 +843,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `伤害的${rd(Math.min(datas[0], 1) * 100)}%由其他己方精灵承担`;
+            return `伤害的${rdP(Math.min(datas[0], 1))}%由其他己方精灵承担`;
         }
     },
     heal: {
@@ -850,7 +854,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             aim.hp += Math.abs(bData.finalDmg) * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `治疗效果提高${rd(datas[0] * 100)}%`;
+            return `治疗效果提高${rdP(datas[0])}%`;
         }
     },
     healByHp: {
@@ -861,7 +865,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (aim.hp < aim.hpMax * 0.25) aim.hp += Math.abs(bData.finalDmg) * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `如果血量低于25%，治疗效果提高${rd(datas[0] * 100)}%`;
+            return `如果血量低于25%，治疗效果提高${rdP(datas[0])}%`;
         }
     },
     healByCombo: {
@@ -873,7 +877,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (combo > 0) aim.hp += Math.abs(bData.finalDmg) * datas[0] * combo;
         },
         getInfo(datas: number[]): string {
-            return `连击时，治疗效果提高${rd(datas[0] * 100)}%乘以连击次数`;
+            return `连击时，治疗效果提高${rdP(datas[0])}%乘以连击次数`;
         }
     },
     healAndHurt: {
@@ -888,7 +892,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hp = Math.max(pet.hp - bData.finalDmg * datas[1], 1);
         },
         getInfo(datas: number[]): string {
-            return `治疗效果提高${rd(datas[0] * 100)}%，但施法者会受到${rd(datas[1] * 100)}%的伤害（不会致死）`;
+            return `治疗效果提高${rdP(datas[0])}%，但施法者会受到${rdP(datas[1])}%的伤害（不会致死）`;
         }
     },
     beginAddRage: {
@@ -910,7 +914,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (ctrlr.ranSd() < rate(datas[0], 0.05, 0.9)) ctrlr.addBuff(pet, pet, 'ReLi', 3);
         },
         getInfo(datas: number[]): string {
-            return `战斗开始时，${rd(rate(datas[0], 0.05, 0.9) * 100)}%概率获得热力，持续3回合`;
+            return `战斗开始时，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得热力，持续3回合`;
         }
     },
     killAddHp: {
@@ -921,7 +925,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hp = Math.min(pet.hp + aim.hpMax * datas[0], pet.hpMax);
         },
         getInfo(datas: number[]): string {
-            return `敌人被击败时恢复血量，数值相当于敌人最大血量的${rd(datas[0] * 100)}%`;
+            return `敌人被击败时恢复血量，数值相当于敌人最大血量的${rdP(datas[0])}%`;
         }
     },
     killAddAllHp: {
@@ -937,7 +941,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `自己击败敌人时所有己方恢复血量，数值相当于敌人最大血量的${rd(datas[0] * 100)}%`;
+            return `自己击败敌人时所有己方恢复血量，数值相当于敌人最大血量的${rdP(datas[0])}%`;
         }
     },
     killAddMp: {
@@ -961,7 +965,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             for (const skilllData of pet.skillDatas) skilllData.cd = Math.max(skilllData.cd - cd, 0);
         },
         getInfo(datas: number[]): string {
-            return `敌人被击败时，所有冷却直接减少1回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率减少2回合`;
+            return `敌人被击败时，所有冷却直接减少1回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率减少2回合`;
         }
     },
     deadHurt: {
@@ -973,7 +977,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             for (const ePet of ctrlr.getTeam(caster).pets) ePet.hp = Math.max(ePet.hp - hpRdc, 1);
         },
         getInfo(datas: number[]): string {
-            return `被击败时，对全体敌人造成自己最大血量${rd(datas[0] * 100)}%的伤害（不会致死）`;
+            return `被击败时，对全体敌人造成自己最大血量${rdP(datas[0])}%的伤害（不会致死）`;
         }
     },
     deadFangHu: {
@@ -987,7 +991,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `被击败时，对己方其他精灵释放防护罩持续2回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率持续4回合`;
+            return `被击败时，对己方其他精灵释放防护罩持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
         }
     },
     deadHuiChun: {
@@ -1001,7 +1005,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `被击败时，对己方其他精灵释放回春术持续2回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率持续4回合`;
+            return `被击败时，对己方其他精灵释放回春术持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
         }
     }
 };
