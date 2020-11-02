@@ -921,7 +921,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hp = Math.min(pet.hp + aim.hpMax * datas[0], pet.hpMax);
         },
         getInfo(datas: number[]): string {
-            return `敌人被击杀时，血量恢复目标最大血量的${rd(datas[0] * 100)}%`;
+            return `敌人被击败时恢复血量，数值相当于敌人最大血量的${rd(datas[0] * 100)}%`;
         }
     },
     killAddAllHp: {
@@ -930,12 +930,14 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         dataAreas: [[0.03, 0.02]],
         onEDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             if (pet === caster) {
-                const petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0);
-                for (const petA of petsAlive) petA.hp = Math.min(petA.hp + aim.hpMax * datas[0], petA.hpMax);
+                const hpAdd = aim.hpMax * datas[0];
+                for (const petIn of ctrlr.getTeam(pet).pets) {
+                    if (petIn.hp > 0) petIn.hp = Math.min(petIn.hp + hpAdd, petIn.hpMax);
+                }
             }
         },
         getInfo(datas: number[]): string {
-            return `自己击杀敌人后，所有己方血量恢复目标最大血量的${rd(datas[0] * 100)}%`;
+            return `自己击败敌人时所有己方恢复血量，数值相当于敌人最大血量的${rd(datas[0] * 100)}%`;
         }
     },
     killAddMp: {
@@ -947,7 +949,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             sTeam.mp = Math.min(sTeam.mp + datas[0], sTeam.mpMax);
         },
         getInfo(datas: number[]): string {
-            return `敌人被击杀时，精神恢复${datas[0]}点`;
+            return `敌人被击败时，精神恢复${datas[0]}点`;
         }
     },
     killRdcCD: {
@@ -959,19 +961,19 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             for (const skilllData of pet.skillDatas) skilllData.cd = Math.max(skilllData.cd - cd, 0);
         },
         getInfo(datas: number[]): string {
-            return `敌人被击杀时，所有冷却直接减少1回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率减少2回合`;
+            return `敌人被击败时，所有冷却直接减少1回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率减少2回合`;
         }
     },
     deadHurt: {
         id: 'deadHurt',
         cnBrief: '尽',
-        dataAreas: [[0.1, 0.05]],
+        dataAreas: [[0.02, 0.01]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
-            const hp = pet.hpMax * rate(datas[0], 0.1, 0.4);
-            caster.hp = Math.max(caster.hp - hp, 1);
+            let hpRdc = pet.hpMax * Math.min(datas[0], 0.2);
+            for (const ePet of ctrlr.getTeam(caster).pets) ePet.hp = Math.max(ePet.hp - hpRdc, 1);
         },
         getInfo(datas: number[]): string {
-            return `被击杀时，对敌人造成自己最大血量${rd(rate(datas[0], 0.1, 0.4) * 100)}%的伤害（不会致死）`;
+            return `被击败时，对全体敌人造成自己最大血量${rd(datas[0] * 100)}%的伤害（不会致死）`;
         }
     },
     deadFangHu: {
@@ -980,11 +982,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         dataAreas: [[1, 1]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
-            const petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
-            for (const petAlive of petsAlive) ctrlr.addBuff(petAlive, pet, 'FangHu', cd);
+            for (const petIn of ctrlr.getTeam(pet).pets) {
+                if (petIn.hp > 0 && petIn !== pet) ctrlr.addBuff(petIn, pet, 'FangHu', cd);
+            }
         },
         getInfo(datas: number[]): string {
-            return `被击杀时，对己方其他精灵释放防护罩持续2回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率持续4回合`;
+            return `被击败时，对己方其他精灵释放防护罩持续2回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率持续4回合`;
         }
     },
     deadHuiChun: {
@@ -993,11 +996,12 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         dataAreas: [[1, 1]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
-            const petsAlive = ctrlr.getTeam(pet).pets.filter((value: BattlePet) => value.hp > 0 && value !== pet);
-            for (const petAlive of petsAlive) ctrlr.addBuff(petAlive, pet, 'HuiChun', cd);
+            for (const petIn of ctrlr.getTeam(pet).pets) {
+                if (petIn.hp > 0 && petIn !== pet) ctrlr.addBuff(petIn, pet, 'HuiChun', cd);
+            }
         },
         getInfo(datas: number[]): string {
-            return `被击杀时，对己方其他精灵释放回春术持续2回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率持续4回合`;
+            return `被击败时，对己方其他精灵释放回春术持续2回合，${rd(rate(datas[0], 0.2, 0.6) * 100)}%概率持续4回合`;
         }
     }
 };

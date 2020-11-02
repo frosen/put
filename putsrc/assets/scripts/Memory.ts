@@ -345,8 +345,6 @@ export class Memory {
         pet = PetTool.createWithRandomFeature('CiHuaYouLing', 29);
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures);
 
-        cc.log('^_^!>>>', this.gameData.pets);
-
         // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
 
         GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(21, 25));
