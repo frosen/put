@@ -341,8 +341,8 @@ export class BtlCtrlr {
                                 dmg *= BtlCtrlr.getEleDmgRate(buffModel.eleType, pet, buffData.caster);
                                 dmg *= (1 - pet.pet2.dfsRate) * FormationHitRate[pet.fromationIdx];
                             }
-                            dmg = Math.floor(dmg);
                             pet.hp -= dmg;
+                            pet.hp = Math.floor(pet.hp);
                             if (pet.hp < 1) pet.hp = 1;
                             else if (pet.hp > pet.hpMax) pet.hp = pet.hpMax;
                             if (this.page) this.page.doHurt(pet.beEnemy, pet.idx, pet.hp, pet.hpMax, dmg, false, 0);
