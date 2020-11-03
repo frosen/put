@@ -256,33 +256,23 @@ export class ExplUpdater {
         const HangMaxSpan = 8; // 3*8=24小时
         let spanCnt = 0;
 
+        const recalcSpanIndexs = [0, 1, 2, 3, 5]; // 不用每次都重新计算，不计算的使用上一次的
+        let btlDuraUpdCnt = 0;
+        let btlWinRate = 0;
+
         while (true) {
             // 战斗状态
             const selfLv = selfPets.getAvg((pet: Pet) => pet.lv);
-            const selfPwr = selfPets.getAvg((pet: Pet) => {
-                let totalEqpLv = 0;
-                let featureLvs = 0;
-                for (const eqp of pet.equips) {
-                    if (!eqp) continue;
-                    const eqpModel = equipModelDict[eqp.id];
-                    const eqpLv = (eqpModel.lv + eqp.growth) * (1 + eqpModel.rank * 0.1);
-                    totalEqpLv += eqpLv * 0.15; // 每个装备属性大约等于同等级精灵的20%，但这里只x15%，少于20%
-                    for (const lv of eqp.selfFeatureLvs) featureLvs += lv;
-                    for (const feature of eqp.affixes) featureLvs += feature.lv;
-                }
-                for (const feature of pet.lndFeatures) featureLvs += feature.lv;
-
-                const realPrvty = PetTool.getRealPrvty(pet);
-                let curPower = pet.lv + totalEqpLv;
-                curPower *= 1 + (featureLvs + realPrvty * 0.01 * 20) * 0.01;
-                return curPower;
-            });
             const enemyLv: number = RealBattle.calcLvArea(curPosModel, curStep).base;
-            const enemyPwr = enemyLv;
+            if (recalcSpanIndexs.includes(spanCnt)) {
+                const calcRzt = this.calcBtlDuraUpdCntAndWinRate(gameData);
+                btlDuraUpdCnt = calcRzt.btlDuraUpdCnt;
+                btlWinRate = calcRzt.btlWinRate;
+            }
             const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.btlCtrlr);
             const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.btlCtrlr);
             const eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.btlCtrlr);
-            const petSt = { selfLv, selfPwr, enemyLv, enemyPwr, agiRate, sensRate, eleRate };
+            const petSt = { selfLv, enemyLv, btlDuraUpdCnt, btlWinRate, agiRate, sensRate, eleRate };
 
             const nextUpdCnt = curExpl.chngUpdCnt + EachSpanUpdCnt;
             const nextTime = nextUpdCnt * ExplInterval + curExpl.stepEnterTime;
@@ -402,9 +392,9 @@ export class ExplUpdater {
         toUpdCnt: number,
         petSt: {
             selfLv: number;
-            selfPwr: number;
             enemyLv: number;
-            enemyPwr: number;
+            btlDuraUpdCnt: number;
+            btlWinRate: number;
             agiRate: number;
             sensRate: number;
             eleRate: number;
@@ -413,13 +403,12 @@ export class ExplUpdater {
         rztSt: { exp: number; money: number; eqps: any[]; pets: any[]; itemDict: {}; moveCnt: number },
         spanEndTime: number
     ) {
-        const gameData = this.gameData;
-
         // 计算回合数和胜利数量 ------------------------------------------
         let eachBigRdUpdCnt = 0; // 一个大轮次中包括了战斗和探索，恢复的时间
-        const { btlDuraUpdCnt, winRate } = this.calcBtlDuraUpdCntAndWinRate(gameData);
-        eachBigRdUpdCnt += btlDuraUpdCnt;
 
+        eachBigRdUpdCnt += petSt.btlDuraUpdCnt;
+
+        const gameData = this.gameData;
         const curExpl = gameData.curExpl;
         const eachHidingRdCnt = curExpl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
         const realExplRdCnt = AvgExplRdCnt + eachHidingRdCnt;
@@ -428,7 +417,7 @@ export class ExplUpdater {
 
         const diffUpdCnt = toUpdCnt - fromUpdCnt;
         const bigRdCnt = Math.floor(diffUpdCnt / eachBigRdUpdCnt);
-        const winCount = Math.ceil(bigRdCnt * winRate);
+        const winCount = Math.ceil(bigRdCnt * petSt.btlWinRate);
 
         // 计算获取的经验 ------------------------------------------
         const exp = ExplUpdater.calcExpByLv(petSt.selfLv, petSt.enemyLv);
@@ -607,7 +596,7 @@ export class ExplUpdater {
         rztSt.moveCnt += bigRdCnt * realExplRdCnt;
     }
 
-    calcBtlDuraUpdCntAndWinRate(gameData: GameData): { btlDuraUpdCnt: number; winRate: number } {
+    calcBtlDuraUpdCntAndWinRate(gameData: GameData): { btlDuraUpdCnt: number; btlWinRate: number } {
         const curExpl = gameData.curExpl;
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
@@ -654,11 +643,11 @@ export class ExplUpdater {
         }
 
         const btlDuraUpdCnt = Math.floor(updCntTotal / CalcCnt);
-        const winRate = winRateTotal / (CalcCnt * petLen);
+        const btlWinRate = winRateTotal / (CalcCnt * petLen);
 
         return {
             btlDuraUpdCnt,
-            winRate
+            btlWinRate
         };
     }
 
