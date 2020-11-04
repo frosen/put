@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { ListViewCell } from 'scripts/ListViewCell';
 import { petModelDict } from 'configs/PetModelDict';
 
-import { Pet, PetStateNames, EleColor } from 'scripts/DataSaved';
+import { Pet, PetStateNames, EleColors } from 'scripts/DataSaved';
 import { featureModelDict } from 'configs/FeatureModelDict';
 import { PetTool } from 'scripts/Memory';
 
@@ -69,7 +69,7 @@ export class CellPet extends ListViewCell {
         ListViewCell.rerenderLbl(this.lvLbl);
         this.petNameLbl.node.parent.getComponent(cc.Layout).updateLayout();
 
-        this.petSp.node.color = EleColor[petModelDict[pet.id].eleType];
+        this.petSp.node.color = EleColors[petModelDict[pet.id].eleType];
 
         const stateLbl = this.stateBtn.getComponentInChildren(cc.Label);
         stateLbl.string = PetStateNames[pet.state];

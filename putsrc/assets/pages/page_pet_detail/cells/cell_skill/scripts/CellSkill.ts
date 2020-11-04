@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from 'scripts/ListViewCell';
-import { EleColor, EleTypeNames } from 'scripts/DataSaved';
+import { EleColors, EleTypeNames } from 'scripts/DataSaved';
 import { SkillModel } from 'scripts/DataModel';
 import { skillModelDict } from 'configs/SkillModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
@@ -53,9 +53,9 @@ export class CellSkill extends ListViewCell {
         const dir = SkillDirTypeCellNames[skillModel.dirType];
         const stp = SkillTypeCellNames[skillModel.skillType];
         this.typeLbl.string = ele + aim + dir + stp;
-        this.typeLbl.node.parent.color = EleColor[skillModel.eleType];
+        this.typeLbl.node.parent.color = EleColors[skillModel.eleType];
 
-        this.skillSp.node.color = EleColor[skillModel.eleType];
+        this.skillSp.node.color = EleColors[skillModel.eleType];
 
         if (skillModel.mainDmg) {
             this.dmgLbl.node.parent.scaleX = 1;
@@ -73,7 +73,7 @@ export class CellSkill extends ListViewCell {
         if (skillModel.mainBuffId) {
             this.buffLbl.node.parent.scaleX = 1;
             const buffModel = buffModelDict[skillModel.mainBuffId];
-            this.buffLbl.node.parent.color = EleColor[buffModel.eleType];
+            this.buffLbl.node.parent.color = EleColors[buffModel.eleType];
             this.buffLbl.string = buffModel.cnName;
         } else {
             this.buffLbl.node.parent.scaleX = 0;

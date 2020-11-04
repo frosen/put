@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
-import { Equip, EleColor } from 'scripts/DataSaved';
+import { Equip, EleColors } from 'scripts/DataSaved';
 import { EquipTool } from 'scripts/Memory';
 import { skillModelDict } from 'configs/SkillModelDict';
 import { equipModelDict } from 'configs/EquipModelDict';
@@ -73,7 +73,7 @@ export class CellPkgEquip extends CellPkgBase {
             this.skillLbl.string = typeStr + skillModel.cnName;
 
             this.skillLbl.node.parent.opacity = 255;
-            this.skillLbl.node.parent.color = EleColor[skillModel.eleType];
+            this.skillLbl.node.parent.color = EleColors[skillModel.eleType];
         } else {
             this.skillLbl.node.parent.opacity = 0;
         }

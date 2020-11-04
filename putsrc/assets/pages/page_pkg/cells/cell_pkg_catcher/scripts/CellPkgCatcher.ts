@@ -7,7 +7,15 @@
 const { ccclass, property } = cc._decorator;
 
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
-import { Catcher, BioTypeNames, EleTypeNames, BattleTypeNames } from 'scripts/DataSaved';
+import {
+    Catcher,
+    BioTypeNames,
+    EleTypeNames,
+    BattleTypeNames,
+    EleDarkColors,
+    BioColors,
+    BattleTypeColors
+} from 'scripts/DataSaved';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { CatcherModel } from 'scripts/DataModel';
 import { ListViewCell } from 'scripts/ListViewCell';
@@ -56,17 +64,19 @@ export class CellPkgCatcher extends CellPkgCnsum {
 
         this.rateLbl.string = `成功率${Math.round(catcherModel.rate * 0.5)}-${catcherModel.rate}%`;
         ListViewCell.rerenderLbl(this.rateLbl);
-        CellPkgCatcher.setTypeName(catcherModel.bioType, BioTypeNames, this.bioLbl, this.bioLbl.node.parent);
-        CellPkgCatcher.setTypeName(catcherModel.eleType, EleTypeNames, this.eleLbl, this.eleLbl.node.parent);
-        CellPkgCatcher.setTypeName(catcherModel.battleType, BattleTypeNames, this.btlTypeLbl, this.btlTypeLbl.node.parent);
+        CellPkgCatcher.setTypeName(catcherModel.bioType, BioTypeNames, BioColors, this.bioLbl);
+        CellPkgCatcher.setTypeName(catcherModel.eleType, EleTypeNames, EleDarkColors, this.eleLbl);
+        CellPkgCatcher.setTypeName(catcherModel.battleType, BattleTypeNames, BattleTypeColors, this.btlTypeLbl);
 
         for (const layout of this.layouts) layout.updateLayout();
     }
 
-    static setTypeName(data: number, names: string[], lbl: cc.Label, baseNode: cc.Node) {
-        if (data) {
+    static setTypeName(type: number, names: string[], colors: cc.Color[], lbl: cc.Label) {
+        const baseNode = lbl.node.parent;
+        if (type) {
             baseNode.scaleX = 1;
-            lbl.string = names[data];
+            baseNode.color = colors[type];
+            lbl.string = names[type];
             ListViewCell.rerenderLbl(lbl);
         } else {
             baseNode.scaleX = 0;

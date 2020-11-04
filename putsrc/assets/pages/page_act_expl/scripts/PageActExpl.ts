@@ -11,7 +11,7 @@ import { PetUI } from './PetUI';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { PageActExplLVD } from './PageActExplLVD';
 import { ListView } from 'scripts/ListView';
-import { EleType, ItemType, CnsumType, Catcher } from 'scripts/DataSaved';
+import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors } from 'scripts/DataSaved';
 import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, PAKey } from 'scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
@@ -352,21 +352,8 @@ export class PageActExpl extends BtlPageBase {
     }
 
     getBuffColor(buffModel: BuffModel): cc.Color {
-        const de = buffModel.buffType === BuffType.debuff;
-        switch (buffModel.eleType) {
-            case EleType.fire:
-                return de ? cc.color(200, 0, 0) : cc.color(255, 100, 100);
-            case EleType.water:
-                return de ? cc.color(0, 0, 200) : cc.color(100, 100, 255);
-            case EleType.air:
-                return de ? cc.color(0, 175, 0) : cc.color(50, 230, 50);
-            case EleType.earth:
-                return de ? cc.color(100, 90, 50) : cc.color(168, 150, 85);
-            case EleType.light:
-                return de ? cc.color(239, 115, 0) : cc.color(239, 200, 0);
-            case EleType.dark:
-                return de ? cc.color(125, 0, 195) : cc.color(185, 78, 255);
-        }
+        if (buffModel.buffType === BuffType.buff) return EleColors[buffModel.eleType];
+        else return EleDarkColors[buffModel.eleType];
     }
 
     addBuffByStr(beEnemy: boolean, idx: number, buffStr: string, color: cc.Color) {

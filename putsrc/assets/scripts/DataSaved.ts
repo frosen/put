@@ -14,6 +14,14 @@ export enum BioType {
 }
 
 export const BioTypeNames = ['', '人形生物', '魔法生物', '机械生物', '自然生物', '未知生物'];
+export const BioColors = [
+    null,
+    cc.color(240, 180, 60),
+    cc.color(50, 50, 200),
+    cc.color(120, 90, 70),
+    cc.color(50, 170, 50),
+    cc.color(100, 100, 100)
+];
 
 export enum EleType {
     none,
@@ -27,14 +35,23 @@ export enum EleType {
 
 export const EleTypeNames = ['', '火系', '水系', '空系', '地系', '光系', '暗系'];
 export const SimpleEleTypeNames = ['', '火', '水', '空', '地', '光', '暗'];
-export const EleColor = [
+export const EleColors = [
     null,
-    cc.Color.RED,
-    cc.Color.BLUE,
-    cc.color(40, 170, 150),
+    cc.color(200, 50, 50),
+    cc.color(50, 50, 200),
+    cc.color(50, 200, 50),
+    cc.color(190, 100, 30),
+    cc.color(239, 170, 50),
+    cc.color(185, 78, 255)
+];
+export const EleDarkColors = [
+    null,
+    cc.color(150, 30, 30),
+    cc.color(30, 30, 150),
+    cc.color(30, 150, 30),
     cc.color(128, 64, 0),
-    cc.Color.ORANGE,
-    cc.Color.BLACK
+    cc.color(200, 140, 0),
+    cc.color(125, 25, 195)
 ];
 
 export enum BattleType {
@@ -49,6 +66,15 @@ export enum BattleType {
 }
 
 export const BattleTypeNames = ['', '近战', '射击', '冲锋', '刺杀', '连段', '停止', '混乱'];
+export const BattleTypeColors = [
+    null,
+    cc.color(200, 50, 50),
+    cc.color(50, 50, 200),
+    cc.color(240, 180, 60),
+    cc.color(125, 25, 195),
+    cc.color(100, 100, 100),
+    cc.color(125, 0, 50)
+];
 
 export enum PetState {
     ready = 1,
