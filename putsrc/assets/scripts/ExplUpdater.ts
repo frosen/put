@@ -679,8 +679,7 @@ export class ExplUpdater {
         if (this.pausing) return;
         if (!this.inited) this.inited = true;
 
-        const curTime = Date.now();
-        const diff = curTime - this.lastTime;
+        const diff = Date.now() - this.lastTime;
         if (diff < ExplInterval) {
             return;
         } else if (diff < ExplInterval * 2) {

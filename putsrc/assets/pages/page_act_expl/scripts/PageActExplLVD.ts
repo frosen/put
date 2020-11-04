@@ -37,11 +37,12 @@ export class PageActExplLVD extends ListViewDelegate {
 
     lblFrameDict: { [key: string]: LblFrameData } = {};
 
-    setSpByString(sp: cc.Sprite, str: string) {
+    setSpByString(sp: cc.Sprite, str: string, color: cc.Color = null) {
         if (str) {
             const data = this.getFrameDataByString(str);
             sp.spriteFrame = data.frame;
             sp.node.width = data.width;
+            if (color) sp.node.color = color;
         } else {
             sp.spriteFrame = null;
             sp.node.width = 0;

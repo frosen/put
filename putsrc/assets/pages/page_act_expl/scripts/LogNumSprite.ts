@@ -16,7 +16,7 @@ export class LogNumSprite extends cc.Component {
         this.lvd = lvd;
     }
 
-    setNum(num: number) {
+    setNum(num: number, color: cc.Color = null) {
         const numStr = String(num);
         const childrenCount = this.node.childrenCount;
         const children = this.node.children;
@@ -30,14 +30,15 @@ export class LogNumSprite extends cc.Component {
                 const newNode = new cc.Node();
                 newNode.parent = this.node;
                 newNode.setAnchorPoint(0, 0.5);
+                newNode.color = this.node.color;
                 sp = newNode.addComponent(cc.Sprite);
             }
-            this.lvd.setSpByString(sp, letter);
+            this.lvd.setSpByString(sp, letter, color);
         }
 
         for (let index = numStr.length; index < childrenCount; index++) {
             const sp = children[index].getComponent(cc.Sprite);
-            this.lvd.setSpByString(sp, null);
+            this.lvd.setSpByString(sp, null, null);
         }
 
         let curX = 0;

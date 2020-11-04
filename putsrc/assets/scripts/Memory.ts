@@ -491,13 +491,16 @@ export class PetTool {
     }
 
     static getBaseCnName(pet: Pet, needSpace: boolean = false): string {
-        if (pet.exFeatureIds.length > 0) {
+        if (pet.exFeatureIds.length === 1) {
+            const name = featureModelDict[pet.exFeatureIds[0]].cnBrief;
+            return name + (needSpace ? ' 之 ' : '之') + PetTool.getOriNameById(pet.id);
+        } else if (pet.exFeatureIds.length === 2) {
             let name = '';
             for (let index = pet.exFeatureIds.length - 1; index >= 0; index--) {
                 const id = pet.exFeatureIds[index];
                 name += featureModelDict[id].cnBrief;
             }
-            return name + (needSpace ? ' 之 ' : '之') + PetTool.getOriNameById(pet.id);
+            return name + (needSpace ? ' ' : '') + PetTool.getOriNameById(pet.id);
         } else {
             return PetTool.getOriNameById(pet.id);
         }
