@@ -458,18 +458,20 @@ export class PetTool {
         const model = petModelDict[id];
         const selfFeatureIds = model.selfFeatureIds;
 
-        const exFeatureIds = [];
+        const exFIds = [];
         const exFR = Math.random();
-        if (lv > 10 && exFR > 0.4) exFeatureIds.push(getRandomOneInList(selfFeatureIds)); // 有一定等级的怪物才会有天赋
-        if (lv > 20 && exFR > 0.8) exFeatureIds.push(getRandomOneInList(selfFeatureIds));
+        if (lv > 10 && exFR > 0.4) exFIds.push(getRandomOneInList(selfFeatureIds)); // 有一定等级的怪物才会有天赋
+        if (lv > 20 && exFR > 0.8) exFIds.push(getRandomOneInList(selfFeatureIds));
+
+        if (exFIds.length === 2 && exFIds[0] === exFIds[1]) exFIds.length = 1; // 天赋特性不能重复
 
         const features = [];
-        for (const exFId of exFeatureIds) {
+        for (const exFId of exFIds) {
             const feature = FeatureTool.create(exFId, 1 + randomInt(3));
             features.push(feature);
         }
 
-        const pet = PetTool.create(id, lv, exFeatureIds, features);
+        const pet = PetTool.create(id, lv, exFIds, features);
         for (let curLv = 0; curLv <= lv; curLv++) {
             PetTool.addFeatureByLvUp(pet, curLv);
         }

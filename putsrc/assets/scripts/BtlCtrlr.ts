@@ -534,7 +534,7 @@ export class BtlCtrlr {
         finalDmg = lastHp - aim.hp;
 
         if (this.page) this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
-        if (this.logging) this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, skillModel.cnName, skillModel.eleType);
+        if (this.logging) this.logAtk(battlePet, aim, finalDmg, skillModel.cnName, skillModel.eleType);
 
         if (dmgRate > 0) this.addRage(battlePet);
 
@@ -621,7 +621,7 @@ export class BtlCtrlr {
         if (aim.hp < 0) aim.hp = 0;
 
         if (this.page) this.page.doHurt(aim.beEnemy, aim.idx, aim.hp, aim.hpMax, finalDmg, hitResult > 1, this.realBattle.combo);
-        if (this.logging) this.logAtk(battlePet, aim, finalDmg, this.realBattle.combo > 1, '普攻');
+        if (this.logging) this.logAtk(battlePet, aim, finalDmg, '普攻');
 
         this.addRage(battlePet);
         this.addMp(battlePet, aim);
@@ -817,12 +817,11 @@ export class BtlCtrlr {
         return spBT || casterBPet.pet2.exBattleTypes.getLast() || petModelDict[casterBPet.pet.id].battleType;
     }
 
-    logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, beCombo: boolean, skillName: string, eleType: EleType = null) {
+    logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, skillName: string, eleType: EleType = null) {
         const dataList = [
             PetTool.getCnName(battlePet.pet),
             PetTool.getCnName(aim.pet),
             skillName,
-            beCombo,
             Math.floor(dmg * 0.1),
             eleType
         ];

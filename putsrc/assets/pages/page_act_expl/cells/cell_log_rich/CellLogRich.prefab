@@ -175,9 +175,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 88,
+      "g": 88,
+      "b": 88,
       "a": 255
     },
     "_contentSize": {
@@ -239,9 +239,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 0,
+      "r": 88,
+      "g": 88,
+      "b": 88,
       "a": 255
     },
     "_contentSize": {
@@ -323,7 +323,7 @@
     "asset": {
       "__uuid__": "94a982c6-b186-49bb-b509-c4e6d0715e22"
     },
-    "fileId": "72LPkQMVlKC7HmS9qTXHXN",
+    "fileId": "1cqK/O/LdCDYiZzRK7WIwE",
     "sync": false
   },
   {
@@ -346,9 +346,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 88,
+      "g": 88,
+      "b": 88,
       "a": 255
     },
     "_contentSize": {
@@ -430,7 +430,7 @@
     "asset": {
       "__uuid__": "94a982c6-b186-49bb-b509-c4e6d0715e22"
     },
-    "fileId": "91a0OSATBNFK1fu7x/A11V",
+    "fileId": "231vpiAwlLc6Oxew67+zvD",
     "sync": false
   },
   {
@@ -453,9 +453,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 15,
-      "g": 255,
-      "b": 255,
+      "r": 88,
+      "g": 88,
+      "b": 88,
       "a": 255
     },
     "_contentSize": {
@@ -537,7 +537,7 @@
     "asset": {
       "__uuid__": "94a982c6-b186-49bb-b509-c4e6d0715e22"
     },
-    "fileId": "b35otSgWlNXaKb5lnMh+Vj",
+    "fileId": "e1FIl6aWhMnpkoIHSBzv6u",
     "sync": false
   },
   {

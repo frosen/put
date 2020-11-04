@@ -472,12 +472,7 @@ export class PageActExpl extends BtlPageBase {
     }
 
     onClickEnter() {
-        if (this.enterIsReady) {
-            this.updater.enterNextStep();
-            this.setEnterReady(false);
-        } else {
-            this.ctrlr.popToast('当前阶段探索度高于99%后才可进入下一阶段');
-        }
+        this.updater.executeEnter();
     }
 
     setCatchActive(b: boolean) {
@@ -488,11 +483,7 @@ export class PageActExpl extends BtlPageBase {
         this.lblBtnHide.string = b ? '潜行中' : '潜行';
     }
 
-    enterIsReady: boolean = false;
-
     setEnterReady(b: boolean) {
-        if (this.enterIsReady === b) return;
-        this.enterIsReady = b;
         this.enterTipNode.stopAllActions();
 
         if (b) {

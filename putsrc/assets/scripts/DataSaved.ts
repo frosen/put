@@ -26,6 +26,7 @@ export enum EleType {
 }
 
 export const EleTypeNames = ['', '火系', '水系', '空系', '地系', '光系', '暗系'];
+export const SimpleEleTypeNames = ['', '火', '水', '空', '地', '光', '暗'];
 export const EleColor = [
     null,
     cc.Color.RED,

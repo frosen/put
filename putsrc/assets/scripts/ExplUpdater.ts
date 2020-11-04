@@ -22,16 +22,7 @@ import {
 } from 'scripts/DataSaved';
 import { AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
-import {
-    randomInt,
-    randomArea,
-    randomRate,
-    getRandomOneInList,
-    randomAreaInt,
-    random,
-    randomRound,
-    randomAreaByIntRange
-} from './Random';
+import { randomInt, randomRate, getRandomOneInList, randomAreaInt, random, randomRound, randomAreaByIntRange } from './Random';
 import {
     ExplModel,
     StepTypesByMax,
@@ -44,7 +35,6 @@ import {
     GatherQuestNeed,
     SearchQuestNeed
 } from './DataModel';
-import { equipModelDict } from 'configs/EquipModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { petModelDict } from 'configs/PetModelDict';
 
@@ -702,7 +692,7 @@ export class ExplUpdater {
             this.btlCtrlr.page = null;
 
             const turnCount = Math.floor(diff / ExplInterval);
-            for (let index = 0; index < turnCount - 1; index++) this.updateReal();
+            for (let index = turnCount - 1; index >= 0; index--) this.updateReal();
 
             this.page = oldPage;
             this.btlCtrlr.page = oldPage;
@@ -936,6 +926,8 @@ export class ExplUpdater {
     }
 
     explStepPercent: number = -1;
+    enterIsReady: boolean = false;
+    stepEntering: boolean = false;
 
     doExploration() {
         const curExpl = this.gameData.curExpl;
@@ -973,7 +965,10 @@ export class ExplUpdater {
                 if (this.page) this.page.setExplStepUI();
             }
             if (this.updCnt >= nextStepUpdCnt) {
-                if (this.page) this.page.setEnterReady(true);
+                if (this.enterIsReady === false) {
+                    if (this.page) this.page.setEnterReady(true);
+                }
+                this.enterIsReady = true;
             }
         }
 
@@ -1033,18 +1028,6 @@ export class ExplUpdater {
         const posData: PosData = this.gameData.posDataDict[this.gameData.curExpl.curPosId];
         const pADExpl: PADExpl = posData.actDict[PAKey.expl] as PADExpl;
         if (step > pADExpl.doneStep) pADExpl.doneStep = step;
-    }
-
-    stepEntering: boolean = false;
-
-    enterNextStep() {
-        this.stepEntering = true;
-        if (this.page && this.state !== ExplState.explore) {
-            const curExpl = this.gameData.curExpl;
-            const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-            const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep + 1] || 0;
-            this.page.ctrlr.popToast(`准备进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`);
-        }
     }
 
     gainRes() {
@@ -1316,14 +1299,31 @@ export class ExplUpdater {
         if (this.page) this.page.setHideActive(cur);
     }
 
-    executeEnter() {}
+    executeEnter() {
+        if (this.enterIsReady) {
+            this.enterIsReady = false;
+            this.stepEntering = true;
+            if (this.page) {
+                this.page.setEnterReady(false);
+                if (this.state !== ExplState.explore) {
+                    const curExpl = this.gameData.curExpl;
+                    const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+                    const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep + 1] || 0;
+                    const str = `准备进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`;
+                    this.page.ctrlr.popToast(str);
+                }
+            }
+        } else {
+            if (this.page) this.page.ctrlr.popToast('当前阶段探索度高于99%后才可进入下一阶段');
+        }
+    }
 
     // -----------------------------------------------------------------
 
     logList: ExplLogData[] = [];
 
     log(type: ExplLogType, data: any) {
-        cc.log('PUT EXPL: ', type, data);
+        cc.log('PUT EXPL: ', type, JSON.stringify(data));
         this.logList[this.logList.length] = { type, data };
     }
 

@@ -10,7 +10,7 @@ import { CellLogBase } from 'pages/page_act_expl/scripts/CellLogBase';
 import { ExplLogData } from 'scripts/ExplUpdater';
 import { PageActExplLVD } from 'pages/page_act_expl/scripts/PageActExplLVD';
 import { LogNumSprite } from 'pages/page_act_expl/scripts/LogNumSprite';
-import { EleTypeNames } from 'scripts/DataSaved';
+import { SimpleEleTypeNames } from 'scripts/DataSaved';
 
 @ccclass
 export class CellLogAtk extends CellLogBase {
@@ -24,8 +24,6 @@ export class CellLogAtk extends CellLogBase {
     useSp: cc.Sprite = null;
     @property(cc.Sprite)
     sklNameSp: cc.Sprite = null;
-    @property(cc.Sprite)
-    comboSp: cc.Sprite = null;
     @property(cc.Sprite)
     handleSp: cc.Sprite = null;
     @property(LogNumSprite)
@@ -51,21 +49,18 @@ export class CellLogAtk extends CellLogBase {
         const petName = data.data[0];
         const aimName = data.data[1];
         const sklName = data.data[2];
-        const combo = data.data[3];
-        const dmg = data.data[4];
-        const eleType = data.data[5];
+        const dmg = data.data[3];
+        const eleType = data.data[4];
 
         this.lvd.setSpByString(this.petNameSp, petName);
         this.lvd.setSpByString(this.aimNameSp, aimName);
         this.lvd.setSpByString(this.sklNameSp, sklName);
         if (dmg > 0) {
-            this.lvd.setSpByString(this.comboSp, combo ? '连击' : null);
-            this.lvd.setSpByString(this.handleSp, '，造成');
+            this.lvd.setSpByString(this.handleSp, '造成');
             this.dmgSp.setNum(dmg);
-            this.lvd.setSpByString(this.eleTypeSp, (eleType ? EleTypeNames[eleType] : '物理') + '伤害');
+            this.lvd.setSpByString(this.eleTypeSp, (eleType ? SimpleEleTypeNames[eleType] : '物') + '伤');
         } else {
-            this.lvd.setSpByString(this.comboSp, null);
-            this.lvd.setSpByString(this.handleSp, '，恢复血量');
+            this.lvd.setSpByString(this.handleSp, '恢复血量');
             this.dmgSp.setNum(-dmg);
             this.lvd.setSpByString(this.eleTypeSp, null);
         }
