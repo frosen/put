@@ -164,6 +164,7 @@ export class ExplUpdater {
     createExpl(spcBtlId: number, startStep: number) {
         GameDataTool.createExpl(this.gameData, startStep);
         if (!spcBtlId) {
+            this.logEnter();
             this.startExpl();
         } else {
             this.startBattle(spcBtlId); // 专属作战直接进入战斗
@@ -933,13 +934,7 @@ export class ExplUpdater {
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const curStep = curExpl.curStep;
 
-        if (curExpl.chngUpdCnt === 0) {
-            this.updateChgUpdCnt();
-            this.explStepPercent = 0;
-            this.logEnter();
-            if (this.page) this.page.setExplStepUI();
-            return;
-        } else if (this.stepEntering === true) {
+        if (this.stepEntering === true) {
             this.stepEntering = false;
             curExpl.curStep++;
             curExpl.stepEnterTime = this.lastTime;

@@ -193,7 +193,7 @@ export class BtlCtrlr {
 
         const petNameDict = {};
         for (const ePet of this.realBattle.enemyTeam.pets) {
-            const cnName = PetTool.getCnName(ePet.pet);
+            const cnName = PetTool.getOriNameById(ePet.pet.id); // 避免太长，都用原始名
             petNameDict[cnName] = true;
         }
 
@@ -345,7 +345,7 @@ export class BtlCtrlr {
                             pet.hp = Math.floor(pet.hp);
                             if (pet.hp < 1) pet.hp = 1;
                             else if (pet.hp > pet.hpMax) pet.hp = pet.hpMax;
-                            if (this.page) this.page.doHurt(pet.beEnemy, pet.idx, pet.hp, pet.hpMax, dmg, false, 0);
+                            if (this.page) this.page.doHurt(pet.beEnemy, pet.idx, pet.hp, pet.hpMax, 0, false, 0);
                         }
                         // handleBuff中的mp和rage变化不用同步到UI上，因为handleBuff在gotoNextRound中，而此函数出现的地方CenterBar可控
                         if (buffOutput.mp) {
@@ -462,6 +462,7 @@ export class BtlCtrlr {
         if (skillModel.aimType === SkillAimtype.oneAndNext) {
             const nextAim = aim.next;
             if (nextAim) {
+                // 分两次check hp是因为castDmg中也会把hp减为0
                 if (skillModel.subDmg > 0 && nextAim.hp > 0) {
                     this.castDmg(battlePet, nextAim, skillModel.subDmg, skillModel);
                 }
