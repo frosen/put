@@ -57,9 +57,9 @@ export class CellLogAtk extends CellLogBase {
         this.lvd.setSpByString(this.sklNameSp, sklName);
         if (dmg > 0) {
             this.lvd.setSpByString(this.handleSp, '造成');
-            this.dmgSp.setNum(dmg);
+            this.dmgSp.setNum(dmg, cc.color(200, 50, 50));
             const eleStr = (eleType ? SimpleEleTypeNames[eleType] : '物') + '伤';
-            const eleColor = eleType ? EleDarkColors[eleType] : cc.Color.BLACK;
+            const eleColor = eleType ? EleDarkColors[eleType] : cc.color(128, 0, 64);
             this.lvd.setSpByString(this.eleTypeSp, eleStr, eleColor);
         } else {
             this.lvd.setSpByString(this.handleSp, '恢复血量');

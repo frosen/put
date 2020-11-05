@@ -68,7 +68,6 @@ import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { materialModelDict } from 'configs/MaterialModelDict';
 import { questModelDict } from 'configs/QuestModelDict';
 import Tea = require('./Tea');
-import { actPosModelDict } from 'configs/ActPosModelDict';
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = -1;
