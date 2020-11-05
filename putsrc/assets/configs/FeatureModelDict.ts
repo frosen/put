@@ -893,7 +893,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.hp = Math.max(pet.hp - Math.floor(pDmg * datas[1]), 1);
         },
         getInfo(datas: number[]): string {
-            return `治疗效果提高${rdP(datas[0])}%，但施法者会受到${rdP(datas[1])}%的伤害（不会致死）`;
+            return `治疗效果提高${rdP(datas[0])}%，但自己会受到${rdP(datas[1])}%的伤害（不会致死）`;
         }
     },
     beginAddRage: {
@@ -975,7 +975,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
         dataAreas: [[0.02, 0.01]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             const hpRdc = Math.floor(pet.hpMax * Math.min(datas[0], 0.2));
-            for (const ePet of ctrlr.getTeam(caster).pets) ePet.hp = Math.max(ePet.hp - hpRdc, 1);
+            for (const ePet of ctrlr.getTeam(caster).pets) if (ePet.hp > 0) ePet.hp = Math.max(ePet.hp - hpRdc, 1);
         },
         getInfo(datas: number[]): string {
             return `被击败时，对全体敌人造成自己最大血量${rdP(datas[0])}%的伤害（不会致死）`;

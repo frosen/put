@@ -1075,6 +1075,9 @@
     "roundLogCellPrefab": {
       "__uuid__": "bae4f453-3fe9-4e59-8f8b-e0b4bacba2dc"
     },
+    "blankLogCellPrefab": {
+      "__uuid__": "e5ab1ace-52d4-4cae-9946-fb44750b4720"
+    },
     "_id": ""
   },
   {

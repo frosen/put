@@ -26,6 +26,7 @@ const SLog = 'S';
 const DLog = 'D';
 const RdLog = 'Rd';
 const CellIdsByLogType = ['', RepeatLog, RichLog, ALog, MLog, BLog, SLog, DLog, RdLog];
+const BLANK = 'bl';
 
 cc.macro.CLEANUP_IMAGE_CACHE = false;
 cc.dynamicAtlasManager.enabled = true;
@@ -113,13 +114,17 @@ export class PageActExplLVD extends ListViewDelegate {
     @property(cc.Prefab)
     roundLogCellPrefab: cc.Prefab = null;
 
+    @property(cc.Prefab)
+    blankLogCellPrefab: cc.Prefab = null;
+
     numberOfRows(listView: ListView): number {
-        return Math.min(this.page.getLogs().length, 99);
+        return Math.min(this.page.getLogs().length, 99) + 8; // 多个blank占一个屏幕
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
         const logList = this.page.getLogs();
-        return CellIdsByLogType[logList[logList.length - rowIdx - 1].type];
+        if (rowIdx < logList.length) return CellIdsByLogType[logList[logList.length - rowIdx - 1].type];
+        else return BLANK;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
@@ -146,11 +151,13 @@ export class PageActExplLVD extends ListViewDelegate {
                 return cc.instantiate(this.deadLogCellPrefab).getComponent(CellLogBase);
             case RdLog:
                 return cc.instantiate(this.roundLogCellPrefab).getComponent(CellLogBase);
+            case BLANK:
+                return cc.instantiate(this.blankLogCellPrefab).getComponent(CellLogBase);
         }
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellLogBase) {
         const logList = this.page.getLogs();
-        cell.setData(logList[logList.length - rowIdx - 1]);
+        if (rowIdx < logList.length) cell.setData(logList[logList.length - rowIdx - 1]);
     }
 }
