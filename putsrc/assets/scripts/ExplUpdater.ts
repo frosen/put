@@ -219,13 +219,49 @@ export class ExplUpdater {
         this.logList.length = 0;
         nowTime -= MockSpan;
 
+        const curStep = curExpl.curStep;
+        const posId = curExpl.curPosId;
+        const curPosModel = actPosModelDict[posId];
+        const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
+
         // 捕捉状态
-        let catcherIdx = -1;
+        const catchSt = { catcherIdx: -1, canCatchPetIds: [], lvMin: 0, lvMax: 0 };
         if (curExpl.catcherId) {
-            catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, curExpl.catcherId);
-            if (catcherIdx === -1) curExpl.catcherId = null;
+            do {
+                const catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, curExpl.catcherId);
+                if (catcherIdx === -1) {
+                    curExpl.catcherId = null;
+                    break;
+                }
+                const catcher = gameData.items[catcherIdx] as Catcher;
+                const catcherModel: CatcherModel = catcherModelDict[catcher.id];
+
+                const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
+                let lvMin = lvBase - lvRange;
+                let lvMax = lvBase + lvRange;
+
+                lvMin = Math.max(lvMin, catcherModel.lvMin);
+                lvMax = Math.min(lvMax, catcherModel.lvMax);
+                if (lvMin > lvMax) break;
+
+                const petIdLists = explModel.petIdLists;
+                const petIds = petIdLists[curStep];
+                const realPetIds = [];
+                for (const petId of petIds) {
+                    const petModel = petModelDict[petId];
+                    if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;
+                    if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) continue;
+                    if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) continue;
+                    realPetIds[realPetIds.length] = petId;
+                }
+                if (realPetIds.length === 0) break;
+
+                catchSt.catcherIdx = catcherIdx;
+                catchSt.canCatchPetIds = realPetIds;
+                catchSt.lvMin = lvMin;
+                catchSt.lvMin = lvMax;
+            } while (false);
         }
-        const catchSt = { catcherIdx };
 
         // 结果状态
         const rztSt = {
@@ -242,10 +278,6 @@ export class ExplUpdater {
         const selfPets = GameDataTool.getReadyPets(this.gameData);
 
         // 计算step
-        const posId = curExpl.curPosId;
-        const curPosModel = actPosModelDict[posId];
-        const curStep = curExpl.curStep;
-
         const EachSpanUpdCnt = (1000 * 60 * 60 * 3) / ExplIntervalNormal; // 3小时的跳数
         const HangMaxSpan = 8; // 3*8=24小时
         let spanCnt = 0;
@@ -304,6 +336,27 @@ export class ExplUpdater {
 
         // 减速
         this.rdcExplDegreeByBtlFail(rztSt.failCnt);
+
+        // 战斗类任务
+        let fQCnt = 0;
+        const curStepPetIdLists = explModel.petIdLists[curStep];
+        const curStepPetLen = curStepPetIdLists.length;
+        GameDataTool.eachNeedQuest(gameData, QuestType.fight, (quest: Quest, model: QuestModel) => {
+            if (fQCnt === rztSt.winCnt) return;
+            const need = model.need as FightQuestNeed;
+            const needPetIds = need.petIds;
+            let petHaveCnt = 0;
+            for (const petId of curStepPetIdLists) if (needPetIds.includes(petId)) petHaveCnt++;
+            const meetRate = 1 - Math.pow((curStepPetLen - petHaveCnt) / curStepPetLen, 2); // llytodo 测试运算是否正确
+            const meetCnt = Math.floor(rztSt.winCnt * meetRate);
+            if (meetCnt <= 0) return;
+            const count = QuestTool.getRealCount(quest);
+            let diff = Math.min(count - quest.progress, meetCnt);
+            if (fQCnt + diff >= rztSt.winCnt) diff = rztSt.winCnt - fQCnt;
+
+            fQCnt += diff;
+            quest.progress += diff;
+        });
 
         // 调查类任务
         GameDataTool.eachNeedQuest(gameData, QuestType.search, (quest: Quest, model: QuestModel) => {
@@ -404,7 +457,7 @@ export class ExplUpdater {
             sensRate: number;
             eleRate: number;
         },
-        catchSt: { catcherIdx: number },
+        catchSt: { catcherIdx: number; canCatchPetIds: string[]; lvMin: number; lvMax: number },
         rztSt: {
             winCnt: number;
             failCnt: number;
@@ -457,36 +510,17 @@ export class ExplUpdater {
         do {
             const catcherIdx = catchSt.catcherIdx;
             if (catcherIdx === -1) break;
+
             const catcher = gameData.items[catcherIdx] as Catcher;
             const catcherModel: CatcherModel = catcherModelDict[catcher.id];
-
-            const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
-            let lvMin = lvBase - lvRange;
-            let lvMax = lvBase + lvRange;
-
-            lvMin = Math.max(lvMin, catcherModel.lvMin);
-            lvMax = Math.min(lvMax, catcherModel.lvMax);
-            if (lvMin > lvMax) break;
-
-            const petIdLists = explModel.petIdLists;
-            const petIds = petIdLists[curStep];
-            const realPetIds = [];
-            for (const petId of petIds) {
-                const petModel = petModelDict[petId];
-                if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;
-                if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) continue;
-                if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) continue;
-                realPetIds[realPetIds.length] = petId;
-            }
-            if (realPetIds.length === 0) break;
 
             const rate = ExplUpdater.calcCatchRateByEleRate(catcherModel, petSt.eleRate);
             let catchCount = Math.floor(rate * winCount);
             catchCount = Math.min(catchCount, catcher.count);
             let catchIdx = 0;
             for (; catchIdx < catchCount; catchIdx++) {
-                const petId = getRandomOneInList(realPetIds);
-                const lv = lvMin + randomInt(lvMax - lvMin);
+                const petId = getRandomOneInList(catchSt.canCatchPetIds);
+                const lv = catchSt.lvMin + randomInt(catchSt.lvMax - catchSt.lvMin);
 
                 const pet = PetTool.createWithRandomFeature(petId, lv);
                 const cPet = CaughtPetTool.createByPet(pet);
@@ -501,27 +535,6 @@ export class ExplUpdater {
             }
             GameDataTool.deleteItem(gameData, catcherIdx, catchIdx);
         } while (false);
-
-        // 战斗类任务
-        let fQCnt = 0;
-        const curStepPetIdLists = explModel.petIdLists[curStep];
-        const curStepPetLen = curStepPetIdLists.length;
-        GameDataTool.eachNeedQuest(gameData, QuestType.fight, (quest: Quest, model: QuestModel) => {
-            if (fQCnt === winCount) return;
-            const need = model.need as FightQuestNeed;
-            const needPetIds = need.petIds;
-            let petHaveCnt = 0;
-            for (const petId of curStepPetIdLists) if (needPetIds.includes(petId)) petHaveCnt++;
-            const meetRate = 1 - Math.pow((curStepPetLen - petHaveCnt) / curStepPetLen, 2); // llytodo 测试运算是否正确
-            const meetCnt = Math.floor(winCount * meetRate);
-            if (meetCnt <= 0) return;
-            const count = QuestTool.getRealCount(quest);
-            let diff = Math.min(count - quest.progress, meetCnt);
-            if (fQCnt + diff >= winCount) diff = winCount - fQCnt;
-
-            fQCnt += diff;
-            quest.progress += diff;
-        });
 
         // 计算获得的物品
         let gainCnt = bigRdCnt * (realExplRdCnt - 1);
@@ -566,7 +579,8 @@ export class ExplUpdater {
         // 计算钱
         const moneyGainCnt = Math.floor(gainCnt * MoneyGainRdEnterRate);
         if (moneyGainCnt > 0) {
-            const eachMoneyCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curStep, gainMoreRate);
+            let eachMoneyCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curStep, gainMoreRate);
+            eachMoneyCnt *= GameJITDataTool.getAmplRate(null, AmplAttriType.expl);
             const moneyAdd = randomAreaInt(eachMoneyCnt * moneyGainCnt, 0.2);
             GameDataTool.handleMoney(gameData, (money: Money) => (money.sum += moneyAdd));
             rztSt.money += moneyAdd;
@@ -832,7 +846,8 @@ export class ExplUpdater {
                 const gainCntRate = ExplUpdater.calcGainCntRate(sensRate);
                 this.moneyGaining = randomRate(MoneyGainRdEnterRate);
                 if (this.moneyGaining) {
-                    this.gainCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curExpl.curStep, gainCntRate);
+                    const gainCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curExpl.curStep, gainCntRate);
+                    this.gainCnt = Math.floor(gainCnt * GameJITDataTool.getAmplRate(null, AmplAttriType.expl));
                 } else {
                     this.gainCnt = randomRound(gainCntRate);
                 }
@@ -864,7 +879,7 @@ export class ExplUpdater {
 
     changeExplDegree(cnt: number) {
         if (cnt === 0) return;
-        if (cnt < 0) cnt = Math.max(this.updCnt, cnt);
+        if (cnt < 0) cnt = Math.max(-this.updCnt, cnt);
         this.updCnt += cnt;
         this.gameData.curExpl.chngUpdCnt += cnt; // 不用chngUpdCnt = updCnt是为了避免恢复时还没有updCnt造成问题
         this.gameData.curExpl.stepEnterTime -= cnt * ExplInterval;
@@ -883,19 +898,16 @@ export class ExplUpdater {
     }
 
     static calcGainCntRate(senRate: number): number {
-        let cntRate: number;
-        if (senRate < 1) cntRate = 1;
+        if (senRate < 1) return 1;
         if (senRate < 3) return 1 + (senRate - 1) * 0.5;
-        else cntRate = 2;
-        return cntRate + 0.1;
+        else return 2;
     }
 
     static calcMoneyGain(lv: number, step: number, gainRate: number): number {
         let moneyAdd = (lv + step * 2) * (1 + step * 0.1);
+        moneyAdd *= 0.7 + gainRate * 0.3;
         moneyAdd = randomAreaInt(moneyAdd, 0.2);
         moneyAdd = moneyAdd - 3 + randomInt(7); // +-20% +-3
-        moneyAdd *= GameJITDataTool.getAmplRate(null, AmplAttriType.expl);
-        moneyAdd *= 1 + gainRate * 0.1;
         moneyAdd = Math.max(Math.ceil(moneyAdd), 1);
         return moneyAdd;
     }
