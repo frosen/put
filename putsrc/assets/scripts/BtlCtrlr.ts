@@ -149,10 +149,6 @@ export class BtlCtrlr {
         const curExpl = this.gameData.curExpl;
         const petCount = GameDataTool.getReadyPets(this.gameData).length;
         this.realBattle.reset(null, spcBtlId, { curExpl, petCount });
-        if (this.debugMode) {
-            this.realBattleCopys.length = 0;
-            this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(this.realBattle) });
-        }
 
         // 更新memory
         GameDataTool.createBattle(
@@ -166,8 +162,12 @@ export class BtlCtrlr {
                 }
             )
         );
-
         this.initBattle(this.realBattle);
+
+        if (this.debugMode) {
+            this.realBattleCopys.length = 0;
+            this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(this.realBattle) });
+        }
         this.gotoNextRound();
     }
 
@@ -176,12 +176,12 @@ export class BtlCtrlr {
 
         // 更新battle
         this.realBattle.reset(battleMmr.enemys, null, null);
+        this.initBattle(this.realBattle);
+
         if (this.debugMode) {
             this.realBattleCopys.length = 0;
             this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(this.realBattle) });
         }
-
-        this.initBattle(this.realBattle);
         this.gotoNextRound();
     }
 

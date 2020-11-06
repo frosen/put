@@ -412,10 +412,18 @@ export class BattlePet {
         newBPet.next = this.next; // 暂时指向旧数据，在RealBattle的clone中更新
 
         newBPet.pet = this.pet;
-        newBPet.pet2 = this.pet2;
+        newBPet.pet2 = deepCopy(this.pet2);
 
         newBPet.hp = this.hp;
         newBPet.hpMax = this.hpMax;
+
+        newBPet.startFeatures = this.startFeatures;
+        newBPet.atkFeatures = this.atkFeatures;
+        newBPet.castFeatures = this.castFeatures;
+        newBPet.hurtFeatures = this.hurtFeatures;
+        newBPet.healFeatures = this.healFeatures;
+        newBPet.eDeadFeatures = this.eDeadFeatures;
+        newBPet.deadFeatures = this.deadFeatures;
 
         for (const skill of this.skillDatas) {
             const newSkill = new BattleSkill();

@@ -193,10 +193,10 @@ export class ExplUpdater {
                 if (win) {
                     this.receiveExp();
                     this.catchPet();
+                } else {
+                    this.rdcExplDegreeByBtlFail();
                 }
             }
-        } else {
-            this.handleSelfTeamChange();
         }
 
         let nowTime = Date.now();
@@ -209,8 +209,9 @@ export class ExplUpdater {
             this.updCnt = curExpl.chngUpdCnt;
             this.lastTime = lastTime;
 
-            this.recoverExplStepPercent(curExpl);
+            this.resetSelfTeamData();
             this.resetAllUI();
+            this.recoverExplStepPercent(curExpl);
             this.startExpl();
             return;
         }
@@ -228,6 +229,8 @@ export class ExplUpdater {
 
         // 结果状态
         const rztSt = {
+            winCnt: 0,
+            failCnt: 0,
             exp: 0,
             money: 0,
             eqps: [],
@@ -259,6 +262,8 @@ export class ExplUpdater {
                 const calcRzt = this.calcBtlDuraUpdCntAndWinRate(gameData);
                 btlDuraUpdCnt = calcRzt.btlDuraUpdCnt;
                 btlWinRate = calcRzt.btlWinRate;
+            } else {
+                this.resetSelfTeamData(); // getPosPetAgiRate等需要selfTeamData，而上面calcBtl带有resetSelfTeam
             }
             const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.btlCtrlr);
             const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.btlCtrlr);
@@ -269,16 +274,18 @@ export class ExplUpdater {
             const nextTime = nextUpdCnt * ExplInterval + curExpl.stepEnterTime;
 
             if (nextTime < nowTime) {
-                this.recoverExplInExpl(curExpl.chngUpdCnt, nextUpdCnt, petSt, catchSt, rztSt, nextTime);
+                this.recoverExplInExpl(curExpl.chngUpdCnt, nextUpdCnt, petSt, catchSt, rztSt);
                 curExpl.chngUpdCnt = nextUpdCnt;
             } else {
                 const curUpdCnt = Math.floor((nowTime - curExpl.stepEnterTime) / ExplInterval);
-                this.recoverExplInExpl(curExpl.chngUpdCnt, curUpdCnt, petSt, catchSt, rztSt, nowTime);
+                this.recoverExplInExpl(curExpl.chngUpdCnt, curUpdCnt, petSt, catchSt, rztSt);
                 curExpl.chngUpdCnt = curUpdCnt;
                 this.updCnt = curUpdCnt;
                 this.lastTime = curUpdCnt * ExplInterval + curExpl.stepEnterTime;
                 break;
             }
+
+            Memory.updateGameDataReal(gameData, nextTime); // 计算饮品和默契
 
             spanCnt++;
             if (spanCnt >= HangMaxSpan) {
@@ -293,11 +300,10 @@ export class ExplUpdater {
         const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.btlCtrlr);
         const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
         const speedChangeCnt = rztSt.moveCnt * speedUpCnt;
-        if (speedUpCnt !== 0) {
-            this.updCnt += speedChangeCnt;
-            this.updateChgUpdCnt();
-            this.gameData.curExpl.stepEnterTime -= speedUpCnt * ExplInterval;
-        }
+        this.changeExplDegree(speedChangeCnt);
+
+        // 减速
+        this.rdcExplDegreeByBtlFail(rztSt.failCnt);
 
         // 调查类任务
         GameDataTool.eachNeedQuest(gameData, QuestType.search, (quest: Quest, model: QuestModel) => {
@@ -308,6 +314,7 @@ export class ExplUpdater {
             }
         });
 
+        this.resetSelfTeamData();
         this.resetAllUI();
         this.recoverExplStepPercent(curExpl);
 
@@ -378,6 +385,13 @@ export class ExplUpdater {
         return win;
     }
 
+    resetSelfTeamData() {
+        const oldPage = this.btlCtrlr.page;
+        this.btlCtrlr.page = null;
+        this.btlCtrlr.resetSelfTeam();
+        this.btlCtrlr.page = oldPage;
+    }
+
     recoverExplInExpl(
         fromUpdCnt: number,
         toUpdCnt: number,
@@ -391,8 +405,16 @@ export class ExplUpdater {
             eleRate: number;
         },
         catchSt: { catcherIdx: number },
-        rztSt: { exp: number; money: number; eqps: any[]; pets: any[]; itemDict: {}; moveCnt: number },
-        spanEndTime: number
+        rztSt: {
+            winCnt: number;
+            failCnt: number;
+            exp: number;
+            money: number;
+            eqps: any[];
+            pets: any[];
+            itemDict: {};
+            moveCnt: number;
+        }
     ) {
         // 计算回合数和胜利数量 ------------------------------------------
         let eachBigRdUpdCnt = 0; // 一个大轮次中包括了战斗和探索，恢复的时间
@@ -409,6 +431,10 @@ export class ExplUpdater {
         const diffUpdCnt = toUpdCnt - fromUpdCnt;
         const bigRdCnt = Math.floor(diffUpdCnt / eachBigRdUpdCnt);
         const winCount = Math.ceil(bigRdCnt * petSt.btlWinRate);
+
+        rztSt.winCnt += winCount;
+        rztSt.failCnt += bigRdCnt - winCount;
+        rztSt.moveCnt += bigRdCnt * realExplRdCnt; // 用于调整速度而记录移动次数
 
         // 计算获取的经验 ------------------------------------------
         const exp = ExplUpdater.calcExpByLv(petSt.selfLv, petSt.enemyLv);
@@ -579,12 +605,6 @@ export class ExplUpdater {
                 if (rzt === GameDataTool.SUC) saveItemRzt(itemId, itemLeft);
             }
         }
-
-        // 计算饮品和默契
-        Memory.updateGameDataReal(gameData, spanEndTime);
-
-        // 用于调整速度而记录移动次数
-        rztSt.moveCnt += bigRdCnt * realExplRdCnt;
     }
 
     calcBtlDuraUpdCntAndWinRate(gameData: GameData): { btlDuraUpdCnt: number; btlWinRate: number } {
@@ -612,7 +632,7 @@ export class ExplUpdater {
                     features: ePet.inbFeatures
                 });
             }
-            const mockBattle: BattleMmr = {
+            const mockData: BattleMmr = {
                 startUpdCnt: 0,
                 seed: 0,
                 selfs: null,
@@ -620,7 +640,7 @@ export class ExplUpdater {
                 spcBtlId: 0
             };
 
-            const win = this.mockBattle(mockBattle, false, (realBattle: RealBattle): boolean => {
+            const win = this.mockBattle(mockData, false, (realBattle: RealBattle): boolean => {
                 if (realBattle.start === false) return true;
                 updCntTotal++;
                 return false;
@@ -839,11 +859,15 @@ export class ExplUpdater {
     handleSpeedUp() {
         const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.btlCtrlr);
         const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
-        if (speedUpCnt !== 0) {
-            this.updCnt += speedUpCnt;
-            this.updateChgUpdCnt();
-            this.gameData.curExpl.stepEnterTime -= speedUpCnt * ExplInterval;
-        }
+        this.changeExplDegree(speedUpCnt);
+    }
+
+    changeExplDegree(cnt: number) {
+        if (cnt === 0) return;
+        if (cnt < 0) cnt = Math.max(this.updCnt, cnt);
+        this.updCnt += cnt;
+        this.gameData.curExpl.chngUpdCnt += cnt; // 不用chngUpdCnt = updCnt是为了避免恢复时还没有updCnt造成问题
+        this.gameData.curExpl.stepEnterTime -= cnt * ExplInterval;
     }
 
     static calcHideExplRdCnt(rate: number): number {
@@ -1111,6 +1135,8 @@ export class ExplUpdater {
             this.receiveExp();
             this.catchPet();
             this.doFightQuest();
+        } else {
+            this.rdcExplDegreeByBtlFail();
         }
         this.startRecover();
     }
@@ -1238,6 +1264,10 @@ export class ExplUpdater {
         }
     }
 
+    rdcExplDegreeByBtlFail(failCnt: number = 1) {
+        this.changeExplDegree(-200 * failCnt);
+    }
+
     // -----------------------------------------------------------------
 
     startRecover() {
@@ -1274,6 +1304,7 @@ export class ExplUpdater {
         }
 
         if (done) {
+            this.updateChgUpdCnt();
             this.startExpl();
         } else {
             this.log(ExplLogType.repeat, '休息中');
