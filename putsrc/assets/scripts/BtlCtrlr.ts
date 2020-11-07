@@ -147,8 +147,7 @@ export class BtlCtrlr {
 
         // 更新battle
         const curExpl = this.gameData.curExpl;
-        const petCount = GameDataTool.getReadyPets(this.gameData).length;
-        this.realBattle.reset(null, spcBtlId, { curExpl, petCount });
+        this.realBattle.reset(null, spcBtlId, curExpl);
 
         // 更新memory
         GameDataTool.createBattle(
@@ -648,9 +647,23 @@ export class BtlCtrlr {
     static getHitResult(battlePet: BattlePet, aim: BattlePet): number {
         const pet2 = battlePet.pet2;
         let hitRate = pet2.hitRate;
+
+        // 命中等级修正
+        const lvDiff = battlePet.pet.lv - aim.pet.lv;
+        if (lvDiff >= 4) hitRate += 0.27;
+        else if (lvDiff === 3) hitRate += 0.09;
+        else if (lvDiff === 2) hitRate += 0.03;
+        else if (lvDiff === 1) hitRate += 0.01;
+        else if (lvDiff === 0) hitRate += 0;
+        else if (lvDiff === -1) hitRate -= 0.01;
+        else if (lvDiff === -2) hitRate -= 0.03;
+        else if (lvDiff === -3) hitRate -= 0.09;
+        else hitRate -= 0.27;
+
+        // 命中敏捷修正
         const agiProportion = pet2.agility / aim.pet2.agility;
-        if (agiProportion > 1) hitRate = hitRate + 0.02 + (agiProportion - 1) * 0.1;
-        else if (agiProportion < 1) hitRate = hitRate - (1 - agiProportion) * 0.1;
+        if (agiProportion > 1) hitRate = hitRate + 0.05 + (agiProportion - 1) * 0.2;
+        else if (agiProportion < 1) hitRate = hitRate - 0.05 - (1 - agiProportion) * 0.3;
 
         let hitResult: number;
         if (ranSd() < hitRate - aim.pet2.evdRate) {

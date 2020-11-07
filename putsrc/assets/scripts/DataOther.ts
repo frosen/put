@@ -550,7 +550,7 @@ export class RealBattle {
         });
     }
 
-    reset(ePetMmrs: EPetMmr[], spcBtlId: number, createData: { curExpl: ExplMmr; petCount: number }) {
+    reset(ePetMmrs: EPetMmr[], spcBtlId: number, curExpl: ExplMmr) {
         if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
 
         if (ePetMmrs) {
@@ -563,7 +563,7 @@ export class RealBattle {
         } else if (spcBtlId > 0) {
             // llytodo
         } else {
-            const ePetsData = RealBattle.createRandomPetData(createData.curExpl, createData.petCount);
+            const ePetsData = RealBattle.createRandomEnemyPetData(curExpl);
             this.enemyTeam.reset(ePetsData.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetData = ePetsData[petIdx];
                 const ePet = PetTool.createWithRandomFeature(ePetData.id, ePetData.lv);
@@ -594,12 +594,17 @@ export class RealBattle {
         this.start = true;
     }
 
-    static createRandomPetData(curExpl: ExplMmr, count: number): { id: string; lv: number }[] {
+    static getEnemyPetCountByLv(lv: number): number {
+        if (lv < 10) return 3;
+        else if (lv < 20) return 4;
+        else return 5;
+    }
+
+    static createRandomEnemyPetData(curExpl: ExplMmr): { id: string; lv: number }[] {
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
-        const petCount = randomRate(0.5) ? count : count - 1;
         const curStep = curExpl.curStep;
         const petIdLists = explModel.petIdLists;
         if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有精灵列表petIdLists，无法战斗`);
@@ -609,6 +614,9 @@ export class RealBattle {
         const enmeyPetType2 = getRandomOneInList(petIds);
 
         const { base: lvBase, range: lvRange } = this.calcLvArea(curPosModel, curStep);
+
+        let petCount = RealBattle.getEnemyPetCountByLv(lvBase);
+        if (randomRate(0.5)) petCount -= 1; // 增加一些随机感
 
         const petDatas: { id: string; lv: number }[] = [];
         for (let index = 0; index < petCount; index++) {

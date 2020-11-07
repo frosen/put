@@ -629,7 +629,7 @@ export class ExplUpdater {
         const curStep = curExpl.curStep;
         const petList = curExplModel.petIdLists[curStep];
         const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
-        const petLen = GameDataTool.getReadyPets(this.gameData).length;
+        const petCnt = RealBattle.getEnemyPetCountByLv(lvBase);
 
         let updCntTotal: number = 0;
         let winRateTotal: number = 0;
@@ -637,7 +637,7 @@ export class ExplUpdater {
         const CalcCnt = 3;
         for (let index = 0; index < CalcCnt; index++) {
             const enemys: EPetMmr[] = [];
-            for (let index = 0; index < petLen; index++) {
+            for (let index = 0; index < petCnt; index++) {
                 const ePet = PetTool.createWithRandomFeature(petList[index], curLv);
                 enemys.push({
                     id: ePet.id,
@@ -661,14 +661,21 @@ export class ExplUpdater {
             });
 
             const rb = this.btlCtrlr.realBattle;
-            if (win) for (const bPet of rb.selfTeam.pets) winRateTotal += 0.5 + Math.min(1, bPet.hp / bPet.hpMax / 0.2) * 0.5;
-            else for (const bPet of rb.enemyTeam.pets) winRateTotal += 0.5 - Math.min(bPet.hp / bPet.hpMax / 0.2) * 0.5;
+            if (win) {
+                let hpRateTotal = 0;
+                for (const bPet of rb.selfTeam.pets) hpRateTotal += bPet.hp / bPet.hpMax;
+                winRateTotal += 0.5 + (Math.min(0.2, hpRateTotal / rb.selfTeam.pets.length) / 0.2) * 0.5;
+            } else {
+                let hpRateTotal = 0;
+                for (const bPet of rb.enemyTeam.pets) hpRateTotal += bPet.hp / bPet.hpMax;
+                winRateTotal += 0.5 - (Math.min(0.2, hpRateTotal / rb.enemyTeam.pets.length) / 0.2) * 0.5;
+            }
 
             curLv += lvRange;
         }
 
         const btlDuraUpdCnt = Math.floor(updCntTotal / CalcCnt);
-        const btlWinRate = winRateTotal / (CalcCnt * petLen);
+        const btlWinRate = winRateTotal / CalcCnt;
 
         return {
             btlDuraUpdCnt,
