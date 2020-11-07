@@ -72,7 +72,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
             '所以现在我们委任你控制你的精灵去把这些物资运送回来，请一定要注意安全；'
         ],
         need: {
-            posId: 'GuangJiDianZhiLu',
+            posId: 'KeChuangXiaoJing',
             step: 1,
             name: '不稳定原料',
             count: 15
@@ -90,7 +90,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
             '现在有个重要会议他必须在场，你去找一下他，通知回来开会；'
         ],
         need: {
-            posId: 'GuangJiDianZhiLu',
+            posId: 'KeChuangXiaoJing',
             step: 2,
             name: '电气工程师',
             count: 800
