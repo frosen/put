@@ -251,27 +251,31 @@ export class PageActExpl extends BtlPageBase {
 
     // ui -----------------------------------------------------------------
 
-    setUIofSelfPet(index: number) {
+    setUIOfSelfPet(index: number) {
         const pets = this.updater.btlCtrlr.realBattle.selfTeam.pets;
         if (index === -1) {
             let petIdx = 0;
-            for (; petIdx < pets.length; petIdx++) this.setUIofSelfPet(petIdx);
-            for (; petIdx < BattlePetLenMax; petIdx++) this.clearUIofSelfPet(petIdx);
+            for (; petIdx < pets.length; petIdx++) this.setUIOfSelfPet(petIdx);
+            for (; petIdx < BattlePetLenMax; petIdx++) this.clearUIOfSelfPet(petIdx);
         } else {
-            this.setUIofPet(pets[index], this.selfPetUIs[index]);
+            this.setUIOfPet(pets[index], this.selfPetUIs[index]);
         }
     }
 
-    setUIofEnemyPet(index: number) {
+    setUIOfEnemyPet(index: number) {
         const pets = this.updater.btlCtrlr.realBattle.enemyTeam.pets;
         if (index === -1) {
-            for (let petIdx = 0; petIdx < pets.length; petIdx++) this.setUIofEnemyPet(petIdx);
+            for (let petIdx = 0; petIdx < pets.length; petIdx++) this.setUIOfEnemyPet(petIdx);
         } else {
-            this.setUIofPet(pets[index], this.enemyPetUIs[index]);
+            const bPet = pets[index];
+            const petUI = this.enemyPetUIs[index];
+            this.setUIOfPet(bPet, petUI);
+            // BOSS的颜色
+            petUI.petName.node.color = bPet.pet.master ? cc.color(230, 180, 0) : cc.color(29, 39, 42);
         }
     }
 
-    setUIofPet(battlePet: BattlePet, ui: PetUI) {
+    setUIOfPet(battlePet: BattlePet, ui: PetUI) {
         ui.node.active = true;
         const pet = battlePet.pet;
         ui.petName.string = PetTool.getCnName(pet);
@@ -283,11 +287,11 @@ export class PageActExpl extends BtlPageBase {
         ui.node.x = 0;
     }
 
-    clearUIofSelfPet(index: number) {
+    clearUIOfSelfPet(index: number) {
         this.selfPetUIs[index].node.active = false;
     }
 
-    clearUIofEnemyPet(index: number) {
+    clearUIOfEnemyPet(index: number) {
         this.enemyPetUIs[index].node.active = false;
     }
 

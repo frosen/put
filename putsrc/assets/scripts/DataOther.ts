@@ -183,7 +183,7 @@ export class Pet2 {
 
     skillIds: string[];
 
-    setData(pet: Pet, exPrvty: number = null, exEquips: Equip[] = null) {
+    setData(pet: Pet, ampl: number = 1, exPrvty: number = null, exEquips: Equip[] = null) {
         const petModel: PetModel = petModelDict[pet.id];
 
         const lv = pet.lv;
@@ -192,12 +192,12 @@ export class Pet2 {
         const dmgRange = DmgRangeByBio[bioType];
 
         // 一级原始属性
-        this.strengthOri = petModel.baseStrength + petModel.addStrength * lv;
-        this.concentrationOri = petModel.baseConcentration + petModel.addConcentration * lv;
-        this.durabilityOri = petModel.baseDurability + petModel.addDurability * lv;
-        this.agilityOri = petModel.baseAgility + petModel.addAgility * lv;
-        this.sensitivityOri = petModel.baseSensitivity + petModel.addSensitivity * lv;
-        this.elegantOri = petModel.baseElegant + petModel.addElegant * lv;
+        this.strengthOri = Math.floor((petModel.baseStrength + petModel.addStrength * lv) * ampl);
+        this.concentrationOri = Math.floor((petModel.baseConcentration + petModel.addConcentration * lv) * ampl);
+        this.durabilityOri = Math.floor((petModel.baseDurability + petModel.addDurability * lv) * ampl);
+        this.agilityOri = Math.floor((petModel.baseAgility + petModel.addAgility * lv) * ampl);
+        this.sensitivityOri = Math.floor((petModel.baseSensitivity + petModel.addSensitivity * lv) * ampl);
+        this.elegantOri = Math.floor((petModel.baseElegant + petModel.addElegant * lv) * ampl);
 
         // 一级属性
         this.strength = this.strengthOri;
@@ -364,10 +364,10 @@ export class BattlePet {
         this.beEnemy = beEnemy;
     }
 
-    init(pet: Pet, exPrvty: number, exEquips: Equip[]) {
+    init(pet: Pet, ampl: number, exPrvty: number, exEquips: Equip[]) {
         this.pet = pet;
         if (!this.pet2) this.pet2 = new Pet2();
-        this.pet2.setData(pet, exPrvty, exEquips);
+        this.pet2.setData(pet, ampl, exPrvty, exEquips);
 
         this.hp = this.pet2.hpMax;
         this.hpMax = this.pet2.hpMax;
@@ -546,41 +546,41 @@ export class RealBattle {
         } else sPets = GameDataTool.getReadyPets(gameData);
 
         this.selfTeam.reset(sPets.length, false, (bPet: BattlePet, petIdx: number) => {
-            bPet.init(sPets[petIdx], exPrvtys[petIdx], exEquips[petIdx]);
+            bPet.init(sPets[petIdx], 1, exPrvtys[petIdx], exEquips[petIdx]);
         });
     }
 
-    reset(ePetMmrs: EPetMmr[], spcBtlId: number, curExpl: ExplMmr) {
+    resetEnemy(spcBtlId: number, ePetMmrs: EPetMmr[], curExpl: ExplMmr) {
         if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
 
-        if (ePetMmrs) {
+        if (spcBtlId) {
+            // llytodo
+        } else if (ePetMmrs) {
+            const { ampl, prvty } = RealBattle.getEnemyAmplAndPrvtyByStep(curExpl.curStep);
             this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetMmr = ePetMmrs[petIdx];
                 const petData = PetTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.exFeatureIds, ePetMmr.features);
-                if (spcBtlId > 0) petData.master = 'spcBtl'; // llytodo master不配拥有名称吗
-                bPet.init(petData, null, null);
+                bPet.init(petData, ampl, prvty, null);
             });
-        } else if (spcBtlId > 0) {
-            // llytodo
         } else {
-            const ePetsData = RealBattle.createRandomEnemyPetData(curExpl);
-            this.enemyTeam.reset(ePetsData.length, true, (bPet: BattlePet, petIdx: number) => {
-                const ePetData = ePetsData[petIdx];
+            const { ampl, prvty } = RealBattle.getEnemyAmplAndPrvtyByStep(curExpl.curStep);
+            const ePetsDatas = RealBattle.createRandomEnemyPetData(curExpl);
+            this.enemyTeam.reset(ePetsDatas.length, true, (bPet: BattlePet, petIdx: number) => {
+                const ePetData = ePetsDatas[petIdx];
                 const ePet = PetTool.createWithRandomFeature(ePetData.id, ePetData.lv);
-                if (spcBtlId > 0) ePet.master = 'spcBtl';
-                bPet.init(ePet, null, null);
+                bPet.init(ePet, ampl, prvty, null);
             });
-        }
 
-        // 按照HP排序
-        if (randomRate(0.5)) {
-            const ePets = this.enemyTeam.pets;
-            ePets.sort((a, b) => b.hpMax - a.hpMax);
-            // 重置索引
-            for (let index = 0; index < ePets.length; index++) {
-                const pet = ePets[index];
-                pet.idx = index;
-                pet.fromationIdx = 5 - ePets.length + index;
+            // 按照HP排序
+            if (randomRate(0.5)) {
+                const ePets = this.enemyTeam.pets;
+                ePets.sort((a, b) => b.hpMax - a.hpMax);
+                // 重置索引
+                for (let index = 0; index < ePets.length; index++) {
+                    const pet = ePets[index];
+                    pet.idx = index;
+                    pet.fromationIdx = 5 - ePets.length + index;
+                }
             }
         }
 
@@ -594,10 +594,11 @@ export class RealBattle {
         this.start = true;
     }
 
-    static getEnemyPetCountByLv(lv: number): number {
-        if (lv < 10) return 3;
-        else if (lv < 20) return 4;
-        else return 5;
+    static getEnemyAmplAndPrvtyByStep(step: number): { ampl: number; prvty: number } {
+        if (step === 0) return { ampl: 1, prvty: 0 };
+        else if (step === 1) return { ampl: 1, prvty: 30 };
+        else if (step === 1) return { ampl: 1.1, prvty: 60 };
+        else return { ampl: 1.3, prvty: 90 };
     }
 
     static createRandomEnemyPetData(curExpl: ExplMmr): { id: string; lv: number }[] {
@@ -613,7 +614,7 @@ export class RealBattle {
         const enmeyPetType1 = getRandomOneInList(petIds);
         const enmeyPetType2 = getRandomOneInList(petIds);
 
-        const { base: lvBase, range: lvRange } = this.calcLvArea(curPosModel, curStep);
+        const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
 
         let petCount = RealBattle.getEnemyPetCountByLv(lvBase);
         if (randomRate(0.5)) petCount -= 1; // 增加一些随机感
@@ -630,6 +631,12 @@ export class RealBattle {
 
     static calcLvArea(posModel: ActPosModel, step: number): { base: number; range: number } {
         return { base: posModel.lv + step * 2, range: 2 };
+    }
+
+    static getEnemyPetCountByLv(lv: number): number {
+        if (lv < 10) return 3;
+        else if (lv < 20) return 4;
+        else return 5;
     }
 
     clone() {

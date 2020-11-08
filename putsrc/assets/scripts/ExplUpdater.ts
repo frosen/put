@@ -689,7 +689,7 @@ export class ExplUpdater {
         if (this.btlCtrlr.realBattle.start) {
             this.btlCtrlr.resetAllUI();
         } else {
-            this.page.setUIofSelfPet(-1);
+            this.page.setUIOfSelfPet(-1);
 
             const team = this.btlCtrlr.realBattle.selfTeam;
             this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
@@ -1304,7 +1304,7 @@ export class ExplUpdater {
                 done = false;
                 battlePet.hp += Math.floor(hpMax * 0.1);
                 battlePet.hp = Math.min(hpMax, battlePet.hp);
-                if (this.page) this.page.setUIofSelfPet(index);
+                if (this.page) this.page.setUIOfSelfPet(index);
             }
         }
 

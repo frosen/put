@@ -9,10 +9,10 @@ import { PageBase } from './PageBase';
 
 @ccclass
 export abstract class BtlPageBase extends PageBase {
-    abstract setUIofSelfPet(index: number): void;
-    abstract setUIofEnemyPet(index: number): void;
-    abstract clearUIofSelfPet(index: number): void;
-    abstract clearUIofEnemyPet(index: number): void;
+    abstract setUIOfSelfPet(index: number): void;
+    abstract setUIOfEnemyPet(index: number): void;
+    abstract clearUIOfSelfPet(index: number): void;
+    abstract clearUIOfEnemyPet(index: number): void;
 
     abstract doAttack(beEnemy: boolean, idx: number, combo: number): void;
     abstract doHurt(beEnemy: boolean, idx: number, hp: number, hpMax: number, dmg: number, crit: boolean, combo: number): void;

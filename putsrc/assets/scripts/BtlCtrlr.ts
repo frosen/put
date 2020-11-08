@@ -113,8 +113,8 @@ export class BtlCtrlr {
     }
 
     resetAllUI() {
-        this.page.setUIofSelfPet(-1);
-        this.page.setUIofEnemyPet(-1);
+        this.page.setUIOfSelfPet(-1);
+        this.page.setUIOfEnemyPet(-1);
         const team = this.realBattle.selfTeam;
         this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
         for (const pet of team.pets) {
@@ -135,19 +135,19 @@ export class BtlCtrlr {
     resetSelfTeam(mmr: BattleMmr = null) {
         this.realBattle.resetSelf(this.gameData, mmr ? mmr.selfs : null);
         if (this.page) {
-            this.page.setUIofSelfPet(-1);
+            this.page.setUIOfSelfPet(-1);
             const mpMax = this.realBattle.selfTeam.mpMax;
             this.page.resetAttriBar(mpMax, mpMax, 0);
         }
     }
 
-    startBattle(startUpdCnt: number, spcBtlId: number = 0) {
+    startBattle(startUpdCnt: number, spcBtlId: number = null) {
         const seed = Date.now();
         setSeed(seed);
 
         // 更新battle
         const curExpl = this.gameData.curExpl;
-        this.realBattle.reset(null, spcBtlId, curExpl);
+        this.realBattle.resetEnemy(spcBtlId, null, curExpl);
 
         // 更新memory
         GameDataTool.createBattle(
@@ -174,7 +174,7 @@ export class BtlCtrlr {
         setSeed(battleMmr.seed);
 
         // 更新battle
-        this.realBattle.reset(battleMmr.enemys, null, null);
+        this.realBattle.resetEnemy(battleMmr.spcBtlId, battleMmr.enemys, null);
         this.initBattle(this.realBattle);
 
         if (this.debugMode) {
@@ -188,7 +188,7 @@ export class BtlCtrlr {
         const hiding = this.gameData.curExpl.hiding;
 
         // 更新UI和日志
-        if (this.page) this.page.setUIofEnemyPet(-1);
+        if (this.page) this.page.setUIOfEnemyPet(-1);
 
         const petNameDict = {};
         for (const ePet of this.realBattle.enemyTeam.pets) {
@@ -743,7 +743,7 @@ export class BtlCtrlr {
         if (this.page) {
             // 清理敌人状态
             for (let index = 0; index < BattlePetLenMax; index++) {
-                this.page.clearUIofEnemyPet(index);
+                this.page.clearUIOfEnemyPet(index);
                 this.page.removeBuff(true, index, null);
             }
 
