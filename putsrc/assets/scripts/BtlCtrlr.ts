@@ -650,15 +650,19 @@ export class BtlCtrlr {
 
         // 命中等级修正
         const lvDiff = battlePet.pet.lv - aim.pet.lv;
-        if (lvDiff >= 4) hitRate += 0.27;
-        else if (lvDiff === 3) hitRate += 0.09;
-        else if (lvDiff === 2) hitRate += 0.03;
-        else if (lvDiff === 1) hitRate += 0.01;
-        else if (lvDiff === 0) hitRate += 0;
-        else if (lvDiff === -1) hitRate -= 0.01;
-        else if (lvDiff === -2) hitRate -= 0.03;
-        else if (lvDiff === -3) hitRate -= 0.09;
-        else hitRate -= 0.27;
+        if (lvDiff > 0) {
+            if (lvDiff === 1) hitRate += 0.01;
+            else if (lvDiff === 2) hitRate += 0.03;
+            else if (lvDiff === 3) hitRate += 0.09;
+            else if (lvDiff === 4) hitRate += 0.27;
+            else hitRate += 0.54;
+        } else if (lvDiff < 0) {
+            if (lvDiff === -1) hitRate -= 0.01;
+            else if (lvDiff === -2) hitRate -= 0.03;
+            else if (lvDiff === -3) hitRate -= 0.09;
+            else if (lvDiff === -4) hitRate -= 0.27;
+            else hitRate -= 0.54;
+        }
 
         // 命中敏捷修正
         const agiProportion = pet2.agility / aim.pet2.agility;

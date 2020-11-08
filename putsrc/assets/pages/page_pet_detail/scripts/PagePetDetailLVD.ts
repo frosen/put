@@ -15,7 +15,7 @@ import { CellPetName } from '../cells/cell_pet_name/scripts/CellPetName';
 import { CellTitle } from '../cells/cell_title/scripts/CellTitle';
 import { petModelDict } from 'configs/PetModelDict';
 import { expModels } from 'configs/ExpModels';
-import { Pet, PetStateNames, BioTypeNames, EleTypeNames, BattleTypeNames, Feature } from 'scripts/DataSaved';
+import { Pet, BioTypeNames, EleTypeNames, BattleTypeNames, Feature } from 'scripts/DataSaved';
 import { Pet2 } from 'scripts/DataOther';
 import { PetModel } from 'scripts/DataModel';
 import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
@@ -25,6 +25,7 @@ import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PetTool } from 'scripts/Memory';
 import { drinkModelDict } from 'configs/DrinkModelDict';
+import { CellPet } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 
 const PETNAME = 'p';
 const ATTRI2 = '2';
@@ -197,8 +198,11 @@ export class PagePetDetailLVD extends ListViewDelegate {
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
         switch (cellId) {
-            case PETNAME:
-                return cc.instantiate(this.petNamePrefab).getComponent(ListViewCell);
+            case PETNAME: {
+                const cell = cc.instantiate(this.petNamePrefab).getComponent(CellPetName);
+                cell.page = this.page;
+                return cell;
+            }
             case ATTRI1:
                 return cc.instantiate(this.attriPrefab).getComponent(ListViewCell);
             case ATTRI2:
@@ -223,9 +227,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
 
         // 第一组
         if (rowIdx === 0) {
-            const name = PetTool.getCnName(pet);
-            const subName = pet.nickname ? '(' + PetTool.getBaseCnName(pet) + ')' : '';
-            cell.setData(name, subName, PetStateNames[pet.state], STATE_TIP);
+            cell.setData(pet, STATE_TIP);
         } else if (rowIdx === 1) {
             cell.setData1('等级', String(pet.lv), LV_TIP);
             cell.setData2('融合层数', String(pet.merges.length), MERGE_TIP);

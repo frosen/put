@@ -418,7 +418,7 @@ export class PetTool {
         const pet = newInsWithChecker(Pet);
 
         pet.id = id;
-        pet.nickname = null;
+        pet.nickname = '';
         pet.master = '';
 
         pet.catchTime = 0;
@@ -1497,6 +1497,10 @@ export class GameDataTool {
 
     static getItemCountMax(gameData: GameData) {
         return 300; // llytodo 根据职称不同而不同
+    }
+
+    static getPetNameLenMax(gameData: GameData) {
+        return 2;
     }
 
     // -----------------------------------------------------------------
