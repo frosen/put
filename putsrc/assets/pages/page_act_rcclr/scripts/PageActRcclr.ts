@@ -11,11 +11,13 @@ import { PageActRcclrLVD } from './PageActRcclrLVD';
 import { GameData, Item, ItemType, Cnsum, CnsumType, Money, Equip, CaughtPet } from 'scripts/DataSaved';
 import { MoneyTool, GameDataTool, CnsumTool, EquipTool, CaughtPetTool } from 'scripts/Memory';
 import { NavBar } from 'scripts/NavBar';
-import { LIST_NAMES } from 'pages/page_pkg/scripts/PagePkg';
+import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { PageBase } from 'scripts/PageBase';
 import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
+import { PkgSelectionBar } from 'pages/page_pkg/scripts/PkgSelectionBar';
+import { TouchLayerForBack } from 'scripts/TouchLayerForBack';
 
 const WIDTH = 1080;
 const RcclPriceRate = 0.4;
@@ -36,12 +38,12 @@ export class PageActRcclr extends PageBase {
     listDatas: { dirtyToken: number; list: ListView; delegate: PageActRcclrLVD }[] = [];
 
     @property(cc.Node)
-    selectionLayer: cc.Node = null;
+    selectionNode: cc.Node = null;
 
-    @property(cc.Node)
-    selectionBar: cc.Node = null;
+    @property(cc.Prefab)
+    selectionBarPrefab: cc.Node = null;
 
-    selectionLblNodes: cc.Node[] = [];
+    selectionBar: PkgSelectionBar = null;
 
     priceDict: { [key: string]: number } = {};
     countDict: { [key: string]: number } = {};
@@ -50,27 +52,17 @@ export class PageActRcclr extends PageBase {
         super.onLoad();
         if (CC_EDITOR) return;
 
-        const selections = this.selectionLayer.children;
-        for (let index = 0; index < LIST_NAMES.length; index++) {
-            const listNode = cc.instantiate(this.listPrefab);
-            listNode.parent = this.listLayer;
-            listNode.x = index * WIDTH;
+        const selectionBarNode = cc.instantiate(this.selectionBarPrefab);
+        selectionBarNode.parent = this.selectionNode;
 
-            const list = listNode.getComponent(ListView);
-            const delegate = list.delegate as PageActRcclrLVD;
-            delegate.page = this;
+        this.selectionBar = selectionBarNode.getComponent(PkgSelectionBar);
+        this.selectionBar.onSelection = (curSelection: number) => {
+            this.turnList(curSelection);
+        };
+    }
 
-            this.listDatas.push({ dirtyToken: 0, list, delegate });
-
-            const selection = selections[index];
-            selection.on('click', () => {
-                this.turnList(index);
-            });
-
-            const lblNode = selection.children[0];
-            lblNode.getComponent(cc.Label).string = LIST_NAMES[index];
-            this.selectionLblNodes.push(lblNode);
-        }
+    beforePageHideAnim(willDestroy: boolean) {
+        this.ctrlr.touchLayerForBack.getComponent(TouchLayerForBack).setYLimit(0);
     }
 
     onLoadNavBar(navBar: NavBar) {
@@ -90,6 +82,8 @@ export class PageActRcclr extends PageBase {
             return false;
         });
         navBar.setTitle('回收站');
+
+        this.ctrlr.touchLayerForBack.getComponent(TouchLayerForBack).setYLimit(-110);
     }
 
     recycle(): boolean {
@@ -174,40 +168,30 @@ export class PageActRcclr extends PageBase {
 
     resetCurList() {
         const curDirtyToken = this.ctrlr.memory.dirtyToken;
-        const curData = this.listDatas[this.curListIdx];
+        let curData = this.listDatas[this.curListIdx];
+        if (!curData) curData = this.createList(this.curListIdx);
         if (curData.dirtyToken !== curDirtyToken) {
             curData.dirtyToken = curDirtyToken;
             const items = this.ctrlr.memory.gameData.items;
-            const idxs = PageActRcclr.getItemIdxsByListIdxWithoutMoney(items, this.curListIdx);
+            const idxs = PagePkg.getItemIdxsByListIdx(items, this.curListIdx || -1); // -1是不显示money
             curData.delegate.initListData(items, idxs);
             curData.list.resetContent(true);
         }
     }
 
-    static getItemIdxsByListIdxWithoutMoney(items: Item[], listIdx: number): number[] {
-        const idxs: number[] = [];
-        if (listIdx === 0) {
-            for (let index = 1; index < items.length; index++) idxs[idxs.length] = index;
-        } else if (listIdx === 1) {
-            this.getoutItemIdxsByTypeWithoutMoney(items, idxs, ItemType.equip);
-        } else if (listIdx === 2) {
-            this.getoutItemIdxsByTypeWithoutMoney(items, idxs, ItemType.cnsum, CnsumType.drink);
-        } else if (listIdx === 3) {
-            this.getoutItemIdxsByTypeWithoutMoney(items, idxs, ItemType.cnsum, CnsumType.catcher);
-            this.getoutItemIdxsByTypeWithoutMoney(items, idxs, ItemType.caughtPet);
-        } else if (listIdx === 4) {
-            this.getoutItemIdxsByTypeWithoutMoney(items, idxs, ItemType.cnsum, CnsumType.eqpAmplr);
-        }
-        return idxs;
-    }
+    createList(listIdx: number): { dirtyToken: number; list: ListView; delegate: PageActRcclrLVD } {
+        const listNode = cc.instantiate(this.listPrefab);
+        listNode.parent = this.listLayer;
+        listNode.x = listIdx * WIDTH;
 
-    static getoutItemIdxsByTypeWithoutMoney(items: Item[], idxsOut: number[], itemType: ItemType, cnsumType: CnsumType = null) {
-        for (let index = 1; index < items.length; index++) {
-            const item = items[index];
-            if (item.itemType === itemType && (cnsumType ? (item as Cnsum).cnsumType === cnsumType : true)) {
-                idxsOut[idxsOut.length] = index;
-            }
-        }
+        const list = listNode.getComponent(ListView);
+        const delegate = list.delegate as PageActRcclrLVD;
+        delegate.page = this;
+
+        const listData = { dirtyToken: 0, list, delegate };
+        this.listDatas[listIdx] = listData;
+
+        return listData;
     }
 
     turnning: boolean = false;
@@ -220,32 +204,17 @@ export class PageActRcclr extends PageBase {
             this.resetCurList();
 
             this.turnning = true;
+            this.selectionBar.canTurn = false;
             cc.tween(this.listLayer)
                 .to(0.2, { x: idx * WIDTH * -1 }, { easing: 'quadInOut' })
                 .call(() => {
                     this.turnning = false;
+                    this.selectionBar.canTurn = true;
                 })
-                .start();
-
-            for (const lblNode of this.selectionLblNodes) lblNode.color = cc.color(90, 90, 90);
-            this.selectionLblNodes[idx].color = cc.Color.RED;
-
-            cc.tween(this.selectionBar)
-                .to(0.2, { x: idx * 180 + 90 }, { easing: 'quadInOut' })
                 .start();
         } else {
             this.resetCurList();
         }
-    }
-
-    moveList(moveDis: number) {
-        const nextIdx = this.curListIdx + moveDis;
-        if (nextIdx < 0 || this.listDatas.length <= nextIdx) {
-            cc.log('PUT can not move list to ', nextIdx);
-            return;
-        }
-
-        this.turnList(nextIdx);
     }
 
     // -----------------------------------------------------------------
@@ -264,6 +233,8 @@ export class PageActRcclr extends PageBase {
 
         cell.setCount(newCount, countMax);
         this.resetSubTitle();
+
+        for (const listData of this.listDatas) if (listData) listData.dirtyToken = 0; // 所有页面预备刷新
     }
 
     onCellRdcCount(cell: CellTransaction, count: number) {
@@ -280,6 +251,8 @@ export class PageActRcclr extends PageBase {
 
         cell.setCount(newCount, countMax);
         this.resetSubTitle();
+
+        for (const listData of this.listDatas) if (listData) listData.dirtyToken = 0; // 所有页面预备刷新
     }
 
     onCellClickDetailBtn(cell: CellPkgCnsum) {}

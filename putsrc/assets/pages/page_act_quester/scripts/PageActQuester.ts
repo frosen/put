@@ -16,7 +16,7 @@ import { actPosModelDict } from 'configs/ActPosModelDict';
 import { getRandomOneInList, randomInt, randomRate } from 'scripts/Random';
 import { PageActQuesterLVD } from './PageActQuesterLVD';
 import { CellQuest, QuestState } from '../cells/cell_quest/scripts/CellQuest';
-import { FuncBar } from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
+import { FuncBar } from 'pages/page_pet/scripts/FuncBar';
 import { questModelDict } from 'configs/QuestModelDict';
 
 export const QuesterUpdateInterval: number = 12 * 60 * 60 * 1000; // 更新间隔毫秒

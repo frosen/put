@@ -13,7 +13,7 @@ import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet, Equip } from 'scripts
 import { GameDataTool, CnsumTool, PetTool, EquipTool, CaughtPetTool } from 'scripts/Memory';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import { ListViewCell } from 'scripts/ListViewCell';
-import { FuncBar } from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
+import { FuncBar } from 'pages/page_pet/scripts/FuncBar';
 import { PagePet } from 'pages/page_pet/scripts/PagePet';
 import { drinkModelDict } from 'configs/DrinkModelDict';
 import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
@@ -21,9 +21,8 @@ import { equipModelDict } from 'configs/EquipModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
 import { NavBar } from 'scripts/NavBar';
-import { PagePkgTouchLayer } from './PagePkgTouchLayer';
+import { PkgSelectionBar } from './PkgSelectionBar';
 
-export const LIST_NAMES = ['全部', '装备', '饮品', '捕捉', '强化', '其他'];
 const WIDTH = 1080;
 
 @ccclass
@@ -39,46 +38,29 @@ export class PagePkg extends PagePkgBase {
     listDatas: { dirtyToken: number; list: ListView; delegate: PagePkgLVD }[] = [];
 
     @property(cc.Node)
-    selectionLayer: cc.Node = null;
+    selectionNode: cc.Node = null;
 
-    @property(cc.Node)
-    selectionBar: cc.Node = null;
+    @property(cc.Prefab)
+    selectionBarPrefab: cc.Node = null;
 
-    selectionLblNodes: cc.Node[] = [];
+    selectionBar: PkgSelectionBar = null;
 
     @property(cc.Prefab)
     funcBarPrefab: cc.Prefab = null;
 
     funcBar: FuncBar = null;
 
-    @property(PagePkgTouchLayer)
-    touchLayer: PagePkgTouchLayer = null;
-
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
 
-        const selections = this.selectionLayer.children;
-        for (let index = 0; index < LIST_NAMES.length; index++) {
-            const listNode = cc.instantiate(this.listPrefab);
-            listNode.parent = this.listLayer;
-            listNode.x = index * WIDTH;
+        const selectionBarNode = cc.instantiate(this.selectionBarPrefab);
+        selectionBarNode.parent = this.selectionNode;
 
-            const list = listNode.getComponent(ListView);
-            const delegate = list.delegate as PagePkgLVD;
-            delegate.page = this;
-
-            this.listDatas.push({ dirtyToken: 0, list, delegate });
-
-            const selection = selections[index];
-            selection.on('click', () => {
-                this.turnList(index);
-            });
-
-            const lblNode = selection.children[0];
-            lblNode.getComponent(cc.Label).string = LIST_NAMES[index];
-            this.selectionLblNodes.push(lblNode);
-        }
+        this.selectionBar = selectionBarNode.getComponent(PkgSelectionBar);
+        this.selectionBar.onSelection = (curSelection: number) => {
+            this.turnList(curSelection);
+        };
 
         const funcBarNode = cc.instantiate(this.funcBarPrefab);
         funcBarNode.parent = this.node.getChildByName('root');
@@ -90,8 +72,6 @@ export class PagePkg extends PagePkgBase {
             { str: '下移', callback: this.onMoveDownCell.bind(this) },
             { str: '丢弃', callback: this.onRemoveCell.bind(this) }
         ]);
-
-        this.touchLayer.init(this);
     }
 
     onLoadNavBar(navBar: NavBar) {
@@ -102,12 +82,13 @@ export class PagePkg extends PagePkgBase {
         const gameData = this.ctrlr.memory.gameData;
         this.navBar.setSubTitle(`${gameData.weight}/${GameDataTool.getItemCountMax(gameData)}`);
 
-        this.turnList(this.curListIdx);
+        this.selectionBar.onClickBtn(this.curListIdx);
     }
 
     resetCurList() {
         const curDirtyToken = this.ctrlr.memory.dirtyToken;
-        const curData = this.listDatas[this.curListIdx];
+        let curData = this.listDatas[this.curListIdx];
+        if (!curData) curData = this.createList(this.curListIdx);
         if (curData.dirtyToken !== curDirtyToken) {
             curData.dirtyToken = curDirtyToken;
             const items = this.ctrlr.memory.gameData.items;
@@ -117,9 +98,26 @@ export class PagePkg extends PagePkgBase {
         }
     }
 
+    createList(listIdx: number): { dirtyToken: number; list: ListView; delegate: PagePkgLVD } {
+        const listNode = cc.instantiate(this.listPrefab);
+        listNode.parent = this.listLayer;
+        listNode.x = listIdx * WIDTH;
+
+        const list = listNode.getComponent(ListView);
+        const delegate = list.delegate as PagePkgLVD;
+        delegate.page = this;
+
+        const listData = { dirtyToken: 0, list, delegate };
+        this.listDatas[listIdx] = listData;
+
+        return listData;
+    }
+
     static getItemIdxsByListIdx(items: Item[], listIdx: number): number[] {
         const idxs: number[] = [];
-        if (listIdx === 0) {
+        if (listIdx === -1) {
+            for (let index = 1; index < items.length; index++) idxs[index - 1] = index;
+        } else if (listIdx === 0) {
             for (let index = 0; index < items.length; index++) idxs[index] = index;
         } else if (listIdx === 1) {
             this.getoutItemIdxsByType(items, idxs, ItemType.equip);
@@ -127,9 +125,12 @@ export class PagePkg extends PagePkgBase {
             this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.drink);
         } else if (listIdx === 3) {
             this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.catcher);
-            this.getoutItemIdxsByType(items, idxs, ItemType.caughtPet);
         } else if (listIdx === 4) {
+            this.getoutItemIdxsByType(items, idxs, ItemType.caughtPet);
+        } else if (listIdx === 5) {
             this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.eqpAmplr);
+        } else if (listIdx === 6) {
+        } else if (listIdx === 7) {
         }
         return idxs;
     }
@@ -153,32 +154,17 @@ export class PagePkg extends PagePkgBase {
             this.resetCurList();
 
             this.turnning = true;
+            this.selectionBar.canTurn = false;
             cc.tween(this.listLayer)
                 .to(0.2, { x: idx * WIDTH * -1 }, { easing: 'quadInOut' })
                 .call(() => {
                     this.turnning = false;
+                    this.selectionBar.canTurn = true;
                 })
-                .start();
-
-            for (const lblNode of this.selectionLblNodes) lblNode.color = cc.color(90, 90, 90);
-            this.selectionLblNodes[idx].color = cc.Color.RED;
-
-            cc.tween(this.selectionBar)
-                .to(0.2, { x: idx * 180 + 90 }, { easing: 'quadInOut' })
                 .start();
         } else {
             this.resetCurList();
         }
-    }
-
-    moveList(moveDis: number) {
-        const nextIdx = this.curListIdx + moveDis;
-        if (nextIdx < 0 || this.listDatas.length <= nextIdx) {
-            cc.log('PUT can not move list to ', nextIdx);
-            return;
-        }
-
-        this.turnList(nextIdx);
     }
 
     // -----------------------------------------------------------------

@@ -45,6 +45,10 @@ export class TouchLayerForBack extends cc.Component {
             this.touchId = null;
             return;
         }
+
+        const y = this.node.convertToNodeSpaceAR(event.getLocation()).y;
+        if (y > this.yLimit) return;
+
         this.touchId = event.getID();
         this.lastX = event.getLocationX();
         this.lastY = event.getLocationY();
@@ -55,8 +59,10 @@ export class TouchLayerForBack extends cc.Component {
 
     onGestureMoved(event: cc.Event.EventTouch) {
         if (this.touchId === null || event.getID() !== this.touchId) return;
+
         const curX = event.getLocationX();
         const curY = event.getLocationY();
+
         if (Math.abs(curY - this.lastY) > Math.abs(curX - this.lastX)) {
             this.touchId = null;
             return;
@@ -86,5 +92,11 @@ export class TouchLayerForBack extends cc.Component {
         if (this.mark.x > 0) {
             cc.tween(this.mark).to(0.25, { x: 0 }, { easing: 'quadOut' }).start();
         }
+    }
+
+    yLimit: number = 0;
+
+    setYLimit(y: number) {
+        this.yLimit = y;
     }
 }

@@ -15,7 +15,7 @@ import { ListViewCell } from 'scripts/ListViewCell';
 import { PetTool, GameDataTool } from 'scripts/Memory';
 import { FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
-import { FuncBar } from 'pages/page_pet/prefabs/prefab_func_bar/scripts/FuncBar';
+import { FuncBar } from 'pages/page_pet/scripts/FuncBar';
 import { NavBar } from 'scripts/NavBar';
 
 @ccclass

@@ -13,7 +13,7 @@ import { Pet, PetState } from 'scripts/DataSaved';
 import { CellPet } from '../cells/cell_pet/scripts/CellPet';
 import { PagePetDetail } from 'pages/page_pet_detail/scripts/PagePetDetail';
 import { PageBase } from 'scripts/PageBase';
-import { FuncBar } from '../prefabs/prefab_func_bar/scripts/FuncBar';
+import { FuncBar } from './FuncBar';
 import { NavBar } from 'scripts/NavBar';
 import { ExplUpdater } from 'scripts/ExplUpdater';
 
