@@ -74,7 +74,7 @@ export class PkgEquipPetLVD extends ListViewDelegate {
             return cc.instantiate(this.cellPetBriefPrefab).getComponent(CellPetBrief);
         } else if (cellId === EQUIP) {
             const cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
-            cell.setFuncBtnUI(this.page.detailBtnSFrame);
+            cell.changeFuncBtnImgToDetail();
             cell.clickCallback = this.page.onPetCellClick.bind(this.page);
             cell.funcBtnCallback = this.page.onPetCellClickFuncBtn.bind(this.page);
             return cell;

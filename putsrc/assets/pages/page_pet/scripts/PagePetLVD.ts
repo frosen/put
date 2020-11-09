@@ -51,7 +51,7 @@ export class PagePetLVD extends ListViewDelegate {
             cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
             cell.stateBtnCallback = this.page.onCellClickStateBtn.bind(this.page);
         } else {
-            cell.setFuncBtnUI(this.page.detailBtnSFrame);
+            cell.changeFuncBtnImgToDetail();
             cell.clickCallback = this.page.onCellClick.bind(this.page);
             cell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
             cell.stateBtn.interactable = false;

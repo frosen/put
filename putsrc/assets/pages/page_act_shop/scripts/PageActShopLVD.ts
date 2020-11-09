@@ -76,7 +76,7 @@ export class PageActShopLVD extends ListViewDelegate {
                 subCell = cc.instantiate(this.cellPkgMaterialPrefab).getComponent(CellPkgMaterial);
                 break;
         }
-        subCell.setFuncBtnUI(this.page.detailBtnSFrame);
+        subCell.changeFuncBtnImgToDetail();
         subCell.getComponent(cc.Button).interactable = false;
         subCell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
 

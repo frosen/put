@@ -20,9 +20,6 @@ export class PagePkgSelection extends PagePkgBase {
 
     lvd: PagePkgLVD = null;
 
-    @property(cc.SpriteFrame)
-    detailBtnSFrame: cc.SpriteFrame = null;
-
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;

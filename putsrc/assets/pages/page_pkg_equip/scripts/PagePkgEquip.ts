@@ -34,9 +34,6 @@ export class PagePkgEquip extends PageBase {
     @property(cc.Node)
     petEquipLayer: cc.Node = null;
 
-    @property(cc.SpriteFrame)
-    detailBtnSFrame: cc.SpriteFrame = null;
-
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;

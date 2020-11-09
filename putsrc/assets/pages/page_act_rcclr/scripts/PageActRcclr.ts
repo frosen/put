@@ -26,9 +26,6 @@ const RcclPriceRate = 0.4;
 export class PageActRcclr extends PageBase {
     curListIdx: number = 0;
 
-    @property(cc.SpriteFrame)
-    detailBtnSFrame: cc.SpriteFrame = null;
-
     @property(cc.Node)
     listLayer: cc.Node = null;
 

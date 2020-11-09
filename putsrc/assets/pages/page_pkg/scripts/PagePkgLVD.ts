@@ -124,7 +124,7 @@ export class PagePkgLVD extends ListViewDelegate {
             cell.clickCallback = this.page.onCellClickDetailBtn.bind(this.page);
             cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
         } else {
-            cell.setFuncBtnUI(this.page.detailBtnSFrame);
+            cell.changeFuncBtnImgToDetail();
             cell.clickCallback = this.page.onCellClick.bind(this.page);
             cell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
         }

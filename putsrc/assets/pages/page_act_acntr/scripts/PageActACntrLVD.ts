@@ -90,7 +90,7 @@ export class PageActACntrLVD extends ListViewDelegate {
                 subCell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
                 break;
         }
-        subCell.setFuncBtnUI(this.page.detailBtnSFrame);
+        subCell.changeFuncBtnImgToDetail();
         subCell.getComponent(cc.Button).interactable = false;
         subCell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
 

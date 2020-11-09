@@ -12,6 +12,7 @@ import { TouchLayerForBack } from './TouchLayerForBack';
 import { TouchLayerForToast } from './TouchLayerForToast';
 import { checkConfigs } from './ConfigsChecker';
 import { NavBar } from './NavBar';
+import { RunningImgMgr } from './RunningImgMgr';
 
 // @ts-ignore
 const customEngineInfo = cc.director.customEngineInfo;
@@ -93,6 +94,9 @@ export class BaseCtrlr extends cc.Component {
 
     @property(TabBtnData)
     selfTBData: TabBtnData = null;
+
+    @property(RunningImgMgr)
+    runningImgMgr: RunningImgMgr = null;
 
     memory: Memory = null;
 

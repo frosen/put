@@ -11,7 +11,6 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export abstract class PagePkgBase extends PageBase {
-    detailBtnSFrame: cc.SpriteFrame = null;
     abstract onCellClick(cell: ListViewCell): void;
     abstract onCellClickFuncBtn(cell: ListViewCell): void;
     abstract onCellClickDetailBtn(cell: ListViewCell): void;

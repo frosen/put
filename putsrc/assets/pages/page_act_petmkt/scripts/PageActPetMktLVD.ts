@@ -53,7 +53,7 @@ export class PageActPetMktLVD extends ListViewDelegate {
             cell.rdcCallback = this.page.onCellRdcCount.bind(this.page);
 
             const subCell = cc.instantiate(this.cellPkgCPetPrefab).getComponent(CellPkgCaughtPet);
-            subCell.setFuncBtnUI(this.page.detailBtnSFrame);
+            subCell.changeFuncBtnImgToDetail();
             subCell.getComponent(cc.Button).interactable = false;
             subCell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
 

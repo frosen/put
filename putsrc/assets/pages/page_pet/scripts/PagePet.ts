@@ -29,9 +29,6 @@ export class PagePet extends PageBase {
 
     funcBar: FuncBar = null;
 
-    @property(cc.SpriteFrame)
-    detailBtnSFrame: cc.SpriteFrame = null;
-
     onLoad() {
         super.onLoad();
 

@@ -46,7 +46,7 @@ export class PkgEquipItemLVD extends ListViewDelegate {
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
         if (cellId === EQUIP) {
             const cell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
-            cell.setFuncBtnUI(this.page.detailBtnSFrame);
+            cell.changeFuncBtnImgToDetail();
             cell.clickCallback = this.page.onItemCellClick.bind(this.page);
             cell.funcBtnCallback = this.page.onItemCellClickDetailBtn.bind(this.page);
             return cell;

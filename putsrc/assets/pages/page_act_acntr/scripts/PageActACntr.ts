@@ -24,9 +24,6 @@ export class PageActACntr extends PageBase {
     @property(ListView)
     list: ListView = null;
 
-    @property(cc.SpriteFrame)
-    detailBtnSFrame: cc.SpriteFrame = null;
-
     totalPrice: number = 0;
 
     paIdxList: number[] = [];

@@ -44,7 +44,7 @@ export class CellPkgBase extends ListViewCell {
         if (this.funcBtnCallback) this.funcBtnCallback(this);
     }
 
-    setFuncBtnUI(sFrame: cc.SpriteFrame) {
-        this.funcBtn.target.getComponent(cc.Sprite).spriteFrame = sFrame;
+    changeFuncBtnImgToDetail() {
+        this.funcBtn.target.getComponent(cc.Sprite).spriteFrame = this.ctrlr.runningImgMgr.detail;
     }
 }
