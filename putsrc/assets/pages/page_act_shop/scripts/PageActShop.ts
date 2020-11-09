@@ -18,7 +18,7 @@ import { Money } from 'scripts/DataSaved';
 import { CnsumModel, PAKey, ShopModel } from 'scripts/DataModel';
 
 export const ShopCountMax: number = 9999;
-export const ReputDiscount: number[] = [1, 1, 0.95, 0.9, 0.85, 0.8];
+const ShopReputDiscount: number[] = [1, 1, 0.95, 0.9, 0.85, 0.8];
 
 @ccclass
 export class PageActShop extends PageBase {
@@ -151,6 +151,6 @@ export class PageActShop extends PageBase {
     getCnsumReputPrice(model: CnsumModel): number {
         const gameData = this.ctrlr.memory.gameData;
         const reputRank = GameDataTool.getReputRank(gameData, gameData.curPosId);
-        return model.price * ReputDiscount[reputRank];
+        return model.price * ShopReputDiscount[reputRank];
     }
 }

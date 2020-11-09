@@ -35,7 +35,9 @@ export class CellTransaction extends ListViewCell {
     @property(cc.Button)
     rdcBtn: cc.Button = null;
 
-    cell: CellPkgBase;
+    priceBaseStr: string = '单价：';
+
+    subCell: ListViewCell;
 
     itemId: string;
     itemCount: number;
@@ -50,23 +52,13 @@ export class CellTransaction extends ListViewCell {
         this.rdcBtn.node.on(cc.Node.EventType.TOUCH_END, this.onRdcEnd.bind(this));
     }
 
-    init(cell: CellPkgBase) {
-        this.cell = cell;
-        cell.node.parent = this.itemBaseNode;
-    }
-
-    setData(itemIdx: number, data: any, price: number) {
-        this.cell.setData(itemIdx, data);
-        this.setPrice(price);
-    }
-
-    setDataByModel(itemIdx: number, model: CnsumModel, count: number, price: number) {
-        (this.cell as CellPkgCnsum).setDataByModel(itemIdx, model, count);
-        this.setPrice(price);
+    init(subCell: ListViewCell) {
+        this.subCell = subCell;
+        subCell.node.parent = this.itemBaseNode;
     }
 
     setPrice(price: number) {
-        this.priceLbl.string = '单价：' + MoneyTool.getSimpleStr(price);
+        this.priceLbl.string = this.priceBaseStr + MoneyTool.getSimpleStr(price);
     }
 
     setSubData(subData: string, subLblColor: cc.Color = null) {

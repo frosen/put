@@ -88,8 +88,10 @@ export class PageActShopLVD extends ListViewDelegate {
     setCellForRow(listView: ListView, rowIdx: number, cell: CellTransaction) {
         const goodsId = this.page.goodsIds[rowIdx];
         const model = CnsumTool.getModelById(goodsId);
+        (cell.subCell as CellPkgCnsum).setDataByModel(rowIdx, model, -1);
+
         const price = this.page.getCnsumReputPrice(model);
-        cell.setDataByModel(rowIdx, model, -1, price);
+        cell.setPrice(price);
 
         const count = this.page.countList[rowIdx] || 0;
         cell.setCount(count, ShopCountMax);

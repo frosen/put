@@ -270,8 +270,7 @@ export class PageActExpl extends BtlPageBase {
             const bPet = pets[index];
             const petUI = this.enemyPetUIs[index];
             this.setUIOfPet(bPet, petUI);
-            // BOSS的颜色
-            petUI.petName.node.color = bPet.pet.master ? cc.color(230, 180, 0) : cc.color(29, 39, 42);
+            petUI.petName.node.color = bPet.pet.master ? cc.color(230, 180, 0) : cc.color(29, 39, 42); // BOSS的颜色
         }
     }
 

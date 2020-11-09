@@ -15,6 +15,7 @@ import { LIST_NAMES } from 'pages/page_pkg/scripts/PagePkg';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { PageBase } from 'scripts/PageBase';
+import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 
 const WIDTH = 1080;
 const RcclPriceRate = 0.4;
@@ -250,7 +251,7 @@ export class PageActRcclr extends PageBase {
     // -----------------------------------------------------------------
 
     onCellAddCount(cell: CellTransaction, count: number) {
-        const itemIdx = cell.cell.curItemIdx;
+        const itemIdx = (cell.subCell as CellPkgBase).curItemIdx;
         const items = this.ctrlr.memory.gameData.items;
         const item = items[itemIdx];
 
@@ -266,7 +267,7 @@ export class PageActRcclr extends PageBase {
     }
 
     onCellRdcCount(cell: CellTransaction, count: number) {
-        const itemIdx = cell.cell.curItemIdx;
+        const itemIdx = (cell.subCell as CellPkgBase).curItemIdx;
         const items = this.ctrlr.memory.gameData.items;
         const item = items[itemIdx];
 

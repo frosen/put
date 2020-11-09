@@ -13,6 +13,7 @@ import { PageActPetMkt, PetMktCountMax } from './PageActPetMkt';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
 import { CellPkgCaughtPet } from 'pages/page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
+import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 
 @ccclass
 export class PageActPetMktLVD extends ListViewDelegate {
@@ -67,10 +68,11 @@ export class PageActPetMktLVD extends ListViewDelegate {
             cell.setData(this.page.pADPetMkt.updateTime);
         } else {
             const idx = rowIdx - 1;
-
             const goods = this.page.goodsList[idx];
+            (cell.subCell as CellPkgBase).setData(idx, goods);
+
             const price = this.page.priceList[idx];
-            cell.setData(idx, goods, price);
+            cell.setPrice(price);
 
             const count = this.page.countList[idx] || 0;
             cell.setCount(count, PetMktCountMax);

@@ -121,7 +121,8 @@ export class PageActRcclrLVD extends ListViewDelegate {
     setCellForRow(listView: ListView, rowIdx: number, cell: CellTransaction) {
         const itemIdx = this.curItemIdxs[rowIdx];
         const item = this.curItems[itemIdx];
-        cell.setData(itemIdx, item, PageActRcclr.getItemRcclPrice(item));
+        (cell.subCell as CellPkgBase).setData(itemIdx, item);
+        cell.setPrice(PageActRcclr.getItemRcclPrice(item));
 
         const count = this.page.countDict[item.id] || 0;
         const countMax = item.itemType === ItemType.cnsum ? (item as Cnsum).count : 1;

@@ -28,11 +28,11 @@ export class NavBar extends cc.Component {
         this.title.string = title;
         // @ts-ignore
         this.title._assembler.updateRenderData(this.title);
-        this.subTitle.node.x = 540 + this.title.node.width * 0.5 + 20;
     }
 
     setSubTitle(title: string) {
         this.subTitle.string = title;
+        this.subTitle.node.x = 540 + this.title.node.width * 0.5 + 20;
     }
 
     backBtnActive: boolean = false;

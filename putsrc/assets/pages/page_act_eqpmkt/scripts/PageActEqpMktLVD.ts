@@ -13,6 +13,7 @@ import { PageActEqpMkt, EqpMktCountMax } from './PageActEqpMkt';
 import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { CellUpdateDisplay } from '../cells/cell_update_display/scripts/CellUpdateDisplay';
+import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
 
 @ccclass
 export class PageActEqpMktLVD extends ListViewDelegate {
@@ -67,10 +68,11 @@ export class PageActEqpMktLVD extends ListViewDelegate {
             cell.setData(this.page.pADEqpMkt.updateTime);
         } else {
             const idx = rowIdx - 1;
-
             const goods = this.page.goodsList[idx];
+            (cell.subCell as CellPkgBase).setData(idx, goods);
+
             const price = this.page.priceList[idx];
-            cell.setData(idx, goods, price);
+            cell.setPrice(price);
 
             const count = this.page.countList[idx] || 0;
             cell.setCount(count, EqpMktCountMax);

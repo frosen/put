@@ -49,12 +49,13 @@ export class PagePetLVD extends ListViewDelegate {
         if (this.cellType === PagePetCellType.normal) {
             cell.clickCallback = this.page.onCellClickDetailBtn.bind(this.page);
             cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+            cell.stateBtnCallback = this.page.onCellClickStateBtn.bind(this.page);
         } else {
             cell.setFuncBtnUI(this.page.detailBtnSFrame);
             cell.clickCallback = this.page.onCellClick.bind(this.page);
             cell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
+            cell.stateBtn.interactable = false;
         }
-        cell.stateBtnCallback = this.page.onCellClickStateBtn.bind(this.page);
 
         return cell;
     }

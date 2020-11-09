@@ -606,6 +606,10 @@ export class PetTool {
         if (petFeature) petFeature.lv += feature.lv;
         else pet.lndFeatures.push(FeatureTool.clone(feature));
     }
+
+    static getCurMergeLv(pet: Pet): number {
+        return pet.merges.length * 5 + 10;
+    }
 }
 
 export class CnsumTool {
@@ -1107,34 +1111,12 @@ export class GameDataTool {
 
     static mergePet(gameData: GameData, petIdx: number, caughtPetIdx: number, featureId: string): string {
         const pet = gameData.pets[petIdx];
-        if (pet.state !== PetState.rest) return '精灵未在休息状态，无法融合';
-
-        const curCatchIdx = pet.catchIdx;
-        if (gameData.curExpl && gameData.curExpl.curBattle) {
-            for (const petMmr of gameData.curExpl.curBattle.selfs) {
-                if (curCatchIdx === petMmr.catchIdx) return '当前精灵处于战斗状态，无法融合';
-            }
-        }
-
-        const MergeStartLv = 10;
-        const MergeIntervalLv = 5;
-        if (pet.lv < MergeStartLv) return `精灵等级低于${MergeStartLv}级，无法融合`;
-
-        const canCnt = Math.floor((pet.lv - MergeStartLv) / MergeIntervalLv) + 1; // 10级后每5级可有一次
-
-        if (pet.merges.length >= canCnt) {
-            const nextLv = canCnt * MergeIntervalLv + MergeStartLv;
-            return `融合层数已达到上限，升至${nextLv}级时可继续增加上限`;
-        }
+        const petRzt = GameDataTool.checkMergePet(gameData, pet);
+        if (petRzt !== this.SUC) return petRzt;
 
         const caughtPet = gameData.items[caughtPetIdx] as CaughtPet;
-
-        for (const merged of pet.merges) {
-            if (merged.petId === caughtPet.petId) {
-                const petName = petModelDict[caughtPet.petId].cnName;
-                return `${petName}已被融合过\n不得融入2只同种类精灵`;
-            }
-        }
+        const cPetRzt = GameDataTool.checkMergeCaughtPet(gameData, pet, caughtPet);
+        if (cPetRzt !== this.SUC) return cPetRzt;
 
         let mergeFeature: Feature = null;
         for (const cFeature of caughtPet.features) {
@@ -1145,17 +1127,37 @@ export class GameDataTool {
         }
         if (!mergeFeature) return `${caughtPet.id}不具备${featureId}`;
 
-        const PrvtyDisplay = 30;
-        const PrvtyNeed = PrvtyDisplay * PrvtyDisplay * 100;
-        if (pet.prvty < PrvtyNeed) return `融合需要精灵默契值高于${PrvtyDisplay}`;
-
         const rzt = GameDataTool.deleteItem(gameData, caughtPetIdx);
         if (rzt !== this.SUC) return rzt;
 
         PetTool.merge(pet, mergeFeature);
 
-        pet.prvty -= PrvtyNeed;
+        return this.SUC;
+    }
 
+    static checkMergePet(gameData: GameData, pet: Pet): string {
+        if (pet.state !== PetState.rest) return '精灵未在休息状态，无法融合';
+
+        const curCatchIdx = pet.catchIdx;
+        if (gameData.curExpl && gameData.curExpl.curBattle) {
+            for (const petMmr of gameData.curExpl.curBattle.selfs) {
+                if (curCatchIdx === petMmr.catchIdx) return '当前精灵处于战斗状态，无法融合';
+            }
+        }
+
+        const mergeLv = PetTool.getCurMergeLv(pet);
+        if (pet.lv < mergeLv) return `精灵下次融合需达到${mergeLv}级，目前无法融合`;
+
+        return this.SUC;
+    }
+
+    static checkMergeCaughtPet(gameData: GameData, pet: Pet, caughtPet: CaughtPet): string {
+        for (const merged of pet.merges) {
+            if (merged.petId === caughtPet.petId) {
+                const petName = petModelDict[caughtPet.petId].cnName;
+                return `${petName}已被融合过\n不得融入2只同种类精灵`;
+            }
+        }
         return this.SUC;
     }
 
