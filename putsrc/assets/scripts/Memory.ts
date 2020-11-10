@@ -608,7 +608,7 @@ export class PetTool {
     }
 
     static getCurMergeLv(pet: Pet): number {
-        return pet.merges.length * 5 + 10;
+        return pet.merges.length * 5 + 15;
     }
 }
 
@@ -1152,6 +1152,11 @@ export class GameDataTool {
     }
 
     static checkMergeCaughtPet(gameData: GameData, pet: Pet, caughtPet: CaughtPet): string {
+        if (caughtPet.features.length === 0) {
+            const petName = petModelDict[caughtPet.petId].cnName;
+            return `${petName}目前尚未获得天赋特性`;
+        }
+
         for (const merged of pet.merges) {
             if (merged.petId === caughtPet.petId) {
                 const petName = petModelDict[caughtPet.petId].cnName;

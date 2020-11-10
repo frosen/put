@@ -19,6 +19,8 @@ import { PagePet } from 'pages/page_pet/scripts/PagePet';
 import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
 import { CellPkgCaughtPet } from 'pages/page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
 import { petModelDict } from 'configs/PetModelDict';
+import { FeatureGainType } from 'pages/page_pet_detail/cells/cell_feature/scripts/CellFeature';
+import { PagePetFeature } from 'pages/page_pet_feature/scripts/PagePetFeature';
 
 const MergeReputDiscount = [1, 1, 0.9, 0.8, 0.7, 0.6];
 
@@ -181,7 +183,26 @@ export class PageActMerger extends PageBase {
             this.ctrlr.popToast(this.featureLbl.string);
             return;
         }
+
+        const features = this.curCaughtPet.features;
+        const gainTypes = [];
+        for (const feature of features) {
+            if (this.curCaughtPet.exFeatureIds.includes[feature.id]) gainTypes.push(FeatureGainType.expert);
+            else gainTypes.push(FeatureGainType.inborn);
+        }
+
+        this.ctrlr.pushPage(PagePetFeature, {
+            name: '选择特性',
+            features,
+            gainTypes,
+            callback: (feature: Feature, gainType: FeatureGainType) => {
+                this.onSelectFeature(feature);
+                this.ctrlr.popPage();
+            }
+        });
     }
+
+    onSelectFeature(feature: Feature) {}
 
     clearFeature() {
         if (this.featureNode.childrenCount > 0) {
