@@ -50,7 +50,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 156
+      "height": 194
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -133,7 +133,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 156
+      "height": 194
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -203,7 +203,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 156
+      "height": 194
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -360,7 +360,7 @@
       "ctor": "Float64Array",
       "array": [
         90,
-        -78,
+        -97,
         0,
         0,
         0,
@@ -477,7 +477,7 @@
       "ctor": "Float64Array",
       "array": [
         180,
-        -53,
+        -65,
         0,
         0,
         0,
@@ -528,8 +528,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 172,
-      "height": 54.18
+      "width": 200,
+      "height": 63
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -581,8 +581,8 @@
     "_useOriginalSize": false,
     "_string": "蓝白雨燕",
     "_N$string": "蓝白雨燕",
-    "_fontSize": 43,
-    "_lineHeight": 43,
+    "_fontSize": 50,
+    "_lineHeight": 50,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -633,7 +633,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 180.01,
+      "width": 252.76,
       "height": 54.18
     },
     "_anchorPoint": {
@@ -645,8 +645,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        182,
-        -5,
+        210,
+        -3,
         0,
         0,
         0,
@@ -684,9 +684,9 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "(bai白蓝雨燕)",
-    "_N$string": "(bai白蓝雨燕)",
-    "_fontSize": 30,
+    "_string": "(白 之 白蓝雨燕)",
+    "_N$string": "(白 之 白蓝雨燕)",
+    "_fontSize": 35,
     "_lineHeight": 43,
     "_enableWrapText": true,
     "_N$file": null,
@@ -738,7 +738,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 102.16,
+      "width": 142.05,
       "height": 44.1
     },
     "_anchorPoint": {
@@ -750,8 +750,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        372.01,
-        -1,
+        472.76,
+        -3,
         0,
         0,
         0,
@@ -789,8 +789,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "[L1B+]",
-    "_N$string": "[L1B+]",
+    "_string": "[L99R99]",
+    "_N$string": "[L99R99]",
     "_fontSize": 35,
     "_lineHeight": 35,
     "_enableWrapText": true,
@@ -900,7 +900,7 @@
       "ctor": "Float64Array",
       "array": [
         180,
-        -110,
+        -135,
         0,
         0,
         0,
@@ -950,7 +950,7 @@
     "_N$paddingRight": 0,
     "_N$paddingTop": 0,
     "_N$paddingBottom": 0,
-    "_N$spacingX": 5,
+    "_N$spacingX": 8,
     "_N$spacingY": 0,
     "_N$verticalDirection": 1,
     "_N$horizontalDirection": 0,
@@ -1015,7 +1015,7 @@
       "ctor": "Float64Array",
       "array": [
         940,
-        -78,
+        -97,
         0,
         0,
         0,
@@ -1173,8 +1173,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 96,
-      "height": 40.32
+      "width": 105,
+      "height": 44.1
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1226,8 +1226,8 @@
     "_useOriginalSize": false,
     "_string": "备战中",
     "_N$string": "备战中",
-    "_fontSize": 32,
-    "_lineHeight": 32,
+    "_fontSize": 35,
+    "_lineHeight": 35,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -1388,7 +1388,7 @@
       "ctor": "Float64Array",
       "array": [
         1008,
-        -78,
+        -97,
         0,
         0,
         0,
@@ -1680,7 +1680,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 156
+      "height": 194
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1692,7 +1692,7 @@
       "ctor": "Float64Array",
       "array": [
         540,
-        -78,
+        -97,
         0,
         0,
         0,

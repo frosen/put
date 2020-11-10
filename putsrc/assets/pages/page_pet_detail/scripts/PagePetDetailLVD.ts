@@ -25,7 +25,6 @@ import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PetTool } from 'scripts/Memory';
 import { drinkModelDict } from 'configs/DrinkModelDict';
-import { CellPet } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 
 const PETNAME = 'p';
 const ATTRI2 = '2';
@@ -81,10 +80,12 @@ const ATK_TIP = '影响普攻伤害\n影响技能伤害（保持1倍，不受技
 const SKL_TIP = '影响技能伤害（乘以技能的伤害系数）';
 
 const FEATURE_TIP = `分为：
-天赋特性 每种精灵的固有特性，11级开始每3级随机升1级 
+天赋特性 每种精灵的固有特性
 专精特性 天赋特性中天生强化的特性
 习得特性 通过其他方式获取，数量不限
-每个特性都可以通过提升等级增强效果`;
+ 
+任何特性都可以通过提升等级增强效果
+精灵从11级开始每3级随机升级天赋特性`;
 
 type DetailCell = CellPetName & CellAttri & CellAttri2 & CellTitle & CellPkgEquip & CellPkgEquipBlank & CellSkill & CellFeature;
 
@@ -136,7 +137,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
 
     heightForRow(listView: ListView, rowIdx: number): number {
         // 第一组
-        if (rowIdx === 0) return 226;
+        if (rowIdx === 0) return 296;
         else if (rowIdx === 1 || rowIdx === 2) return 106;
         else if (rowIdx === 3) return 126;
         // 第二组
