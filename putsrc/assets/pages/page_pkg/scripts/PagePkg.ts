@@ -131,6 +131,7 @@ export class PagePkg extends PagePkgBase {
             this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.eqpAmplr);
         } else if (listIdx === 6) {
         } else if (listIdx === 7) {
+        } else if (listIdx === 8) {
         }
         return idxs;
     }
@@ -212,9 +213,11 @@ export class PagePkg extends PagePkgBase {
             } else if (cnsum.cnsumType === CnsumType.catcher) {
                 this.ctrlr.popToast('捕捉器会在战斗中开启“捕捉”后自动使用');
             } else if (cnsum.cnsumType === CnsumType.eqpAmplr) {
+                let eqpIdxs = [];
+                PagePkg.getoutItemIdxsByType(gameData.items, eqpIdxs, ItemType.equip);
                 this.ctrlr.pushPage(PagePkgSelection, {
                     name: '选择要强化的装备',
-                    curItemIdxs: PagePkg.getItemIdxsByListIdx(gameData.items, 1),
+                    curItemIdxs: eqpIdxs,
                     callback: (cellIdx: number, equipIdx: number, equip: Equip) => {
                         if (equip.growth >= 5) {
                             this.ctrlr.popToast('该武器成长等级已达到上限');

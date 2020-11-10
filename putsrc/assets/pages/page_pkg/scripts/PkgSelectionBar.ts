@@ -52,17 +52,27 @@ export class PkgSelectionBar extends cc.Component {
         const btnNode = curLblNode.parent;
         cc.tween(this.indicator).to(0.3, { x: btnNode.x }, { easing: 'quadInOut' }).start();
 
+        const ctt = this.scroll.content;
         const left = btnNode.x - btnNode.width * 0.5;
-        const realLeft = left + this.scroll.content.x;
-        if (realLeft < 0) {
-            cc.tween(this.scroll.content).by(0.3, { x: -realLeft }, { easing: 'quadInOut' }).start();
+        const realLeft = left + ctt.x;
+        const right = btnNode.x + btnNode.width * 0.5;
+        const realRight = right + ctt.x;
+
+        if (idx === 0 || idx === this.lblNodes.length - 1) {
+            if (realLeft < 0) {
+                const aim = 0 - realLeft;
+                cc.tween(ctt).by(0.3, { x: aim }, { easing: 'quadInOut' }).start();
+            } else if (realRight > 1080) {
+                const aim = 1080 - realRight;
+                cc.tween(ctt).by(0.3, { x: aim }, { easing: 'quadInOut' }).start();
+            }
         } else {
-            const right = btnNode.x + btnNode.width * 0.5;
-            const realRight = right + this.scroll.content.x;
-            if (realRight > 1080) {
-                cc.tween(this.scroll.content)
-                    .by(0.3, { x: 1080 - realRight }, { easing: 'quadInOut' })
-                    .start();
+            if (realLeft < btnNode.width) {
+                const aim = btnNode.width - realLeft;
+                cc.tween(ctt).by(0.3, { x: aim }, { easing: 'quadInOut' }).start();
+            } else if (realRight > 1080 - btnNode.width) {
+                const aim = 1080 - btnNode.width - realRight;
+                cc.tween(ctt).by(0.3, { x: aim }, { easing: 'quadInOut' }).start();
             }
         }
 
