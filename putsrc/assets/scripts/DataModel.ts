@@ -225,6 +225,7 @@ export class PAKey {
     static quester = 'quester';
     static aCntr = 'awardsCenter';
     static rcclr = 'recycler';
+    static merger = 'merger';
 }
 
 export abstract class PAModel {

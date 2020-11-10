@@ -41,7 +41,8 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                     { need: 4, price: 250, fullId: 'DaMoShi' }
                 ]
             },
-            [PAKey.rcclr]: {}
+            [PAKey.rcclr]: {},
+            [PAKey.merger]: {}
         },
         movs: [{ id: 'KeChuangXiaoJing', price: 0 }],
         loc: { x: 1000, y: 100 }

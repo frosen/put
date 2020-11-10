@@ -25,6 +25,7 @@ import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_displ
 import { PageActRcclr } from 'pages/page_act_rcclr/scripts/PageActRcclr';
 import { PageActACntr } from 'pages/page_act_acntr/scripts/PageActACntr';
 import { PageActQuester } from 'pages/page_act_quester/scripts/PageActQuester';
+import { PageActMerger } from 'pages/page_act_merger/scripts/PageActMerger';
 
 type CellActInfo = {
     cnName: string;
@@ -135,7 +136,8 @@ const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.work]: { cnName: '精灵应聘广场' },
     [PAKey.quester]: { cnName: '任务大厅', page: PageActQuester },
     [PAKey.aCntr]: { cnName: '奖励中心', page: PageActACntr },
-    [PAKey.rcclr]: { cnName: '回收站', page: PageActRcclr }
+    [PAKey.rcclr]: { cnName: '回收站', page: PageActRcclr },
+    [PAKey.merger]: { cnName: '精灵融合堂', page: PageActMerger }
 };
 
 @ccclass
