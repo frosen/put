@@ -112,22 +112,20 @@ export class PagePetDetail extends PageBase {
     }
 
     onMoveUpCell(cellIdx: number) {
-        const rzt = GameDataTool.moveEquipInPetList(
-            this.ctrlr.memory.gameData,
-            this.curPet,
-            this.curEquipIdx,
-            this.curEquipIdx - 1
-        );
+        const gameData = this.ctrlr.memory.gameData;
+        const petIdx = GameDataTool.getPetIdx(gameData, this.curPet);
+        if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
+        const rzt = GameDataTool.moveEquipInPetList(gameData, petIdx, this.curEquipIdx, this.curEquipIdx - 1);
         if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+        else this.ctrlr.popToast(rzt);
     }
 
     onMoveDownCell(cellIdx: number) {
-        const rzt = GameDataTool.moveEquipInPetList(
-            this.ctrlr.memory.gameData,
-            this.curPet,
-            this.curEquipIdx,
-            this.curEquipIdx + 1
-        );
+        const gameData = this.ctrlr.memory.gameData;
+        const petIdx = GameDataTool.getPetIdx(gameData, this.curPet);
+        if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
+        const rzt = GameDataTool.moveEquipInPetList(gameData, petIdx, this.curEquipIdx, this.curEquipIdx + 1);
         if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
+        else this.ctrlr.popToast(rzt);
     }
 }

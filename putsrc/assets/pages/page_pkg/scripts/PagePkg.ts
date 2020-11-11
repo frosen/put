@@ -204,11 +204,15 @@ export class PagePkg extends PagePkgBase {
                                 if (key === 1) {
                                     const petIdx = GameDataTool.getPetIdx(gameData, curPet);
                                     if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
-                                    const itemIdx = GameDataTool.getItemIdx(gameData, cnsum);
-                                    if (itemIdx === -1) return this.ctrlr.popToast('物品有误');
-                                    const rzt = GameDataTool.useDrinkToPet(gameData, petIdx, itemIdx);
-                                    if (rzt === GameDataTool.SUC) this.ctrlr.popPage();
-                                    else this.ctrlr.popToast(rzt);
+                                    const drinkIdx = GameDataTool.getItemIdx(gameData, cnsum);
+                                    if (drinkIdx === -1) return this.ctrlr.popToast('物品有误');
+                                    const rzt = GameDataTool.useDrinkToPet(gameData, petIdx, drinkIdx);
+                                    if (rzt === GameDataTool.SUC) {
+                                        this.ctrlr.popPage();
+                                        const petName = PetTool.getCnName(curPet);
+                                        const drinkModel = drinkModelDict[cnsum.id];
+                                        this.ctrlr.popToast(`${petName}获得${drinkModel.cnName}效果`);
+                                    } else this.ctrlr.popToast(rzt);
                                 }
                             }
                         );
@@ -240,20 +244,23 @@ export class PagePkg extends PagePkgBase {
                                 if (key === 1) {
                                     const petIdx = GameDataTool.getPetIdx(gameData, curPet);
                                     if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
-                                    const itemIdx = GameDataTool.getItemIdx(gameData, cnsum);
-                                    if (itemIdx === -1) return this.ctrlr.popToast('物品有误');
-                                    const weightRzt = GameDataTool.checkWeight(gameData);
-                                    if (weightRzt !== GameDataTool.SUC) return this.ctrlr.popToast(weightRzt);
+                                    const catcherIdx = GameDataTool.getItemIdx(gameData, cnsum);
+                                    if (catcherIdx === -1) return this.ctrlr.popToast('物品有误');
                                     const cPet = CaughtPetTool.createByPet(curPet);
                                     const rzt = GameDataTool.deletePet(gameData, petIdx);
                                     if (rzt === GameDataTool.SUC) {
+                                        GameDataTool.deleteItem(gameData, catcherIdx);
                                         GameDataTool.addCaughtPet(gameData, cPet);
-                                    }
+                                        this.ctrlr.popPage();
+                                        this.ctrlr.popToast('成功使用' + catcherModel.cnName);
+                                    } else this.ctrlr.popToast(rzt);
                                 }
                             }
                         );
                     }
                 });
+            } else if (cnsum.cnsumType === CnsumType.book) {
+            } else if (cnsum.cnsumType === CnsumType.special) {
             } else if (cnsum.cnsumType === CnsumType.eqpAmplr) {
                 let eqpIdxs = [];
                 PagePkg.getoutItemIdxsByType(gameData.items, eqpIdxs, ItemType.equip);
@@ -283,9 +290,11 @@ export class PagePkg extends PagePkgBase {
                             `提升“${EquipTool.getCnName(equip)}”的成长等级吗？`;
                         this.ctrlr.popAlert(str, (key: number) => {
                             if (key === 1) {
-                                const rzt = GameDataTool.growForEquip(gameData, equip);
+                                const eqpIdx = GameDataTool.getItemIdx(gameData, equip);
+                                if (eqpIdx === -1) return this.ctrlr.popToast('物品有误');
+                                const rzt = GameDataTool.makeEquipGrow(gameData, eqpIdx);
                                 if (rzt === GameDataTool.SUC) {
-                                    GameDataTool.deleteItem(gameData, itemIdx);
+                                    GameDataTool.deleteItem(gameData, eqpIdx);
                                     this.ctrlr.popToast(`“${EquipTool.getCnName(equip)}”的成长等级升至${equip.growth}级`);
                                     this.ctrlr.popPage();
                                 } else this.ctrlr.popToast(rzt);

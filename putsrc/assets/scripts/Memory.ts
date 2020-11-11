@@ -1323,7 +1323,8 @@ export class GameDataTool {
 
     static UNWIELD: number = -666;
 
-    static wieldEquip(gameData: GameData, itemIdx: number, pet: Pet, petEquipIdx: number): string {
+    static wieldEquip(gameData: GameData, itemIdx: number, petIdx: number, petEquipIdx: number): string {
+        const pet = gameData.pets[petIdx];
         if (petEquipIdx < 0 || PetEquipCountMax <= petEquipIdx) return '精灵装备栏索引错误';
         if (itemIdx !== this.UNWIELD) {
             const item = gameData.items[itemIdx];
@@ -1370,21 +1371,24 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static growForEquip(gameData: GameData, equip: Equip): string {
+    static makeEquipGrow(gameData: GameData, eqpIdx: number): string {
+        const equip = gameData.items[eqpIdx] as Equip;
         equip.growth++;
         gameData.totalEquipCount++;
         equip.catchIdx = gameData.totalEquipCount;
         return this.SUC;
     }
 
-    static addAffixForEquip(gameData: GameData, equip: Equip): string {
+    static addAffixForEquip(gameData: GameData, eqpIdx: number): string {
+        const equip = gameData.items[eqpIdx] as Equip;
         // llytodo
         gameData.totalEquipCount++;
         equip.catchIdx = gameData.totalEquipCount;
         return this.SUC;
     }
 
-    static moveEquipInPetList(gameData: GameData, pet: Pet, from: number, to: number): string {
+    static moveEquipInPetList(gameData: GameData, petIdx: number, from: number, to: number): string {
+        const pet = gameData.pets[petIdx];
         const equips = pet.equips;
         if (from < 0 || equips.length <= from || to < 0 || equips.length <= to) return '请勿把项目移出列表范围';
 

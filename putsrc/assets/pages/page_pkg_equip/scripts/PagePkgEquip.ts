@@ -220,7 +220,10 @@ export class PagePkgEquip extends PageBase {
         const itemIdx = (this.selectedItemEquipCell as CellPkgEquip).curItemIdx || GameDataTool.UNWIELD;
         const petLVD = this.petEquipList.delegate as PkgEquipPetLVD;
         const data = petLVD.dataList[this.selectedPetEquipCell.curCellIdx];
-        const rzt = GameDataTool.wieldEquip(this.ctrlr.memory.gameData, itemIdx, data.pet, data.equipIndex);
+        const gameData = this.ctrlr.memory.gameData;
+        const petIdx = GameDataTool.getPetIdx(gameData, data.pet);
+        if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
+        const rzt = GameDataTool.wieldEquip(gameData, itemIdx, petIdx, data.equipIndex);
         if (rzt === GameDataTool.SUC) {
             this.resetList();
             this.ctrlr.popToast('装备更新');

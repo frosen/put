@@ -166,7 +166,9 @@ export enum CnsumType {
     drink = 1,
     catcher = 2,
     eqpAmplr = 3,
-    material = 4
+    book = 4,
+    special = 5,
+    material = 6
 }
 
 export class Cnsum extends Item {
