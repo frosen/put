@@ -8,9 +8,8 @@ const { ccclass, property } = cc._decorator;
 
 import { PageBase } from 'scripts/PageBase';
 import { NavBar } from 'scripts/NavBar';
-import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CaughtPet, Feature, ItemType, Pet } from 'scripts/DataSaved';
-import { GameDataTool, PetTool } from 'scripts/Memory';
+import { CaughtPetTool, GameDataTool, MoneyTool, PetTool } from 'scripts/Memory';
 import { PagePetDetail } from 'pages/page_pet_detail/scripts/PagePetDetail';
 import { CellPet } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
 import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
@@ -18,9 +17,9 @@ import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
 import { PagePet } from 'pages/page_pet/scripts/PagePet';
 import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
 import { CellPkgCaughtPet } from 'pages/page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
-import { petModelDict } from 'configs/PetModelDict';
-import { FeatureGainType } from 'pages/page_pet_detail/cells/cell_feature/scripts/CellFeature';
+import { CellFeature, FeatureGainType } from 'pages/page_pet_detail/cells/cell_feature/scripts/CellFeature';
 import { PagePetFeature } from 'pages/page_pet_feature/scripts/PagePetFeature';
+import { featureModelDict } from 'configs/FeatureModelDict';
 
 const MergeReputDiscount = [1, 1, 0.9, 0.8, 0.7, 0.6];
 
@@ -62,9 +61,19 @@ export class PageActMerger extends PageBase {
     @property(cc.Label)
     featureLbl: cc.Label = null;
 
+    @property(cc.Label)
+    priceLbl: cc.Label = null;
+
+    @property(cc.Label)
+    noMoneyLbl: cc.Label = null;
+
+    @property(cc.Button)
+    mergeBtn: cc.Button = null;
+
     curPet: Pet = null;
     curCaughtPet: CaughtPet = null;
     curFeature: Feature = null;
+    needMoney: number = -1;
 
     onLoad() {
         super.onLoad();
@@ -73,6 +82,8 @@ export class PageActMerger extends PageBase {
         this.petBtn.node.on('click', this.selectPet.bind(this));
         this.cPetBtn.node.on('click', this.selectCaughtPet.bind(this));
         this.featureBtn.node.on('click', this.selectFeature.bind(this));
+
+        this.mergeBtn.node.on('click', this.gotoMerge.bind(this));
     }
 
     onLoadNavBar(navBar: NavBar) {
@@ -117,6 +128,25 @@ export class PageActMerger extends PageBase {
         const lv = PetTool.getCurMergeLv(pet);
         this.cPetLbl.string = `选择等级不高于${lv}级的捕获状态精灵`;
         this.featureLbl.string = '先选择要被融掉的捕获状态精灵';
+
+        const { price, discount } = this.getMergePriceAndDiscount(pet);
+        if (price > 0) {
+            const priceStr = MoneyTool.getSimpleStr(price);
+            const discountStr = discount > 0 ? `（已享${discount}%声望折扣）` : '';
+            this.priceLbl.string = priceStr + discountStr;
+        } else {
+            this.priceLbl.string = '本次免费';
+        }
+
+        const gameData = this.ctrlr.memory.gameData;
+        const curMoney = GameDataTool.getMoney(gameData);
+        if (curMoney < price) {
+            this.noMoneyLbl.node.opacity = 255;
+            this.needMoney = -1;
+        } else {
+            this.noMoneyLbl.node.opacity = 0;
+            this.needMoney = price;
+        }
     }
 
     clearPet() {
@@ -128,10 +158,7 @@ export class PageActMerger extends PageBase {
     }
 
     selectCaughtPet() {
-        if (!this.curPet) {
-            this.ctrlr.popToast(this.cPetLbl.string);
-            return;
-        }
+        if (!this.curPet) return this.ctrlr.popToast(this.cPetLbl.string);
 
         const gameData = this.ctrlr.memory.gameData;
         let cPetIdxs = [];
@@ -166,7 +193,7 @@ export class PageActMerger extends PageBase {
 
         this.curCaughtPet = cPet;
 
-        const name = petModelDict[cPet.petId].cnName;
+        const name = CaughtPetTool.getCnName(this.curCaughtPet);
         this.featureLbl.string = `选择${name}的一个特性`;
     }
 
@@ -179,15 +206,12 @@ export class PageActMerger extends PageBase {
     }
 
     selectFeature() {
-        if (!this.curPet || !this.curCaughtPet) {
-            this.ctrlr.popToast(this.featureLbl.string);
-            return;
-        }
+        if (!this.curPet || !this.curCaughtPet) return this.ctrlr.popToast(this.featureLbl.string);
 
         const features = this.curCaughtPet.features;
         const gainTypes = [];
         for (const feature of features) {
-            if (this.curCaughtPet.exFeatureIds.includes[feature.id]) gainTypes.push(FeatureGainType.expert);
+            if (this.curCaughtPet.exFeatureIds.includes(feature.id)) gainTypes.push(FeatureGainType.expert);
             else gainTypes.push(FeatureGainType.inborn);
         }
 
@@ -196,13 +220,24 @@ export class PageActMerger extends PageBase {
             features,
             gainTypes,
             callback: (feature: Feature, gainType: FeatureGainType) => {
-                this.onSelectFeature(feature);
+                this.onSelectFeature(feature, gainType);
                 this.ctrlr.popPage();
             }
         });
     }
 
-    onSelectFeature(feature: Feature) {}
+    onSelectFeature(feature: Feature, gainType: FeatureGainType) {
+        this.clearFeature();
+
+        const cellFeatureNode = cc.instantiate(this.featurePrefab);
+        cellFeatureNode.parent = this.featureNode;
+
+        const cellFeature = cellFeatureNode.getComponent(CellFeature);
+        cellFeature.clickCallback = this.selectFeature.bind(this);
+        cellFeature.setData(feature, gainType);
+
+        this.curFeature = feature;
+    }
 
     clearFeature() {
         if (this.featureNode.childrenCount > 0) {
@@ -212,11 +247,73 @@ export class PageActMerger extends PageBase {
         }
     }
 
+    gotoMerge() {
+        if (!this.curPet) return this.ctrlr.popToast('先选择精灵');
+        if (!this.curCaughtPet) return this.ctrlr.popToast('先选择捕获状态精灵');
+        if (!this.curFeature) return this.ctrlr.popToast('先选择特性');
+        if (this.needMoney < 0) return this.ctrlr.popToast('通用币不足');
+
+        const petName = PetTool.getCnName(this.curPet);
+        const cPetName = CaughtPetTool.getCnName(this.curCaughtPet);
+        const featureName = featureModelDict[this.curFeature.id].cnBrief;
+        const str = `确定把${cPetName}的特性“${featureName}”\n融合到${petName}身上吗？\n注意：你将失去${cPetName}`;
+        this.ctrlr.popAlert(str, (key: number) => {
+            if (key === 1) this.merge();
+        });
+    }
+
+    merge() {
+        const gameData = this.ctrlr.memory.gameData;
+        let petIdx = -1;
+        for (let index = 0; index < gameData.pets.length; index++) {
+            const petIn = gameData.pets[index];
+            if (petIn.catchIdx === this.curPet.catchIdx) {
+                petIdx = index;
+                break;
+            }
+        }
+        if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
+
+        let cPetIdx = -1;
+        for (let index = 0; index < gameData.items.length; index++) {
+            const item = gameData.items[index];
+            if (item.id === this.curCaughtPet.id) {
+                cPetIdx = index;
+                break;
+            }
+        }
+        if (cPetIdx === -1) return this.ctrlr.popToast('捕获状态精灵有误');
+
+        const money = GameDataTool.getMoney(gameData);
+        if (money < this.needMoney) return this.ctrlr.popToast('通用币不足');
+
+        const rzt = GameDataTool.mergePet(gameData, petIdx, cPetIdx, this.curFeature.id);
+        if (rzt !== GameDataTool.SUC) return this.ctrlr.popToast(rzt);
+
+        const petName = PetTool.getCnName(this.curPet);
+        const featureName = featureModelDict[this.curFeature.id].cnBrief;
+        this.ctrlr.popToast(`融合成功\n${petName} 特性${featureName} +${this.curFeature.lv}`);
+
+        this.clearPet();
+        this.clearCaughtPet();
+        this.clearFeature();
+        this.curPet = null;
+        this.curCaughtPet = null;
+        this.curFeature = null;
+        this.needMoney = -1;
+        this.petLbl.string = '选择精灵';
+        this.cPetLbl.string = '先选择准备强化的精灵';
+        this.featureLbl.string = '先选择准备强化的精灵';
+        this.priceLbl.string = '0块';
+        this.noMoneyLbl.node.opacity = 0;
+    }
+
     // -----------------------------------------------------------------
 
-    getMergePrice(pet: Pet): number {
+    getMergePriceAndDiscount(pet: Pet): { price: number; discount: number } {
         const gameData = this.ctrlr.memory.gameData;
         const reputRank = GameDataTool.getReputRank(gameData, gameData.curPosId);
-        return pet.merges.length * 100 * MergeReputDiscount[reputRank];
+        const discount = MergeReputDiscount[reputRank];
+        return { price: pet.merges.length * 100 * discount, discount: Math.round((1 - discount) * 100) };
     }
 }

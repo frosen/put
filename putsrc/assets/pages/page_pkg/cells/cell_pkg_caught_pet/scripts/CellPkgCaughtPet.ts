@@ -36,7 +36,8 @@ export class CellPkgCaughtPet extends CellPkgBase {
         for (const feature of caughtPet.features) {
             const cnName = featureModelDict[feature.id].cnBrief;
             const lv = feature.lv;
-            this.setInfoNode(index, '天赋特性・' + cnName + String(lv), cc.Color.RED);
+            const ex = caughtPet.exFeatureIds.includes(feature.id);
+            this.setInfoNode(index, cnName + String(lv), ex ? cc.Color.RED : cc.Color.BLUE);
             index++;
         }
 

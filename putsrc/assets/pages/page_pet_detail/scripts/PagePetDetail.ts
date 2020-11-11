@@ -12,11 +12,12 @@ import { PagePetDetailLVD } from './PagePetDetailLVD';
 import { Pet, Feature } from 'scripts/DataSaved';
 import { Pet2 } from 'scripts/DataOther';
 import { ListViewCell } from 'scripts/ListViewCell';
-import { PetTool, GameDataTool } from 'scripts/Memory';
-import { FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
+import { GameDataTool } from 'scripts/Memory';
+import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import { FuncBar } from 'pages/page_pet/scripts/FuncBar';
 import { NavBar } from 'scripts/NavBar';
+import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 
 @ccclass
 export class PagePetDetail extends PageBase {
@@ -100,7 +101,9 @@ export class PagePetDetail extends PageBase {
         this.ctrlr.pushPage(PagePkgEquip, { pet: this.curPet, idx: index });
     }
 
-    onSkillCellClick(index: number, cell: ListViewCell) {}
+    onSkillCellClick(sklIdx: number, cell: CellSkill) {}
+
+    onFeatureCellClick(cellFeature: CellFeature) {}
 
     // -----------------------------------------------------------------
 

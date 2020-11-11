@@ -43,7 +43,9 @@ const STATE_TIP = `分为：
 const LV_TIP = `提高等级可以：
 提高属性
 从11级开始每3级随机获取一个特性
-10级和30级时可分别学会一个技能`;
+10级和30级时可分别学会一个技能
+
+战斗时攻守双方等级差影响命中率`;
 const MERGE_TIP = '将其他精灵的能力融合给当前精灵的次数\n15级后每5级可获得一次融合的机会\n融合操作在“精灵融合堂”进行';
 const PRVTY_TIP = '数值 0-100 随时间自行提高\n数字越大上升越慢\n可提高基础暴击率，暴击伤害，命中，闪躲';
 const DRINK_TIP = `使用道具中的“饮品”获得
@@ -52,9 +54,11 @@ const DRINK_TIP = `使用道具中的“饮品”获得
 提升某种资源的获取效率和提升某项战力`;
 
 const BIO_TIP = '分为：\n人形生物 魔法生物\n机械生物 自然生物\n未知生物';
-const ELE_TIP =
-    '分为：\n火 克空   水 克火   空 克地\n地 克水   光 克暗   暗 克光\n' +
-    '对克制精灵造成15%的额外伤害\n使用同种属性技能精神消耗减少10%，伤害增加5%';
+const ELE_TIP = `分为：
+火 克空   水 克火   空 克地
+地 克水   光 克暗   暗 克光
+对克制精灵造成15%的额外伤害
+使用同种属性技能精神消耗减少10%，伤害增加5%`;
 
 const BATTLE_TIP = `分为：
 近战 攻击正前面的目标
@@ -356,6 +360,9 @@ export class PagePetDetailLVD extends ListViewDelegate {
         } else if (rowIdx <= 21 + this.curPet2.skillIds.length + 1 + this.featureDatas.length) {
             const featureData = this.featureDatas[rowIdx - 21 - this.curPet2.skillIds.length - 1 - 1];
             cell.setData(featureData.feature, featureData.type);
+            (cell as CellFeature).clickCallback = (cell: CellFeature) => {
+                this.page.onFeatureCellClick(cell);
+            };
         }
     }
 }

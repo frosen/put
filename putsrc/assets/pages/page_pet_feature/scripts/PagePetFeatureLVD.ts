@@ -28,7 +28,9 @@ export class PagePetFeatureLVD extends ListViewDelegate {
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
-        return cc.instantiate(this.featurePrefab).getComponent(CellFeature);
+        const cell = cc.instantiate(this.featurePrefab).getComponent(CellFeature);
+        cell.clickCallback = this.page.onCellClick.bind(this.page);
+        return cell;
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellFeature) {

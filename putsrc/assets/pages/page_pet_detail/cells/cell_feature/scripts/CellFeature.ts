@@ -37,6 +37,8 @@ export class CellFeature extends ListViewCell {
     feature: Feature = null;
     gainType: FeatureGainType = null;
 
+    clickCallback: (cell: CellFeature) => void = null;
+
     setData(feature: Feature, type: FeatureGainType) {
         this.feature = feature;
         this.gainType = type;
@@ -52,6 +54,6 @@ export class CellFeature extends ListViewCell {
 
     onClick() {
         cc.log('PUT cell click: ', this.feature.id, this.curCellIdx);
-        this.ctrlr.popToast(`这是一个${FeatureGainNames[this.gainType]}特性`);
+        if (this.clickCallback) this.clickCallback(this);
     }
 }

@@ -78,11 +78,13 @@ export class CellPet extends ListViewCell {
         this.hideAllInfoNode();
         let index = 0;
         const realPrvty = PetTool.getRealPrvty(pet);
-        this.setInfoNode(index, `默契值：${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
+        this.setInfoNode(index, `默契 ${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
         index++;
-        for (const featureId of pet.exFeatureIds) {
-            const cnName = featureModelDict[featureId].cnBrief;
-            this.setInfoNode(index, '专精特性・' + cnName, cc.Color.RED);
+        for (const feature of pet.inbFeatures) {
+            const cnName = featureModelDict[feature.id].cnBrief;
+            const lv = feature.lv;
+            const ex = pet.exFeatureIds.includes(feature.id);
+            this.setInfoNode(index, cnName + String(lv), ex ? cc.Color.RED : cc.Color.BLUE);
             index++;
         }
 

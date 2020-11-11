@@ -495,10 +495,8 @@ export class PetTool {
             return name + (needSpace ? ' 之 ' : '之') + PetTool.getOriNameById(pet.id);
         } else if (pet.exFeatureIds.length === 2) {
             let name = '';
-            for (let index = pet.exFeatureIds.length - 1; index >= 0; index--) {
-                const id = pet.exFeatureIds[index];
-                name += featureModelDict[id].cnBrief;
-            }
+            name += featureModelDict[pet.exFeatureIds[1]].cnBrief;
+            name += featureModelDict[pet.exFeatureIds[0]].cnBrief;
             return name + (needSpace ? ' ' : '') + PetTool.getOriNameById(pet.id);
         } else {
             return PetTool.getOriNameById(pet.id);
@@ -811,16 +809,17 @@ export class EquipTool {
     }
 
     static getCnName(equip: Equip, needSpace: boolean = false): string {
-        if (equip.affixes.length > 0) {
-            let name = '';
-            for (let index = equip.affixes.length - 1; index >= 0; index--) {
-                const affix = equip.affixes[index];
-                name += featureModelDict[affix.id].cnBrief;
-            }
-            return name + (needSpace ? ' 之 ' : '之') + equipModelDict[equip.id].cnName;
-        } else {
-            return equipModelDict[equip.id].cnName;
+        let afName = '';
+        for (let index = equip.affixes.length - 1; index >= 0; index--) {
+            const affix = equip.affixes[index];
+            afName += featureModelDict[affix.id].cnBrief;
         }
+        let mid: string;
+        if (afName.length === 0) mid = '';
+        else if (afName.length === 1) mid = needSpace ? ' 之 ' : '之';
+        else mid = needSpace ? ' ' : '';
+
+        return afName + mid + equipModelDict[equip.id].cnName;
     }
 
     static getToken(e: Equip): string {
@@ -874,22 +873,21 @@ export class CaughtPetTool {
         return CaughtPetTool.create(pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures);
     }
 
-    static getCnName(cpet: CaughtPet, needSpace: boolean = false): string {
-        const petId = cpet.id.slice(3);
-        let petName: string;
-        if (cpet.features.length > 0) {
+    static getCnName(cPet: CaughtPet, needSpace: boolean = false): string {
+        let cnName: string;
+        if (cPet.exFeatureIds.length === 1) {
+            const name = featureModelDict[cPet.exFeatureIds[0]].cnBrief;
+            cnName = name + (needSpace ? ' 之 ' : '之') + PetTool.getOriNameById(cPet.petId);
+        } else if (cPet.exFeatureIds.length === 2) {
             let name = '';
-            for (let index = 1; index >= 0; index--) {
-                const feature = cpet.features[index];
-                if (!feature) continue;
-                name += featureModelDict[feature.id].cnBrief;
-            }
-            petName = name + (needSpace ? ' 之 ' : '之') + PetTool.getOriNameById(petId);
+            name += featureModelDict[cPet.exFeatureIds[1]].cnBrief;
+            name += featureModelDict[cPet.exFeatureIds[0]].cnBrief;
+            cnName = name + (needSpace ? ' ' : '') + PetTool.getOriNameById(cPet.petId);
         } else {
-            petName = PetTool.getOriNameById(petId);
+            cnName = PetTool.getOriNameById(cPet.petId);
         }
 
-        return '捕获：' + petName;
+        return '捕获：' + cnName;
     }
 
     static getPrice(cpet: CaughtPet): number {
