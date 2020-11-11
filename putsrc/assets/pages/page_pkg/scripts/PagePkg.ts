@@ -22,6 +22,8 @@ import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
 import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
 import { NavBar } from 'scripts/NavBar';
 import { PkgSelectionBar } from './PkgSelectionBar';
+import { catcherModelDict } from 'configs/CatcherModelDict';
+import { petModelDict } from 'configs/PetModelDict';
 
 const WIDTH = 1080;
 
@@ -200,18 +202,58 @@ export class PagePkg extends PagePkgBase {
                             `确定对“${PetTool.getCnName(curPet)}”使用“${drinkModel.cnName}”吗？`,
                             (key: number) => {
                                 if (key === 1) {
-                                    const rzt = GameDataTool.useDrinkToPet(gameData, curPet, cnsum);
-                                    if (rzt === GameDataTool.SUC) {
-                                        GameDataTool.deleteItem(gameData, itemIdx);
-                                        this.ctrlr.popPage();
-                                    } else this.ctrlr.popToast(rzt);
+                                    const petIdx = GameDataTool.getPetIdx(gameData, curPet);
+                                    if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
+                                    const itemIdx = GameDataTool.getItemIdx(gameData, cnsum);
+                                    if (itemIdx === -1) return this.ctrlr.popToast('物品有误');
+                                    const rzt = GameDataTool.useDrinkToPet(gameData, petIdx, itemIdx);
+                                    if (rzt === GameDataTool.SUC) this.ctrlr.popPage();
+                                    else this.ctrlr.popToast(rzt);
                                 }
                             }
                         );
                     }
                 });
             } else if (cnsum.cnsumType === CnsumType.catcher) {
-                this.ctrlr.popToast('捕捉器会在战斗中开启“捕捉”后自动使用');
+                this.ctrlr.pushPage(PagePet, {
+                    cellPetType: PagePetCellType.selection,
+                    name: '选择精灵',
+                    callback: (cellIdx: number, curPet: Pet) => {
+                        const catcherModel = catcherModelDict[cnsum.id];
+                        const petModel = petModelDict[curPet.id];
+                        if (curPet.lv < catcherModel.lvMin || catcherModel.lvMax < curPet.lv) {
+                            return this.ctrlr.popToast('等级不符，无法使用');
+                        }
+                        if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) {
+                            return this.ctrlr.popToast('生物类型不符，无法使用');
+                        }
+                        if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) {
+                            return this.ctrlr.popToast('元素类型不符，无法使用');
+                        }
+                        if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) {
+                            return this.ctrlr.popToast('战斗类型不符，无法使用');
+                        }
+
+                        this.ctrlr.popAlert(
+                            `确定对“${PetTool.getCnName(curPet)}”使用“${catcherModel.cnName}”吗？`,
+                            (key: number) => {
+                                if (key === 1) {
+                                    const petIdx = GameDataTool.getPetIdx(gameData, curPet);
+                                    if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
+                                    const itemIdx = GameDataTool.getItemIdx(gameData, cnsum);
+                                    if (itemIdx === -1) return this.ctrlr.popToast('物品有误');
+                                    const weightRzt = GameDataTool.checkWeight(gameData);
+                                    if (weightRzt !== GameDataTool.SUC) return this.ctrlr.popToast(weightRzt);
+                                    const cPet = CaughtPetTool.createByPet(curPet);
+                                    const rzt = GameDataTool.deletePet(gameData, petIdx);
+                                    if (rzt === GameDataTool.SUC) {
+                                        GameDataTool.addCaughtPet(gameData, cPet);
+                                    }
+                                }
+                            }
+                        );
+                    }
+                });
             } else if (cnsum.cnsumType === CnsumType.eqpAmplr) {
                 let eqpIdxs = [];
                 PagePkg.getoutItemIdxsByType(gameData.items, eqpIdxs, ItemType.equip);

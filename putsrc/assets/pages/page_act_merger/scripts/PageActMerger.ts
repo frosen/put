@@ -264,24 +264,10 @@ export class PageActMerger extends PageBase {
 
     merge() {
         const gameData = this.ctrlr.memory.gameData;
-        let petIdx = -1;
-        for (let index = 0; index < gameData.pets.length; index++) {
-            const petIn = gameData.pets[index];
-            if (petIn.catchIdx === this.curPet.catchIdx) {
-                petIdx = index;
-                break;
-            }
-        }
+        const petIdx = GameDataTool.getPetIdx(gameData, this.curPet);
         if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
 
-        let cPetIdx = -1;
-        for (let index = 0; index < gameData.items.length; index++) {
-            const item = gameData.items[index];
-            if (item.id === this.curCaughtPet.id) {
-                cPetIdx = index;
-                break;
-            }
-        }
+        let cPetIdx = GameDataTool.getItemIdx(gameData, this.curCaughtPet);
         if (cPetIdx === -1) return this.ctrlr.popToast('捕获状态精灵有误');
 
         const money = GameDataTool.getMoney(gameData);

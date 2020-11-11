@@ -43,7 +43,8 @@ import {
     QuestAmplType,
     QuestAmplRates,
     QuestAmplAwardRates,
-    QuestDLineAwardRates
+    QuestDLineAwardRates,
+    Item
 } from './DataSaved';
 import {
     FeatureModel,
@@ -276,7 +277,8 @@ export class Memory {
     }
 
     static updateGameDataReal(gameData: GameData, curTime: number) {
-        for (const pet of gameData.pets) {
+        for (let index = 0; index < gameData.pets.length; index++) {
+            const pet = gameData.pets[index];
             if (pet.prvty < PrvtyMax) {
                 const Range = 10 * 60 * 1000; // 默契值 10min1点
                 if (curTime - pet.prvtyTime > Range) {
@@ -291,7 +293,7 @@ export class Memory {
 
             if (pet.drink) {
                 if (curTime - pet.drinkTime >= drinkModelDict[pet.drink.id].dura) {
-                    GameDataTool.clearDrinkFromPet(pet);
+                    GameDataTool.clearDrinkFromPet(gameData, index);
                 }
             }
         }
@@ -310,7 +312,7 @@ export class Memory {
     // -----------------------------------------------------------------
 
     test() {
-        this.gameData.curPosId = 'YiZhuangJiDi';
+        this.gameData.curPosId = 'KeChuangXiaoJing';
 
         let pet = PetTool.createWithRandomFeature('FaTiaoWa', 30);
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
@@ -339,10 +341,12 @@ export class Memory {
         });
 
         pet = PetTool.createWithRandomFeature('HeiFengWuRenJi', 30);
-        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures);
+        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
+            pet.state = PetState.ready;
+        });
 
         pet = PetTool.createWithRandomFeature('CiHuaYouLing', 29);
-        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures);
+        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {});
 
         // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
 
@@ -370,11 +374,10 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 33);
         GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += 1000));
 
-        const cPet = CaughtPetTool.createByPet(PetTool.createWithRandomFeature('BaiLanYuYan', 3));
+        const petForCPet = PetTool.createWithRandomFeature('BaiLanYuYan', 13);
+        const cPet = CaughtPetTool.createByPet(petForCPet);
         GameDataTool.addCaughtPet(this.gameData, cPet);
 
-        this.gameData.curPosId = 'GuangJiDianZhiLu';
-        actPosModelDict[this.gameData.curPosId].lv = 30;
         // GameDataTool.createExpl(this.gameData, 0);
         // this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 60 * 24 * 2;
         // this.gameData.curExpl.catcherId = 'PuTongXianJing1';
@@ -1164,9 +1167,9 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    // -----------------------------------------------------------------
-
-    static useDrinkToPet(gameData: GameData, pet: Pet, drink: Drink, curTime: number = null): string {
+    static useDrinkToPet(gameData: GameData, petIdx: number, drinkIdx: number, curTime: number = null): string {
+        const pet = gameData.pets[petIdx];
+        const drink = gameData.items[drinkIdx];
         const drinkModel: DrinkModel = drinkModelDict[drink.id];
 
         if (pet.drinkTime > 0) {
@@ -1180,10 +1183,13 @@ export class GameDataTool {
         pet.drink = CnsumTool.create(Drink, drink.id); // 不用 pet.drink = drink，是因为drink内部有count代表多个
         pet.drinkTime = curTime || Date.now();
 
+        GameDataTool.deleteItem(gameData, drinkIdx);
+
         return this.SUC;
     }
 
-    static clearDrinkFromPet(pet: Pet) {
+    static clearDrinkFromPet(gameData: GameData, petIdx: number) {
+        const pet = gameData.pets[petIdx];
         const drink = pet.drink;
         const drinkModel: DrinkModel = drinkModelDict[drink.id];
         GameJITDataTool.removeAmpl(pet, drinkModel.id);
@@ -1192,10 +1198,24 @@ export class GameDataTool {
         pet.drinkTime = 0;
     }
 
+    static getPetIdx(gameData: GameData, pet: Pet): number {
+        for (let index = 0; index < gameData.pets.length; index++) {
+            if (gameData.pets[index].catchIdx === pet.catchIdx) return index;
+        }
+        return -1;
+    }
+
     // -----------------------------------------------------------------
 
-    static addCnsum(gameData: GameData, cnsumId: string, count: number = 1, callback: (cnsum: Cnsum) => void = null): string {
+    static checkWeight(gameData: GameData): string {
         if (gameData.weight >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+        return this.SUC;
+    }
+
+    static addCnsum(gameData: GameData, cnsumId: string, count: number = 1, callback: (cnsum: Cnsum) => void = null): string {
+        const weightRzt = this.checkWeight(gameData);
+        if (weightRzt !== this.SUC) return weightRzt;
+
         gameData.weight += count;
 
         let itemIdx: number = -1;
@@ -1223,7 +1243,9 @@ export class GameDataTool {
     }
 
     static addEquip(gameData: GameData, equip: Equip, callback: (equip: Equip) => void = null): string {
-        if (gameData.weight >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+        const weightRzt = this.checkWeight(gameData);
+        if (weightRzt !== this.SUC) return weightRzt;
+
         gameData.weight++;
 
         gameData.totalEquipCount++;
@@ -1236,7 +1258,9 @@ export class GameDataTool {
     }
 
     static addCaughtPet(gameData: GameData, cp: CaughtPet, callback: (cp: CaughtPet) => void = null): string {
-        if (gameData.weight >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+        const weightRzt = this.checkWeight(gameData);
+        if (weightRzt !== this.SUC) return weightRzt;
+
         gameData.weight++;
 
         gameData.items.push(cp);
@@ -1335,7 +1359,8 @@ export class GameDataTool {
         } else {
             const oldEquip = pet.equips[petEquipIdx];
             if (!oldEquip) return '空和空无法交换';
-            if (gameData.items.length >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+            const weightRzt = this.checkWeight(gameData);
+            if (weightRzt !== this.SUC) return weightRzt;
 
             gameData.items.push(oldEquip);
             pet.equips[petEquipIdx] = undefined;
@@ -1367,6 +1392,13 @@ export class GameDataTool {
         equips.splice(from, 1);
         equips.splice(to, 0, equip);
         return this.SUC;
+    }
+
+    static getItemIdx(gameData: GameData, item: Item): number {
+        for (let index = 0; index < gameData.items.length; index++) {
+            if (gameData.items[index].id === item.id) return index;
+        }
+        return -1;
     }
 
     // -----------------------------------------------------------------
