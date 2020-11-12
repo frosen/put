@@ -309,11 +309,17 @@ export class PagePkg extends PagePkgBase {
             this.ctrlr.pushPage(PagePkgEquip, { idx: itemIdx });
         } else if (item.itemType === ItemType.caughtPet) {
             const cPet = item as CaughtPet;
-            const rzt = GameDataTool.addPet(gameData, cPet.petId, cPet.lv, cPet.exFeatureIds, cPet.features);
-            if (rzt === GameDataTool.SUC) {
-                GameDataTool.deleteItem(gameData, itemIdx);
-                this.resetCurList();
-            } else this.ctrlr.popToast(rzt);
+            this.ctrlr.popAlert(`确定使用${CaughtPetTool.getCnName(cPet)}吗？`, (key: number) => {
+                if (key === 1) {
+                    const cPetIdx = GameDataTool.getItemIdx(gameData, cPet);
+                    if (cPetIdx === -1) return this.ctrlr.popToast('物品有误');
+                    const rzt = GameDataTool.addPet(gameData, cPet.petId, cPet.lv, cPet.exFeatureIds, cPet.features);
+                    if (rzt === GameDataTool.SUC) {
+                        GameDataTool.deleteItem(gameData, cPetIdx);
+                        this.resetCurList();
+                    } else this.ctrlr.popToast(rzt);
+                }
+            });
         }
     }
 

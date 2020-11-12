@@ -278,7 +278,7 @@ export class PageActMerger extends PageBase {
 
         const petName = PetTool.getCnName(this.curPet);
         const featureName = featureModelDict[this.curFeature.id].cnBrief;
-        this.ctrlr.popToast(`融合成功\n${petName} 特性${featureName} +${this.curFeature.lv}`);
+        this.ctrlr.popToast(`融合成功\n${petName} 特性：${featureName} +${this.curFeature.lv}`);
 
         this.clearPet();
         this.clearCaughtPet();

@@ -44,7 +44,8 @@ import {
     QuestAmplRates,
     QuestAmplAwardRates,
     QuestDLineAwardRates,
-    Item
+    Item,
+    Merge
 } from './DataSaved';
 import {
     FeatureModel,
@@ -340,12 +341,15 @@ export class Memory {
             pet.lndFeatures.push(f);
         });
 
-        pet = PetTool.createWithRandomFeature('HeiFengWuRenJi', 30);
+        pet = PetTool.createWithRandomFeature('HeiFengWuRenJi', 18);
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
             pet.state = PetState.ready;
         });
 
         pet = PetTool.createWithRandomFeature('CiHuaYouLing', 29);
+        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {});
+
+        pet = PetTool.createWithRandomFeature('HuoHuoTu', 18);
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {});
 
         // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
@@ -606,6 +610,13 @@ export class PetTool {
 
         if (petFeature) petFeature.lv += feature.lv;
         else pet.lndFeatures.push(FeatureTool.clone(feature));
+
+        const mergeData = newInsWithChecker(Merge);
+        mergeData.oPetLv = pet.lv;
+        mergeData.petId = pet.id;
+        mergeData.featureId = feature.id;
+        mergeData.featureLv = feature.lv;
+        pet.merges.push(mergeData);
     }
 
     static getCurMergeLv(pet: Pet): number {
@@ -1089,8 +1100,8 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static deletePet(gameData: GameData, index: number): string {
-        const pet = gameData.pets[index];
+    static deletePet(gameData: GameData, petIdx: number): string {
+        const pet = gameData.pets[petIdx];
         if (pet.state !== PetState.rest) return '精灵未在休息状态，无法放生';
 
         const curCatchIdx = pet.catchIdx;
@@ -1100,7 +1111,13 @@ export class GameDataTool {
             }
         }
 
-        gameData.pets.splice(index, 1);
+        for (let index = 0; index < 3; index++) {
+            if (!pet.equips[index]) continue;
+            const rzt = this.wieldEquip(gameData, this.UNWIELD, petIdx, index);
+            if (rzt !== this.SUC) return rzt + '，无法卸下装备';
+        }
+
+        gameData.pets.splice(petIdx, 1);
         return this.SUC;
     }
 
@@ -1108,32 +1125,6 @@ export class GameDataTool {
         gameData.pets.sort((a: Pet, b: Pet): number => {
             return a.state - b.state;
         });
-    }
-
-    static mergePet(gameData: GameData, petIdx: number, caughtPetIdx: number, featureId: string): string {
-        const pet = gameData.pets[petIdx];
-        const petRzt = GameDataTool.checkMergePet(gameData, pet);
-        if (petRzt !== this.SUC) return petRzt;
-
-        const caughtPet = gameData.items[caughtPetIdx] as CaughtPet;
-        const cPetRzt = GameDataTool.checkMergeCaughtPet(gameData, pet, caughtPet);
-        if (cPetRzt !== this.SUC) return cPetRzt;
-
-        let mergeFeature: Feature = null;
-        for (const cFeature of caughtPet.features) {
-            if (cFeature.id === featureId) {
-                mergeFeature = cFeature;
-                break;
-            }
-        }
-        if (!mergeFeature) return `${caughtPet.id}不具备${featureId}`;
-
-        const rzt = GameDataTool.deleteItem(gameData, caughtPetIdx);
-        if (rzt !== this.SUC) return rzt;
-
-        PetTool.merge(pet, mergeFeature);
-
-        return this.SUC;
     }
 
     static checkMergePet(gameData: GameData, pet: Pet): string {
@@ -1158,12 +1149,41 @@ export class GameDataTool {
             return `${petName}目前尚未获得天赋特性`;
         }
 
+        const mergeLv = PetTool.getCurMergeLv(pet);
+        if (caughtPet.lv > mergeLv) return `融掉精灵的等级不得超过融合等级${mergeLv}级`;
+
         for (const merged of pet.merges) {
             if (merged.petId === caughtPet.petId) {
                 const petName = petModelDict[caughtPet.petId].cnName;
                 return `${petName}已被融合过\n不得融入2只同种类精灵`;
             }
         }
+        return this.SUC;
+    }
+
+    static mergePet(gameData: GameData, petIdx: number, caughtPetIdx: number, featureId: string): string {
+        const pet = gameData.pets[petIdx];
+        const petRzt = this.checkMergePet(gameData, pet);
+        if (petRzt !== this.SUC) return petRzt;
+
+        const caughtPet = gameData.items[caughtPetIdx] as CaughtPet;
+        const cPetRzt = this.checkMergeCaughtPet(gameData, pet, caughtPet);
+        if (cPetRzt !== this.SUC) return cPetRzt;
+
+        let mergeFeature: Feature = null;
+        for (const cFeature of caughtPet.features) {
+            if (cFeature.id === featureId) {
+                mergeFeature = cFeature;
+                break;
+            }
+        }
+        if (!mergeFeature) return `${caughtPet.id}不具备${featureId}`;
+
+        const rzt = this.deleteItem(gameData, caughtPetIdx);
+        if (rzt !== this.SUC) return rzt;
+
+        PetTool.merge(pet, mergeFeature);
+
         return this.SUC;
     }
 
@@ -1183,7 +1203,7 @@ export class GameDataTool {
         pet.drink = CnsumTool.create(Drink, drink.id); // 不用 pet.drink = drink，是因为drink内部有count代表多个
         pet.drinkTime = curTime || Date.now();
 
-        GameDataTool.deleteItem(gameData, drinkIdx);
+        this.deleteItem(gameData, drinkIdx);
 
         return this.SUC;
     }
@@ -1416,7 +1436,7 @@ export class GameDataTool {
     }
 
     static addPA(gameData: GameData, posId: string, paKey: string): PADBase {
-        const pd = GameDataTool.addPos(gameData, posId);
+        const pd = this.addPos(gameData, posId);
         if (!pd.actDict.hasOwnProperty(paKey)) {
             let pad: PADBase;
             if (paKey === PAKey.expl) pad = PosDataTool.createPADExpl();

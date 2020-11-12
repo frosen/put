@@ -92,9 +92,10 @@ export const PetEquipCountMax: number = 3;
 export const PrvtyMax: number = 1000000;
 
 export class Merge {
+    oPetLv: number;
     petId: string;
     featureId: string;
-    num: number;
+    featureLv: number;
 }
 
 export class Pet {

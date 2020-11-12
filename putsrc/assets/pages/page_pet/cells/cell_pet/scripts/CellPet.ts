@@ -63,7 +63,7 @@ export class CellPet extends ListViewCell {
 
         this.petNameLbl.string = PetTool.getCnName(pet, true);
         this.subNameLbl.string = pet.nickname ? '(' + PetTool.getBaseCnName(pet) + ')' : '';
-        this.lvLbl.string = `[L${pet.lv}R${0}]`; // r是融合层数
+        this.lvLbl.string = `[L${pet.lv}R${pet.merges.length}]`;
         ListViewCell.rerenderLbl(this.petNameLbl);
         ListViewCell.rerenderLbl(this.subNameLbl);
         ListViewCell.rerenderLbl(this.lvLbl);

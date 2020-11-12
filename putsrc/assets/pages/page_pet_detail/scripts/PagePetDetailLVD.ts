@@ -25,6 +25,7 @@ import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PetTool } from 'scripts/Memory';
 import { drinkModelDict } from 'configs/DrinkModelDict';
+import { CellMerge } from '../cells/cell_merge/scripts/CellMerge';
 
 const PETNAME = 'p';
 const ATTRI2 = '2';
@@ -34,6 +35,7 @@ const EQUIP = 'e';
 const BLANK = 'b';
 const SKILL = 's';
 const FEATURE = 'f';
+const MERGE = 'm';
 
 const STATE_TIP = `分为：
 备战中 跟随主人参与战斗
@@ -91,7 +93,15 @@ const FEATURE_TIP = `分为：
 任何特性都可以通过提升等级增强效果
 精灵从11级开始每3级随机升级天赋特性`;
 
-type DetailCell = CellPetName & CellAttri & CellAttri2 & CellTitle & CellPkgEquip & CellPkgEquipBlank & CellSkill & CellFeature;
+type DetailCell = CellPetName &
+    CellAttri &
+    CellAttri2 &
+    CellTitle &
+    CellPkgEquip &
+    CellPkgEquipBlank &
+    CellSkill &
+    CellFeature &
+    CellMerge;
 
 function numStr(n: number): string {
     return (n * 0.1).toFixed(1);
@@ -129,14 +139,24 @@ export class PagePetDetailLVD extends ListViewDelegate {
     @property(cc.Prefab)
     featurePrefab: cc.Prefab = null;
 
+    @property(cc.Prefab)
+    mergePrefab: cc.Prefab = null;
+
     curPet: Pet = null;
     curPet2: Pet2 = null;
     featureDatas: { feature: Feature; type: FeatureGainType }[] = [];
 
     page: PagePetDetail = null;
 
+    skillLen: number = 0;
+    featureLen: number = 0;
+    mergeLen: number = 0;
+
     numberOfRows(listView: ListView): number {
-        return 21 + 1 + this.curPet2.skillIds.length + 1 + this.featureDatas.length; // llytodo融合精灵的展示
+        this.skillLen = this.curPet2.skillIds.length;
+        this.featureLen = this.featureDatas.length;
+        this.mergeLen = this.curPet.merges.length;
+        return 21 + 1 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen;
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
@@ -166,11 +186,14 @@ export class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx === 20) return 180;
         // 第七组
         else if (rowIdx === 21) return 66;
-        else if (rowIdx < 21 + this.curPet2.skillIds.length) return 160;
-        else if (rowIdx === 21 + this.curPet2.skillIds.length) return 180;
+        else if (rowIdx < 21 + this.skillLen) return 160;
+        else if (rowIdx === 21 + this.skillLen) return 180;
         // 第八组
-        else if (rowIdx === 21 + this.curPet2.skillIds.length + 1) return 66;
-        else if (rowIdx <= 21 + this.curPet2.skillIds.length + 1 + this.featureDatas.length) return 160;
+        else if (rowIdx === 21 + this.skillLen + 1) return 66;
+        else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen) return 160;
+        // 第九组
+        else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) return 66;
+        else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) return 106;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
@@ -195,10 +218,13 @@ export class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx === 18 || rowIdx === 19 || rowIdx === 20) return this.curPet.equips[rowIdx - 18] ? EQUIP : BLANK;
         // 第七组
         else if (rowIdx === 21) return TITLE;
-        else if (rowIdx <= 21 + this.curPet2.skillIds.length) return SKILL;
+        else if (rowIdx <= 21 + this.skillLen) return SKILL;
         // 第八组
-        else if (rowIdx === 21 + this.curPet2.skillIds.length + 1) return TITLE;
-        else if (rowIdx <= 21 + this.curPet2.skillIds.length + 1 + this.featureDatas.length) return FEATURE;
+        else if (rowIdx === 21 + this.skillLen + 1) return TITLE;
+        else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen) return FEATURE;
+        // 第九组
+        else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) return TITLE;
+        else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) return MERGE;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
@@ -222,6 +248,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
                 return cc.instantiate(this.skillPrefab).getComponent(CellSkill);
             case FEATURE:
                 return cc.instantiate(this.featurePrefab).getComponent(CellFeature);
+            case MERGE:
+                return cc.instantiate(this.mergePrefab).getComponent(CellMerge);
         }
     }
 
@@ -345,8 +373,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
         }
         // 第七组
         else if (rowIdx === 21) {
-            cell.setData(`精灵技能（${this.curPet2.skillIds.length}）`);
-        } else if (rowIdx <= 21 + this.curPet2.skillIds.length) {
+            cell.setData(`精灵技能（${this.skillLen}）`);
+        } else if (rowIdx <= 21 + this.skillLen) {
             const skillIdx = rowIdx - 22;
             const skillId = this.curPet2.skillIds[skillIdx];
             cell.setData(skillId);
@@ -355,14 +383,22 @@ export class PagePetDetailLVD extends ListViewDelegate {
             };
         }
         // 第八组
-        else if (rowIdx === 21 + this.curPet2.skillIds.length + 1) {
-            cell.setData(`精灵特性（${this.featureDatas.length}）`, FEATURE_TIP);
-        } else if (rowIdx <= 21 + this.curPet2.skillIds.length + 1 + this.featureDatas.length) {
-            const featureData = this.featureDatas[rowIdx - 21 - this.curPet2.skillIds.length - 1 - 1];
+        else if (rowIdx === 21 + this.skillLen + 1) {
+            cell.setData(`精灵特性（${this.featureLen}）`, FEATURE_TIP);
+        } else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen) {
+            const featureData = this.featureDatas[rowIdx - 21 - this.skillLen - 1 - 1];
             cell.setData(featureData.feature, featureData.type);
             (cell as CellFeature).clickCallback = (cell: CellFeature) => {
                 this.page.onFeatureCellClick(cell);
             };
+        }
+        // 第九组
+        else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) {
+            cell.setData(`融合信息（${this.mergeLen}）`);
+        } else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) {
+            const mergeIdx = rowIdx - 21 - this.skillLen - 1 - this.featureLen - 1 - 1;
+            const mergeData = this.curPet.merges[mergeIdx];
+            cell.setData(mergeData);
         }
     }
 }
