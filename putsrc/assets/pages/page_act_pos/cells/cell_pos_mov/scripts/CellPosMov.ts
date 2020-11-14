@@ -6,20 +6,28 @@
 
 const { ccclass, property } = cc._decorator;
 
+import { actPosModelDict } from 'configs/ActPosModelDict';
+import { ActPosModel } from 'scripts/DataModel';
 import { ListViewCell } from 'scripts/ListViewCell';
 
 @ccclass
 export class CellPosMov extends ListViewCell {
     @property(cc.Label)
-    posName: cc.Label = null;
+    posNameLbl: cc.Label = null;
 
     @property(cc.Label)
-    price: cc.Label = null;
+    priceLbl: cc.Label = null;
+
+    @property(cc.Layout)
+    layout: cc.Layout = null;
 
     @property(cc.Button)
     infoBtn: cc.Button = null;
 
-    callback: () => void = null;
+    clickCallback: (cell: ListViewCell) => void = null;
+
+    movPosModel: ActPosModel = null;
+    price: number = 0;
 
     onLoad() {
         super.onLoad();
@@ -27,18 +35,24 @@ export class CellPosMov extends ListViewCell {
         this.infoBtn.node.on('click', this.onClickInfo, this);
     }
 
-    setData(name: string, price: string, callback: () => void) {
-        this.posName.string = name;
-        this.price.string = price;
-        this.callback = callback;
+    setData(movPosModel: ActPosModel, price: number) {
+        this.movPosModel = movPosModel;
+        this.price = price;
+
+        this.posNameLbl.string = '前往：' + movPosModel.cnName;
+        this.priceLbl.string = '花费：' + String(price);
+
+        ListViewCell.rerenderLbl(this.posNameLbl);
+        ListViewCell.rerenderLbl(this.priceLbl);
+        this.layout.updateLayout();
     }
 
     onClick() {
-        cc.log('PUT click mov: ', this.posName.string);
-        if (this.callback) this.callback();
+        cc.log('PUT click mov: ', this.posNameLbl.string);
+        if (this.clickCallback) this.clickCallback(this);
     }
 
     onClickInfo() {
-        cc.log('PUT click mov info: ', this.posName.string);
+        cc.log('PUT click mov info: ', this.posNameLbl.string);
     }
 }

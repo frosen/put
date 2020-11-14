@@ -13,6 +13,7 @@ import { GameDataTool } from 'scripts/Memory';
 import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
 import { PanelPosInfo } from './PanelPosInfo';
 import { ExplUpdater } from 'scripts/ExplUpdater';
+import { actPosModelDict } from 'configs/ActPosModelDict';
 
 @ccclass
 export class PageActPos extends PageBase {
@@ -61,6 +62,9 @@ export class PageActPos extends PageBase {
         this.listView.clearContent();
         this.listView.createContent(y);
         this.posInfo.onScrolling(y);
+
+        const actPosModel = actPosModelDict[this.curPosId];
+        this.posInfo.setData(actPosModel);
     }
 
     afterPageShowAnim() {

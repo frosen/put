@@ -7,9 +7,9 @@
 import { ActPosModel, PAKey, ActPosType } from 'scripts/DataModel';
 
 export const actPosModelDict: { [key: string]: ActPosModel } = {
-    YiZhuangJiDi: {
-        id: 'YiZhuangJiDi',
-        cnName: '易庄基地',
+    YiShanJiDi: {
+        id: 'YiShanJiDi',
+        cnName: '亦山基地',
         lv: 1,
         type: ActPosType.town,
         evts: [],

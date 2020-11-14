@@ -5,6 +5,7 @@
  */
 
 const { ccclass, property } = cc._decorator;
+import { ActPosModel } from 'scripts/DataModel';
 
 const PosInfoHeight = 335;
 
@@ -16,8 +17,8 @@ export class PanelPosInfo extends cc.Component {
     @property(cc.Label)
     posName: cc.Label = null;
 
-    setData(posName: string) {
-        this.posName.string = posName;
+    setData(actPosModel: ActPosModel) {
+        this.posName.string = actPosModel.cnName;
     }
 
     onScrolling(y: number) {

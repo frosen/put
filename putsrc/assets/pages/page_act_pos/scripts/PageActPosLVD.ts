@@ -214,7 +214,7 @@ export class PageActPosLVD extends ListViewDelegate {
         } else if (rowIdx < this.evtCellLength + this.actCellLength) {
             return 139;
         } else {
-            return 176;
+            return 156;
         }
     }
 
@@ -234,8 +234,11 @@ export class PageActPosLVD extends ListViewDelegate {
                 return cc.instantiate(this.infoPrefab).getComponent(ListViewCell);
             case 'posBtn':
                 return cc.instantiate(this.btnPrefab).getComponent(ListViewCell);
-            case 'posMov':
-                return cc.instantiate(this.movPrefab).getComponent(ListViewCell);
+            case 'posMov': {
+                const cell = cc.instantiate(this.movPrefab).getComponent(CellPosMov);
+                cell.clickCallback = this.onClickCellPosMov.bind(this);
+                return cell;
+            }
         }
     }
 
@@ -276,16 +279,7 @@ export class PageActPosLVD extends ListViewDelegate {
             const moveType = this.curMovs[movIdx];
             const posId = moveType.id;
             const movPosModel = actPosModelDict[posId];
-            cell.setData('前往：' + movPosModel.cnName, '花费：' + String(moveType.price), () => {
-                if (moveType.price === 0) {
-                    this.gotoNextPos(posId);
-                } else {
-                    const txt = `确定花费${moveType.price}前往“${movPosModel.cnName}”吗？`;
-                    this.ctrlr.popAlert(txt, (key: number) => {
-                        if (key === 1) this.gotoNextPos(posId);
-                    });
-                }
-            });
+            cell.setData(movPosModel, moveType.price);
         }
     }
 
@@ -311,9 +305,20 @@ export class PageActPosLVD extends ListViewDelegate {
         } else this.ctrlr.pushPage(actInfo.page);
     }
 
-    gotoNextPos(nextPosId: string) {
+    onClickCellPosMov(cell: CellPosMov) {
+        if (cell.price === 0) {
+            this.switchPosPage(cell.movPosModel);
+        } else {
+            const txt = `确定花费${cell.price}前往“${cell.movPosModel.cnName}”吗？`;
+            this.ctrlr.popAlert(txt, (key: number) => {
+                if (key === 1) this.switchPosPage(cell.movPosModel);
+            });
+        }
+    }
+
+    switchPosPage(nextPosModel: ActPosModel) {
         const curLoc = this.curActPosModel.loc;
-        const nextLoc = actPosModelDict[nextPosId].loc;
+        const nextLoc = nextPosModel.loc;
         const disX = nextLoc.x - curLoc.x;
         const disY = nextLoc.y - curLoc.y;
         let switchAnim: PageSwitchAnim;
@@ -323,7 +328,7 @@ export class PageActPosLVD extends ListViewDelegate {
             switchAnim = disY > 0 ? PageSwitchAnim.fromTop : PageSwitchAnim.fromBottom;
         }
 
-        this.ctrlr.memory.gameData.curPosId = nextPosId;
+        this.ctrlr.memory.gameData.curPosId = nextPosModel.id;
         this.ctrlr.switchCurPage(PageActPos, null, switchAnim);
     }
 }
