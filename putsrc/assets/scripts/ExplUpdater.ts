@@ -533,7 +533,7 @@ export class ExplUpdater {
                 catchSt.catcherIdx = -1;
                 curExpl.catcherId = null;
             }
-            GameDataTool.deleteItem(gameData, catcherIdx, catchIdx);
+            GameDataTool.removeItem(gameData, catcherIdx, catchIdx);
         } while (false);
 
         // 计算获得的物品
@@ -707,7 +707,7 @@ export class ExplUpdater {
 
     destroy() {
         cc.director.getScheduler().unscheduleUpdate(this);
-        GameDataTool.deleteExpl(this.gameData);
+        GameDataTool.clearExpl(this.gameData);
         this.memory.removeDataListener(this);
         this.page.ctrlr.debugTool.removeShortCut('ww');
         this.page.ctrlr.debugTool.removeShortCut('gg');
@@ -1239,7 +1239,7 @@ export class ExplUpdater {
                         gameData.curExpl.catcherId = null;
                         if (this.page) this.page.setCatchActive(false);
                     }
-                    GameDataTool.deleteItem(gameData, catcherIdx);
+                    GameDataTool.removeItem(gameData, catcherIdx);
                 } else {
                     this.log(ExplLogType.rich, `捕获失败：${rztStr}`);
                 }

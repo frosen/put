@@ -1104,7 +1104,9 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static deletePet(gameData: GameData, petIdx: number): string {
+    static removePet(gameData: GameData, petIdx: number): string {
+        if (gameData.pets.length <= 1) return '至少保留一只精灵';
+
         const pet = gameData.pets[petIdx];
         if (pet.state !== PetState.rest) return '精灵未在休息状态，无法放生';
 
@@ -1183,7 +1185,7 @@ export class GameDataTool {
         }
         if (!mergeFeature) return `${caughtPet.id}不具备${featureId}`;
 
-        const rzt = this.deleteItem(gameData, caughtPetIdx);
+        const rzt = this.removeItem(gameData, caughtPetIdx);
         if (rzt !== this.SUC) return rzt;
 
         PetTool.merge(pet, mergeFeature);
@@ -1207,7 +1209,7 @@ export class GameDataTool {
         pet.drinkId = drink.id;
         pet.drinkTime = curTime || Date.now();
 
-        this.deleteItem(gameData, drinkIdx);
+        this.removeItem(gameData, drinkIdx);
 
         return this.SUC;
     }
@@ -1300,7 +1302,7 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static deleteItem(gameData: GameData, index: number, count: number = 1): string {
+    static removeItem(gameData: GameData, index: number, count: number = 1): string {
         if (index < 0 || gameData.items.length <= index) return '索引错误';
         if (index === 0) return '货币项目不可删除';
 
@@ -1469,7 +1471,7 @@ export class GameDataTool {
         gameData.curExpl = expl;
     }
 
-    static deleteExpl(gameData: GameData) {
+    static clearExpl(gameData: GameData) {
         if (gameData.curExpl) gameData.curExpl = null;
     }
 
@@ -1496,7 +1498,7 @@ export class GameDataTool {
         return pets;
     }
 
-    static deleteBattle(gameData: GameData) {
+    static clearBattle(gameData: GameData) {
         cc.assert(gameData.curExpl, '删除battle前必有Expl');
         gameData.curExpl.curBattle = null;
     }
@@ -1510,7 +1512,7 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static deleteAcceQuest(gameData: GameData, questId: string, posId: string) {
+    static removeAcceQuest(gameData: GameData, questId: string, posId: string) {
         for (let index = 0; index < gameData.acceQuestInfos.length; index++) {
             const quest = gameData.acceQuestInfos[index];
             if (quest.posId === posId && quest.questId === questId) {

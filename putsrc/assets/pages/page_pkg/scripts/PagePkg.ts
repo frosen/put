@@ -247,9 +247,9 @@ export class PagePkg extends PagePkgBase {
                                     const catcherIdx = GameDataTool.getItemIdx(gameData, cnsum);
                                     if (catcherIdx === -1) return this.ctrlr.popToast('物品有误');
                                     const cPet = CaughtPetTool.createByPet(curPet);
-                                    const rzt = GameDataTool.deletePet(gameData, petIdx);
+                                    const rzt = GameDataTool.removePet(gameData, petIdx);
                                     if (rzt === GameDataTool.SUC) {
-                                        GameDataTool.deleteItem(gameData, catcherIdx);
+                                        GameDataTool.removeItem(gameData, catcherIdx);
                                         GameDataTool.addCaughtPet(gameData, cPet);
                                         this.ctrlr.popPage();
                                         this.ctrlr.popToast('成功使用' + catcherModel.cnName);
@@ -294,7 +294,7 @@ export class PagePkg extends PagePkgBase {
                                 if (eqpIdx === -1) return this.ctrlr.popToast('物品有误');
                                 const rzt = GameDataTool.makeEquipGrow(gameData, eqpIdx);
                                 if (rzt === GameDataTool.SUC) {
-                                    GameDataTool.deleteItem(gameData, eqpIdx);
+                                    GameDataTool.removeItem(gameData, eqpIdx);
                                     this.ctrlr.popToast(`“${EquipTool.getCnName(equip)}”的成长等级升至${equip.growth}级`);
                                     this.ctrlr.popPage();
                                 } else this.ctrlr.popToast(rzt);
@@ -315,7 +315,7 @@ export class PagePkg extends PagePkgBase {
                     if (cPetIdx === -1) return this.ctrlr.popToast('物品有误');
                     const rzt = GameDataTool.addPet(gameData, cPet.petId, cPet.lv, cPet.exFeatureIds, cPet.features);
                     if (rzt === GameDataTool.SUC) {
-                        GameDataTool.deleteItem(gameData, cPetIdx);
+                        GameDataTool.removeItem(gameData, cPetIdx);
                         this.resetCurList();
                     } else this.ctrlr.popToast(rzt);
                 }
@@ -359,7 +359,7 @@ export class PagePkg extends PagePkgBase {
                 (key: number) => {
                     if (key === 0) return;
                     const count = key === 1 ? 1 : (item as Cnsum).count;
-                    const rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, itemIdx, count);
+                    const rzt = GameDataTool.removeItem(this.ctrlr.memory.gameData, itemIdx, count);
                     if (rzt === GameDataTool.SUC) this.resetCurList();
                     else this.ctrlr.popToast(rzt);
                 },
@@ -369,7 +369,7 @@ export class PagePkg extends PagePkgBase {
         } else {
             this.ctrlr.popAlert(str, (key: number) => {
                 if (key === 1) {
-                    const rzt = GameDataTool.deleteItem(this.ctrlr.memory.gameData, itemIdx);
+                    const rzt = GameDataTool.removeItem(this.ctrlr.memory.gameData, itemIdx);
                     if (rzt === GameDataTool.SUC) this.resetCurList();
                     else this.ctrlr.popToast(rzt);
                 }

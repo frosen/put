@@ -97,7 +97,7 @@ export class PageActRcclr extends PageBase {
 
             const item = gameData.items[itemIdx];
             const price = this.priceDict[id] || PageActRcclr.getItemRcclPrice(item);
-            const rzt = GameDataTool.deleteItem(gameData, itemIdx, count);
+            const rzt = GameDataTool.removeItem(gameData, itemIdx, count);
             if (rzt === GameDataTool.SUC) {
                 realTotalPrice += count * price;
             } else {

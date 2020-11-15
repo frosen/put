@@ -740,7 +740,7 @@ export class BtlCtrlr {
 
         if (this.endCallback) this.endCallback(selfWin); // callback中可能会用到battle数据，所以放在清理前
 
-        GameDataTool.deleteBattle(this.gameData);
+        GameDataTool.clearBattle(this.gameData);
         if (this.page) {
             // 清理敌人状态
             for (let index = 0; index < BattlePetLenMax; index++) {

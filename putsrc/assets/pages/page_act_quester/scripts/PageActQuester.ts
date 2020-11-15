@@ -43,7 +43,7 @@ export class PageActQuester extends PageBase {
         funcBarNode.parent = this.node.getChildByName('root');
 
         this.funcBar = funcBarNode.getComponent(FuncBar);
-        this.funcBar.setBtns([{ str: '删除', callback: this.deleteQuest.bind(this) }]);
+        this.funcBar.setBtns([{ str: '删除', callback: this.removeQuest.bind(this) }]);
 
         const gameData = this.ctrlr.memory.gameData;
         this.resetAcceptedQuestDict(gameData);
@@ -177,7 +177,7 @@ export class PageActQuester extends PageBase {
             }
 
             const realCount = Math.min(count, needItem.count);
-            const rzt = GameDataTool.deleteItem(gameData, needItemIdx, realCount);
+            const rzt = GameDataTool.removeItem(gameData, needItemIdx, realCount);
             if (rzt !== GameDataTool.SUC) {
                 this.ctrlr.popToast(rzt);
                 return;
@@ -231,7 +231,7 @@ export class PageActQuester extends PageBase {
             }
         }
 
-        GameDataTool.deleteAcceQuest(gameData, questModel.id, gameData.curPosId);
+        GameDataTool.removeAcceQuest(gameData, questModel.id, gameData.curPosId);
         for (let index = 0; index < this.pADQuester.quests.length; index++) {
             const quest = this.pADQuester.quests[index];
             if (quest.id === questModel.id) {
@@ -247,14 +247,14 @@ export class PageActQuester extends PageBase {
         this.ctrlr.popToast(`${timeOut ? '超时！！\n' : ''}完成任务 ${questModel.cnName}\n获得\n` + tip);
     }
 
-    deleteQuest(cellIdx: number) {
+    removeQuest(cellIdx: number) {
         const gameData = this.ctrlr.memory.gameData;
         const quest = this.pADQuester.quests[cellIdx - 1];
         const questId = quest.id;
         const model = questModelDict[questId];
         this.ctrlr.popAlert(`确定删除任务 ${model.cnName} 吗`, (key: number) => {
             if (key === 1) {
-                GameDataTool.deleteAcceQuest(gameData, questId, gameData.curPosId);
+                GameDataTool.removeAcceQuest(gameData, questId, gameData.curPosId);
                 // 根据id重新查找，以免出现冲突
                 for (let index = 0; index < this.pADQuester.quests.length; index++) {
                     const qInList = this.pADQuester.quests[index];
