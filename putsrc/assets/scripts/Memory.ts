@@ -176,29 +176,32 @@ export class Memory {
         }
 
         // 整理历史数据
-        GameJITDataTool.init();
-        Memory.resetGameData(this.gameData);
+        Memory.resetGameJITData(this.gameData);
     }
 
+    firstFrameIgnored: boolean = false; // 忽略第一次update，因为此时可能还没有恢复完成
+
     update(dt: number) {
-        if (memoryDirtyToken < 0) {
-            memoryDirtyToken = memoryDirtyToken * -1 + 1;
-            for (const listener of this.dataListeners) {
-                listener.onMemoryDataChanged();
+        if (this.firstFrameIgnored) {
+            if (memoryDirtyToken < 0) {
+                memoryDirtyToken = memoryDirtyToken * -1 + 1;
+                for (const listener of this.dataListeners) {
+                    listener.onMemoryDataChanged();
+                }
+
+                this.saveToken = true;
             }
 
-            this.saveToken = true;
-        }
+            if (this.saveInterval > 0) {
+                this.saveInterval -= dt;
+            } else if (this.saveToken) {
+                this.saveToken = false;
+                this.saveInterval = 1;
+                this.saveMemory();
+            }
 
-        if (this.saveInterval > 0) {
-            this.saveInterval -= dt;
-        } else if (this.saveToken) {
-            this.saveToken = false;
-            this.saveInterval = 1;
-            this.saveMemory();
-        }
-
-        Memory.updateGameData(this.gameData);
+            Memory.updateGameData(this.gameData);
+        } else this.firstFrameIgnored = true;
     }
 
     dataListeners: any[] = [];
@@ -292,19 +295,18 @@ export class Memory {
                 }
             }
 
-            if (pet.drink) {
-                if (curTime - pet.drinkTime >= drinkModelDict[pet.drink.id].dura) {
+            if (pet.drinkId) {
+                if (curTime - pet.drinkTime >= drinkModelDict[pet.drinkId].dura) {
                     GameDataTool.clearDrinkFromPet(gameData, index);
                 }
             }
         }
     }
 
-    static resetGameData(gameData: GameData) {
+    static resetGameJITData(gameData: GameData) {
         for (const pet of gameData.pets) {
-            const drink = pet.drink;
-            if (drink) {
-                const drinkModel = drinkModelDict[drink.id];
+            if (pet.drinkId) {
+                const drinkModel = drinkModelDict[pet.drinkId];
                 GameJITDataTool.addAmplByDrink(pet, drinkModel);
             }
         }
@@ -327,7 +329,7 @@ export class Memory {
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
-            pet.drink = CnsumTool.create(Drink, 'LingGanYaoJi2');
+            pet.drinkId = 'LingGanYaoJi2';
             pet.drinkTime = Date.now();
         });
 
@@ -341,13 +343,15 @@ export class Memory {
             pet.lndFeatures.push(f);
         });
 
-        pet = PetTool.createWithRandomFeature('HeiFengWuRenJi', 18);
+        pet = PetTool.createWithRandomFeature('HeiFengWuRenJi', 28);
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
             pet.state = PetState.ready;
         });
 
         pet = PetTool.createWithRandomFeature('CiHuaYouLing', 29);
-        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {});
+        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
+            pet.state = PetState.ready;
+        });
 
         pet = PetTool.createWithRandomFeature('HuoHuoTu', 18);
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {});
@@ -439,7 +443,7 @@ export class PetTool {
         pet.prvty = 0;
         pet.prvtyTime = 0;
 
-        pet.drink = null;
+        pet.drinkId = '';
         pet.drinkTime = 0;
 
         pet.exp = 0;
@@ -1200,7 +1204,7 @@ export class GameDataTool {
 
         GameJITDataTool.addAmplByDrink(pet, drinkModel);
 
-        pet.drink = CnsumTool.create(Drink, drink.id); // 不用 pet.drink = drink，是因为drink内部有count代表多个
+        pet.drinkId = drink.id;
         pet.drinkTime = curTime || Date.now();
 
         this.deleteItem(gameData, drinkIdx);
@@ -1210,11 +1214,9 @@ export class GameDataTool {
 
     static clearDrinkFromPet(gameData: GameData, petIdx: number) {
         const pet = gameData.pets[petIdx];
-        const drink = pet.drink;
-        const drinkModel: DrinkModel = drinkModelDict[drink.id];
-        GameJITDataTool.removeAmpl(pet, drinkModel.id);
+        GameJITDataTool.removeAmpl(pet, pet.drinkId);
 
-        pet.drink = null;
+        pet.drinkId = '';
         pet.drinkTime = 0;
     }
 

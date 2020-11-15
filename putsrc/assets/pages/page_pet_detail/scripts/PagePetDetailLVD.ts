@@ -267,8 +267,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
         } else if (rowIdx === 2) {
             cell.setData1('默契值', String(PetTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
             let drinkStr: string;
-            if (pet.drink) {
-                const drinkModel = drinkModelDict[pet.drink.id];
+            if (pet.drinkId) {
+                const drinkModel = drinkModelDict[pet.drinkId];
                 const endTime = pet.drinkTime + drinkModel.dura;
                 const leftMins = Math.floor((endTime - Date.now()) / 1000 / 60);
                 drinkStr = `${drinkModel.cnName} [${leftMins >= 1 ? leftMins : '<1'}min]`;

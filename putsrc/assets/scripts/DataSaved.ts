@@ -119,7 +119,7 @@ export class Pet {
     prvtyTime: number;
 
     /** 当前食物 */
-    drink: Drink;
+    drinkId: string;
     drinkTime: number;
 
     /** 当前经验 */

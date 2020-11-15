@@ -174,7 +174,8 @@ export class BtlCtrlr {
         setSeed(battleMmr.seed);
 
         // 更新battle
-        this.realBattle.resetEnemy(battleMmr.spcBtlId, battleMmr.enemys, null);
+        const curExpl = this.gameData.curExpl;
+        this.realBattle.resetEnemy(battleMmr.spcBtlId, battleMmr.enemys, curExpl);
         this.initBattle(this.realBattle);
 
         if (this.debugMode) {

@@ -61,11 +61,7 @@ const NotNeedPetType = [AmplAttriType.expl, AmplAttriType.reput];
 /** 运行时游戏数据 */
 export class GameJITDataTool {
     /** petid:key:attri:data */
-    static attriGainAmplDict: { [key: string]: { [key: string]: { [key: number]: number } } };
-
-    static init() {
-        this.attriGainAmplDict = {};
-    }
+    static attriGainAmplDict: { [key: string]: { [key: string]: { [key: number]: number } } } = {};
 
     static addAmplByDrink(pet: Pet, drinkModel: DrinkModel) {
         const data = {};
@@ -222,7 +218,7 @@ export class Pet2 {
         }
 
         // 饮品加成
-        if (pet.drink) {
+        if (pet.drinkId) {
             this.strength *= GameJITDataTool.getAmplRate(pet, AmplAttriType.strength);
             this.concentration *= GameJITDataTool.getAmplRate(pet, AmplAttriType.concentration);
             this.durability *= GameJITDataTool.getAmplRate(pet, AmplAttriType.durability);

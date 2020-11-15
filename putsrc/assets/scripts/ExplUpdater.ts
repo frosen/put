@@ -635,6 +635,7 @@ export class ExplUpdater {
         let winRateTotal: number = 0;
         let curLv = lvBase - lvRange;
         const CalcCnt = 3;
+        const winHpMax = 0.5;
         for (let index = 0; index < CalcCnt; index++) {
             const enemys: EPetMmr[] = [];
             for (let index = 0; index < petCnt; index++) {
@@ -664,11 +665,11 @@ export class ExplUpdater {
             if (win) {
                 let hpRateTotal = 0;
                 for (const bPet of rb.selfTeam.pets) hpRateTotal += bPet.hp / bPet.hpMax;
-                winRateTotal += 0.5 + (Math.min(0.2, hpRateTotal / rb.selfTeam.pets.length) / 0.2) * 0.5;
+                winRateTotal += 0.5 + (Math.min(winHpMax, hpRateTotal / rb.selfTeam.pets.length) / winHpMax) * 0.5;
             } else {
                 let hpRateTotal = 0;
                 for (const bPet of rb.enemyTeam.pets) hpRateTotal += bPet.hp / bPet.hpMax;
-                winRateTotal += 0.5 - (Math.min(0.2, hpRateTotal / rb.enemyTeam.pets.length) / 0.2) * 0.5;
+                winRateTotal += 0.5 - (Math.min(winHpMax, hpRateTotal / rb.enemyTeam.pets.length) / winHpMax) * 0.5;
             }
 
             curLv += lvRange;
