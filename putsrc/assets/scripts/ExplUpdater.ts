@@ -633,10 +633,11 @@ export class ExplUpdater {
 
         let updCntTotal: number = 0;
         let winRateTotal: number = 0;
-        let curLv = lvBase - lvRange;
-        const CalcCnt = 3;
+
+        const curLvs = [lvBase - lvRange, lvBase, lvBase, lvBase + lvRange];
         const winHpMax = 0.5;
-        for (let index = 0; index < CalcCnt; index++) {
+        for (let index = 0; index < curLvs.length; index++) {
+            const curLv = curLvs[index];
             const enemys: EPetMmr[] = [];
             for (let index = 0; index < petCnt; index++) {
                 const ePet = PetTool.createWithRandomFeature(petList[index], curLv);
@@ -671,12 +672,10 @@ export class ExplUpdater {
                 for (const bPet of rb.enemyTeam.pets) hpRateTotal += bPet.hp / bPet.hpMax;
                 winRateTotal += 0.5 - (Math.min(winHpMax, hpRateTotal / rb.enemyTeam.pets.length) / winHpMax) * 0.5;
             }
-
-            curLv += lvRange;
         }
 
-        const btlDuraUpdCnt = Math.floor(updCntTotal / CalcCnt);
-        const btlWinRate = winRateTotal / CalcCnt;
+        const btlDuraUpdCnt = Math.floor(updCntTotal / curLvs.length);
+        const btlWinRate = winRateTotal / curLvs.length;
 
         return {
             btlDuraUpdCnt,
