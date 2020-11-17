@@ -190,6 +190,14 @@ export class EqpAmplr extends Cnsum {
     cnsumType: CnsumType = CnsumType.eqpAmplr;
 }
 
+export class Book extends Cnsum {
+    cnsumType: CnsumType = CnsumType.book;
+}
+
+export class Special extends Cnsum {
+    cnsumType: CnsumType = CnsumType.special;
+}
+
 export class Material extends Cnsum {
     cnsumType: CnsumType = CnsumType.material;
 }

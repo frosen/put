@@ -5,7 +5,7 @@
  */
 
 import { BtlCtrlr } from './BtlCtrlr';
-import { EleType, BattleType, BioType, Pet, GameData, Item } from './DataSaved';
+import { EleType, BattleType, BioType, Pet, GameData } from './DataSaved';
 import { Pet2, BattlePet, BattleBuff, AmplAttriType } from './DataOther';
 
 // -----------------------------------------------------------------
@@ -166,6 +166,10 @@ export class CatcherModel extends CnsumModel {
 export class EqpAmplrModel extends CnsumModel {
     lvMax: number;
 }
+
+export class BookModel extends CnsumModel {}
+
+export class SpecialModel extends CnsumModel {}
 
 export class MaterialModel extends CnsumModel {
     lvMax: number;

@@ -45,7 +45,9 @@ import {
     QuestAmplAwardRates,
     QuestDLineAwardRates,
     Item,
-    Merge
+    Merge,
+    Book,
+    Special
 } from './DataSaved';
 import {
     FeatureModel,
@@ -63,13 +65,16 @@ import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList }
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
 import { GameJITDataTool, AmplAttriType } from './DataOther';
-import { drinkModelDict } from 'configs/DrinkModelDict';
+import Tea = require('./Tea');
+
 import { expModels } from 'configs/ExpModels';
+import { questModelDict } from 'configs/QuestModelDict';
+import { drinkModelDict } from 'configs/DrinkModelDict';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
+import { bookModelDict } from 'configs/BookModelDict';
+import { specialModelDict } from 'configs/SpecialModelDict';
 import { materialModelDict } from 'configs/MaterialModelDict';
-import { questModelDict } from 'configs/QuestModelDict';
-import Tea = require('./Tea');
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = -1;
@@ -640,6 +645,8 @@ export class CnsumTool {
         if (cnsumId in drinkModelDict) return CnsumType.drink;
         else if (cnsumId in catcherModelDict) return CnsumType.catcher;
         else if (cnsumId in eqpAmplrModelDict) return CnsumType.eqpAmplr;
+        else if (cnsumId in bookModelDict) return CnsumType.book;
+        else if (cnsumId in specialModelDict) return CnsumType.special;
         else if (cnsumId in materialModelDict) return CnsumType.material;
         else return null;
     }
@@ -648,6 +655,8 @@ export class CnsumTool {
         if (cnsumId in drinkModelDict) return drinkModelDict[cnsumId];
         else if (cnsumId in catcherModelDict) return catcherModelDict[cnsumId];
         else if (cnsumId in eqpAmplrModelDict) return eqpAmplrModelDict[cnsumId];
+        else if (cnsumId in bookModelDict) return bookModelDict[cnsumId];
+        else if (cnsumId in specialModelDict) return specialModelDict[cnsumId];
         else if (cnsumId in materialModelDict) return materialModelDict[cnsumId];
         else return null;
     }
@@ -656,6 +665,8 @@ export class CnsumTool {
         if (cnsumId in drinkModelDict) return Drink;
         else if (cnsumId in catcherModelDict) return Catcher;
         else if (cnsumId in eqpAmplrModelDict) return EqpAmplr;
+        else if (cnsumId in bookModelDict) return Book;
+        else if (cnsumId in specialModelDict) return Special;
         else if (cnsumId in materialModelDict) return Material;
         else return null;
     }

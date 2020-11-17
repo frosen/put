@@ -27,15 +27,15 @@ import { PageActACntr } from 'pages/page_act_acntr/scripts/PageActACntr';
 import { PageActQuester } from 'pages/page_act_quester/scripts/PageActQuester';
 import { PageActMerger } from 'pages/page_act_merger/scripts/PageActMerger';
 
-type CellActInfo = {
+export class CellActInfo {
     cnName: string;
     getSubInfo?: (ctrlr: BaseCtrlr) => { str: string; color?: cc.Color };
     page?: { new (): PageBase };
     check?: (ctrlr: BaseCtrlr) => string;
     beforeEnter?: (ctrlr: BaseCtrlr, callback: (data: any) => void) => void;
-};
+}
 
-const CellActInfoDict: { [key: string]: CellActInfo } = {
+export const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.expl]: {
         cnName: '探索',
         getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } => {
@@ -232,8 +232,11 @@ export class PageActPosLVD extends ListViewDelegate {
         switch (cellId) {
             case 'posInfo':
                 return cc.instantiate(this.infoPrefab).getComponent(ListViewCell);
-            case 'posBtn':
-                return cc.instantiate(this.btnPrefab).getComponent(ListViewCell);
+            case 'posBtn': {
+                const cell = cc.instantiate(this.btnPrefab).getComponent(CellPosBtn);
+                cell.clickCallback = this.onClickCellPosBtn.bind(this);
+                return cell;
+            }
             case 'posMov': {
                 const cell = cc.instantiate(this.movPrefab).getComponent(CellPosMov);
                 cell.clickCallback = this.onClickCellPosMov.bind(this);
@@ -250,29 +253,13 @@ export class PageActPosLVD extends ListViewDelegate {
             const actIdx = (rowIdx - 1 - this.evtCellLength) * 2;
             const actKey1 = this.curActKeys[actIdx];
             const actInfo1 = CellActInfoDict[actKey1];
-            const { str, color } = this.getSubInfo(actInfo1);
-            cell.setBtn1(
-                actInfo1.cnName,
-                () => {
-                    this.gotoPage(actInfo1);
-                },
-                str,
-                color
-            );
+            cell.setBtn1(actInfo1);
 
             if (actIdx + 1 < this.curActKeys.length) {
                 const actKey2 = this.curActKeys[actIdx + 1];
                 const actInfo2 = CellActInfoDict[actKey2];
-                const { str, color } = this.getSubInfo(actInfo2);
-                cell.setBtn2(
-                    actInfo2.cnName,
-                    () => {
-                        this.gotoPage(actInfo2);
-                    },
-                    str,
-                    color
-                );
-            } else cell.setBtn2(null, null);
+                cell.setBtn2(actInfo2);
+            } else cell.setBtn2(null);
         } else {
             const movIdx = rowIdx - 1 - this.evtCellLength - this.actCellLength;
 
@@ -283,13 +270,7 @@ export class PageActPosLVD extends ListViewDelegate {
         }
     }
 
-    getSubInfo(actInfo: CellActInfo): { str: string; color?: cc.Color } {
-        if (actInfo.hasOwnProperty('getSubInfo')) {
-            return actInfo.getSubInfo(this.ctrlr) || { str: null };
-        } else return { str: null };
-    }
-
-    gotoPage(actInfo: CellActInfo) {
+    onClickCellPosBtn(actInfo: CellActInfo) {
         if (actInfo.hasOwnProperty('check')) {
             const errorStr = actInfo.check(this.ctrlr);
             if (errorStr) {

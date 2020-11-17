@@ -27,6 +27,8 @@ const MONEY = 'M';
 const DRINK = 'D';
 const CATCHER = 'C';
 const EQPAMPLR = 'ea';
+const BOOK = 'bk';
+const SPECIAL = 'sp';
 const MATERIAL = 'ml';
 const EQUIP = 'E';
 const CPET = 'p';
@@ -83,6 +85,8 @@ export class PagePkgLVD extends ListViewDelegate {
                 if (cnsumType === CnsumType.drink) return DRINK;
                 else if (cnsumType === CnsumType.catcher) return CATCHER;
                 else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
+                else if (cnsumType === CnsumType.book) return BOOK;
+                else if (cnsumType === CnsumType.special) return SPECIAL;
                 else if (cnsumType === CnsumType.material) return MATERIAL;
                 else return null;
             }

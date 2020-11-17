@@ -24,6 +24,7 @@ import { NavBar } from 'scripts/NavBar';
 import { PkgSelectionBar } from './PkgSelectionBar';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { petModelDict } from 'configs/PetModelDict';
+import { specialModelDict } from 'configs/SpecialModelDict';
 
 const WIDTH = 1080;
 
@@ -132,8 +133,11 @@ export class PagePkg extends PagePkgBase {
         } else if (listIdx === 5) {
             this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.eqpAmplr);
         } else if (listIdx === 6) {
+            this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.book);
         } else if (listIdx === 7) {
+            this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.special);
         } else if (listIdx === 8) {
+            this.getoutItemIdxsByType(items, idxs, ItemType.cnsum, CnsumType.material);
         }
         return idxs;
     }
@@ -259,8 +263,6 @@ export class PagePkg extends PagePkgBase {
                         );
                     }
                 });
-            } else if (cnsum.cnsumType === CnsumType.book) {
-            } else if (cnsum.cnsumType === CnsumType.special) {
             } else if (cnsum.cnsumType === CnsumType.eqpAmplr) {
                 let eqpIdxs = [];
                 PagePkg.getoutItemIdxsByType(gameData.items, eqpIdxs, ItemType.equip);
@@ -302,8 +304,36 @@ export class PagePkg extends PagePkgBase {
                         });
                     }
                 });
+            } else if (cnsum.cnsumType === CnsumType.book) {
+            } else if (cnsum.cnsumType === CnsumType.special) {
+                const specialModel = specialModelDict[cnsum.id];
+                if (cnsum.id === 'YiWangShuiJing') {
+                    this.ctrlr.pushPage(PagePet, {
+                        cellPetType: PagePetCellType.selection,
+                        name: '选择精灵',
+                        callback: (cellIdx: number, curPet: Pet) => {
+                            const petModel = petModelDict[curPet.id];
+                            if (!curPet.nickname) this.ctrlr.popToast(petModel.cnName + '并未起名');
+                            this.ctrlr.popAlert(
+                                `确定对“${PetTool.getCnName(curPet)}”使用“${specialModel.cnName}”吗？`,
+                                (key: number) => {
+                                    if (key === 1) {
+                                        const petIdx = GameDataTool.getPetIdx(gameData, curPet);
+                                        if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
+                                        const specialIdx = GameDataTool.getItemIdx(gameData, cnsum);
+                                        if (specialIdx === -1) return this.ctrlr.popToast('物品有误');
+                                        curPet.nickname = '';
+                                        GameDataTool.removeItem(gameData, specialIdx);
+                                        this.ctrlr.popPage();
+                                        this.ctrlr.popToast(petModel.cnName + '已经遗忘了名字');
+                                    }
+                                }
+                            );
+                        }
+                    });
+                }
             } else if (cnsum.cnsumType === CnsumType.material) {
-                this.ctrlr.popToast('材料无法直接使用');
+                this.ctrlr.popToast('材料用于合成，无法直接使用');
             }
         } else if (item.itemType === ItemType.equip) {
             this.ctrlr.pushPage(PagePkgEquip, { idx: itemIdx });
