@@ -251,13 +251,22 @@ export class Memory {
         let lastGameData: any;
         if (sd1.t < 0 && sd2.t < 0) {
             lastGameData = null;
-            this.curSaveDataId = 1;
         } else if (sd1.t > sd2.t) {
-            lastGameData = sd1.g;
-            this.curSaveDataId = 1;
+            if (sd1.t < Date.now()) {
+                lastGameData = sd1.g;
+                this.curSaveDataId = 1;
+            } else {
+                cc.error('PUT Err: cur time less than save time');
+                lastGameData = null;
+            }
         } else {
-            lastGameData = sd2.g;
-            this.curSaveDataId = 2;
+            if (sd2.t < Date.now()) {
+                lastGameData = sd2.g;
+                this.curSaveDataId = 2;
+            } else {
+                cc.error('PUT Err: cur time less than save time');
+                lastGameData = null;
+            }
         }
         return lastGameData;
     }
