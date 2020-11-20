@@ -232,9 +232,10 @@ export class PageActQuester extends PageBase {
 
         const eleAmplStr = eleAmpl > 1 ? `优雅加成${Math.floor((eleAmpl - 1) * 100)}%` : '';
         const drinkAmplStr = drinkAmpl > 1 ? `饮品加成${Math.floor((drinkAmpl - 1) * 100)}%` : '';
+        const amplStr = eleAmplStr || drinkAmplStr ? '(' + eleAmplStr + ' ' + drinkAmplStr + ')' : '';
 
-        let tip = '获得';
-        tip += `声望 ${awardReput} ${eleAmplStr} ${drinkAmplStr}\n`;
+        let tip = '';
+        tip += `声望 ${awardReput} ${amplStr}\n`;
         tip += `通用币 ${MoneyTool.getSimpleStr(awardMoney)}\n`;
         for (const itemId of questModel.awardItemIds) {
             const cnsumModel = CnsumTool.getModelById(itemId);
@@ -247,6 +248,7 @@ export class PageActQuester extends PageBase {
                 tip += EquipTool.getCnName(equip) + '\n';
             }
         }
+        tip = tip.slice(0, -1);
 
         GameDataTool.removeAcceQuest(gameData, questModel.id, gameData.curPosId);
         for (let index = 0; index < this.pADQuester.quests.length; index++) {
