@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { PageBase } from 'scripts/PageBase';
 import { ListView } from 'scripts/ListView';
 import { PagePetDetailLVD } from './PagePetDetailLVD';
-import { Pet, Feature } from 'scripts/DataSaved';
+import { Pet, Feature, PetState } from 'scripts/DataSaved';
 import { Pet2 } from 'scripts/DataOther';
 import { ListViewCell } from 'scripts/ListViewCell';
 import { GameDataTool } from 'scripts/Memory';
@@ -108,11 +108,18 @@ export class PagePetDetail extends PageBase {
     // -----------------------------------------------------------------
 
     onChangeEquip(cellIdx: number) {
+        const gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl && gameData.curExpl.afb && this.curPet.state === PetState.ready) {
+            return this.ctrlr.popToast('无法变更！\n精灵在战斗而训练师未与其在一起');
+        }
         this.ctrlr.pushPage(PagePkgEquip, { pet: this.curPet, idx: this.curEquipIdx });
     }
 
     onMoveUpCell(cellIdx: number) {
         const gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl && gameData.curExpl.afb && this.curPet.state === PetState.ready) {
+            return this.ctrlr.popToast('无法变更！\n精灵在战斗而训练师未与其在一起');
+        }
         const petIdx = GameDataTool.getPetIdx(gameData, this.curPet);
         if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
         const rzt = GameDataTool.moveEquipInPetList(gameData, petIdx, this.curEquipIdx, this.curEquipIdx - 1);
@@ -122,6 +129,9 @@ export class PagePetDetail extends PageBase {
 
     onMoveDownCell(cellIdx: number) {
         const gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl && gameData.curExpl.afb && this.curPet.state === PetState.ready) {
+            return this.ctrlr.popToast('无法变更！\n精灵在战斗而训练师未与其在一起');
+        }
         const petIdx = GameDataTool.getPetIdx(gameData, this.curPet);
         if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
         const rzt = GameDataTool.moveEquipInPetList(gameData, petIdx, this.curEquipIdx, this.curEquipIdx + 1);

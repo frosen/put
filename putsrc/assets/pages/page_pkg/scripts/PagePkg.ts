@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { PagePkgBase } from './PagePkgBase';
 import { ListView } from 'scripts/ListView';
 import { PagePkgLVD } from './PagePkgLVD';
-import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet, Equip } from 'scripts/DataSaved';
+import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet, Equip, PetState } from 'scripts/DataSaved';
 import { GameDataTool, CnsumTool, PetTool, EquipTool, CaughtPetTool } from 'scripts/Memory';
 import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
 import { ListViewCell } from 'scripts/ListViewCell';
@@ -200,6 +200,9 @@ export class PagePkg extends PagePkgBase {
                     cellPetType: PagePetCellType.selection,
                     name: '选择精灵',
                     callback: (cellIdx: number, curPet: Pet) => {
+                        if (gameData.curExpl && gameData.curExpl.afb && curPet.state === PetState.ready) {
+                            return this.ctrlr.popToast('无法对该精灵使用！\n精灵在战斗而训练师未与其在一起');
+                        }
                         const drinkModel = drinkModelDict[cnsum.id];
                         this.ctrlr.popAlert(
                             `确定对“${PetTool.getCnName(curPet)}”使用“${drinkModel.cnName}”吗？`,
@@ -239,6 +242,10 @@ export class PagePkg extends PagePkgBase {
                         }
                         if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) {
                             return this.ctrlr.popToast('战斗类型不符，无法使用');
+                        }
+
+                        if (gameData.curExpl && gameData.curExpl.afb && curPet.state === PetState.ready) {
+                            return this.ctrlr.popToast('无法对该精灵使用！\n精灵在战斗而训练师未与其在一起');
                         }
 
                         this.ctrlr.popAlert(
@@ -313,6 +320,9 @@ export class PagePkg extends PagePkgBase {
                         callback: (cellIdx: number, curPet: Pet) => {
                             const petModel = petModelDict[curPet.id];
                             if (!curPet.nickname) this.ctrlr.popToast(petModel.cnName + '并未起名');
+                            if (gameData.curExpl && gameData.curExpl.afb && curPet.state === PetState.ready) {
+                                return this.ctrlr.popToast('无法对该精灵使用！\n精灵在战斗而训练师未与其在一起');
+                            }
                             this.ctrlr.popAlert(
                                 `确定对“${PetTool.getCnName(curPet)}”使用“${specialModel.cnName}”吗？`,
                                 (key: number) => {

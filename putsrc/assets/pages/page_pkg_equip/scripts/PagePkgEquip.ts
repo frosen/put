@@ -14,7 +14,7 @@ import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
 import { ListViewCell } from 'scripts/ListViewCell';
 import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { GameDataTool } from 'scripts/Memory';
-import { Pet, ItemType } from 'scripts/DataSaved';
+import { Pet, ItemType, PetState } from 'scripts/DataSaved';
 import { NavBar } from 'scripts/NavBar';
 
 @ccclass
@@ -145,6 +145,14 @@ export class PagePkgEquip extends PageBase {
 
     onPetCellClick(cell: ListViewCell) {
         if (this.selectedPetEquipCell === cell) return;
+
+        const petLVD = this.petEquipList.delegate as PkgEquipPetLVD;
+        const pet = petLVD.dataList[this.selectedPetEquipCell.curCellIdx].pet;
+        const gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl && gameData.curExpl.afb && pet.state === PetState.ready) {
+            return this.ctrlr.popToast('无法变更！\n精灵在战斗而训练师未与其在一起');
+        }
+
         this.selectedPetEquipCell = cell;
         if (!this.selectedItemEquipCell) this.selectPetEquip();
         else {

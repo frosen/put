@@ -38,8 +38,8 @@ const FEATURE = 'f';
 const MERGE = 'm';
 
 const STATE_TIP = `分为：
-备战中 跟随训练师参与战斗
-休息中 跟随训练师但不参与战斗
+备战中 准备参与战斗
+休息中 不参与战斗
 是否参战可在精灵列表中点击状态按钮修改`;
 
 const LV_TIP = `提高等级可以：
