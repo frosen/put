@@ -80,20 +80,25 @@ export class PageActQuester extends PageBase {
     }
 
     resetCurQuestList(pADQuester: PADQuester, posModel: ActPosModel) {
+        const savedQuests = [];
+        const savedQuestDict = {};
+        for (let index = 0; index < pADQuester.quests.length; index++) {
+            const quest = pADQuester.quests[index];
+            if (this.acceQuestDict.hasOwnProperty(quest.id)) {
+                savedQuests.push(quest);
+                savedQuestDict[quest.id] = quest;
+            }
+        }
+        pADQuester.quests = savedQuests; // 已经接受的任务不会消失
+
         const questerModel = posModel.actMDict[PAKey.quester] as QuesterModel;
         const doneTimeDict = pADQuester.doneTimeDict;
         const questIdList = [];
         for (const questId of questerModel.questIdList) {
             if (doneTimeDict.hasOwnProperty(questId)) continue;
+            if (savedQuestDict.hasOwnProperty(questId)) continue;
             questIdList.push(questId);
         }
-
-        const savedQuests = [];
-        for (let index = 0; index < pADQuester.quests.length; index++) {
-            const quest = pADQuester.quests[index];
-            if (this.acceQuestDict.hasOwnProperty(quest.id)) savedQuests.push(quest);
-        }
-        pADQuester.quests = savedQuests; // 已经接受的任务不会消失
 
         const questCount = randomInt(4) + 3;
         for (let index = 0; index < questCount; index++) {

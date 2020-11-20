@@ -73,7 +73,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
         ],
         need: {
             posId: 'KeChuangXiaoJing',
-            step: 1,
+            step: 0,
             name: '不稳定原料',
             count: 15
         },
@@ -91,7 +91,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
         ],
         need: {
             posId: 'KeChuangXiaoJing',
-            step: 2,
+            step: 1,
             name: '电气工程师',
             count: 800
         },

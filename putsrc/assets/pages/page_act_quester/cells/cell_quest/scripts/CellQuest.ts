@@ -12,13 +12,15 @@ import { petModelDict } from 'configs/PetModelDict';
 import { AcceQuestInfo, Quest, QuestDLines } from 'scripts/DataSaved';
 import { CnsumTool, EquipTool, MoneyTool, QuestTool } from 'scripts/Memory';
 import {
+    ExplModel,
     ExplStepNames,
-    ExplStepType,
     FightQuestNeed,
     GatherQuestNeed,
+    PAKey,
     QuestModel,
     QuestType,
     SearchQuestNeed,
+    StepTypesByMax,
     SupportQuestNeed
 } from 'scripts/DataModel';
 import { actPosModelDict } from 'configs/ActPosModelDict';
@@ -166,10 +168,14 @@ export class CellQuest extends ListViewCell {
             case QuestType.gather: {
                 const need = questModel.need as GatherQuestNeed;
                 const posModel = actPosModelDict[need.posId];
+                const explModel: ExplModel = posModel.actMDict[PAKey.expl] as ExplModel;
+                const stepMax = explModel.stepMax;
+                const stepType = StepTypesByMax[stepMax][need.step];
+                const stepName = ExplStepNames[stepType];
 
                 lbls[0].string = '前往';
                 CellQuest.lbl(lbls[1], posModel.cnName, cc.Color.BLUE);
-                CellQuest.lbl(lbls[2], ExplStepNames[need.step], cc.Color.RED);
+                CellQuest.lbl(lbls[2], stepName, cc.Color.RED);
                 CellQuest.lbl(lbls[3], '收集', cc.color(173, 173, 173));
                 CellQuest.lbl(lbls[4], need.name, cc.Color.BLUE);
                 CellQuest.lbl(lbls[5], 'x ' + String(QuestTool.getRealCount(quest)), cc.Color.ORANGE);
@@ -178,9 +184,14 @@ export class CellQuest extends ListViewCell {
             case QuestType.search: {
                 const need = questModel.need as SearchQuestNeed;
                 const posModel = actPosModelDict[need.posId];
+                const explModel: ExplModel = posModel.actMDict[PAKey.expl] as ExplModel;
+                const stepMax = explModel.stepMax;
+                const stepType = StepTypesByMax[stepMax][need.step];
+                const stepName = ExplStepNames[stepType];
+
                 lbls[0].string = '前往';
                 CellQuest.lbl(lbls[1], posModel.cnName, cc.Color.BLUE);
-                CellQuest.lbl(lbls[2], ExplStepNames[need.step], cc.Color.RED);
+                CellQuest.lbl(lbls[2], stepName, cc.Color.RED);
                 CellQuest.lbl(lbls[3], '搜寻', cc.color(173, 173, 173));
                 CellQuest.lbl(lbls[4], need.name, cc.Color.BLUE);
                 lbls[5].string = '';
