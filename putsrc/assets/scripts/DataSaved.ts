@@ -307,6 +307,7 @@ export class BattleMmr {
 }
 
 export const NeedUpdCntByStep = [1600, 4800, 14400];
+export const RdcUpdCntForFailByStep = [-200, -400, -800];
 
 export class ExplMmr {
     curPosId: string;

@@ -18,7 +18,8 @@ import {
     PADExpl,
     Quest,
     NeedUpdCntByStep,
-    EPetMmr
+    EPetMmr,
+    RdcUpdCntForFailByStep
 } from 'scripts/DataSaved';
 import { AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
@@ -176,6 +177,7 @@ export class ExplUpdater {
 
     recoverLastExpl(gameData: GameData) {
         const curExpl = gameData.curExpl;
+        const curStep = curExpl.curStep;
 
         if (curExpl.curBattle) {
             const { inBattle, win, updCnt, lastTime } = this.recoverExplInBattle(curExpl.curBattle, curExpl.stepEnterTime);
@@ -194,7 +196,7 @@ export class ExplUpdater {
                     this.receiveExp();
                     this.catchPet();
                 } else {
-                    this.rdcExplDegreeByBtlFail();
+                    this.rdcExplDegreeByBtlFail(curStep);
                 }
             }
         }
@@ -219,7 +221,6 @@ export class ExplUpdater {
         this.logList.length = 0;
         nowTime -= MockSpan;
 
-        const curStep = curExpl.curStep;
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
@@ -335,7 +336,7 @@ export class ExplUpdater {
         this.changeExplDegree(speedChangeCnt);
 
         // 减速
-        this.rdcExplDegreeByBtlFail(rztSt.failCnt);
+        this.rdcExplDegreeByBtlFail(curStep, rztSt.failCnt);
 
         // 战斗类任务
         let fQCnt = 0;
@@ -347,13 +348,13 @@ export class ExplUpdater {
             const needPetIds = need.petIds;
             let petHaveCnt = 0;
             for (const petId of curStepPetIdLists) if (needPetIds.includes(petId)) petHaveCnt++;
-            const meetRate = 1 - Math.pow((curStepPetLen - petHaveCnt) / curStepPetLen, 2); // llytodo 测试运算是否正确
+            if (petHaveCnt === 0) return;
+            const meetRate = petHaveCnt / curStepPetLen;
             const meetCnt = Math.floor(rztSt.winCnt * meetRate);
-            if (meetCnt <= 0) return;
+            if (meetCnt === 0) return;
             const count = QuestTool.getRealCount(quest);
             let diff = Math.min(count - quest.progress, meetCnt);
             if (fQCnt + diff >= rztSt.winCnt) diff = rztSt.winCnt - fQCnt;
-
             fQCnt += diff;
             quest.progress += diff;
         });
@@ -886,10 +887,12 @@ export class ExplUpdater {
 
     changeExplDegree(cnt: number) {
         if (cnt === 0) return;
-        if (cnt < 0) cnt = Math.max(-this.updCnt, cnt);
-        this.updCnt += cnt;
-        this.gameData.curExpl.chngUpdCnt += cnt; // 不用chngUpdCnt = updCnt是为了避免恢复时还没有updCnt造成问题
-        this.gameData.curExpl.stepEnterTime -= cnt * ExplInterval;
+        let realCnt: number;
+        if (cnt > 0) realCnt = cnt;
+        else realCnt = Math.max(-this.updCnt, cnt);
+        this.updCnt += realCnt;
+        this.gameData.curExpl.chngUpdCnt += realCnt; // 不用chngUpdCnt = updCnt是为了避免恢复时还没有updCnt造成问题
+        this.gameData.curExpl.stepEnterTime -= realCnt * ExplInterval;
     }
 
     static calcHideExplRdCnt(rate: number): number {
@@ -1155,7 +1158,8 @@ export class ExplUpdater {
             this.catchPet();
             this.doFightQuest();
         } else {
-            this.rdcExplDegreeByBtlFail();
+            const curExpl = this.gameData.curExpl;
+            this.rdcExplDegreeByBtlFail(curExpl.curStep);
         }
         this.startRecover();
     }
@@ -1283,8 +1287,8 @@ export class ExplUpdater {
         }
     }
 
-    rdcExplDegreeByBtlFail(failCnt: number = 1) {
-        this.changeExplDegree(-200 * failCnt);
+    rdcExplDegreeByBtlFail(curStep: number, failCnt: number = 1) {
+        this.changeExplDegree(RdcUpdCntForFailByStep[curStep] * failCnt);
     }
 
     // -----------------------------------------------------------------
