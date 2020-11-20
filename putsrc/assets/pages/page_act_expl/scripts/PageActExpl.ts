@@ -11,7 +11,7 @@ import { PetUI } from './PetUI';
 import { buffModelDict } from 'configs/BuffModelDict';
 import { PageActExplLVD } from './PageActExplLVD';
 import { ListView } from 'scripts/ListView';
-import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors } from 'scripts/DataSaved';
+import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors, GameData } from 'scripts/DataSaved';
 import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, PAKey } from 'scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
@@ -81,12 +81,12 @@ export class PageActExpl extends BtlPageBase {
     @property(cc.Label)
     newLogTipLbl: cc.Label = null;
 
-    lblBtnCatch: cc.Label = null;
-    lblBtnHide: cc.Label = null;
-    lblBtnEnter: cc.Label = null;
+    lblBtnCatch: cc.Label;
+    lblBtnHide: cc.Label;
+    lblBtnEnter: cc.Label;
 
-    listView: ListView = null;
-    lvd: PageActExplLVD = null;
+    listView: ListView;
+    lvd: PageActExplLVD;
 
     updaterRetaining: boolean = false; // 虽然退出但保留updater
 
@@ -172,6 +172,8 @@ export class PageActExpl extends BtlPageBase {
                 }
             }
             this.updaterRetaining = true;
+            gameData.curExpl.afb = true;
+
             this.ctrlr.popPage();
         }
     }
@@ -179,10 +181,13 @@ export class PageActExpl extends BtlPageBase {
     start() {
         if (CC_EDITOR) return;
 
-        if (ExplUpdater.haveUpdaterInBG()) {
+        const gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl.afb && ExplUpdater.haveUpdaterInBG()) {
             this.updater = ExplUpdater.popUpdaterInBG();
             this.updater.runAt(this);
             this.updater.resetAllUI();
+
+            gameData.curExpl.afb = false;
         } else {
             this.updater = new ExplUpdater();
             this.updater.init(this, this.spcBtlId, this.startStep);

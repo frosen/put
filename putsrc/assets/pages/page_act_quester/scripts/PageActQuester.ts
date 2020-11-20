@@ -18,6 +18,7 @@ import { PageActQuesterLVD } from './PageActQuesterLVD';
 import { CellQuest, QuestState } from '../cells/cell_quest/scripts/CellQuest';
 import { FuncBar } from 'pages/page_pet/scripts/FuncBar';
 import { questModelDict } from 'configs/QuestModelDict';
+import { AmplAttriType, GameJITDataTool } from 'scripts/DataOther';
 
 export const QuesterUpdateInterval: number = 12 * 60 * 60 * 1000; // 更新间隔毫秒
 export const QuesterReuseInterval: number = 24 * 60 * 60 * 1000; // 重新可用间隔毫秒
@@ -221,9 +222,20 @@ export class PageActQuester extends PageBase {
             awardReput = Math.floor(awardReput * 0.1);
         }
 
+        const eleAmpl = 1;
+        const drinkAmpl = GameJITDataTool.getAmplRate(null, AmplAttriType.reput);
+        awardReput *= eleAmpl * drinkAmpl;
+        awardReput = Math.floor(awardReput);
+
         GameDataTool.handleMoney(gameData, money => (money.sum += awardMoney));
         GameDataTool.addReput(gameData, gameData.curPosId, awardReput);
-        let tip = `声望 ${awardReput}\n通用币 ${MoneyTool.getSimpleStr(awardMoney)}`;
+
+        const eleAmplStr = eleAmpl > 1 ? `优雅加成${Math.floor((eleAmpl - 1) * 100)}%` : '';
+        const drinkAmplStr = drinkAmpl > 1 ? `饮品加成${Math.floor((drinkAmpl - 1) * 100)}%` : '';
+
+        let tip = '获得';
+        tip += `声望 ${awardReput} ${eleAmplStr} ${drinkAmplStr}\n`;
+        tip += `通用币 ${MoneyTool.getSimpleStr(awardMoney)}\n`;
         for (const itemId of questModel.awardItemIds) {
             const cnsumModel = CnsumTool.getModelById(itemId);
             if (cnsumModel) {

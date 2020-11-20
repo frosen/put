@@ -318,6 +318,7 @@ export class ExplMmr {
     curBattle: BattleMmr;
     hiding: boolean;
     catcherId: string;
+    afb: boolean; // away from battle
 }
 
 // -----------------------------------------------------------------

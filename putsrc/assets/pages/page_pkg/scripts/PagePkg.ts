@@ -193,7 +193,6 @@ export class PagePkg extends PagePkgBase {
         const item = gameData.items[itemIdx];
         cc.log('PUT 使用道具：', item.id);
 
-        // llytodo
         if (item.itemType === ItemType.cnsum) {
             const cnsum = item as Cnsum;
             if (cnsum.cnsumType === CnsumType.drink) {

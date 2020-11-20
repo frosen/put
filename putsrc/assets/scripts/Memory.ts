@@ -180,6 +180,12 @@ export class Memory {
             this.gameData = turnToDataWithChecker(lastGameData);
         }
 
+        // 移除自行离开状态
+        if (this.gameData.curExpl) {
+            this.gameData.curPosId = this.gameData.curExpl.curPosId;
+            this.gameData.curExpl.afb = false;
+        }
+
         // 整理历史数据
         Memory.resetGameJITData(this.gameData);
     }
@@ -1018,6 +1024,7 @@ export class MmrTool {
         expl.chngUpdCnt = 0;
         expl.hiding = false;
         expl.catcherId = null;
+        expl.afb = false;
         return expl;
     }
 

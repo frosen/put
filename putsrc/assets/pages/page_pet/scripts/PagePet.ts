@@ -109,37 +109,49 @@ export class PagePet extends PageBase {
     // -----------------------------------------------------------------
 
     changePetState(pet: Pet) {
-        if (ExplUpdater.haveUpdaterInBG()) {
-            this.ctrlr.popToast('无法改变状态！主人未与战斗中的精灵在一起');
-            return;
+        const gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl && gameData.curExpl.afb) {
+            return this.ctrlr.popToast('无法改变状态！主人未与战斗中的精灵在一起');
         }
 
-        const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
-            this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');
-            return;
+            return this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');
         }
         pet.state = pet.state === PetState.rest ? PetState.ready : PetState.rest;
-        GameDataTool.sortPetsByState(this.ctrlr.memory.gameData);
+        GameDataTool.sortPetsByState(gameData);
         this.getComponentInChildren(ListView).resetContent(true);
     }
 
     onMoveUpCell(cellIdx: number) {
-        const rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, cellIdx, cellIdx - 1);
+        const gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl && gameData.curExpl.afb) {
+            if (cellIdx === 0 || gameData.pets[cellIdx - 1].state === PetState.ready) {
+                return this.ctrlr.popToast('无法移动！主人未与战斗中的精灵在一起');
+            }
+        }
+
+        const rzt = GameDataTool.movePetInList(gameData, cellIdx, cellIdx - 1);
         if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
     }
 
     onMoveDownCell(cellIdx: number) {
-        const rzt = GameDataTool.movePetInList(this.ctrlr.memory.gameData, cellIdx, cellIdx + 1);
+        const gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl && gameData.curExpl.afb) {
+            if (gameData.pets[cellIdx].state === PetState.ready) {
+                return this.ctrlr.popToast('无法移动！主人未与战斗中的精灵在一起');
+            }
+        }
+
+        const rzt = GameDataTool.movePetInList(gameData, cellIdx, cellIdx + 1);
         if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
     }
 
     onRemoveCell(cellIdx: number) {
-        const pet = this.ctrlr.memory.gameData.pets[cellIdx];
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
-            this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');
-            return;
+        const pet = gameData.pets[cellIdx];
+
+        if (pet.state !== PetState.rest) {
+            return this.ctrlr.popToast('无法放生非休息状态精灵！');
         }
 
         const name = PetTool.getCnName(pet);

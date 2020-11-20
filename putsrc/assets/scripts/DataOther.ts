@@ -88,18 +88,14 @@ export class GameJITDataTool {
         if (NotNeedPetType.includes(attri)) cc.assert(!pet, 'PUT need no pet');
         else cc.assert(pet, 'PUT need pet');
 
-        let ampl = 1;
-        let cnt = 0;
+        const ampls = [];
         if (pet) {
             const petDataDict = this.attriGainAmplDict[String(pet.catchIdx)];
             if (petDataDict) {
                 for (const drinkId in petDataDict) {
                     if (!petDataDict.hasOwnProperty(drinkId)) continue;
                     const petData = petDataDict[drinkId];
-                    if (petData.hasOwnProperty(attri)) {
-                        ampl += petData[attri] * 0.01 * Math.pow(0.5, cnt);
-                        cnt++;
-                    }
+                    if (petData.hasOwnProperty(attri)) ampls.push(petData[attri]);
                 }
             }
         } else {
@@ -108,12 +104,17 @@ export class GameJITDataTool {
                 const petDataDict = this.attriGainAmplDict[petId];
                 for (const drinkId in petDataDict) {
                     const petData = petDataDict[drinkId];
-                    if (petData.hasOwnProperty(attri)) {
-                        ampl += petData[attri] * 0.01 * Math.pow(0.5, cnt);
-                        cnt++;
-                    }
+                    if (petData.hasOwnProperty(attri)) ampls.push(petData[attri]);
                 }
             }
+        }
+
+        ampls.sort((a, b) => b - a);
+
+        let ampl = 1;
+        for (let index = 0; index < ampls.length; index++) {
+            const amplIn = ampls[index];
+            ampl += amplIn * 0.01 * Math.pow(0.5, index); // 多个叠加有衰减
         }
 
         return ampl;
