@@ -173,10 +173,12 @@ export class Memory {
         // 初始化，或者恢复历史数据
         const lastGameData = this.loadMemory();
         if (!lastGameData || true) {
+            cc.log('PUT init Game Data');
             this.gameData = newInsWithChecker(GameData);
             GameDataTool.init(this.gameData);
             this.test();
         } else {
+            cc.log('PUT load Game Data');
             this.gameData = turnToDataWithChecker(lastGameData);
         }
 
@@ -366,11 +368,13 @@ export class Memory {
         pet = PetTool.createWithRandomFeature('HeiFengWuRenJi', 28);
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
             pet.state = PetState.ready;
+            pet.prvty = 400000;
         });
 
         pet = PetTool.createWithRandomFeature('CiHuaYouLing', 29);
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
             pet.state = PetState.ready;
+            pet.prvty = 400000;
         });
 
         pet = PetTool.createWithRandomFeature('HuoHuoTu', 18);

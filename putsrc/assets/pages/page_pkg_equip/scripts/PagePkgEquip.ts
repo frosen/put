@@ -147,7 +147,7 @@ export class PagePkgEquip extends PageBase {
         if (this.selectedPetEquipCell === cell) return;
 
         const petLVD = this.petEquipList.delegate as PkgEquipPetLVD;
-        const pet = petLVD.dataList[this.selectedPetEquipCell.curCellIdx].pet;
+        const pet = petLVD.dataList[cell.curCellIdx].pet;
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl && gameData.curExpl.afb && pet.state === PetState.ready) {
             return this.ctrlr.popToast('无法变更！\n精灵在战斗而训练师未与其在一起');

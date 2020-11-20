@@ -182,7 +182,7 @@ export class PageActExpl extends BtlPageBase {
         if (CC_EDITOR) return;
 
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl.afb && ExplUpdater.haveUpdaterInBG()) {
+        if (gameData.curExpl && gameData.curExpl.afb && ExplUpdater.haveUpdaterInBG()) {
             this.updater = ExplUpdater.popUpdaterInBG();
             this.updater.runAt(this);
             this.updater.resetAllUI();

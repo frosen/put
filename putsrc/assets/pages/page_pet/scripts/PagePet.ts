@@ -109,11 +109,8 @@ export class PagePet extends PageBase {
     // -----------------------------------------------------------------
 
     changePetState(pet: Pet) {
+        if (!this.checkMasterHere()) return;
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && gameData.curExpl.afb) {
-            return this.ctrlr.popToast('无法改变状态！\n精灵在战斗而训练师未与其在一起');
-        }
-
         if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
             return this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');
         }
@@ -124,11 +121,7 @@ export class PagePet extends PageBase {
 
     onMoveUpCell(cellIdx: number) {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && gameData.curExpl.afb) {
-            if (cellIdx === 0 || gameData.pets[cellIdx - 1].state === PetState.ready) {
-                return this.ctrlr.popToast('无法移动！\n精灵在战斗而训练师未与其在一起');
-            }
-        }
+        if (!this.checkMasterHere(gameData.pets[cellIdx - 1])) return;
 
         const rzt = GameDataTool.movePetInList(gameData, cellIdx, cellIdx - 1);
         if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
@@ -136,9 +129,7 @@ export class PagePet extends PageBase {
 
     onMoveDownCell(cellIdx: number) {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && gameData.curExpl.afb && gameData.pets[cellIdx].state === PetState.ready) {
-            return this.ctrlr.popToast('无法移动！\n精灵在战斗而训练师未与其在一起');
-        }
+        if (!this.checkMasterHere(gameData.pets[cellIdx])) return;
 
         const rzt = GameDataTool.movePetInList(gameData, cellIdx, cellIdx + 1);
         if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);
@@ -161,5 +152,14 @@ export class PagePet extends PageBase {
                 else this.ctrlr.popToast(rzt);
             }
         });
+    }
+
+    checkMasterHere(pet: Pet = null): boolean {
+        const gameData = this.ctrlr.memory.gameData;
+        if (gameData.curExpl && gameData.curExpl.afb && (pet ? pet.state === PetState.ready : true)) {
+            this.ctrlr.popToast('无法变更！\n精灵在战斗而训练师未与其在一起');
+            return false;
+        }
+        return true;
     }
 }
