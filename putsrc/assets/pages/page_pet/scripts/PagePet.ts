@@ -111,7 +111,7 @@ export class PagePet extends PageBase {
     changePetState(pet: Pet) {
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl && gameData.curExpl.afb) {
-            return this.ctrlr.popToast('无法改变状态！主人未与战斗中的精灵在一起');
+            return this.ctrlr.popToast('无法改变状态！训练师未与战斗中的精灵在一起');
         }
 
         if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
@@ -126,7 +126,7 @@ export class PagePet extends PageBase {
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl && gameData.curExpl.afb) {
             if (cellIdx === 0 || gameData.pets[cellIdx - 1].state === PetState.ready) {
-                return this.ctrlr.popToast('无法移动！主人未与战斗中的精灵在一起');
+                return this.ctrlr.popToast('无法移动！训练师未与战斗中的精灵在一起');
             }
         }
 
@@ -138,7 +138,7 @@ export class PagePet extends PageBase {
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.curExpl && gameData.curExpl.afb) {
             if (gameData.pets[cellIdx].state === PetState.ready) {
-                return this.ctrlr.popToast('无法移动！主人未与战斗中的精灵在一起');
+                return this.ctrlr.popToast('无法移动！训练师未与战斗中的精灵在一起');
             }
         }
 

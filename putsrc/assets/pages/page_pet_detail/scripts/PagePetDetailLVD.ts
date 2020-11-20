@@ -38,8 +38,8 @@ const FEATURE = 'f';
 const MERGE = 'm';
 
 const STATE_TIP = `分为：
-备战中 跟随主人参与战斗
-休息中 跟随主人但不参与战斗
+备战中 跟随训练师参与战斗
+休息中 跟随训练师但不参与战斗
 是否参战可在精灵列表中点击状态按钮修改`;
 
 const LV_TIP = `提高等级可以：
@@ -323,7 +323,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData('身份信息');
         } else if (rowIdx === 15) {
             const masterStr = pet.master || '无';
-            cell.setData1('主人', masterStr);
+            cell.setData1('训练师', masterStr);
             cell.setData2('唯一标识', String(pet.catchIdx));
         } else if (rowIdx === 16) {
             let timeStr: string;
