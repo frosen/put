@@ -111,9 +111,16 @@ export class PagePet extends PageBase {
     changePetState(pet: Pet) {
         if (!this.checkMasterHere()) return;
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
-            return this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');
+        if (gameData.curExpl) {
+            if (pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
+                return this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');
+            }
+
+            if (gameData.curExpl.curBattle) {
+                return this.ctrlr.popToast('无法改变状态！当前处于交战状态');
+            }
         }
+
         pet.state = pet.state === PetState.rest ? PetState.ready : PetState.rest;
         GameDataTool.sortPetsByState(gameData);
         this.getComponentInChildren(ListView).resetContent(true);
@@ -121,7 +128,7 @@ export class PagePet extends PageBase {
 
     onMoveUpCell(cellIdx: number) {
         const gameData = this.ctrlr.memory.gameData;
-        if (!this.checkMasterHere(gameData.pets[cellIdx - 1])) return;
+        if (!this.checkMasterHere(gameData.pets[cellIdx])) return;
 
         const rzt = GameDataTool.movePetInList(gameData, cellIdx, cellIdx - 1);
         if (rzt === GameDataTool.SUC) this.getComponentInChildren(ListView).resetContent(true);

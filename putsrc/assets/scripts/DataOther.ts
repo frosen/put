@@ -180,7 +180,7 @@ export class Pet2 {
 
     skillIds: string[];
 
-    setData(pet: Pet, ampl: number = 1, exPrvty: number = null, exEquips: Equip[] = null) {
+    setData(pet: Pet, ampl: number, exPrvty: number, exEquips: Equip[]) {
         const petModel: PetModel = petModelDict[pet.id];
 
         const lv = pet.lv;
@@ -214,8 +214,7 @@ export class Pet2 {
         // 装备加成
         const equips = exEquips || pet.equips;
         for (const equip of equips) {
-            if (!equip) continue;
-            EquipTool.getFinalAttris(equip, this);
+            if (equip) EquipTool.getFinalAttris(equip, this);
         }
 
         // 饮品加成
@@ -286,6 +285,64 @@ export class Pet2 {
             skillIdx++;
         }
         this.skillIds.length = skillIdx;
+    }
+
+    // 单独计算属性 -----------------------------------------------------------------
+
+    static pet2ForCalc: Pet2 = null;
+
+    static getPet2ForCalc(): Pet2 {
+        if (this.pet2ForCalc) return this.pet2ForCalc;
+        const pet2 = new Pet2();
+
+        pet2.strengthOri = 0;
+        pet2.concentrationOri = 0;
+        pet2.durabilityOri = 0;
+        pet2.agilityOri = 0;
+        pet2.sensitivityOri = 0;
+        pet2.elegantOri = 0;
+
+        pet2.strength = 0;
+        pet2.concentration = 0;
+        pet2.durability = 0;
+        pet2.agility = 0;
+        pet2.sensitivity = 0;
+        pet2.elegant = 0;
+
+        this.pet2ForCalc = pet2;
+        return this.pet2ForCalc;
+    }
+
+    static handlePet2ForCalc(pet2: Pet2, pet: Pet) {
+        PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
+            if (model.hasOwnProperty('onBaseSetting')) model.onBaseSetting(pet2, datas);
+        });
+
+        for (const equip of pet.equips) {
+            if (equip) EquipTool.getFinalAttris(equip, pet2);
+        }
+
+        PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
+            if (model.hasOwnProperty('onSetting')) model.onSetting(pet2, datas);
+        });
+    }
+
+    static calcSensitivity(pet: Pet): number {
+        const petModel: PetModel = petModelDict[pet.id];
+        const pet2 = this.getPet2ForCalc();
+        pet2.sensitivityOri = Math.floor(petModel.baseSensitivity + petModel.addSensitivity * pet.lv);
+        pet2.sensitivity = pet2.sensitivityOri;
+        this.handlePet2ForCalc(pet2, pet);
+        return pet2.sensitivity;
+    }
+
+    static calcElegant(pet: Pet): number {
+        const petModel: PetModel = petModelDict[pet.id];
+        const pet2 = this.getPet2ForCalc();
+        pet2.elegantOri = Math.floor(petModel.baseElegant + petModel.addElegant * pet.lv);
+        pet2.elegant = pet2.elegantOri;
+        this.handlePet2ForCalc(pet2, pet);
+        return pet2.elegant;
     }
 }
 
@@ -556,8 +613,8 @@ export class RealBattle {
             const { ampl, prvty } = RealBattle.getEnemyAmplAndPrvtyByStep(curExpl.curStep);
             this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetMmr = ePetMmrs[petIdx];
-                const petData = PetTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.exFeatureIds, ePetMmr.features);
-                bPet.init(petData, ampl, prvty, null);
+                const ePet = PetTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.exFeatureIds, ePetMmr.features);
+                bPet.init(ePet, ampl, prvty, null);
             });
         } else {
             const { ampl, prvty } = RealBattle.getEnemyAmplAndPrvtyByStep(curExpl.curStep);

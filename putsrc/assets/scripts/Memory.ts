@@ -306,11 +306,11 @@ export class Memory {
         for (let index = 0; index < gameData.pets.length; index++) {
             const pet = gameData.pets[index];
             if (pet.prvty < PrvtyMax) {
-                const Range = 10 * 60 * 1000; // 默契值 10min1点
+                const Range = 10 * 60 * 1000; // 默契值 10min5点
                 if (curTime - pet.prvtyTime > Range) {
                     const count = Math.floor((curTime - pet.prvtyTime) / Range);
                     if (pet.state === PetState.ready || pet.state === PetState.rest) {
-                        pet.prvty += Math.floor(100 * GameJITDataTool.getAmplRate(pet, AmplAttriType.prvty) * count);
+                        pet.prvty += Math.floor(500 * GameJITDataTool.getAmplRate(pet, AmplAttriType.prvty) * count);
                         pet.prvty = Math.min(pet.prvty, PrvtyMax);
                     }
                     pet.prvtyTime += Range * count;
@@ -638,6 +638,8 @@ export class PetTool {
 
         if (petFeature) petFeature.lv += feature.lv;
         else pet.lndFeatures.push(FeatureTool.clone(feature));
+
+        pet.prvty = Math.max(pet.prvty - 2500 * 100, 0); // merge会减少默契
 
         const mergeData = newInsWithChecker(Merge);
         mergeData.oPetLv = pet.lv;
@@ -1141,13 +1143,6 @@ export class GameDataTool {
         const pet = gameData.pets[petIdx];
         if (pet.state !== PetState.rest) return '精灵未在休息状态，无法放生';
 
-        const curCatchIdx = pet.catchIdx;
-        if (gameData.curExpl && gameData.curExpl.curBattle) {
-            for (const petMmr of gameData.curExpl.curBattle.selfs) {
-                if (curCatchIdx === petMmr.catchIdx) return '当前精灵处于战斗状态，无法放生';
-            }
-        }
-
         for (let index = 0; index < 3; index++) {
             if (!pet.equips[index]) continue;
             const rzt = this.wieldEquip(gameData, this.UNWIELD, petIdx, index);
@@ -1166,13 +1161,6 @@ export class GameDataTool {
 
     static checkMergePet(gameData: GameData, pet: Pet): string {
         if (pet.state !== PetState.rest) return '精灵未在休息状态，无法融合';
-
-        const curCatchIdx = pet.catchIdx;
-        if (gameData.curExpl && gameData.curExpl.curBattle) {
-            for (const petMmr of gameData.curExpl.curBattle.selfs) {
-                if (curCatchIdx === petMmr.catchIdx) return '当前精灵处于战斗状态，无法融合';
-            }
-        }
 
         const mergeLv = PetTool.getCurMergeLv(pet);
         if (pet.lv < mergeLv) return `精灵下次融合需达到${mergeLv}级，目前无法融合`;

@@ -166,8 +166,8 @@ export class PageActExpl extends BtlPageBase {
             const pets = GameDataTool.getReadyPets(gameData);
             for (const pet of pets) {
                 const prvty = PetTool.getRealPrvty(pet);
-                if (prvty < 50) {
-                    this.ctrlr.popToast(`精灵独立战斗要求所有精灵默契值至少50，\n但目前${PetTool.getCnName(pet)}未达到！`);
+                if (prvty < 35) {
+                    this.ctrlr.popToast(`精灵独立战斗要求所有精灵默契值至少35，\n但目前${PetTool.getCnName(pet)}未达到！`);
                     return;
                 }
             }
