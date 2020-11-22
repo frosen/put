@@ -61,7 +61,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * rate };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `每回合对目标造成最低40%最高80%释放者技能攻击力的暗系伤害，血量越低伤害越高`;
+            return `每回合对目标造成最低40%最高80%释放者技能攻击的暗系伤害，血量越低伤害越高`;
         }
     },
     ZhuiLuo: {
@@ -114,7 +114,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             aim.pet2.atkDmgTo -= to;
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `目标普攻伤害提高，相当于自身攻击力的15%伤害外加释放者技能攻击力的15%`;
+            return `目标普攻伤害提高，相当于自身攻击的15%伤害外加释放者技能攻击的15%`;
         }
     },
     KongJu: {
@@ -313,7 +313,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             return { hp: Math.floor(dmg * 0.3) };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `目标最大伤害提高150%，但每回合都会受到相当于自身全部攻击力30%的暗系伤害`;
+            return `目标最大伤害提高150%，但每回合都会受到相当于自身全部攻击30%的暗系伤害`;
         }
     },
     JingJin: {
@@ -333,7 +333,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             const mp = 20 + Math.floor(pet.lv / 10);
             const dmg = getSklDmgStr(pet2, 1.2);
-            return `目标每回合燃烧掉目标${mp}点精神，如果精神不足${mp}点，则造成${dmg}(120%释放者技能伤害)点火系伤害`;
+            return `目标每回合燃烧掉目标${mp}点精神力，如果精神力不足${mp}点，则造成${dmg}(120%释放者技能伤害)点火系伤害`;
         }
     },
     NingJing: {

@@ -174,7 +174,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.mpMax += datas[0];
         },
         getInfo(datas: number[]): string {
-            return `精神上限增加${datas[0]}点`;
+            return `精神力上限增加${datas[0]}点`;
         }
     },
     addAtkDmg: {
@@ -308,7 +308,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             pet.mpMax = Math.max(pet.mpMax - datas[1], 0);
         },
         getInfo(datas: number[]): string {
-            return `血量上限提高${rdP(datas[0])}%，但精神上限降低${datas[1]}点`;
+            return `血量上限提高${rdP(datas[0])}%，但精神力上限降低${datas[1]}点`;
         }
     },
     addByLuck: {
@@ -424,7 +424,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             bData.ctrlr.getTeam(aim).mp = Math.max(bData.ctrlr.getTeam(aim).mp - datas[0], 0);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，敌人减少${datas[0]}点精神`;
+            return `普攻击中时，敌人减少${datas[0]}点精神力`;
         }
     },
     hitRdcRg: {
@@ -449,7 +449,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             sTeam.mp = Math.min(sTeam.mp + datas[0], sTeam.mpMax);
         },
         getInfo(datas: number[]): string {
-            return `普攻击中时，额外获得${datas[0]}点精神`;
+            return `普攻击中时，额外获得${datas[0]}点精神力`;
         }
     },
     hitAddRg: {
@@ -515,7 +515,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             if (bData.ctrlr.getTeam(pet).mp > bData.ctrlr.getTeam(pet).mpMax * datas[0]) aim.hp -= bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
-            return `如果精神大于总量的${rdP(datas[0])}%，则技能伤害提高${rdP(datas[1])}%`;
+            return `如果精神力大于总量的${rdP(datas[0])}%，则技能伤害提高${rdP(datas[1])}%`;
         }
     },
     castConDmg: {
@@ -686,7 +686,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             sTeam.mp = Math.min(sTeam.mp + datas[0], sTeam.mpMax);
         },
         getInfo(datas: number[]): string {
-            return `受伤时，额外获得${datas[0]}点精神`;
+            return `受伤时，额外获得${datas[0]}点精神力`;
         }
     },
     hurtGotRage: {
@@ -716,7 +716,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `受伤时，如果有足够的精神，则${rdP(datas[0])}%伤害由消耗精神抵消（1MP=2HP*lv）`;
+            return `受伤时，如果有足够的精神力，则${rdP(datas[0])}%伤害由消耗精神力抵消（1MP=2HP*lv）`;
         }
     },
     hurtWithMelee: {
@@ -954,7 +954,7 @@ const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
             sTeam.mp = Math.min(sTeam.mp + datas[0], sTeam.mpMax);
         },
         getInfo(datas: number[]): string {
-            return `敌人被击败时，精神恢复${datas[0]}点`;
+            return `敌人被击败时，精神力恢复${datas[0]}点`;
         }
     },
     killRdcCD: {

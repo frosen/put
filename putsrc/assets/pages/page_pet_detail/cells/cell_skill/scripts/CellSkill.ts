@@ -12,7 +12,7 @@ import { SkillModel } from 'scripts/DataModel';
 import { skillModelDict } from 'configs/SkillModelDict';
 import { buffModelDict } from 'configs/BuffModelDict';
 
-const SkillTypeCellNames = ['', '・技能', '・瞬发技能', '・绝技'];
+const SkillTypeCellNames = ['', '・技能', '・瞬发技能', '・必杀技'];
 const SkillDirTypeCellNames = ['', '', '・增益'];
 const SkillAimTypeCellNames = ['', '', '・双目标', '・全体', '・敌我'];
 

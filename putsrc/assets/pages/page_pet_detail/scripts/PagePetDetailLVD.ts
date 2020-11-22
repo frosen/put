@@ -59,8 +59,8 @@ const BIO_TIP = '分为：\n人形生物 魔法生物\n机械生物 自然生物
 const ELE_TIP = `分为：
 火 克空   水 克火   空 克地
 地 克水   光 克暗   暗 克光
-对克制精灵造成15%的额外伤害
-使用同种属性技能精神消耗减少10%，伤害增加5%`;
+对属性克制精灵造成15%的额外伤害
+使用同属性技能时，精神力消耗减少10%，伤害增加5%`;
 
 const BATTLE_TIP = `分为：
 近战 攻击正前面的目标
@@ -73,14 +73,14 @@ const BATTLE_TIP = `分为：
 const SPEED_TIP = '数值1-100，数字越大行动次序越靠前';
 
 const STR_TIP = '每1点力量增加1点物理伤害';
-const CON_TIP = '每1点专注增加1点技能伤害\n每30点增加1点精神上限';
+const CON_TIP = '每1点专注增加1点技能伤害\n每30点增加1点精神力上限';
 const DUN_TIP = '每1点耐久增加25点血量上限';
 const AGI_TIP = '影响暴击率和闪躲率\n影响偷袭效果\n数据最高者影响潜行效率和探索移动速度';
 const SEN_TIP = '影响制作物品成功的几率\n数据最高者影响察觉宝藏的几率';
 const ELG_TIP = '队伍中数据最高者影响声望上升速度和捕捉精灵的几率';
 
-const HP_TIP = '战斗中的血量上限\n降低到0则无法继续作战';
-const MP_TIP = '战斗中的精神上限\n释放技能所消耗的能量\n普攻击中可少量恢复精神';
+const HP_TIP = '用于战斗\n降低到0则无法继续作战\n全部精灵降低至0则战斗失败';
+const MP_TIP = '用于战斗\n所有精灵共用一个精神力池，数值为所有精灵精神力之和\n释放技能消耗精神力\n普攻可少量恢复精神力';
 
 const ATK_TIP = '影响普攻伤害\n影响技能伤害（保持1倍，不受技能伤害系数影响）';
 const SKL_TIP = '影响技能伤害（乘以技能的伤害系数）';
@@ -312,8 +312,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx === 11) {
             cell.setData('二级属性');
         } else if (rowIdx === 12) {
-            cell.setData1('血量', String(Math.floor(pet2.hpMax * 0.1)), HP_TIP);
-            cell.setData2('精神上限', String(pet2.mpMax), MP_TIP);
+            cell.setData1('血量上限', String(Math.floor(pet2.hpMax * 0.1)), HP_TIP);
+            cell.setData2('精神力上限', String(pet2.mpMax), MP_TIP);
         } else if (rowIdx === 13) {
             cell.setData1('攻击伤害', `${numStr(pet2.atkDmgFrom)}~${numStr(pet2.atkDmgTo)}`, ATK_TIP);
             cell.setData2('技能伤害', `${numStr(pet2.sklDmgFrom)}~${numStr(pet2.sklDmgTo)}`, SKL_TIP);

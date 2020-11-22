@@ -27,6 +27,9 @@ export class CellPet extends ListViewCell {
     @property(cc.Node)
     infoLayer: cc.Node = null;
 
+    @property(cc.Node)
+    infoLayer2: cc.Node = null;
+
     @property(cc.Sprite)
     petSp: cc.Sprite = null;
 
@@ -78,17 +81,28 @@ export class CellPet extends ListViewCell {
         this.hideAllInfoNode();
         let index = 0;
         const realPrvty = PetTool.getRealPrvty(pet);
-        this.setInfoNode(index, `默契 ${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
+        const prvtyStr = `默契 ${realPrvty}`;
+        const prvtyColor = cc.color(100, 50 + realPrvty, 100);
+        this.setInfoNode(index, prvtyStr, prvtyColor);
         index++;
+
         for (const feature of pet.inbFeatures) {
             const cnName = featureModelDict[feature.id].cnBrief;
-            const lv = feature.lv;
-            const ex = pet.exFeatureIds.includes(feature.id);
-            this.setInfoNode(index, cnName + String(lv), ex ? cc.Color.RED : cc.Color.BLUE);
+            const color = pet.exFeatureIds.includes(feature.id) ? cc.Color.RED : cc.Color.BLUE;
+            this.setInfoNode(index, cnName + String(feature.lv), color);
+            index++;
+        }
+
+        let lndLv = 0;
+        for (const feature of pet.lndFeatures) lndLv += feature.lv;
+        if (lndLv > 0) {
+            this.setInfoNode(index, '习得 ' + String(lndLv), cc.color(75, 165, 130));
             index++;
         }
 
         this.infoLayer.getComponent(cc.Layout).updateLayout();
+        this.infoLayer2.getComponent(cc.Layout).updateLayout();
+        this.infoLayer.y = index <= 6 ? -135 : -120;
     }
 
     hideAllInfoNode() {
@@ -103,7 +117,7 @@ export class CellPet extends ListViewCell {
         if (!infoNode) {
             infoNode = cc.instantiate(this.infoNodePrefab);
             this.infoNodePool[index] = infoNode;
-            infoNode.parent = this.infoLayer;
+            infoNode.parent = index < 6 ? this.infoLayer : this.infoLayer2;
         }
         infoNode.opacity = 255;
 
