@@ -66,7 +66,7 @@ export class PagePetDetail extends PageBase {
         lvd.curPet = this.curPet;
 
         const pet2 = new Pet2();
-        pet2.setData(this.curPet);
+        pet2.setData(this.curPet, 1, null, null);
         lvd.curPet2 = pet2;
 
         const curDirtyToken = this.ctrlr.memory.dirtyToken;
