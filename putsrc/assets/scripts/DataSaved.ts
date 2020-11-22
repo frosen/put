@@ -288,6 +288,7 @@ export class PosData {
 export class SPetMmr {
     catchIdx: number; // 战斗开始后，可能会变化的只有如下几项
     prvty: number;
+    drinkId: string;
     eqpTokens: string[];
 }
 

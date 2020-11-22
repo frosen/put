@@ -7,9 +7,8 @@
 const { ccclass, property } = cc._decorator;
 
 import { Drink } from 'scripts/DataSaved';
-import { DrinkModel } from 'scripts/DataModel';
+import { AmplAttriNames, DrinkModel } from 'scripts/DataModel';
 import { drinkModelDict } from 'configs/DrinkModelDict';
-import { AmplAttriNames } from 'scripts/DataOther';
 import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
 import { ListViewCell } from 'scripts/ListViewCell';
 

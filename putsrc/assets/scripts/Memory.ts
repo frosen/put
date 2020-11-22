@@ -58,13 +58,13 @@ import {
     PAKey,
     ReputRank,
     QuestType,
-    QuestModel
+    QuestModel,
+    AmplAttriType
 } from './DataModel';
 import { equipModelDict } from 'configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
-import { GameJITDataTool, AmplAttriType } from './DataOther';
 import Tea = require('./Tea');
 
 import { expModels } from 'configs/ExpModels';
@@ -187,9 +187,6 @@ export class Memory {
             this.gameData.curPosId = this.gameData.curExpl.curPosId;
             this.gameData.curExpl.afb = false;
         }
-
-        // 整理历史数据
-        Memory.resetGameJITData(this.gameData);
     }
 
     firstFrameIgnored: boolean = false; // 忽略第一次update，因为此时可能还没有恢复完成
@@ -310,7 +307,7 @@ export class Memory {
                 if (curTime - pet.prvtyTime > Range) {
                     const count = Math.floor((curTime - pet.prvtyTime) / Range);
                     if (pet.state === PetState.ready || pet.state === PetState.rest) {
-                        pet.prvty += Math.floor(500 * GameJITDataTool.getAmplRate(pet, AmplAttriType.prvty) * count);
+                        pet.prvty += Math.floor(500 * GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.prvty) * count);
                         pet.prvty = Math.min(pet.prvty, PrvtyMax);
                     }
                     pet.prvtyTime += Range * count;
@@ -321,15 +318,6 @@ export class Memory {
                 if (curTime - pet.drinkTime >= drinkModelDict[pet.drinkId].dura) {
                     GameDataTool.clearDrinkFromPet(gameData, index);
                 }
-            }
-        }
-    }
-
-    static resetGameJITData(gameData: GameData) {
-        for (const pet of gameData.pets) {
-            if (pet.drinkId) {
-                const drinkModel = drinkModelDict[pet.drinkId];
-                GameJITDataTool.addAmplByDrink(pet, drinkModel);
             }
         }
     }
@@ -378,6 +366,9 @@ export class Memory {
         });
 
         pet = PetTool.createWithRandomFeature('HuoHuoTu', 18);
+        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {});
+
+        pet = PetTool.createWithRandomFeature('DianZiShouWei', 8);
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {});
 
         // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
@@ -1048,6 +1039,7 @@ export class MmrTool {
         const selfPetMmr = newInsWithChecker(SPetMmr);
         selfPetMmr.catchIdx = pet.catchIdx;
         selfPetMmr.prvty = pet.prvty;
+        selfPetMmr.drinkId = pet.drinkId;
         const tokens = [];
         for (const equip of pet.equips) tokens.push(EquipTool.getToken(equip));
         selfPetMmr.eqpTokens = newList(tokens);
@@ -1223,8 +1215,6 @@ export class GameDataTool {
 
         if (pet.lv > drinkModel.lvMax) return `${drinkModel.cnName}不能作用于等级高于${drinkModel.lvMax}的精灵`;
 
-        GameJITDataTool.addAmplByDrink(pet, drinkModel);
-
         pet.drinkId = drink.id;
         pet.drinkTime = curTime || Date.now();
 
@@ -1233,9 +1223,31 @@ export class GameDataTool {
         return this.SUC;
     }
 
+    static getDrinkAmpl(gameData: GameData, petOrDrinkId: Pet | string, attri: AmplAttriType, base: number = 1): number {
+        if (gameData) {
+            const ampls = [];
+            for (const pet of gameData.pets) ampls[ampls.length] = this.getDrinkAmpl(null, pet, attri, 0);
+            ampls.sort((a, b) => b - a);
+
+            let ampl = base;
+            for (let index = 0; index < ampls.length; index++) {
+                const amplIn = ampls[index];
+                ampl += amplIn * Math.pow(0.5, index); // 多个叠加有衰减
+            }
+            return ampl;
+        } else if (petOrDrinkId) {
+            const drinkId = typeof petOrDrinkId === 'string' ? petOrDrinkId : petOrDrinkId.drinkId;
+            if (!drinkId) return base;
+            const drinkModel = drinkModelDict[drinkId];
+
+            if (drinkModel.mainAttri === attri) return drinkModel.mainPercent * 0.01 + base;
+            else if (drinkModel.subAttri === attri) return drinkModel.subPercent * 0.01 + base;
+            else return base;
+        } else cc.error('Wrong getDrinkAmpl param');
+    }
+
     static clearDrinkFromPet(gameData: GameData, petIdx: number) {
         const pet = gameData.pets[petIdx];
-        GameJITDataTool.removeAmpl(pet, pet.drinkId);
 
         pet.drinkId = '';
         pet.drinkTime = 0;

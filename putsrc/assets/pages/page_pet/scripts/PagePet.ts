@@ -111,6 +111,11 @@ export class PagePet extends PageBase {
     changePetState(pet: Pet) {
         if (!this.checkMasterHere()) return;
         const gameData = this.ctrlr.memory.gameData;
+        const readyLen = GameDataTool.getReadyPets(gameData).length;
+        if (pet.state === PetState.rest && readyLen >= 5) {
+            return this.ctrlr.popToast('无法改变状态！备战状态的精灵不得大于五只');
+        }
+
         if (gameData.curExpl) {
             if (pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
                 return this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');

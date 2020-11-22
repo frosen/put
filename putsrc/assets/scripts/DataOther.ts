@@ -12,10 +12,10 @@ import {
     SkillType,
     SkillDirType,
     SkillAimtype,
-    DrinkModel,
     ExplModel,
     ActPosModel,
-    PAKey
+    PAKey,
+    AmplAttriType
 } from './DataModel';
 import {
     BioType,
@@ -40,86 +40,6 @@ import { BtlCtrlr } from './BtlCtrlr';
 import { randomRate, getRandomOneInList, normalRandom } from './Random';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { expModels } from 'configs/ExpModels';
-
-export enum AmplAttriType {
-    none,
-    exp,
-    expl,
-    work,
-    prvty,
-    reput,
-
-    strength,
-    concentration,
-    durability
-}
-
-export const AmplAttriNames = ['', '经验', '探索受益', '工作受益', '默契', '声望', '力量', '专注', '耐久'];
-
-const NotNeedPetType = [AmplAttriType.expl, AmplAttriType.reput];
-
-/** 运行时游戏数据 */
-export class GameJITDataTool {
-    /** petid:key:attri:data */
-    static attriGainAmplDict: { [key: string]: { [key: string]: { [key: number]: number } } } = {};
-
-    static addAmplByDrink(pet: Pet, drinkModel: DrinkModel) {
-        const data = {};
-        data[drinkModel.mainAttri] = drinkModel.mainPercent;
-        if (drinkModel.subAttri) data[drinkModel.subAttri] = drinkModel.subPercent;
-
-        this.addAmpl(pet, drinkModel.id, data);
-    }
-
-    static addAmpl(pet: Pet, drinkId: string, data: { [key: number]: number }) {
-        const petId = String(pet.catchIdx);
-        if (!this.attriGainAmplDict[petId]) this.attriGainAmplDict[petId] = {};
-        this.attriGainAmplDict[petId][drinkId] = data;
-    }
-
-    static removeAmpl(pet: Pet, drinkId: string) {
-        const petId = String(pet.catchIdx);
-        if (this.attriGainAmplDict[petId]) {
-            delete this.attriGainAmplDict[petId][drinkId];
-        }
-    }
-
-    static getAmplRate(pet: Pet, attri: AmplAttriType) {
-        if (NotNeedPetType.includes(attri)) cc.assert(!pet, 'PUT need no pet');
-        else cc.assert(pet, 'PUT need pet');
-
-        const ampls = [];
-        if (pet) {
-            const petDataDict = this.attriGainAmplDict[String(pet.catchIdx)];
-            if (petDataDict) {
-                for (const drinkId in petDataDict) {
-                    if (!petDataDict.hasOwnProperty(drinkId)) continue;
-                    const petData = petDataDict[drinkId];
-                    if (petData.hasOwnProperty(attri)) ampls.push(petData[attri]);
-                }
-            }
-        } else {
-            for (const petId in this.attriGainAmplDict) {
-                if (!this.attriGainAmplDict.hasOwnProperty(petId)) continue;
-                const petDataDict = this.attriGainAmplDict[petId];
-                for (const drinkId in petDataDict) {
-                    const petData = petDataDict[drinkId];
-                    if (petData.hasOwnProperty(attri)) ampls.push(petData[attri]);
-                }
-            }
-        }
-
-        ampls.sort((a, b) => b - a);
-
-        let ampl = 1;
-        for (let index = 0; index < ampls.length; index++) {
-            const amplIn = ampls[index];
-            ampl += amplIn * 0.01 * Math.pow(0.5, index); // 多个叠加有衰减
-        }
-
-        return ampl;
-    }
-}
 
 // -----------------------------------------------------------------
 
@@ -180,7 +100,7 @@ export class Pet2 {
 
     skillIds: string[];
 
-    setData(pet: Pet, ampl: number, exPrvty: number, exEquips: Equip[]) {
+    setData(pet: Pet, ampl: number, exPrvty: number, exDrinkId: string, exEquips: Equip[]) {
         const petModel: PetModel = petModelDict[pet.id];
 
         const lv = pet.lv;
@@ -218,10 +138,11 @@ export class Pet2 {
         }
 
         // 饮品加成
-        if (pet.drinkId) {
-            this.strength *= GameJITDataTool.getAmplRate(pet, AmplAttriType.strength);
-            this.concentration *= GameJITDataTool.getAmplRate(pet, AmplAttriType.concentration);
-            this.durability *= GameJITDataTool.getAmplRate(pet, AmplAttriType.durability);
+        const drinkId = exDrinkId || pet.drinkId;
+        if (drinkId) {
+            this.strength *= GameDataTool.getDrinkAmpl(null, drinkId, AmplAttriType.strength);
+            this.concentration *= GameDataTool.getDrinkAmpl(null, drinkId, AmplAttriType.concentration);
+            this.durability *= GameDataTool.getDrinkAmpl(null, drinkId, AmplAttriType.durability);
         }
 
         // 二级原始属性
@@ -418,10 +339,10 @@ export class BattlePet {
         this.beEnemy = beEnemy;
     }
 
-    init(pet: Pet, ampl: number, exPrvty: number, exEquips: Equip[]) {
+    init(pet: Pet, ampl: number, exPrvty: number, exDrinkId: string, exEquips: Equip[]) {
         this.pet = pet;
         if (!this.pet2) this.pet2 = new Pet2();
-        this.pet2.setData(pet, ampl, exPrvty, exEquips);
+        this.pet2.setData(pet, ampl, exPrvty, exDrinkId, exEquips);
 
         this.hp = this.pet2.hpMax;
         this.hpMax = this.pet2.hpMax;
@@ -555,6 +476,7 @@ export class RealBattle {
 
         let sPets: Pet[];
         const exPrvtys: number[] = [];
+        const exDrinkIds: string[] = [];
         const exEquips: Equip[][] = [];
         if (sPetMmrs) {
             sPets = [];
@@ -584,6 +506,7 @@ export class RealBattle {
                 sPets.push(curPet);
 
                 exPrvtys.push(selfPetMmr.prvty);
+                exDrinkIds.push(selfPetMmr.drinkId);
 
                 const equips = [];
                 for (const token of selfPetMmr.eqpTokens) {
@@ -600,7 +523,7 @@ export class RealBattle {
         } else sPets = GameDataTool.getReadyPets(gameData);
 
         this.selfTeam.reset(sPets.length, false, (bPet: BattlePet, petIdx: number) => {
-            bPet.init(sPets[petIdx], 1, exPrvtys[petIdx], exEquips[petIdx]);
+            bPet.init(sPets[petIdx], 1, exPrvtys[petIdx], exDrinkIds[petIdx], exEquips[petIdx]);
         });
     }
 
@@ -614,7 +537,7 @@ export class RealBattle {
             this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetMmr = ePetMmrs[petIdx];
                 const ePet = PetTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.exFeatureIds, ePetMmr.features);
-                bPet.init(ePet, ampl, prvty, null);
+                bPet.init(ePet, ampl, prvty, null, null);
             });
         } else {
             const { ampl, prvty } = RealBattle.getEnemyAmplAndPrvtyByStep(curExpl.curStep);
@@ -622,7 +545,7 @@ export class RealBattle {
             this.enemyTeam.reset(ePetsDatas.length, true, (bPet: BattlePet, petIdx: number) => {
                 const ePetData = ePetsDatas[petIdx];
                 const ePet = PetTool.createWithRandomFeature(ePetData.id, ePetData.lv);
-                bPet.init(ePet, ampl, prvty, null);
+                bPet.init(ePet, ampl, prvty, null, null);
             });
 
             // 按照HP排序

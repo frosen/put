@@ -21,7 +21,7 @@ import {
     EPetMmr,
     RdcUpdCntForFailByStep
 } from 'scripts/DataSaved';
-import { AmplAttriType, RealBattle, BattlePet, GameJITDataTool } from './DataOther';
+import { RealBattle, BattlePet } from './DataOther';
 import { actPosModelDict } from 'configs/ActPosModelDict';
 import { randomInt, randomRate, getRandomOneInList, randomAreaInt, random, randomRound, randomAreaByIntRange } from './Random';
 import {
@@ -34,7 +34,8 @@ import {
     QuestModel,
     FightQuestNeed,
     GatherQuestNeed,
-    SearchQuestNeed
+    SearchQuestNeed,
+    AmplAttriType
 } from './DataModel';
 import { catcherModelDict } from 'configs/CatcherModelDict';
 import { petModelDict } from 'configs/PetModelDict';
@@ -497,7 +498,7 @@ export class ExplUpdater {
 
         const selfPets = GameDataTool.getReadyPets(gameData);
         for (const pet of selfPets) {
-            const expEach = Math.ceil(expTotal * GameJITDataTool.getAmplRate(pet, AmplAttriType.exp)); // 计算饮品的加成
+            const expEach = Math.ceil(expTotal * GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.exp));
             PetTool.addExp(pet, expEach);
         }
         rztSt.exp += expTotal;
@@ -581,7 +582,7 @@ export class ExplUpdater {
         const moneyGainCnt = Math.floor(gainCnt * MoneyGainRdEnterRate);
         if (moneyGainCnt > 0) {
             let eachMoneyCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curStep, gainMoreRate);
-            eachMoneyCnt *= GameJITDataTool.getAmplRate(null, AmplAttriType.expl);
+            eachMoneyCnt *= GameDataTool.getDrinkAmpl(gameData, null, AmplAttriType.expl);
             const moneyAdd = randomAreaInt(eachMoneyCnt * moneyGainCnt, 0.2);
             GameDataTool.handleMoney(gameData, (money: Money) => (money.sum += moneyAdd));
             rztSt.money += moneyAdd;
@@ -855,7 +856,7 @@ export class ExplUpdater {
                 this.moneyGaining = randomRate(MoneyGainRdEnterRate);
                 if (this.moneyGaining) {
                     const gainCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curExpl.curStep, gainCntRate);
-                    this.gainCnt = Math.floor(gainCnt * GameJITDataTool.getAmplRate(null, AmplAttriType.expl));
+                    this.gainCnt = Math.floor(gainCnt * GameDataTool.getDrinkAmpl(this.gameData, null, AmplAttriType.expl));
                 } else {
                     this.gainCnt = randomRound(gainCntRate);
                 }
@@ -1175,7 +1176,7 @@ export class ExplUpdater {
         for (const selfBPet of rb.selfTeam.pets) {
             const selfPet = selfBPet.pet;
 
-            const curExp = Math.ceil(exp * GameJITDataTool.getAmplRate(selfBPet.pet, AmplAttriType.exp));
+            const curExp = Math.ceil(exp * GameDataTool.getDrinkAmpl(null, selfBPet.pet, AmplAttriType.exp));
             const curExpPercent = PetTool.addExp(selfPet, curExp);
 
             const petName = PetTool.getCnName(selfPet);
@@ -1191,14 +1192,8 @@ export class ExplUpdater {
     }
 
     static calcExpByLv(selfLv: number, enemyLv: number): number {
-        let exp: number;
-        if (selfLv <= enemyLv) {
-            exp = 8 + 5 * selfLv;
-        } else {
-            exp = 8 + 5 * enemyLv;
-            exp *= 1 - Math.min(selfLv - enemyLv, 8) / 8;
-        }
-
+        let exp = 8 + 5 * enemyLv;
+        if (enemyLv < selfLv) exp *= 1 - Math.min(selfLv - enemyLv, 8) / 8;
         return exp;
     }
 

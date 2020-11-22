@@ -6,7 +6,7 @@
 
 import { BtlCtrlr } from './BtlCtrlr';
 import { EleType, BattleType, BioType, Pet, GameData } from './DataSaved';
-import { Pet2, BattlePet, BattleBuff, AmplAttriType } from './DataOther';
+import { Pet2, BattlePet, BattleBuff } from './DataOther';
 
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
@@ -143,6 +143,20 @@ export class CnsumModel {
     cnName: string;
     price: number;
 }
+
+export enum AmplAttriType {
+    exp = 1,
+    expl,
+    work,
+    prvty,
+    reput,
+
+    strength,
+    concentration,
+    durability
+}
+
+export const AmplAttriNames = ['', '经验', '探索受益', '工作受益', '默契', '声望', '力量', '专注', '耐久'];
 
 export class DrinkModel extends CnsumModel {
     lvMax: number;
