@@ -14,13 +14,14 @@ import { checkConfigs } from './ConfigsChecker';
 import { NavBar } from './NavBar';
 import { RunningImgMgr } from './RunningImgMgr';
 
-// @ts-ignore
-const customEngineInfo = cc.director.customEngineInfo;
-if (customEngineInfo) {
-    cc.log('PUT Custom engine info: ' + customEngineInfo);
-} else {
-    cc.error('PUT Need custom engine!!!!!');
-}
+// llytodo 暂时无需自定义引擎
+// // @ts-ignore
+// const customEngineInfo = cc.director.customEngineInfo;
+// if (customEngineInfo) {
+//     cc.log('PUT Custom engine info: ' + customEngineInfo);
+// } else {
+//     cc.error('PUT Need custom engine!!!!!');
+// }
 
 const TabBtnData = cc.Class({
     name: 'TabBtnData',
