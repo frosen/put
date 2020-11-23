@@ -61,6 +61,9 @@ export class CellPet extends ListViewCell {
         this.funcBtn.node.on('click', this.onClickFuncBtn, this);
     }
 
+    infoIdx: number = 0;
+    infoW: number = 0;
+
     setData(pet: Pet) {
         this.curPet = pet;
 
@@ -79,30 +82,25 @@ export class CellPet extends ListViewCell {
         // llytodo stateLbl.node.color
 
         this.hideAllInfoNode();
-        let index = 0;
+        this.infoIdx = 0;
+        this.infoW = 0;
+
         const realPrvty = PetTool.getRealPrvty(pet);
-        const prvtyStr = `默契 ${realPrvty}`;
-        const prvtyColor = cc.color(100, 50 + realPrvty, 100);
-        this.setInfoNode(index, prvtyStr, prvtyColor);
-        index++;
+        this.setInfoNode(`默契 ${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
 
         for (const feature of pet.inbFeatures) {
             const cnName = featureModelDict[feature.id].cnBrief;
             const color = pet.exFeatureIds.includes(feature.id) ? cc.Color.RED : cc.Color.BLUE;
-            this.setInfoNode(index, cnName + String(feature.lv), color);
-            index++;
+            this.setInfoNode(cnName + String(feature.lv), color);
         }
 
         let lndLv = 0;
         for (const feature of pet.lndFeatures) lndLv += feature.lv;
-        if (lndLv > 0) {
-            this.setInfoNode(index, '习得 ' + String(lndLv), cc.color(75, 165, 130));
-            index++;
-        }
+        if (lndLv > 0) this.setInfoNode('习得 ' + String(lndLv), cc.color(75, 165, 130));
 
         this.infoLayer.getComponent(cc.Layout).updateLayout();
         this.infoLayer2.getComponent(cc.Layout).updateLayout();
-        this.infoLayer.y = index <= 6 ? -135 : -120;
+        this.infoLayer.y = this.infoLayer2.childrenCount === 0 ? -135 : -120;
     }
 
     hideAllInfoNode() {
@@ -112,12 +110,12 @@ export class CellPet extends ListViewCell {
         }
     }
 
-    setInfoNode(index: number, str: string, color: cc.Color) {
-        let infoNode = this.infoNodePool[index];
+    setInfoNode(str: string, color: cc.Color) {
+        let infoNode = this.infoNodePool[this.infoIdx];
         if (!infoNode) {
             infoNode = cc.instantiate(this.infoNodePrefab);
-            this.infoNodePool[index] = infoNode;
-            infoNode.parent = index < 6 ? this.infoLayer : this.infoLayer2;
+            this.infoNodePool[this.infoIdx] = infoNode;
+            infoNode.parent = this.infoLayer; // 为了rerenderLbl，必须先设定一个parent，否则会报错
         }
         infoNode.opacity = 255;
 
@@ -126,6 +124,11 @@ export class CellPet extends ListViewCell {
         lbl.string = str;
         ListViewCell.rerenderLbl(lbl);
         infoNode.getComponent(cc.Layout).updateLayout();
+
+        this.infoIdx++;
+        this.infoW += infoNode.width + this.infoLayer.getComponent(cc.Layout).spacingX;
+
+        infoNode.parent = this.infoW < 600 ? this.infoLayer : this.infoLayer2;
     }
 
     onClick() {
