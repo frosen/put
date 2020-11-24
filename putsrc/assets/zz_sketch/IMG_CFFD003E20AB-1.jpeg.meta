@@ -1,5 +1,5 @@
 {
-  "ver": "2.3.3",
+  "ver": "2.3.5",
   "uuid": "05a703bc-a250-48c4-9985-e50f1c387720",
   "type": "sprite",
   "wrapMode": "clamp",
@@ -7,6 +7,8 @@
   "premultiplyAlpha": false,
   "genMipmaps": false,
   "packable": true,
+  "width": 1080,
+  "height": 1920,
   "platformSettings": {},
   "subMetas": {
     "IMG_CFFD003E20AB-1": {

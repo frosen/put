@@ -1,5 +1,5 @@
 {
-  "ver": "2.3.3",
+  "ver": "2.3.5",
   "uuid": "b3342ca2-114a-4cf9-bf09-5cc970f152dd",
   "type": "sprite",
   "wrapMode": "clamp",
@@ -7,6 +7,8 @@
   "premultiplyAlpha": false,
   "genMipmaps": false,
   "packable": true,
+  "width": 246,
+  "height": 158,
   "platformSettings": {},
   "subMetas": {
     "talkpop": {

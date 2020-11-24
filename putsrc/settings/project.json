@@ -27,7 +27,11 @@
     "TiledMap",
     "VideoPlayer",
     "3D",
-    "3D Primitive"
+    "3D Primitive",
+    "3D Physics/cannon.js",
+    "3D Physics/Builtin",
+    "3D Particle",
+    "SafeArea"
   ],
   "group-list": [
     "default",
@@ -58,5 +62,8 @@
     "live": {
       "enable": false
     }
-  }
+  },
+  "migrate-history": [
+    "cloud-function"
+  ]
 }

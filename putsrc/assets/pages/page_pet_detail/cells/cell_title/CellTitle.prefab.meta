@@ -1,5 +1,5 @@
 {
-  "ver": "1.2.5",
+  "ver": "1.2.9",
   "uuid": "83f672e1-42ff-4268-9693-0760c8abcaa7",
   "optimizationPolicy": "MULTI_INSTANCE",
   "asyncLoadAssets": false,
