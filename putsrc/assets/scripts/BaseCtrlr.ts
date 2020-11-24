@@ -154,30 +154,30 @@ export class BaseCtrlr extends cc.Component {
     }
 
     setPagePrefabList() {
-        this.pagePrefabList = [];
-        const baseCtrlr = this;
-        const pageDir = Editor.Project.path + '/assets/pages';
-        const Fs = require('fs');
-        const files = Fs.readdirSync(pageDir);
-        for (const file of files) {
-            if (Fs.statSync(pageDir + '/' + file).isDirectory()) {
-                const editorDir = 'db://assets/pages/' + file + '/*';
-                Editor.assetdb.queryAssets(editorDir, null, function (err, results) {
-                    for (const res of results) {
-                        if (res.type === 'prefab') {
-                            cc.loader.load(
-                                { type: 'uuid', uuid: res.uuid },
-                                () => {},
-                                function (err, asset) {
-                                    if (err || !asset) return;
-                                    baseCtrlr.pagePrefabList.push(asset);
-                                }
-                            );
-                        }
-                    }
-                });
-            }
-        }
+        // this.pagePrefabList = [];
+        // const baseCtrlr = this;
+        // const pageDir = Editor.Project.path + '/assets/pages';
+        // const Fs = require('fs');
+        // const files = Fs.readdirSync(pageDir);
+        // for (const file of files) {
+        //     if (Fs.statSync(pageDir + '/' + file).isDirectory()) {
+        //         const editorDir = 'db://assets/pages/' + file + '/*';
+        //         Editor.assetdb.queryAssets(editorDir, null, function (err, results) {
+        //             for (const res of results) {
+        //                 if (res.type === 'prefab') {
+        //                     cc.loader.load(
+        //                         { type: 'uuid', uuid: res.uuid },
+        //                         () => {},
+        //                         function (err, asset) {
+        //                             if (err || !asset) return;
+        //                             baseCtrlr.pagePrefabList.push(asset);
+        //                         }
+        //                     );
+        //                 }
+        //             }
+        //         });
+        //     }
+        // }
     }
 
     setPagePrefabDict() {
