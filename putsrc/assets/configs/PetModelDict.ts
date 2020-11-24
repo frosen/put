@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { PetModel } from 'scripts/DataModel';
+import { PetModel } from '../scripts/DataModel';
   
 export const petModelDict: { [key: string]: PetModel } = {
     FaTiaoWa: {

@@ -4,18 +4,18 @@
  * luleyan
  */
 
-import { GameDataTool, PetTool } from 'scripts/Memory';
+import { GameDataTool, PetTool } from '../scripts/Memory';
 import { BtlPageBase } from './BtlPageBase';
 
-import { skillModelDict } from 'configs/SkillModelDict';
-import { buffModelDict } from 'configs/BuffModelDict';
-import { petModelDict } from 'configs/PetModelDict';
+import { skillModelDict } from '../configs/SkillModelDict';
+import { buffModelDict } from '../configs/BuffModelDict';
+import { petModelDict } from '../configs/PetModelDict';
 
-import { deepCopy } from 'scripts/Utils';
-import { SkillModel, SkillType, SkillAimtype, SkillDirType } from 'scripts/DataModel';
-import { Pet, EleType, BattleType, GameData, BattleMmr, BioType } from 'scripts/DataSaved';
-import { RealBattle, BattleTeam, BattlePet, BattleBuff, RageMax, BattlePetLenMax } from 'scripts/DataOther';
-import { battleSequence } from 'configs/BattleSequence';
+import { deepCopy } from '../scripts/Utils';
+import { SkillModel, SkillType, SkillAimtype, SkillDirType } from '../scripts/DataModel';
+import { Pet, EleType, BattleType, GameData, BattleMmr, BioType } from '../scripts/DataSaved';
+import { RealBattle, BattleTeam, BattlePet, BattleBuff, RageMax, BattlePetLenMax } from '../scripts/DataOther';
+import { battleSequence } from '../configs/BattleSequence';
 import { ExplUpdater, ExplLogType } from './ExplUpdater';
 
 // random with seed -----------------------------------------------------------------

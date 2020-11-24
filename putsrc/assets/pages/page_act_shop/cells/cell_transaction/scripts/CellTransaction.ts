@@ -6,11 +6,8 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
-import { CnsumModel } from 'scripts/DataModel';
-import { MoneyTool } from 'scripts/Memory';
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { MoneyTool } from '../../../../../scripts/Memory';
 
 @ccclass
 export class CellTransaction extends ListViewCell {

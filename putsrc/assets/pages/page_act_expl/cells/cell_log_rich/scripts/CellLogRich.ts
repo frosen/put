@@ -6,8 +6,8 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellLogBase } from 'pages/page_act_expl/scripts/CellLogBase';
-import { ExplLogData } from 'scripts/ExplUpdater';
+import { ExplLogData } from '../../../../../scripts/ExplUpdater';
+import { CellLogBase } from '../../../scripts/CellLogBase';
 
 @ccclass
 export class CellLogRich extends CellLogBase {

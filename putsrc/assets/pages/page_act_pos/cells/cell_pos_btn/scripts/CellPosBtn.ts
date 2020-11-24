@@ -6,8 +6,8 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellActInfo, PageActPosLVD } from 'pages/page_act_pos/scripts/PageActPosLVD';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { CellActInfo } from '../../../scripts/PageActPosLVD';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
 export class CellPosBtn extends ListViewCell {

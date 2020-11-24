@@ -4,12 +4,12 @@
  * luleyan
  */
 
-import { BookModel } from 'scripts/DataModel';
+import { BookModel } from '../scripts/DataModel';
 
 export const bookModelDict: { [key: string]: BookModel } = {
     castAirBook: {
         id: 'castAirBook',
-        cnName: '苍之卷轴',
+        cnName: '苍之手卷',
         price: 1
     }
 };

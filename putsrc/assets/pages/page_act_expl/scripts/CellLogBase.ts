@@ -6,9 +6,9 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { ExplLogData } from '../../../scripts/ExplUpdater';
 import { PageActExplLVD } from './PageActExplLVD';
-import { ExplLogData } from 'scripts/ExplUpdater';
 
 @ccclass
 export class CellLogBase extends ListViewCell {

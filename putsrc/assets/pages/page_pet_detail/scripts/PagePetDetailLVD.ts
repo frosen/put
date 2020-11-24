@@ -6,25 +6,25 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CellAttri } from '../cells/cell_attri/scripts/CellAttri';
 import { CellAttri2 } from '../cells/cell_attri2/scripts/CellAttri2';
 import { CellPetName } from '../cells/cell_pet_name/scripts/CellPetName';
 import { CellTitle } from '../cells/cell_title/scripts/CellTitle';
-import { petModelDict } from 'configs/PetModelDict';
-import { expModels } from 'configs/ExpModels';
-import { Pet, BioTypeNames, EleTypeNames, BattleTypeNames, Feature } from 'scripts/DataSaved';
-import { Pet2 } from 'scripts/DataOther';
-import { PetModel } from 'scripts/DataModel';
-import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { petModelDict } from '../../../configs/PetModelDict';
+import { expModels } from '../../../configs/ExpModels';
+import { Pet, BioTypeNames, EleTypeNames, BattleTypeNames, Feature } from '../../../scripts/DataSaved';
+import { Pet2 } from '../../../scripts/DataOther';
+import { PetModel } from '../../../scripts/DataModel';
+import { CellPkgEquip } from '../../page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { PagePetDetail } from './PagePetDetail';
-import { CellPkgEquipBlank } from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
+import { CellPkgEquipBlank } from '../../page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
-import { PetTool } from 'scripts/Memory';
-import { drinkModelDict } from 'configs/DrinkModelDict';
+import { PetTool } from '../../../scripts/Memory';
+import { drinkModelDict } from '../../../configs/DrinkModelDict';
 import { CellMerge } from '../cells/cell_merge/scripts/CellMerge';
 
 const PETNAME = 'p';

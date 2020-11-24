@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
-import { petModelDict } from 'configs/PetModelDict';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { petModelDict } from '../../../../../configs/PetModelDict';
 
-import { AcceQuestInfo, Quest, QuestDLines } from 'scripts/DataSaved';
-import { CnsumTool, EquipTool, MoneyTool, QuestTool } from 'scripts/Memory';
+import { AcceQuestInfo, Quest, QuestDLines } from '../../../../../scripts/DataSaved';
+import { CnsumTool, EquipTool, MoneyTool, QuestTool } from '../../../../../scripts/Memory';
 import {
     ExplModel,
     ExplStepNames,
@@ -22,9 +22,9 @@ import {
     SearchQuestNeed,
     StepTypesByMax,
     SupportQuestNeed
-} from 'scripts/DataModel';
-import { actPosModelDict } from 'configs/ActPosModelDict';
-import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
+} from '../../../../../scripts/DataModel';
+import { actPosModelDict } from '../../../../../configs/ActPosModelDict';
+import { CellUpdateDisplay } from '../../../../page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
 
 export enum QuestState {
     toAccept = 1,

@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { EqpAmplrModel } from 'scripts/DataModel';
+import { EqpAmplrModel } from '../scripts/DataModel';
   
 export const eqpAmplrModelDict: { [key: string]: EqpAmplrModel } = {
     DaMoShi: {

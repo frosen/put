@@ -6,15 +6,15 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { Equip, Pet } from 'scripts/DataSaved';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { Equip, Pet } from '../../../scripts/DataSaved';
 import { PagePkgEquip } from './PagePkgEquip';
-import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { CellPkgEquip } from '../../page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { CellPetBrief } from '../cells/cell_pet_brief/scripts/CellPetBrief';
-import { CellPkgEquipBlank } from 'pages/page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
-import { PetTool } from 'scripts/Memory';
+import { CellPkgEquipBlank } from '../../page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
+import { PetTool } from '../../../scripts/Memory';
 
 const PET_INFO = 'p';
 const EQUIP = 'e';

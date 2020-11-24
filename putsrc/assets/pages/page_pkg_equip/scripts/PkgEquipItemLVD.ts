@@ -6,14 +6,14 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { Item, Equip } from 'scripts/DataSaved';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { Item, Equip } from '../../../scripts/DataSaved';
 import { PagePkgEquip } from './PagePkgEquip';
-import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
-import { GameDataTool } from 'scripts/Memory';
-import { CellPkgEquipUnwield } from 'pages/page_pkg/cells/cell_pkg_equip_unwield/scripts/CellPkgEquipUnwield';
+import { CellPkgEquip } from '../../page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { GameDataTool } from '../../../scripts/Memory';
+import { CellPkgEquipUnwield } from '../../page_pkg/cells/cell_pkg_equip_unwield/scripts/CellPkgEquipUnwield';
 
 const UNWIELD = 'u';
 const EQUIP = 'e';

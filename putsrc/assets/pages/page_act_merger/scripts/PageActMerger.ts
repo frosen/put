@@ -6,20 +6,22 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { PageBase } from 'scripts/PageBase';
-import { NavBar } from 'scripts/NavBar';
-import { CaughtPet, Feature, ItemType, Pet } from 'scripts/DataSaved';
-import { CaughtPetTool, GameDataTool, MoneyTool, PetTool } from 'scripts/Memory';
-import { PagePetDetail } from 'pages/page_pet_detail/scripts/PagePetDetail';
-import { CellPet } from 'pages/page_pet/cells/cell_pet/scripts/CellPet';
-import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
-import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
-import { PagePet } from 'pages/page_pet/scripts/PagePet';
-import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
-import { CellPkgCaughtPet } from 'pages/page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
-import { CellFeature, FeatureGainType } from 'pages/page_pet_detail/cells/cell_feature/scripts/CellFeature';
-import { PagePetFeature } from 'pages/page_pet_feature/scripts/PagePetFeature';
-import { featureModelDict } from 'configs/FeatureModelDict';
+import { PageBase } from '../../../scripts/PageBase';
+import { NavBar } from '../../../scripts/NavBar';
+import { CaughtPet, Feature, ItemType, Pet } from '../../../scripts/DataSaved';
+import { CaughtPetTool, GameDataTool, MoneyTool, PetTool } from '../../../scripts/Memory';
+
+import { featureModelDict } from '../../../configs/FeatureModelDict';
+
+import { PagePetDetail } from '../../page_pet_detail/scripts/PagePetDetail';
+import { CellPet } from '../../page_pet/cells/cell_pet/scripts/CellPet';
+import { PagePkgSelection } from '../../page_pkg_selection/scripts/PagePkgSelection';
+import { PagePkg } from '../../page_pkg/scripts/PagePkg';
+import { PagePet } from '../../page_pet/scripts/PagePet';
+import { PagePetCellType } from '../../page_pet/scripts/PagePetLVD';
+import { CellPkgCaughtPet } from '../../page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
+import { CellFeature, FeatureGainType } from '../../page_pet_detail/cells/cell_feature/scripts/CellFeature';
+import { PagePetFeature } from '../../page_pet_feature/scripts/PagePetFeature';
 
 const MergeReputDiscount = [1, 1, 0.9, 0.8, 0.7, 0.6];
 

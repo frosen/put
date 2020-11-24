@@ -6,9 +6,9 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
-import { Money } from 'scripts/DataSaved';
-import { MoneyTool } from 'scripts/Memory';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { Money } from '../../../../../scripts/DataSaved';
+import { MoneyTool } from '../../../../../scripts/Memory';
 
 @ccclass
 export class CellPkgMoney extends ListViewCell {

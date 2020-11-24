@@ -6,14 +6,14 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 import { PageActPetMkt, PetMktCountMax } from './PageActPetMkt';
-import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
-import { CellPkgCaughtPet } from 'pages/page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
+import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
+import { CellUpdateDisplay } from '../../page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
+import { CellPkgCaughtPet } from '../../page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
+import { CellPkgBase } from '../../page_pkg/scripts/CellPkgBase';
 
 @ccclass
 export class PageActPetMktLVD extends ListViewDelegate {

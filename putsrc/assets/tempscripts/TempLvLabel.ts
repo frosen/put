@@ -5,7 +5,7 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import { TempBase } from 'scripts/TempBase';
+import { TempBase } from '../scripts/TempBase';
 
 @ccclass
 export class TempLvLabel extends TempBase {

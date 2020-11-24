@@ -4,8 +4,8 @@
  * luleyan
  */
 
-import { PageBase } from 'scripts/PageBase';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { PageBase } from '../../../scripts/PageBase';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 
 const { ccclass, property } = cc._decorator;
 

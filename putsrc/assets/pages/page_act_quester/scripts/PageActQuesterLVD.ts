@@ -6,13 +6,13 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { CellUpdateDisplay } from '../../page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
 import { PageActQuester } from './PageActQuester';
 import { CellQuest } from '../cells/cell_quest/scripts/CellQuest';
-import { questModelDict } from 'configs/QuestModelDict';
+import { questModelDict } from '../../../configs/QuestModelDict';
 
 @ccclass
 export class PageActQuesterLVD extends ListViewDelegate {

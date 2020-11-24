@@ -6,16 +6,16 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { PageBase } from 'scripts/PageBase';
-import { ListView } from 'scripts/ListView';
+import { PageBase } from '../../../scripts/PageBase';
+import { ListView } from '../../../scripts/ListView';
 import { PkgEquipItemLVD } from './PkgEquipItemLVD';
 import { PkgEquipPetLVD } from './PkgEquipPetLVD';
-import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
-import { GameDataTool } from 'scripts/Memory';
-import { Pet, ItemType, PetState } from 'scripts/DataSaved';
-import { NavBar } from 'scripts/NavBar';
+import { PagePkg } from '../../page_pkg/scripts/PagePkg';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { CellPkgEquip } from '../../page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { GameDataTool } from '../../../scripts/Memory';
+import { Pet, ItemType, PetState } from '../../../scripts/DataSaved';
+import { NavBar } from '../../../scripts/NavBar';
 
 @ccclass
 export class PagePkgEquip extends PageBase {

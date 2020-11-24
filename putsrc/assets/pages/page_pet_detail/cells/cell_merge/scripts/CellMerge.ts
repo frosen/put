@@ -6,12 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
-import { petModelDict } from 'configs/PetModelDict';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { petModelDict } from '../../../../../configs/PetModelDict';
 
-import { Pet, PetStateNames, EleColors, Merge } from 'scripts/DataSaved';
-import { featureModelDict } from 'configs/FeatureModelDict';
-import { PetTool } from 'scripts/Memory';
+import { Merge } from '../../../../../scripts/DataSaved';
+import { featureModelDict } from '../../../../../configs/FeatureModelDict';
 
 @ccclass
 export class CellMerge extends ListViewCell {

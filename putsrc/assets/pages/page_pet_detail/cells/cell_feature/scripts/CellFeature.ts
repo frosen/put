@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
-import { Feature } from 'scripts/DataSaved';
-import { FeatureModel } from 'scripts/DataModel';
-import { featureModelDict } from 'configs/FeatureModelDict';
-import { FeatureTool } from 'scripts/Memory';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { Feature } from '../../../../../scripts/DataSaved';
+import { FeatureModel } from '../../../../../scripts/DataModel';
+import { featureModelDict } from '../../../../../configs/FeatureModelDict';
+import { FeatureTool } from '../../../../../scripts/Memory';
 
 export enum FeatureGainType {
     inborn = 1,

@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { CellPkgBase } from './CellPkgBase';
-import { CnsumModel } from 'scripts/DataModel';
+import { CnsumModel } from '../../../scripts/DataModel';
 
 @ccclass
 export class CellPkgCnsum extends CellPkgBase {

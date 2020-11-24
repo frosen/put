@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 import { PagePetFeature } from './PagePetFeature';
-import { CellFeature } from 'pages/page_pet_detail/cells/cell_feature/scripts/CellFeature';
+import { CellFeature } from '../../page_pet_detail/cells/cell_feature/scripts/CellFeature';
 
 @ccclass
 export class PagePetFeatureLVD extends ListViewDelegate {

@@ -6,16 +6,17 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool, GameDataTool, EquipTool } from 'scripts/Memory';
-import { PageBase } from 'scripts/PageBase';
-import { NavBar } from 'scripts/NavBar';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
-import { ListView } from 'scripts/ListView';
-import { Money, Equip, PADEqpMkt } from 'scripts/DataSaved';
-import { PAKey, ActPosModel, EqpMktModel, ReputRank } from 'scripts/DataModel';
-import { actPosModelDict } from 'configs/ActPosModelDict';
-import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from 'scripts/Random';
-import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
+import { MoneyTool, GameDataTool, EquipTool } from '../../../scripts/Memory';
+import { PageBase } from '../../../scripts/PageBase';
+import { NavBar } from '../../../scripts/NavBar';
+
+import { ListView } from '../../../scripts/ListView';
+import { Money, Equip, PADEqpMkt } from '../../../scripts/DataSaved';
+import { PAKey, ActPosModel, EqpMktModel, ReputRank } from '../../../scripts/DataModel';
+import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from '../../../scripts/Random';
+import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
+import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
 import { PageActEqpMktLVD } from './PageActEqpMktLVD';
 
 export const EqpMktCountMax: number = 1;

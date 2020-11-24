@@ -6,8 +6,8 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
-import { PetState, PetStateNames } from 'scripts/DataSaved';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { PetState, PetStateNames } from '../../../../../scripts/DataSaved';
 
 @ccclass
 export class CellPetBrief extends ListViewCell {

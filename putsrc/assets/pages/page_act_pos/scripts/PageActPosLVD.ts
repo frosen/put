@@ -5,27 +5,27 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { actPosModelDict } from 'configs/ActPosModelDict';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { PageActPos } from './PageActPos';
-import { PageSwitchAnim, BaseCtrlr } from 'scripts/BaseCtrlr';
-import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
-import { PosData, PADExpl, PADEqpMkt, PADPetMkt } from 'scripts/DataSaved';
-import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel, EvtModel, MovModel } from 'scripts/DataModel';
-import { GameDataTool } from 'scripts/Memory';
-import { PageBase } from 'scripts/PageBase';
-import { PageActShop } from 'pages/page_act_shop/scripts/PageActShop';
-import { PageActEqpMkt, EqpMktUpdataInterval } from 'pages/page_act_eqpmkt/scripts/PageActEqpMkt';
-import { PageActPetMkt } from 'pages/page_act_petmkt/scripts/PageActPetMkt';
-import { CellUpdateDisplay } from 'pages/page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
-import { PageActRcclr } from 'pages/page_act_rcclr/scripts/PageActRcclr';
-import { PageActACntr } from 'pages/page_act_acntr/scripts/PageActACntr';
-import { PageActQuester } from 'pages/page_act_quester/scripts/PageActQuester';
-import { PageActMerger } from 'pages/page_act_merger/scripts/PageActMerger';
+import { PageSwitchAnim, BaseCtrlr } from '../../../scripts/BaseCtrlr';
+import { PageActExpl } from '../../page_act_expl/scripts/PageActExpl';
+import { PosData, PADExpl, PADEqpMkt, PADPetMkt } from '../../../scripts/DataSaved';
+import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel, EvtModel, MovModel } from '../../../scripts/DataModel';
+import { GameDataTool } from '../../../scripts/Memory';
+import { PageBase } from '../../../scripts/PageBase';
+import { PageActShop } from '../../page_act_shop/scripts/PageActShop';
+import { PageActEqpMkt, EqpMktUpdataInterval } from '../../page_act_eqpmkt/scripts/PageActEqpMkt';
+import { PageActPetMkt } from '../../page_act_petmkt/scripts/PageActPetMkt';
+import { CellUpdateDisplay } from '../../page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
+import { PageActRcclr } from '../../page_act_rcclr/scripts/PageActRcclr';
+import { PageActACntr } from '../../page_act_acntr/scripts/PageActACntr';
+import { PageActQuester } from '../../page_act_quester/scripts/PageActQuester';
+import { PageActMerger } from '../../page_act_merger/scripts/PageActMerger';
 
 export class CellActInfo {
     cnName: string;

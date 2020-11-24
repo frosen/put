@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
-import { CaughtPet } from 'scripts/DataSaved';
-import { featureModelDict } from 'configs/FeatureModelDict';
-import { CaughtPetTool } from 'scripts/Memory';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { CellPkgBase } from '../../../scripts/CellPkgBase';
+import { CaughtPet } from '../../../../../scripts/DataSaved';
+import { featureModelDict } from '../../../../../configs/FeatureModelDict';
+import { CaughtPetTool } from '../../../../../scripts/Memory';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
 export class CellPkgCaughtPet extends CellPkgBase {

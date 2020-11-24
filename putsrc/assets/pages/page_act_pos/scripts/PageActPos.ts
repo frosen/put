@@ -5,14 +5,14 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import { PageBase } from 'scripts/PageBase';
+import { PageBase } from '../../../scripts/PageBase';
 import { PageActPosLVD } from './PageActPosLVD';
-import { ListView } from 'scripts/ListView';
-import { PosData } from 'scripts/DataSaved';
-import { GameDataTool } from 'scripts/Memory';
-import { PageActExpl } from 'pages/page_act_expl/scripts/PageActExpl';
+import { ListView } from '../../../scripts/ListView';
+import { PosData } from '../../../scripts/DataSaved';
+import { GameDataTool } from '../../../scripts/Memory';
+import { PageActExpl } from '../../page_act_expl/scripts/PageActExpl';
 import { PanelPosInfo } from './PanelPosInfo';
-import { actPosModelDict } from 'configs/ActPosModelDict';
+import { actPosModelDict } from '../../../configs/ActPosModelDict';
 
 @ccclass
 export class PageActPos extends PageBase {

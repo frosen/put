@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { MaterialModel } from 'scripts/DataModel';
+import { MaterialModel } from '../scripts/DataModel';
   
 export const materialModelDict: { [key: string]: MaterialModel } = {
     YingZhiChiLun: {

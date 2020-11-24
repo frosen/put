@@ -6,18 +6,35 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CnsumTool, EquipTool, GameDataTool, MoneyTool, QuestTool } from 'scripts/Memory';
-import { PageBase } from 'scripts/PageBase';
-import { NavBar } from 'scripts/NavBar';
-import { ListView } from 'scripts/ListView';
-import { AcceQuestInfo, Cnsum, GameData, PADQuester, Quest, QuestAmplType, QuestDLines, QuestDLineType } from 'scripts/DataSaved';
-import { PAKey, ActPosModel, QuesterModel, QuestModel, QuestType, SupportQuestNeed, AmplAttriType } from 'scripts/DataModel';
-import { actPosModelDict } from 'configs/ActPosModelDict';
-import { getRandomOneInList, randomInt, randomRate } from 'scripts/Random';
+import { CnsumTool, EquipTool, GameDataTool, MoneyTool, QuestTool } from '../../../scripts/Memory';
+import { PageBase } from '../../../scripts/PageBase';
+import { NavBar } from '../../../scripts/NavBar';
+import { ListView } from '../../../scripts/ListView';
+import {
+    AcceQuestInfo,
+    Cnsum,
+    GameData,
+    PADQuester,
+    Quest,
+    QuestAmplType,
+    QuestDLines,
+    QuestDLineType
+} from '../../../scripts/DataSaved';
+import {
+    PAKey,
+    ActPosModel,
+    QuesterModel,
+    QuestModel,
+    QuestType,
+    SupportQuestNeed,
+    AmplAttriType
+} from '../../../scripts/DataModel';
+import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { getRandomOneInList, randomInt, randomRate } from '../../../scripts/Random';
 import { PageActQuesterLVD } from './PageActQuesterLVD';
 import { CellQuest, QuestState } from '../cells/cell_quest/scripts/CellQuest';
-import { FuncBar } from 'pages/page_pet/scripts/FuncBar';
-import { questModelDict } from 'configs/QuestModelDict';
+import { FuncBar } from '../../page_pet/scripts/FuncBar';
+import { questModelDict } from '../../../configs/QuestModelDict';
 
 export const QuesterUpdateInterval: number = 12 * 60 * 60 * 1000; // 更新间隔毫秒
 export const QuesterReuseInterval: number = 24 * 60 * 60 * 1000; // 重新可用间隔毫秒

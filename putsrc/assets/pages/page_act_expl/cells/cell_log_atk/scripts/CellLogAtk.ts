@@ -6,11 +6,12 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellLogBase } from 'pages/page_act_expl/scripts/CellLogBase';
-import { ExplLogData } from 'scripts/ExplUpdater';
-import { PageActExplLVD } from 'pages/page_act_expl/scripts/PageActExplLVD';
-import { LogNumSprite } from 'pages/page_act_expl/scripts/LogNumSprite';
-import { EleDarkColors, SimpleEleTypeNames } from 'scripts/DataSaved';
+import { EleDarkColors, SimpleEleTypeNames } from '../../../../../scripts/DataSaved';
+import { ExplLogData } from '../../../../../scripts/ExplUpdater';
+
+import { CellLogBase } from '../../../scripts/CellLogBase';
+import { PageActExplLVD } from '../../../scripts/PageActExplLVD';
+import { LogNumSprite } from '../../../scripts/LogNumSprite';
 
 @ccclass
 export class CellLogAtk extends CellLogBase {

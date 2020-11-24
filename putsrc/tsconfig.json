@@ -6,7 +6,6 @@
         "allowJs": true,
         "experimentalDecorators": true,
         "skipLibCheck": true,
-        "baseUrl": "./assets",
         "outDir": "./dist"
     },
     "exclude": ["node_modules", "library", "local", "temp", "build", "settings"]

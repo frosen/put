@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { CatcherModel } from 'scripts/DataModel';
+import { CatcherModel } from '../scripts/DataModel';
   
 export const catcherModelDict: { [key: string]: CatcherModel } = {
     PuTongXianJing1: {

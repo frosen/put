@@ -6,14 +6,15 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 import { PageActEqpMkt, EqpMktCountMax } from './PageActEqpMkt';
-import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+
 import { CellUpdateDisplay } from '../cells/cell_update_display/scripts/CellUpdateDisplay';
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
+import { CellPkgBase } from '../../page_pkg/scripts/CellPkgBase';
+import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
+import { CellPkgEquip } from '../../page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 
 @ccclass
 export class PageActEqpMktLVD extends ListViewDelegate {

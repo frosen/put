@@ -6,8 +6,8 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { PageBase } from 'scripts/PageBase';
-import { PageActPos } from 'pages/page_act_pos/scripts/PageActPos';
+import { PageBase } from '../../../scripts/PageBase';
+import { PageActPos } from '../../page_act_pos/scripts/PageActPos';
 
 @ccclass
 export class PageAct extends PageBase {

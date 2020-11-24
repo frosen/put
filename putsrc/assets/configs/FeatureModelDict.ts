@@ -4,10 +4,10 @@
  * luleyan
  */
 
-import { BtlCtrlr } from 'scripts/BtlCtrlr';
-import { FeatureModel, FeatureBtlData, SkillType } from 'scripts/DataModel';
-import { Pet2, BattlePet, RageMax } from 'scripts/DataOther';
-import { EleType, BattleType } from 'scripts/DataSaved';
+import { BtlCtrlr } from '../scripts/BtlCtrlr';
+import { FeatureModel, FeatureBtlData, SkillType } from '../scripts/DataModel';
+import { Pet2, BattlePet, RageMax } from '../scripts/DataOther';
+import { EleType, BattleType } from '../scripts/DataSaved';
 
 function rd(n: number): string {
     if (Math.round(n) * 10 === Math.round(n * 10)) return String(Math.round(n));

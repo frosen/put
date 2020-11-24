@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { ActPosModel, PAKey, ActPosType } from 'scripts/DataModel';
+import { ActPosModel, PAKey, ActPosType } from '../scripts/DataModel';
 
 export const actPosModelDict: { [key: string]: ActPosModel } = {
     YiShanJiDi: {

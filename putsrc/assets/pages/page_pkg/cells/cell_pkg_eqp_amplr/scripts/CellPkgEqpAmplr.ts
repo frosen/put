@@ -6,12 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
-import { EqpAmplr } from 'scripts/DataSaved';
-import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
-import { EqpAmplrModel } from 'scripts/DataModel';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { EqpAmplr } from '../../../../../scripts/DataSaved';
+import { eqpAmplrModelDict } from '../../../../../configs/EqpAmplrModelDict';
+import { CellPkgCnsum } from '../../../scripts/CellPkgCnsum';
+import { EqpAmplrModel } from '../../../../../scripts/DataModel';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
 export class CellPkgEqpAmplr extends CellPkgCnsum {

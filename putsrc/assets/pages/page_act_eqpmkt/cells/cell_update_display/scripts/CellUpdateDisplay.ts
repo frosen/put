@@ -6,8 +6,8 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
-import { EqpMktUpdataInterval } from 'pages/page_act_eqpmkt/scripts/PageActEqpMkt';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { EqpMktUpdataInterval } from '../../../scripts/PageActEqpMkt';
 
 @ccclass
 export class CellUpdateDisplay extends ListViewCell {

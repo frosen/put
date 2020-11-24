@@ -6,9 +6,9 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellLogBase } from 'pages/page_act_expl/scripts/CellLogBase';
-import { ExplLogData } from 'scripts/ExplUpdater';
-import { PageActExplLVD } from 'pages/page_act_expl/scripts/PageActExplLVD';
+import { ExplLogData } from '../../../../../scripts/ExplUpdater';
+import { CellLogBase } from '../../../scripts/CellLogBase';
+import { PageActExplLVD } from '../../../scripts/PageActExplLVD';
 
 @ccclass
 export class CellLogBuff extends CellLogBase {

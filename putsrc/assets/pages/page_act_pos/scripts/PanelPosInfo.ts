@@ -5,7 +5,7 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import { ActPosModel } from 'scripts/DataModel';
+import { ActPosModel } from '../../../scripts/DataModel';
 
 const PosInfoHeight = 335;
 

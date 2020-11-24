@@ -6,17 +6,17 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { PageBase } from 'scripts/PageBase';
-import { ListView } from 'scripts/ListView';
+import { PageBase } from '../../../scripts/PageBase';
+import { ListView } from '../../../scripts/ListView';
 import { PagePetDetailLVD } from './PagePetDetailLVD';
-import { Pet, Feature, PetState } from 'scripts/DataSaved';
-import { Pet2 } from 'scripts/DataOther';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { GameDataTool } from 'scripts/Memory';
+import { Pet, Feature, PetState } from '../../../scripts/DataSaved';
+import { Pet2 } from '../../../scripts/DataOther';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { GameDataTool } from '../../../scripts/Memory';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
-import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
-import { FuncBar } from 'pages/page_pet/scripts/FuncBar';
-import { NavBar } from 'scripts/NavBar';
+import { PagePkgEquip } from '../../page_pkg_equip/scripts/PagePkgEquip';
+import { FuncBar } from '../../page_pet/scripts/FuncBar';
+import { NavBar } from '../../../scripts/NavBar';
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 
 @ccclass

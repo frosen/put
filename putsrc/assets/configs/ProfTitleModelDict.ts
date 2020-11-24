@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { ProfTitleModel } from 'scripts/DataModel';
+import { ProfTitleModel } from '../scripts/DataModel';
 
 const ProfTitleModelDict: { [key: string]: Partial<ProfTitleModel> } = {
     ShouCangJia: {

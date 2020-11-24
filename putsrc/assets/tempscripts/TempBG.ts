@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { TempBase } from 'scripts/TempBase';
+import { TempBase } from '../scripts/TempBase';
 
 enum BGType {
     cell = 1,

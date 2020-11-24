@@ -5,9 +5,9 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 import { PageActExpl } from './PageActExpl';
 import { CellLogBase } from './CellLogBase';
 

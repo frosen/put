@@ -7,24 +7,24 @@
 const { ccclass, property } = cc._decorator;
 
 import { PagePkgBase } from './PagePkgBase';
-import { ListView } from 'scripts/ListView';
+import { ListView } from '../../../scripts/ListView';
 import { PagePkgLVD } from './PagePkgLVD';
-import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet, Equip, PetState } from 'scripts/DataSaved';
-import { GameDataTool, CnsumTool, PetTool, EquipTool, CaughtPetTool } from 'scripts/Memory';
-import { PagePkgEquip } from 'pages/page_pkg_equip/scripts/PagePkgEquip';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { FuncBar } from 'pages/page_pet/scripts/FuncBar';
-import { PagePet } from 'pages/page_pet/scripts/PagePet';
-import { drinkModelDict } from 'configs/DrinkModelDict';
-import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
-import { equipModelDict } from 'configs/EquipModelDict';
-import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
-import { PagePetCellType } from 'pages/page_pet/scripts/PagePetLVD';
-import { NavBar } from 'scripts/NavBar';
+import { Item, ItemType, Cnsum, CnsumType, Pet, CaughtPet, Equip, PetState } from '../../../scripts/DataSaved';
+import { GameDataTool, CnsumTool, PetTool, EquipTool, CaughtPetTool } from '../../../scripts/Memory';
+import { PagePkgEquip } from '../../page_pkg_equip/scripts/PagePkgEquip';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { FuncBar } from '../../page_pet/scripts/FuncBar';
+import { PagePet } from '../../page_pet/scripts/PagePet';
+import { drinkModelDict } from '../../../configs/DrinkModelDict';
+import { PagePkgSelection } from '../../page_pkg_selection/scripts/PagePkgSelection';
+import { equipModelDict } from '../../../configs/EquipModelDict';
+import { eqpAmplrModelDict } from '../../../configs/EqpAmplrModelDict';
+import { PagePetCellType } from '../../page_pet/scripts/PagePetLVD';
+import { NavBar } from '../../../scripts/NavBar';
 import { PkgSelectionBar } from './PkgSelectionBar';
-import { catcherModelDict } from 'configs/CatcherModelDict';
-import { petModelDict } from 'configs/PetModelDict';
-import { specialModelDict } from 'configs/SpecialModelDict';
+import { catcherModelDict } from '../../../configs/CatcherModelDict';
+import { petModelDict } from '../../../configs/PetModelDict';
+import { specialModelDict } from '../../../configs/SpecialModelDict';
 
 const WIDTH = 1080;
 

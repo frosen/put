@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
-import { EleColors, EleTypeNames } from 'scripts/DataSaved';
-import { SkillModel } from 'scripts/DataModel';
-import { skillModelDict } from 'configs/SkillModelDict';
-import { buffModelDict } from 'configs/BuffModelDict';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { EleColors, EleTypeNames } from '../../../../../scripts/DataSaved';
+import { SkillModel } from '../../../../../scripts/DataModel';
+import { skillModelDict } from '../../../../../configs/SkillModelDict';
+import { buffModelDict } from '../../../../../configs/BuffModelDict';
 
 const SkillTypeCellNames = ['', '・技能', '・瞬发技能', '・必杀技'];
 const SkillDirTypeCellNames = ['', '', '・增益'];

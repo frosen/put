@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { Pet, PetStateNames } from 'scripts/DataSaved';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { GameDataTool, PetTool } from 'scripts/Memory';
-import { PageBase } from 'scripts/PageBase';
-import { sensitiveWords } from 'configs/SensitiveWords';
+import { Pet, PetStateNames } from '../../../../../scripts/DataSaved';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { GameDataTool, PetTool } from '../../../../../scripts/Memory';
+import { PageBase } from '../../../../../scripts/PageBase';
+import { sensitiveWords } from '../../../../../configs/SensitiveWords';
 
 @ccclass
 export class CellPetName extends ListViewCell {

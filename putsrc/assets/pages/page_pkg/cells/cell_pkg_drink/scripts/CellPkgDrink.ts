@@ -6,11 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { Drink } from 'scripts/DataSaved';
-import { AmplAttriNames, DrinkModel } from 'scripts/DataModel';
-import { drinkModelDict } from 'configs/DrinkModelDict';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { Drink } from '../../../../../scripts/DataSaved';
+import { AmplAttriNames, DrinkModel } from '../../../../../scripts/DataModel';
+import { drinkModelDict } from '../../../../../configs/DrinkModelDict';
+import { CellPkgCnsum } from '../../../scripts/CellPkgCnsum';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
 export class CellPkgDrink extends CellPkgCnsum {

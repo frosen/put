@@ -6,18 +6,18 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListView } from 'scripts/ListView';
+import { ListView } from '../../../scripts/ListView';
 import { PageActRcclrLVD } from './PageActRcclrLVD';
-import { GameData, Item, ItemType, Cnsum, CnsumType, Money, Equip, CaughtPet } from 'scripts/DataSaved';
-import { MoneyTool, GameDataTool, CnsumTool, EquipTool, CaughtPetTool } from 'scripts/Memory';
-import { NavBar } from 'scripts/NavBar';
-import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
-import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
-import { PageBase } from 'scripts/PageBase';
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
-import { PkgSelectionBar } from 'pages/page_pkg/scripts/PkgSelectionBar';
-import { TouchLayerForBack } from 'scripts/TouchLayerForBack';
+import { GameData, Item, ItemType, Cnsum, CnsumType, Money, Equip, CaughtPet } from '../../../scripts/DataSaved';
+import { MoneyTool, GameDataTool, CnsumTool, EquipTool, CaughtPetTool } from '../../../scripts/Memory';
+import { NavBar } from '../../../scripts/NavBar';
+import { PagePkg } from '../../page_pkg/scripts/PagePkg';
+import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
+import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
+import { PageBase } from '../../../scripts/PageBase';
+import { CellPkgBase } from '../../page_pkg/scripts/CellPkgBase';
+import { PkgSelectionBar } from '../../page_pkg/scripts/PkgSelectionBar';
+import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
 
 const WIDTH = 1080;
 const RcclPriceRate = 0.4;

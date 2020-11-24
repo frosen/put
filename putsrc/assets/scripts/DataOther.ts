@@ -32,14 +32,14 @@ import {
     SPetMmr
 } from './DataSaved';
 
-import { petModelDict } from 'configs/PetModelDict';
-import { skillModelDict } from 'configs/SkillModelDict';
+import { petModelDict } from '../configs/PetModelDict';
+import { skillModelDict } from '../configs/SkillModelDict';
 import { deepCopy } from './Utils';
-import { buffModelDict } from 'configs/BuffModelDict';
+import { buffModelDict } from '../configs/BuffModelDict';
 import { BtlCtrlr } from './BtlCtrlr';
 import { randomRate, getRandomOneInList, normalRandom } from './Random';
-import { actPosModelDict } from 'configs/ActPosModelDict';
-import { expModels } from 'configs/ExpModels';
+import { actPosModelDict } from '../configs/ActPosModelDict';
+import { expModels } from '../configs/ExpModels';
 
 // -----------------------------------------------------------------
 

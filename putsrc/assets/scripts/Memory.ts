@@ -4,8 +4,8 @@
  * luleyan
  */
 
-import { petModelDict } from 'configs/PetModelDict';
-import { featureModelDict } from 'configs/FeatureModelDict';
+import { petModelDict } from '../configs/PetModelDict';
+import { featureModelDict } from '../configs/FeatureModelDict';
 import {
     Feature,
     Pet,
@@ -61,20 +61,20 @@ import {
     QuestModel,
     AmplAttriType
 } from './DataModel';
-import { equipModelDict } from 'configs/EquipModelDict';
+import { equipModelDict } from '../configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
-import { equipIdsByLvRank } from 'configs/EquipIdsByLvRank';
-import { skillIdsByEleType } from 'configs/SkillIdsByEleType';
+import { equipIdsByLvRank } from '../configs/EquipIdsByLvRank';
+import { skillIdsByEleType } from '../configs/SkillIdsByEleType';
 import Tea = require('./Tea');
 
-import { expModels } from 'configs/ExpModels';
-import { questModelDict } from 'configs/QuestModelDict';
-import { drinkModelDict } from 'configs/DrinkModelDict';
-import { catcherModelDict } from 'configs/CatcherModelDict';
-import { eqpAmplrModelDict } from 'configs/EqpAmplrModelDict';
-import { bookModelDict } from 'configs/BookModelDict';
-import { specialModelDict } from 'configs/SpecialModelDict';
-import { materialModelDict } from 'configs/MaterialModelDict';
+import { expModels } from '../configs/ExpModels';
+import { questModelDict } from '../configs/QuestModelDict';
+import { drinkModelDict } from '../configs/DrinkModelDict';
+import { catcherModelDict } from '../configs/CatcherModelDict';
+import { eqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
+import { bookModelDict } from '../configs/BookModelDict';
+import { specialModelDict } from '../configs/SpecialModelDict';
+import { materialModelDict } from '../configs/MaterialModelDict';
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = -1;

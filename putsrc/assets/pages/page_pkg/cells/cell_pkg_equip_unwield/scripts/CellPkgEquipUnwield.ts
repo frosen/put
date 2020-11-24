@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
 export class CellPkgEquipUnwield extends ListViewCell {

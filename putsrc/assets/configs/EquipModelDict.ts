@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { EquipModel } from 'scripts/DataModel';
+import { EquipModel } from '../scripts/DataModel';
   
 export const equipModelDict: { [key: string]: EquipModel } = {
     DuanJian: {

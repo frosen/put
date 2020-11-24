@@ -6,12 +6,11 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
-import { Material } from 'scripts/DataSaved';
-import { materialModelDict } from 'configs/MaterialModelDict';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
-import { MaterialModel } from 'scripts/DataModel';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { Material } from '../../../../../scripts/DataSaved';
+import { materialModelDict } from '../../../../../configs/MaterialModelDict';
+import { CellPkgCnsum } from '../../../scripts/CellPkgCnsum';
+import { MaterialModel } from '../../../../../scripts/DataModel';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
 export class CellPkgMaterial extends CellPkgCnsum {

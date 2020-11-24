@@ -6,16 +6,17 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool, CnsumTool, GameDataTool, EquipTool } from 'scripts/Memory';
-import { PageBase } from 'scripts/PageBase';
-import { NavBar } from 'scripts/NavBar';
+import { MoneyTool, CnsumTool, GameDataTool, EquipTool } from '../../../scripts/Memory';
+import { PageBase } from '../../../scripts/PageBase';
+import { NavBar } from '../../../scripts/NavBar';
 import { PageActACntrLVD } from './PageActACntrLVD';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
-import { actPosModelDict } from 'configs/ActPosModelDict';
-import { ListView } from 'scripts/ListView';
-import { Equip, Money, PADACntr } from 'scripts/DataSaved';
-import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { ACntrModel, PAKey, ReputAwardModel } from 'scripts/DataModel';
+import { ListView } from '../../../scripts/ListView';
+import { Equip, Money, PADACntr } from '../../../scripts/DataSaved';
+import { ACntrModel, PAKey, ReputAwardModel } from '../../../scripts/DataModel';
+import { actPosModelDict } from '../../../configs/ActPosModelDict';
+
+import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
+import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 
 export const ACntrCountMax = 1;
 

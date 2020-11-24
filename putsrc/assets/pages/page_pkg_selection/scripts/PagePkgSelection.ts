@@ -6,12 +6,12 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { PagePkgBase } from 'pages/page_pkg/scripts/PagePkgBase';
-import { PagePkgLVD, PagePkgCellType } from 'pages/page_pkg/scripts/PagePkgLVD';
-import { ListView } from 'scripts/ListView';
-import { Item } from 'scripts/DataSaved';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { NavBar } from 'scripts/NavBar';
+import { PagePkgBase } from '../../page_pkg/scripts/PagePkgBase';
+import { PagePkgLVD, PagePkgCellType } from '../../page_pkg/scripts/PagePkgLVD';
+import { ListView } from '../../../scripts/ListView';
+import { Item } from '../../../scripts/DataSaved';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { NavBar } from '../../../scripts/NavBar';
 
 @ccclass
 export class PagePkgSelection extends PagePkgBase {

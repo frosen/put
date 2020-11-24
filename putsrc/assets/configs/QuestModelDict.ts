@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { QuestModel } from 'scripts/DataModel';
+import { QuestModel } from '../scripts/DataModel';
   
 export const questModelDict: { [key: string]: QuestModel } = {
     LingJianHuiShou: {

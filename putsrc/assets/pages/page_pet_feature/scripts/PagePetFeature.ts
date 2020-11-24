@@ -6,12 +6,12 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { PageBase } from 'scripts/PageBase';
-import { ListView } from 'scripts/ListView';
-import { Feature, Item } from 'scripts/DataSaved';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { NavBar } from 'scripts/NavBar';
-import { FeatureGainType } from 'pages/page_pet_detail/cells/cell_feature/scripts/CellFeature';
+import { PageBase } from '../../../scripts/PageBase';
+import { ListView } from '../../../scripts/ListView';
+import { Feature } from '../../../scripts/DataSaved';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { NavBar } from '../../../scripts/NavBar';
+import { FeatureGainType } from '../../page_pet_detail/cells/cell_feature/scripts/CellFeature';
 import { PagePetFeatureLVD } from './PagePetFeatureLVD';
 
 @ccclass

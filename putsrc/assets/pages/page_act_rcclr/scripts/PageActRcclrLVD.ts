@@ -6,20 +6,20 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { Cnsum, CnsumType, Item, ItemType } from 'scripts/DataSaved';
-import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
-import { CellPkgDrink } from 'pages/page_pkg/cells/cell_pkg_drink/scripts/CellPkgDrink';
-import { CellPkgCatcher } from 'pages/page_pkg/cells/cell_pkg_catcher/scripts/CellPkgCatcher';
-import { CellPkgEqpAmplr } from 'pages/page_pkg/cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
-import { CellPkgMaterial } from 'pages/page_pkg/cells/cell_pkg_material/scripts/CellPkgMaterial';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { Cnsum, CnsumType, Item, ItemType } from '../../../scripts/DataSaved';
+import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
+import { CellPkgDrink } from '../../page_pkg/cells/cell_pkg_drink/scripts/CellPkgDrink';
+import { CellPkgCatcher } from '../../page_pkg/cells/cell_pkg_catcher/scripts/CellPkgCatcher';
+import { CellPkgEqpAmplr } from '../../page_pkg/cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
+import { CellPkgMaterial } from '../../page_pkg/cells/cell_pkg_material/scripts/CellPkgMaterial';
 import { PageActRcclr } from './PageActRcclr';
-import { PagePkgCellType } from 'pages/page_pkg/scripts/PagePkgLVD';
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
-import { CellPkgEquip } from 'pages/page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
-import { CellPkgCaughtPet } from 'pages/page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
+import { PagePkgCellType } from '../../page_pkg/scripts/PagePkgLVD';
+import { CellPkgBase } from '../../page_pkg/scripts/CellPkgBase';
+import { CellPkgEquip } from '../../page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
+import { CellPkgCaughtPet } from '../../page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
 
 const DRINK = 'D';
 const CATCHER = 'C';

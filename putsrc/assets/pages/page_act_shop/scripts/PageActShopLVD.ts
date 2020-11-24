@@ -6,17 +6,17 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewDelegate } from 'scripts/ListViewDelegate';
-import { ListView } from 'scripts/ListView';
-import { ListViewCell } from 'scripts/ListViewCell';
-import { CnsumType } from 'scripts/DataSaved';
+import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { CnsumType } from '../../../scripts/DataSaved';
 import { CellTransaction } from '../cells/cell_transaction/scripts/CellTransaction';
-import { CnsumTool } from 'scripts/Memory';
-import { CellPkgDrink } from 'pages/page_pkg/cells/cell_pkg_drink/scripts/CellPkgDrink';
-import { CellPkgCatcher } from 'pages/page_pkg/cells/cell_pkg_catcher/scripts/CellPkgCatcher';
-import { CellPkgEqpAmplr } from 'pages/page_pkg/cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
-import { CellPkgMaterial } from 'pages/page_pkg/cells/cell_pkg_material/scripts/CellPkgMaterial';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
+import { CnsumTool } from '../../../scripts/Memory';
+import { CellPkgDrink } from '../../page_pkg/cells/cell_pkg_drink/scripts/CellPkgDrink';
+import { CellPkgCatcher } from '../../page_pkg/cells/cell_pkg_catcher/scripts/CellPkgCatcher';
+import { CellPkgEqpAmplr } from '../../page_pkg/cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
+import { CellPkgMaterial } from '../../page_pkg/cells/cell_pkg_material/scripts/CellPkgMaterial';
+import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
 import { PageActShop, ShopCountMax } from './PageActShop';
 
 const DRINK = 'D';

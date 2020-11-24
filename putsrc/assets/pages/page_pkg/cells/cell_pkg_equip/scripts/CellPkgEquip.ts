@@ -6,14 +6,14 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellPkgBase } from 'pages/page_pkg/scripts/CellPkgBase';
-import { Equip, EleColors } from 'scripts/DataSaved';
-import { EquipTool } from 'scripts/Memory';
-import { skillModelDict } from 'configs/SkillModelDict';
-import { equipModelDict } from 'configs/EquipModelDict';
-import { featureModelDict } from 'configs/FeatureModelDict';
-import { SkillType } from 'scripts/DataModel';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { CellPkgBase } from '../../../scripts/CellPkgBase';
+import { Equip, EleColors } from '../../../../../scripts/DataSaved';
+import { EquipTool } from '../../../../../scripts/Memory';
+import { skillModelDict } from '../../../../../configs/SkillModelDict';
+import { equipModelDict } from '../../../../../configs/EquipModelDict';
+import { featureModelDict } from '../../../../../configs/FeatureModelDict';
+import { SkillType } from '../../../../../scripts/DataModel';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 const RankColor = [null, cc.Color.BLACK, cc.Color.BLUE, cc.color(153, 50, 205)];
 

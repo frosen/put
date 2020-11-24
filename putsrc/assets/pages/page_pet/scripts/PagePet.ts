@@ -6,16 +6,15 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListView } from 'scripts/ListView';
+import { ListView } from '../../../scripts/ListView';
 import { PagePetLVD, PagePetCellType } from './PagePetLVD';
-import { GameDataTool, PetTool } from 'scripts/Memory';
-import { Pet, PetState } from 'scripts/DataSaved';
+import { GameDataTool, PetTool } from '../../../scripts/Memory';
+import { Pet, PetState } from '../../../scripts/DataSaved';
 import { CellPet } from '../cells/cell_pet/scripts/CellPet';
-import { PagePetDetail } from 'pages/page_pet_detail/scripts/PagePetDetail';
-import { PageBase } from 'scripts/PageBase';
+import { PagePetDetail } from '../../page_pet_detail/scripts/PagePetDetail';
+import { PageBase } from '../../../scripts/PageBase';
 import { FuncBar } from './FuncBar';
-import { NavBar } from 'scripts/NavBar';
-import { ExplUpdater } from 'scripts/ExplUpdater';
+import { NavBar } from '../../../scripts/NavBar';
 
 @ccclass
 export class PagePet extends PageBase {

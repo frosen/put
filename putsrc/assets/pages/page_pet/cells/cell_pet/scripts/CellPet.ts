@@ -6,12 +6,12 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from 'scripts/ListViewCell';
-import { petModelDict } from 'configs/PetModelDict';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { petModelDict } from '../../../../../configs/PetModelDict';
 
-import { Pet, PetStateNames, EleColors } from 'scripts/DataSaved';
-import { featureModelDict } from 'configs/FeatureModelDict';
-import { PetTool } from 'scripts/Memory';
+import { Pet, PetStateNames, EleColors } from '../../../../../scripts/DataSaved';
+import { featureModelDict } from '../../../../../configs/FeatureModelDict';
+import { PetTool } from '../../../../../scripts/Memory';
 
 @ccclass
 export class CellPet extends ListViewCell {

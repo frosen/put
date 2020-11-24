@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { SkillModel } from 'scripts/DataModel';
+import { SkillModel } from '../scripts/DataModel';
   
 export const skillModelDict: { [key: string]: SkillModel } = {
     HuoYanDan: {

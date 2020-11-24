@@ -6,9 +6,8 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { actPosModelDict } from 'configs/ActPosModelDict';
-import { ActPosModel } from 'scripts/DataModel';
-import { ListViewCell } from 'scripts/ListViewCell';
+import { ActPosModel } from '../../../../../scripts/DataModel';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
 export class CellPosMov extends ListViewCell {

@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { DrinkModel } from 'scripts/DataModel';
+import { DrinkModel } from '../scripts/DataModel';
   
 export const drinkModelDict: { [key: string]: DrinkModel } = {
     LingGanYaoJi1: {

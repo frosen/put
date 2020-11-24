@@ -6,20 +6,20 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { MoneyTool, GameDataTool, CaughtPetTool, PetTool } from 'scripts/Memory';
-import { PageBase } from 'scripts/PageBase';
-import { NavBar } from 'scripts/NavBar';
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
-import { ListView } from 'scripts/ListView';
-import { Money, PADPetMkt, CaughtPet } from 'scripts/DataSaved';
-import { PAKey, ActPosModel, PetMktModel, ReputRank } from 'scripts/DataModel';
-import { actPosModelDict } from 'configs/ActPosModelDict';
-import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from 'scripts/Random';
-import { CellTransaction } from 'pages/page_act_shop/cells/cell_transaction/scripts/CellTransaction';
+import { MoneyTool, GameDataTool, CaughtPetTool, PetTool } from '../../../scripts/Memory';
+import { PageBase } from '../../../scripts/PageBase';
+import { NavBar } from '../../../scripts/NavBar';
+import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
+import { ListView } from '../../../scripts/ListView';
+import { Money, PADPetMkt, CaughtPet } from '../../../scripts/DataSaved';
+import { PAKey, ActPosModel, PetMktModel, ReputRank } from '../../../scripts/DataModel';
+import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from '../../../scripts/Random';
+import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { PageActPetMktLVD } from './PageActPetMktLVD';
-import { RealBattle } from 'scripts/DataOther';
-import { normalRandom } from 'scripts/Random';
-import { expModels } from 'configs/ExpModels';
+import { RealBattle } from '../../../scripts/DataOther';
+import { normalRandom } from '../../../scripts/Random';
+import { expModels } from '../../../configs/ExpModels';
 
 export const PetMktCountMax: number = 1;
 export const PetMktUpdataInterval: number = 24 * 60 * 60 * 1000; // 更新间隔毫秒

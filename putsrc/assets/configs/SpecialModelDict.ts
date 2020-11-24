@@ -4,7 +4,7 @@
  * luleyan
  */
 
-import { SpecialModel } from 'scripts/DataModel';
+import { SpecialModel } from '../scripts/DataModel';
 
 export const specialModelDict: { [key: string]: SpecialModel } = {
     YiWangShuiJing: {

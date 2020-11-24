@@ -5,20 +5,23 @@
  */
 
 const { ccclass, property, executionOrder } = cc._decorator;
-import { BtlPageBase } from 'scripts/BtlPageBase';
-import { ExplUpdater, ExplLogData } from 'scripts/ExplUpdater';
+import { BtlPageBase } from '../../../scripts/BtlPageBase';
+import { ExplUpdater, ExplLogData } from '../../../scripts/ExplUpdater';
+import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors } from '../../../scripts/DataSaved';
+import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, PAKey } from '../../../scripts/DataModel';
+import { BattlePet, RageMax, BattlePetLenMax } from '../../../scripts/DataOther';
+import { ListView } from '../../../scripts/ListView';
+import { GameDataTool, PetTool } from '../../../scripts/Memory';
+import { NavBar } from '../../../scripts/NavBar';
+
+import { buffModelDict } from '../../../configs/BuffModelDict';
+import { actPosModelDict } from '../../../configs/ActPosModelDict';
+
 import { PetUI } from './PetUI';
-import { buffModelDict } from 'configs/BuffModelDict';
 import { PageActExplLVD } from './PageActExplLVD';
-import { ListView } from 'scripts/ListView';
-import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors, GameData } from 'scripts/DataSaved';
-import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, PAKey } from 'scripts/DataModel';
-import { BattlePet, RageMax, BattlePetLenMax } from 'scripts/DataOther';
-import { actPosModelDict } from 'configs/ActPosModelDict';
-import { PagePkgSelection } from 'pages/page_pkg_selection/scripts/PagePkgSelection';
-import { PagePkg } from 'pages/page_pkg/scripts/PagePkg';
-import { GameDataTool, PetTool } from 'scripts/Memory';
-import { NavBar } from 'scripts/NavBar';
+
+import { PagePkgSelection } from '../../page_pkg_selection/scripts/PagePkgSelection';
+import { PagePkg } from '../../page_pkg/scripts/PagePkg';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 

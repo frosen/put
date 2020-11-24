@@ -5,7 +5,7 @@
  */
 
 import { BtlPageBase } from './BtlPageBase';
-import { Memory, GameDataTool, PetTool, EquipTool, CnsumTool, MoneyTool, QuestTool, CaughtPetTool } from 'scripts/Memory';
+import { Memory, GameDataTool, PetTool, EquipTool, CnsumTool, MoneyTool, QuestTool, CaughtPetTool } from '../scripts/Memory';
 import { BtlCtrlr } from './BtlCtrlr';
 import {
     GameData,
@@ -20,9 +20,9 @@ import {
     NeedUpdCntByStep,
     EPetMmr,
     RdcUpdCntForFailByStep
-} from 'scripts/DataSaved';
+} from '../scripts/DataSaved';
 import { RealBattle, BattlePet } from './DataOther';
-import { actPosModelDict } from 'configs/ActPosModelDict';
+import { actPosModelDict } from '../configs/ActPosModelDict';
 import { randomInt, randomRate, getRandomOneInList, randomAreaInt, random, randomRound, randomAreaByIntRange } from './Random';
 import {
     ExplModel,
@@ -37,8 +37,8 @@ import {
     SearchQuestNeed,
     AmplAttriType
 } from './DataModel';
-import { catcherModelDict } from 'configs/CatcherModelDict';
-import { petModelDict } from 'configs/PetModelDict';
+import { catcherModelDict } from '../configs/CatcherModelDict';
+import { petModelDict } from '../configs/PetModelDict';
 
 export enum ExplState {
     none,

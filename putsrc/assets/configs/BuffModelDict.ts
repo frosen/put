@@ -4,10 +4,10 @@
  * luleyan
  */
 
-import { EleType, BattleType, Pet } from 'scripts/DataSaved';
-import { BuffModel, BuffOutput, BuffType } from 'scripts/DataModel';
-import { BattlePet, BattleBuff, Pet2 } from 'scripts/DataOther';
-import { BtlCtrlr } from 'scripts/BtlCtrlr';
+import { EleType, BattleType, Pet } from '../scripts/DataSaved';
+import { BuffModel, BuffOutput, BuffType } from '../scripts/DataModel';
+import { BattlePet, BattleBuff, Pet2 } from '../scripts/DataOther';
+import { BtlCtrlr } from '../scripts/BtlCtrlr';
 
 function fl1(n: number) {
     return n.toFixed(1);

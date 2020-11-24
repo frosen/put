@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellPkgCnsum } from 'pages/page_pkg/scripts/CellPkgCnsum';
+import { CellPkgCnsum } from '../../../scripts/CellPkgCnsum';
 import {
     Catcher,
     BioTypeNames,
@@ -15,10 +15,10 @@ import {
     EleDarkColors,
     BioColors,
     BattleTypeColors
-} from 'scripts/DataSaved';
-import { catcherModelDict } from 'configs/CatcherModelDict';
-import { CatcherModel } from 'scripts/DataModel';
-import { ListViewCell } from 'scripts/ListViewCell';
+} from '../../../../../scripts/DataSaved';
+import { catcherModelDict } from '../../../../../configs/CatcherModelDict';
+import { CatcherModel } from '../../../../../scripts/DataModel';
+import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
 export class CellPkgCatcher extends CellPkgCnsum {
