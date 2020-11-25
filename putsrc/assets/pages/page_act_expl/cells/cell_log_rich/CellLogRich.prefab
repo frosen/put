@@ -239,9 +239,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
+      "r": 255,
+      "g": 255,
+      "b": 0,
       "a": 255
     },
     "_contentSize": {
@@ -278,7 +278,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": -32768,
     "_is3DNode": false,
     "_groupIndex": 0,
     "groupIndex": 0,
@@ -298,7 +297,8 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_useOriginalSize": true,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_string": "乐颜相机",
     "_N$string": "乐颜相机",
     "_fontSize": 35,
@@ -308,6 +308,8 @@
     "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
@@ -323,7 +325,7 @@
     "asset": {
       "__uuid__": "94a982c6-b186-49bb-b509-c4e6d0715e22"
     },
-    "fileId": "02Ps0hzJtJa55K1949LV6B",
+    "fileId": "a7Cmcu5zhHOqbA2952VFnH",
     "sync": false
   },
   {
@@ -385,7 +387,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": -32768,
     "_is3DNode": false,
     "_groupIndex": 0,
     "groupIndex": 0,
@@ -405,7 +406,8 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_useOriginalSize": true,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_string": "  ",
     "_N$string": "  ",
     "_fontSize": 35,
@@ -415,6 +417,8 @@
     "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
@@ -430,7 +434,7 @@
     "asset": {
       "__uuid__": "94a982c6-b186-49bb-b509-c4e6d0715e22"
     },
-    "fileId": "94EKFzFHBIZrEeWkPUpa26",
+    "fileId": "9cG86PYetIOJftjs5w6c7B",
     "sync": false
   },
   {
@@ -453,9 +457,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 120,
-      "g": 120,
-      "b": 120,
+      "r": 15,
+      "g": 255,
+      "b": 255,
       "a": 255
     },
     "_contentSize": {
@@ -492,7 +496,6 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": -32768,
     "_is3DNode": false,
     "_groupIndex": 0,
     "groupIndex": 0,
@@ -512,7 +515,8 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_useOriginalSize": true,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_string": "刺血剑术",
     "_N$string": "刺血剑术",
     "_fontSize": 35,
@@ -522,6 +526,8 @@
     "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
@@ -537,7 +543,7 @@
     "asset": {
       "__uuid__": "94a982c6-b186-49bb-b509-c4e6d0715e22"
     },
-    "fileId": "60jU79xzhGQKuXQ94N+e2p",
+    "fileId": "d0gCWHFztLN65vOlVrrqYt",
     "sync": false
   },
   {
@@ -554,6 +560,7 @@
     "_N$horizontalAlign": 0,
     "_N$fontSize": 35,
     "_N$font": null,
+    "_N$cacheMode": 0,
     "_N$maxWidth": 0,
     "_N$lineHeight": 50,
     "_N$imageAtlas": null,
@@ -630,7 +637,7 @@
     "asset": {
       "__uuid__": "94a982c6-b186-49bb-b509-c4e6d0715e22"
     },
-    "fileId": "82AQc/XTdMS7H+gh4cK5QF",
+    "fileId": "",
     "sync": false
   }
 ]

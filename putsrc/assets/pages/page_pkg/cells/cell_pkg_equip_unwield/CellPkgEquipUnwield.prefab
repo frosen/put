@@ -495,7 +495,8 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_useOriginalSize": false,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_string": "卸下装备",
     "_N$string": "卸下装备",
     "_fontSize": 43,
@@ -505,6 +506,8 @@
     "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
@@ -763,7 +766,7 @@
     "asset": {
       "__uuid__": "7c133b6d-f500-4afa-b6ea-0b122d0d949c"
     },
-    "fileId": "82AQc/XTdMS7H+gh4cK5QF",
+    "fileId": "",
     "sync": false
   }
 ]

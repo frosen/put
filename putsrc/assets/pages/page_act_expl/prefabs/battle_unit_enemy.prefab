@@ -403,7 +403,6 @@
     },
     "_resize": 0,
     "_N$layoutType": 1,
-    "_N$padding": 0,
     "_N$cellSize": {
       "__type__": "cc.Size",
       "width": 40,
@@ -583,7 +582,8 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_useOriginalSize": false,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_string": "狂热",
     "_N$string": "狂热",
     "_fontSize": 36,
@@ -593,6 +593,8 @@
     "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 2,
     "_N$fontFamily": "Arial",
@@ -688,7 +690,8 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_useOriginalSize": false,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_string": "格罗姆高狂热之斧",
     "_N$string": "格罗姆高狂热之斧",
     "_fontSize": 22,
@@ -698,6 +701,8 @@
     "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 2,
     "_N$fontFamily": "Arial",
@@ -744,7 +749,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 97.03,
-      "height": 33.03
+      "height": 32
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -793,7 +798,8 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_useOriginalSize": false,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_string": "L39B+",
     "_N$string": "L39B+",
     "_fontSize": 32,
@@ -805,6 +811,8 @@
     "_isSystemFontUsed": false,
     "_spacingX": 0,
     "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 2,
     "_N$fontFamily": "Arial",
@@ -838,7 +846,6 @@
     },
     "_resize": 0,
     "_N$layoutType": 1,
-    "_N$padding": 0,
     "_N$cellSize": {
       "__type__": "cc.Size",
       "width": 40,
@@ -944,7 +951,8 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_useOriginalSize": false,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_string": "100 / 100",
     "_N$string": "100 / 100",
     "_fontSize": 31,
@@ -956,6 +964,8 @@
     "_isSystemFontUsed": false,
     "_spacingX": 0,
     "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
@@ -1010,7 +1020,7 @@
     "asset": {
       "__uuid__": "cc6cbba1-4cd3-4ae4-a826-bfc879148d94"
     },
-    "fileId": "0fblKfSe9GZYX1KT1A5d8Z",
+    "fileId": "",
     "sync": false
   }
 ]

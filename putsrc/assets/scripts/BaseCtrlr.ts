@@ -78,6 +78,11 @@ export class BaseCtrlr extends cc.Component {
     @property(cc.Node)
     tabBed: cc.Node = null;
 
+    @property({
+        displayName: '[操作]刷新页面列表'
+    })
+    toRefreshPageList: boolean = false;
+
     @property([cc.Prefab])
     pagePrefabList: cc.Prefab[] = [];
 
@@ -109,7 +114,6 @@ export class BaseCtrlr extends cc.Component {
 
     onLoad() {
         if (CC_EDITOR) {
-            this.setPagePrefabList();
             this.setPagePrefabDict();
             checkConfigs();
             return;
@@ -154,30 +158,30 @@ export class BaseCtrlr extends cc.Component {
     }
 
     setPagePrefabList() {
-        // this.pagePrefabList = [];
-        // const baseCtrlr = this;
-        // const pageDir = Editor.Project.path + '/assets/pages';
-        // const Fs = require('fs');
-        // const files = Fs.readdirSync(pageDir);
-        // for (const file of files) {
-        //     if (Fs.statSync(pageDir + '/' + file).isDirectory()) {
-        //         const editorDir = 'db://assets/pages/' + file + '/*';
-        //         Editor.assetdb.queryAssets(editorDir, null, function (err, results) {
-        //             for (const res of results) {
-        //                 if (res.type === 'prefab') {
-        //                     cc.loader.load(
-        //                         { type: 'uuid', uuid: res.uuid },
-        //                         () => {},
-        //                         function (err, asset) {
-        //                             if (err || !asset) return;
-        //                             baseCtrlr.pagePrefabList.push(asset);
-        //                         }
-        //                     );
-        //                 }
-        //             }
-        //         });
-        //     }
-        // }
+        this.pagePrefabList = [];
+        const baseCtrlr = this;
+        const pageDir = Editor.Project.path + '/assets/pages';
+        const Fs = require('fs');
+        const files = Fs.readdirSync(pageDir);
+        for (const file of files) {
+            if (Fs.statSync(pageDir + '/' + file).isDirectory()) {
+                const editorDir = 'db://assets/pages/' + file + '/*';
+                Editor.assetdb.queryAssets(editorDir, null, function (err, results) {
+                    for (const res of results) {
+                        if (res.type === 'prefab') {
+                            cc.assetManager.loadAny(
+                                { uuid: res.uuid },
+                                () => {},
+                                function (err, asset) {
+                                    if (err || !asset) return;
+                                    baseCtrlr.pagePrefabList.push(asset);
+                                }
+                            );
+                        }
+                    }
+                });
+            }
+        }
     }
 
     setPagePrefabDict() {
@@ -213,7 +217,14 @@ export class BaseCtrlr extends cc.Component {
     }
 
     update(dt: number) {
-        if (CC_EDITOR) return;
+        if (CC_EDITOR) {
+            if (this.toRefreshPageList) {
+                this.toRefreshPageList = false;
+                this.setPagePrefabList();
+                this.setPagePrefabDict();
+            }
+            return;
+        }
         this.memory.update(dt);
     }
 
