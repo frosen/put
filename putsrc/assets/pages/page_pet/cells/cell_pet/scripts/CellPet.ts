@@ -9,9 +9,11 @@ const { ccclass, property } = cc._decorator;
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 import { petModelDict } from '../../../../../configs/PetModelDict';
 
-import { Pet, PetStateNames, EleColors } from '../../../../../scripts/DataSaved';
+import { Pet, PetStateNames, EleColors, BioType } from '../../../../../scripts/DataSaved';
 import { featureModelDict } from '../../../../../configs/FeatureModelDict';
 import { PetTool } from '../../../../../scripts/Memory';
+import { RunningImgMgr } from '../../../../../scripts/RunningImgMgr';
+import { BaseCtrlr } from '../../../../../scripts/BaseCtrlr';
 
 @ccclass
 export class CellPet extends ListViewCell {
@@ -31,7 +33,10 @@ export class CellPet extends ListViewCell {
     infoLayer2: cc.Node = null;
 
     @property(cc.Sprite)
-    petSp: cc.Sprite = null;
+    petIconBG: cc.Sprite = null;
+
+    @property(cc.Sprite)
+    petIcon: cc.Sprite = null;
 
     @property(cc.Label)
     stateLbl: cc.Label = null;
@@ -75,7 +80,9 @@ export class CellPet extends ListViewCell {
         ListViewCell.rerenderLbl(this.lvLbl);
         this.petNameLbl.node.parent.getComponent(cc.Layout).updateLayout();
 
-        this.petSp.node.color = EleColors[petModelDict[pet.id].eleType];
+        const { img, color } = CellPet.getPetIcon(pet, this.ctrlr.runningImgMgr);
+        this.petIcon.spriteFrame = img;
+        this.petIconBG.node.color = color;
 
         const stateLbl = this.stateBtn.getComponentInChildren(cc.Label);
         stateLbl.string = PetStateNames[pet.state];
@@ -101,6 +108,24 @@ export class CellPet extends ListViewCell {
         this.infoLayer.getComponent(cc.Layout).updateLayout();
         this.infoLayer2.getComponent(cc.Layout).updateLayout();
         this.infoLayer.y = this.infoLayer2.childrenCount === 0 ? -135 : -120;
+    }
+
+    static getPetIcon(pet: Pet, rImgMgr: RunningImgMgr): { img: cc.SpriteFrame; color: cc.Color } {
+        const petModel = petModelDict[pet.id];
+        const color = EleColors[petModel.eleType];
+
+        switch (petModel.bioType) {
+            case BioType.human:
+                return { img: rImgMgr.humanPet, color };
+            case BioType.magic:
+                return { img: rImgMgr.magicPet, color };
+            case BioType.mech:
+                return { img: rImgMgr.mechPet, color };
+            case BioType.nature:
+                return { img: rImgMgr.naturePet, color };
+            case BioType.unknown:
+                return { img: rImgMgr.unknownPet, color };
+        }
     }
 
     hideAllInfoNode() {

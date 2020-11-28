@@ -11,6 +11,7 @@ import { ListViewCell } from '../../../../../scripts/ListViewCell';
 import { GameDataTool, PetTool } from '../../../../../scripts/Memory';
 import { PageBase } from '../../../../../scripts/PageBase';
 import { sensitiveWords } from '../../../../../configs/SensitiveWords';
+import { CellPet } from '../../../../page_pet/cells/cell_pet/scripts/CellPet';
 
 @ccclass
 export class CellPetName extends ListViewCell {
@@ -31,6 +32,12 @@ export class CellPetName extends ListViewCell {
 
     @property(cc.EditBox)
     editBox: cc.EditBox = null;
+
+    @property(cc.Sprite)
+    petIconBG: cc.Sprite = null;
+
+    @property(cc.Sprite)
+    petIcon: cc.Sprite = null;
 
     page: PageBase = null;
 
@@ -150,6 +157,10 @@ export class CellPetName extends ListViewCell {
         ListViewCell.rerenderLbl(this.petName);
         ListViewCell.rerenderLbl(this.subName);
         this.layout.updateLayout();
+
+        const { img, color } = CellPet.getPetIcon(pet, this.ctrlr.runningImgMgr);
+        this.petIcon.spriteFrame = img;
+        this.petIconBG.node.color = color;
     }
 
     onClickState() {

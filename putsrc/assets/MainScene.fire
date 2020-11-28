@@ -180,7 +180,7 @@
       "array": [
         0,
         0,
-        363.73066958946424,
+        431.28065108465046,
         0,
         0,
         0,
@@ -278,7 +278,7 @@
       "array": [
         0,
         0,
-        363.73066958946424,
+        431.28065108465046,
         0,
         0,
         0,
@@ -376,7 +376,7 @@
       "array": [
         0,
         0,
-        363.73066958946424,
+        431.28065108465046,
         0,
         0,
         0,
@@ -474,7 +474,7 @@
       "array": [
         0,
         0,
-        363.73066958946424,
+        431.28065108465046,
         0,
         0,
         0,
@@ -6049,6 +6049,30 @@
     "_enabled": true,
     "detail": {
       "__uuid__": "c71ebd49-c6f8-4cdb-9d4f-fd9880b27cc2"
+    },
+    "iconBG0": {
+      "__uuid__": "e6615254-9548-4278-9941-aaf1c542e854"
+    },
+    "iconBG4": {
+      "__uuid__": "f14d41f0-b016-48eb-bee6-0de894c09fd6"
+    },
+    "iconBG6": {
+      "__uuid__": "03a75ca8-f7c4-44a9-855e-be3252ef1a5e"
+    },
+    "humanPet": {
+      "__uuid__": "b89d3afa-5e3b-4e1f-befd-93e0764acda3"
+    },
+    "magicPet": {
+      "__uuid__": "b89d3afa-5e3b-4e1f-befd-93e0764acda3"
+    },
+    "mechPet": {
+      "__uuid__": "b89d3afa-5e3b-4e1f-befd-93e0764acda3"
+    },
+    "naturePet": {
+      "__uuid__": "b89d3afa-5e3b-4e1f-befd-93e0764acda3"
+    },
+    "unknownPet": {
+      "__uuid__": "b89d3afa-5e3b-4e1f-befd-93e0764acda3"
     },
     "_id": "42LBUC48lFnIks4uNcCJ8J"
   },

@@ -4,11 +4,18 @@
  * luleyan
  */
 
-const { ccclass, property } = cc._decorator;
+const { ccclass, property, executeInEditMode } = cc._decorator;
 
 @ccclass
+@executeInEditMode
 export class RunningImgMgr extends cc.Component {
     @property(cc.SpriteFrame) detail: cc.SpriteFrame = null;
+
+    // icon range -----------------------------------------------------------------
+
+    @property(cc.SpriteFrame) iconBG0: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame) iconBG4: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame) iconBG6: cc.SpriteFrame = null;
 
     // pet -----------------------------------------------------------------
 
@@ -23,4 +30,14 @@ export class RunningImgMgr extends cc.Component {
     // pos -----------------------------------------------------------------
 
     // quester -----------------------------------------------------------------
+
+    // 检测 -----------------------------------------------------------------
+
+    update() {
+        if (CC_EDITOR) this.check();
+    }
+
+    check() {
+        // llytodo
+    }
 }
