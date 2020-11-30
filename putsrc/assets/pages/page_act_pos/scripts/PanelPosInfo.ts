@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 import { ActPosModel } from '../../../scripts/DataModel';
 
-const PosInfoHeight = 335;
+const PosInfoHeight = 500;
 
 @ccclass
 export class PanelPosInfo extends cc.Component {

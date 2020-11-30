@@ -206,7 +206,7 @@ export class PageActPosLVD extends ListViewDelegate {
 
     heightForRow(listView: ListView, rowIdx: number): number {
         if (rowIdx === 0) {
-            return 380;
+            return 546;
         } else if (rowIdx === this.evtCellLength) {
             return 179;
         } else if (rowIdx === this.evtCellLength + this.actCellLength) {

@@ -965,7 +965,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 335
+      "height": 500
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -977,7 +977,7 @@
       "ctor": "Float64Array",
       "array": [
         0.969,
-        -335,
+        -500,
         0,
         0,
         0,
@@ -1032,7 +1032,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 670
+      "height": 900
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1044,7 +1044,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        670,
+        900,
         0,
         0,
         0,
@@ -1113,7 +1113,7 @@
     "_alignFlags": 45,
     "_left": 0,
     "_right": 0,
-    "_top": -335,
+    "_top": -400,
     "_bottom": 0,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
@@ -1389,7 +1389,8 @@
         "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
       }
     ],
-    "_useOriginalSize": false,
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
     "_string": "这里是地址",
     "_N$string": "这里是地址",
     "_fontSize": 55,
@@ -1399,6 +1400,8 @@
     "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_batchAsBitmap": false,
+    "_styleFlags": 0,
+    "_underlineHeight": 0,
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
@@ -1517,7 +1520,7 @@
     "asset": {
       "__uuid__": "4ca0b42f-dd5c-415b-bb67-4b5869962810"
     },
-    "fileId": "2d6kXV72pO9pAWY6QbtMHM",
+    "fileId": "",
     "sync": false
   }
 ]
