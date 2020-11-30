@@ -14,7 +14,10 @@ export class CellPkgBase extends ListViewCell {
     nameLbl: cc.Label = null;
 
     @property(cc.Sprite)
-    sp: cc.Sprite = null;
+    iconBG: cc.Sprite = null;
+
+    @property(cc.Sprite)
+    icon: cc.Sprite = null;
 
     @property(cc.Button)
     funcBtn: cc.Button = null;
