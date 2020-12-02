@@ -188,18 +188,18 @@ export class Pet2 {
         this.sklDmgFrom = Math.max(this.sklDmgFrom, 1);
         this.sklDmgTo = Math.max(this.sklDmgTo, 1);
 
-        // 技能
+        // 招式
         if (!this.skillIds) this.skillIds = [];
         let skillIdx = 0;
         for (let index = equips.length - 1; index >= 0; index--) {
-            const equip = equips[index]; // 装备技能
+            const equip = equips[index]; // 装备招式
             if (!equip) continue;
             const skillId = equip.skillId;
             if (!skillId) continue;
             this.skillIds[skillIdx] = skillId;
             skillIdx++;
         }
-        const selfSkillIds = PetTool.getSelfSkillIdByCurLv(pet); // 自带技能
+        const selfSkillIds = PetTool.getSelfSkillIdByCurLv(pet); // 自带招式
         for (let index = selfSkillIds.length - 1; index >= 0; index--) {
             const skillId = selfSkillIds[index];
             this.skillIds[skillIdx] = skillId;
@@ -366,7 +366,7 @@ export class BattlePet {
             BattlePet.addFeatureFunc(this, 'deadFeatures', 'onDead', model, datas);
         });
 
-        // 技能
+        // 招式
         this.skillDatas.length = this.pet2.skillIds.length;
         for (let index = 0; index < this.pet2.skillIds.length; index++) {
             const skillId = this.pet2.skillIds[index];
@@ -737,9 +737,9 @@ export class SkillInfo {
         let info = '';
         if (dmg) {
             if (dmg > 0) {
-                info += `受到##点(${dmg}%技能+100%攻击伤害)${EleTypeNames[eleType]}伤害`;
+                info += `受到##点(${dmg}%招式+100%攻击伤害)${EleTypeNames[eleType]}伤害`;
             } else {
-                info += `恢复血量##点(${-dmg}%技能伤害)`;
+                info += `恢复血量##点(${-dmg}%招式伤害)`;
             }
         }
         if (sub) info = info.replace('##', '^^');

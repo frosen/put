@@ -66,6 +66,16 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
         },
         movs: [
             { id: 'YiShanJiDi', price: 0 },
+            { id: 'YiShanJiDi', price: 0 },
+            { id: 'YiShanJiDi', price: 0 },
+            { id: 'YiShanJiDi', price: 0 },
+            { id: 'YiShanJiDi', price: 0 },
+            { id: 'YiShanJiDi', price: 0 },
+            { id: 'YiShanJiDi', price: 0 },
+            { id: 'YiShanJiDi', price: 0 },
+            { id: 'YiShanJiDi', price: 0 },
+            { id: 'YiShanJiDi', price: 0 },
+            { id: 'YiShanJiDi', price: 0 },
             { id: 'GuangJiDianGongChang', price: 0 }
         ],
         loc: { x: 1100, y: 100 }

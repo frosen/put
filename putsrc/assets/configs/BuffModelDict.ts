@@ -28,7 +28,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * 0.7 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `每回合对目标造成${getSklDmgStr(pet2, 0.7)}(70%释放者技能伤害)点火系伤害`;
+            return `每回合对目标造成${getSklDmgStr(pet2, 0.7)}(70%释放者招式伤害)点火系伤害`;
         }
     },
     HanLeng: {
@@ -47,7 +47,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * 0.5 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `减速目标，且每回合对目标造成${getSklDmgStr(pet2, 0.5)}(50%释放者技能伤害)点水系伤害`;
+            return `减速目标，且每回合对目标造成${getSklDmgStr(pet2, 0.5)}(50%释放者招式伤害)点水系伤害`;
         }
     },
     ZhongDu: {
@@ -61,7 +61,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * rate };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `每回合对目标造成最低40%最高80%释放者技能攻击的暗系伤害，血量越低伤害越高`;
+            return `每回合对目标造成最低40%最高80%释放者招式攻击的暗系伤害，血量越低伤害越高`;
         }
     },
     ZhuiLuo: {
@@ -74,7 +74,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             if (buff.time === 0) return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `效果结束时对目标造成${getSklDmgStr(pet2, 1)}(100%释放者技能伤害)点地系伤害`;
+            return `效果结束时对目标造成${getSklDmgStr(pet2, 1)}(100%释放者招式伤害)点地系伤害`;
         }
     },
     JingJie: {
@@ -114,7 +114,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             aim.pet2.atkDmgTo -= to;
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `目标普攻伤害提高，相当于自身攻击的15%伤害外加释放者技能攻击的15%`;
+            return `目标普攻伤害提高，相当于自身攻击的15%伤害外加释放者招式攻击的15%`;
         }
     },
     KongJu: {
@@ -254,7 +254,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, null) * 0.8 * -1 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `目标每回合恢复目标${getSklDmgStr(pet2, 0.8)}(80%释放者技能伤害)点血量`;
+            return `目标每回合恢复目标${getSklDmgStr(pet2, 0.8)}(80%释放者招式伤害)点血量`;
         }
     },
     JingZhi: {
@@ -333,7 +333,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             const mp = 20 + Math.floor(pet.lv / 10);
             const dmg = getSklDmgStr(pet2, 1.2);
-            return `目标每回合燃烧掉目标${mp}点精神力，如果精神力不足${mp}点，则造成${dmg}(120%释放者技能伤害)点火系伤害`;
+            return `目标每回合燃烧掉目标${mp}点灵能，如果灵能不足${mp}点，则造成${dmg}(120%释放者招式伤害)点火系伤害`;
         }
     },
     NingJing: {
@@ -390,7 +390,7 @@ const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
             aim.pet2.sklDmgTo -= to;
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `目标技能伤害提高40%`;
+            return `目标招式伤害提高40%`;
         }
     },
     ShengMen: {

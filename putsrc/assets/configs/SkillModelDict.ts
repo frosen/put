@@ -5,7 +5,7 @@
  */
 
 import { SkillModel } from '../scripts/DataModel';
-  
+
 export const skillModelDict: { [key: string]: SkillModel } = {
     HuoYanDan: {
         id: 'HuoYanDan',
@@ -807,7 +807,7 @@ export const skillModelDict: { [key: string]: SkillModel } = {
     },
     JingShenRanJin: {
         id: 'JingShenRanJin',
-        cnName: '精神燃尽',
+        cnName: '灵能燃尽',
         skillType: 2,
         dirType: 1,
         aimType: 1,
