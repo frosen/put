@@ -292,6 +292,15 @@ export class PageActExpl extends BtlPageBase {
         ui.petHP.string = `${Math.ceil(battlePet.hp * 0.1)} / ${Math.ceil(battlePet.hpMax * 0.1)}`;
         ui.node.stopAllActions();
         ui.node.x = 0;
+
+        const rerenderLbl = (lbl: cc.Label) => {
+            // @ts-ignore
+            lbl._assembler.updateRenderData(lbl);
+        };
+
+        rerenderLbl(ui.petName);
+        rerenderLbl(ui.subName);
+        ui.layout.updateLayout();
     }
 
     clearUIOfSelfPet(index: number) {

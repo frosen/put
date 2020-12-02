@@ -25,4 +25,7 @@ export class PetUI extends cc.Component {
 
     @property(cc.Node)
     buffNode: cc.Node = null;
+
+    @property(cc.Layout)
+    layout: cc.Layout = null;
 }
