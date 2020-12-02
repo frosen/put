@@ -2681,9 +2681,9 @@
     },
     "_N$disabledColor": {
       "__type__": "cc.Color",
-      "r": 150,
-      "g": 150,
-      "b": 150,
+      "r": 255,
+      "g": 255,
+      "b": 255,
       "a": 255
     },
     "_N$normalSprite": null,

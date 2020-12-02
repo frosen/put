@@ -11,7 +11,7 @@ const { ccclass, property, executeInEditMode, disallowMultiple } = cc._decorator
 @disallowMultiple
 export class TempBase extends cc.Component {
     onLoad() {
-        this.handleTemp();
+        if (CC_EDITOR) this.handleTemp();
     }
 
     update() {
