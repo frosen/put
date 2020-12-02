@@ -65,7 +65,7 @@ import { equipModelDict } from '../configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 import { equipIdsByLvRank } from '../configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from '../configs/SkillIdsByEleType';
-import Tea = require('./Tea');
+import { Tea } from './Tea';
 
 import { expModels } from '../configs/ExpModels';
 import { questModelDict } from '../configs/QuestModelDict';
@@ -242,7 +242,7 @@ export class Memory {
             t: Date.now()
         };
 
-        const encodeStr = Tea.Tea.encrypt(JSON.stringify(savedData), '0x5d627c');
+        const encodeStr = Tea.encrypt(JSON.stringify(savedData), '0x5d627c');
         this.curSaveDataId = this.curSaveDataId === 1 ? 2 : 1;
         cc.sys.localStorage.setItem(`sg${this.curSaveDataId}`, encodeStr);
     }

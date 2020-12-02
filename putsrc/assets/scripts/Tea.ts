@@ -10,7 +10,7 @@
 /*             http://www.cl.cam.ac.uk/ftp/users/djw3/xxtea.ps (1998)                             */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-var Tea = {}; // Tea namespace
+export var Tea: any = {}; // Tea namespace
 
 /*
  * encrypt text using Corrected Block TEA (xxtea) algorithm
@@ -134,7 +134,7 @@ Tea.longsToStr = function (l) {
 /*    note: depends on Utf8 class                                                                 */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-var Base64 = {}; // Base64 namespace
+var Base64: any = {}; // Base64 namespace
 
 Base64.code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
@@ -256,7 +256,7 @@ Base64.decode = function (str, utf8decode) {
 /*              single-byte character encoding (c) Chris Veness 2002-2010                         */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
 
-var Utf8 = {}; // Utf8 namespace
+var Utf8: any = {}; // Utf8 namespace
 
 /**
  * Encode multi-byte Unicode string into utf-8 multiple single-byte characters
@@ -313,7 +313,3 @@ Utf8.decode = function (strUtf) {
     );
     return strUni;
 };
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-
-module.exports = { Tea };
