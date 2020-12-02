@@ -111,26 +111,33 @@ function newDict(dict = null) {
     const ckDict = {};
     for (const key in realDict) {
         if (!realDict.hasOwnProperty(key)) continue;
-        const cNum = realDict[key];
-        if (typeof cNum === 'number') ckDict[key] = getCheckedNumber(cNum) as any;
+        const value = realDict[key];
+        if (typeof value === 'number') {
+            ckDict[key] = getCheckedNumber(value);
+        } else if (typeof value === 'boolean') {
+            ckDict[key] = value;
+        }
     }
     return new Proxy(realDict, {
         set: function (target, key, value, receiver) {
             if (typeof value === 'number') {
                 ckDict[key] = getCheckedNumber(value);
+            } else if (typeof value === 'boolean') {
+                ckDict[key] = value;
             }
             memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
             return Reflect.set(target, key, value, receiver);
         },
         get: function (target, key) {
-            const v = target[key];
-            if (typeof v === 'number') {
-                if (getCheckedNumber(v) !== ckDict[key]) {
-                    if (sfbdCount < 0) sfbdCount = 1;
-                    if (!CC_BUILD) throw new Error('number check wrong!');
-                }
+            const value = target[key];
+            if (
+                (typeof value === 'number' && getCheckedNumber(value) !== ckDict[key]) ||
+                (typeof value === 'boolean' && value !== ckDict[key])
+            ) {
+                if (sfbdCount < 0) sfbdCount = 1;
+                if (!CC_BUILD) throw new Error('data check wrong!');
             }
-            return v;
+            return value;
         }
     });
 }
@@ -235,14 +242,15 @@ export class Memory {
 
     saveMemory() {
         cc.log('STORM 保存 ');
-        if (!checkDataCorrect()) return;
 
         const savedData = {
             g: this.gameData,
             t: Date.now()
         };
+        const dataStr = JSON.stringify(savedData);
+        if (!checkDataCorrect()) return; // stringify时会调用get方法并检测值的有效性，所以在此时判断
 
-        const encodeStr = Tea.encrypt(JSON.stringify(savedData), '0x5d627c');
+        const encodeStr = Tea.encrypt(dataStr, '0x5d627c');
         this.curSaveDataId = this.curSaveDataId === 1 ? 2 : 1;
         cc.sys.localStorage.setItem(`sg${this.curSaveDataId}`, encodeStr);
     }

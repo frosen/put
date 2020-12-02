@@ -356,12 +356,21 @@ export class PageActExpl extends BtlPageBase {
         node.color = color;
 
         const dir = beEnemy ? 1 : -1;
-        const p = cc.v2(params[0] * dir, 0);
+        const x = params[0] * dir;
         const h = 35 + params[1];
 
         node.stopAllActions();
-        node.runAction(cc.sequence(cc.delayTime(delay), cc.jumpBy(1, p, h, 1).easing(cc.easeSineOut())));
-        node.runAction(cc.sequence(cc.delayTime(delay), cc.fadeIn(0.01), cc.delayTime(0.7), cc.fadeOut(0.1)));
+        const t = cc.tween;
+        const e = cc.easing;
+        t(node)
+            .delay(delay)
+            .set({ opacity: 255 })
+            .parallel(
+                t().by(1, { x }, { easing: e.quadOut }),
+                t().by(0.5, { y: h }, { easing: e.quadOut }).by(0.5, { y: -h }, { easing: e.quadIn }),
+                t().delay(0.7).to(0.3, { opacity: 0 })
+            )
+            .start();
     }
 
     addBuff(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
