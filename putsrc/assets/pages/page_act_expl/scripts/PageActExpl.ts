@@ -22,6 +22,7 @@ import { PageActExplLVD } from './PageActExplLVD';
 
 import { PagePkgSelection } from '../../page_pkg_selection/scripts/PagePkgSelection';
 import { PagePkg } from '../../page_pkg/scripts/PagePkg';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -293,13 +294,8 @@ export class PageActExpl extends BtlPageBase {
         ui.node.stopAllActions();
         ui.node.x = 0;
 
-        const rerenderLbl = (lbl: cc.Label) => {
-            // @ts-ignore
-            lbl._assembler.updateRenderData(lbl);
-        };
-
-        rerenderLbl(ui.petName);
-        rerenderLbl(ui.subName);
+        ListViewCell.rerenderLbl(ui.petName);
+        ListViewCell.rerenderLbl(ui.subName);
         ui.layout.updateLayout();
     }
 

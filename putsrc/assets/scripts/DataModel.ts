@@ -385,8 +385,7 @@ export class MovModel {
 
 export enum ActPosType {
     town = 1,
-    wild,
-    NoGA // 无政府管辖区
+    wild
 }
 
 export class ActPosModel {

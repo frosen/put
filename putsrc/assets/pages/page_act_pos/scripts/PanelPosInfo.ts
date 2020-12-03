@@ -5,7 +5,10 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import { ActPosModel } from '../../../scripts/DataModel';
+import { ActPosModel, ActPosType, ReputNames } from '../../../scripts/DataModel';
+import { GameData } from '../../../scripts/DataSaved';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { GameDataTool } from '../../../scripts/Memory';
 
 const PosInfoHeight = 500;
 
@@ -17,8 +20,54 @@ export class PanelPosInfo extends cc.Component {
     @property(cc.Label)
     posName: cc.Label = null;
 
-    setData(actPosModel: ActPosModel) {
+    @property(cc.Label)
+    typeName: cc.Label = null;
+
+    @property(cc.Label)
+    subData: cc.Label = null;
+
+    @property(cc.Layout)
+    layout: cc.Layout = null;
+
+    @property(cc.Node)
+    townUI: cc.Node = null;
+
+    @property(cc.ProgressBar)
+    townBar: cc.ProgressBar = null;
+
+    @property(cc.Label)
+    townLbl: cc.Label = null;
+
+    @property(cc.Node)
+    wildUI: cc.Node = null;
+
+    @property([cc.Node])
+    wildStates: cc.Node[] = [];
+
+    setData(actPosModel: ActPosModel, gameData: GameData) {
         this.posName.string = actPosModel.cnName;
+        ListViewCell.rerenderLbl(this.posName);
+        this.layout.updateLayout();
+
+        if (actPosModel.type === ActPosType.town) {
+            this.townUI.opacity = 255;
+            this.wildUI.opacity = 0;
+
+            this.typeName.string = '城镇';
+            this.subData.node.parent.opacity = 255;
+
+            const { rank, value, max } = GameDataTool.getCurReputData(gameData, gameData.curPosId);
+
+            this.subData.string = ReputNames[rank];
+            this.townBar.progress = value / max;
+            this.townLbl.string = `当前声望：${value}/${max}`;
+        } else {
+            this.wildUI.opacity = 255;
+            this.townUI.opacity = 0;
+
+            this.typeName.string = '野外';
+            this.subData.node.parent.opacity = 0;
+        }
     }
 
     onScrolling(y: number) {

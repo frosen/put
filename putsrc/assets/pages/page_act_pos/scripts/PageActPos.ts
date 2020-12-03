@@ -50,6 +50,9 @@ export class PageActPos extends PageBase {
             this.curPosId = pd.id;
             this.dirtyToken = curDirtyToken;
             this.resetListview();
+
+            const actPosModel = actPosModelDict[this.curPosId];
+            this.posInfo.setData(actPosModel, gameData);
         }
     }
 
@@ -61,9 +64,6 @@ export class PageActPos extends PageBase {
         this.listView.clearContent();
         this.listView.createContent(y);
         this.posInfo.onScrolling(y);
-
-        const actPosModel = actPosModelDict[this.curPosId];
-        this.posInfo.setData(actPosModel);
     }
 
     afterPageShowAnim() {

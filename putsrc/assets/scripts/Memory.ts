@@ -1498,7 +1498,12 @@ export class GameDataTool {
 
     static getReputRank(gameData: GameData, posId: string): ReputRank {
         const reput = gameData.posDataDict[posId].reput;
-        return ReputRank.renown;
+        return ReputRank.renown; // llytodo
+    }
+
+    static getCurReputData(gameData: GameData, posId: string): { rank: ReputRank; value: number; max: number } {
+        const reput = gameData.posDataDict[posId].reput;
+        return { rank: ReputRank.renown, value: 450, max: 10000 };
     }
 
     // -----------------------------------------------------------------
