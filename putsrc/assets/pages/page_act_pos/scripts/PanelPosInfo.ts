@@ -5,8 +5,8 @@
  */
 
 const { ccclass, property } = cc._decorator;
-import { ActPosModel, ActPosType, ReputNames } from '../../../scripts/DataModel';
-import { GameData } from '../../../scripts/DataSaved';
+import { ActPosModel, ActPosType, ExplModel, PAKey, ReputNames } from '../../../scripts/DataModel';
+import { GameData, PADExpl } from '../../../scripts/DataSaved';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { GameDataTool } from '../../../scripts/Memory';
 
@@ -67,6 +67,22 @@ export class PanelPosInfo extends cc.Component {
 
             this.typeName.string = '野外';
             this.subData.node.parent.opacity = 0;
+
+            const posData = gameData.posDataDict[gameData.curPosId];
+            let curStep: number;
+            if (posData.actDict.hasOwnProperty(PAKey.expl)) {
+                const pADExpl = posData.actDict[PAKey.expl] as PADExpl;
+                curStep = pADExpl.doneStep + 1;
+            } else curStep = 0;
+
+            const explModel: ExplModel = actPosModel.actMDict[PAKey.expl] as ExplModel;
+            const stepMax = explModel.stepMax;
+
+            for (let index = 0; index < this.wildStates.length; index++) {
+                const stateUI = this.wildStates[index];
+                stateUI.opacity = index < curStep ? 255 : 0;
+                stateUI.parent.opacity = index < stepMax ? 255 : 0;
+            }
         }
     }
 

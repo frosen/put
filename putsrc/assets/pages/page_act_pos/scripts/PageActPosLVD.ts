@@ -41,16 +41,7 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
         getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } => {
             const gameData = ctrlr.memory.gameData;
             const ing = gameData.curExpl && gameData.curExpl.curPosId === gameData.curPosId ? 'ing' : '';
-            const posData = gameData.posDataDict[gameData.curPosId];
-            let curStep: number;
-            if (posData.actDict.hasOwnProperty(PAKey.expl)) {
-                const pADExpl = posData.actDict[PAKey.expl] as PADExpl;
-                curStep = pADExpl.doneStep + 1;
-            } else curStep = 0;
-            const curPosModel = actPosModelDict[gameData.curPosId];
-            const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
-            const stepMax = explModel.stepMax;
-            return { str: String(`${ing}[${curStep}/${stepMax}]`), color: cc.color(255, 102, 0) };
+            return { str: String(`${ing}`), color: cc.color(255, 102, 0) };
         },
         page: PageActExpl,
         check: (ctrlr: BaseCtrlr): string => {
