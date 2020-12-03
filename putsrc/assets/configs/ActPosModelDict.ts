@@ -50,7 +50,7 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
     KeChuangXiaoJing: {
         id: 'KeChuangXiaoJing',
         cnName: '科创小径',
-        lv: 2,
+        lv: 30,
         type: ActPosType.wild,
         evts: [],
         actMDict: {

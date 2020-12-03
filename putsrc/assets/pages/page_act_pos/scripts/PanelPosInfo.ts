@@ -31,7 +31,5 @@ export class PanelPosInfo extends cc.Component {
         else if (realY > 0) rate = 0;
         else rate = realY / -141;
         this.uiScaleNode.scale = rate * 0.63 + 0.37;
-
-        this.posName.node.scale = 1.5 - rate * 0.5;
     }
 }
