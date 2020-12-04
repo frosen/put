@@ -17,7 +17,7 @@ function getSklDmgStr(pet2: Pet2, rate: number) {
     return `${fl1(pet2.sklDmgFrom * 0.1 * rate)}到${fl1(pet2.sklDmgTo * 0.1 * rate)}`;
 }
 
-const BuffModelDict: { [key: string]: Partial<BuffModel> } = {
+const BuffModelDict: { [key: string]: BuffModel } = {
     ZhuoShao: {
         id: 'ZhuoShao',
         cnName: '灼烧',

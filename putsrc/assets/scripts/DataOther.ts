@@ -737,7 +737,7 @@ export class SkillInfo {
         return info;
     }
 
-    static getDmg(dmg: number, eleType: EleType, sub: boolean = false) {
+    static getDmg(dmg: number, eleType: EleType, sub: boolean = false): string {
         let info = '';
         if (dmg) {
             if (dmg > 0) {
@@ -751,7 +751,7 @@ export class SkillInfo {
         return info;
     }
 
-    static getBuff(dmg: number, buffId: string, buffTime: number) {
+    static getBuff(dmg: number, buffId: string, buffTime: number): string {
         let info = '';
         if (buffId) {
             if (dmg) info += '并';
@@ -761,7 +761,7 @@ export class SkillInfo {
         return info;
     }
 
-    static getSklDmgStr(pet2: Pet2, rate: number) {
+    static getSklDmgStr(pet2: Pet2, rate: number): string {
         const from = BtlCtrlr.getCastRealDmg(pet2.sklDmgFrom, rate, pet2.atkDmgFrom) * 0.1;
         const to = BtlCtrlr.getCastRealDmg(pet2.sklDmgTo, rate, pet2.atkDmgTo) * 0.1;
         return `${from.toFixed(1)}到${to.toFixed(1)}`;

@@ -24,16 +24,16 @@ export enum BuffType {
     debuff
 }
 
-export abstract class BuffModel {
-    abstract id: string;
-    abstract cnName: string;
-    abstract brief: string;
-    abstract buffType: BuffType;
-    abstract eleType: EleType;
-    abstract onStarted(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any;
-    abstract onEnd(thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any): void;
-    abstract onTurnEnd(thisPet: BattlePet, buff: BattleBuff, ctrlr: BtlCtrlr): BuffOutput | void;
-    abstract getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string;
+export class BuffModel {
+    id: string;
+    cnName: string;
+    brief: string;
+    buffType: BuffType;
+    eleType: EleType;
+    onStarted?: (thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr) => any;
+    onEnd?: (thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) => void;
+    onTurnEnd?: (thisPet: BattlePet, buff: BattleBuff, ctrlr: BtlCtrlr) => BuffOutput | void;
+    getInfo: (pet: Readonly<Pet>, pet2: Readonly<Pet2>) => string;
 }
 
 export enum SkillType {
@@ -83,20 +83,20 @@ export class SkillModel {
 
 export type FeatureBtlData = { ctrlr: BtlCtrlr; finalDmg: number; skillModel: SkillModel };
 
-export abstract class FeatureModel {
-    abstract id: string;
-    abstract cnBrief: string;
-    abstract dataAreas: number[][];
-    abstract onBaseSetting(pet: Pet2, datas: number[]): void;
-    abstract onSetting(pet: Pet2, datas: number[]): void;
-    abstract onBtlStart(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
-    abstract onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
-    abstract onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
-    abstract onHurt(pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void;
-    abstract onHeal(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void;
-    abstract onEDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
-    abstract onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void;
-    abstract getInfo(datas: number[]): string;
+export class FeatureModel {
+    id: string;
+    cnBrief: string;
+    dataAreas: number[][];
+    onBaseSetting?: (pet: Pet2, datas: number[]) => void;
+    onSetting?: (pet: Pet2, datas: number[]) => void;
+    onBtlStart?: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    onAtk?: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    onCast?: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    onHurt?: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    onHeal?: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    onEDead?: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    onDead?: (pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    getInfo: (datas: number[]) => string;
 }
 
 export class PetModel {
@@ -403,7 +403,10 @@ export class ActPosModel {
 // -----------------------------------------------------------------
 
 export enum ProTtlType {
-    purchase = 1
+    purchase = 1,
+    function = 2,
+    pet = 3,
+    story = 4
 }
 
 export class ProTtlModel {
@@ -411,4 +414,6 @@ export class ProTtlModel {
     cnName: string;
     proTtlType: ProTtlType;
     subIdx: number;
+    info: string;
+    onBaseSetting?: (pet: Pet2) => void;
 }

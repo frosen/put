@@ -22,7 +22,7 @@ function rate(data: number, from: number, range: number): number {
     return (data / (data + 7)) * range + from;
 }
 
-const FeatureModelDict: { [key: string]: Partial<FeatureModel> } = {
+const FeatureModelDict: { [key: string]: FeatureModel } = {
     strength: {
         id: 'strength',
         cnBrief: '壮',
