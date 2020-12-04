@@ -402,7 +402,13 @@ export class ActPosModel {
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
-export class ProfTitleModel {
+export enum ProTtlType {
+    purchase = 1
+}
+
+export class ProTtlModel {
     id: string;
     cnName: string;
+    proTtlType: ProTtlType;
+    subIdx: number;
 }

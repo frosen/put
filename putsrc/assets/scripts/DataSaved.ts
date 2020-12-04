@@ -4,6 +4,13 @@
  * luleyan
  */
 
+export class ProTtlData {
+    id: string;
+    gainTime: number;
+}
+
+// -----------------------------------------------------------------
+
 export enum BioType {
     none,
     human,
@@ -333,7 +340,7 @@ export class AcceQuestInfo {
 // -----------------------------------------------------------------
 
 export class GameData {
-    profTitleIds: string[];
+    proTtlDatas: ProTtlData[];
 
     pets: Pet[];
     totalPetCount: number; // 一共抓取过的精灵的总量，用于pet的索引

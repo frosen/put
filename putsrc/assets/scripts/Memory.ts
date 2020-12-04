@@ -1079,7 +1079,7 @@ export class GameDataTool {
     static SUC: string = 'K';
 
     static init(gameData: GameData) {
-        gameData.profTitleIds = newList();
+        gameData.proTtlDatas = newList();
 
         gameData.pets = newList();
         gameData.totalPetCount = 0;

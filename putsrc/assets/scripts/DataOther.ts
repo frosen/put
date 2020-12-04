@@ -328,9 +328,13 @@ export class BattlePet {
     static getSkillMpUsing(skillId: string, pet: Pet) {
         const skillModel: SkillModel = skillModelDict[skillId];
         if (skillModel.skillType === SkillType.ultimate) return 0;
-        let mpUsing = skillModel.mp;
-        if (petModelDict[pet.id].eleType === skillModel.eleType) mpUsing -= Math.ceil(mpUsing * 0.1);
-        return mpUsing;
+        const petModel = petModelDict[pet.id];
+
+        let realRate = 1.0;
+        if (petModel.eleType === skillModel.eleType) realRate -= 0.1;
+        if (petModel.battleType === skillModel.spBattleType) realRate -= 0.1;
+
+        return Math.floor(skillModel.mp * realRate);
     }
 
     initPosition(idx: number, fromationIdx: number, beEnemy: boolean) {

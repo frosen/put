@@ -1,12 +1,12 @@
 /*
- * ProfTitleModelDict.ts
+ * ProTtlModelDict.ts
  * 持续效果
  * luleyan
  */
 
-import { ProfTitleModel } from '../scripts/DataModel';
+import { ProTtlModel } from '../scripts/DataModel';
 
-const ProfTitleModelDict: { [key: string]: Partial<ProfTitleModel> } = {
+const ProTtlModelDict: { [key: string]: Partial<ProTtlModel> } = {
     ShouCangJia: {
         id: 'ShouCangJia',
         cnName: '收藏家'
@@ -37,4 +37,4 @@ const ProfTitleModelDict: { [key: string]: Partial<ProfTitleModel> } = {
     }
 };
 
-export const profTitleModelDict: { [key: string]: ProfTitleModel } = ProfTitleModelDict as { [key: string]: ProfTitleModel };
+export const proTtlModelDict: { [key: string]: ProTtlModel } = ProTtlModelDict as { [key: string]: ProTtlModel };
