@@ -180,7 +180,7 @@
       "array": [
         0,
         0,
-        431.28065108465046,
+        515.5692798373578,
         0,
         0,
         0,
@@ -278,7 +278,7 @@
       "array": [
         0,
         0,
-        431.28065108465046,
+        515.5692798373578,
         0,
         0,
         0,
@@ -376,7 +376,7 @@
       "array": [
         0,
         0,
-        431.28065108465046,
+        515.5692798373578,
         0,
         0,
         0,
@@ -474,7 +474,7 @@
       "array": [
         0,
         0,
-        431.28065108465046,
+        515.5692798373578,
         0,
         0,
         0,
@@ -3865,9 +3865,9 @@
     },
     "_N$disabledColor": {
       "__type__": "cc.Color",
-      "r": 150,
-      "g": 150,
-      "b": 150,
+      "r": 255,
+      "g": 255,
+      "b": 255,
       "a": 255
     },
     "_N$normalSprite": {
@@ -6073,6 +6073,24 @@
     },
     "unknownPet": {
       "__uuid__": "b89d3afa-5e3b-4e1f-befd-93e0764acda3"
+    },
+    "icon_YiShanJiDi": {
+      "__uuid__": "8d96cad4-5982-4b87-a8f8-f061f39792dd"
+    },
+    "bg_YiShanJiDi": {
+      "__uuid__": "a4d5a516-e018-4384-a3cb-63657586af6f"
+    },
+    "icon_KeChuangXiaoJing": {
+      "__uuid__": "8d96cad4-5982-4b87-a8f8-f061f39792dd"
+    },
+    "bg_KeChuangXiaoJing": {
+      "__uuid__": "a4d5a516-e018-4384-a3cb-63657586af6f"
+    },
+    "icon_GuangJiDianGongChang": {
+      "__uuid__": "8d96cad4-5982-4b87-a8f8-f061f39792dd"
+    },
+    "bg_GuangJiDianGongChang": {
+      "__uuid__": "a4d5a516-e018-4384-a3cb-63657586af6f"
     },
     "_id": "42LBUC48lFnIks4uNcCJ8J"
   },

@@ -5,6 +5,7 @@
  */
 
 const { ccclass, property } = cc._decorator;
+import { BaseCtrlr } from '../../../scripts/BaseCtrlr';
 import { ActPosModel, ActPosType, ExplModel, PAKey, ReputNames } from '../../../scripts/DataModel';
 import { GameData, PADExpl } from '../../../scripts/DataSaved';
 import { ListViewCell } from '../../../scripts/ListViewCell';
@@ -14,6 +15,14 @@ const PosInfoHeight = 500;
 
 @ccclass
 export class PanelPosInfo extends cc.Component {
+    ctrlr: BaseCtrlr = null;
+
+    @property(cc.Sprite)
+    bg: cc.Sprite = null;
+
+    @property(cc.Sprite)
+    icon: cc.Sprite = null;
+
     @property(cc.Node)
     uiScaleNode: cc.Node = null;
 
@@ -45,6 +54,11 @@ export class PanelPosInfo extends cc.Component {
     wildStates: cc.Node[] = [];
 
     setData(actPosModel: ActPosModel, gameData: GameData) {
+        const posId = actPosModel.id;
+
+        this.bg.spriteFrame = this.ctrlr.runningImgMgr['bg_' + posId];
+        this.icon.spriteFrame = this.ctrlr.runningImgMgr['icon_' + posId];
+
         this.posName.string = actPosModel.cnName;
         ListViewCell.rerenderLbl(this.posName);
         this.layout.updateLayout();

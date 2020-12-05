@@ -11,6 +11,9 @@ import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
 export class CellPosMov extends ListViewCell {
+    @property(cc.Sprite)
+    icon: cc.Sprite = null;
+
     @property(cc.Label)
     posNameLbl: cc.Label = null;
 
@@ -38,6 +41,7 @@ export class CellPosMov extends ListViewCell {
         this.movPosModel = movPosModel;
         this.price = price;
 
+        this.icon.spriteFrame = this.ctrlr.runningImgMgr['icon_' + movPosModel.id];
         this.posNameLbl.string = '前往：' + movPosModel.cnName;
         this.priceLbl.string = '花费：' + String(price);
 

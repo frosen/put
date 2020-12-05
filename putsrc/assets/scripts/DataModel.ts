@@ -404,8 +404,8 @@ export class ActPosModel {
 
 export enum ProTtlType {
     purchase = 1,
-    function = 2,
-    pet = 3,
+    pet = 2,
+    function = 3,
     story = 4
 }
 
@@ -413,7 +413,8 @@ export class ProTtlModel {
     id: string;
     cnName: string;
     proTtlType: ProTtlType;
-    subIdx: number;
+    order: number;
     info: string;
-    onBaseSetting?: (pet: Pet2) => void;
+    data?: number;
+    sbstId?: string; // 替代另一个ProTtl
 }

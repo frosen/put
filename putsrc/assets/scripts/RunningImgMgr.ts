@@ -29,6 +29,15 @@ export class RunningImgMgr extends cc.Component {
 
     // pos -----------------------------------------------------------------
 
+    @property(cc.SpriteFrame) icon_YiShanJiDi: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame) bg_YiShanJiDi: cc.SpriteFrame = null;
+
+    @property(cc.SpriteFrame) icon_KeChuangXiaoJing: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame) bg_KeChuangXiaoJing: cc.SpriteFrame = null;
+
+    @property(cc.SpriteFrame) icon_GuangJiDianGongChang: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame) bg_GuangJiDianGongChang: cc.SpriteFrame = null;
+
     // quester -----------------------------------------------------------------
 
     // 检测 -----------------------------------------------------------------
