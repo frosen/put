@@ -41,7 +41,7 @@ export class CellPosMov extends ListViewCell {
         this.movPosModel = movPosModel;
         this.price = price;
 
-        this.icon.spriteFrame = this.ctrlr.runningImgMgr['icon_' + movPosModel.id];
+        this.icon.spriteFrame = this.ctrlr.runningImgMgr[movPosModel.id].icon;
         this.posNameLbl.string = '前往：' + movPosModel.cnName;
         this.priceLbl.string = '花费：' + String(price);
 

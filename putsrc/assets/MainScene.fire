@@ -87,10 +87,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 130
+        "__id__": 133
       },
       {
-        "__id__": 131
+        "__id__": 134
       }
     ],
     "_prefab": null,
@@ -572,7 +572,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 124
+        "__id__": 127
       }
     ],
     "_prefab": null,
@@ -6074,25 +6074,43 @@
     "unknownPet": {
       "__uuid__": "b89d3afa-5e3b-4e1f-befd-93e0764acda3"
     },
-    "icon_YiShanJiDi": {
-      "__uuid__": "8d96cad4-5982-4b87-a8f8-f061f39792dd"
+    "YiShanJiDi": {
+      "__id__": 124
     },
-    "bg_YiShanJiDi": {
-      "__uuid__": "a4d5a516-e018-4384-a3cb-63657586af6f"
+    "KeChuangXiaoJing": {
+      "__id__": 125
     },
-    "icon_KeChuangXiaoJing": {
-      "__uuid__": "8d96cad4-5982-4b87-a8f8-f061f39792dd"
-    },
-    "bg_KeChuangXiaoJing": {
-      "__uuid__": "a4d5a516-e018-4384-a3cb-63657586af6f"
-    },
-    "icon_GuangJiDianGongChang": {
-      "__uuid__": "8d96cad4-5982-4b87-a8f8-f061f39792dd"
-    },
-    "bg_GuangJiDianGongChang": {
-      "__uuid__": "a4d5a516-e018-4384-a3cb-63657586af6f"
+    "GuangJiDianGongChang": {
+      "__id__": 126
     },
     "_id": "42LBUC48lFnIks4uNcCJ8J"
+  },
+  {
+    "__type__": "PosImgData",
+    "icon": {
+      "__uuid__": "8d96cad4-5982-4b87-a8f8-f061f39792dd"
+    },
+    "bg": {
+      "__uuid__": "a4d5a516-e018-4384-a3cb-63657586af6f"
+    }
+  },
+  {
+    "__type__": "PosImgData",
+    "icon": {
+      "__uuid__": "8d96cad4-5982-4b87-a8f8-f061f39792dd"
+    },
+    "bg": {
+      "__uuid__": "a4d5a516-e018-4384-a3cb-63657586af6f"
+    }
+  },
+  {
+    "__type__": "PosImgData",
+    "icon": {
+      "__uuid__": "8d96cad4-5982-4b87-a8f8-f061f39792dd"
+    },
+    "bg": {
+      "__uuid__": "a4d5a516-e018-4384-a3cb-63657586af6f"
+    }
   },
   {
     "__type__": "fb129pTaFRDYIDK1iKXvM+l",
@@ -6178,19 +6196,19 @@
       }
     ],
     "actTBData": {
-      "__id__": 125
-    },
-    "msgTBData": {
-      "__id__": 126
-    },
-    "petTBData": {
-      "__id__": 127
-    },
-    "pkgTBData": {
       "__id__": 128
     },
-    "selfTBData": {
+    "msgTBData": {
       "__id__": 129
+    },
+    "petTBData": {
+      "__id__": 130
+    },
+    "pkgTBData": {
+      "__id__": 131
+    },
+    "selfTBData": {
+      "__id__": 132
     },
     "runningImgMgr": {
       "__id__": 123

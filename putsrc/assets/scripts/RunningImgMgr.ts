@@ -6,6 +6,12 @@
 
 const { ccclass, property, executeInEditMode } = cc._decorator;
 
+@ccclass('PosImgData')
+export class PosImgData {
+    @property(cc.SpriteFrame) icon: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame) bg: cc.SpriteFrame = null;
+}
+
 @ccclass
 @executeInEditMode
 export class RunningImgMgr extends cc.Component {
@@ -29,14 +35,9 @@ export class RunningImgMgr extends cc.Component {
 
     // pos -----------------------------------------------------------------
 
-    @property(cc.SpriteFrame) icon_YiShanJiDi: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame) bg_YiShanJiDi: cc.SpriteFrame = null;
-
-    @property(cc.SpriteFrame) icon_KeChuangXiaoJing: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame) bg_KeChuangXiaoJing: cc.SpriteFrame = null;
-
-    @property(cc.SpriteFrame) icon_GuangJiDianGongChang: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame) bg_GuangJiDianGongChang: cc.SpriteFrame = null;
+    @property(PosImgData) YiShanJiDi: PosImgData = null;
+    @property(PosImgData) KeChuangXiaoJing: PosImgData = null;
+    @property(PosImgData) GuangJiDianGongChang: PosImgData = null;
 
     // quester -----------------------------------------------------------------
 

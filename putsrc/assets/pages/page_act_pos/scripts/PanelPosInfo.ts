@@ -56,8 +56,8 @@ export class PanelPosInfo extends cc.Component {
     setData(actPosModel: ActPosModel, gameData: GameData) {
         const posId = actPosModel.id;
 
-        this.bg.spriteFrame = this.ctrlr.runningImgMgr['bg_' + posId];
-        this.icon.spriteFrame = this.ctrlr.runningImgMgr['icon_' + posId];
+        this.bg.spriteFrame = this.ctrlr.runningImgMgr[posId].bg;
+        this.icon.spriteFrame = this.ctrlr.runningImgMgr[posId].icon;
 
         this.posName.string = actPosModel.cnName;
         ListViewCell.rerenderLbl(this.posName);
