@@ -352,7 +352,8 @@ export class EvtData {
 export class GameData {
     roleName: string;
     userData: UserData;
-    proTtlDatas: ProTtlData[];
+
+    proTtlDataDict: { [key: string]: ProTtlData };
 
     pets: Pet[];
     totalPetCount: number; // 一共抓取过的精灵的总量，用于pet的索引

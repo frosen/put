@@ -1081,7 +1081,8 @@ export class GameDataTool {
     static init(gameData: GameData) {
         gameData.roleName = '张涵';
         gameData.userData = null;
-        gameData.proTtlDatas = newList();
+
+        gameData.proTtlDataDict = newDict();
 
         gameData.pets = newList();
         gameData.totalPetCount = 0;
