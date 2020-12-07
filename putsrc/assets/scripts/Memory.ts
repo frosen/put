@@ -97,7 +97,7 @@ function getCheckedNumber(s: number): number {
     return (s * MagicNum) >> 19;
 }
 
-function newList(list = null) {
+function newList(list = null): any[] {
     return new Proxy(list || [], {
         set: function (target, key, value, receiver) {
             memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
@@ -1079,6 +1079,8 @@ export class GameDataTool {
     static SUC: string = 'K';
 
     static init(gameData: GameData) {
+        gameData.roleName = '张涵';
+        gameData.userData = null;
         gameData.proTtlDatas = newList();
 
         gameData.pets = newList();
@@ -1097,6 +1099,10 @@ export class GameDataTool {
         gameData.curExpl = null;
 
         gameData.acceQuestInfos = newList();
+
+        gameData.evtDataDict = newDict();
+        gameData.ongoingEvtIds = newList();
+        gameData.finishedEvtIds = newList();
     }
 
     // -----------------------------------------------------------------

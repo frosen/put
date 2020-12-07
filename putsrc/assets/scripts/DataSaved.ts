@@ -4,6 +4,12 @@
  * luleyan
  */
 
+export class UserData {
+    id: string;
+    phone: number;
+    guildId: string;
+}
+
 export class ProTtlData {
     id: string;
     gainTime: number;
@@ -337,9 +343,15 @@ export class AcceQuestInfo {
     questId: string;
 }
 
+export class EvtData {
+    progress: number;
+}
+
 // -----------------------------------------------------------------
 
 export class GameData {
+    roleName: string;
+    userData: UserData;
     proTtlDatas: ProTtlData[];
 
     pets: Pet[];
@@ -355,4 +367,8 @@ export class GameData {
     curExpl: ExplMmr;
 
     acceQuestInfos: AcceQuestInfo[]; // 已经接受了的quest
+
+    evtDataDict: { [key: string]: EvtData };
+    ongoingEvtIds: string[];
+    finishedEvtIds: string[];
 }

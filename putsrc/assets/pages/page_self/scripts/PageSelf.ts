@@ -10,6 +10,7 @@ import { PageBase } from '../../../scripts/PageBase';
 import { ListView } from '../../../scripts/ListView';
 import { PageActPosLVD } from '../../page_act_pos/scripts/PageActPosLVD';
 import { PanelSelfInfo } from './PanelSelfInfo';
+import { PageSelfLVD } from './PageSelfLVD';
 
 @ccclass
 export class PageSelf extends PageBase {
@@ -17,7 +18,7 @@ export class PageSelf extends PageBase {
 
     @property(ListView)
     listView: ListView = null;
-    lvd: PageActPosLVD = null;
+    lvd: PageSelfLVD = null;
 
     @property(PanelSelfInfo)
     selfInfo: PanelSelfInfo = null;
@@ -26,10 +27,16 @@ export class PageSelf extends PageBase {
         super.onLoad();
         if (CC_EDITOR) return;
 
-        this.lvd = this.listView.delegate as PageActPosLVD;
-        this.listView.node.on('scrolling', this.onScrolling.bind(this));
+        this.lvd = this.listView.delegate as PageSelfLVD;
+        this.lvd.page = this;
 
+        this.listView.node.on('scrolling', this.onScrolling.bind(this));
         this.selfInfo.ctrlr = this.ctrlr;
+    }
+
+    resetListview() {
+        this.lvd.initData();
+        this.listView.resetContent(true);
     }
 
     onScrolling() {

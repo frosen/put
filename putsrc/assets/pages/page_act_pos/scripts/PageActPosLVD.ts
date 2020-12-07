@@ -131,6 +131,11 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.merger]: { cnName: '精灵融合堂', page: PageActMerger }
 };
 
+const INFO = 'i';
+const EVT = 'e';
+const ACT = 'a';
+const MOV = 'm';
+
 @ccclass
 export class PageActPosLVD extends ListViewDelegate {
     @property(cc.Prefab)
@@ -150,9 +155,9 @@ export class PageActPosLVD extends ListViewDelegate {
     curActKeys: string[] = [];
     curMovs: MovModel[] = [];
 
-    evtCellLength: number;
-    actCellLength: number;
-    movCellLength: number;
+    evtCellLen: number;
+    actCellLen: number;
+    movCellLen: number;
 
     initData() {
         const gameData = this.ctrlr.memory.gameData;
@@ -186,43 +191,41 @@ export class PageActPosLVD extends ListViewDelegate {
             } else this.curMovs.push(movModel);
         }
 
-        this.evtCellLength = Math.ceil(this.curEvts.length * 0.5);
-        this.actCellLength = Math.ceil(this.curActKeys.length * 0.5);
-        this.movCellLength = this.curMovs.length;
+        this.evtCellLen = Math.ceil(this.curEvts.length * 0.5);
+        this.actCellLen = Math.ceil(this.curActKeys.length * 0.5);
+        this.movCellLen = this.curMovs.length;
     }
 
     numberOfRows(listView: ListView): number {
-        return 1 + this.evtCellLength + this.actCellLength + this.movCellLength;
+        return 1 + this.evtCellLen + this.actCellLen + this.movCellLen;
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
         if (rowIdx === 0) return 546;
-        else if (rowIdx < this.evtCellLength) return 139;
-        else if (rowIdx === this.evtCellLength) return 179;
-        else if (rowIdx < this.evtCellLength + this.actCellLength) return 139;
-        else if (rowIdx === this.evtCellLength + this.actCellLength) return 179;
+        else if (rowIdx < this.evtCellLen) return 139;
+        else if (rowIdx === this.evtCellLen) return 179;
+        else if (rowIdx < this.evtCellLen + this.actCellLen) return 139;
+        else if (rowIdx === this.evtCellLen + this.actCellLen) return 179;
         else return 154;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        if (rowIdx === 0) return 'posInfo';
-        else if (rowIdx < this.evtCellLength) return 'posBtn';
-        else if (rowIdx === this.evtCellLength) return 'posBtn';
-        else if (rowIdx < this.evtCellLength + this.actCellLength) return 'posBtn';
-        else if (rowIdx === this.evtCellLength + this.actCellLength) return 'posBtn';
-        else return 'posMov';
+        if (rowIdx === 0) return INFO;
+        else if (rowIdx <= this.evtCellLen) return EVT;
+        else if (rowIdx <= this.evtCellLen + this.actCellLen) return ACT;
+        else return MOV;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
         switch (cellId) {
-            case 'posInfo':
+            case INFO:
                 return cc.instantiate(this.infoPrefab).getComponent(ListViewCell);
-            case 'posBtn': {
+            case ACT: {
                 const cell = cc.instantiate(this.btnPrefab).getComponent(CellPosBtn);
                 cell.clickCallback = this.onClickCellPosBtn.bind(this);
                 return cell;
             }
-            case 'posMov': {
+            case MOV: {
                 const cell = cc.instantiate(this.movPrefab).getComponent(CellPosMov);
                 cell.clickCallback = this.onClickCellPosMov.bind(this);
                 return cell;
@@ -232,10 +235,10 @@ export class PageActPosLVD extends ListViewDelegate {
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPosBtn & CellPosMov) {
         if (rowIdx === 0) {
-        } else if (rowIdx <= this.evtCellLength) {
+        } else if (rowIdx <= this.evtCellLen) {
             //
-        } else if (rowIdx <= this.evtCellLength + this.actCellLength) {
-            const actIdx = (rowIdx - 1 - this.evtCellLength) * 2;
+        } else if (rowIdx <= this.evtCellLen + this.actCellLen) {
+            const actIdx = (rowIdx - 1 - this.evtCellLen) * 2;
             const actKey1 = this.curActKeys[actIdx];
             const actInfo1 = CellActInfoDict[actKey1];
             cell.setBtn1(actInfo1);
@@ -246,7 +249,7 @@ export class PageActPosLVD extends ListViewDelegate {
                 cell.setBtn2(actInfo2);
             } else cell.setBtn2(null);
         } else {
-            const movIdx = rowIdx - 1 - this.evtCellLength - this.actCellLength;
+            const movIdx = rowIdx - 1 - this.evtCellLen - this.actCellLen;
 
             const moveType = this.curMovs[movIdx];
             const posId = moveType.id;
