@@ -11,7 +11,7 @@ import { GameData, PADExpl } from '../../../scripts/DataSaved';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { GameDataTool } from '../../../scripts/Memory';
 
-const PosInfoHeight = 500;
+const NavBarHeight = 141;
 
 @ccclass
 export class PanelPosInfo extends cc.Component {
@@ -101,14 +101,15 @@ export class PanelPosInfo extends cc.Component {
     }
 
     onScrolling(y: number) {
-        let realY = y - PosInfoHeight;
+        let realY = y - this.node.height;
         if (realY > 0) realY = 0;
+        else if (realY < -200 - this.node.height) realY = -200 - this.node.height;
         this.node.y = realY;
 
         let rate: number;
-        if (realY < -141) rate = 1;
+        if (realY < -NavBarHeight) rate = 1;
         else if (realY > 0) rate = 0;
-        else rate = realY / -141;
+        else rate = realY / -NavBarHeight;
         this.uiScaleNode.scale = rate * 0.63 + 0.37;
     }
 }
