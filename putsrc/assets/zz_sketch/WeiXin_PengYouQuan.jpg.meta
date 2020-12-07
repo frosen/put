@@ -1,6 +1,6 @@
 {
   "ver": "2.3.5",
-  "uuid": "8331a4d8-859d-4d27-9f99-2672d4a6039a",
+  "uuid": "b3796ea8-5b52-4830-8b5d-92519553e26f",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -8,13 +8,13 @@
   "genMipmaps": false,
   "packable": true,
   "width": 1080,
-  "height": 1920,
+  "height": 2340,
   "platformSettings": {},
   "subMetas": {
-    "IMG_3B959FBFB419-1": {
+    "WeiXin_PengYouQuan": {
       "ver": "1.0.4",
-      "uuid": "e24ed3e5-e874-45b5-b362-d13309118d18",
-      "rawTextureUuid": "8331a4d8-859d-4d27-9f99-2672d4a6039a",
+      "uuid": "82045c79-4e43-42a9-b3d9-f9263df86ae5",
+      "rawTextureUuid": "b3796ea8-5b52-4830-8b5d-92519553e26f",
       "trimType": "custom",
       "trimThreshold": 1,
       "rotated": false,
@@ -23,9 +23,9 @@
       "trimX": 0,
       "trimY": 0,
       "width": 1080,
-      "height": 1920,
+      "height": 2340,
       "rawWidth": 1080,
-      "rawHeight": 1920,
+      "rawHeight": 2340,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,

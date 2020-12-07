@@ -1,6 +1,6 @@
 {
   "ver": "2.3.5",
-  "uuid": "99820f16-fec2-4067-b209-bcc4cc58bc5d",
+  "uuid": "83a14457-cd36-4082-aecb-c054725aebb4",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,10 +11,10 @@
   "height": 1920,
   "platformSettings": {},
   "subMetas": {
-    "test_0533": {
+    "XiuZhen_ZhuangTai": {
       "ver": "1.0.4",
-      "uuid": "43c7e938-9620-4b77-a2cd-a33834d06417",
-      "rawTextureUuid": "99820f16-fec2-4067-b209-bcc4cc58bc5d",
+      "uuid": "4e31a857-5bc6-4af7-bd13-5fa8baed9d28",
+      "rawTextureUuid": "83a14457-cd36-4082-aecb-c054725aebb4",
       "trimType": "custom",
       "trimThreshold": 1,
       "rotated": false,

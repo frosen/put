@@ -1,6 +1,6 @@
 {
   "ver": "2.3.5",
-  "uuid": "ead4d8da-8df9-407c-9299-cb4e382092c1",
+  "uuid": "89cfce91-ddd1-453e-913c-7029add38064",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -8,13 +8,13 @@
   "genMipmaps": false,
   "packable": true,
   "width": 1080,
-  "height": 2340,
+  "height": 1921,
   "platformSettings": {},
   "subMetas": {
-    "Screenshot_20201126_151334_com.tencent.gamehelper": {
+    "JingDong_GouWuChe": {
       "ver": "1.0.4",
-      "uuid": "c4293107-1489-41c2-bc9a-e9f05cbf35ea",
-      "rawTextureUuid": "ead4d8da-8df9-407c-9299-cb4e382092c1",
+      "uuid": "9a5f8b2d-f887-4665-ad9a-4f4f91d0cb25",
+      "rawTextureUuid": "89cfce91-ddd1-453e-913c-7029add38064",
       "trimType": "custom",
       "trimThreshold": 1,
       "rotated": false,
@@ -23,9 +23,9 @@
       "trimX": 0,
       "trimY": 0,
       "width": 1080,
-      "height": 2340,
+      "height": 1921,
       "rawWidth": 1080,
-      "rawHeight": 2340,
+      "rawHeight": 1921,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,

@@ -1,6 +1,6 @@
 {
   "ver": "2.3.5",
-  "uuid": "539374e7-8cc0-4a8f-8eb9-e4968067e985",
+  "uuid": "8331a4d8-859d-4d27-9f99-2672d4a6039a",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -8,13 +8,13 @@
   "genMipmaps": false,
   "packable": true,
   "width": 1080,
-  "height": 2340,
+  "height": 1920,
   "platformSettings": {},
   "subMetas": {
-    "Screenshot_20201126_151218_com.anzogame.lol": {
+    "MeiTuan": {
       "ver": "1.0.4",
-      "uuid": "f24a3bf8-0768-47a9-bef3-c4542aeb9e4c",
-      "rawTextureUuid": "539374e7-8cc0-4a8f-8eb9-e4968067e985",
+      "uuid": "e24ed3e5-e874-45b5-b362-d13309118d18",
+      "rawTextureUuid": "8331a4d8-859d-4d27-9f99-2672d4a6039a",
       "trimType": "custom",
       "trimThreshold": 1,
       "rotated": false,
@@ -23,9 +23,9 @@
       "trimX": 0,
       "trimY": 0,
       "width": 1080,
-      "height": 2340,
+      "height": 1920,
       "rawWidth": 1080,
-      "rawHeight": 2340,
+      "rawHeight": 1920,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,
