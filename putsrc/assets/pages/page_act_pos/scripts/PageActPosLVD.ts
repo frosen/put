@@ -196,27 +196,21 @@ export class PageActPosLVD extends ListViewDelegate {
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
-        if (rowIdx === 0) {
-            return 546;
-        } else if (rowIdx === this.evtCellLength) {
-            return 179;
-        } else if (rowIdx === this.evtCellLength + this.actCellLength) {
-            return 179;
-        } else if (rowIdx < this.evtCellLength + this.actCellLength) {
-            return 139;
-        } else {
-            return 156;
-        }
+        if (rowIdx === 0) return 546;
+        else if (rowIdx < this.evtCellLength) return 139;
+        else if (rowIdx === this.evtCellLength) return 179;
+        else if (rowIdx < this.evtCellLength + this.actCellLength) return 139;
+        else if (rowIdx === this.evtCellLength + this.actCellLength) return 179;
+        else return 154;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        if (rowIdx === 0) {
-            return 'posInfo';
-        } else if (rowIdx <= this.evtCellLength + this.actCellLength) {
-            return 'posBtn';
-        } else {
-            return 'posMov';
-        }
+        if (rowIdx === 0) return 'posInfo';
+        else if (rowIdx < this.evtCellLength) return 'posBtn';
+        else if (rowIdx === this.evtCellLength) return 'posBtn';
+        else if (rowIdx < this.evtCellLength + this.actCellLength) return 'posBtn';
+        else if (rowIdx === this.evtCellLength + this.actCellLength) return 'posBtn';
+        else return 'posMov';
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {

@@ -162,39 +162,40 @@ export class PagePetDetailLVD extends ListViewDelegate {
 
     heightForRow(listView: ListView, rowIdx: number): number {
         // 第一组
-        if (rowIdx === 0) return 296;
-        else if (rowIdx === 1 || rowIdx === 2) return 106;
+        if (rowIdx === 0) return 294;
+        else if (rowIdx === 1 || rowIdx === 2) return 104;
         else if (rowIdx === 3) return 126;
         // 第二组
-        else if (rowIdx === 4) return 66;
-        else if (rowIdx === 5) return 106;
+        else if (rowIdx === 4) return 64;
+        else if (rowIdx === 5) return 104;
         else if (rowIdx === 6) return 126;
         // 第三组
-        else if (rowIdx === 7) return 66;
-        else if (rowIdx === 8 || rowIdx === 9) return 106;
+        else if (rowIdx === 7) return 64;
+        else if (rowIdx === 8 || rowIdx === 9) return 104;
         else if (rowIdx === 10) return 126;
         // 第四组
-        else if (rowIdx === 11) return 66;
-        else if (rowIdx === 12) return 106;
+        else if (rowIdx === 11) return 64;
+        else if (rowIdx === 12) return 104;
         else if (rowIdx === 13) return 126;
         // 第五组
-        else if (rowIdx === 14) return 66;
-        else if (rowIdx === 15) return 106;
+        else if (rowIdx === 14) return 64;
+        else if (rowIdx === 15) return 104;
         else if (rowIdx === 16) return 126;
         // 第六组
-        else if (rowIdx === 17) return 66;
+        else if (rowIdx === 17) return 64;
         else if (rowIdx === 18 || rowIdx === 19) return 160;
-        else if (rowIdx === 20) return 180;
+        else if (rowIdx === 20) return 182;
         // 第七组
-        else if (rowIdx === 21) return 66;
+        else if (rowIdx === 21) return 64;
         else if (rowIdx < 21 + this.skillLen) return 160;
-        else if (rowIdx === 21 + this.skillLen) return 180;
+        else if (rowIdx === 21 + this.skillLen) return 182;
         // 第八组
-        else if (rowIdx === 21 + this.skillLen + 1) return 66;
-        else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen) return 160;
+        else if (rowIdx === 21 + this.skillLen + 1) return 64;
+        else if (rowIdx < 21 + this.skillLen + 1 + this.featureLen) return 160;
+        else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen) return 182;
         // 第九组
-        else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) return 66;
-        else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) return 106;
+        else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) return 64;
+        else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) return 104;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
