@@ -225,11 +225,14 @@ export class EquipModel {
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
-type CondFunc = (gd: GameData) => boolean;
+export class UseCond {
+    evtId: string;
+    progress: number;
+}
 
 export class EvtModel {
     id: string;
-    condFunc?: CondFunc;
+    useCond?: UseCond;
 }
 
 // -----------------------------------------------------------------
@@ -247,7 +250,7 @@ export class PAKey {
 }
 
 export abstract class PAModel {
-    condFunc?: CondFunc;
+    useCond?: UseCond;
 }
 
 // -----------------------------------------------------------------
@@ -378,7 +381,7 @@ type AllPAModel = ExplModel | ShopModel | EqpMktModel | PetMktModel | WorkModel 
 export class MovModel {
     id: string;
     price: number;
-    condFunc?: CondFunc;
+    useCond?: UseCond;
 }
 
 // -----------------------------------------------------------------

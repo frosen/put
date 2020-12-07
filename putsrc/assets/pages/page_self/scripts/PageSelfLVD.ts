@@ -12,6 +12,8 @@ import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
 
 @ccclass
 export class PageSelfLVD extends ListViewDelegate {
+    initData() {}
+
     numberOfRows(listView: ListView): number {
         return 0;
     }

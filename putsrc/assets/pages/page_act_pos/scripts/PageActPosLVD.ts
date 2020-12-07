@@ -166,23 +166,23 @@ export class PageActPosLVD extends ListViewDelegate {
 
         for (let index = 0; index < this.curActPosModel.evts.length; index++) {
             const evtModel = this.curActPosModel.evts[index];
-            if (evtModel && evtModel.hasOwnProperty('condFunc')) {
-                if (evtModel.condFunc(gameData)) this.curEvts.push(evtModel);
+            if (evtModel && evtModel.hasOwnProperty('useCond')) {
+                // if (evtModel.condFunc(gameData)) this.curEvts.push(evtModel);
             } else this.curEvts.push(evtModel);
         }
 
         for (const pakey in this.curActPosModel.actMDict) {
             if (!this.curActPosModel.actMDict.hasOwnProperty(pakey)) continue;
             const actModel = this.curActPosModel.actMDict[pakey];
-            if (actModel && actModel.hasOwnProperty('condFunc')) {
-                if (actModel.condFunc(gameData)) this.curActKeys.push(pakey);
+            if (actModel && actModel.hasOwnProperty('useCond')) {
+                // if (actModel.condFunc(gameData)) this.curActKeys.push(pakey);
             } else this.curActKeys.push(pakey);
         }
 
         for (let index = 0; index < this.curActPosModel.movs.length; index++) {
             const movModel = this.curActPosModel.movs[index];
-            if (movModel && movModel.hasOwnProperty('condFunc')) {
-                if (movModel.condFunc(gameData)) this.curMovs.push(movModel);
+            if (movModel && movModel.hasOwnProperty('useCond')) {
+                // if (movModel.condFunc(gameData)) this.curMovs.push(movModel);
             } else this.curMovs.push(movModel);
         }
 
