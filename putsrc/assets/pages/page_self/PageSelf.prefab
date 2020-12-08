@@ -908,6 +908,22 @@
       "__id__": 1
     },
     "_enabled": true,
+    "infoPrefab": {
+      "__uuid__": "7474a7a6-c6e9-41bd-baf3-146923f08311"
+    },
+    "btnPrefab": {
+      "__uuid__": "6f1043f0-08a6-4492-879a-28fd32553e31"
+    },
+    "titlePrefab": {
+      "__uuid__": "83f672e1-42ff-4268-9693-0760c8abcaa7"
+    },
+    "ttlPrefab": {
+      "__uuid__": "ef71dd1c-6706-415b-88b5-7a2a6ff36dcc"
+    },
+    "questPrefab": {
+      "__uuid__": "9bf30230-bd54-46f2-bc63-1bb67df574a1"
+    },
+    "evtPrefab": null,
     "_id": ""
   },
   {
