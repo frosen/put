@@ -7,6 +7,9 @@
 const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { PageSelf } from '../../../scripts/PageSelf';
 
 @ccclass
-export class CellSelfBtn extends ListViewCell {}
+export class CellSelfBtn extends ListViewCell {
+    page: PageSelf;
+}

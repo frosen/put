@@ -7,9 +7,15 @@
 const { ccclass, property } = cc._decorator;
 
 import { proTtlModelDict } from '../../../configs/ProTtlModelDict';
+import { questModelDict } from '../../../configs/QuestModelDict';
+import { PAKey } from '../../../scripts/DataModel';
+import { PADQuester, Quest } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { CellQuest } from '../../page_act_quester/cells/cell_quest/scripts/CellQuest';
+import { CellTitle } from '../../page_pet_detail/cells/cell_title/scripts/CellTitle';
+import { CellSelfBtn } from '../cells/cell_self_btn/scripts/CellSelfBtn';
 import { PageSelf } from './PageSelf';
 
 const INFO = 'i';
@@ -97,9 +103,51 @@ export class PageSelfLVD extends ListViewDelegate {
         else return EVT;
     }
 
-    createCellForRow(listView: ListView, rowIdx: number): ListViewCell {
-        return null;
+    createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
+        switch (cellId) {
+            case INFO:
+                return cc.instantiate(this.infoPrefab).getComponent(ListViewCell);
+            case BTN:
+                const cell = cc.instantiate(this.btnPrefab).getComponent(CellSelfBtn);
+                cell.page = this.page;
+                return cell;
+            case TITLE:
+                return cc.instantiate(this.titlePrefab).getComponent(ListViewCell);
+            case TTL:
+                return cc.instantiate(this.ttlPrefab).getComponent(ListViewCell);
+            case QUEST: {
+                const cell: CellQuest = cc.instantiate(this.questPrefab).getComponent(CellQuest);
+                cell.clickCallback = this.page.onClickQuest.bind(this.page);
+                cell.funcBtn.node.opacity = 0;
+                cell.funcBtn.interactable = false;
+                return cell;
+            }
+            case EVT: {
+                const cell = cc.instantiate(this.evtPrefab).getComponent(ListViewCell);
+                return cell;
+            }
+        }
     }
 
-    setCellForRow(listView: ListView, rowIdx: number, cell: any) {}
+    setCellForRow(listView: ListView, rowIdx: number, cell: CellQuest & CellTitle) {
+        if (rowIdx === 0) {
+        } else if (rowIdx === 1) {
+        } else if (rowIdx === 2) {
+            cell.setData(`个人称号（${this.ttlCellLen}）`);
+        } else if (rowIdx <= 2 + this.ttlCellLen) {
+        } else if (rowIdx === 3 + this.ttlCellLen) {
+            cell.setData(`当前任务（${this.ttlCellLen}）`);
+        } else if (rowIdx <= 3 + this.ttlCellLen + this.questCellLen) {
+            const idx = rowIdx - 3 - this.ttlCellLen - 1;
+            const questInfo = this.ctrlr.memory.gameData.acceQuestInfos[idx];
+            const questModel = questModelDict[questInfo.questId];
+            const posData = this.ctrlr.memory.gameData.posDataDict[questInfo.posId];
+            const quests = (posData.actDict[PAKey.quester] as PADQuester).quests;
+            const quest = quests.find((value: Quest) => value.id === questModel.id);
+            cell.setData(questModel, quest, questInfo);
+        } else if (rowIdx === 4 + this.ttlCellLen + this.questCellLen) {
+            cell.setData(`事件经历（${this.ttlCellLen}）`);
+        } else {
+        }
+    }
 }

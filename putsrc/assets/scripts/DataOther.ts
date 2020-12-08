@@ -330,11 +330,8 @@ export class BattlePet {
         if (skillModel.skillType === SkillType.ultimate) return 0;
         const petModel = petModelDict[pet.id];
 
-        let realRate = 1.0;
-        if (petModel.eleType === skillModel.eleType) realRate -= 0.1;
-        if (petModel.battleType === skillModel.spBattleType) realRate -= 0.1;
-
-        return Math.floor(skillModel.mp * realRate);
+        if (petModel.eleType === skillModel.eleType) return Math.floor(skillModel.mp * 0.9);
+        else return skillModel.mp;
     }
 
     initPosition(idx: number, fromationIdx: number, beEnemy: boolean) {
