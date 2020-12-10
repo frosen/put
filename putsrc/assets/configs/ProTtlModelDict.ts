@@ -40,7 +40,7 @@ const ProTtlModelDict: { [key: string]: ProTtlModel } = {
         cnName: '精灵王',
         proTtlType: ProTtlType.purchase,
         order: 5,
-        info: '精灵持有上限增加3格'
+        info: '精灵持有上限增加3格；可以给精灵起更多字的名字'
     },
     [PTKey.LingXiu]: {
         id: PTKey.LingXiu,
@@ -54,8 +54,7 @@ const ProTtlModelDict: { [key: string]: ProTtlModel } = {
         cnName: '暗黑客',
         proTtlType: ProTtlType.purchase,
         order: 7,
-        info:
-            '可与暗系精灵产生默契（否则使用暗系精灵时默契值不成长）；可以给装备增加第四个词缀；夜里探索时降低被非黑暗客看到的几率；拍卖加密没有限制'
+        info: '可与暗系精灵产生默契；可以给装备增加额外词缀；夜里探索时降低被非黑暗客看到的几率；拍卖加密没有限制'
     }
 };
 

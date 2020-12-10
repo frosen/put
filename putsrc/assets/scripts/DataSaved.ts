@@ -161,6 +161,9 @@ export class Pet {
 
     /** 融合 */
     merges: Merge[];
+
+    /** 解绑次数 */
+    unbindCnt: number;
 }
 
 // -----------------------------------------------------------------
@@ -234,9 +237,13 @@ export class Equip extends Item {
     selfFeatureLvs: number[];
 
     affixes: Feature[];
-    learnTimes: number;
+    /** 锻造次数，锻造增加affixes，但次数有限 */
+    forgeCnt: number;
 
     catchIdx: number;
+
+    /** 解绑次数 */
+    unbindCnt: number;
 }
 
 export class CaughtPet extends Item {

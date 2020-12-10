@@ -777,7 +777,7 @@ export class EquipTool {
         growth: number,
         featureLvs: number[],
         affixes: Feature[],
-        learnTimes: number
+        forgeCnt: number
     ): Equip {
         const equip = newInsWithChecker(Equip);
 
@@ -788,7 +788,7 @@ export class EquipTool {
         for (const lv of featureLvs) equip.selfFeatureLvs.push(lv);
         equip.affixes = newList();
         for (const feature of affixes) equip.affixes.push(FeatureTool.clone(feature));
-        equip.learnTimes = learnTimes;
+        equip.forgeCnt = forgeCnt;
 
         return equip;
     }
