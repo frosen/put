@@ -33,14 +33,14 @@ const ProTtlModelDict: { [key: string]: ProTtlModel } = {
         cnName: '记忆大师',
         proTtlType: ProTtlType.purchase,
         order: 4,
-        info: '直接获得10颗[永恒记忆碎片]，之后每周获得2颗，持有上限为10颗，[永恒记忆碎片]可解除装备或精灵的绑定'
+        info: '直接获得10颗[永恒记忆碎片]，之后每周获得2颗直到拥有10颗；[永恒记忆碎片]可用于解除绑定和更改名称'
     },
     [PTKey.JingLingWang]: {
         id: PTKey.JingLingWang,
         cnName: '精灵王',
         proTtlType: ProTtlType.purchase,
         order: 5,
-        info: '精灵持有上限增加3格；可以给精灵起更多字的名字'
+        info: '精灵持有上限增加3格；可以给精灵起更多字的名字；精灵战斗后再额外获得15%的经验'
     },
     [PTKey.LingXiu]: {
         id: PTKey.LingXiu,
