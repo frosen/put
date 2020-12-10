@@ -8,43 +8,50 @@ const { ccclass, property } = cc._decorator;
 import { BaseCtrlr } from '../../../scripts/BaseCtrlr';
 import { GameData } from '../../../scripts/DataSaved';
 
-const NavBarHeight = 141;
+const H1 = 384.0;
+const H2 = 280.0;
 
 @ccclass
 export class PanelSelfInfo extends cc.Component {
     ctrlr: BaseCtrlr = null;
 
     @property(cc.Node)
-    uiScaleNode: cc.Node = null;
+    uiMoveNode: cc.Node = null;
 
     @property(cc.Node)
-    uiOpacityNode: cc.Node = null;
+    uiScaleNode: cc.Node = null;
 
     @property(cc.Sprite)
     icon: cc.Sprite = null;
 
     @property(cc.Label)
-    selfName: cc.Label = null;
+    roleName: cc.Label = null;
 
     @property(cc.Label)
-    guildName: cc.Label = null;
+    userInfo: cc.Label = null;
 
     setData(gameData: GameData) {
-        this.selfName.string = gameData.roleName;
+        this.roleName.string = gameData.roleName;
     }
 
     onScrolling(y: number) {
         let realY = y - this.node.height;
-        // cc.log('STORM cc ^_^ y ', y, realY);
         if (realY > 0) realY = 0;
         else if (realY < -200 - this.node.height) realY = -200 - this.node.height;
         this.node.y = realY;
-        // cc.log('STORM cc ^_^ yyyy ', realY);
 
+        this.uiScaleNode.scale = this.getRate(realY, -384.0, -280.0) * 0.53 + 0.47;
+        this.uiMoveNode.y = this.getRate(realY, -280.0, 0) * 280;
+
+        // this.roleName.node.opacity = Math.ceil(this.getRate(realY, -345.0, -245.0) * 255);
+        // this.userInfo.node.opacity = Math.ceil(this.getRate(realY, -200.0, -110.0) * 255);
+    }
+
+    getRate(cur: number, n1: number, n2: number): number {
         let rate: number;
-        if (realY < -NavBarHeight) rate = 1;
-        else if (realY > 0) rate = 0;
-        else rate = realY / -NavBarHeight;
-        this.uiScaleNode.scale = rate * 0.63 + 0.37;
+        if (cur < n1) rate = 1;
+        else if (cur > n2) rate = 0;
+        else rate = (cur - n2) / (n1 - n2);
+        return rate;
     }
 }

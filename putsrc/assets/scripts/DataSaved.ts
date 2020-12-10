@@ -11,7 +11,6 @@ export class UserData {
 }
 
 export class ProTtlData {
-    id: string;
     gainTime: number;
 }
 

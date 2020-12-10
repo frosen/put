@@ -334,6 +334,23 @@ export class Memory {
 
     test() {
         this.gameData.curPosId = 'KeChuangXiaoJing';
+        this.gameData.proTtlDataDict = {
+            ShouCangJia: {
+                gainTime: 1
+            },
+            XueBa: {
+                gainTime: 1
+            },
+            KongJianGuiHuaShi: {
+                gainTime: 1
+            },
+            JiYiDaShi: {
+                gainTime: 1
+            },
+            JingLingWang: {
+                gainTime: 1
+            }
+        };
 
         let pet = PetTool.createWithRandomFeature('FaTiaoWa', 30);
         GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
