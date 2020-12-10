@@ -10,8 +10,20 @@ export class UserData {
     guildId: string;
 }
 
-export class ProTtlData {
+export class ProTtl {
     gainTime: number;
+}
+
+/** 成就状态 */
+export enum AchvSt {
+    /** 未获得 */
+    none,
+    /** 获得第一个 */
+    gain1,
+    /** 获得第二个 */
+    gain2,
+    /** 获得第一个和第二个 */
+    gain1And2
 }
 
 // -----------------------------------------------------------------
@@ -342,7 +354,7 @@ export class AcceQuestInfo {
     questId: string;
 }
 
-export class EvtData {
+export class Evt {
     progress: number;
 }
 
@@ -352,7 +364,9 @@ export class GameData {
     roleName: string;
     userData: UserData;
 
-    proTtlDataDict: { [key: string]: ProTtlData };
+    proTtlDict: { [key: string]: ProTtl };
+
+    achvSts: AchvSt[];
 
     pets: Pet[];
     totalPetCount: number; // 一共抓取过的精灵的总量，用于pet的索引
@@ -368,7 +382,7 @@ export class GameData {
 
     acceQuestInfos: AcceQuestInfo[]; // 已经接受了的quest
 
-    evtDataDict: { [key: string]: EvtData };
+    evtDict: { [key: string]: Evt };
     ongoingEvtIds: string[];
     finishedEvtIds: string[];
 }

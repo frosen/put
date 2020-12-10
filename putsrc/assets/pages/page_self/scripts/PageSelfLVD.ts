@@ -57,7 +57,7 @@ export class PageSelfLVD extends ListViewDelegate {
     initData() {
         const gameData = this.ctrlr.memory.gameData;
 
-        this.ttlIds = Object.keys(gameData.proTtlDataDict);
+        this.ttlIds = Object.keys(gameData.proTtlDict);
         this.ttlIds.sort((a: string, b: string) => {
             const aModel = proTtlModelDict[a];
             const bModel = proTtlModelDict[b];
@@ -68,7 +68,7 @@ export class PageSelfLVD extends ListViewDelegate {
             const diff2 = aModel.order - bModel.order;
             if (diff2 !== 0) return diff2;
 
-            return gameData.proTtlDataDict[b].gainTime - gameData.proTtlDataDict[a].gainTime;
+            return gameData.proTtlDict[b].gainTime - gameData.proTtlDict[a].gainTime;
         });
 
         this.ttlCellLen = this.ttlIds.length;

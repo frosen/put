@@ -334,7 +334,7 @@ export class Memory {
 
     test() {
         this.gameData.curPosId = 'KeChuangXiaoJing';
-        this.gameData.proTtlDataDict = {
+        this.gameData.proTtlDict = {
             ShouCangJia: {
                 gainTime: 1
             },
@@ -1099,7 +1099,9 @@ export class GameDataTool {
         gameData.roleName = '张涵';
         gameData.userData = null;
 
-        gameData.proTtlDataDict = newDict();
+        gameData.proTtlDict = newDict();
+
+        gameData.achvSts = newList();
 
         gameData.pets = newList();
         gameData.totalPetCount = 0;
@@ -1118,7 +1120,7 @@ export class GameDataTool {
 
         gameData.acceQuestInfos = newList();
 
-        gameData.evtDataDict = newDict();
+        gameData.evtDict = newDict();
         gameData.ongoingEvtIds = newList();
         gameData.finishedEvtIds = newList();
     }

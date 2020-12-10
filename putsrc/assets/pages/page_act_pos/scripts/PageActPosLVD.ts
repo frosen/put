@@ -142,6 +142,9 @@ export class PageActPosLVD extends ListViewDelegate {
     infoPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
+    evtPrefab: cc.Prefab = null;
+
+    @property(cc.Prefab)
     btnPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
@@ -202,10 +205,10 @@ export class PageActPosLVD extends ListViewDelegate {
 
     heightForRow(listView: ListView, rowIdx: number): number {
         if (rowIdx === 0) return 546;
-        else if (rowIdx < this.evtCellLen) return 139;
-        else if (rowIdx === this.evtCellLen) return 179;
+        else if (rowIdx < this.evtCellLen) return 204;
+        else if (rowIdx === this.evtCellLen) return 226;
         else if (rowIdx < this.evtCellLen + this.actCellLen) return 139;
-        else if (rowIdx === this.evtCellLen + this.actCellLen) return 179;
+        else if (rowIdx === this.evtCellLen + this.actCellLen) return 181;
         else return 154;
     }
 
@@ -220,6 +223,8 @@ export class PageActPosLVD extends ListViewDelegate {
         switch (cellId) {
             case INFO:
                 return cc.instantiate(this.infoPrefab).getComponent(ListViewCell);
+            case EVT:
+                return cc.instantiate(this.evtPrefab).getComponent(ListViewCell);
             case ACT: {
                 const cell = cc.instantiate(this.btnPrefab).getComponent(CellPosBtn);
                 cell.clickCallback = this.onClickCellPosBtn.bind(this);

@@ -923,7 +923,9 @@
     "questPrefab": {
       "__uuid__": "9bf30230-bd54-46f2-bc63-1bb67df574a1"
     },
-    "evtPrefab": null,
+    "evtPrefab": {
+      "__uuid__": "ad4b36f2-1c66-42ef-b993-0761bd2f437b"
+    },
     "_id": ""
   },
   {
