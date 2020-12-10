@@ -12,6 +12,7 @@ import { GameDataTool, PetTool } from '../../../../../scripts/Memory';
 import { PageBase } from '../../../../../scripts/PageBase';
 import { sensitiveWords } from '../../../../../configs/SensitiveWords';
 import { CellPet } from '../../../../page_pet/cells/cell_pet/scripts/CellPet';
+import { PTKey } from '../../../../../scripts/DataModel';
 
 @ccclass
 export class CellPetName extends ListViewCell {
@@ -86,8 +87,9 @@ export class CellPetName extends ListViewCell {
         if (this.checkedStrDict.hasOwnProperty(str)) return true;
 
         const gameData = this.ctrlr.memory.gameData;
-        if (str.length > GameDataTool.getPetNameLenMax(gameData)) {
-            this.ctrlr.popToast('修改名称失败\n一般名字最多2个字符\n特殊情况最多4个字符');
+        const charMax = GameDataTool.hasProTtl(gameData, PTKey.JingLingWang) ? 4 : 2;
+        if (str.length > charMax) {
+            this.ctrlr.popToast('修改名称失败\n一般名字最多2个字符\n成为精灵王后最多4个字符');
             return false;
         }
 

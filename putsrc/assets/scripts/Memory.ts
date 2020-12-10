@@ -47,7 +47,8 @@ import {
     Item,
     Merge,
     Book,
-    Special
+    Special,
+    EleType
 } from './DataSaved';
 import {
     FeatureModel,
@@ -59,7 +60,8 @@ import {
     ReputRank,
     QuestType,
     QuestModel,
-    AmplAttriType
+    AmplAttriType,
+    PTKey
 } from './DataModel';
 import { equipModelDict } from '../configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
@@ -310,22 +312,33 @@ export class Memory {
     static updateGameDataReal(gameData: GameData, curTime: number) {
         for (let index = 0; index < gameData.pets.length; index++) {
             const pet = gameData.pets[index];
-            if (pet.prvty < PrvtyMax) {
-                const Range = 10 * 60 * 1000; // 默契值 10min5点
-                if (curTime - pet.prvtyTime > Range) {
-                    const count = Math.floor((curTime - pet.prvtyTime) / Range);
-                    if (pet.state === PetState.ready || pet.state === PetState.rest) {
-                        pet.prvty += Math.floor(500 * GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.prvty) * count);
-                        pet.prvty = Math.min(pet.prvty, PrvtyMax);
-                    }
-                    pet.prvtyTime += Range * count;
-                }
-            }
+            this.updatePetPrvty(gameData, pet, curTime);
+            this.updatePetDrink(gameData, pet, index, curTime);
+        }
+    }
 
-            if (pet.drinkId) {
-                if (curTime - pet.drinkTime >= drinkModelDict[pet.drinkId].dura) {
-                    GameDataTool.clearDrinkFromPet(gameData, index);
-                }
+    static updatePetPrvty(gameData: GameData, pet: Pet, curTime: number) {
+        if (pet.prvty >= PrvtyMax) return;
+
+        const Interval = 10 * 60 * 1000; // 默契值 10min5点
+        const diff = curTime - pet.prvtyTime;
+        if (diff < Interval) return;
+
+        const count = Math.floor(diff / Interval);
+        pet.prvtyTime += Interval * count;
+
+        if (petModelDict[pet.id].eleType === EleType.dark && !GameDataTool.hasProTtl(gameData, PTKey.AnHeiKe)) {
+            return; // 非暗黑客不能培养dark精灵
+        }
+
+        pet.prvty += Math.floor(500 * GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.prvty) * count);
+        pet.prvty = Math.min(pet.prvty, PrvtyMax);
+    }
+
+    static updatePetDrink(gameData: GameData, pet: Pet, petIdx: number, curTime: number) {
+        if (pet.drinkId) {
+            if (curTime - pet.drinkTime >= drinkModelDict[pet.drinkId].dura) {
+                GameDataTool.clearDrinkFromPet(gameData, petIdx);
             }
         }
     }
@@ -1135,7 +1148,8 @@ export class GameDataTool {
         features: Feature[],
         callback: (pet: Pet) => void = null
     ): string {
-        if (gameData.pets.length >= this.getPetCountMax(gameData)) return '精灵数量到达上限';
+        const countMax = this.hasProTtl(gameData, PTKey.JingLingWang) ? 13 : 10;
+        if (gameData.pets.length >= countMax) return '精灵数量到达上限';
 
         gameData.totalPetCount++;
 
@@ -1297,7 +1311,8 @@ export class GameDataTool {
     // -----------------------------------------------------------------
 
     static checkWeight(gameData: GameData): string {
-        if (gameData.weight >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
+        const countMax = this.hasProTtl(gameData, PTKey.KongJianGuiHuaShi) ? 600 : 300;
+        if (gameData.weight >= countMax) return '道具数量到达最大值';
         return this.SUC;
     }
 
@@ -1626,16 +1641,8 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
-    static getPetCountMax(gameData: GameData) {
-        return 10; // llytodo 根据职称不同而不同
-    }
-
-    static getItemCountMax(gameData: GameData) {
-        return 300; // llytodo 根据职称不同而不同
-    }
-
-    static getPetNameLenMax(gameData: GameData) {
-        return 2;
+    static hasProTtl(gameData: GameData, id: string): boolean {
+        return true;
     }
 
     // -----------------------------------------------------------------

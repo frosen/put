@@ -405,6 +405,16 @@ export class ActPosModel {
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
+export class PTKey {
+    static ShouCangJia = 'ShouCangJia';
+    static XueBa = 'XueBa';
+    static KongJianGuiHuaShi = 'KongJianGuiHuaShi';
+    static JiYiDaShi = 'JiYiDaShi';
+    static JingLingWang = 'JingLingWang';
+    static LingXiu = 'LingXiu';
+    static AnHeiKe = 'AnHeiKe';
+}
+
 export enum ProTtlType {
     purchase = 1,
     pet = 2,
