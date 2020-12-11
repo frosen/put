@@ -5,8 +5,9 @@
  */
 
 const { ccclass, property } = cc._decorator;
+import { PAKey } from '../../../configs/ActPosModelDict';
 import { BaseCtrlr } from '../../../scripts/BaseCtrlr';
-import { ActPosModel, ActPosType, ExplModel, PAKey, ReputNames } from '../../../scripts/DataModel';
+import { ActPosModel, ActPosType, ExplModel, ReputNames } from '../../../scripts/DataModel';
 import { GameData, PADExpl } from '../../../scripts/DataSaved';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { GameDataTool } from '../../../scripts/Memory';

@@ -12,7 +12,7 @@ import { GameDataTool, PetTool } from '../../../../../scripts/Memory';
 import { PageBase } from '../../../../../scripts/PageBase';
 import { sensitiveWords } from '../../../../../configs/SensitiveWords';
 import { CellPet } from '../../../../page_pet/cells/cell_pet/scripts/CellPet';
-import { PTKey } from '../../../../../scripts/DataModel';
+import { PTKey } from '../../../../../configs/ProTtlModelDict';
 
 @ccclass
 export class CellPetName extends ListViewCell {

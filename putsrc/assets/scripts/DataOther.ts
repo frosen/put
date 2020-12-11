@@ -14,7 +14,6 @@ import {
     SkillAimtype,
     ExplModel,
     ActPosModel,
-    PAKey,
     AmplAttriType
 } from './DataModel';
 import {
@@ -38,7 +37,7 @@ import { deepCopy } from './Utils';
 import { buffModelDict } from '../configs/BuffModelDict';
 import { BtlCtrlr } from './BtlCtrlr';
 import { randomRate, getRandomOneInList, normalRandom } from './Random';
-import { actPosModelDict } from '../configs/ActPosModelDict';
+import { actPosModelDict, PAKey } from '../configs/ActPosModelDict';
 import { expModels } from '../configs/ExpModels';
 
 // -----------------------------------------------------------------

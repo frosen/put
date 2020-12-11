@@ -5,7 +5,7 @@
  */
 
 import { petModelDict } from '../configs/PetModelDict';
-import { actPosModelDict } from '../configs/ActPosModelDict';
+import { actPosModelDict, PAKey } from '../configs/ActPosModelDict';
 import { skillModelDict } from '../configs/SkillModelDict';
 import { buffModelDict } from '../configs/BuffModelDict';
 import { featureModelDict } from '../configs/FeatureModelDict';
@@ -13,7 +13,7 @@ import { equipModelDict } from '../configs/EquipModelDict';
 import { drinkModelDict } from '../configs/DrinkModelDict';
 import { catcherModelDict } from '../configs/CatcherModelDict';
 import { eqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
-import { EqpMktModel, ExplModel, PAKey, PetMktModel, ShopModel } from './DataModel';
+import { EqpMktModel, ExplModel, PetMktModel, ShopModel } from './DataModel';
 import { CnsumTool } from './Memory';
 
 function need(ins: any, attris: string[], name: string) {

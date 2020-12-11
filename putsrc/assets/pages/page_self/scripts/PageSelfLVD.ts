@@ -6,9 +6,9 @@
 
 const { ccclass, property } = cc._decorator;
 
+import { PAKey } from '../../../configs/ActPosModelDict';
 import { proTtlModelDict } from '../../../configs/ProTtlModelDict';
 import { questModelDict } from '../../../configs/QuestModelDict';
-import { PAKey } from '../../../scripts/DataModel';
 import { PADQuester, Quest } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';

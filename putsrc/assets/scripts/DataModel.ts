@@ -237,18 +237,6 @@ export class EvtModel {
 
 // -----------------------------------------------------------------
 
-export class PAKey {
-    static expl = 'exploration';
-    static shop = 'shop';
-    static eqpMkt = 'equipMarket';
-    static petMkt = 'petMarket';
-    static work = 'work';
-    static quester = 'quester';
-    static aCntr = 'awardsCenter';
-    static rcclr = 'recycler';
-    static merger = 'merger';
-}
-
 export abstract class PAModel {
     useCond?: UseCond;
 }
@@ -404,16 +392,6 @@ export class ActPosModel {
 
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
-
-export class PTKey {
-    static ShouCangJia = 'ShouCangJia';
-    static XueBa = 'XueBa';
-    static KongJianGuiHuaShi = 'KongJianGuiHuaShi';
-    static JiYiDaShi = 'JiYiDaShi';
-    static JingLingWang = 'JingLingWang';
-    static LingXiu = 'LingXiu';
-    static AnHeiKe = 'AnHeiKe';
-}
 
 export enum ProTtlType {
     purchase = 1,

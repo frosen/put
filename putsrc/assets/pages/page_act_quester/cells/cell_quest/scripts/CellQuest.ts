@@ -16,14 +16,13 @@ import {
     ExplStepNames,
     FightQuestNeed,
     GatherQuestNeed,
-    PAKey,
     QuestModel,
     QuestType,
     SearchQuestNeed,
     StepTypesByMax,
     SupportQuestNeed
 } from '../../../../../scripts/DataModel';
-import { actPosModelDict } from '../../../../../configs/ActPosModelDict';
+import { actPosModelDict, PAKey } from '../../../../../configs/ActPosModelDict';
 import { CellUpdateDisplay } from '../../../../page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
 
 export enum QuestState {

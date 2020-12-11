@@ -12,8 +12,8 @@ import { NavBar } from '../../../scripts/NavBar';
 import { PageActACntrLVD } from './PageActACntrLVD';
 import { ListView } from '../../../scripts/ListView';
 import { Equip, Money, PADACntr } from '../../../scripts/DataSaved';
-import { ACntrModel, PAKey, ReputAwardModel } from '../../../scripts/DataModel';
-import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { ACntrModel, ReputAwardModel } from '../../../scripts/DataModel';
+import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 
 import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
 import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';

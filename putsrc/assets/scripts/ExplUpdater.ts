@@ -22,20 +22,20 @@ import {
     RdcUpdCntForFailByStep
 } from '../scripts/DataSaved';
 import { RealBattle, BattlePet } from './DataOther';
-import { actPosModelDict } from '../configs/ActPosModelDict';
+import { actPosModelDict, PAKey } from '../configs/ActPosModelDict';
 import { randomInt, randomRate, getRandomOneInList, randomAreaInt, random, randomRound, randomAreaByIntRange } from './Random';
 import {
     ExplModel,
     StepTypesByMax,
     ExplStepNames,
     CatcherModel,
-    PAKey,
     QuestType,
     QuestModel,
     FightQuestNeed,
     GatherQuestNeed,
     SearchQuestNeed,
-    AmplAttriType
+    AmplAttriType,
+    PTKey
 } from './DataModel';
 import { catcherModelDict } from '../configs/CatcherModelDict';
 import { petModelDict } from '../configs/PetModelDict';
@@ -497,10 +497,7 @@ export class ExplUpdater {
         expTotal = randomAreaInt(expTotal, 0.05);
 
         const selfPets = GameDataTool.getReadyPets(gameData);
-        for (const pet of selfPets) {
-            const expEach = Math.ceil(expTotal * GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.exp));
-            PetTool.addExp(pet, expEach);
-        }
+        for (const selfPet of selfPets) this.addExpToPet(selfPet, expTotal);
         rztSt.exp += expTotal;
 
         const curStep = curExpl.curStep;
@@ -1175,10 +1172,7 @@ export class ExplUpdater {
 
         for (const selfBPet of rb.selfTeam.pets) {
             const selfPet = selfBPet.pet;
-
-            const curExp = Math.ceil(exp * GameDataTool.getDrinkAmpl(null, selfBPet.pet, AmplAttriType.exp));
-            const curExpPercent = PetTool.addExp(selfPet, curExp);
-
+            const { realExp, curExpPercent } = this.addExpToPet(selfPet, exp);
             const petName = PetTool.getCnName(selfPet);
             if (curExpPercent <= 0) {
                 // 跳过
@@ -1186,9 +1180,18 @@ export class ExplUpdater {
                 this.log(ExplLogType.rich, `${petName}升到了${selfPet.lv}级`);
             } else {
                 const expRate = (curExpPercent * 100).toFixed(2);
-                this.log(ExplLogType.rich, `${petName}获得${curExp}点经验，升级进度完成了${expRate}%`);
+                this.log(ExplLogType.rich, `${petName}获得${realExp}点经验，升级进度完成了${expRate}%`);
             }
         }
+    }
+
+    addExpToPet(pet: Pet, exp: number): { realExp: number; curExpPercent: number } {
+        let ampl = GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.exp);
+        if (GameDataTool.hasProTtl(this.gameData, PTKey.XueBa)) ampl += 0.25;
+        if (GameDataTool.hasProTtl(this.gameData, PTKey.JingLingWang)) ampl += 0.15;
+        const realExp = Math.ceil(exp * ampl);
+        const curExpPercent = PetTool.addExp(pet, realExp);
+        return { realExp, curExpPercent };
     }
 
     static calcExpByLv(selfLv: number, enemyLv: number): number {

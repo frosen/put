@@ -11,11 +11,11 @@ import { PageBase } from '../../../scripts/PageBase';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageActShopLVD } from './PageActShopLVD';
 import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
-import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { ListView } from '../../../scripts/ListView';
 import { CellTransaction } from '../cells/cell_transaction/scripts/CellTransaction';
 import { Money } from '../../../scripts/DataSaved';
-import { CnsumModel, PAKey, ShopModel } from '../../../scripts/DataModel';
+import { CnsumModel, ShopModel } from '../../../scripts/DataModel';
 
 export const ShopCountMax: number = 9999;
 const ShopReputDiscount: number[] = [1, 1, 0.95, 0.9, 0.85, 0.8];

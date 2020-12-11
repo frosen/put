@@ -12,8 +12,8 @@ import { NavBar } from '../../../scripts/NavBar';
 
 import { ListView } from '../../../scripts/ListView';
 import { Money, Equip, PADEqpMkt } from '../../../scripts/DataSaved';
-import { PAKey, ActPosModel, EqpMktModel, ReputRank } from '../../../scripts/DataModel';
-import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { ActPosModel, EqpMktModel, ReputRank } from '../../../scripts/DataModel';
+import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from '../../../scripts/Random';
 import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';

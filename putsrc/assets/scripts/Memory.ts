@@ -56,7 +56,6 @@ import {
     EquipModel,
     DrinkModel,
     CnsumModel,
-    PAKey,
     ReputRank,
     QuestType,
     QuestModel,
@@ -77,6 +76,7 @@ import { eqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
 import { bookModelDict } from '../configs/BookModelDict';
 import { specialModelDict } from '../configs/SpecialModelDict';
 import { materialModelDict } from '../configs/MaterialModelDict';
+import { PAKey } from '../configs/ActPosModelDict';
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = -1;
@@ -1140,6 +1140,10 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
+    static getPetCountMax(gameData: GameData): number {
+        return this.hasProTtl(gameData, PTKey.JingLingWang) ? 13 : 10;
+    }
+
     static addPet(
         gameData: GameData,
         id: string,
@@ -1148,8 +1152,7 @@ export class GameDataTool {
         features: Feature[],
         callback: (pet: Pet) => void = null
     ): string {
-        const countMax = this.hasProTtl(gameData, PTKey.JingLingWang) ? 13 : 10;
-        if (gameData.pets.length >= countMax) return '精灵数量到达上限';
+        if (gameData.pets.length >= this.getPetCountMax(gameData)) return '精灵数量到达上限';
 
         gameData.totalPetCount++;
 
@@ -1310,9 +1313,12 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
+    static getItemCountMax(gameData: GameData) {
+        return this.hasProTtl(gameData, PTKey.KongJianGuiHuaShi) ? 600 : 300;
+    }
+
     static checkWeight(gameData: GameData): string {
-        const countMax = this.hasProTtl(gameData, PTKey.KongJianGuiHuaShi) ? 600 : 300;
-        if (gameData.weight >= countMax) return '道具数量到达最大值';
+        if (gameData.weight >= this.getItemCountMax(gameData)) return '道具数量到达最大值';
         return this.SUC;
     }
 

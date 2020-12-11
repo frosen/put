@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
 import { ListView } from '../../../scripts/ListView';
-import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
@@ -15,7 +15,7 @@ import { PageActPos } from './PageActPos';
 import { PageSwitchAnim, BaseCtrlr } from '../../../scripts/BaseCtrlr';
 import { PageActExpl } from '../../page_act_expl/scripts/PageActExpl';
 import { PosData, PADExpl, PADEqpMkt, PADPetMkt } from '../../../scripts/DataSaved';
-import { ActPosModel, PAKey, StepTypesByMax, ExplStepNames, ExplModel, EvtModel, MovModel } from '../../../scripts/DataModel';
+import { ActPosModel, StepTypesByMax, ExplStepNames, ExplModel, EvtModel, MovModel } from '../../../scripts/DataModel';
 import { GameDataTool } from '../../../scripts/Memory';
 import { PageBase } from '../../../scripts/PageBase';
 import { PageActShop } from '../../page_act_shop/scripts/PageActShop';

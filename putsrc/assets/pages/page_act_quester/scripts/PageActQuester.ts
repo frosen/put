@@ -20,16 +20,8 @@ import {
     QuestDLines,
     QuestDLineType
 } from '../../../scripts/DataSaved';
-import {
-    PAKey,
-    ActPosModel,
-    QuesterModel,
-    QuestModel,
-    QuestType,
-    SupportQuestNeed,
-    AmplAttriType
-} from '../../../scripts/DataModel';
-import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { ActPosModel, QuesterModel, QuestModel, QuestType, SupportQuestNeed, AmplAttriType } from '../../../scripts/DataModel';
+import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { getRandomOneInList, randomInt, randomRate } from '../../../scripts/Random';
 import { PageActQuesterLVD } from './PageActQuesterLVD';
 import { CellQuest, QuestState } from '../cells/cell_quest/scripts/CellQuest';
