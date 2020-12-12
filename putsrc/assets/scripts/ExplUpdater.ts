@@ -19,7 +19,9 @@ import {
     Quest,
     NeedUpdCntByStep,
     EPetMmr,
-    RdcUpdCntForFailByStep
+    RdcUpdCntForFailByStep,
+    BioType,
+    EleType
 } from '../scripts/DataSaved';
 import { RealBattle, BattlePet } from './DataOther';
 import { actPosModelDict, PAKey } from '../configs/ActPosModelDict';
@@ -34,11 +36,11 @@ import {
     FightQuestNeed,
     GatherQuestNeed,
     SearchQuestNeed,
-    AmplAttriType,
-    PTKey
+    AmplAttriType
 } from './DataModel';
 import { catcherModelDict } from '../configs/CatcherModelDict';
 import { petModelDict } from '../configs/PetModelDict';
+import { PTKey } from '../configs/ProTtlModelDict';
 
 export enum ExplState {
     none,
@@ -1186,9 +1188,34 @@ export class ExplUpdater {
     }
 
     addExpToPet(pet: Pet, exp: number): { realExp: number; curExpPercent: number } {
+        const gd = this.gameData;
         let ampl = GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.exp);
-        if (GameDataTool.hasProTtl(this.gameData, PTKey.XueBa)) ampl += 0.25;
-        if (GameDataTool.hasProTtl(this.gameData, PTKey.JingLingWang)) ampl += 0.15;
+        if (GameDataTool.hasProTtl(gd, PTKey.XueBa)) ampl += 0.25;
+        if (GameDataTool.hasProTtl(gd, PTKey.JingLingWang)) ampl += 0.15;
+
+        const model = petModelDict[pet.id];
+        if (model.bioType === BioType.magic) {
+            if (GameDataTool.hasProTtl(gd, PTKey.DaXueSheng)) ampl += 0.05 * gd.proTtlDict[PTKey.DaXueSheng].data;
+        } else if (model.bioType === BioType.mech) {
+            if (GameDataTool.hasProTtl(gd, PTKey.JiXieShi)) ampl += 0.05 * gd.proTtlDict[PTKey.JiXieShi].data;
+        } else if (model.bioType === BioType.nature) {
+            if (GameDataTool.hasProTtl(gd, PTKey.SiYangYuan)) ampl += 0.05 * gd.proTtlDict[PTKey.SiYangYuan].data;
+        }
+
+        if (model.eleType === EleType.fire) {
+            if (GameDataTool.hasProTtl(gd, PTKey.ZongHuoZhe)) ampl += 0.05 * gd.proTtlDict[PTKey.ZongHuoZhe].data;
+        } else if (model.eleType === EleType.water) {
+            if (GameDataTool.hasProTtl(gd, PTKey.YuShuiZhe)) ampl += 0.05 * gd.proTtlDict[PTKey.YuShuiZhe].data;
+        } else if (model.eleType === EleType.air) {
+            if (GameDataTool.hasProTtl(gd, PTKey.KongWuZhe)) ampl += 0.05 * gd.proTtlDict[PTKey.KongWuZhe].data;
+        } else if (model.eleType === EleType.earth) {
+            if (GameDataTool.hasProTtl(gd, PTKey.DiFuZhe)) ampl += 0.05 * gd.proTtlDict[PTKey.DiFuZhe].data;
+        } else if (model.eleType === EleType.light) {
+            if (GameDataTool.hasProTtl(gd, PTKey.GuangShi)) ampl += 0.05 * gd.proTtlDict[PTKey.GuangShi].data;
+        } else if (model.eleType === EleType.dark) {
+            if (GameDataTool.hasProTtl(gd, PTKey.AnShi)) ampl += 0.05 * gd.proTtlDict[PTKey.AnShi].data;
+        }
+
         const realExp = Math.ceil(exp * ampl);
         const curExpPercent = PetTool.addExp(pet, realExp);
         return { realExp, curExpPercent };

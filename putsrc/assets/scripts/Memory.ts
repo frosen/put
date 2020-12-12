@@ -59,8 +59,7 @@ import {
     ReputRank,
     QuestType,
     QuestModel,
-    AmplAttriType,
-    PTKey
+    AmplAttriType
 } from './DataModel';
 import { equipModelDict } from '../configs/EquipModelDict';
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
@@ -77,6 +76,7 @@ import { bookModelDict } from '../configs/BookModelDict';
 import { specialModelDict } from '../configs/SpecialModelDict';
 import { materialModelDict } from '../configs/MaterialModelDict';
 import { PAKey } from '../configs/ActPosModelDict';
+import { PTKey } from '../configs/ProTtlModelDict';
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = -1;
@@ -327,8 +327,8 @@ export class Memory {
         const count = Math.floor(diff / Interval);
         pet.prvtyTime += Interval * count;
 
-        if (petModelDict[pet.id].eleType === EleType.dark && !GameDataTool.hasProTtl(gameData, PTKey.AnHeiKe)) {
-            return; // 非暗黑客不能培养dark精灵
+        if (petModelDict[pet.id].eleType === EleType.dark && !GameDataTool.hasProTtl(gameData, PTKey.YeZhiShen)) {
+            return; // 非夜之神不能培养dark精灵
         }
 
         pet.prvty += Math.floor(500 * GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.prvty) * count);
@@ -1648,7 +1648,7 @@ export class GameDataTool {
     // -----------------------------------------------------------------
 
     static hasProTtl(gameData: GameData, id: string): boolean {
-        return true;
+        return gameData.proTtlDict.hasOwnProperty(id);
     }
 
     // -----------------------------------------------------------------

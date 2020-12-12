@@ -12,6 +12,7 @@ export class UserData {
 
 export class ProTtl {
     gainTime: number;
+    data?: any;
 }
 
 /** 成就状态 */
@@ -37,7 +38,7 @@ export enum BioType {
     unknown
 }
 
-export const BioTypeNames = ['', '人形生物', '魔法生物', '机械生物', '自然生物', '未知生物'];
+export const BioTypeNames = ['', '人形生物', '魔法精灵', '机械精灵', '自然精灵', '未知精灵'];
 export const BioColors = [
     null,
     cc.color(240, 180, 60),

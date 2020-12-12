@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { PAKey } from '../../../configs/ActPosModelDict';
 import { proTtlModelDict } from '../../../configs/ProTtlModelDict';
 import { questModelDict } from '../../../configs/QuestModelDict';
-import { PADQuester, Quest } from '../../../scripts/DataSaved';
+import { GameData, PADQuester, Quest } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
@@ -48,6 +48,8 @@ export class PageSelfLVD extends ListViewDelegate {
     @property(cc.Prefab)
     evtPrefab: cc.Prefab = null;
 
+    gameData: GameData;
+
     ttlIds: string[];
 
     ttlCellLen: number;
@@ -65,8 +67,10 @@ export class PageSelfLVD extends ListViewDelegate {
             const diff1 = aModel.proTtlType - bModel.proTtlType;
             if (diff1 !== 0) return diff1;
 
-            const diff2 = aModel.order - bModel.order;
-            if (diff2 !== 0) return diff2;
+            if (aModel.order && bModel.order) {
+                const diff2 = aModel.order - bModel.order;
+                if (diff2 !== 0) return diff2;
+            }
 
             return gameData.proTtlDict[b].gainTime - gameData.proTtlDict[a].gainTime;
         });
@@ -74,6 +78,7 @@ export class PageSelfLVD extends ListViewDelegate {
         this.ttlCellLen = this.ttlIds.length;
         this.questCellLen = gameData.acceQuestInfos.length;
         this.evtCellLen = Math.ceil((gameData.ongoingEvtIds.length + gameData.finishedEvtIds.length) * 0.5);
+        this.gameData = gameData;
     }
 
     numberOfRows(listView: ListView): number {
@@ -138,15 +143,16 @@ export class PageSelfLVD extends ListViewDelegate {
         } else if (rowIdx <= 2 + this.ttlCellLen) {
             const idx = rowIdx - 2 - 1;
             const ttlId = this.ttlIds[idx];
+            const proTtl = this.gameData.proTtlDict[ttlId];
             const model = proTtlModelDict[ttlId];
-            cell.setData(model);
+            cell.setData(proTtl, model);
         } else if (rowIdx === 3 + this.ttlCellLen) {
             cell.setData(`当前任务（${this.questCellLen}）`);
         } else if (rowIdx <= 3 + this.ttlCellLen + this.questCellLen) {
             const idx = rowIdx - 3 - this.ttlCellLen - 1;
-            const questInfo = this.ctrlr.memory.gameData.acceQuestInfos[idx];
+            const questInfo = this.gameData.acceQuestInfos[idx];
             const questModel = questModelDict[questInfo.questId];
-            const posData = this.ctrlr.memory.gameData.posDataDict[questInfo.posId];
+            const posData = this.gameData.posDataDict[questInfo.posId];
             const quests = (posData.actDict[PAKey.quester] as PADQuester).quests;
             const quest = quests.find((value: Quest) => value.id === questModel.id);
             cell.setData(questModel, quest, questInfo);

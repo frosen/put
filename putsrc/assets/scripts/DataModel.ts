@@ -402,10 +402,9 @@ export enum ProTtlType {
 
 export class ProTtlModel {
     id: string;
-    cnName: string;
+    cnName: string | ((d: any) => string);
+    info: string | ((d: any) => string);
     proTtlType: ProTtlType;
-    order: number;
-    info: string;
-    data?: number;
+    order?: number;
     sbstId?: string; // 替代另一个ProTtl
 }

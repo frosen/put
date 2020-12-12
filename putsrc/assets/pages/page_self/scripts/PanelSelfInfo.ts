@@ -8,9 +8,6 @@ const { ccclass, property } = cc._decorator;
 import { BaseCtrlr } from '../../../scripts/BaseCtrlr';
 import { GameData } from '../../../scripts/DataSaved';
 
-const H1 = 384.0;
-const H2 = 280.0;
-
 @ccclass
 export class PanelSelfInfo extends cc.Component {
     ctrlr: BaseCtrlr = null;
@@ -40,11 +37,8 @@ export class PanelSelfInfo extends cc.Component {
         else if (realY < -200 - this.node.height) realY = -200 - this.node.height;
         this.node.y = realY;
 
-        this.uiScaleNode.scale = this.getRate(realY, -384.0, -280.0) * 0.53 + 0.47;
-        this.uiMoveNode.y = this.getRate(realY, -280.0, 0) * 280;
-
-        // this.roleName.node.opacity = Math.ceil(this.getRate(realY, -345.0, -245.0) * 255);
-        // this.userInfo.node.opacity = Math.ceil(this.getRate(realY, -200.0, -110.0) * 255);
+        this.uiScaleNode.scale = this.getRate(realY, -384, -280) * 0.53 + 0.47;
+        this.uiMoveNode.y = this.getRate(realY, -280, 0) * 280;
     }
 
     getRate(cur: number, n1: number, n2: number): number {
