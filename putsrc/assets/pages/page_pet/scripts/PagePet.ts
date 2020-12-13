@@ -75,6 +75,9 @@ export class PagePet extends PageBase {
     }
 
     onPageShow() {
+        const gameData = this.ctrlr.memory.gameData;
+        this.navBar.setSubTitle(`${gameData.pets.length}/${GameDataTool.getPetCountMax(gameData)}`);
+
         const lvd = this.list.delegate as PagePetLVD;
         if (lvd.cellType === PagePetCellType.normal) {
             const curDirtyToken = this.ctrlr.memory.dirtyToken;
