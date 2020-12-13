@@ -7,6 +7,7 @@
 import { ProTtlModel, ProTtlType } from '../scripts/DataModel';
 
 export class PTKey {
+    static DaShanRen = 'DaShanRen';
     static XueBa = 'XueBa';
     static ShouCangJia = 'ShouCangJia';
     static KongJianGuiHuaShi = 'KongJianGuiHuaShi';
@@ -33,6 +34,12 @@ export class PTKey {
 }
 
 const ProTtlModelDict: { [key: string]: ProTtlModel } = {
+    [PTKey.DaShanRen]: {
+        id: PTKey.DaShanRen,
+        cnName: d => `大善人${d}`,
+        proTtlType: ProTtlType.kind,
+        info: 'thx'
+    },
     [PTKey.XueBa]: {
         id: PTKey.XueBa,
         cnName: '学霸',

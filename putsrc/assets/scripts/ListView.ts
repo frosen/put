@@ -12,6 +12,10 @@ import { ListViewCell } from './ListViewCell';
 @ccclass
 @requireComponent(cc.ScrollView)
 export class ListView extends cc.Component {
+    static EventType = {
+        scrolling: 'lvsing'
+    };
+
     @property(ListViewDelegate)
     delegate: ListViewDelegate = null;
 
@@ -179,6 +183,7 @@ export class ListView extends cc.Component {
         const { disTop, disBtm } = this.calcDisplayArea();
         this.updateDisTopRowData(disTop);
         this.updateDisBtmRowData(disBtm);
+        this.node.emit(ListView.EventType.scrolling, this);
     }
 
     updateDisTopRowData(disTop: number) {

@@ -31,7 +31,7 @@ export class PageSelf extends PageBase {
         this.lvd = this.listView.delegate as PageSelfLVD;
         this.lvd.page = this;
 
-        this.listView.node.on('scrolling', this.onScrolling.bind(this));
+        this.listView.node.on(ListView.EventType.scrolling, this.onScrolling.bind(this));
         this.selfInfo.ctrlr = this.ctrlr;
     }
 

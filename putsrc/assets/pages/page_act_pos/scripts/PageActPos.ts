@@ -33,7 +33,7 @@ export class PageActPos extends PageBase {
         if (CC_EDITOR) return;
 
         this.lvd = this.listView.delegate as PageActPosLVD;
-        this.listView.node.on('scrolling', this.onScrolling.bind(this));
+        this.listView.node.on(ListView.EventType.scrolling, this.onScrolling.bind(this));
 
         this.posInfo.ctrlr = this.ctrlr;
     }

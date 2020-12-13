@@ -362,6 +362,10 @@ export class Memory {
             },
             JingLingWang: {
                 gainTime: 1
+            },
+            JiXieShi: {
+                gainTime: 1,
+                data: 1
             }
         };
 

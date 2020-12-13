@@ -394,10 +394,11 @@ export class ActPosModel {
 // -----------------------------------------------------------------
 
 export enum ProTtlType {
-    purchase = 1,
-    pet = 2,
-    function = 3,
-    story = 4
+    kind = 1,
+    purchase,
+    pet,
+    function,
+    story
 }
 
 export class ProTtlModel {

@@ -8,14 +8,14 @@ const { ccclass, property, executionOrder } = cc._decorator;
 import { BtlPageBase } from '../../../scripts/BtlPageBase';
 import { ExplUpdater, ExplLogData } from '../../../scripts/ExplUpdater';
 import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors } from '../../../scripts/DataSaved';
-import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, PAKey } from '../../../scripts/DataModel';
+import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames } from '../../../scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax } from '../../../scripts/DataOther';
 import { ListView } from '../../../scripts/ListView';
 import { GameDataTool, PetTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 
 import { buffModelDict } from '../../../configs/BuffModelDict';
-import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 
 import { PetUI } from './PetUI';
 import { PageActExplLVD } from './PageActExplLVD';

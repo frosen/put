@@ -44,7 +44,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 150
+      "height": 140
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -121,7 +121,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 150
+      "height": 140
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -191,7 +191,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 150
+      "height": 140
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -335,8 +335,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 45,
-      "height": 45
+      "width": 80,
+      "height": 80
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -347,8 +347,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        60,
-        -54,
+        70,
+        -70,
         0,
         0,
         0,
@@ -442,7 +442,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 297.79,
+      "width": 260.57,
       "height": 54.18
     },
     "_anchorPoint": {
@@ -454,8 +454,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        95,
-        -55,
+        130,
+        -48,
         0,
         0,
         0,
@@ -496,7 +496,7 @@
     "_dstBlendFactor": 771,
     "_string": "阿斯加德覅额OA",
     "_N$string": "阿斯加德覅额OA",
-    "_fontSize": 40,
+    "_fontSize": 35,
     "_lineHeight": 43,
     "_enableWrapText": true,
     "_N$file": null,
@@ -506,7 +506,7 @@
     "_styleFlags": 0,
     "_underlineHeight": 0,
     "_N$horizontalAlign": 0,
-    "_N$verticalAlign": 1,
+    "_N$verticalAlign": 2,
     "_N$fontFamily": "Arial",
     "_N$overflow": 0,
     "_N$cacheMode": 0,
@@ -550,20 +550,20 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1000,
-      "height": 37.8
+      "width": 920,
+      "height": 34.02
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
       "x": 0,
-      "y": 0.6
+      "y": 0.9
     },
     "_trs": {
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        40,
-        -105,
+        130,
+        -90,
         0,
         0,
         0,
@@ -602,10 +602,10 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "阿贵是否分为上瓦房俯拾皆是更换了个诶复古色覅额搜是否IE是是否IEso付看IG额几十个欧式房间诶是",
-    "_N$string": "阿贵是否分为上瓦房俯拾皆是更换了个诶复古色覅额搜是否IE是是否IEso付看IG额几十个欧式房间诶是",
+    "_string": "阿贵是否分为上瓦房俯拾皆是更换了个诶复古色覅额搜是",
+    "_N$string": "阿贵是否分为上瓦房俯拾皆是更换了个诶复古色覅额搜是",
     "_fontSize": 22,
-    "_lineHeight": 30,
+    "_lineHeight": 27,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -614,7 +614,7 @@
     "_styleFlags": 0,
     "_underlineHeight": 0,
     "_N$horizontalAlign": 0,
-    "_N$verticalAlign": 1,
+    "_N$verticalAlign": 0,
     "_N$fontFamily": "Arial",
     "_N$overflow": 3,
     "_N$cacheMode": 0,
@@ -697,7 +697,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 150
+      "height": 140
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -709,7 +709,7 @@
       "ctor": "Float64Array",
       "array": [
         540,
-        -75,
+        -70,
         0,
         0,
         0,
