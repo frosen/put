@@ -23,6 +23,7 @@ import { PageActExplLVD } from './PageActExplLVD';
 import { PagePkgSelection } from '../../page_pkg_selection/scripts/PagePkgSelection';
 import { PagePkg } from '../../page_pkg/scripts/PagePkg';
 import { ListViewCell } from '../../../scripts/ListViewCell';
+import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
 
 const BattleUnitYs = [-60, -220, -380, -540, -700];
 
@@ -214,23 +215,9 @@ export class PageActExpl extends BtlPageBase {
         }
     }
 
-    update() {
-        if (CC_EDITOR) return;
-        this.updateLogListView();
-    }
-
-    beforePageHideAnim(willDestroy: boolean) {
-        if (willDestroy) {
-            if (!this.updaterRetaining) this.updater.destroy();
-            else {
-                this.updater.runAt(null);
-                ExplUpdater.save(this.updater);
-            }
-        }
-    }
-
     onPageShow() {
         this.setExplStepUI();
+        this.ctrlr.touchLayerForBack.getComponent(TouchLayerForBack).setYLimit(-980);
     }
 
     setExplStepUI() {
@@ -256,7 +243,21 @@ export class PageActExpl extends BtlPageBase {
         this.navBar.setSubTitle(`${stepName} ${curStep + 1}${percentStr}/${stepMax}`);
     }
 
-    showEnterNextTip() {}
+    update() {
+        if (CC_EDITOR) return;
+        this.updateLogListView();
+    }
+
+    beforePageHideAnim(willDestroy: boolean) {
+        if (willDestroy) {
+            if (!this.updaterRetaining) this.updater.destroy();
+            else {
+                this.updater.runAt(null);
+                ExplUpdater.save(this.updater);
+            }
+        }
+        this.ctrlr.touchLayerForBack.getComponent(TouchLayerForBack).setYLimit(0);
+    }
 
     // ui -----------------------------------------------------------------
 

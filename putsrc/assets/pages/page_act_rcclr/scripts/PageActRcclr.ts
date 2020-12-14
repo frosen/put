@@ -58,10 +58,6 @@ export class PageActRcclr extends PageBase {
         };
     }
 
-    beforePageHideAnim(willDestroy: boolean) {
-        this.ctrlr.touchLayerForBack.getComponent(TouchLayerForBack).setYLimit(0);
-    }
-
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
             const totalPrice = this.getTotalPrice();
@@ -79,8 +75,6 @@ export class PageActRcclr extends PageBase {
             return false;
         });
         navBar.setTitle('回收站');
-
-        this.ctrlr.touchLayerForBack.getComponent(TouchLayerForBack).setYLimit(-110);
     }
 
     recycle(): boolean {
@@ -126,6 +120,8 @@ export class PageActRcclr extends PageBase {
         this.checkCountData();
         this.resetSubTitle();
         this.turnList(this.curListIdx);
+
+        this.ctrlr.touchLayerForBack.getComponent(TouchLayerForBack).setYLimit(-110);
     }
 
     checkCountData() {
@@ -212,6 +208,10 @@ export class PageActRcclr extends PageBase {
         } else {
             this.resetCurList();
         }
+    }
+
+    beforePageHideAnim(willDestroy: boolean) {
+        this.ctrlr.touchLayerForBack.getComponent(TouchLayerForBack).setYLimit(0);
     }
 
     // -----------------------------------------------------------------
