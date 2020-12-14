@@ -337,6 +337,7 @@ export class BattleMmr {
     selfs: SPetMmr[];
     enemys: EPetMmr[];
     spcBtlId: number; // 特殊战斗的id
+    hiding: boolean;
 }
 
 export const NeedUpdCntByStep = [1600, 4800, 14400];

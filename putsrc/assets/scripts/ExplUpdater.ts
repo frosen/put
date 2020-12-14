@@ -45,6 +45,7 @@ import { PTKey } from '../configs/ProTtlModelDict';
 export enum ExplState {
     none,
     explore,
+    prepare,
     battle,
     recover
 }
@@ -654,7 +655,8 @@ export class ExplUpdater {
                 seed: 0,
                 selfs: null,
                 enemys,
-                spcBtlId: 0
+                spcBtlId: 0,
+                hiding: curExpl.hiding
             };
 
             const win = this.mockBattle(mockData, false, (realBattle: RealBattle): boolean => {
@@ -755,6 +757,7 @@ export class ExplUpdater {
 
     onUpdate() {
         if (this.state === ExplState.explore) this.updateExpl();
+        else if (this.state === ExplState.prepare) this.updatePrepare();
         else if (this.state === ExplState.battle) this.updateBattle();
         else if (this.state === ExplState.recover) this.updateRecover();
 
@@ -1138,6 +1141,31 @@ export class ExplUpdater {
         this.startExpl();
     }
 
+    // -----------------------------------------------------------------
+
+    prepareUpdCnt: number = 0;
+
+    prepareToBattle(spcBtlId: number) {
+        this.handleSelfTeamChange();
+
+        this.state = ExplState.prepare;
+        this.btlCtrlr.startBattle(this.updCnt, spcBtlId);
+
+        this.prepareUpdCnt = 15;
+    }
+
+    updatePrepare() {
+        this.prepareUpdCnt--;
+        if (this.prepareUpdCnt > 0) {
+            this.log(ExplLogType.rich, `备战！剩余${this.prepareUpdCnt}回合`);
+        } else {
+            this.log(ExplLogType.rich, `出击！！!`);
+            this.startBattleAfterPrepare();
+        }
+    }
+
+    // -----------------------------------------------------------------
+
     startBattle(spcBtlId: number = 0) {
         this.handleSelfTeamChange();
 
@@ -1145,7 +1173,9 @@ export class ExplUpdater {
         this.btlCtrlr.startBattle(this.updCnt, spcBtlId);
     }
 
-    // -----------------------------------------------------------------
+    startBattleAfterPrepare() {
+        this.state = ExplState.battle;
+    }
 
     updateBattle() {
         this.btlCtrlr.update();

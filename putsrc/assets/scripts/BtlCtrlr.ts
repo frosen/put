@@ -58,6 +58,8 @@ export class BtlCtrlr {
 
     realBattle: RealBattle = null;
 
+    hiding: boolean = false;
+
     debugMode: boolean = false;
     realBattleCopys: { seed: number; rb: RealBattle }[] = []; // 用于战斗重置
 
@@ -92,7 +94,7 @@ export class BtlCtrlr {
         setSeed(this.realBattleCopys[0].seed);
         this.realBattleCopys.length = 1;
         this.resetAllUI();
-        this.gotoNextRound();
+        this.goReadyToBattle();
     }
 
     resetBattleDataToTurnBegin() {
@@ -161,13 +163,16 @@ export class BtlCtrlr {
                 }
             )
         );
+
         this.initBattle(this.realBattle);
+        this.hiding = curExpl.hiding;
 
         if (this.debugMode) {
             this.realBattleCopys.length = 0;
             this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(this.realBattle) });
         }
-        this.gotoNextRound();
+
+        this.goReadyToBattle();
     }
 
     resetBattle(battleMmr: BattleMmr) {
@@ -177,17 +182,16 @@ export class BtlCtrlr {
         const curExpl = this.gameData.curExpl;
         this.realBattle.resetEnemy(battleMmr.spcBtlId, battleMmr.enemys, curExpl);
         this.initBattle(this.realBattle);
+        this.hiding = battleMmr.hiding;
 
         if (this.debugMode) {
             this.realBattleCopys.length = 0;
             this.realBattleCopys.push({ seed: getCurSeed(), rb: <RealBattle>deepCopy(this.realBattle) });
         }
-        this.gotoNextRound();
+        this.goReadyToBattle();
     }
 
     initBattle(rb: RealBattle) {
-        const hiding = this.gameData.curExpl.hiding;
-
         // 更新UI和日志
         if (this.page) this.page.setUIOfEnemyPet(-1);
 
@@ -199,31 +203,17 @@ export class BtlCtrlr {
 
         if (this.logging) {
             const petNames = Object.keys(petNameDict);
-            const str = '发现：' + petNames.join(', ') + (hiding ? '，偷袭成功' : '，进入战斗');
+            const str = '发现：' + petNames.join(', ') + '，进入战斗';
             this.updater.log(ExplLogType.rich, str);
-        }
-
-        // 偷袭
-        if (hiding) {
-            for (let index = 0; index < BattlePetLenMax; index++) {
-                if (index >= rb.selfTeam.pets.length || index >= rb.enemyTeam.pets.length) break;
-                const selfPet = rb.selfTeam.pets[index];
-                const enemyPet = rb.enemyTeam.pets[index];
-                const times = BtlCtrlr.calcSneakAttackTimes(selfPet, enemyPet);
-                this.addBuff(enemyPet, selfPet, 'JingZhi', times);
-            }
-        }
-
-        // 触发进入战斗特性
-        for (const pet of rb.order) {
-            pet.startFeatures.forEach((value: StartFeature) => {
-                value.func(pet, value.datas, this);
-            });
         }
     }
 
     static calcSneakAttackTimes(selfPet: BattlePet, enemyPet: BattlePet): number {
         return Math.ceil(selfPet.pet2.agility / enemyPet.pet2.agility); // 敏捷每大于敌人100%，会让敌人多静止1回合
+    }
+
+    goReadyToBattle() {
+        this.realBattle.curOrderIdx = 99; // 强制下次update切换回合
     }
 
     update() {
@@ -313,6 +303,8 @@ export class BtlCtrlr {
         rb.lastAim = null;
 
         if (this.logging) this.updater.log(ExplLogType.round, rb.battleRound);
+
+        if (rb.battleRound === 1) this.doFirstRound();
     }
 
     handleCD(team: BattleTeam) {
@@ -378,6 +370,30 @@ export class BtlCtrlr {
 
         for (const { aim, caster, id, time } of newBuffDataList) {
             this.addBuff(aim, caster, id, time);
+        }
+    }
+
+    doFirstRound() {
+        const rb = this.realBattle;
+
+        // 偷袭
+        if (this.hiding) {
+            if (this.logging) this.updater.log(ExplLogType.rich, '偷袭成功');
+
+            for (let index = 0; index < BattlePetLenMax; index++) {
+                if (index >= rb.selfTeam.pets.length || index >= rb.enemyTeam.pets.length) break;
+                const selfPet = rb.selfTeam.pets[index];
+                const enemyPet = rb.enemyTeam.pets[index];
+                const times = BtlCtrlr.calcSneakAttackTimes(selfPet, enemyPet);
+                this.addBuff(enemyPet, selfPet, 'JingZhi', times);
+            }
+        }
+
+        // 触发进入战斗特性
+        for (const pet of rb.order) {
+            pet.startFeatures.forEach((value: StartFeature) => {
+                value.func(pet, value.datas, this);
+            });
         }
     }
 
