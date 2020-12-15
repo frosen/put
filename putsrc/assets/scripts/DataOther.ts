@@ -14,7 +14,8 @@ import {
     SkillAimtype,
     ExplModel,
     ActPosModel,
-    AmplAttriType
+    AmplAttriType,
+    BossType
 } from './DataModel';
 import {
     BioType,
@@ -28,7 +29,8 @@ import {
     GameData,
     Item,
     ItemType,
-    SPetMmr
+    SPetMmr,
+    PrvtyMax
 } from './DataSaved';
 
 import { petModelDict } from '../configs/PetModelDict';
@@ -39,6 +41,7 @@ import { BtlCtrlr } from './BtlCtrlr';
 import { randomRate, getRandomOneInList, normalRandom } from './Random';
 import { actPosModelDict, PAKey } from '../configs/ActPosModelDict';
 import { expModels } from '../configs/ExpModels';
+import { spcBtlModelDict } from '../configs/SpcBtlModelDict';
 
 // -----------------------------------------------------------------
 
@@ -289,6 +292,7 @@ export class BattlePet {
 
     fromationIdx: number = 0;
     beEnemy: boolean = false;
+    bossType: BossType = null; // 主要用于显示不同的名字颜色
 
     last: BattlePet = null;
     next: BattlePet = null;
@@ -531,7 +535,14 @@ export class RealBattle {
         if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
 
         if (spcBtlId) {
-            // llytodo
+            const spcBtlModel = spcBtlModelDict[spcBtlId];
+            this.enemyTeam.reset(spcBtlModel.pets.length, true, (bPet: BattlePet, petIdx: number) => {
+                const spcBtlPet = spcBtlModel.pets[petIdx];
+                const ePet = PetTool.create(spcBtlPet.id, spcBtlPet.lv, [], spcBtlPet.features);
+                ePet.nickname = spcBtlPet.bossName;
+                bPet.init(ePet, spcBtlPet.ampl, PrvtyMax, null, null);
+                bPet.bossType = spcBtlPet.bossType;
+            });
         } else if (ePetMmrs) {
             const { ampl, prvty } = RealBattle.getEnemyAmplAndPrvtyByStep(curExpl.curStep);
             this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {

@@ -24,7 +24,7 @@ import { NavBar } from '../../../scripts/NavBar';
 import { PkgSelectionBar } from './PkgSelectionBar';
 import { catcherModelDict } from '../../../configs/CatcherModelDict';
 import { petModelDict } from '../../../configs/PetModelDict';
-import { specialModelDict } from '../../../configs/SpecialModelDict';
+import { spcModelDict } from '../../../configs/SpcModelDict';
 
 const WIDTH = 1080;
 
@@ -307,7 +307,7 @@ export class PagePkg extends PagePkgBase {
                 });
             } else if (cnsum.cnsumType === CnsumType.book) {
             } else if (cnsum.cnsumType === CnsumType.special) {
-                const specialModel = specialModelDict[cnsum.id];
+                const spcModel = spcModelDict[cnsum.id];
                 if (cnsum.id === 'YiWangShuiJing') {
                     this.ctrlr.pushPage(PagePet, {
                         cellPetType: PagePetCellType.selection,
@@ -317,7 +317,7 @@ export class PagePkg extends PagePkgBase {
                             if (!curPet.nickname) this.ctrlr.popToast(petModel.cnName + '并未起名');
                             if (!this.checkMasterHere(curPet)) return;
                             this.ctrlr.popAlert(
-                                `确定对“${PetTool.getCnName(curPet)}”使用“${specialModel.cnName}”吗？`,
+                                `确定对“${PetTool.getCnName(curPet)}”使用“${spcModel.cnName}”吗？`,
                                 (key: number) => {
                                     if (key === 1) {
                                         const petIdx = GameDataTool.getPetIdx(gameData, curPet);

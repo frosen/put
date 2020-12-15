@@ -73,7 +73,7 @@ import { drinkModelDict } from '../configs/DrinkModelDict';
 import { catcherModelDict } from '../configs/CatcherModelDict';
 import { eqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
 import { bookModelDict } from '../configs/BookModelDict';
-import { specialModelDict } from '../configs/SpecialModelDict';
+import { spcModelDict } from '../configs/SpcModelDict';
 import { materialModelDict } from '../configs/MaterialModelDict';
 import { PAKey } from '../configs/ActPosModelDict';
 import { PTKey } from '../configs/ProTtlModelDict';
@@ -700,7 +700,7 @@ export class CnsumTool {
         else if (cnsumId in catcherModelDict) return CnsumType.catcher;
         else if (cnsumId in eqpAmplrModelDict) return CnsumType.eqpAmplr;
         else if (cnsumId in bookModelDict) return CnsumType.book;
-        else if (cnsumId in specialModelDict) return CnsumType.special;
+        else if (cnsumId in spcModelDict) return CnsumType.special;
         else if (cnsumId in materialModelDict) return CnsumType.material;
         else return null;
     }
@@ -710,7 +710,7 @@ export class CnsumTool {
         else if (cnsumId in catcherModelDict) return catcherModelDict[cnsumId];
         else if (cnsumId in eqpAmplrModelDict) return eqpAmplrModelDict[cnsumId];
         else if (cnsumId in bookModelDict) return bookModelDict[cnsumId];
-        else if (cnsumId in specialModelDict) return specialModelDict[cnsumId];
+        else if (cnsumId in spcModelDict) return spcModelDict[cnsumId];
         else if (cnsumId in materialModelDict) return materialModelDict[cnsumId];
         else return null;
     }
@@ -720,7 +720,7 @@ export class CnsumTool {
         else if (cnsumId in catcherModelDict) return Catcher;
         else if (cnsumId in eqpAmplrModelDict) return EqpAmplr;
         else if (cnsumId in bookModelDict) return Book;
-        else if (cnsumId in specialModelDict) return Special;
+        else if (cnsumId in spcModelDict) return Special;
         else if (cnsumId in materialModelDict) return Material;
         else return null;
     }

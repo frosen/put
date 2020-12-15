@@ -8,7 +8,7 @@ const { ccclass, property, executionOrder } = cc._decorator;
 import { BtlPageBase } from '../../../scripts/BtlPageBase';
 import { ExplUpdater, ExplLogData } from '../../../scripts/ExplUpdater';
 import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors } from '../../../scripts/DataSaved';
-import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames } from '../../../scripts/DataModel';
+import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, BossType } from '../../../scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax } from '../../../scripts/DataOther';
 import { ListView } from '../../../scripts/ListView';
 import { GameDataTool, PetTool } from '../../../scripts/Memory';
@@ -280,7 +280,9 @@ export class PageActExpl extends BtlPageBase {
             const bPet = pets[index];
             const petUI = this.enemyPetUIs[index];
             this.setUIOfPet(bPet, petUI);
-            petUI.petName.node.color = bPet.pet.master ? cc.color(230, 180, 0) : cc.color(29, 39, 42); // BOSS的颜色
+
+            if (bPet.bossType === BossType.main) petUI.petName.node.color = cc.color(230, 180, 0);
+            else if (bPet.bossType === BossType.sub) petUI.petName.node.color = cc.color(120, 0, 170);
         }
     }
 

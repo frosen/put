@@ -5,7 +5,7 @@
  */
 
 import { BtlCtrlr } from './BtlCtrlr';
-import { EleType, BattleType, BioType, Pet, GameData } from './DataSaved';
+import { EleType, BattleType, BioType, Pet, Feature } from './DataSaved';
 import { Pet2, BattlePet, BattleBuff } from './DataOther';
 
 // -----------------------------------------------------------------
@@ -135,6 +135,26 @@ export class PetModel {
     selfSkillIds: string[];
 }
 
+export enum BossType {
+    main = 1,
+    sub,
+    normal
+}
+
+export class SpcBtlPet {
+    id: string;
+    lv: number;
+    ampl: number;
+    features: Feature[];
+    bossName: string;
+    bossType: BossType; // 类型以给boss名字加颜色
+}
+
+export class SpcBtlModel {
+    id: string;
+    pets: SpcBtlPet[];
+}
+
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
@@ -183,7 +203,7 @@ export class EqpAmplrModel extends CnsumModel {
 
 export class BookModel extends CnsumModel {}
 
-export class SpecialModel extends CnsumModel {}
+export class SpcModel extends CnsumModel {}
 
 export class MaterialModel extends CnsumModel {
     lvMax: number;
