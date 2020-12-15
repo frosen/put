@@ -25,7 +25,7 @@ import { PagePkg } from '../../page_pkg/scripts/PagePkg';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
 
-const BattleUnitYs = [-60, -220, -380, -540, -700];
+const BattleUnitYs = [0, -172, -172 * 2, -172 * 3, -172 * 4];
 
 const DmgLblActParams: number[][] = [
     [97, 30],
@@ -311,9 +311,9 @@ export class PageActExpl extends BtlPageBase {
     doAttack(beEnemy: boolean, idx: number, combo: number) {
         const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
         const ui = uis[idx];
-        const node = ui.node;
-        node.stopAllActions();
-        cc.tween(node)
+        const baseNode = ui.baseNode;
+        baseNode.stopAllActions();
+        cc.tween(baseNode)
             .delay((combo - 1) * 0.05)
             .to(0.15, { x: beEnemy ? -35 : 35 })
             .to(0.15, { x: 0 })
