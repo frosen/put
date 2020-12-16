@@ -51,6 +51,9 @@ export class PageActExpl extends BtlPageBase {
     @property(cc.Node)
     enemyPetsLayer: cc.Node = null;
 
+    @property(cc.Node)
+    btlTouchLayer: cc.Node = null;
+
     @property(cc.Prefab)
     selfPetPrefab: cc.Prefab = null;
 
@@ -134,8 +137,17 @@ export class PageActExpl extends BtlPageBase {
             this.dmgLbls.push(dmgLblNode.getComponent(cc.Label));
         }
 
+        this.btlTouchLayer.on(cc.Node.EventType.TOUCH_START, this.onBtlTouchStart.bind(this));
+        this.btlTouchLayer.on(cc.Node.EventType.TOUCH_MOVE, this.onBtlTouchMove.bind(this));
+        this.btlTouchLayer.on(cc.Node.EventType.TOUCH_END, this.onBtlTouchEnd.bind(this));
+        this.btlTouchLayer.on(cc.Node.EventType.TOUCH_CANCEL, this.onBtlTouchEnd.bind(this));
+
         this.initPADExpl();
     }
+
+    onBtlTouchStart() {}
+    onBtlTouchMove() {}
+    onBtlTouchEnd() {}
 
     initPADExpl() {
         const gameData = this.ctrlr.memory.gameData;
