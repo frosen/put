@@ -145,9 +145,15 @@ export class PageActExpl extends BtlPageBase {
         this.initPADExpl();
     }
 
-    onBtlTouchStart() {}
-    onBtlTouchMove() {}
-    onBtlTouchEnd() {}
+    onBtlTouchStart(event: cc.Event.EventTouch) {
+        const wPos = event.getLocation();
+        const curPos = this.node.convertToNodeSpaceAR(wPos);
+        cc.log('STORM cc ^_^ pos ', curPos.x, curPos.y);
+    }
+
+    onBtlTouchMove(event: cc.Event.EventTouch) {}
+
+    onBtlTouchEnd(event: cc.Event.EventTouch) {}
 
     initPADExpl() {
         const gameData = this.ctrlr.memory.gameData;
