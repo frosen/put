@@ -13,7 +13,6 @@ import { Pet, PetStateNames, EleColors, BioType } from '../../../../../scripts/D
 import { featureModelDict } from '../../../../../configs/FeatureModelDict';
 import { PetTool } from '../../../../../scripts/Memory';
 import { RunningImgMgr } from '../../../../../scripts/RunningImgMgr';
-import { BaseCtrlr } from '../../../../../scripts/BaseCtrlr';
 
 @ccclass
 export class CellPet extends ListViewCell {

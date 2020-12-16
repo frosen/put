@@ -94,6 +94,7 @@ export class FeatureModel {
     onCast?: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
     onHurt?: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
     onHeal?: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    onBuff?: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
     onEDead?: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
     onDead?: (pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
     getInfo: (datas: number[]) => string;
