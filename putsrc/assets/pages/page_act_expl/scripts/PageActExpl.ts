@@ -313,7 +313,7 @@ export class PageActExpl extends BtlPageBase {
     doAttack(beEnemy: boolean, idx: number, combo: number) {
         const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
         const ui = uis[idx];
-        const baseNode = ui.baseNode;
+        const baseNode = ui.node;
         baseNode.stopAllActions();
         cc.tween(baseNode)
             .delay((combo - 1) * 0.05)
