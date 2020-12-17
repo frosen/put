@@ -463,7 +463,7 @@ export class BtlCtrlr {
     }
 
     cast(battlePet: BattlePet, skillModel: SkillModel): boolean {
-        const aim: BattlePet = this.getAim(battlePet, skillModel.dirType === SkillDirType.self, skillModel.spBattleType);
+        const aim: BattlePet = this.getAim(battlePet, skillModel.dirType === SkillDirType.self, skillModel);
         if (!aim) return false;
 
         if (skillModel.hpLimit > 0 && (aim.hp / aim.hpMax) * 100 > skillModel.hpLimit) return false;
@@ -768,19 +768,32 @@ export class BtlCtrlr {
             for (const selfPet of rb.selfTeam.pets) {
                 selfPet.buffDatas.length = 0;
                 this.page.removeBuff(selfPet.beEnemy, selfPet.idx, null);
+                this.setSelfPetCtrlAimIdx(selfPet, -1);
+                this.setSelfPetForbidSkl(selfPet, 0);
             }
         }
     }
 
-    getAim(battlePet: BattlePet, toSelf: boolean, spBattleType: BattleType = null): BattlePet {
+    getAim(battlePet: BattlePet, toSelf: boolean, skillModel: SkillModel = null): BattlePet {
         const rb = this.realBattle;
-        const battleType = spBattleType || BtlCtrlr.getBattleType(battlePet);
 
         let aimPets: BattlePet[];
         if (toSelf) {
             aimPets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
         } else {
             aimPets = battlePet.beEnemy ? rb.selfTeam.pets : rb.enemyTeam.pets;
+        }
+
+        const battleType = BtlCtrlr.getBattleType(battlePet, skillModel);
+
+        if (!skillModel && !skillModel.spBattleType && battlePet.ctrlAimIdx !== -1) {
+            const ctrlAim = aimPets[battlePet.ctrlAimIdx];
+            if (ctrlAim.hp === 0 || battleType === BattleType.stay || battleType === BattleType.chaos) {
+                this.setSelfPetCtrlAimIdx(battlePet, -1);
+            } else {
+                rb.lastAim = ctrlAim;
+                return ctrlAim;
+            }
         }
 
         let aim: BattlePet;
@@ -851,6 +864,17 @@ export class BtlCtrlr {
         const spBT = skillModel ? skillModel.spBattleType : null;
         return spBT || casterBPet.pet2.exBattleTypes.getLast() || petModelDict[casterBPet.pet.id].battleType;
     }
+
+    // -----------------------------------------------------------------
+
+    setSelfPetCtrlAimIdx(selfBPet: BattlePet, aimIdx: number) {
+        selfBPet.ctrlAimIdx = aimIdx;
+        if (this.page) this.page.setSelfAim(selfBPet.idx, aimIdx);
+    }
+
+    setSelfPetForbidSkl(selfBPet: BattlePet, skl: number) {}
+
+    // -----------------------------------------------------------------
 
     logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, skillName: string, eleType: EleType = null) {
         const dataList = [

@@ -29,7 +29,7 @@ export class PTKey {
     static AnShi = 'AnShi';
 
     static ZhanShuDaShi = 'ZhanShuDaShi';
-    static KongLingZhe = 'KongLingZhe';
+    static YiLingZhe = 'KongLingZhe';
     static YingYan = 'YingYan';
 }
 
@@ -172,9 +172,9 @@ const ProTtlModelDict: { [key: string]: ProTtlModel } = {
         proTtlType: ProTtlType.function,
         info: ''
     },
-    [PTKey.KongLingZhe]: {
-        id: PTKey.KongLingZhe,
-        cnName: '控灵者',
+    [PTKey.YiLingZhe]: {
+        id: PTKey.YiLingZhe,
+        cnName: '抑灵者',
         proTtlType: ProTtlType.function,
         info: ''
     },

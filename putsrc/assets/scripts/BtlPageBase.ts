@@ -5,14 +5,18 @@
  */
 
 const { ccclass, property } = cc._decorator;
+
 import { PageBase } from './PageBase';
 
 @ccclass
 export abstract class BtlPageBase extends PageBase {
-    abstract setUIOfSelfPet(index: number): void;
-    abstract setUIOfEnemyPet(index: number): void;
-    abstract clearUIOfSelfPet(index: number): void;
-    abstract clearUIOfEnemyPet(index: number): void;
+    abstract setUIOfSelfPet(idx: number): void;
+    abstract setUIOfEnemyPet(idx: number): void;
+    abstract clearUIOfSelfPet(idx: number): void;
+    abstract clearUIOfEnemyPet(idx: number): void;
+
+    abstract setSelfAim(selfIdx: number, aimIndex: number): void;
+    abstract setSelfSklForbid(selfIdx: number, sklIdx: number): void;
 
     abstract doAttack(beEnemy: boolean, idx: number, combo: number): void;
     abstract doHurt(beEnemy: boolean, idx: number, hp: number, hpMax: number, dmg: number, crit: boolean, combo: number): void;

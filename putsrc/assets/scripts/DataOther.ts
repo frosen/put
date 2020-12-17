@@ -315,6 +315,8 @@ export class BattlePet {
 
     buffDatas: BattleBuff[] = [];
 
+    ctrlAimIdx: number = -1;
+
     static addFeatureFunc(bPet: BattlePet, attri: string, funcName: string, model: FeatureModel, datas: number[]) {
         if (!model.hasOwnProperty(funcName)) return;
         const list: { func: any; datas: number[]; id: string }[] = bPet[attri];

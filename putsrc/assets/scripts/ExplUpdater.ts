@@ -1065,7 +1065,10 @@ export class ExplUpdater {
         const curExpl = this.gameData.curExpl;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
-        this.page.ctrlr.popToast(`进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`);
+        if (this.page) {
+            const str = `进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`;
+            this.page.ctrlr.popToast(str);
+        }
     }
 
     saveNewStep(step: number) {
