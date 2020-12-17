@@ -25,7 +25,8 @@ import { PagePkg } from '../../page_pkg/scripts/PagePkg';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
 
-const BattleUnitYs = [0, -172, -172 * 2, -172 * 3, -172 * 4];
+const btlUnitH = -172;
+const BattleUnitYs = [0, btlUnitH, btlUnitH * 2, btlUnitH * 3, btlUnitH * 4];
 
 const DmgLblActParams: number[][] = [
     [97, 30],
@@ -144,16 +145,6 @@ export class PageActExpl extends BtlPageBase {
 
         this.initPADExpl();
     }
-
-    onBtlTouchStart(event: cc.Event.EventTouch) {
-        const wPos = event.getLocation();
-        const curPos = this.node.convertToNodeSpaceAR(wPos);
-        cc.log('STORM cc ^_^ pos ', curPos.x, curPos.y);
-    }
-
-    onBtlTouchMove(event: cc.Event.EventTouch) {}
-
-    onBtlTouchEnd(event: cc.Event.EventTouch) {}
 
     initPADExpl() {
         const gameData = this.ctrlr.memory.gameData;
@@ -478,6 +469,51 @@ export class PageActExpl extends BtlPageBase {
         this.rageProgress.progress = rage / RageMax;
         this.rageLbl.string = `${rage} / ${RageMax}`;
     }
+
+    // touch -----------------------------------------------------------------
+
+    startPos: cc.Vec2 = null;
+    touchIdx: number = -1;
+    touchEnemy: boolean = false;
+
+    onBtlTouchStart(event: cc.Event.EventTouch) {
+        const wPos = event.getLocation();
+        this.startPos = this.node.convertToNodeSpaceAR(wPos);
+        this.touchEnemy = this.startPos.x > 540;
+        const touchIdx = Math.floor(this.startPos.y / btlUnitH);
+        const uis = this.touchEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        const ui = uis[touchIdx];
+        if (ui.node.active === true) this.touchIdx = touchIdx;
+
+        this.showEnemyDetail();
+    }
+
+    onBtlTouchMove(event: cc.Event.EventTouch) {
+        const wPos = event.getLocation();
+        const curPos = this.node.convertToNodeSpaceAR(wPos);
+        this.showSelfCtrlLine(curPos);
+    }
+
+    onBtlTouchEnd(event: cc.Event.EventTouch) {
+        this.touchIdx = -1;
+        this.hideEnemyDetail();
+        this.handleSelfCtrlLine();
+        this.hideSelfCtrlLine();
+    }
+
+    showSelfCtrlLine(curPos: cc.Vec2) {
+        if (this.touchEnemy || this.touchIdx === -1) return;
+    }
+
+    hideSelfCtrlLine() {}
+
+    showEnemyDetail() {
+        if (!this.touchEnemy || this.touchIdx === -1) return;
+    }
+
+    handleSelfCtrlLine() {}
+
+    hideEnemyDetail() {}
 
     // button -----------------------------------------------------------------
 
