@@ -1273,8 +1273,6 @@ export class ExplUpdater {
             return;
         }
 
-        if (gameData.curExpl.curBattle.spcBtlId) return;
-
         const catcherModel: CatcherModel = catcherModelDict[catcherId];
         const eleRate = ExplUpdater.getPosPetEleRate(gameData.curExpl, this.btlCtrlr);
         const catchRate = ExplUpdater.calcCatchRateByEleRate(catcherModel, eleRate);
@@ -1283,6 +1281,8 @@ export class ExplUpdater {
         for (const battlePet of rb.enemyTeam.pets) {
             // 计算能否捕捉
             const pet = battlePet.pet;
+            if (pet.master) continue;
+
             const petModel = petModelDict[pet.id];
             if (petModel.bioType === BioType.human || petModel.bioType === BioType.unknown) continue;
             if (pet.lv < catcherModel.lvMin || catcherModel.lvMax < pet.lv) continue;

@@ -292,7 +292,6 @@ export class BattlePet {
 
     fromationIdx: number = 0;
     beEnemy: boolean = false;
-    bossType: BossType = null; // 主要用于显示不同的名字颜色
 
     last: BattlePet = null;
     next: BattlePet = null;
@@ -460,6 +459,11 @@ export class BattleTeam {
     }
 }
 
+export class BossMaster {
+    static main: string = 'main';
+    static sub: string = 'sub';
+}
+
 export class RealBattle {
     start: boolean = false;
 
@@ -542,8 +546,9 @@ export class RealBattle {
                 const spcBtlPet = spcBtlModel.pets[petIdx];
                 const ePet = PetTool.create(spcBtlPet.id, spcBtlPet.lv, [], spcBtlPet.features);
                 ePet.nickname = spcBtlPet.bossName;
+                if (spcBtlPet.bossType === BossType.main) ePet.master = BossMaster.main;
+                else if (spcBtlPet.bossType === BossType.sub) ePet.master = BossMaster.sub;
                 bPet.init(ePet, spcBtlPet.ampl, PrvtyMax, null, null);
-                bPet.bossType = spcBtlPet.bossType;
             });
         } else if (ePetMmrs) {
             const { ampl, prvty } = RealBattle.getEnemyAmplAndPrvtyByStep(curExpl.curStep);

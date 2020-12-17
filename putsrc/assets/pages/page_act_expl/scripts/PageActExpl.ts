@@ -6,10 +6,10 @@
 
 const { ccclass, property, executionOrder } = cc._decorator;
 import { BtlPageBase } from '../../../scripts/BtlPageBase';
-import { ExplUpdater, ExplLogData } from '../../../scripts/ExplUpdater';
+import { ExplUpdater, ExplLogData, ExplState } from '../../../scripts/ExplUpdater';
 import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors } from '../../../scripts/DataSaved';
-import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, BossType } from '../../../scripts/DataModel';
-import { BattlePet, RageMax, BattlePetLenMax } from '../../../scripts/DataOther';
+import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames } from '../../../scripts/DataModel';
+import { BattlePet, RageMax, BattlePetLenMax, BossMaster } from '../../../scripts/DataOther';
 import { ListView } from '../../../scripts/ListView';
 import { GameDataTool, PetTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
@@ -24,6 +24,7 @@ import { PagePkgSelection } from '../../page_pkg_selection/scripts/PagePkgSelect
 import { PagePkg } from '../../page_pkg/scripts/PagePkg';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
+import { PTKey } from '../../../configs/ProTtlModelDict';
 
 const btlUnitH = -172;
 const BattleUnitYs = [0, btlUnitH, btlUnitH * 2, btlUnitH * 3, btlUnitH * 4];
@@ -72,6 +73,9 @@ export class PageActExpl extends BtlPageBase {
 
     dmgLbls: cc.Label[] = [];
     dmgIdx: number = 0;
+
+    @property(cc.Node)
+    enemyDetailPanel: cc.Node = null;
 
     @property(cc.ProgressBar) mpProgress: cc.ProgressBar = null;
     @property(cc.Label) mpLbl: cc.Label = null;
@@ -138,12 +142,20 @@ export class PageActExpl extends BtlPageBase {
             this.dmgLbls.push(dmgLblNode.getComponent(cc.Label));
         }
 
+        this.initTouchCtrl();
+        this.initPADExpl();
+    }
+
+    initTouchCtrl() {
         this.btlTouchLayer.on(cc.Node.EventType.TOUCH_START, this.onBtlTouchStart.bind(this));
         this.btlTouchLayer.on(cc.Node.EventType.TOUCH_MOVE, this.onBtlTouchMove.bind(this));
         this.btlTouchLayer.on(cc.Node.EventType.TOUCH_END, this.onBtlTouchEnd.bind(this));
         this.btlTouchLayer.on(cc.Node.EventType.TOUCH_CANCEL, this.onBtlTouchEnd.bind(this));
 
-        this.initPADExpl();
+        const gameData = this.ctrlr.memory.gameData;
+        this.canCtrlSelfAim = GameDataTool.hasProTtl(gameData, PTKey.ZhanShuDaShi);
+        this.canCtrlSelfSkl = GameDataTool.hasProTtl(gameData, PTKey.YiLingZhe);
+        this.canSeeEnemy = GameDataTool.hasProTtl(gameData, PTKey.YingYan);
     }
 
     initPADExpl() {
@@ -290,8 +302,8 @@ export class PageActExpl extends BtlPageBase {
             const petUI = this.enemyPetUIs[index];
             this.setUIOfPet(bPet, petUI);
 
-            if (bPet.bossType === BossType.main) petUI.petName.node.color = cc.color(230, 180, 0);
-            else if (bPet.bossType === BossType.sub) petUI.petName.node.color = cc.color(120, 0, 170);
+            if (bPet.pet.master === BossMaster.main) petUI.petName.node.color = cc.color(230, 180, 0);
+            else if (bPet.pet.master === BossMaster.sub) petUI.petName.node.color = cc.color(120, 0, 170);
         }
     }
 
@@ -472,18 +484,21 @@ export class PageActExpl extends BtlPageBase {
 
     // touch -----------------------------------------------------------------
 
+    canCtrlSelfAim: boolean = false;
+    canCtrlSelfSkl: boolean = false;
+    canSeeEnemy: boolean = false;
+
     startPos: cc.Vec2 = null;
-    touchIdx: number = -1;
-    touchEnemy: boolean = false;
+    startIdx: number = -1;
+    startBeEnemy: boolean = false;
 
     onBtlTouchStart(event: cc.Event.EventTouch) {
+        const eSt = this.updater.state;
+        if (eSt !== ExplState.prepare && eSt !== ExplState.battle) return;
+
         const wPos = event.getLocation();
         this.startPos = this.node.convertToNodeSpaceAR(wPos);
-        this.touchEnemy = this.startPos.x > 540;
-        const touchIdx = Math.floor(this.startPos.y / btlUnitH);
-        const uis = this.touchEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        const ui = uis[touchIdx];
-        if (ui.node.active === true) this.touchIdx = touchIdx;
+        ({ touchEnemy: this.startBeEnemy, touchIdx: this.startIdx } = this.calcTouchState(this.startPos));
 
         this.showEnemyDetail();
     }
@@ -491,29 +506,79 @@ export class PageActExpl extends BtlPageBase {
     onBtlTouchMove(event: cc.Event.EventTouch) {
         const wPos = event.getLocation();
         const curPos = this.node.convertToNodeSpaceAR(wPos);
-        this.showSelfCtrlLine(curPos);
+        const { touchEnemy, touchIdx } = this.calcTouchState(curPos);
+        this.showSelfAimLine(curPos);
+        this.showSelfSklForbidBtn(curPos);
+        this.changeEnemyDetail(touchEnemy, touchIdx);
     }
 
     onBtlTouchEnd(event: cc.Event.EventTouch) {
-        this.touchIdx = -1;
+        if (event) {
+            const wPos = event.getLocation();
+            const curPos = this.node.convertToNodeSpaceAR(wPos);
+            const { touchEnemy, touchIdx } = this.calcTouchState(curPos);
+            this.handleSelfAimLine(touchEnemy, touchIdx);
+            this.handleSelfSklForbidBtn();
+        }
+
+        this.hideSelfAimLine();
+        this.hideSelfSklForbidBtn();
         this.hideEnemyDetail();
-        this.handleSelfCtrlLine();
-        this.hideSelfCtrlLine();
+        this.startIdx = -1;
     }
 
-    showSelfCtrlLine(curPos: cc.Vec2) {
-        if (this.touchEnemy || this.touchIdx === -1) return;
+    calcTouchState(pos: cc.Vec2): { touchEnemy: boolean; touchIdx: number } {
+        const touchEnemy = this.startPos.x > 540;
+        let touchIdx = Math.floor(this.startPos.y / btlUnitH);
+        const uis = touchEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        const ui = uis[touchIdx];
+        touchIdx = ui.node.active === true ? touchIdx : -1;
+        return { touchEnemy, touchIdx };
     }
 
-    hideSelfCtrlLine() {}
+    ctrlLineShowing: boolean = false;
+
+    showSelfAimLine(curPos: cc.Vec2) {
+        if (this.startBeEnemy || this.startIdx === -1 || !this.canCtrlSelfAim) return;
+        if (!this.ctrlLineShowing) {
+        }
+    }
+
+    handleSelfAimLine(curBeEnemy: boolean, curIdx: number) {}
+
+    hideSelfAimLine() {}
+
+    showSelfSklForbidBtn(curPos: cc.Vec2) {
+        if (this.startBeEnemy || this.startIdx === -1 || !this.canCtrlSelfSkl) return;
+    }
+
+    handleSelfSklForbidBtn() {}
+
+    hideSelfSklForbidBtn() {}
 
     showEnemyDetail() {
-        if (!this.touchEnemy || this.touchIdx === -1) return;
+        if (!this.startBeEnemy || this.startIdx === -1 || !this.canSeeEnemy) return;
+        cc.tween(this.enemyDetailPanel).to(0.3, { opacity: 255 }).start();
+        const pets = this.updater.btlCtrlr.realBattle.selfTeam.pets;
+        this.setEnemyDetailPanelData(pets[this.startIdx]);
     }
 
-    handleSelfCtrlLine() {}
+    changeEnemyDetail(curBeEnemy: boolean, curIdx: number) {
+        if (!this.startBeEnemy || this.startIdx === -1 || !this.canSeeEnemy) return;
+        if (!curBeEnemy || curIdx === -1 || curIdx === this.startIdx) return;
+        const pets = this.updater.btlCtrlr.realBattle.selfTeam.pets;
+        this.setEnemyDetailPanelData(pets[curIdx]);
+    }
 
-    hideEnemyDetail() {}
+    setEnemyDetailPanelData(bPet: BattlePet) {}
+
+    hideEnemyDetail() {
+        cc.tween(this.enemyDetailPanel).to(0.3, { opacity: 0 }).start();
+    }
+
+    setSelfAim(selfIdx: number, aimIndex: number) {}
+
+    setSelfSklForbid(selfIdx: number, sklIdx: number) {}
 
     // button -----------------------------------------------------------------
 
