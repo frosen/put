@@ -7,7 +7,7 @@
 const { ccclass, property, executionOrder } = cc._decorator;
 import { BtlPageBase } from '../../../scripts/BtlPageBase';
 import { ExplUpdater, ExplLogData, ExplState } from '../../../scripts/ExplUpdater';
-import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors } from '../../../scripts/DataSaved';
+import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors, BattleType } from '../../../scripts/DataSaved';
 import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames } from '../../../scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax, BossMaster } from '../../../scripts/DataOther';
 import { ListView } from '../../../scripts/ListView';
@@ -25,6 +25,8 @@ import { PagePkg } from '../../page_pkg/scripts/PagePkg';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
 import { PTKey } from '../../../configs/ProTtlModelDict';
+import { petModelDict } from '../../../configs/PetModelDict';
+import { BtlCtrlr } from '../../../scripts/BtlCtrlr';
 
 const btlUnitH = -172;
 const BattleUnitYs = [0, btlUnitH, btlUnitH * 2, btlUnitH * 3, btlUnitH * 4];
@@ -52,6 +54,9 @@ export class PageActExpl extends BtlPageBase {
 
     @property(cc.Node)
     enemyPetsLayer: cc.Node = null;
+
+    @property(cc.Node)
+    dmgLayer: cc.Node = null;
 
     @property(cc.Node)
     btlTouchLayer: cc.Node = null;
@@ -137,7 +142,7 @@ export class PageActExpl extends BtlPageBase {
 
         for (let index = 0; index < 30; index++) {
             const dmgLblNode = cc.instantiate(this.dmgPrefab);
-            dmgLblNode.parent = this.node;
+            dmgLblNode.parent = this.dmgLayer;
             dmgLblNode.opacity = 0;
             this.dmgLbls.push(dmgLblNode.getComponent(cc.Label));
         }
@@ -153,7 +158,7 @@ export class PageActExpl extends BtlPageBase {
         this.btlTouchLayer.on(cc.Node.EventType.TOUCH_CANCEL, this.onBtlTouchEnd.bind(this));
 
         const gameData = this.ctrlr.memory.gameData;
-        this.canCtrlSelfAim = GameDataTool.hasProTtl(gameData, PTKey.ZhanShuDaShi);
+        this.canCtrlSelfAim = GameDataTool.hasProTtl(gameData, PTKey.ZhanShuDaShi) || true;
         this.canCtrlSelfSkl = GameDataTool.hasProTtl(gameData, PTKey.YiLingZhe);
         this.canSeeEnemy = GameDataTool.hasProTtl(gameData, PTKey.YingYan);
     }
@@ -504,22 +509,19 @@ export class PageActExpl extends BtlPageBase {
     }
 
     onBtlTouchMove(event: cc.Event.EventTouch) {
+        const eSt = this.updater.state;
+        if (eSt !== ExplState.prepare && eSt !== ExplState.battle) return;
+
         const wPos = event.getLocation();
         const curPos = this.node.convertToNodeSpaceAR(wPos);
         const { touchEnemy, touchIdx } = this.calcTouchState(curPos);
-        this.showSelfAimLine(curPos);
+        this.showSelfAimLine(curPos, touchEnemy, touchIdx);
         this.showSelfSklForbidBtn(curPos);
         this.changeEnemyDetail(touchEnemy, touchIdx);
     }
 
     onBtlTouchEnd(event: cc.Event.EventTouch) {
-        if (event) {
-            const wPos = event.getLocation();
-            const curPos = this.node.convertToNodeSpaceAR(wPos);
-            const { touchEnemy, touchIdx } = this.calcTouchState(curPos);
-            this.handleSelfAimLine(touchEnemy, touchIdx);
-            this.handleSelfSklForbidBtn();
-        }
+        if (event) this.handleTouch(event);
 
         this.hideSelfAimLine();
         this.hideSelfSklForbidBtn();
@@ -527,26 +529,113 @@ export class PageActExpl extends BtlPageBase {
         this.startIdx = -1;
     }
 
+    handleTouch(event: cc.Event.EventTouch) {
+        const eSt = this.updater.state;
+        if (eSt !== ExplState.prepare && eSt !== ExplState.battle) return;
+
+        const wPos = event.getLocation();
+        const curPos = this.node.convertToNodeSpaceAR(wPos);
+        const { touchEnemy, touchIdx } = this.calcTouchState(curPos);
+        this.handleSelfAimLine(touchEnemy, touchIdx);
+        this.handleSelfSklForbidBtn();
+    }
+
     calcTouchState(pos: cc.Vec2): { touchEnemy: boolean; touchIdx: number } {
-        const touchEnemy = this.startPos.x > 540;
-        let touchIdx = Math.floor(this.startPos.y / btlUnitH);
+        const touchEnemy = pos.x > 540;
+        let touchIdx = Math.floor(pos.y / btlUnitH);
         const uis = touchEnemy ? this.enemyPetUIs : this.selfPetUIs;
         const ui = uis[touchIdx];
         touchIdx = ui.node.active === true ? touchIdx : -1;
+
         return { touchEnemy, touchIdx };
     }
 
     ctrlLineShowing: boolean = false;
 
-    showSelfAimLine(curPos: cc.Vec2) {
+    showSelfAimLine(curPos: cc.Vec2, curBeEnemy: boolean, curIdx: number) {
         if (this.startBeEnemy || this.startIdx === -1 || !this.canCtrlSelfAim) return;
         if (!this.ctrlLineShowing) {
+            // 显示线
+            // 隐藏不可选
+            this.showAimRange();
         }
     }
 
-    handleSelfAimLine(curBeEnemy: boolean, curIdx: number) {}
+    selfAimIdxs: number[] = [];
+    enmeyAimIdxs: number[] = [];
 
-    hideSelfAimLine() {}
+    showAimRange() {
+        this.selfAimIdxs.length = 0;
+        this.enmeyAimIdxs.length = 0;
+
+        const rb = this.updater.btlCtrlr.realBattle;
+        const selfBPets = rb.selfTeam.pets;
+        const enemyBPets = rb.enemyTeam.pets;
+
+        const curBPet = selfBPets[this.startIdx];
+        const battleType = BtlCtrlr.getBattleType(curBPet);
+        const aimRangeIdxs = PageActExpl.getAimRange(this.startIdx, battleType);
+
+        for (let index = 0; index < BattlePetLenMax; index++) {
+            do {
+                if (index === this.startIdx) break;
+
+                const selfUI = this.selfPetUIs[index];
+                if (!selfUI.node.active) break;
+
+                const selfBPet = selfBPets[index];
+                if (selfBPet.hp === 0 || !aimRangeIdxs.includes(index)) {
+                    selfUI.node.stopAllActions();
+                    cc.tween(selfUI.node).to(0.3, { opacity: 125 }).start();
+                } else {
+                    this.selfAimIdxs.push(index);
+                }
+            } while (false);
+
+            do {
+                const enemyUI = this.enemyPetUIs[index];
+                if (!enemyUI.node.active) break;
+
+                const enemyBPet = enemyBPets[index];
+                if (enemyBPet.hp === 0 || !aimRangeIdxs.includes(index)) {
+                    enemyUI.node.stopAllActions();
+                    cc.tween(enemyUI.node).to(0.3, { opacity: 125 }).start();
+                } else {
+                    this.enmeyAimIdxs.push(index);
+                }
+            } while (false);
+        }
+    }
+
+    static getAimRange(curIdx: number, battleType: BattleType) {
+        if (battleType === BattleType.melee) return [curIdx - 1, curIdx, curIdx + 1];
+        else if (battleType === BattleType.charge) return [0, curIdx - 1, curIdx, curIdx + 1];
+        else if (battleType === BattleType.shoot) return [0, 1, 2, 3, 4];
+        else if (battleType === BattleType.assassinate) return [curIdx - 1, curIdx, curIdx + 1];
+        else if (battleType === BattleType.combo) return [curIdx - 1, curIdx, curIdx + 1];
+        else return [];
+    }
+
+    handleSelfAimLine(curBeEnemy: boolean, curIdx: number) {
+        if (!this.ctrlLineShowing) return;
+    }
+
+    hideSelfAimLine() {
+        this.ctrlLineShowing = false;
+        this.hideAimRange();
+    }
+
+    hideAimRange() {
+        for (let index = 0; index < BattlePetLenMax; index++) {
+            const selfUINode = this.selfPetUIs[index].node;
+            selfUINode.stopAllActions();
+            cc.tween(selfUINode).to(0.3, { opacity: 255 }).start();
+
+            const enemyUINode = this.enemyPetUIs[index].node;
+            enemyUINode.stopAllActions();
+            cc.tween(enemyUINode).to(0.3, { opacity: 255 }).start();
+        }
+    }
 
     showSelfSklForbidBtn(curPos: cc.Vec2) {
         if (this.startBeEnemy || this.startIdx === -1 || !this.canCtrlSelfSkl) return;

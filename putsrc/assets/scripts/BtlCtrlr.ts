@@ -786,7 +786,7 @@ export class BtlCtrlr {
 
         const battleType = BtlCtrlr.getBattleType(battlePet, skillModel);
 
-        if (!skillModel && !skillModel.spBattleType && battlePet.ctrlAimIdx !== -1) {
+        if (battlePet.ctrlAimIdx !== -1 && (!skillModel || !skillModel.spBattleType)) {
             const ctrlAim = aimPets[battlePet.ctrlAimIdx];
             if (ctrlAim.hp === 0 || battleType === BattleType.stay || battleType === BattleType.chaos) {
                 this.setSelfPetCtrlAimIdx(battlePet, -1);
