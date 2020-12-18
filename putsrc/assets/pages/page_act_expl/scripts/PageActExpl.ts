@@ -160,7 +160,7 @@ export class PageActExpl extends BtlPageBase {
         const gameData = this.ctrlr.memory.gameData;
         this.canCtrlSelfAim = GameDataTool.hasProTtl(gameData, PTKey.ZhanShuDaShi) || true;
         this.canCtrlSelfSkl = GameDataTool.hasProTtl(gameData, PTKey.YiLingZhe);
-        this.canSeeEnemy = GameDataTool.hasProTtl(gameData, PTKey.YingYan);
+        this.canSeeEnemy = GameDataTool.hasProTtl(gameData, PTKey.YingYan) || true;
     }
 
     initPADExpl() {
@@ -555,6 +555,7 @@ export class PageActExpl extends BtlPageBase {
     showSelfAimLine(curPos: cc.Vec2, curBeEnemy: boolean, curIdx: number) {
         if (this.startBeEnemy || this.startIdx === -1 || !this.canCtrlSelfAim) return;
         if (!this.ctrlLineShowing) {
+            this.ctrlLineShowing = true;
             this.showAimRange();
         }
     }
@@ -584,7 +585,7 @@ export class PageActExpl extends BtlPageBase {
                 const selfBPet = selfBPets[index];
                 if (selfBPet.hp === 0 || !aimRangeIdxs.includes(index)) {
                     selfUI.node.stopAllActions();
-                    cc.tween(selfUI.node).to(0.3, { opacity: 125 }).start();
+                    cc.tween(selfUI.node).to(0.2, { opacity: 100 }).start();
                 } else {
                     this.selfAimIdxs.push(index);
                 }
@@ -597,11 +598,13 @@ export class PageActExpl extends BtlPageBase {
                 const enemyBPet = enemyBPets[index];
                 if (enemyBPet.hp === 0 || !aimRangeIdxs.includes(index)) {
                     enemyUI.node.stopAllActions();
-                    cc.tween(enemyUI.node).to(0.3, { opacity: 125 }).start();
+                    cc.tween(enemyUI.node).to(0.2, { opacity: 100 }).start();
                 } else {
                     this.enmeyAimIdxs.push(index);
                 }
             } while (false);
+
+            cc.log('STORM cc ^_^ >>> ', battleType, aimRangeIdxs, this.selfAimIdxs, this.enmeyAimIdxs);
         }
     }
 
@@ -627,11 +630,11 @@ export class PageActExpl extends BtlPageBase {
         for (let index = 0; index < BattlePetLenMax; index++) {
             const selfUINode = this.selfPetUIs[index].node;
             selfUINode.stopAllActions();
-            cc.tween(selfUINode).to(0.3, { opacity: 255 }).start();
+            cc.tween(selfUINode).to(0.2, { opacity: 255 }).start();
 
             const enemyUINode = this.enemyPetUIs[index].node;
             enemyUINode.stopAllActions();
-            cc.tween(enemyUINode).to(0.3, { opacity: 255 }).start();
+            cc.tween(enemyUINode).to(0.2, { opacity: 255 }).start();
         }
     }
 
@@ -645,7 +648,7 @@ export class PageActExpl extends BtlPageBase {
 
     showEnemyDetail() {
         if (!this.startBeEnemy || this.startIdx === -1 || !this.canSeeEnemy) return;
-        cc.tween(this.enemyDetailPanel).to(0.3, { opacity: 255 }).start();
+        cc.tween(this.enemyDetailPanel).to(0.2, { opacity: 255 }).start();
         const pets = this.updater.btlCtrlr.realBattle.selfTeam.pets;
         this.setEnemyDetailPanelData(pets[this.startIdx]);
     }
@@ -660,7 +663,7 @@ export class PageActExpl extends BtlPageBase {
     setEnemyDetailPanelData(bPet: BattlePet) {}
 
     hideEnemyDetail() {
-        cc.tween(this.enemyDetailPanel).to(0.3, { opacity: 0 }).start();
+        cc.tween(this.enemyDetailPanel).to(0.2, { opacity: 0 }).start();
     }
 
     setSelfAim(selfIdx: number, toSelf: boolean, aimIndex: number) {}
