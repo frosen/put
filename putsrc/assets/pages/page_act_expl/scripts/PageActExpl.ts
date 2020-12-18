@@ -555,8 +555,6 @@ export class PageActExpl extends BtlPageBase {
     showSelfAimLine(curPos: cc.Vec2, curBeEnemy: boolean, curIdx: number) {
         if (this.startBeEnemy || this.startIdx === -1 || !this.canCtrlSelfAim) return;
         if (!this.ctrlLineShowing) {
-            // 显示线
-            // 隐藏不可选
             this.showAimRange();
         }
     }
@@ -665,7 +663,7 @@ export class PageActExpl extends BtlPageBase {
         cc.tween(this.enemyDetailPanel).to(0.3, { opacity: 0 }).start();
     }
 
-    setSelfAim(selfIdx: number, aimIndex: number) {}
+    setSelfAim(selfIdx: number, toSelf: boolean, aimIndex: number) {}
 
     setSelfSklForbid(selfIdx: number, sklIdx: number) {}
 

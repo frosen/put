@@ -768,7 +768,8 @@ export class BtlCtrlr {
             for (const selfPet of rb.selfTeam.pets) {
                 selfPet.buffDatas.length = 0;
                 this.page.removeBuff(selfPet.beEnemy, selfPet.idx, null);
-                this.setSelfPetCtrlAimIdx(selfPet, -1);
+                this.setSelfPetCtrlAimIdx(selfPet, true, -1);
+                this.setSelfPetCtrlAimIdx(selfPet, false, -1);
                 this.setSelfPetForbidSkl(selfPet, 0);
             }
         }
@@ -785,11 +786,11 @@ export class BtlCtrlr {
         }
 
         const battleType = BtlCtrlr.getBattleType(battlePet, skillModel);
-
-        if (battlePet.ctrlAimIdx !== -1 && (!skillModel || !skillModel.spBattleType)) {
-            const ctrlAim = aimPets[battlePet.ctrlAimIdx];
+        const ctrlAimIdx = toSelf ? battlePet.ctrlSelfAimIdx : battlePet.ctrlEnemyAimIdx;
+        if (ctrlAimIdx !== -1 && (!skillModel || !skillModel.spBattleType)) {
+            const ctrlAim = aimPets[ctrlAimIdx];
             if (ctrlAim.hp === 0 || battleType === BattleType.stay || battleType === BattleType.chaos) {
-                this.setSelfPetCtrlAimIdx(battlePet, -1);
+                this.setSelfPetCtrlAimIdx(battlePet, toSelf, -1);
             } else {
                 rb.lastAim = ctrlAim;
                 return ctrlAim;
@@ -820,14 +821,17 @@ export class BtlCtrlr {
                 }
                 break;
             case BattleType.chaos: {
-                let anotherSidePets: BattlePet[];
-                if (toSelf) {
-                    anotherSidePets = battlePet.beEnemy ? rb.selfTeam.pets : rb.enemyTeam.pets;
+                if (ranSd() > 0.5) {
+                    aim = BtlCtrlr.getPetAlive(aimPets[ranSdInt(aimPets.length)]);
                 } else {
-                    anotherSidePets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
+                    let anotherSidePets: BattlePet[];
+                    if (toSelf) {
+                        anotherSidePets = battlePet.beEnemy ? rb.selfTeam.pets : rb.enemyTeam.pets;
+                    } else {
+                        anotherSidePets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
+                    }
+                    aim = BtlCtrlr.getPetAlive(anotherSidePets[ranSdInt(anotherSidePets.length)]);
                 }
-                const pets = ranSd() > 0.5 ? aimPets : anotherSidePets;
-                aim = BtlCtrlr.getPetAlive(pets[ranSdInt(pets.length)]);
                 break;
             }
             default:
@@ -867,9 +871,10 @@ export class BtlCtrlr {
 
     // -----------------------------------------------------------------
 
-    setSelfPetCtrlAimIdx(selfBPet: BattlePet, aimIdx: number) {
-        selfBPet.ctrlAimIdx = aimIdx;
-        if (this.page) this.page.setSelfAim(selfBPet.idx, aimIdx);
+    setSelfPetCtrlAimIdx(selfBPet: BattlePet, toSelf: boolean, aimIdx: number) {
+        if (toSelf) selfBPet.ctrlSelfAimIdx = aimIdx;
+        else selfBPet.ctrlEnemyAimIdx = aimIdx;
+        if (this.page) this.page.setSelfAim(selfBPet.idx, toSelf, aimIdx);
     }
 
     setSelfPetForbidSkl(selfBPet: BattlePet, skl: number) {}

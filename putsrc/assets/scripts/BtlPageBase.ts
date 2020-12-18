@@ -15,7 +15,7 @@ export abstract class BtlPageBase extends PageBase {
     abstract clearUIOfSelfPet(idx: number): void;
     abstract clearUIOfEnemyPet(idx: number): void;
 
-    abstract setSelfAim(selfIdx: number, aimIndex: number): void;
+    abstract setSelfAim(selfIdx: number, toSelf: boolean, aimIndex: number): void;
     abstract setSelfSklForbid(selfIdx: number, sklIdx: number): void;
 
     abstract doAttack(beEnemy: boolean, idx: number, combo: number): void;

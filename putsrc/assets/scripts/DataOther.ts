@@ -314,7 +314,8 @@ export class BattlePet {
 
     buffDatas: BattleBuff[] = [];
 
-    ctrlAimIdx: number = -1;
+    ctrlSelfAimIdx: number = -1;
+    ctrlEnemyAimIdx: number = -1;
 
     static addFeatureFunc(bPet: BattlePet, attri: string, funcName: string, model: FeatureModel, datas: number[]) {
         if (!model.hasOwnProperty(funcName)) return;
