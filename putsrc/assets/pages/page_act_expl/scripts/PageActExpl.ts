@@ -25,8 +25,8 @@ import { PagePkg } from '../../page_pkg/scripts/PagePkg';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
 import { PTKey } from '../../../configs/ProTtlModelDict';
-import { petModelDict } from '../../../configs/PetModelDict';
 import { BtlCtrlr } from '../../../scripts/BtlCtrlr';
+import { AimLine, LineType } from './AimLine';
 
 const btlUnitH = -172;
 const BattleUnitYs = [0, btlUnitH, btlUnitH * 2, btlUnitH * 3, btlUnitH * 4];
@@ -72,6 +72,11 @@ export class PageActExpl extends BtlPageBase {
 
     selfPetUIs: PetUI[] = [];
     enemyPetUIs: PetUI[] = [];
+
+    @property(cc.Prefab)
+    aimLinePrefab: cc.Prefab = null;
+
+    aimLiness: AimLine[][] = [];
 
     @property(cc.Prefab)
     dmgPrefab: cc.Prefab = null;
@@ -161,6 +166,23 @@ export class PageActExpl extends BtlPageBase {
         this.canCtrlSelfAim = GameDataTool.hasProTtl(gameData, PTKey.ZhanShuDaShi) || true;
         this.canCtrlSelfSkl = GameDataTool.hasProTtl(gameData, PTKey.YiLingZhe);
         this.canSeeEnemy = GameDataTool.hasProTtl(gameData, PTKey.YingYan) || true;
+
+        const createAimLine = (lt: LineType): AimLine => {
+            const lineNode = cc.instantiate(this.aimLinePrefab);
+            lineNode.parent = this.btlTouchLayer;
+            const line = lineNode.getComponent(AimLine);
+            line.setLineType(lt);
+            line.hide();
+            return line;
+        };
+
+        for (let index = 0; index < BattlePetLenMax; index++) {
+            const lines = [];
+            lines.push(createAimLine(LineType.toSelf));
+            lines.push(createAimLine(LineType.toEnemy));
+            lines.push(createAimLine(LineType.normal));
+            this.aimLiness.push(lines);
+        }
     }
 
     initPADExpl() {
@@ -271,6 +293,7 @@ export class PageActExpl extends BtlPageBase {
 
     update() {
         if (CC_EDITOR) return;
+        this.updateAimLine();
         this.updateLogListView();
     }
 
@@ -493,7 +516,6 @@ export class PageActExpl extends BtlPageBase {
     canCtrlSelfSkl: boolean = false;
     canSeeEnemy: boolean = false;
 
-    startPos: cc.Vec2 = null;
     startIdx: number = -1;
     startBeEnemy: boolean = false;
 
@@ -502,8 +524,8 @@ export class PageActExpl extends BtlPageBase {
         if (eSt !== ExplState.prepare && eSt !== ExplState.battle) return;
 
         const wPos = event.getLocation();
-        this.startPos = this.node.convertToNodeSpaceAR(wPos);
-        ({ touchEnemy: this.startBeEnemy, touchIdx: this.startIdx } = this.calcTouchState(this.startPos));
+        const startPos = this.node.convertToNodeSpaceAR(wPos);
+        ({ touchEnemy: this.startBeEnemy, touchIdx: this.startIdx } = this.calcTouchState(startPos));
 
         this.showEnemyDetail();
     }
@@ -536,7 +558,7 @@ export class PageActExpl extends BtlPageBase {
         const wPos = event.getLocation();
         const curPos = this.node.convertToNodeSpaceAR(wPos);
         const { touchEnemy, touchIdx } = this.calcTouchState(curPos);
-        this.handleSelfAimLine(touchEnemy, touchIdx);
+        this.handleSelfAimLine(touchEnemy, touchIdx, curPos);
         this.handleSelfSklForbidBtn();
     }
 
@@ -551,13 +573,16 @@ export class PageActExpl extends BtlPageBase {
     }
 
     ctrlLineShowing: boolean = false;
+    movePos: cc.Vec2 = null;
 
     showSelfAimLine(curPos: cc.Vec2, curBeEnemy: boolean, curIdx: number) {
         if (this.startBeEnemy || this.startIdx === -1 || !this.canCtrlSelfAim) return;
         if (!this.ctrlLineShowing) {
             this.ctrlLineShowing = true;
             this.showAimRange();
+            this.aimLiness[this.startIdx][2].show();
         }
+        this.movePos = curPos;
     }
 
     selfAimIdxs: number[] = [];
@@ -577,8 +602,6 @@ export class PageActExpl extends BtlPageBase {
 
         for (let index = 0; index < BattlePetLenMax; index++) {
             do {
-                if (index === this.startIdx) break;
-
                 const selfUI = this.selfPetUIs[index];
                 if (!selfUI.node.active) break;
 
@@ -603,8 +626,6 @@ export class PageActExpl extends BtlPageBase {
                     this.enmeyAimIdxs.push(index);
                 }
             } while (false);
-
-            cc.log('STORM cc ^_^ >>> ', battleType, aimRangeIdxs, this.selfAimIdxs, this.enmeyAimIdxs);
         }
     }
 
@@ -617,13 +638,29 @@ export class PageActExpl extends BtlPageBase {
         else return [];
     }
 
-    handleSelfAimLine(curBeEnemy: boolean, curIdx: number) {
+    handleSelfAimLine(curBeEnemy: boolean, curIdx: number, curPos: cc.Vec2) {
         if (!this.ctrlLineShowing) return;
+        const btlCtrlr = this.updater.btlCtrlr;
+        const selfBPet = btlCtrlr.realBattle.selfTeam.pets[this.startIdx];
+        if (curBeEnemy) {
+            if (this.enmeyAimIdxs.includes(curIdx)) {
+                btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, false, curIdx);
+            }
+        } else {
+            if (this.selfAimIdxs.includes(curIdx)) {
+                if (curIdx === this.startIdx && curPos.x > 352) return; // 对自己使用，需要多往左划一点
+                btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, true, curIdx);
+            }
+        }
     }
 
     hideSelfAimLine() {
         this.ctrlLineShowing = false;
         this.hideAimRange();
+
+        for (let index = 0; index < BattlePetLenMax; index++) {
+            this.aimLiness[index][2].hide();
+        }
     }
 
     hideAimRange() {
@@ -666,9 +703,50 @@ export class PageActExpl extends BtlPageBase {
         cc.tween(this.enemyDetailPanel).to(0.2, { opacity: 0 }).start();
     }
 
-    setSelfAim(selfIdx: number, toSelf: boolean, aimIndex: number) {}
+    setSelfAim(selfIdx: number, toSelf: boolean, aimIdx: number) {
+        const lines = this.aimLiness[selfIdx];
+        const line = toSelf ? lines[0] : lines[1];
+        if (aimIdx >= 0) line.show();
+        else line.hide();
+    }
 
     setSelfSklForbid(selfIdx: number, sklIdx: number) {}
+
+    updateAimLine() {
+        for (let index = 0; index < BattlePetLenMax; index++) {
+            const selfPetNode = this.selfPetUIs[index].node;
+            const startX = selfPetNode.x + 460;
+            const startY = selfPetNode.y - 86;
+            const lines = this.aimLiness[index];
+            for (let j = 0; j < lines.length; j++) {
+                const aimLine = lines[j];
+                if (!aimLine.isShowing()) continue;
+                if (j === 0) {
+                    const btlCtrlr = this.updater.btlCtrlr;
+                    const selfBPet = btlCtrlr.realBattle.selfTeam.pets[index];
+                    const aimIdx = selfBPet.ctrlSelfAimIdx;
+                    if (aimIdx >= 0) {
+                        const aimPetNode = this.selfPetUIs[aimIdx].node;
+                        const aimX = aimPetNode.x + 352;
+                        const aimY = aimPetNode.y - 86;
+                        aimLine.setPos(startX, startY, aimX, aimY);
+                    }
+                } else if (j === 1) {
+                    const btlCtrlr = this.updater.btlCtrlr;
+                    const selfBPet = btlCtrlr.realBattle.selfTeam.pets[index];
+                    const aimIdx = selfBPet.ctrlEnemyAimIdx;
+                    if (aimIdx >= 0) {
+                        const aimPetNode = this.enemyPetUIs[aimIdx].node;
+                        const aimX = aimPetNode.x + 728;
+                        const aimY = aimPetNode.y - 86;
+                        aimLine.setPos(startX, startY, aimX, aimY);
+                    }
+                } else {
+                    aimLine.setPos(startX, startY, this.movePos.x, this.movePos.y);
+                }
+            }
+        }
+    }
 
     // button -----------------------------------------------------------------
 

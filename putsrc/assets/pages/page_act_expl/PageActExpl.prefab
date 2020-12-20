@@ -456,77 +456,6 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "dmg_layer",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 2
-    },
-    "_children": [],
-    "_active": true,
-    "_components": [],
-    "_prefab": {
-      "__id__": 12
-    },
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 0,
-      "height": 0
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
-    "_trs": {
-      "__type__": "TypedArray",
-      "ctor": "Float64Array",
-      "array": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1
-      ]
-    },
-    "_eulerAngles": {
-      "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_is3DNode": false,
-    "_groupIndex": 3,
-    "groupIndex": 3,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.PrefabInfo",
-    "root": {
-      "__id__": 1
-    },
-    "asset": {
-      "__uuid__": "a33cd81f-c6d3-4f59-b890-e40c0e228fec"
-    },
-    "fileId": "f8PWITlttHMJcHKA6fNpbS",
-    "sync": false
-  },
-  {
-    "__type__": "cc.Node",
     "_name": "battle_touch",
     "_objFlags": 0,
     "_parent": {
@@ -536,7 +465,7 @@
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 14
+      "__id__": 12
     },
     "_opacity": 255,
     "_color": {
@@ -594,6 +523,77 @@
       "__uuid__": "a33cd81f-c6d3-4f59-b890-e40c0e228fec"
     },
     "fileId": "beory1s7VJ4ZKrn+bSzKh8",
+    "sync": false
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "dmg_layer",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 2
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [],
+    "_prefab": {
+      "__id__": 14
+    },
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float64Array",
+      "array": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "_groupIndex": 3,
+    "groupIndex": 3,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "a33cd81f-c6d3-4f59-b890-e40c0e228fec"
+    },
+    "fileId": "f8PWITlttHMJcHKA6fNpbS",
     "sync": false
   },
   {
@@ -4636,10 +4636,10 @@
       "__id__": 9
     },
     "dmgLayer": {
-      "__id__": 11
+      "__id__": 13
     },
     "btlTouchLayer": {
-      "__id__": 13
+      "__id__": 11
     },
     "selfPetPrefab": {
       "__uuid__": "668c068c-5a43-4180-80ba-5af5d91413e0"
@@ -4649,6 +4649,9 @@
     },
     "buffPrefab": {
       "__uuid__": "7525847d-5d8c-4fde-b6cc-98f946ff33fa"
+    },
+    "aimLinePrefab": {
+      "__uuid__": "035df36d-7056-4fe7-9315-47f95ab667c0"
     },
     "dmgPrefab": {
       "__uuid__": "c896dc52-2d51-438a-b512-2f4ad1ce8468"
