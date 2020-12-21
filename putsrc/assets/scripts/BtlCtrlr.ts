@@ -120,12 +120,18 @@ export class BtlCtrlr {
         const team = this.realBattle.selfTeam;
         this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
         for (const pet of team.pets) {
-            this.page.removeBuff(pet.beEnemy, pet.idx, null);
-            for (const { id, time } of pet.buffDatas) this.page.addBuff(pet.beEnemy, pet.idx, id, time);
+            this.page.removeBuff(pet.beEnemy, pet.idx, -1);
+            for (let index = 0; index < pet.buffDatas.length; index++) {
+                const { id, time } = pet.buffDatas[index];
+                this.page.addBuff(pet.beEnemy, pet.idx, id, time, index);
+            }
         }
         for (const pet of this.realBattle.enemyTeam.pets) {
-            this.page.removeBuff(pet.beEnemy, pet.idx, null);
-            for (const { id, time } of pet.buffDatas) this.page.addBuff(pet.beEnemy, pet.idx, id, time);
+            this.page.removeBuff(pet.beEnemy, pet.idx, -1);
+            for (let index = 0; index < pet.buffDatas.length; index++) {
+                const { id, time } = pet.buffDatas[index];
+                this.page.addBuff(pet.beEnemy, pet.idx, id, time, index);
+            }
         }
     }
 
@@ -360,10 +366,10 @@ export class BtlCtrlr {
 
                 if (buffData.time === 0) {
                     if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(pet, buffData.caster, this, buffData.data);
-                    if (this.page) this.page.removeBuff(pet.beEnemy, pet.idx, buffData.id);
+                    if (this.page) this.page.removeBuff(pet.beEnemy, pet.idx, buffIdx);
                     pet.buffDatas.splice(buffIdx, 1);
                 } else {
-                    if (this.page) this.page.resetBuffTime(pet.beEnemy, pet.idx, buffData.id, buffData.time);
+                    if (this.page) this.page.resetBuffTime(pet.beEnemy, pet.idx, buffData.id, buffData.time, buffIdx);
                 }
             }
         }
@@ -419,8 +425,12 @@ export class BtlCtrlr {
 
     castUltimateSkill(battlePet: BattlePet): boolean {
         let done = false;
-        for (const skillData of battlePet.skillDatas) {
+        for (let index = 0; index < battlePet.skillDatas.length; index++) {
+            if (((battlePet.sklForbidFlag << index) & 1) === 1) continue;
+
+            const skillData = battlePet.skillDatas[index];
             if (skillData.cd > 0) continue;
+
             const skillModel: SkillModel = skillModelDict[skillData.id];
             if (skillModel.skillType !== SkillType.ultimate) continue;
 
@@ -441,8 +451,12 @@ export class BtlCtrlr {
 
     castNormalSkill(battlePet: BattlePet): boolean {
         let done = false;
-        for (const skillData of battlePet.skillDatas) {
+        for (let index = 0; index < battlePet.skillDatas.length; index++) {
+            if (((battlePet.sklForbidFlag << index) & 1) === 1) continue;
+
+            const skillData = battlePet.skillDatas[index];
             if (skillData.cd > 0) continue;
+
             const skillModel: SkillModel = skillModelDict[skillData.id];
             if (skillModel.skillType === SkillType.ultimate) continue;
 
@@ -595,6 +609,7 @@ export class BtlCtrlr {
             const buffData = aim.buffDatas[index];
             if (buffData.id === buffId) {
                 if (buffTime > buffData.time) buffData.time = buffTime;
+                if (this.logging) this.logBuff(aim, buffModel.cnName);
                 return;
             }
         }
@@ -603,10 +618,11 @@ export class BtlCtrlr {
         buffData.id = buffId;
         buffData.time = buffTime;
         buffData.caster = caster;
-        if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted(aim, caster, this);
-        if (this.page) this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime);
-        if (this.logging) this.logBuff(aim, buffModel.cnName);
         aim.buffDatas.push(buffData);
+
+        if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted(aim, caster, this);
+        if (this.page) this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime, aim.buffDatas.length - 1);
+        if (this.logging) this.logBuff(aim, buffModel.cnName);
     }
 
     doNormalAttack(battlePet: BattlePet): boolean {
@@ -732,7 +748,7 @@ export class BtlCtrlr {
             });
 
             battlePet.buffDatas.length = 0;
-            if (this.page) this.page.removeBuff(battlePet.beEnemy, battlePet.idx, null);
+            if (this.page) this.page.removeBuff(battlePet.beEnemy, battlePet.idx, -1);
 
             for (let index = battlePet.idx + 1; index < curPets.length; index++) {
                 const pet = curPets[index];
@@ -761,13 +777,13 @@ export class BtlCtrlr {
             // 清理敌人状态
             for (let index = 0; index < BattlePetLenMax; index++) {
                 this.page.clearUIOfEnemyPet(index);
-                this.page.removeBuff(true, index, null);
+                this.page.removeBuff(true, index, -1);
             }
 
             // 清理己方状态
             for (const selfPet of rb.selfTeam.pets) {
                 selfPet.buffDatas.length = 0;
-                this.page.removeBuff(selfPet.beEnemy, selfPet.idx, null);
+                this.page.removeBuff(selfPet.beEnemy, selfPet.idx, -1);
                 this.setSelfPetCtrlAimIdx(selfPet, true, -1);
                 this.setSelfPetCtrlAimIdx(selfPet, false, -1);
                 this.setSelfPetForbidSkl(selfPet, 0);

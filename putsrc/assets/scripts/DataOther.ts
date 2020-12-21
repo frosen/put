@@ -317,6 +317,8 @@ export class BattlePet {
     ctrlSelfAimIdx: number = -1;
     ctrlEnemyAimIdx: number = -1;
 
+    sklForbidFlag: number = 0; // 二进制flag，位数代表禁用的索引
+
     static addFeatureFunc(bPet: BattlePet, attri: string, funcName: string, model: FeatureModel, datas: number[]) {
         if (!model.hasOwnProperty(funcName)) return;
         const list: { func: any; datas: number[]; id: string }[] = bPet[attri];

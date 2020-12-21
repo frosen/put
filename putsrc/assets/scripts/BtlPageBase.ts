@@ -22,11 +22,9 @@ export abstract class BtlPageBase extends PageBase {
     abstract doHurt(beEnemy: boolean, idx: number, hp: number, hpMax: number, dmg: number, crit: boolean, combo: number): void;
     abstract doMiss(beEnemy: boolean, idx: number, combo: number): void;
 
-    abstract addBuff(beEnemy: boolean, idx: number, buffId: string, buffTime: number): void;
-    abstract addBuffByStr(beEnemy: boolean, idx: number, buffStr: string, color: cc.Color): void;
-    abstract resetBuffTime(beEnemy: boolean, idx: number, buffId: string, buffTime: number): void;
-    abstract removeBuff(beEnemy: boolean, idx: number, buffId: string): void;
-    abstract removeBuffByStr(beEnemy: boolean, idx: number, str: string): void;
+    abstract addBuff(beEnemy: boolean, petIdx: number, buffId: string, buffTime: number, buffIdx: number): void;
+    abstract resetBuffTime(beEnemy: boolean, petIdx: number, buffId: string, buffTime: number, buffIdx: number): void;
+    abstract removeBuff(beEnemy: boolean, petIdx: number, buffIdx: number): void;
 
     abstract resetAttriBar(mp: number, mpMax: number, rage: number): void;
 

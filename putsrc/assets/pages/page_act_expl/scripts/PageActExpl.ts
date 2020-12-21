@@ -421,83 +421,56 @@ export class PageActExpl extends BtlPageBase {
             .start();
     }
 
-    addBuff(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
+    addBuff(beEnemy: boolean, petIdx: number, buffId: string, buffTime: number, buffIdx: number) {
+        if (buffIdx >= 7) return;
+
+        const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
+        const ui = uis[petIdx];
+
+        let buffNode = ui.buffNode.children[buffIdx];
+        if (!buffNode) {
+            buffNode = cc.instantiate(this.buffPrefab);
+            buffNode.parent = ui.buffNode;
+        }
+
         const buffModel = buffModelDict[buffId] as BuffModel;
         const buffBrief = buffModel.brief;
-        const buffStr = buffBrief + String(buffTime);
-        this.addBuffByStr(beEnemy, idx, buffStr, this.getBuffColor(buffModel));
+        buffNode.getComponent(cc.Label).string = '[' + buffBrief + String(buffTime) + ']';
+        buffNode.color = PageActExpl.getBuffColor(buffModel);
     }
 
-    getBuffColor(buffModel: BuffModel): cc.Color {
+    static getBuffColor(buffModel: BuffModel): cc.Color {
         if (buffModel.buffType === BuffType.buff) return EleColors[buffModel.eleType];
         else return EleDarkColors[buffModel.eleType];
     }
 
-    addBuffByStr(beEnemy: boolean, idx: number, buffStr: string, color: cc.Color) {
+    resetBuffTime(beEnemy: boolean, petIdx: number, buffId: string, buffTime: number, buffIdx: number) {
         const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        const ui = uis[idx];
-
-        const realBuffStr = '[' + buffStr + ']';
-        const buffNode = cc.instantiate(this.buffPrefab);
-        buffNode.getComponent(cc.Label).string = realBuffStr;
-        buffNode.color = color;
-        buffNode.parent = ui.buffNode;
-
-        // 多于7个后面不显示
-        for (let index = 0; index < ui.buffNode.childrenCount; index++) {
-            const buff = ui.buffNode.children[index];
-            buff.scale = index < 7 ? 1 : 0;
-        }
-    }
-
-    resetBuffTime(beEnemy: boolean, idx: number, buffId: string, buffTime: number) {
-        const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        const ui = uis[idx];
-        const buffBrief = (buffModelDict[buffId] as BuffModel).brief;
-        const buffStrTest = new RegExp('\\[' + buffBrief + '[0-9]*\\]');
-        for (const child of ui.buffNode.children) {
-            if (buffStrTest.test(child.getComponent(cc.Label).string)) {
-                const newBuffStr = '[' + buffBrief + String(buffTime) + ']';
-                child.getComponent(cc.Label).string = newBuffStr;
-                break;
-            }
-        }
-    }
-
-    removeBuff(beEnemy: boolean, idx: number, buffId: string) {
-        const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        const ui = uis[idx];
-        if (buffId) {
+        const ui = uis[petIdx];
+        const buffNode = ui.buffNode.children[buffIdx];
+        if (buffNode) {
             const buffBrief = (buffModelDict[buffId] as BuffModel).brief;
-            const buffStrTest = new RegExp('\\[' + buffBrief + '[0-9]*\\]');
-            for (const child of ui.buffNode.children) {
-                if (buffStrTest.test(child.getComponent(cc.Label).string)) {
-                    child.removeFromParent();
-                    child.destroy();
-                    break;
-                }
-            }
-
-            // 多于7个后面不显示
-            for (let index = 0; index < ui.buffNode.childrenCount; index++) {
-                const buff = ui.buffNode.children[index];
-                buff.scale = index < 7 ? 1 : 0;
-            }
-        } else {
-            for (const child of ui.buffNode.children) child.destroy();
-            ui.buffNode.removeAllChildren();
+            const newBuffStr = '[' + buffBrief + String(buffTime) + ']';
+            buffNode.getComponent(cc.Label).string = newBuffStr;
         }
     }
 
-    removeBuffByStr(beEnemy: boolean, idx: number, str: string) {
+    removeBuff(beEnemy: boolean, petIdx: number, buffIdx: number = -1) {
         const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
-        const ui = uis[idx];
-        const buffStr = '[' + str + ']';
-        for (const child of ui.buffNode.children) {
-            if (child.getComponent(cc.Label).string === buffStr) {
-                child.removeFromParent();
-                child.destroy();
-                break;
+        const ui = uis[petIdx];
+        if (buffIdx === -1) {
+            for (const buffNode of ui.buffNode.children) buffNode.getComponent(cc.Label).string = '';
+        } else {
+            const children = ui.buffNode.children;
+            for (let index = buffIdx; index < children.length; index++) {
+                const buffNode = children[index];
+                if (index < children.length - 1) {
+                    const nextBuffNode = children[index + 1];
+                    buffNode.getComponent(cc.Label).string = nextBuffNode.getComponent(cc.Label).string;
+                    buffNode.color = nextBuffNode.color;
+                } else {
+                    buffNode.getComponent(cc.Label).string = '';
+                }
             }
         }
     }
@@ -713,37 +686,40 @@ export class PageActExpl extends BtlPageBase {
     setSelfSklForbid(selfIdx: number, sklIdx: number) {}
 
     updateAimLine() {
+        const btlCtrlr = this.updater.btlCtrlr;
         for (let index = 0; index < BattlePetLenMax; index++) {
             const selfPetNode = this.selfPetUIs[index].node;
             const startX = selfPetNode.x + 460;
             const startY = selfPetNode.y - 86;
             const lines = this.aimLiness[index];
-            for (let j = 0; j < lines.length; j++) {
-                const aimLine = lines[j];
-                if (!aimLine.isShowing()) continue;
-                if (j === 0) {
-                    const btlCtrlr = this.updater.btlCtrlr;
-                    const selfBPet = btlCtrlr.realBattle.selfTeam.pets[index];
-                    const aimIdx = selfBPet.ctrlSelfAimIdx;
-                    if (aimIdx >= 0) {
-                        const aimPetNode = this.selfPetUIs[aimIdx].node;
-                        const aimX = aimPetNode.x + 352;
-                        const aimY = aimPetNode.y - 86;
-                        aimLine.setPos(startX, startY, aimX, aimY);
-                    }
-                } else if (j === 1) {
-                    const btlCtrlr = this.updater.btlCtrlr;
-                    const selfBPet = btlCtrlr.realBattle.selfTeam.pets[index];
-                    const aimIdx = selfBPet.ctrlEnemyAimIdx;
-                    if (aimIdx >= 0) {
-                        const aimPetNode = this.enemyPetUIs[aimIdx].node;
-                        const aimX = aimPetNode.x + 728;
-                        const aimY = aimPetNode.y - 86;
-                        aimLine.setPos(startX, startY, aimX, aimY);
-                    }
-                } else {
-                    aimLine.setPos(startX, startY, this.movePos.x, this.movePos.y);
+
+            const selfAimLine = lines[0];
+            if (selfAimLine.isShowing()) {
+                const selfBPet = btlCtrlr.realBattle.selfTeam.pets[index];
+                const aimIdx = selfBPet.ctrlSelfAimIdx;
+                if (aimIdx >= 0) {
+                    const aimPetNode = this.selfPetUIs[aimIdx].node;
+                    const aimX = aimPetNode.x + 352;
+                    const aimY = aimPetNode.y - 86;
+                    selfAimLine.setPos(startX, startY, aimX, aimY);
                 }
+            }
+
+            const enemyAimLine = lines[1];
+            if (enemyAimLine.isShowing()) {
+                const selfBPet = btlCtrlr.realBattle.selfTeam.pets[index];
+                const aimIdx = selfBPet.ctrlEnemyAimIdx;
+                if (aimIdx >= 0) {
+                    const aimPetNode = this.enemyPetUIs[aimIdx].node;
+                    const aimX = aimPetNode.x + 728;
+                    const aimY = aimPetNode.y - 86;
+                    enemyAimLine.setPos(startX, startY, aimX, aimY);
+                }
+            }
+
+            const touchAimLine = lines[2];
+            if (touchAimLine.isShowing()) {
+                touchAimLine.setPos(startX, startY, this.movePos.x, this.movePos.y);
             }
         }
     }
