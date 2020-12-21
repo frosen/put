@@ -750,6 +750,12 @@ export class BtlCtrlr {
             battlePet.buffDatas.length = 0;
             if (this.page) this.page.removeBuff(battlePet.beEnemy, battlePet.idx, -1);
 
+            if (!battlePet.beEnemy) {
+                this.setSelfPetCtrlAimIdx(battlePet, true, -1);
+                this.setSelfPetCtrlAimIdx(battlePet, false, -1);
+                this.setSelfPetForbidSkl(battlePet, 0);
+            }
+
             for (let index = battlePet.idx + 1; index < curPets.length; index++) {
                 const pet = curPets[index];
                 pet.fromationIdx -= 1;
@@ -773,21 +779,22 @@ export class BtlCtrlr {
         if (this.endCallback) this.endCallback(selfWin); // callback中可能会用到battle数据，所以放在清理前
 
         GameDataTool.clearBattle(this.gameData);
+
+        // 清理敌人状态
         if (this.page) {
-            // 清理敌人状态
             for (let index = 0; index < BattlePetLenMax; index++) {
                 this.page.clearUIOfEnemyPet(index);
                 this.page.removeBuff(true, index, -1);
             }
+        }
 
-            // 清理己方状态
-            for (const selfPet of rb.selfTeam.pets) {
-                selfPet.buffDatas.length = 0;
-                this.page.removeBuff(selfPet.beEnemy, selfPet.idx, -1);
-                this.setSelfPetCtrlAimIdx(selfPet, true, -1);
-                this.setSelfPetCtrlAimIdx(selfPet, false, -1);
-                this.setSelfPetForbidSkl(selfPet, 0);
-            }
+        // 清理己方状态
+        for (const selfPet of rb.selfTeam.pets) {
+            selfPet.buffDatas.length = 0;
+            if (this.page) this.page.removeBuff(selfPet.beEnemy, selfPet.idx, -1);
+            this.setSelfPetCtrlAimIdx(selfPet, true, -1);
+            this.setSelfPetCtrlAimIdx(selfPet, false, -1);
+            this.setSelfPetForbidSkl(selfPet, 0);
         }
     }
 
@@ -893,7 +900,18 @@ export class BtlCtrlr {
         if (this.page) this.page.setSelfAim(selfBPet.idx, toSelf, aimIdx);
     }
 
-    setSelfPetForbidSkl(selfBPet: BattlePet, skl: number) {}
+    setSelfPetForbidSkl(selfBPet: BattlePet, sklIdx: number) {
+        selfBPet.sklForbidFlag = selfBPet.sklForbidFlag | (1 << sklIdx);
+
+        if (this.page) {
+            const flag = selfBPet.sklForbidFlag;
+            const fbd1 = ((flag << 0) & 1) === 1;
+            const fbd2 = ((flag << 1) & 1) === 1;
+            const fbd3 = ((flag << 2) & 1) === 1;
+            const fbd4 = ((flag << 3) & 1) === 1;
+            this.page.setSelfSklForbid(selfBPet.idx, fbd1, fbd2, fbd3, fbd4);
+        }
+    }
 
     // -----------------------------------------------------------------
 

@@ -683,7 +683,7 @@ export class PageActExpl extends BtlPageBase {
         else line.hide();
     }
 
-    setSelfSklForbid(selfIdx: number, sklIdx: number) {}
+    setSelfSklForbid(selfIdx: number, fbd1: boolean, fbd2: boolean, fbd3: boolean, fbd4: boolean) {}
 
     updateAimLine() {
         const btlCtrlr = this.updater.btlCtrlr;
