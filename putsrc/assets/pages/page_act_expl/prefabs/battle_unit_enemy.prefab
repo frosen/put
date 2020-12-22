@@ -468,7 +468,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 380.03,
+      "width": 135.32,
       "height": 50
     },
     "_anchorPoint": {
@@ -532,7 +532,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 72,
+      "width": 36,
       "height": 45.36
     },
     "_anchorPoint": {
@@ -544,7 +544,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -77,
+        -41,
         0,
         0,
         0,
@@ -584,8 +584,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "狂热",
-    "_N$string": "狂热",
+    "_string": "热",
+    "_N$string": "热",
     "_fontSize": 36,
     "_lineHeight": 36,
     "_enableWrapText": true,
@@ -640,7 +640,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 176,
+      "width": 22,
       "height": 45.36
     },
     "_anchorPoint": {
@@ -652,7 +652,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -268,
+        -78,
         3,
         0,
         0,
@@ -692,8 +692,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "格罗姆高狂热之斧",
-    "_N$string": "格罗姆高狂热之斧",
+    "_string": "格",
+    "_N$string": "格",
     "_fontSize": 22,
     "_lineHeight": 36,
     "_enableWrapText": true,
@@ -748,7 +748,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 97.03,
+      "width": 42.32,
       "height": 32
     },
     "_anchorPoint": {
@@ -760,7 +760,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -380.03,
+        -135.32,
         3,
         0,
         0,
@@ -800,8 +800,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "L39B+",
-    "_N$string": "L39B+",
+    "_string": "B+",
+    "_N$string": "B+",
     "_fontSize": 32,
     "_lineHeight": 32,
     "_enableWrapText": true,
@@ -841,7 +841,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 380.03,
+      "width": 135.32,
       "height": 50
     },
     "_resize": 1,
@@ -901,7 +901,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 131,
+      "width": 17,
       "height": 24
     },
     "_anchorPoint": {
@@ -953,8 +953,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "100 / 100",
-    "_N$string": "100 / 100",
+    "_string": "1",
+    "_N$string": "1",
     "_fontSize": 31,
     "_lineHeight": 24,
     "_enableWrapText": true,
@@ -1013,6 +1013,7 @@
     "layout": {
       "__id__": 22
     },
+    "forbidMarks": [],
     "_id": ""
   },
   {

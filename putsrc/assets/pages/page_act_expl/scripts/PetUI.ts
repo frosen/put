@@ -28,4 +28,14 @@ export class PetUI extends cc.Component {
 
     @property(cc.Layout)
     layout: cc.Layout = null;
+
+    @property([cc.Node])
+    forbidMarks: cc.Node[] = [];
+
+    setForbidMark(idx: number, str: string) {
+        if (str) {
+            this.forbidMarks[idx].opacity = 255;
+            this.forbidMarks[idx].getComponentInChildren(cc.Label).string = str;
+        } else this.forbidMarks[idx].opacity = 0;
+    }
 }

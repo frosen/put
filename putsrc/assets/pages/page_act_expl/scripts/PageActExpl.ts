@@ -421,9 +421,9 @@ export class PageActExpl extends BtlPageBase {
             .start();
     }
 
-    addBuff(beEnemy: boolean, petIdx: number, buffId: string, buffTime: number, buffIdx: number) {
-        if (buffIdx >= 7) return;
+    buffDisplayMax: number = 7;
 
+    addBuff(beEnemy: boolean, petIdx: number, buffId: string, buffTime: number, buffIdx: number) {
         const uis = beEnemy ? this.enemyPetUIs : this.selfPetUIs;
         const ui = uis[petIdx];
 
@@ -431,6 +431,7 @@ export class PageActExpl extends BtlPageBase {
         if (!buffNode) {
             buffNode = cc.instantiate(this.buffPrefab);
             buffNode.parent = ui.buffNode;
+            if (buffIdx >= this.buffDisplayMax) buffNode.opacity = 0;
         }
 
         const buffModel = buffModelDict[buffId] as BuffModel;
@@ -683,7 +684,27 @@ export class PageActExpl extends BtlPageBase {
         else line.hide();
     }
 
-    setSelfSklForbid(selfIdx: number, fbd1: boolean, fbd2: boolean, fbd3: boolean, fbd4: boolean) {}
+    setSelfSklForbid(selfIdx: number, fbd1: boolean, fbd2: boolean, fbd3: boolean, fbd4: boolean) {
+        const petUI = this.selfPetUIs[selfIdx];
+        let markIdx = 0;
+
+        if (fbd1) petUI.setForbidMark(markIdx++, '1'); // 先调用函数，再idx增加
+        if (fbd2) petUI.setForbidMark(markIdx++, '2');
+        if (fbd3) petUI.setForbidMark(markIdx++, '3');
+        if (fbd4) petUI.setForbidMark(markIdx++, '4');
+        for (let index = markIdx; index < 4; index++) petUI.setForbidMark(index, null);
+
+        petUI.layout.node.x = 25 + 30 * markIdx;
+
+        if (markIdx === 4) this.buffDisplayMax = 5;
+        else if (markIdx >= 2) this.buffDisplayMax = 6;
+        else this.buffDisplayMax = 7;
+
+        const buffNodes = petUI.layout.node.children;
+        for (let index = 0; index < buffNodes.length; index++) {
+            buffNodes[index].opacity = index < this.buffDisplayMax ? 255 : 0;
+        }
+    }
 
     updateAimLine() {
         const btlCtrlr = this.updater.btlCtrlr;
