@@ -199,7 +199,7 @@ export class PageActRcclr extends PageBase {
             this.turnning = true;
             this.selectionBar.canTurn = false;
             cc.tween(this.listLayer)
-                .to(0.2, { x: idx * WIDTH * -1 }, { easing: 'quadInOut' })
+                .to(0.2, { x: idx * WIDTH * -1 }, { easing: cc.easing.quadInOut })
                 .call(() => {
                     this.turnning = false;
                     this.selectionBar.canTurn = true;

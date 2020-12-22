@@ -50,7 +50,7 @@ export class PkgSelectionBar extends cc.Component {
         curLblNode.color = cc.color(230, 30, 30);
 
         const btnNode = curLblNode.parent;
-        cc.tween(this.indicator).to(0.3, { x: btnNode.x }, { easing: 'quadInOut' }).start();
+        cc.tween(this.indicator).to(0.3, { x: btnNode.x }, { easing: cc.easing.quadInOut }).start();
 
         const ctt = this.scroll.content;
         const left = btnNode.x - btnNode.width * 0.5;
@@ -61,18 +61,18 @@ export class PkgSelectionBar extends cc.Component {
         if (idx === 0 || idx === this.lblNodes.length - 1) {
             if (realLeft < 0) {
                 const aim = 0 - realLeft;
-                cc.tween(ctt).by(0.3, { x: aim }, { easing: 'quadInOut' }).start();
+                cc.tween(ctt).by(0.3, { x: aim }, { easing: cc.easing.quadInOut }).start();
             } else if (realRight > 1080) {
                 const aim = 1080 - realRight;
-                cc.tween(ctt).by(0.3, { x: aim }, { easing: 'quadInOut' }).start();
+                cc.tween(ctt).by(0.3, { x: aim }, { easing: cc.easing.quadInOut }).start();
             }
         } else {
             if (realLeft < btnNode.width) {
                 const aim = btnNode.width - realLeft;
-                cc.tween(ctt).by(0.3, { x: aim }, { easing: 'quadInOut' }).start();
+                cc.tween(ctt).by(0.3, { x: aim }, { easing: cc.easing.quadInOut }).start();
             } else if (realRight > 1080 - btnNode.width) {
                 const aim = 1080 - btnNode.width - realRight;
-                cc.tween(ctt).by(0.3, { x: aim }, { easing: 'quadInOut' }).start();
+                cc.tween(ctt).by(0.3, { x: aim }, { easing: cc.easing.quadInOut }).start();
             }
         }
 

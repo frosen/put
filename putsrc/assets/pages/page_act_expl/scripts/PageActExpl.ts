@@ -18,6 +18,9 @@ import { buffModelDict } from '../../../configs/BuffModelDict';
 import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 
 import { PetUI } from './PetUI';
+import { AimLine, LineType } from './AimLine';
+import { SklForbidBtn } from './SklForbidBtn';
+import { EnemyDetail } from './EnemyDetail';
 import { PageActExplLVD } from './PageActExplLVD';
 
 import { PagePkgSelection } from '../../page_pkg_selection/scripts/PagePkgSelection';
@@ -26,7 +29,7 @@ import { ListViewCell } from '../../../scripts/ListViewCell';
 import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
 import { PTKey } from '../../../configs/ProTtlModelDict';
 import { BtlCtrlr } from '../../../scripts/BtlCtrlr';
-import { AimLine, LineType } from './AimLine';
+import { skillModelDict } from '../../../configs/SkillModelDict';
 
 const btlUnitH = -172;
 const BattleUnitYs = [0, btlUnitH, btlUnitH * 2, btlUnitH * 3, btlUnitH * 4];
@@ -42,6 +45,14 @@ const DmgLblActParams: number[][] = [
     [126, 50],
     [68, 10],
     [10, 60]
+];
+
+const ForbidBtnPosss: cc.Vec2[][] = [
+    null,
+    [cc.v2(0, 0)],
+    [cc.v2(0, 0), cc.v2(0, 0)],
+    [cc.v2(0, 0), cc.v2(0, 0), cc.v2(0, 0), cc.v2(0, 0)],
+    [cc.v2(0, 0), cc.v2(0, 0), cc.v2(0, 0), cc.v2(0, 0)]
 ];
 
 @ccclass
@@ -74,18 +85,25 @@ export class PageActExpl extends BtlPageBase {
     enemyPetUIs: PetUI[] = [];
 
     @property(cc.Prefab)
-    aimLinePrefab: cc.Prefab = null;
-
-    aimLiness: AimLine[][] = [];
-
-    @property(cc.Prefab)
     dmgPrefab: cc.Prefab = null;
 
     dmgLbls: cc.Label[] = [];
     dmgIdx: number = 0;
 
-    @property(cc.Node)
-    enemyDetailPanel: cc.Node = null;
+    @property(cc.Prefab)
+    aimLinePrefab: cc.Prefab = null;
+
+    aimLiness: AimLine[][] = [];
+
+    @property(cc.Prefab)
+    sklForbidBtnPrefab: cc.Prefab = null;
+
+    sklForbidBtns: SklForbidBtn[] = [];
+
+    @property(cc.Prefab)
+    enemyDetailPrefab: cc.Prefab = null;
+
+    enemyDetail: EnemyDetail = null;
 
     @property(cc.ProgressBar) mpProgress: cc.ProgressBar = null;
     @property(cc.Label) mpLbl: cc.Label = null;
@@ -167,21 +185,41 @@ export class PageActExpl extends BtlPageBase {
         this.canCtrlSelfSkl = GameDataTool.hasProTtl(gameData, PTKey.YiLingZhe);
         this.canSeeEnemy = GameDataTool.hasProTtl(gameData, PTKey.YingYan) || true;
 
-        const createAimLine = (lt: LineType): AimLine => {
-            const lineNode = cc.instantiate(this.aimLinePrefab);
-            lineNode.parent = this.btlTouchLayer;
-            const line = lineNode.getComponent(AimLine);
-            line.setLineType(lt);
-            line.hide();
-            return line;
-        };
+        // 层级上，sklForbidBtn在aimLine下面
+        if (this.canCtrlSelfSkl) {
+            for (let index = 0; index < 4; index++) {
+                const node = cc.instantiate(this.sklForbidBtnPrefab);
+                node.parent = this.btlTouchLayer;
+                const btn = node.getComponent(SklForbidBtn);
+                btn.hide();
+                this.sklForbidBtns.push(btn);
+            }
+        }
 
-        for (let index = 0; index < BattlePetLenMax; index++) {
-            const lines = [];
-            lines.push(createAimLine(LineType.toSelf));
-            lines.push(createAimLine(LineType.toEnemy));
-            lines.push(createAimLine(LineType.normal));
-            this.aimLiness.push(lines);
+        if (this.canCtrlSelfAim) {
+            const createAimLine = (lt: LineType): AimLine => {
+                const lineNode = cc.instantiate(this.aimLinePrefab);
+                lineNode.parent = this.btlTouchLayer;
+                const line = lineNode.getComponent(AimLine);
+                line.setLineType(lt);
+                line.hide();
+                return line;
+            };
+
+            for (let index = 0; index < BattlePetLenMax; index++) {
+                const lines = [];
+                lines.push(createAimLine(LineType.toSelf));
+                lines.push(createAimLine(LineType.toEnemy));
+                lines.push(createAimLine(LineType.normal));
+                this.aimLiness.push(lines);
+            }
+        }
+
+        if (this.canSeeEnemy) {
+            const node = cc.instantiate(this.enemyDetailPrefab);
+            node.parent = this.btlTouchLayer;
+            this.enemyDetail = node.getComponent(EnemyDetail);
+            this.enemyDetail.hide();
         }
     }
 
@@ -651,30 +689,48 @@ export class PageActExpl extends BtlPageBase {
 
     showSelfSklForbidBtn(curPos: cc.Vec2) {
         if (this.startBeEnemy || this.startIdx === -1 || !this.canCtrlSelfSkl) return;
+        const btnForCheck = this.sklForbidBtns[0];
+        if (btnForCheck.using || btnForCheck.node.getNumberOfRunningActions() > 0) return;
+
+        const bPet = this.updater.btlCtrlr.realBattle.selfTeam.pets[this.startIdx];
+        const skillIds = bPet.pet2.skillIds;
+        const forbidFlag = bPet.sklForbidFlag;
+        const selfPetNode = this.selfPetUIs[this.startIdx].node;
+        const startX = selfPetNode.x + 460;
+        const startY = selfPetNode.y - 86;
+        const btnPoss = ForbidBtnPosss[skillIds.length];
+        for (let index = 0; index < skillIds.length; index++) {
+            const btn = this.sklForbidBtns[index];
+            btn.setName(skillModelDict[skillIds[index]].cnName);
+            btn.setForbid(((forbidFlag << index) & 1) === 1);
+            const { x, y } = btnPoss[index];
+            btn.show(startX, startY, x, y);
+        }
     }
 
     handleSelfSklForbidBtn() {}
 
-    hideSelfSklForbidBtn() {}
+    hideSelfSklForbidBtn() {
+        for (let index = 0; index < this.sklForbidBtns.length; index++) {
+            this.sklForbidBtns[index].hide();
+        }
+    }
 
     showEnemyDetail() {
         if (!this.startBeEnemy || this.startIdx === -1 || !this.canSeeEnemy) return;
-        cc.tween(this.enemyDetailPanel).to(0.2, { opacity: 255 }).start();
-        const pets = this.updater.btlCtrlr.realBattle.selfTeam.pets;
-        this.setEnemyDetailPanelData(pets[this.startIdx]);
+        this.enemyDetail.show();
+        this.enemyDetail.setData(this.updater.btlCtrlr.realBattle.enemyTeam.pets[this.startIdx]);
     }
 
     changeEnemyDetail(curBeEnemy: boolean, curIdx: number) {
         if (!this.startBeEnemy || this.startIdx === -1 || !this.canSeeEnemy) return;
         if (!curBeEnemy || curIdx === -1 || curIdx === this.startIdx) return;
-        const pets = this.updater.btlCtrlr.realBattle.selfTeam.pets;
-        this.setEnemyDetailPanelData(pets[curIdx]);
+        this.startIdx = curIdx;
+        this.enemyDetail.setData(this.updater.btlCtrlr.realBattle.enemyTeam.pets[this.startIdx]);
     }
 
-    setEnemyDetailPanelData(bPet: BattlePet) {}
-
     hideEnemyDetail() {
-        cc.tween(this.enemyDetailPanel).to(0.2, { opacity: 0 }).start();
+        this.enemyDetail.hide();
     }
 
     setSelfAim(selfIdx: number, toSelf: boolean, aimIdx: number) {

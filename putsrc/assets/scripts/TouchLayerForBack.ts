@@ -90,7 +90,7 @@ export class TouchLayerForBack extends cc.Component {
 
     moveBack() {
         if (this.mark.x > 0) {
-            cc.tween(this.mark).to(0.25, { x: 0 }, { easing: 'quadOut' }).start();
+            cc.tween(this.mark).to(0.25, { x: 0 }, { easing: cc.easing.quadOut }).start();
         }
     }
 
