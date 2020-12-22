@@ -571,7 +571,7 @@ export class PageActExpl extends BtlPageBase {
         const curPos = this.node.convertToNodeSpaceAR(wPos);
         const { touchEnemy, touchIdx } = this.calcTouchState(curPos);
         this.handleSelfAimLine(touchEnemy, touchIdx, curPos);
-        this.handleSelfSklForbidBtn();
+        this.handleSelfSklForbidBtn(curPos);
     }
 
     calcTouchState(pos: cc.Vec2): { touchEnemy: boolean; touchIdx: number } {
@@ -708,7 +708,18 @@ export class PageActExpl extends BtlPageBase {
         }
     }
 
-    handleSelfSklForbidBtn() {}
+    handleSelfSklForbidBtn(curPos: cc.Vec2) {
+        const btlCtrlr = this.updater.btlCtrlr;
+        const selfBPet = btlCtrlr.realBattle.selfTeam.pets[this.startIdx];
+        for (let index = 0; index < this.sklForbidBtns.length; index++) {
+            const btn = this.sklForbidBtns[index];
+            if (!btn.using) continue;
+            if (btn.getRect().contains(curPos)) {
+                btlCtrlr.switchSelfPetForbidSkl(selfBPet, index);
+                break;
+            }
+        }
+    }
 
     hideSelfSklForbidBtn() {
         for (let index = 0; index < this.sklForbidBtns.length; index++) {

@@ -21,6 +21,9 @@ export class SklForbidBtn extends cc.Component {
 
     setName(str: string) {
         this.nameLbl.string = str;
+        // @ts-ignore
+        this.nameLbl._assembler.updateRenderData(this.nameLbl);
+        this.bar.getComponent(cc.Layout).updateLayout();
     }
 
     setForbid(b: boolean) {
@@ -52,5 +55,9 @@ export class SklForbidBtn extends cc.Component {
             cc.tween(this.node).to(0.3, { x: this.startX, y: this.startY }, { easing: cc.easing.quadIn }).start();
             cc.tween(this.node).to(0.3, { opacity: 0 }).start();
         }
+    }
+
+    getRect(): cc.Rect {
+        return cc.rect(this.node.x + this.bar.height * 0.5, this.node.y, this.bar.width, this.bar.height);
     }
 }

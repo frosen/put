@@ -14,7 +14,21 @@ import { petModelDict } from '../configs/PetModelDict';
 import { deepCopy } from '../scripts/Utils';
 import { SkillModel, SkillType, SkillAimtype, SkillDirType } from '../scripts/DataModel';
 import { Pet, EleType, BattleType, GameData, BattleMmr, BioType } from '../scripts/DataSaved';
-import { RealBattle, BattleTeam, BattlePet, BattleBuff, RageMax, BattlePetLenMax } from '../scripts/DataOther';
+import {
+    RealBattle,
+    BattleTeam,
+    BattlePet,
+    BattleBuff,
+    RageMax,
+    BattlePetLenMax,
+    StartFeature,
+    AtkFeature,
+    HealFeature,
+    HurtFeature,
+    DeadFeature,
+    EDeadFeature,
+    TurnFeature
+} from '../scripts/DataOther';
 import { battleSequence } from '../configs/BattleSequence';
 import { ExplUpdater, ExplLogType } from './ExplUpdater';
 
@@ -311,6 +325,13 @@ export class BtlCtrlr {
         if (this.logging) this.updater.log(ExplLogType.round, rb.battleRound);
 
         if (rb.battleRound === 1) this.doFirstRound();
+
+        // 触发回合特性
+        for (const pet of rb.order) {
+            pet.turnFeatures.forEach((value: TurnFeature) => {
+                value.func(pet, value.datas, this);
+            });
+        }
     }
 
     handleCD(team: BattleTeam) {
@@ -753,7 +774,7 @@ export class BtlCtrlr {
             if (!battlePet.beEnemy) {
                 this.setSelfPetCtrlAimIdx(battlePet, true, -1);
                 this.setSelfPetCtrlAimIdx(battlePet, false, -1);
-                this.setSelfPetForbidSkl(battlePet, 0);
+                this.switchSelfPetForbidSkl(battlePet, -1);
             }
 
             for (let index = battlePet.idx + 1; index < curPets.length; index++) {
@@ -794,7 +815,7 @@ export class BtlCtrlr {
             if (this.page) this.page.removeBuff(selfPet.beEnemy, selfPet.idx, -1);
             this.setSelfPetCtrlAimIdx(selfPet, true, -1);
             this.setSelfPetCtrlAimIdx(selfPet, false, -1);
-            this.setSelfPetForbidSkl(selfPet, 0);
+            this.switchSelfPetForbidSkl(selfPet, -1);
         }
     }
 
@@ -900,8 +921,14 @@ export class BtlCtrlr {
         if (this.page) this.page.setSelfAim(selfBPet.idx, toSelf, aimIdx);
     }
 
-    setSelfPetForbidSkl(selfBPet: BattlePet, sklIdx: number) {
-        selfBPet.sklForbidFlag = selfBPet.sklForbidFlag | (1 << sklIdx);
+    switchSelfPetForbidSkl(selfBPet: BattlePet, sklIdx: number) {
+        if (sklIdx >= 0) {
+            const curIsNotForbid = ((selfBPet.sklForbidFlag << sklIdx) & 1) === 0;
+            if (curIsNotForbid) selfBPet.sklForbidFlag = selfBPet.sklForbidFlag | (1 << sklIdx);
+            else selfBPet.sklForbidFlag = selfBPet.sklForbidFlag & ~(1 << sklIdx);
+        } else {
+            selfBPet.sklForbidFlag = 0;
+        }
 
         if (this.page) {
             const flag = selfBPet.sklForbidFlag;

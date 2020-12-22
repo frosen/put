@@ -271,6 +271,54 @@ export class Pet2 {
 
 // battle -----------------------------------------------------------------
 
+export class StartFeature {
+    func: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    datas: number[];
+    id: string;
+}
+
+export class AtkFeature {
+    func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    datas: number[];
+    id: string;
+}
+
+export class CastFeature {
+    func: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    datas: number[];
+    id: string;
+}
+
+export class HurtFeature {
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    datas: number[];
+    id: string;
+}
+
+export class HealFeature {
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    datas: number[];
+    id: string;
+}
+
+export class EDeadFeature {
+    func: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    datas: number[];
+    id: string;
+}
+
+export class DeadFeature {
+    func: (pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    datas: number[];
+    id: string;
+}
+
+export class TurnFeature {
+    func: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    datas: number[];
+    id: string;
+}
+
 export class BattleSkill {
     id: string;
     cd: number = 0;
@@ -309,6 +357,7 @@ export class BattlePet {
     healFeatures: HealFeature[] = [];
     eDeadFeatures: EDeadFeature[] = [];
     deadFeatures: DeadFeature[] = [];
+    turnFeatures: TurnFeature[] = [];
 
     skillDatas: BattleSkill[] = [];
 
@@ -363,6 +412,7 @@ export class BattlePet {
         this.healFeatures.length = 0;
         this.eDeadFeatures.length = 0;
         this.deadFeatures.length = 0;
+        this.turnFeatures.length = 0;
 
         PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
             BattlePet.addFeatureFunc(this, 'startFeatures', 'onBtlStart', model, datas);
@@ -372,6 +422,7 @@ export class BattlePet {
             BattlePet.addFeatureFunc(this, 'healFeatures', 'onHeal', model, datas);
             BattlePet.addFeatureFunc(this, 'eDeadFeatures', 'onEDead', model, datas);
             BattlePet.addFeatureFunc(this, 'deadFeatures', 'onDead', model, datas);
+            BattlePet.addFeatureFunc(this, 'turnFeatures', 'onTurn', model, datas);
         });
 
         // 招式
