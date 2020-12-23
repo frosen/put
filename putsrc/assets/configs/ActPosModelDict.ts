@@ -5,6 +5,9 @@
  */
 
 import { ActPosModel, ActPosType } from '../scripts/DataModel';
+import { petModelDict } from './PetModelDict';
+
+const p = petModelDict;
 
 export class PAKey {
     static expl = 'exploration';
@@ -37,8 +40,8 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             },
             [PAKey.petMkt]: {
                 petIdLists: [
-                    ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen', 'ZiJingMieHuoQi', 'CaoPingShouGeZhe'],
-                    ['ShuiLengJiQiRen', 'DianZiShouWei']
+                    [p.NeiRanJiShou.id, p.FangShengJiXieBi.id, p.YaHuHanJuRen.id, p.ZiJingMieHuoQi.id, p.CaoPingShouGeZhe.id],
+                    [p.ShuiLengJiQiRen.id, p.DianZiShouWei.id]
                 ]
             },
             [PAKey.work]: {},

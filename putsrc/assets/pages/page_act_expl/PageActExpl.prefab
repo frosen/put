@@ -4465,16 +4465,18 @@
     "buffPrefab": {
       "__uuid__": "7525847d-5d8c-4fde-b6cc-98f946ff33fa"
     },
+    "dmgPrefab": {
+      "__uuid__": "c896dc52-2d51-438a-b512-2f4ad1ce8468"
+    },
     "aimLinePrefab": {
       "__uuid__": "035df36d-7056-4fe7-9315-47f95ab667c0"
     },
     "sklForbidBtnPrefab": {
       "__uuid__": "d26f33e8-5f01-49ca-8417-dbe80b139641"
     },
-    "dmgPrefab": {
-      "__uuid__": "c896dc52-2d51-438a-b512-2f4ad1ce8468"
+    "enemyDetailPrefab": {
+      "__uuid__": "a0ebb236-b146-4f7f-bb3d-d5079ff7f2a4"
     },
-    "enemyDetailPanel": null,
     "mpProgress": {
       "__id__": 48
     },

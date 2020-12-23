@@ -49,9 +49,9 @@ const DmgLblActParams: number[][] = [
 
 const ForbidBtnPosss: cc.Vec2[][] = [
     null,
-    [cc.v2(0, 0)],
-    [cc.v2(0, 0), cc.v2(0, 0)],
-    [cc.v2(0, 0), cc.v2(0, 0), cc.v2(0, 0), cc.v2(0, 0)],
+    [cc.v2(-100, 0)],
+    [cc.v2(-80, 25), cc.v2(-80, -25)],
+    [cc.v2(30, 80), cc.v2(0, -100), cc.v2(-30, 80)],
     [cc.v2(0, 0), cc.v2(0, 0), cc.v2(0, 0), cc.v2(0, 0)]
 ];
 
@@ -182,7 +182,7 @@ export class PageActExpl extends BtlPageBase {
 
         const gameData = this.ctrlr.memory.gameData;
         this.canCtrlSelfAim = GameDataTool.hasProTtl(gameData, PTKey.ZhanShuDaShi) || true;
-        this.canCtrlSelfSkl = GameDataTool.hasProTtl(gameData, PTKey.YiLingZhe);
+        this.canCtrlSelfSkl = GameDataTool.hasProTtl(gameData, PTKey.YiLingZhe) || true;
         this.canSeeEnemy = GameDataTool.hasProTtl(gameData, PTKey.YingYan) || true;
 
         // 层级上，sklForbidBtn在aimLine下面
@@ -696,7 +696,7 @@ export class PageActExpl extends BtlPageBase {
         const skillIds = bPet.pet2.skillIds;
         const forbidFlag = bPet.sklForbidFlag;
         const selfPetNode = this.selfPetUIs[this.startIdx].node;
-        const startX = selfPetNode.x + 460;
+        const startX = selfPetNode.x + 200;
         const startY = selfPetNode.y - 86;
         const btnPoss = ForbidBtnPosss[skillIds.length];
         for (let index = 0; index < skillIds.length; index++) {

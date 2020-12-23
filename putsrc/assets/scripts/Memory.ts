@@ -4,8 +4,6 @@
  * luleyan
  */
 
-import { petModelDict } from '../configs/PetModelDict';
-import { featureModelDict } from '../configs/FeatureModelDict';
 import {
     Feature,
     Pet,
@@ -61,12 +59,13 @@ import {
     QuestModel,
     AmplAttriType
 } from './DataModel';
-import { equipModelDict } from '../configs/EquipModelDict';
+
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
+
+import { petModelDict } from '../configs/PetModelDict';
+import { equipModelDict } from '../configs/EquipModelDict';
 import { equipIdsByLvRank } from '../configs/EquipIdsByLvRank';
 import { skillIdsByEleType } from '../configs/SkillIdsByEleType';
-import { Tea } from './Tea';
-
 import { expModels } from '../configs/ExpModels';
 import { questModelDict } from '../configs/QuestModelDict';
 import { drinkModelDict } from '../configs/DrinkModelDict';
@@ -75,8 +74,12 @@ import { eqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
 import { bookModelDict } from '../configs/BookModelDict';
 import { spcModelDict } from '../configs/SpcModelDict';
 import { materialModelDict } from '../configs/MaterialModelDict';
-import { PAKey } from '../configs/ActPosModelDict';
+
 import { PTKey } from '../configs/ProTtlModelDict';
+import { featureModelDict } from '../configs/FeatureModelDict';
+import { PAKey } from '../configs/ActPosModelDict';
+
+import { Tea } from './Tea';
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = -1;
