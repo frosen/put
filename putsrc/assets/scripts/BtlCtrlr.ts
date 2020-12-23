@@ -447,7 +447,7 @@ export class BtlCtrlr {
     castUltimateSkill(battlePet: BattlePet): boolean {
         let done = false;
         for (let index = 0; index < battlePet.skillDatas.length; index++) {
-            if (((battlePet.sklForbidFlag << index) & 1) === 1) continue;
+            if (((battlePet.sklForbidFlag >> index) & 1) === 1) continue;
 
             const skillData = battlePet.skillDatas[index];
             if (skillData.cd > 0) continue;
@@ -473,7 +473,7 @@ export class BtlCtrlr {
     castNormalSkill(battlePet: BattlePet): boolean {
         let done = false;
         for (let index = 0; index < battlePet.skillDatas.length; index++) {
-            if (((battlePet.sklForbidFlag << index) & 1) === 1) continue;
+            if (((battlePet.sklForbidFlag >> index) & 1) === 1) continue;
 
             const skillData = battlePet.skillDatas[index];
             if (skillData.cd > 0) continue;
@@ -921,22 +921,25 @@ export class BtlCtrlr {
         if (this.page) this.page.setSelfAim(selfBPet.idx, toSelf, aimIdx);
     }
 
-    switchSelfPetForbidSkl(selfBPet: BattlePet, sklIdx: number) {
+    switchSelfPetForbidSkl(selfBPet: BattlePet, sklIdx: number): boolean {
         if (sklIdx >= 0) {
-            const curIsNotForbid = ((selfBPet.sklForbidFlag << sklIdx) & 1) === 0;
+            const curIsNotForbid = ((selfBPet.sklForbidFlag >> sklIdx) & 1) === 0;
             if (curIsNotForbid) selfBPet.sklForbidFlag = selfBPet.sklForbidFlag | (1 << sklIdx);
             else selfBPet.sklForbidFlag = selfBPet.sklForbidFlag & ~(1 << sklIdx);
+
+            if (this.page) {
+                const flag = selfBPet.sklForbidFlag;
+                const fbd1 = ((flag >> 0) & 1) === 1;
+                const fbd2 = ((flag >> 1) & 1) === 1;
+                const fbd3 = ((flag >> 2) & 1) === 1;
+                const fbd4 = ((flag >> 3) & 1) === 1;
+                this.page.setSelfSklForbid(selfBPet.idx, fbd1, fbd2, fbd3, fbd4);
+            }
+            return !curIsNotForbid;
         } else {
             selfBPet.sklForbidFlag = 0;
-        }
-
-        if (this.page) {
-            const flag = selfBPet.sklForbidFlag;
-            const fbd1 = ((flag << 0) & 1) === 1;
-            const fbd2 = ((flag << 1) & 1) === 1;
-            const fbd3 = ((flag << 2) & 1) === 1;
-            const fbd4 = ((flag << 3) & 1) === 1;
-            this.page.setSelfSklForbid(selfBPet.idx, fbd1, fbd2, fbd3, fbd4);
+            this.page.setSelfSklForbid(selfBPet.idx, false, false, false, false);
+            return false;
         }
     }
 

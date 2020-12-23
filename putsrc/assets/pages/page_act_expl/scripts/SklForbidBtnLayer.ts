@@ -33,8 +33,6 @@ export class SklForbidBtnLayer extends cc.Component {
     @property([SklForbidBtn])
     btns: SklForbidBtn[] = [];
 
-    using: boolean = false;
-
     setData(idx: number, name: string, state: SklForbidBtnState) {
         const btn = this.btns[idx];
         btn.nameLbl.string = name;
