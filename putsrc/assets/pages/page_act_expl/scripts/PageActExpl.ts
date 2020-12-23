@@ -19,7 +19,7 @@ import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 
 import { PetUI } from './PetUI';
 import { AimLine, LineType } from './AimLine';
-import { SklForbidBtn } from './SklForbidBtn';
+import { SklForbidBtnLayer, SklForbidBtnState } from './SklForbidBtnLayer';
 import { EnemyDetail } from './EnemyDetail';
 import { PageActExplLVD } from './PageActExplLVD';
 
@@ -96,9 +96,9 @@ export class PageActExpl extends BtlPageBase {
     aimLiness: AimLine[][] = [];
 
     @property(cc.Prefab)
-    sklForbidBtnPrefab: cc.Prefab = null;
+    sklForbidBtnLayerPrefab: cc.Prefab = null;
 
-    sklForbidBtns: SklForbidBtn[] = [];
+    sklForbidBtnLayer: SklForbidBtnLayer = null;
 
     @property(cc.Prefab)
     enemyDetailPrefab: cc.Prefab = null;
@@ -185,15 +185,13 @@ export class PageActExpl extends BtlPageBase {
         this.canCtrlSelfSkl = GameDataTool.hasProTtl(gameData, PTKey.YiLingZhe) || true;
         this.canSeeEnemy = GameDataTool.hasProTtl(gameData, PTKey.YingYan) || true;
 
-        // 层级上，sklForbidBtn在aimLine下面
+        // 层级上，sklForbidBtnLayer在aimLine下面
         if (this.canCtrlSelfSkl) {
-            for (let index = 0; index < 4; index++) {
-                const node = cc.instantiate(this.sklForbidBtnPrefab);
-                node.parent = this.btlTouchLayer;
-                const btn = node.getComponent(SklForbidBtn);
-                btn.hide();
-                this.sklForbidBtns.push(btn);
-            }
+            const layer = cc.instantiate(this.sklForbidBtnLayerPrefab);
+            layer.parent = this.btlTouchLayer;
+            layer.setPosition(540, -this.btlTouchLayer.height - layer.height);
+            layer.opacity = 0;
+            this.sklForbidBtnLayer = layer.getComponent(SklForbidBtnLayer);
         }
 
         if (this.canCtrlSelfAim) {
@@ -689,32 +687,41 @@ export class PageActExpl extends BtlPageBase {
 
     showSelfSklForbidBtn(curPos: cc.Vec2) {
         if (this.startBeEnemy || this.startIdx === -1 || !this.canCtrlSelfSkl) return;
-        const btnForCheck = this.sklForbidBtns[0];
-        if (btnForCheck.using || btnForCheck.node.getNumberOfRunningActions() > 0) return;
+        if (this.sklForbidBtnLayer.node.getNumberOfRunningActions() > 0) return;
 
-        const bPet = this.updater.btlCtrlr.realBattle.selfTeam.pets[this.startIdx];
-        const skillIds = bPet.pet2.skillIds;
-        const forbidFlag = bPet.sklForbidFlag;
-        const selfPetNode = this.selfPetUIs[this.startIdx].node;
-        const startX = selfPetNode.x + 200;
-        const startY = selfPetNode.y - 86;
-        const btnPoss = ForbidBtnPosss[skillIds.length];
-        for (let index = 0; index < skillIds.length; index++) {
-            const btn = this.sklForbidBtns[index];
-            btn.setName(skillModelDict[skillIds[index]].cnName);
-            btn.setForbid(((forbidFlag << index) & 1) === 1);
-            const { x, y } = btnPoss[index];
-            btn.show(startX, startY, x, y);
+        if (!this.sklForbidBtnLayer.using) {
+            const bPet = this.updater.btlCtrlr.realBattle.selfTeam.pets[this.startIdx];
+            const skillIds = bPet.pet2.skillIds;
+            const forbidFlag = bPet.sklForbidFlag;
+            for (let index = 0; index < 4; index++) {
+                if (index < skillIds.length) {
+                    const name = skillModelDict[skillIds[index]].cnName;
+                    const state = ((forbidFlag << index) & 1) === 1 ? SklForbidBtnState.forbid : SklForbidBtnState.open;
+                    this.sklForbidBtnLayer.setData(index, name, state);
+                } else {
+                    this.sklForbidBtnLayer.setData(index, '', SklForbidBtnState.unuse);
+                }
+            }
+
+            this.sklForbidBtnLayer.node.opacity = 255;
+            cc.tween(this.sklForbidBtnLayer.node)
+                .to(0.3, { y: -this.btlTouchLayer.height })
+                .call(() => (this.sklForbidBtnLayer.using = true))
+                .start();
+        } else {
+            // llytodo 添加按钮变色
         }
     }
 
     handleSelfSklForbidBtn(curPos: cc.Vec2) {
-        const btlCtrlr = this.updater.btlCtrlr;
-        const selfBPet = btlCtrlr.realBattle.selfTeam.pets[this.startIdx];
-        for (let index = 0; index < this.sklForbidBtns.length; index++) {
-            const btn = this.sklForbidBtns[index];
-            if (!btn.using) continue;
-            if (btn.getRect().contains(curPos)) {
+        if (!this.sklForbidBtnLayer.using) return;
+        for (let index = 0; index < 4; index++) {
+            const btn = this.sklForbidBtnLayer.btns[index];
+            if (btn.state === SklForbidBtnState.unuse) continue;
+            const rect = this.sklForbidBtnLayer.getRect(index);
+            if (rect.contains(curPos)) {
+                const btlCtrlr = this.updater.btlCtrlr;
+                const selfBPet = btlCtrlr.realBattle.selfTeam.pets[this.startIdx];
                 btlCtrlr.switchSelfPetForbidSkl(selfBPet, index);
                 break;
             }
@@ -722,9 +729,11 @@ export class PageActExpl extends BtlPageBase {
     }
 
     hideSelfSklForbidBtn() {
-        for (let index = 0; index < this.sklForbidBtns.length; index++) {
-            this.sklForbidBtns[index].hide();
-        }
+        this.sklForbidBtnLayer.using = false;
+        cc.tween(this.sklForbidBtnLayer.node)
+            .to(0.3, { y: -this.btlTouchLayer.height - this.sklForbidBtnLayer.node.height })
+            .call(() => (this.sklForbidBtnLayer.node.opacity = 0))
+            .start();
     }
 
     showEnemyDetail() {

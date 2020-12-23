@@ -24,14 +24,14 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 119
+        "__id__": 120
       },
       {
         "__id__": 32
       }
     ],
     "_prefab": {
-      "__id__": 120
+      "__id__": 121
     },
     "_opacity": 255,
     "_color": {
@@ -110,7 +110,7 @@
         "__id__": 36
       },
       {
-        "__id__": 111
+        "__id__": 112
       },
       {
         "__id__": 33
@@ -119,11 +119,11 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 117
+        "__id__": 118
       }
     ],
     "_prefab": {
-      "__id__": 118
+      "__id__": 119
     },
     "_opacity": 255,
     "_color": {
@@ -546,7 +546,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 860
+      "height": 920
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -634,7 +634,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 940
+      "height": 880
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -646,7 +646,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -980,
+        -1040,
         0,
         0,
         0,
@@ -702,7 +702,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 1080,
-      "height": 940
+      "height": 880
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -885,7 +885,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 12,
-      "height": 940
+      "height": 880
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -897,7 +897,7 @@
       "ctor": "Float64Array",
       "array": [
         1080,
-        -470,
+        -440,
         0,
         0,
         0,
@@ -1160,7 +1160,7 @@
     "_alignFlags": 45,
     "_left": 0,
     "_right": 0,
-    "_top": 980,
+    "_top": 1040,
     "_bottom": 0,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
@@ -1341,10 +1341,13 @@
     "_components": [
       {
         "__id__": 109
+      },
+      {
+        "__id__": 110
       }
     ],
     "_prefab": {
-      "__id__": 110
+      "__id__": 111
     },
     "_opacity": 255,
     "_color": {
@@ -1369,7 +1372,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -860,
+        -920,
         0,
         0,
         0,
@@ -4169,6 +4172,16 @@
     "_id": ""
   },
   {
+    "__type__": "cc.BlockInputEvents",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 36
+    },
+    "_enabled": true,
+    "_id": ""
+  },
+  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
@@ -4188,17 +4201,17 @@
     },
     "_children": [
       {
-        "__id__": 112
+        "__id__": 113
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 115
+        "__id__": 116
       }
     ],
     "_prefab": {
-      "__id__": 116
+      "__id__": 117
     },
     "_opacity": 0,
     "_color": {
@@ -4223,7 +4236,7 @@
       "ctor": "Float64Array",
       "array": [
         95,
-        -1040,
+        -1100,
         0,
         0,
         0,
@@ -4252,17 +4265,17 @@
     "_name": "new_tip_lbl",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 111
+      "__id__": 112
     },
     "_children": [],
     "_active": true,
     "_components": [
       {
-        "__id__": 113
+        "__id__": 114
       }
     ],
     "_prefab": {
-      "__id__": 114
+      "__id__": 115
     },
     "_opacity": 255,
     "_color": {
@@ -4316,7 +4329,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 112
+      "__id__": 113
     },
     "_enabled": true,
     "_materials": [
@@ -4360,7 +4373,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 111
+      "__id__": 112
     },
     "_enabled": true,
     "_materials": [
@@ -4471,7 +4484,7 @@
     "aimLinePrefab": {
       "__uuid__": "035df36d-7056-4fe7-9315-47f95ab667c0"
     },
-    "sklForbidBtnPrefab": {
+    "sklForbidBtnLayerPrefab": {
       "__uuid__": "d26f33e8-5f01-49ca-8417-dbe80b139641"
     },
     "enemyDetailPrefab": {
@@ -4508,7 +4521,7 @@
       "__id__": 101
     },
     "newLogTipLbl": {
-      "__id__": 113
+      "__id__": 114
     },
     "_id": ""
   },
