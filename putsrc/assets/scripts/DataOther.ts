@@ -15,7 +15,8 @@ import {
     ExplModel,
     ActPosModel,
     AmplAttriType,
-    BossType
+    BossType,
+    FeatureBtlData
 } from './DataModel';
 import {
     BioType,
@@ -535,7 +536,7 @@ export class RealBattle {
     lastAim: BattlePet = null;
     combo: number = 1;
 
-    resetSelf(gameData: GameData, sPetMmrs: SPetMmr[] = null) {
+    resetSelf(gameData: GameData, sPetMmrs?: SPetMmr[]) {
         if (!this.selfTeam) this.selfTeam = new BattleTeam();
 
         let sPets: Pet[];
@@ -591,7 +592,7 @@ export class RealBattle {
         });
     }
 
-    resetEnemy(spcBtlId: number, ePetMmrs: EPetMmr[], curExpl: ExplMmr) {
+    resetEnemy(curExpl: ExplMmr, spcBtlId?: string, ePetMmrs?: EPetMmr[]) {
         if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
 
         if (spcBtlId) {

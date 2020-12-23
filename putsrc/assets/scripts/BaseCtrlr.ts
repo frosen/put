@@ -33,10 +33,10 @@ const TabBtnData = cc.Class({
 type TabBtnData = { page: cc.Prefab; btn: cc.Button };
 
 class TreeNode {
-    name: string = '';
-    page: PageBase = null;
-    parent: TreeNode = null;
-    child: TreeNode = null;
+    name!: string;
+    page!: PageBase;
+    parent!: TreeNode;
+    child?: TreeNode;
     others: { [key: string]: TreeNode } = {};
 }
 
@@ -95,13 +95,13 @@ export class BaseCtrlr extends cc.Component {
     @property(RunningImgMgr)
     runningImgMgr: RunningImgMgr = null;
 
-    memory: Memory = null;
+    memory!: Memory;
 
-    debugTool: DebugTool = null;
+    debugTool!: DebugTool;
 
     prefabDict: { [key: string]: cc.Prefab } = {};
 
-    pageTree: TreeNode = null;
+    pageTree!: TreeNode;
 
     onLoad() {
         if (CC_EDITOR) {
@@ -157,7 +157,7 @@ export class BaseCtrlr extends cc.Component {
         for (const file of files) {
             if (Fs.statSync(pageDir + '/' + file).isDirectory()) {
                 const editorDir = 'db://assets/pages/' + file + '/*';
-                Editor.assetdb.queryAssets(editorDir, null, function (err, results) {
+                Editor.assetdb.queryAssets(editorDir, null, function (err: any, results: any[]) {
                     for (const res of results) {
                         if (res.type === 'prefab') {
                             cc.assetManager.loadAny(
@@ -200,6 +200,7 @@ export class BaseCtrlr extends cc.Component {
 
     setTree() {
         this.pageTree = new TreeNode();
+        this.pageTree.name = 'pageTree';
     }
 
     start() {
@@ -290,8 +291,8 @@ export class BaseCtrlr extends cc.Component {
 
         cc.log(`PUT push from ${curPageName} to ${nextPageName}`);
 
-        nextTreeNode.child = null;
-        curTreeNode.parent = null;
+        nextTreeNode.child = undefined;
+        curTreeNode.parent = undefined!;
 
         const nextPage = nextTreeNode.page;
         const curPage = curTreeNode.page;
@@ -345,8 +346,8 @@ export class BaseCtrlr extends cc.Component {
     switchPage(nextPageName: string, parentTreeNode: TreeNode, data: any, anim: PageSwitchAnim) {
         if (this.pageChanging) return;
         this.pageChanging = true;
-        let curTreeNode: TreeNode = null;
-        let curDisTreeNode: TreeNode = null;
+        let curTreeNode: TreeNode | undefined;
+        let curDisTreeNode: TreeNode | undefined;
         if (parentTreeNode.child) {
             curTreeNode = parentTreeNode.child;
             curDisTreeNode = this.getTreeLeaf(parentTreeNode.child);
@@ -354,7 +355,7 @@ export class BaseCtrlr extends cc.Component {
         }
 
         let nextTreeNode = parentTreeNode.others[nextPageName];
-        let nextDisTreeNode: TreeNode = null;
+        let nextDisTreeNode: TreeNode;
         if (nextTreeNode) {
             nextDisTreeNode = this.getTreeLeaf(nextTreeNode);
         } else {
@@ -381,14 +382,14 @@ export class BaseCtrlr extends cc.Component {
 
         if (curDisTreeNode) this.willHidePage(curDisTreeNode.page);
         this.showPage(nextDisTreeNode.page);
-        this.doSwitchPageAnim(curDisTreeNode ? curDisTreeNode.page.node : null, nextDisTreeNode.page.node, anim, () => {
+        this.doSwitchPageAnim(curDisTreeNode ? curDisTreeNode.page.node : undefined, nextDisTreeNode.page.node, anim, () => {
             if (curDisTreeNode) this.hidePage(curDisTreeNode.page);
             this.pageChanging = false;
             this.didShowPage(nextDisTreeNode.page);
         });
     }
 
-    doSwitchPageAnim(curNode: cc.Node, nextNode: cc.Node, anim: PageSwitchAnim, callback: () => void) {
+    doSwitchPageAnim(curNode: cc.Node | undefined, nextNode: cc.Node, anim: PageSwitchAnim, callback: () => void) {
         if (!curNode || anim === PageSwitchAnim.none) {
             nextNode.x = 0;
             nextNode.y = 0;
@@ -530,17 +531,17 @@ export class BaseCtrlr extends cc.Component {
 
     @property(cc.Node)
     alertNode: cc.Node = null;
-    alertLbl: cc.Label = null;
-    alertBtn1Node: cc.Node = null;
-    alertBtn2Node: cc.Node = null;
-    alertBtn3Node: cc.Node = null;
-    alertBtn4Node: cc.Node = null;
-    alertBtnCancelNode: cc.Node = null;
+    alertLbl!: cc.Label;
+    alertBtn1Node!: cc.Node;
+    alertBtn2Node!: cc.Node;
+    alertBtn3Node!: cc.Node;
+    alertBtn4Node!: cc.Node;
+    alertBtnCancelNode!: cc.Node;
 
     @property(cc.Node)
     maskNode: cc.Node = null;
 
-    alertCallback: (key: number) => void = null;
+    alertCallback?: (key: number) => void;
 
     initPops() {
         this.toastNode.opacity = 0;
@@ -617,9 +618,9 @@ export class BaseCtrlr extends cc.Component {
         txt: string,
         callback: (key: number) => void,
         btn1: string = '确定',
-        btn2: string = null,
-        btn3: string = null,
-        btn4: string = null,
+        btn2?: string,
+        btn3?: string,
+        btn4?: string,
         btnCancel: string = '取消'
     ) {
         this.alertLbl.string = txt;

@@ -1070,7 +1070,7 @@ export class MmrTool {
         return expl;
     }
 
-    static createBattleMmr(seed: number, startUpdCnt: number, spcBtlId: number, hiding: boolean): BattleMmr {
+    static createBattleMmr(seed: number, startUpdCnt: number, spcBtlId: string, hiding: boolean): BattleMmr {
         const battle = newInsWithChecker(BattleMmr);
         battle.startUpdCnt = startUpdCnt;
         battle.seed = seed;
@@ -1574,7 +1574,7 @@ export class GameDataTool {
         if (gameData.curExpl) gameData.curExpl = null;
     }
 
-    static createBattle(gameData: GameData, seed: number, startUpdCnt: number, spcBtlId: number, ePets: Pet[]) {
+    static createBattle(gameData: GameData, seed: number, startUpdCnt: number, spcBtlId: string, ePets: Pet[]) {
         cc.assert(gameData.curExpl, '创建battle前必有Expl');
         const curExpl = gameData.curExpl;
         if (curExpl.curBattle) return;

@@ -81,7 +81,11 @@ export class SkillModel {
     hpLimit: number;
 }
 
-export type FeatureBtlData = { ctrlr: BtlCtrlr; finalDmg: number; skillModel: SkillModel };
+export class FeatureBtlData {
+    ctrlr: BtlCtrlr;
+    finalDmg: number;
+    skillModel: SkillModel;
+}
 
 export class FeatureModel {
     id: string;

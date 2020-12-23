@@ -64,13 +64,13 @@ const FormationHitRate = [1, 0.95, 0.9, 0.9, 0.85]; // 阵型顺序从0开始
 const EleReinforceRelation = [0, 3, 1, 4, 2, 6, 5]; // 元素相克表
 
 export class BtlCtrlr {
-    updater: ExplUpdater = null;
-    page: BtlPageBase = null;
-    gameData: GameData = null;
+    gameData!: GameData;
+    updater!: ExplUpdater;
+    page?: BtlPageBase;
 
-    endCallback: (win: boolean) => void = null;
+    endCallback?: (win: boolean) => void;
 
-    realBattle: RealBattle = null;
+    realBattle!: RealBattle;
 
     hiding: boolean = false;
 
@@ -121,7 +121,7 @@ export class BtlCtrlr {
         if (this.realBattleCopys.length <= 1) {
             this.resetBattleDataToBegin();
         } else {
-            const last = this.realBattleCopys.pop();
+            const last = this.realBattleCopys.pop()!;
             this.realBattle = deepCopy(last.rb) as RealBattle;
             setSeed(last.seed);
             this.resetAllUI();
@@ -129,33 +129,34 @@ export class BtlCtrlr {
     }
 
     resetAllUI() {
-        this.page.setUIOfSelfPet(-1);
-        this.page.setUIOfEnemyPet(-1);
+        const page = this.page!;
+        page.setUIOfSelfPet(-1);
+        page.setUIOfEnemyPet(-1);
         const team = this.realBattle.selfTeam;
-        this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
+        page.resetAttriBar(team.mp, team.mpMax, team.rage);
         for (const pet of team.pets) {
-            this.page.removeBuff(pet.beEnemy, pet.idx, -1);
+            page.removeBuff(pet.beEnemy, pet.idx, -1);
             for (let index = 0; index < pet.buffDatas.length; index++) {
                 const { id, time } = pet.buffDatas[index];
-                this.page.addBuff(pet.beEnemy, pet.idx, id, time, index);
+                page.addBuff(pet.beEnemy, pet.idx, id, time, index);
             }
         }
         for (const pet of this.realBattle.enemyTeam.pets) {
-            this.page.removeBuff(pet.beEnemy, pet.idx, -1);
+            page.removeBuff(pet.beEnemy, pet.idx, -1);
             for (let index = 0; index < pet.buffDatas.length; index++) {
                 const { id, time } = pet.buffDatas[index];
-                this.page.addBuff(pet.beEnemy, pet.idx, id, time, index);
+                page.addBuff(pet.beEnemy, pet.idx, id, time, index);
             }
         }
     }
 
     destroy() {
-        this.page.ctrlr.debugTool.removeShortCut('rr');
-        this.page.ctrlr.debugTool.removeShortCut('bb');
+        this.page!.ctrlr.debugTool.removeShortCut('rr');
+        this.page!.ctrlr.debugTool.removeShortCut('bb');
     }
 
-    resetSelfTeam(mmr: BattleMmr = null) {
-        this.realBattle.resetSelf(this.gameData, mmr ? mmr.selfs : null);
+    resetSelfTeam(mmr?: BattleMmr) {
+        this.realBattle.resetSelf(this.gameData, mmr ? mmr.selfs : undefined);
         if (this.page) {
             this.page.setUIOfSelfPet(-1);
             const mpMax = this.realBattle.selfTeam.mpMax;
@@ -163,20 +164,20 @@ export class BtlCtrlr {
         }
     }
 
-    startBattle(startUpdCnt: number, spcBtlId: number = null) {
+    startBattle(startUpdCnt: number, spcBtlId?: string) {
         const seed = Date.now();
         setSeed(seed);
 
         // 更新battle
         const curExpl = this.gameData.curExpl;
-        this.realBattle.resetEnemy(spcBtlId, null, curExpl);
+        this.realBattle.resetEnemy(curExpl, spcBtlId, undefined);
 
         // 更新memory
         GameDataTool.createBattle(
             this.gameData,
             seed,
             startUpdCnt,
-            spcBtlId,
+            spcBtlId || '',
             this.realBattle.enemyTeam.pets.map<Pet>(
                 (value: BattlePet): Pet => {
                     return value.pet;
@@ -200,7 +201,7 @@ export class BtlCtrlr {
 
         // 更新battle
         const curExpl = this.gameData.curExpl;
-        this.realBattle.resetEnemy(battleMmr.spcBtlId, battleMmr.enemys, curExpl);
+        this.realBattle.resetEnemy(curExpl, battleMmr.spcBtlId, battleMmr.enemys);
         this.initBattle(this.realBattle);
         this.hiding = battleMmr.hiding;
 

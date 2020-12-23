@@ -227,12 +227,12 @@ export class PageActExpl extends BtlPageBase {
         GameDataTool.addPA(gameData, posId, PAKey.expl);
     }
 
-    spcBtlId: number = 0;
+    spcBtlId: string = '';
     startStep: number = 0;
 
     setData(data: any) {
         if (data) {
-            this.spcBtlId = data.spcBtlId || 0;
+            this.spcBtlId = data.spcBtlId || '';
             this.startStep = data.startStep || 0;
         }
     }

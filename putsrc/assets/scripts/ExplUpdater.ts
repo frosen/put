@@ -97,7 +97,7 @@ export class ExplUpdater {
     inited: boolean = false;
     pausing: boolean = false;
 
-    init(page: BtlPageBase, spcBtlId: number, startStep: number) {
+    init(page: BtlPageBase, spcBtlId: string, startStep: number) {
         this.page = page;
         this.memory = this.page.ctrlr.memory;
         this.gameData = this.memory.gameData;
@@ -112,7 +112,7 @@ export class ExplUpdater {
         this.btlCtrlr.init(this, this.onBattleEnd.bind(this));
 
         const curExpl = this.gameData.curExpl;
-        if (!curExpl) this.createExpl(spcBtlId, startStep);
+        if (!curExpl) this.createExpl(startStep, spcBtlId);
         else this.recoverLastExpl(this.gameData);
     }
 
@@ -166,7 +166,7 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
-    createExpl(spcBtlId: number, startStep: number) {
+    createExpl(startStep: number, spcBtlId?: string) {
         GameDataTool.createExpl(this.gameData, startStep);
         if (!spcBtlId) {
             this.logEnter();
@@ -656,7 +656,7 @@ export class ExplUpdater {
                 seed: 0,
                 selfs: null,
                 enemys,
-                spcBtlId: 0,
+                spcBtlId: '',
                 hiding: curExpl.hiding
             };
 
@@ -1149,7 +1149,7 @@ export class ExplUpdater {
 
     prepareUpdCnt: number = 0;
 
-    prepareToBattle(spcBtlId: number) {
+    prepareToBattle(spcBtlId: string) {
         this.handleSelfTeamChange();
 
         this.state = ExplState.prepare;
@@ -1170,7 +1170,7 @@ export class ExplUpdater {
 
     // -----------------------------------------------------------------
 
-    startBattle(spcBtlId: number = 0) {
+    startBattle(spcBtlId?: string) {
         this.handleSelfTeamChange();
 
         this.state = ExplState.battle;
