@@ -17,6 +17,8 @@ function getSklDmgStr(pet2: Pet2, rate: number) {
     return `${fl1(pet2.sklDmgFrom * 0.1 * rate)}到${fl1(pet2.sklDmgTo * 0.1 * rate)}`;
 }
 
+export class BName {}
+
 export const buffModelDict: { [key: string]: BuffModel } = {
     ZhuoShao: {
         id: 'ZhuoShao',
