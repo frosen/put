@@ -33,7 +33,7 @@ export class PageActEqpMkt extends PageBase {
     priceList: number[] = [];
     countList: number[] = [];
 
-    pADEqpMkt: PADEqpMkt;
+    pADEqpMkt!: PADEqpMkt;
 
     onLoad() {
         super.onLoad();

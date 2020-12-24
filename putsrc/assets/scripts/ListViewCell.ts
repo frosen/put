@@ -15,7 +15,7 @@ export class ListViewCell extends cc.Component {
         if (!this._ctrlr) this._ctrlr = window.baseCtrlr;
         return this._ctrlr;
     }
-    _ctrlr: BaseCtrlr = null;
+    _ctrlr!: BaseCtrlr;
 
     curCellIdx: number = -1;
 

@@ -36,19 +36,17 @@ export function randomAreaByIntRange(c: number, n: number): number {
 }
 
 export function getRandomOneInList<T>(list: Array<T>): T {
-    if (list instanceof Array) return list[randomInt(list.length)];
-    else return null;
+    return list[randomInt(list.length)];
 }
 
 export function getRandomOneInListWithRate<T>(list: Array<T>, rates: number[]): T {
-    if (list instanceof Array) {
-        const r = Math.random();
-        for (let index = 0; index < list.length; index++) {
-            const rInList = rates[index];
-            if (!rInList || r < rInList) return list[index];
-        }
-        return null;
-    } else return null;
+    if (list.length - 1 !== rates.length) cc.error('PUT getRandomOneInListWithRate 参数数量有误');
+    const r = Math.random();
+    for (let index = 0; index < list.length; index++) {
+        const rInList = rates[index];
+        if (!rInList || r < rInList) return list[index];
+    }
+    return list[0];
 }
 
 export function normalRandom(c: number): number {

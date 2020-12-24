@@ -61,7 +61,7 @@ export enum EleType {
 export const EleTypeNames = ['', '火系', '水系', '空系', '地系', '光系', '暗系'];
 export const SimpleEleTypeNames = ['', '火', '水', '空', '地', '光', '暗'];
 export const EleColors = [
-    null,
+    undefined!,
     cc.color(200, 50, 50),
     cc.color(50, 50, 200),
     cc.color(50, 200, 50),
@@ -70,7 +70,7 @@ export const EleColors = [
     cc.color(185, 78, 255)
 ];
 export const EleDarkColors = [
-    null,
+    undefined!,
     cc.color(150, 30, 30),
     cc.color(30, 30, 150),
     cc.color(30, 150, 30),

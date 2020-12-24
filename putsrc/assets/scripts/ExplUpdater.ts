@@ -180,7 +180,7 @@ export class ExplUpdater {
     }
 
     recoverLastExpl(gameData: GameData) {
-        const curExpl = gameData.curExpl;
+        const curExpl = gameData.curExpl!;
         const curStep = curExpl.curStep;
 
         if (curExpl.curBattle) {
@@ -340,7 +340,7 @@ export class ExplUpdater {
         }
 
         // 加速
-        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.btlCtrlr);
+        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl!, this.btlCtrlr);
         const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
         const speedChangeCnt = rztSt.moveCnt * speedUpCnt;
         this.changeExplDegree(speedChangeCnt);
@@ -486,7 +486,7 @@ export class ExplUpdater {
         eachBigRdUpdCnt += petSt.btlDuraUpdCnt;
 
         const gameData = this.gameData;
-        const curExpl = gameData.curExpl;
+        const curExpl = gameData.curExpl!;
         const eachHidingRdCnt = curExpl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
         const realExplRdCnt = AvgExplRdCnt + eachHidingRdCnt;
         eachBigRdUpdCnt += realExplRdCnt * AvgUpdCntForEachExplRd;
@@ -630,7 +630,7 @@ export class ExplUpdater {
     }
 
     calcBtlDuraUpdCntAndWinRate(gameData: GameData): { btlDuraUpdCnt: number; btlWinRate: number } {
-        const curExpl = gameData.curExpl;
+        const curExpl = gameData.curExpl!;
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
         const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
@@ -704,7 +704,7 @@ export class ExplUpdater {
             this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
         }
 
-        const curExpl = this.gameData.curExpl;
+        const curExpl = this.gameData.curExpl!;
         this.page.setCatchActive(curExpl.catcherId !== null);
         this.page.setHideActive(curExpl.hiding);
 
@@ -779,7 +779,7 @@ export class ExplUpdater {
 
     // 每个探索+探索结果(battle，gain)后
     updateChgUpdCnt() {
-        this.gameData.curExpl.chngUpdCnt = this.updCnt;
+        this.gameData.curExpl!.chngUpdCnt = this.updCnt;
     }
 
     // -----------------------------------------------------------------
@@ -815,7 +815,7 @@ export class ExplUpdater {
     startExpl() {
         this.handleSelfTeamChange();
 
-        const curExpl = this.gameData.curExpl;
+        const curExpl = this.gameData.curExpl!;
 
         const enter = this.state !== ExplState.explore;
         this.state = ExplState.explore;
@@ -889,7 +889,7 @@ export class ExplUpdater {
     }
 
     handleSpeedUp() {
-        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl, this.btlCtrlr);
+        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl!, this.btlCtrlr);
         const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
         this.changeExplDegree(speedUpCnt);
     }
@@ -900,8 +900,8 @@ export class ExplUpdater {
         if (cnt > 0) realCnt = cnt;
         else realCnt = Math.max(-this.updCnt, cnt);
         this.updCnt += realCnt;
-        this.gameData.curExpl.chngUpdCnt += realCnt; // 不用chngUpdCnt = updCnt是为了避免恢复时还没有updCnt造成问题
-        this.gameData.curExpl.stepEnterTime -= realCnt * ExplInterval;
+        this.gameData.curExpl!.chngUpdCnt += realCnt; // 不用chngUpdCnt = updCnt是为了避免恢复时还没有updCnt造成问题
+        this.gameData.curExpl!.stepEnterTime -= realCnt * ExplInterval;
     }
 
     static calcHideExplRdCnt(rate: number): number {
@@ -985,7 +985,7 @@ export class ExplUpdater {
     stepEntering: boolean = false;
 
     doExploration() {
-        const curExpl = this.gameData.curExpl;
+        const curExpl = this.gameData.curExpl!;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const curStep = curExpl.curStep;
 
@@ -1060,14 +1060,14 @@ export class ExplUpdater {
     }
 
     logEnter() {
-        const curExpl = this.gameData.curExpl;
+        const curExpl = this.gameData.curExpl!;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
         this.log(ExplLogType.rich, `进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`);
     }
 
     popToastForEnter() {
-        const curExpl = this.gameData.curExpl;
+        const curExpl = this.gameData.curExpl!;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
         if (this.page) {
@@ -1077,13 +1077,13 @@ export class ExplUpdater {
     }
 
     saveNewStep(step: number) {
-        const posData: PosData = this.gameData.posDataDict[this.gameData.curExpl.curPosId];
+        const posData: PosData = this.gameData.posDataDict[this.gameData.curExpl!.curPosId];
         const pADExpl: PADExpl = posData.actDict[PAKey.expl] as PADExpl;
         if (step > pADExpl.doneStep) pADExpl.doneStep = step;
     }
 
     gainRes() {
-        const curExpl = this.gameData.curExpl;
+        const curExpl = this.gameData.curExpl!;
         const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const curStep = curExpl.curStep;
 
@@ -1135,7 +1135,7 @@ export class ExplUpdater {
 
                 const rzt = GameDataTool.addCnsum(this.gameData, itemId, this.gainCnt);
                 if (rzt === GameDataTool.SUC) {
-                    const cnsumModel = CnsumTool.getModelById(itemId);
+                    const cnsumModel = CnsumTool.getModelById(itemId)!;
                     itemName = cnsumModel.cnName + (this.gainCnt > 1 ? 'x' + String(this.gainCnt) : '');
                 } else failRzt = rzt;
             }
@@ -1197,7 +1197,7 @@ export class ExplUpdater {
             this.catchPet();
             this.doFightQuest();
         } else {
-            const curExpl = this.gameData.curExpl;
+            const curExpl = this.gameData.curExpl!;
             this.rdcExplDegreeByBtlFail(curExpl.curStep);
         }
         this.startRecover();
@@ -1268,18 +1268,19 @@ export class ExplUpdater {
 
     catchPet() {
         const gameData = this.gameData;
-        const catcherId = gameData.curExpl.catcherId;
+        const curExpl = gameData.curExpl!;
+        const catcherId = curExpl.catcherId;
         if (!catcherId) return;
 
         const catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, catcherId);
         if (catcherIdx === -1) {
-            gameData.curExpl.catcherId = undefined;
+            curExpl.catcherId = undefined;
             if (this.page) this.page.setCatchActive(false);
             return;
         }
 
         const catcherModel: CatcherModel = catcherModelDict[catcherId];
-        const eleRate = ExplUpdater.getPosPetEleRate(gameData.curExpl, this.btlCtrlr);
+        const eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.btlCtrlr);
         const catchRate = ExplUpdater.calcCatchRateByEleRate(catcherModel, eleRate);
 
         const rb = this.btlCtrlr.realBattle;
@@ -1305,7 +1306,7 @@ export class ExplUpdater {
                     this.log(ExplLogType.rich, `成功捕获${PetTool.getCnName(pet)}`);
                     const catcher = this.memory.gameData.items[catcherIdx] as Catcher;
                     if (catcher.count === 1) {
-                        gameData.curExpl.catcherId = undefined;
+                        curExpl.catcherId = undefined;
                         if (this.page) this.page.setCatchActive(false);
                     }
                     GameDataTool.removeItem(gameData, catcherIdx);
@@ -1403,13 +1404,13 @@ export class ExplUpdater {
     // -----------------------------------------------------------------
 
     executeCatch(catcherId: string) {
-        this.gameData.curExpl.catcherId = catcherId;
+        this.gameData.curExpl!.catcherId = catcherId;
         if (this.page) this.page.setCatchActive(catcherId !== null);
     }
 
     executeHide() {
-        const cur = !this.gameData.curExpl.hiding;
-        this.gameData.curExpl.hiding = cur;
+        const cur = !this.gameData.curExpl!.hiding;
+        this.gameData.curExpl!.hiding = cur;
         if (this.page) this.page.setHideActive(cur);
     }
 
@@ -1420,7 +1421,7 @@ export class ExplUpdater {
             if (this.page) {
                 this.page.setEnterReady(false);
                 if (this.state !== ExplState.explore) {
-                    const curExpl = this.gameData.curExpl;
+                    const curExpl = this.gameData.curExpl!;
                     const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
                     const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep + 1] || 0;
                     const str = `准备进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`;

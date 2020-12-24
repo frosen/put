@@ -592,7 +592,7 @@ export class PageActExpl extends BtlPageBase {
     }
 
     ctrlLineShowing: boolean = false;
-    movePos: cc.Vec2 = null;
+    movePos!: cc.Vec2;
 
     showSelfAimLine(curPos: cc.Vec2) {
         if (this.startBeEnemy || this.startIdx === -1 || !this.canCtrlSelfAim) return;
