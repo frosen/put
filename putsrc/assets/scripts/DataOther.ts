@@ -131,7 +131,7 @@ export class Pet2 {
 
         // 特性加成
         PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
-            if (model.hasOwnProperty('onBaseSetting')) model.onBaseSetting(this, datas);
+            if (model.hasOwnProperty('onBaseSetting')) model.onBaseSetting!(this, datas);
         });
 
         // 装备加成
@@ -143,9 +143,9 @@ export class Pet2 {
         // 饮品加成
         const drinkId = exDrinkId || pet.drinkId;
         if (drinkId) {
-            this.strength *= GameDataTool.getDrinkAmpl(null, drinkId, AmplAttriType.strength);
-            this.concentration *= GameDataTool.getDrinkAmpl(null, drinkId, AmplAttriType.concentration);
-            this.durability *= GameDataTool.getDrinkAmpl(null, drinkId, AmplAttriType.durability);
+            this.strength *= GameDataTool.getDrinkAmpl(AmplAttriType.strength, undefined, drinkId);
+            this.concentration *= GameDataTool.getDrinkAmpl(AmplAttriType.concentration, undefined, drinkId);
+            this.durability *= GameDataTool.getDrinkAmpl(AmplAttriType.durability, undefined, drinkId);
         }
 
         // 二级原始属性
@@ -522,18 +522,18 @@ export class BossMaster {
 export class RealBattle {
     start: boolean = false;
 
-    selfTeam: BattleTeam = null;
-    enemyTeam: BattleTeam = null;
+    selfTeam!: BattleTeam;
+    enemyTeam!: BattleTeam;
 
     battleRound: number = 0;
     atkRound: number = 0;
 
     order: BattlePet[] = [];
     curOrderIdx: number = 0;
-    sequnence: number[] = null;
-    curSequenceIdx: number = 0;
+    sequnence!: number[];
+    curSequenceIdx!: number;
 
-    lastAim: BattlePet = null;
+    lastAim?: BattlePet;
     combo: number = 1;
 
     resetSelf(gameData: GameData, sPetMmrs?: SPetMmr[]) {

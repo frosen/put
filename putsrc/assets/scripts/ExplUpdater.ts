@@ -80,15 +80,15 @@ export enum ExplLogType {
 }
 
 export class ExplLogData {
-    type: ExplLogType;
+    type!: ExplLogType;
     data: any;
 }
 
 export class ExplUpdater {
-    page: BtlPageBase = null;
-    memory: Memory = null;
-    gameData: GameData = null;
-    btlCtrlr: BtlCtrlr = null;
+    page?: BtlPageBase;
+    memory!: Memory;
+    gameData!: GameData;
+    btlCtrlr!: BtlCtrlr;
 
     _id: string = 'expl'; // 用于cc.Scheduler.update
 
@@ -148,20 +148,20 @@ export class ExplUpdater {
         this.btlCtrlr.page = page;
     }
 
-    static updaterInBG: ExplUpdater = null;
+    static updaterInBG?: ExplUpdater;
 
     static save(updater: ExplUpdater) {
         ExplUpdater.updaterInBG = updater;
     }
 
-    static popUpdaterInBG(): ExplUpdater {
+    static popUpdaterInBG(): ExplUpdater | undefined {
         const curUpdater = ExplUpdater.updaterInBG;
-        ExplUpdater.updaterInBG = null;
+        ExplUpdater.updaterInBG = undefined;
         return curUpdater;
     }
 
     static haveUpdaterInBG(): boolean {
-        return ExplUpdater.updaterInBG !== null;
+        return ExplUpdater.updaterInBG !== undefined;
     }
 
     // -----------------------------------------------------------------
@@ -230,12 +230,17 @@ export class ExplUpdater {
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
         // 捕捉状态
-        const catchSt = { catcherIdx: -1, canCatchPetIds: [], lvMin: 0, lvMax: 0 };
+        const catchSt: { catcherIdx: number; canCatchPetIds: string[]; lvMin: number; lvMax: number } = {
+            catcherIdx: -1,
+            canCatchPetIds: [],
+            lvMin: 0,
+            lvMax: 0
+        };
         if (curExpl.catcherId) {
             do {
                 const catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, curExpl.catcherId);
                 if (catcherIdx === -1) {
-                    curExpl.catcherId = null;
+                    curExpl.catcherId = undefined;
                     break;
                 }
                 const catcher = gameData.items[catcherIdx] as Catcher;
@@ -424,9 +429,9 @@ export class ExplUpdater {
     mockBattle(mmr: BattleMmr, logging: boolean, updCallback: (realBattle: RealBattle) => boolean): boolean {
         const oldPage = this.page;
         const endCall = this.btlCtrlr.endCallback;
-        let win: boolean = null;
-        this.page = null;
-        this.btlCtrlr.page = null;
+        let win: boolean = false;
+        this.page = undefined;
+        this.btlCtrlr.page = undefined;
         this.btlCtrlr.endCallback = bw => (win = bw);
         this.btlCtrlr.logging = logging;
 
@@ -446,7 +451,7 @@ export class ExplUpdater {
 
     resetSelfTeamData() {
         const oldPage = this.btlCtrlr.page;
-        this.btlCtrlr.page = null;
+        this.btlCtrlr.page = undefined;
         this.btlCtrlr.resetSelfTeam();
         this.btlCtrlr.page = oldPage;
     }
@@ -471,7 +476,7 @@ export class ExplUpdater {
             money: number;
             eqps: any[];
             pets: any[];
-            itemDict: {};
+            itemDict: { [key: string]: number };
             moveCnt: number;
         }
     ) {
@@ -534,7 +539,7 @@ export class ExplUpdater {
 
             if (catchIdx === catcher.count) {
                 catchSt.catcherIdx = -1;
-                curExpl.catcherId = null;
+                curExpl.catcherId = undefined;
             }
             GameDataTool.removeItem(gameData, catcherIdx, catchIdx);
         } while (false);
@@ -583,7 +588,7 @@ export class ExplUpdater {
         const moneyGainCnt = Math.floor(gainCnt * MoneyGainRdEnterRate);
         if (moneyGainCnt > 0) {
             let eachMoneyCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curStep, gainMoreRate);
-            eachMoneyCnt *= GameDataTool.getDrinkAmpl(gameData, null, AmplAttriType.expl);
+            eachMoneyCnt *= GameDataTool.getDrinkAmpl(AmplAttriType.expl, gameData);
             const moneyAdd = randomAreaInt(eachMoneyCnt * moneyGainCnt, 0.2);
             GameDataTool.handleMoney(gameData, (money: Money) => (money.sum += moneyAdd));
             rztSt.money += moneyAdd;
@@ -654,7 +659,7 @@ export class ExplUpdater {
             const mockData: BattleMmr = {
                 startUpdCnt: 0,
                 seed: 0,
-                selfs: null,
+                selfs: [],
                 enemys,
                 spcBtlId: '',
                 hiding: curExpl.hiding
@@ -712,9 +717,9 @@ export class ExplUpdater {
         cc.director.getScheduler().unscheduleUpdate(this);
         GameDataTool.clearExpl(this.gameData);
         this.memory.removeDataListener(this);
-        this.page.ctrlr.debugTool.removeShortCut('ww');
-        this.page.ctrlr.debugTool.removeShortCut('gg');
-        this.page.ctrlr.debugTool.removeShortCut('ff');
+        this.page!.ctrlr.debugTool.removeShortCut('ww');
+        this.page!.ctrlr.debugTool.removeShortCut('gg');
+        this.page!.ctrlr.debugTool.removeShortCut('ff');
         this.btlCtrlr.destroy();
     }
 
@@ -733,8 +738,8 @@ export class ExplUpdater {
         } else if (diff < ExplInterval * 240) {
             cc.log('PUT recover update in time');
             const oldPage = this.page;
-            this.page = null;
-            this.btlCtrlr.page = null;
+            this.page = undefined;
+            this.btlCtrlr.page = undefined;
 
             const turnCount = Math.floor(diff / ExplInterval);
             for (let index = turnCount - 1; index >= 0; index--) this.updateReal();
@@ -859,7 +864,7 @@ export class ExplUpdater {
                 this.moneyGaining = randomRate(MoneyGainRdEnterRate);
                 if (this.moneyGaining) {
                     const gainCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curExpl.curStep, gainCntRate);
-                    this.gainCnt = Math.floor(gainCnt * GameDataTool.getDrinkAmpl(this.gameData, null, AmplAttriType.expl));
+                    this.gainCnt = Math.floor(gainCnt * GameDataTool.getDrinkAmpl(AmplAttriType.expl, this.gameData));
                 } else {
                     this.gainCnt = randomRound(gainCntRate);
                 }
@@ -1118,8 +1123,8 @@ export class ExplUpdater {
             this.log(ExplLogType.repeat, '宝箱成功被打开');
             this.log(ExplLogType.rich, '获得' + itemName);
         } else {
-            let itemName: string = null;
-            let failRzt: string = null;
+            let itemName: string | undefined;
+            let failRzt: string | undefined;
             if (this.moneyGaining) {
                 GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += this.gainCnt));
                 itemName = '可用物资，折合通用币' + MoneyTool.getStr(this.gainCnt).trim();
@@ -1223,7 +1228,7 @@ export class ExplUpdater {
 
     addExpToPet(pet: Pet, exp: number): { realExp: number; curExpPercent: number } {
         const gd = this.gameData;
-        let ampl = GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.exp);
+        let ampl = GameDataTool.getDrinkAmpl(AmplAttriType.exp, undefined, pet);
         if (GameDataTool.hasProTtl(gd, PTN.XueBa)) ampl += 0.25;
         if (GameDataTool.hasProTtl(gd, PTN.JingLingWang)) ampl += 0.15;
 
@@ -1268,7 +1273,7 @@ export class ExplUpdater {
 
         const catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, catcherId);
         if (catcherIdx === -1) {
-            gameData.curExpl.catcherId = null;
+            gameData.curExpl.catcherId = undefined;
             if (this.page) this.page.setCatchActive(false);
             return;
         }
@@ -1300,7 +1305,7 @@ export class ExplUpdater {
                     this.log(ExplLogType.rich, `成功捕获${PetTool.getCnName(pet)}`);
                     const catcher = this.memory.gameData.items[catcherIdx] as Catcher;
                     if (catcher.count === 1) {
-                        gameData.curExpl.catcherId = null;
+                        gameData.curExpl.catcherId = undefined;
                         if (this.page) this.page.setCatchActive(false);
                     }
                     GameDataTool.removeItem(gameData, catcherIdx);

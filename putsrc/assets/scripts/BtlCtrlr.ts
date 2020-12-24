@@ -88,8 +88,8 @@ export class BtlCtrlr {
         this.realBattle = new RealBattle();
 
         // 快捷键
-        this.page.ctrlr.debugTool.setShortCut('rr', this.resetBattleDataToBegin.bind(this));
-        this.page.ctrlr.debugTool.setShortCut('bb', this.resetBattleDataToTurnBegin.bind(this));
+        this.page!.ctrlr.debugTool.setShortCut('rr', this.resetBattleDataToBegin.bind(this));
+        this.page!.ctrlr.debugTool.setShortCut('bb', this.resetBattleDataToTurnBegin.bind(this));
 
         if (CC_DEBUG) this.debugMode = true;
 
@@ -216,7 +216,7 @@ export class BtlCtrlr {
         // 更新UI和日志
         if (this.page) this.page.setUIOfEnemyPet(-1);
 
-        const petNameDict = {};
+        const petNameDict: { [key: string]: boolean } = {};
         for (const ePet of this.realBattle.enemyTeam.pets) {
             const cnName = PetTool.getOriNameById(ePet.pet.id); // 避免太长，都用原始名
             petNameDict[cnName] = true;
@@ -321,7 +321,7 @@ export class BtlCtrlr {
         rb.curOrderIdx = -1;
         rb.curSequenceIdx = -1;
         rb.battleRound++;
-        rb.lastAim = null;
+        rb.lastAim = undefined;
 
         if (this.logging) this.updater.log(ExplLogType.round, rb.battleRound);
 
@@ -353,7 +353,7 @@ export class BtlCtrlr {
 
                 const buffModel = buffModelDict[buffData.id];
                 if (buffModel.hasOwnProperty('onTurnEnd')) {
-                    const buffOutput = buffModel.onTurnEnd(pet, buffData, this);
+                    const buffOutput = buffModel.onTurnEnd!(pet, buffData, this);
                     if (buffOutput) {
                         if (buffOutput.hp) {
                             let dmg = buffOutput.hp;
@@ -387,7 +387,7 @@ export class BtlCtrlr {
                 }
 
                 if (buffData.time === 0) {
-                    if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd(pet, buffData.caster, this, buffData.data);
+                    if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd!(pet, buffData.caster, this, buffData.data);
                     if (this.page) this.page.removeBuff(pet.beEnemy, pet.idx, buffIdx);
                     pet.buffDatas.splice(buffIdx, 1);
                 } else {
@@ -499,7 +499,7 @@ export class BtlCtrlr {
     }
 
     cast(battlePet: BattlePet, skillModel: SkillModel): boolean {
-        const aim: BattlePet = this.getAim(battlePet, skillModel.dirType === SkillDirType.self, skillModel);
+        const aim = this.getAim(battlePet, skillModel.dirType === SkillDirType.self, skillModel);
         if (!aim) return false;
 
         if (skillModel.hpLimit > 0 && (aim.hp / aim.hpMax) * 100 > skillModel.hpLimit) return false;
@@ -603,7 +603,7 @@ export class BtlCtrlr {
         return sklRealDmg * dmgRate + atkRealDmg;
     }
 
-    static getEleDmgRate(skillEleType: EleType, aim: BattlePet, caster: BattlePet) {
+    static getEleDmgRate(skillEleType: EleType, aim: BattlePet, caster?: BattlePet) {
         let dmgGain: number;
         if (caster) dmgGain = BtlCtrlr.getEleType(caster) === skillEleType ? 1.05 : 1;
         else dmgGain = 1;
@@ -642,13 +642,13 @@ export class BtlCtrlr {
         buffData.caster = caster;
         aim.buffDatas.push(buffData);
 
-        if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted(aim, caster, this);
+        if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted!(aim, caster, this);
         if (this.page) this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime, aim.buffDatas.length - 1);
         if (this.logging) this.logBuff(aim, buffModel.cnName);
     }
 
     doNormalAttack(battlePet: BattlePet): boolean {
-        const aim: BattlePet = this.getAim(battlePet, false);
+        const aim = this.getAim(battlePet, false);
         if (!aim) return false;
 
         const hitResult = BtlCtrlr.getHitResult(battlePet, aim);
@@ -666,10 +666,10 @@ export class BtlCtrlr {
         aim.hp -= finalDmg;
 
         battlePet.atkFeatures.forEach((value: AtkFeature) => {
-            value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg, skillModel: null });
+            value.func(battlePet, aim, value.datas, { ctrlr: this, finalDmg });
         });
         aim.hurtFeatures.forEach((value: HurtFeature) => {
-            value.func(aim, battlePet, value.datas, { ctrlr: this, finalDmg, skillModel: null });
+            value.func(aim, battlePet, value.datas, { ctrlr: this, finalDmg });
         });
 
         aim.hp = Math.floor(aim.hp);
@@ -783,7 +783,7 @@ export class BtlCtrlr {
                 pet.fromationIdx -= 1;
             }
 
-            if (this.realBattle.lastAim === battlePet) this.realBattle.lastAim = null;
+            if (this.realBattle.lastAim === battlePet) this.realBattle.lastAim = undefined;
         } else {
             this.endBattle(battlePet.beEnemy);
         }
@@ -820,7 +820,7 @@ export class BtlCtrlr {
         }
     }
 
-    getAim(battlePet: BattlePet, toSelf: boolean, skillModel: SkillModel = null): BattlePet {
+    getAim(battlePet: BattlePet, toSelf: boolean, skillModel?: SkillModel): BattlePet | undefined {
         const rb = this.realBattle;
 
         let aimPets: BattlePet[];
@@ -842,7 +842,7 @@ export class BtlCtrlr {
             }
         }
 
-        let aim: BattlePet;
+        let aim: BattlePet | undefined;
         switch (battleType) {
             case BattleType.melee:
                 aim = BtlCtrlr.getPetAlive(aimPets[battlePet.idx] || aimPets.getLast());
@@ -879,9 +879,6 @@ export class BtlCtrlr {
                 }
                 break;
             }
-            default:
-                aim = null;
-                break;
         }
         rb.lastAim = aim;
         return aim;
@@ -909,8 +906,8 @@ export class BtlCtrlr {
         return casterBPet.pet2.exEleTypes.getLast() || petModelDict[casterBPet.pet.id].eleType;
     }
 
-    static getBattleType(casterBPet: BattlePet, skillModel: SkillModel = null): BattleType {
-        const spBT = skillModel ? skillModel.spBattleType : null;
+    static getBattleType(casterBPet: BattlePet, skillModel?: SkillModel): BattleType {
+        const spBT = skillModel ? skillModel.spBattleType : undefined;
         return spBT || casterBPet.pet2.exBattleTypes.getLast() || petModelDict[casterBPet.pet.id].battleType;
     }
 
@@ -939,14 +936,14 @@ export class BtlCtrlr {
             return !curIsNotForbid;
         } else {
             selfBPet.sklForbidFlag = 0;
-            this.page.setSelfSklForbid(selfBPet.idx, false, false, false, false);
+            if (this.page) this.page.setSelfSklForbid(selfBPet.idx, false, false, false, false);
             return false;
         }
     }
 
     // -----------------------------------------------------------------
 
-    logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, skillName: string, eleType: EleType = null) {
+    logAtk(battlePet: BattlePet, aim: BattlePet, dmg: number, skillName: string, eleType?: EleType) {
         const dataList = [
             PetTool.getCnName(battlePet.pet),
             PetTool.getCnName(aim.pet),

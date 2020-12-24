@@ -102,8 +102,8 @@ function getCheckedNumber(s: number): number {
     return (s * MagicNum) >> 19;
 }
 
-function newList(list = null): any[] {
-    return new Proxy(list || [], {
+function newList<T extends any[]>(list?: T): T {
+    return new Proxy(list || ([] as any), {
         set: function (target, key, value, receiver) {
             memoryDirtyToken = Math.abs(memoryDirtyToken) * -1;
             return Reflect.set(target, key, value, receiver);
@@ -111,14 +111,14 @@ function newList(list = null): any[] {
     });
 }
 
-function newDict(dict = null) {
-    const realDict = dict || {};
-    const ckDict = {};
+function newDict<T extends Object>(dict?: T): T {
+    const realDict = dict || ({} as T);
+    const ckDict: any = {};
     for (const key in realDict) {
         if (!realDict.hasOwnProperty(key)) continue;
         const value = realDict[key];
         if (typeof value === 'number') {
-            ckDict[key] = getCheckedNumber(value);
+            ckDict[key] = getCheckedNumber(value) as any;
         } else if (typeof value === 'boolean') {
             ckDict[key] = value;
         }
@@ -134,7 +134,7 @@ function newDict(dict = null) {
             return Reflect.set(target, key, value, receiver);
         },
         get: function (target, key) {
-            const value = target[key];
+            const value = (target as any)[key];
             if (
                 (typeof value === 'number' && getCheckedNumber(value) !== ckDict[key]) ||
                 (typeof value === 'boolean' && value !== ckDict[key])
@@ -169,7 +169,7 @@ function turnToDataWithChecker(data: any) {
 // -----------------------------------------------------------------
 
 export class Memory {
-    gameData: GameData = null;
+    gameData!: GameData;
 
     saveToken: boolean = false;
     saveInterval: number = 0;
@@ -289,13 +289,13 @@ export class Memory {
         return lastGameData;
     }
 
-    decodeSaveData(encodeStr: string): { g: any; t: number } {
+    decodeSaveData(encodeStr: string): { g: any; t: number } | undefined {
         try {
             const decodeStr = Tea.Tea.decrypt(encodeStr, '0x5d627c');
             const data = JSON.parse(decodeStr) as { g: any; t: number };
             return data;
         } catch (error) {
-            return null;
+            return undefined;
         }
     }
 
@@ -334,7 +334,7 @@ export class Memory {
             return; // 非夜之神不能培养dark精灵
         }
 
-        pet.prvty += Math.floor(500 * GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.prvty) * count);
+        pet.prvty += Math.floor(500 * GameDataTool.getDrinkAmpl(AmplAttriType.prvty, undefined, pet) * count);
         pet.prvty = Math.min(pet.prvty, PrvtyMax);
     }
 
@@ -418,13 +418,13 @@ export class Memory {
 
         // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
 
-        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(21, 25));
-        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(21, 25));
-        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(21, 25));
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(21, 25)!);
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(21, 25)!);
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(21, 25)!);
 
-        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(11, 15));
-        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(11, 15));
-        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(11, 15));
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(11, 15)!);
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(11, 15)!);
+        GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(11, 15)!);
 
         // GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(30, 33));
         // GameDataTool.addEquip(this.gameData, EquipTool.createRandomByLv(30, 33));
@@ -515,8 +515,8 @@ export class PetTool {
         for (const featureId of exFeatureIds) pet.exFeatureIds.push(featureId);
         for (const feature of features) pet.inbFeatures.push(FeatureTool.clone(feature));
 
-        const equips = [];
-        for (let index = 0; index < PetEquipCountMax; index++) equips.push(null);
+        const equips: (Equip | undefined)[] = [];
+        for (let index = 0; index < PetEquipCountMax; index++) equips.push(undefined);
         pet.equips = newList(equips);
 
         pet.merges = newList();
@@ -547,12 +547,6 @@ export class PetTool {
         }
 
         return pet;
-    }
-
-    static getRandomFeatures(lv: number): Feature[] {
-        const features = [];
-
-        return features;
     }
 
     static getCnName(pet: Pet, needSpace: boolean = false): string {
@@ -664,7 +658,7 @@ export class PetTool {
     }
 
     static merge(pet: Pet, feature: Feature) {
-        let petFeature: Feature = null;
+        let petFeature: Feature | undefined;
         for (const lndFeature of pet.lndFeatures) {
             if (lndFeature.id === feature.id) {
                 petFeature = lndFeature;
@@ -698,34 +692,34 @@ export class CnsumTool {
         return cnsum;
     }
 
-    static getTypeById(cnsumId: string): CnsumType {
+    static getTypeById(cnsumId: string): CnsumType | undefined {
         if (cnsumId in drinkModelDict) return CnsumType.drink;
         else if (cnsumId in catcherModelDict) return CnsumType.catcher;
         else if (cnsumId in eqpAmplrModelDict) return CnsumType.eqpAmplr;
         else if (cnsumId in bookModelDict) return CnsumType.book;
         else if (cnsumId in spcModelDict) return CnsumType.special;
         else if (cnsumId in materialModelDict) return CnsumType.material;
-        else return null;
+        else return undefined;
     }
 
-    static getModelById(cnsumId: string): CnsumModel {
+    static getModelById(cnsumId: string): CnsumModel | undefined {
         if (cnsumId in drinkModelDict) return drinkModelDict[cnsumId];
         else if (cnsumId in catcherModelDict) return catcherModelDict[cnsumId];
         else if (cnsumId in eqpAmplrModelDict) return eqpAmplrModelDict[cnsumId];
         else if (cnsumId in bookModelDict) return bookModelDict[cnsumId];
         else if (cnsumId in spcModelDict) return spcModelDict[cnsumId];
         else if (cnsumId in materialModelDict) return materialModelDict[cnsumId];
-        else return null;
+        else return undefined;
     }
 
-    static getClassById(cnsumId: string): { new (): Cnsum } {
+    static getClassById(cnsumId: string): { new (): Cnsum } | undefined {
         if (cnsumId in drinkModelDict) return Drink;
         else if (cnsumId in catcherModelDict) return Catcher;
         else if (cnsumId in eqpAmplrModelDict) return EqpAmplr;
         else if (cnsumId in bookModelDict) return Book;
         else if (cnsumId in spcModelDict) return Special;
         else if (cnsumId in materialModelDict) return Material;
-        else return null;
+        else return undefined;
     }
 }
 
@@ -831,7 +825,7 @@ export class EquipTool {
         return this.create(equipId, skillId, 0, featureLvs, affixes, 0);
     }
 
-    static createRandomByLv(lvFrom: number, lvTo: number, rankMax: number = 9999): Equip {
+    static createRandomByLv(lvFrom: number, lvTo: number, rankMax: number = 9999): Equip | undefined {
         let equipIds: string[];
         let lv = lvFrom + randomInt(lvTo - lvFrom + 1);
         if (lv < 0) lv = 0;
@@ -840,7 +834,7 @@ export class EquipTool {
         const len = Math.min(equipIdsByRank.length, rankMax);
         switch (len) {
             case 0:
-                return null;
+                return undefined;
             case 1:
                 equipIds = equipIdsByRank[0];
                 break;
@@ -851,7 +845,7 @@ export class EquipTool {
                 equipIds = equipIdsByRank[getRandomOneInListWithRate([0, 1, 2], [0.6, 0.9])];
                 break;
         }
-        const equipId = getRandomOneInList(equipIds);
+        const equipId = getRandomOneInList(equipIds!);
         return this.createRandomById(equipId);
     }
 
@@ -908,18 +902,18 @@ export class EquipTool {
         return afName + mid + equipModelDict[equip.id].cnName;
     }
 
-    static getToken(e: Equip): string {
+    static getToken(e?: Equip): string {
         return e ? String(e.catchIdx) : 'x'; // 可以用catchIdx代表唯一的装备，因为装备在创建，增加和变化时，都会更新catchIdx
     }
 
-    static getFinalAttris(equip: Equip, attris: {} = null): {} {
+    static getFinalAttris(equip: Equip, attris?: {}): {} {
         // 装备加成
-        const setAttriByEquip = (attris: {}, equipModel: EquipModel, key: string, growth: number) => {
-            if (equipModel[key] > 0) attris[key] += equipModel[key] + growth;
+        const setAttriByEquip = (attris: Partial<EquipModel>, equipModel: EquipModel, key: keyof EquipModel, growth: number) => {
+            if (equipModel[key] > 0) (attris[key] as number) += (equipModel[key] as number) + growth;
         };
 
         const equipModel = equipModelDict[equip.id];
-        const finalAttris = attris || {
+        const finalAttris: Partial<EquipModel> = attris || {
             strength: 0,
             concentration: 0,
             durability: 0,
@@ -1057,15 +1051,16 @@ export class QuestTool {
 }
 
 export class MmrTool {
-    static createExplMmr(startStep: number): ExplMmr {
+    static createExplMmr(curPosId: string, startStep: number): ExplMmr {
         const expl = newInsWithChecker(ExplMmr);
+        expl.curPosId = curPosId;
         expl.startTime = Date.now();
         expl.startStep = startStep;
         expl.stepEnterTime = expl.startTime;
         expl.curStep = startStep;
         expl.chngUpdCnt = 0;
         expl.hiding = false;
-        expl.catcherId = null;
+        expl.catcherId = undefined;
         expl.afb = false;
         return expl;
     }
@@ -1118,7 +1113,6 @@ export class GameDataTool {
 
     static init(gameData: GameData) {
         gameData.roleName = '张涵';
-        gameData.userData = null;
 
         gameData.proTtlDict = newDict();
 
@@ -1136,8 +1130,6 @@ export class GameDataTool {
 
         gameData.curPosId = '';
         gameData.posDataDict = newDict();
-
-        gameData.curExpl = null;
 
         gameData.acceQuestInfos = newList();
 
@@ -1158,7 +1150,7 @@ export class GameDataTool {
         lv: number,
         exFeatureIds: string[],
         features: Feature[],
-        callback: (pet: Pet) => void = null
+        callback?: (pet: Pet) => void
     ): string {
         if (gameData.pets.length >= this.getPetCountMax(gameData)) return '精灵数量到达上限';
 
@@ -1246,7 +1238,7 @@ export class GameDataTool {
         const cPetRzt = this.checkMergeCaughtPet(gameData, pet, caughtPet);
         if (cPetRzt !== this.SUC) return cPetRzt;
 
-        let mergeFeature: Feature = null;
+        let mergeFeature: Feature | undefined;
         for (const cFeature of caughtPet.features) {
             if (cFeature.id === featureId) {
                 mergeFeature = cFeature;
@@ -1263,7 +1255,7 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static useDrinkToPet(gameData: GameData, petIdx: number, drinkIdx: number, curTime: number = null): string {
+    static useDrinkToPet(gameData: GameData, petIdx: number, drinkIdx: number, curTime?: number): string {
         const pet = gameData.pets[petIdx];
         const drink = gameData.items[drinkIdx];
         const drinkModel: DrinkModel = drinkModelDict[drink.id];
@@ -1282,10 +1274,10 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static getDrinkAmpl(gameData: GameData, petOrDrinkId: Pet | string, attri: AmplAttriType, base: number = 1): number {
+    static getDrinkAmpl(attri: AmplAttriType, gameData?: GameData, petOrDrinkId?: Pet | string, base: number = 1): number {
         if (gameData) {
             const ampls = [];
-            for (const pet of gameData.pets) ampls[ampls.length] = this.getDrinkAmpl(null, pet, attri, 0);
+            for (const pet of gameData.pets) ampls[ampls.length] = this.getDrinkAmpl(attri, undefined, pet, 0);
             ampls.sort((a, b) => b - a);
 
             let ampl = base;
@@ -1302,7 +1294,10 @@ export class GameDataTool {
             if (drinkModel.mainAttri === attri) return drinkModel.mainPercent * 0.01 + base;
             else if (drinkModel.subAttri === attri) return drinkModel.subPercent * 0.01 + base;
             else return base;
-        } else cc.error('Wrong getDrinkAmpl param');
+        } else {
+            cc.error('Wrong getDrinkAmpl param');
+            return base;
+        }
     }
 
     static clearDrinkFromPet(gameData: GameData, petIdx: number) {
@@ -1330,7 +1325,7 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static addCnsum(gameData: GameData, cnsumId: string, count: number = 1, callback: (cnsum: Cnsum) => void = null): string {
+    static addCnsum(gameData: GameData, cnsumId: string, count: number = 1, callback?: (cnsum: Cnsum) => void): string {
         const weightRzt = this.checkWeight(gameData);
         if (weightRzt !== this.SUC) return weightRzt;
 
@@ -1348,6 +1343,7 @@ export class GameDataTool {
 
         if (itemIdx === -1) {
             const cnsumClass = CnsumTool.getClassById(cnsumId);
+            if (!cnsumClass) return `PUT wrong cnsum id ${cnsumId}`;
             const realCnsum: Cnsum = CnsumTool.create(cnsumClass, cnsumId, count);
             gameData.items.push(realCnsum);
             if (callback) callback(realCnsum);
@@ -1360,7 +1356,7 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static addEquip(gameData: GameData, equip: Equip, callback: (equip: Equip) => void = null): string {
+    static addEquip(gameData: GameData, equip: Equip, callback?: (equip: Equip) => void): string {
         const weightRzt = this.checkWeight(gameData);
         if (weightRzt !== this.SUC) return weightRzt;
 
@@ -1375,7 +1371,7 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static addCaughtPet(gameData: GameData, cp: CaughtPet, callback: (cp: CaughtPet) => void = null): string {
+    static addCaughtPet(gameData: GameData, cp: CaughtPet, callback?: (cp: CaughtPet) => void): string {
         const weightRzt = this.checkWeight(gameData);
         if (weightRzt !== this.SUC) return weightRzt;
 
@@ -1536,7 +1532,7 @@ export class GameDataTool {
     static addPA(gameData: GameData, posId: string, paKey: string): PADBase {
         const pd = this.addPos(gameData, posId);
         if (!pd.actDict.hasOwnProperty(paKey)) {
-            let pad: PADBase;
+            let pad!: PADBase;
             if (paKey === PAKey.expl) pad = PosDataTool.createPADExpl();
             else if (paKey === PAKey.eqpMkt) pad = PosDataTool.createPADEqpMkt();
             else if (paKey === PAKey.petMkt) pad = PosDataTool.createPADPetMkt();
@@ -1565,18 +1561,17 @@ export class GameDataTool {
 
     static createExpl(gameData: GameData, startStep: number) {
         if (gameData.curExpl) return;
-        const expl = MmrTool.createExplMmr(startStep);
-        expl.curPosId = gameData.curPosId;
+        const expl = MmrTool.createExplMmr(gameData.curPosId, startStep);
         gameData.curExpl = expl;
     }
 
     static clearExpl(gameData: GameData) {
-        if (gameData.curExpl) gameData.curExpl = null;
+        if (gameData.curExpl) gameData.curExpl = undefined;
     }
 
     static createBattle(gameData: GameData, seed: number, startUpdCnt: number, spcBtlId: string, ePets: Pet[]) {
         cc.assert(gameData.curExpl, '创建battle前必有Expl');
-        const curExpl = gameData.curExpl;
+        const curExpl = gameData.curExpl!;
         if (curExpl.curBattle) return;
         const battle = MmrTool.createBattleMmr(seed, startUpdCnt, spcBtlId, curExpl.hiding);
 
@@ -1599,7 +1594,7 @@ export class GameDataTool {
 
     static clearBattle(gameData: GameData) {
         cc.assert(gameData.curExpl, '删除battle前必有Expl');
-        gameData.curExpl.curBattle = null;
+        gameData.curExpl!.curBattle = undefined;
     }
 
     // -----------------------------------------------------------------
@@ -1625,7 +1620,7 @@ export class GameDataTool {
         gameData: GameData,
         questType: QuestType,
         check: (quest: Quest, model: QuestModel) => boolean
-    ): { quest: Quest; model: QuestModel } {
+    ): { quest: Quest; model: QuestModel } | undefined {
         for (const questInfo of gameData.acceQuestInfos) {
             const model = questModelDict[questInfo.questId];
             if (model.type !== questType) continue;
@@ -1637,7 +1632,7 @@ export class GameDataTool {
                 return { quest, model };
             }
         }
-        return null;
+        return undefined;
     }
 
     static eachNeedQuest(gameData: GameData, questType: QuestType, call: (quest: Quest, model: QuestModel) => void) {

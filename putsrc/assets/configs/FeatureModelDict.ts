@@ -497,7 +497,7 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '蝠',
         dataAreas: [[0.01, 0.01]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            pet.hp = Math.min(pet.hp + bData[0] * bData.finalDmg, pet.hpMax);
+            pet.hp = Math.min(pet.hp + datas[0] * bData.finalDmg, pet.hpMax);
         },
         getInfo(datas: number[]): string {
             return `普攻击中时偷取血量，数值相当于伤害的${rdP(datas[0])}%`;
@@ -687,7 +687,7 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '猎',
         dataAreas: [[0.02, 0.02]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
-            if (BtlCtrlr.getEleDmgRate(bData.skillModel.eleType, aim, null) > 1) aim.hp -= bData.finalDmg * datas[0];
+            if (BtlCtrlr.getEleDmgRate(bData.skillModel.eleType, aim) > 1) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `对被属性克制的敌人伤害提高${rdP(datas[0])}%`;

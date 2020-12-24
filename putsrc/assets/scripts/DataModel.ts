@@ -25,15 +25,15 @@ export enum BuffType {
 }
 
 export class BuffModel {
-    id: string;
-    cnName: string;
-    brief: string;
-    buffType: BuffType;
-    eleType: EleType;
+    id!: string;
+    cnName!: string;
+    brief!: string;
+    buffType!: BuffType;
+    eleType!: EleType;
     onStarted?: (thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr) => any;
     onEnd?: (thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) => void;
     onTurnEnd?: (thisPet: BattlePet, buff: BattleBuff, ctrlr: BtlCtrlr) => BuffOutput | void;
-    getInfo: (pet: Readonly<Pet>, pet2: Readonly<Pet2>) => string;
+    getInfo!: (pet: Readonly<Pet>, pet2: Readonly<Pet2>) => string;
 }
 
 export enum SkillType {
@@ -58,39 +58,39 @@ export enum SkillAimtype {
 }
 
 export class SkillModel {
-    id: string;
-    cnName: string;
-    skillType: SkillType;
-    dirType: SkillDirType;
-    aimType: SkillAimtype;
-    eleType: EleType;
-    spBattleType: BattleType;
+    id!: string;
+    cnName!: string;
+    skillType!: SkillType;
+    dirType!: SkillDirType;
+    aimType!: SkillAimtype;
+    eleType!: EleType;
+    spBattleType!: BattleType;
 
-    mainDmg: number;
-    mainBuffId: string;
-    mainBuffTime: number;
+    mainDmg!: number;
+    mainBuffId!: string;
+    mainBuffTime!: number;
 
-    subDmg: number;
-    subBuffId: string;
-    subBuffTime: number;
+    subDmg!: number;
+    subBuffId!: string;
+    subBuffTime!: number;
 
-    cd: number;
-    mp: number;
-    rage: number;
+    cd!: number;
+    mp!: number;
+    rage!: number;
 
-    hpLimit: number;
+    hpLimit!: number;
 }
 
 export class FeatureBtlData {
-    ctrlr: BtlCtrlr;
-    finalDmg: number;
-    skillModel: SkillModel;
+    ctrlr!: BtlCtrlr;
+    finalDmg!: number;
+    skillModel?: SkillModel;
 }
 
 export class FeatureModel {
-    id: string;
-    cnBrief: string;
-    dataAreas: number[][];
+    id!: string;
+    cnBrief!: string;
+    dataAreas!: number[][];
     onBaseSetting?: (pet: Pet2, datas: number[]) => void;
     onSetting?: (pet: Pet2, datas: number[]) => void;
     onBtlStart?: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
@@ -102,43 +102,43 @@ export class FeatureModel {
     onEDead?: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
     onDead?: (pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
     onTurn?: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
-    getInfo: (datas: number[]) => string;
+    getInfo!: (datas: number[]) => string;
 }
 
 export class PetModel {
-    id: string;
-    cnName: string;
+    id!: string;
+    cnName!: string;
 
     /** 生物类型 */
-    bioType: BioType;
+    bioType!: BioType;
     /** 元素类型 */
-    eleType: EleType;
+    eleType!: EleType;
     /** 战斗类型 */
-    battleType: BattleType;
+    battleType!: BattleType;
     /** 速度 */
-    speed: number;
+    speed!: number;
 
-    baseStrength: number;
-    addStrength: number;
+    baseStrength!: number;
+    addStrength!: number;
 
-    baseConcentration: number;
-    addConcentration: number;
+    baseConcentration!: number;
+    addConcentration!: number;
 
-    baseDurability: number;
-    addDurability: number;
+    baseDurability!: number;
+    addDurability!: number;
 
-    baseAgility: number;
-    addAgility: number;
+    baseAgility!: number;
+    addAgility!: number;
 
-    baseSensitivity: number;
-    addSensitivity: number;
+    baseSensitivity!: number;
+    addSensitivity!: number;
 
-    baseElegant: number;
-    addElegant: number;
+    baseElegant!: number;
+    addElegant!: number;
 
-    selfFeatureIds: string[];
+    selfFeatureIds!: string[];
 
-    selfSkillIds: string[];
+    selfSkillIds!: string[];
 }
 
 export enum BossType {
@@ -148,17 +148,17 @@ export enum BossType {
 }
 
 export class SpcBtlPet {
-    id: string;
-    lv: number;
-    ampl: number;
-    features: Feature[];
-    bossName: string;
-    bossType: BossType; // 类型以给boss名字加颜色
+    id!: string;
+    lv!: number;
+    ampl!: number;
+    features!: Feature[];
+    bossName!: string;
+    bossType!: BossType; // 类型以给boss名字加颜色
 }
 
 export class SpcBtlModel {
-    id: string;
-    pets: SpcBtlPet[];
+    id!: string;
+    pets!: SpcBtlPet[];
 }
 
 // -----------------------------------------------------------------

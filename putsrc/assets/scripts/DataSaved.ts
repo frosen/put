@@ -158,7 +158,7 @@ export class Pet {
     lndFeatures: Feature[];
 
     /** 装备 */
-    equips: Equip[];
+    equips!: (Equip | undefined)[];
 
     /** 融合 */
     merges: Merge[];
@@ -344,16 +344,16 @@ export const NeedUpdCntByStep = [1600, 4800, 14400];
 export const RdcUpdCntForFailByStep = [-200, -400, -800];
 
 export class ExplMmr {
-    curPosId: string;
-    startTime: number;
-    startStep: number;
-    stepEnterTime: number;
-    curStep: number;
-    chngUpdCnt: number;
-    curBattle: BattleMmr;
-    hiding: boolean;
-    catcherId: string;
-    afb: boolean; // away from battle
+    curPosId!: string;
+    startTime!: number;
+    startStep!: number;
+    stepEnterTime!: number;
+    curStep!: number;
+    chngUpdCnt!: number;
+    curBattle?: BattleMmr;
+    hiding!: boolean;
+    catcherId?: string;
+    afb!: boolean; // away from battle
 }
 
 // -----------------------------------------------------------------
@@ -370,28 +370,28 @@ export class Evt {
 // -----------------------------------------------------------------
 
 export class GameData {
-    roleName: string;
-    userData: UserData;
+    roleName!: string;
+    userData?: UserData;
 
-    proTtlDict: { [key: string]: ProTtl };
+    proTtlDict!: { [key: string]: ProTtl };
 
-    achvSts: AchvSt[];
+    achvSts!: AchvSt[];
 
-    pets: Pet[];
-    totalPetCount: number; // 一共抓取过的精灵的总量，用于pet的索引
+    pets!: Pet[];
+    totalPetCount!: number; // 一共抓取过的精灵的总量，用于pet的索引
 
-    items: Item[];
-    weight: number;
-    totalEquipCount: number; // 一共获得过的装备的总量，用于装备的索引
+    items!: Item[];
+    weight!: number;
+    totalEquipCount!: number; // 一共获得过的装备的总量，用于装备的索引
 
-    curPosId: string;
-    posDataDict: { [key: string]: PosData };
+    curPosId!: string;
+    posDataDict!: { [key: string]: PosData };
 
-    curExpl: ExplMmr;
+    curExpl?: ExplMmr;
 
-    acceQuestInfos: AcceQuestInfo[]; // 已经接受了的quest
+    acceQuestInfos!: AcceQuestInfo[]; // 已经接受了的quest
 
-    evtDict: { [key: string]: Evt };
-    ongoingEvtIds: string[];
-    finishedEvtIds: string[];
+    evtDict!: { [key: string]: Evt };
+    ongoingEvtIds!: string[];
+    finishedEvtIds!: string[];
 }

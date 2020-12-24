@@ -235,7 +235,7 @@ export class PageActQuester extends PageBase {
         }
 
         const eleAmpl = PageActQuester.calcReputEleAmpl(gameData);
-        const drinkAmpl = GameDataTool.getDrinkAmpl(gameData, null, AmplAttriType.reput);
+        const drinkAmpl = GameDataTool.getDrinkAmpl(AmplAttriType.reput, gameData);
         const proTtlAmpl = GameDataTool.hasProTtl(gameData, PTN.WangLuoMingRen) ? 1.25 : 1;
         awardReput *= eleAmpl * drinkAmpl * proTtlAmpl;
         awardReput = Math.floor(awardReput);
