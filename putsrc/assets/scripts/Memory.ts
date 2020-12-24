@@ -75,7 +75,7 @@ import { bookModelDict } from '../configs/BookModelDict';
 import { spcModelDict } from '../configs/SpcModelDict';
 import { materialModelDict } from '../configs/MaterialModelDict';
 
-import { PTKey } from '../configs/ProTtlModelDict';
+import { PTN } from '../configs/ProTtlModelDict';
 import { featureModelDict } from '../configs/FeatureModelDict';
 import { PAKey } from '../configs/ActPosModelDict';
 
@@ -330,7 +330,7 @@ export class Memory {
         const count = Math.floor(diff / Interval);
         pet.prvtyTime += Interval * count;
 
-        if (petModelDict[pet.id].eleType === EleType.dark && !GameDataTool.hasProTtl(gameData, PTKey.YeZhiShen)) {
+        if (petModelDict[pet.id].eleType === EleType.dark && !GameDataTool.hasProTtl(gameData, PTN.YeZhiShen)) {
             return; // 非夜之神不能培养dark精灵
         }
 
@@ -1149,7 +1149,7 @@ export class GameDataTool {
     // -----------------------------------------------------------------
 
     static getPetCountMax(gameData: GameData): number {
-        return this.hasProTtl(gameData, PTKey.JingLingWang) ? 13 : 10;
+        return this.hasProTtl(gameData, PTN.JingLingWang) ? 13 : 10;
     }
 
     static addPet(
@@ -1322,7 +1322,7 @@ export class GameDataTool {
     // -----------------------------------------------------------------
 
     static getItemCountMax(gameData: GameData) {
-        return this.hasProTtl(gameData, PTKey.KongJianGuiHuaShi) ? 600 : 300;
+        return this.hasProTtl(gameData, PTN.KongJianGuiHuaShi) ? 600 : 300;
     }
 
     static checkWeight(gameData: GameData): string {

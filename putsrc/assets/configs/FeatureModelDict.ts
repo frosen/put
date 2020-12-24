@@ -22,9 +22,96 @@ function rate(data: number, from: number, range: number): number {
     return (data / (data + 7)) * range + from;
 }
 
+export class FtN {
+    static strength = 'strength';
+    static concentration = 'concentration';
+    static durability = 'durability';
+    static agility = 'agility';
+    static sensitivity = 'sensitivity';
+    static elegant = 'elegant';
+    static baseStrength = 'baseStrength';
+    static baseConcentration = 'baseConcentration';
+    static baseDurability = 'baseDurability';
+    static baseAgility = 'baseAgility';
+    static baseSensitivity = 'baseSensitivity';
+    static baseElegant = 'baseElegant';
+    static addHpMax = 'addHpMax';
+    static addMpMax = 'addMpMax';
+    static addAtkDmg = 'addAtkDmg';
+    static addSklDmg = 'addSklDmg';
+    static addAtkMax = 'addAtkMax';
+    static addSklMax = 'addSklMax';
+    static addCritRate = 'addCritRate';
+    static addCritDmgRate = 'addCritDmgRate';
+    static addEvdRate = 'addEvdRate';
+    static addHitRate = 'addHitRate';
+    static addDfsRate = 'addDfsRate';
+    static addDmgRdcHp = 'addDmgRdcHp';
+    static addHpRdcMp = 'addHpRdcMp';
+    static addByLuck = 'addByLuck';
+    static addAtkBySkl = 'addAtkBySkl';
+    static hitWithFire = 'hitWithFire';
+    static hitWithWater = 'hitWithWater';
+    static hitWithAir = 'hitWithAir';
+    static hitWithEarth = 'hitWithEarth';
+    static hitWithLight = 'hitWithLight';
+    static hitWithDark = 'hitWithDark';
+    static hitStlHp = 'hitStlHp';
+    static hitRdcMp = 'hitRdcMp';
+    static hitRdcRg = 'hitRdcRg';
+    static hitAddMp = 'hitAddMp';
+    static hitAddRg = 'hitAddRg';
+    static hitKill = 'hitKill';
+    static hitByRage = 'hitByRage';
+    static hitByHp = 'hitByHp';
+    static castMpDmg = 'castMpDmg';
+    static castConDmg = 'castConDmg';
+    static castFire = 'castFire';
+    static castWater = 'castWater';
+    static castAir = 'castAir';
+    static castEarth = 'castEarth';
+    static castLight = 'castLight';
+    static castDark = 'castDark';
+    static castEleRein = 'castEleRein';
+    static castHurtMe = 'castHurtMe';
+    static castUlti = 'castUlti';
+    static castByCombo = 'castByCombo';
+    static castByPetCount = 'castByPetCount';
+    static castFullRage = 'castFullRage';
+    static hurtAndHurt = 'hurtAndHurt';
+    static hurtGotMp = 'hurtGotMp';
+    static hurtGotRage = 'hurtGotRage';
+    static hurtRdcMp = 'hurtRdcMp';
+    static hurtWithMelee = 'hurtWithMelee';
+    static hurtWithShoot = 'hurtWithShoot';
+    static hurtWithCharge = 'hurtWithCharge';
+    static hurtWithAss = 'hurtWithAss';
+    static hurtByHp = 'hurtByHp';
+    static hurt = 'hurt';
+    static hurtWithAtk = 'hurtWithAtk';
+    static hurtWithCast = 'hurtWithCast';
+    static hurtFullRage = 'hurtFullRage';
+    static hurtOthers = 'hurtOthers';
+    static heal = 'heal';
+    static healByHp = 'healByHp';
+    static healByCombo = 'healByCombo';
+    static healAndHurt = 'healAndHurt';
+    static beginAddRage = 'beginAddRage';
+    static beginReLi = 'beginReLi';
+    static killAddHp = 'killAddHp';
+    static killAddAllHp = 'killAddAllHp';
+    static killAddMp = 'killAddMp';
+    static killRdcCD = 'killRdcCD';
+    static deadHurt = 'deadHurt';
+    static deadFangHu = 'deadFangHu';
+    static deadHuiChun = 'deadHuiChun';
+}
+
+export class BFtN {}
+
 export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
-    strength: {
-        id: 'strength',
+    [FtN.strength]: {
+        id: FtN.strength,
         cnBrief: '壮',
         dataAreas: [[1, 1]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -34,8 +121,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础力量增加${datas[0]}点`;
         }
     },
-    concentration: {
-        id: 'concentration',
+    [FtN.concentration]: {
+        id: FtN.concentration,
         cnBrief: '智',
         dataAreas: [[1, 1]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -45,8 +132,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础专注增加${datas[0]}点`;
         }
     },
-    durability: {
-        id: 'durability',
+    [FtN.durability]: {
+        id: FtN.durability,
         cnBrief: '体',
         dataAreas: [[1, 1]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -56,8 +143,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础耐久增加${datas[0]}点`;
         }
     },
-    agility: {
-        id: 'agility',
+    [FtN.agility]: {
+        id: FtN.agility,
         cnBrief: '捷',
         dataAreas: [[1, 1]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -67,8 +154,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础灵敏增加${datas[0]}点`;
         }
     },
-    sensitivity: {
-        id: 'sensitivity',
+    [FtN.sensitivity]: {
+        id: FtN.sensitivity,
         cnBrief: '细',
         dataAreas: [[1, 1]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -78,8 +165,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础感知增加${datas[0]}点`;
         }
     },
-    elegant: {
-        id: 'elegant',
+    [FtN.elegant]: {
+        id: FtN.elegant,
         cnBrief: '魅',
         dataAreas: [[1, 1]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -89,8 +176,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础优雅增加${datas[0]}点`;
         }
     },
-    baseStrength: {
-        id: 'baseStrength',
+    [FtN.baseStrength]: {
+        id: FtN.baseStrength,
         cnBrief: '力',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -100,8 +187,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础力量增加${rdP(datas[0])}%`;
         }
     },
-    baseConcentration: {
-        id: 'baseConcentration',
+    [FtN.baseConcentration]: {
+        id: FtN.baseConcentration,
         cnBrief: '专',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -111,8 +198,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础专注增加${rdP(datas[0])}%`;
         }
     },
-    baseDurability: {
-        id: 'baseDurability',
+    [FtN.baseDurability]: {
+        id: FtN.baseDurability,
         cnBrief: '耐',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -122,8 +209,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础耐久增加${rdP(datas[0])}%`;
         }
     },
-    baseAgility: {
-        id: 'baseAgility',
+    [FtN.baseAgility]: {
+        id: FtN.baseAgility,
         cnBrief: '敏',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -133,8 +220,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础灵敏增加${rdP(datas[0])}%`;
         }
     },
-    baseSensitivity: {
-        id: 'baseSensitivity',
+    [FtN.baseSensitivity]: {
+        id: FtN.baseSensitivity,
         cnBrief: '感',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -144,8 +231,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础感知增加${rdP(datas[0])}%`;
         }
     },
-    baseElegant: {
-        id: 'baseElegant',
+    [FtN.baseElegant]: {
+        id: FtN.baseElegant,
         cnBrief: '雅',
         dataAreas: [[0.01, 0.01]],
         onBaseSetting(pet: Pet2, datas: number[]): void {
@@ -155,8 +242,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `基础优雅增加${rdP(datas[0])}%`;
         }
     },
-    addHpMax: {
-        id: 'addHpMax',
+    [FtN.addHpMax]: {
+        id: FtN.addHpMax,
         cnBrief: '坚',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -166,8 +253,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `血量上限增加${rdP(datas[0])}%`;
         }
     },
-    addMpMax: {
-        id: 'addMpMax',
+    [FtN.addMpMax]: {
+        id: FtN.addMpMax,
         cnBrief: '思',
         dataAreas: [[10, 10]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -177,8 +264,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `灵能上限增加${datas[0]}点`;
         }
     },
-    addAtkDmg: {
-        id: 'addAtkDmg',
+    [FtN.addAtkDmg]: {
+        id: FtN.addAtkDmg,
         cnBrief: '武',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -189,8 +276,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `攻击伤害增加${rdP(datas[0])}%`;
         }
     },
-    addSklDmg: {
-        id: 'addSklDmg',
+    [FtN.addSklDmg]: {
+        id: FtN.addSklDmg,
         cnBrief: '能',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -201,8 +288,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `招式伤害增加${rdP(datas[0])}%`;
         }
     },
-    addAtkMax: {
-        id: 'addAtkMax',
+    [FtN.addAtkMax]: {
+        id: FtN.addAtkMax,
         cnBrief: '极',
         dataAreas: [[0.02, 0.02]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -212,8 +299,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `攻击伤害最大值增加${rdP(datas[0])}%`;
         }
     },
-    addSklMax: {
-        id: 'addSklMax',
+    [FtN.addSklMax]: {
+        id: FtN.addSklMax,
         cnBrief: '超',
         dataAreas: [[0.02, 0.02]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -223,8 +310,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `招式伤害最大值增加${rdP(datas[0])}%`;
         }
     },
-    addCritRate: {
-        id: 'addCritRate',
+    [FtN.addCritRate]: {
+        id: FtN.addCritRate,
         cnBrief: '暴',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -234,8 +321,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `暴击率增加${rdP(datas[0])}%`;
         }
     },
-    addCritDmgRate: {
-        id: 'addCritDmgRate',
+    [FtN.addCritDmgRate]: {
+        id: FtN.addCritDmgRate,
         cnBrief: '伤',
         dataAreas: [[0.1, 0.1]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -245,8 +332,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `暴击伤害增加${rdP(datas[0])}%`;
         }
     },
-    addEvdRate: {
-        id: 'addEvdRate',
+    [FtN.addEvdRate]: {
+        id: FtN.addEvdRate,
         cnBrief: '闪',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -256,8 +343,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `闪躲率增加${rdP(datas[0])}%`;
         }
     },
-    addHitRate: {
-        id: 'addHitRate',
+    [FtN.addHitRate]: {
+        id: FtN.addHitRate,
         cnBrief: '锐',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -267,8 +354,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `命中率增加${rdP(datas[0])}%`;
         }
     },
-    addDfsRate: {
-        id: 'addDfsRate',
+    [FtN.addDfsRate]: {
+        id: FtN.addDfsRate,
         cnBrief: '硬',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -278,8 +365,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `免伤增加${rdP(datas[0])}%`;
         }
     },
-    addDmgRdcHp: {
-        id: 'addDmgRdcHp',
+    [FtN.addDmgRdcHp]: {
+        id: FtN.addDmgRdcHp,
         cnBrief: '蛛',
         dataAreas: [
             [0.02, 0.02],
@@ -296,8 +383,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `所有伤害提高${rdP(datas[0])}%，但血量上限降低${rdP(datas[1])}%`;
         }
     },
-    addHpRdcMp: {
-        id: 'addHpRdcMp',
+    [FtN.addHpRdcMp]: {
+        id: FtN.addHpRdcMp,
         cnBrief: '蛹',
         dataAreas: [
             [0.02, 0.02],
@@ -311,8 +398,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `血量上限提高${rdP(datas[0])}%，但灵能上限降低${datas[1]}点`;
         }
     },
-    addByLuck: {
-        id: 'addByLuck',
+    [FtN.addByLuck]: {
+        id: FtN.addByLuck,
         cnBrief: '吉',
         dataAreas: [[0.01, 0.01]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -327,8 +414,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `任意基础属性如果为3的倍数，则提高${rdP(datas[0])}%`;
         }
     },
-    addAtkBySkl: {
-        id: 'addAtkBySkl',
+    [FtN.addAtkBySkl]: {
+        id: FtN.addAtkBySkl,
         cnBrief: '晓',
         dataAreas: [[0.02, 0.02]],
         onSetting(pet: Pet2, datas: number[]): void {
@@ -339,8 +426,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻伤害增加，数值相当于招式伤害的${rdP(datas[0])}%`;
         }
     },
-    hitWithFire: {
-        id: 'hitWithFire',
+    [FtN.hitWithFire]: {
+        id: FtN.hitWithFire,
         cnBrief: '焰',
         dataAreas: [[0.01, 0.01]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -350,8 +437,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%招式攻击的火系伤害`;
         }
     },
-    hitWithWater: {
-        id: 'hitWithWater',
+    [FtN.hitWithWater]: {
+        id: FtN.hitWithWater,
         cnBrief: '海',
         dataAreas: [[0.01, 0.01]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -361,8 +448,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%招式攻击的水系伤害`;
         }
     },
-    hitWithAir: {
-        id: 'hitWithAir',
+    [FtN.hitWithAir]: {
+        id: FtN.hitWithAir,
         cnBrief: '穹',
         dataAreas: [[0.01, 0.01]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -372,8 +459,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%招式攻击的空系伤害`;
         }
     },
-    hitWithEarth: {
-        id: 'hitWithEarth',
+    [FtN.hitWithEarth]: {
+        id: FtN.hitWithEarth,
         cnBrief: '渊',
         dataAreas: [[0.01, 0.01]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -383,8 +470,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%招式攻击的地系伤害`;
         }
     },
-    hitWithLight: {
-        id: 'hitWithLight',
+    [FtN.hitWithLight]: {
+        id: FtN.hitWithLight,
         cnBrief: '烁',
         dataAreas: [[0.01, 0.01]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -394,8 +481,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%招式攻击的光系伤害`;
         }
     },
-    hitWithDark: {
-        id: 'hitWithDark',
+    [FtN.hitWithDark]: {
+        id: FtN.hitWithDark,
         cnBrief: '影',
         dataAreas: [[0.01, 0.01]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -405,8 +492,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时，敌人额外受到相当于${rdP(datas[0])}%招式攻击的暗系伤害`;
         }
     },
-    hitStlHp: {
-        id: 'hitStlHp',
+    [FtN.hitStlHp]: {
+        id: FtN.hitStlHp,
         cnBrief: '蝠',
         dataAreas: [[0.01, 0.01]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -416,8 +503,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时偷取血量，数值相当于伤害的${rdP(datas[0])}%`;
         }
     },
-    hitRdcMp: {
-        id: 'hitRdcMp',
+    [FtN.hitRdcMp]: {
+        id: FtN.hitRdcMp,
         cnBrief: '鬼',
         dataAreas: [[1, 1]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -427,8 +514,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时，敌人减少${datas[0]}点灵能`;
         }
     },
-    hitRdcRg: {
-        id: 'hitRdcRg',
+    [FtN.hitRdcRg]: {
+        id: FtN.hitRdcRg,
         cnBrief: '雕',
         dataAreas: [[1, 1]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -440,8 +527,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时，敌人减少1点斗志，${rdP(rate(datas[0], 0.05, 0.9))}%概率减少2点`;
         }
     },
-    hitAddMp: {
-        id: 'hitAddMp',
+    [FtN.hitAddMp]: {
+        id: FtN.hitAddMp,
         cnBrief: '灵',
         dataAreas: [[1, 1]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -452,8 +539,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时，额外获得${datas[0]}点灵能`;
         }
     },
-    hitAddRg: {
-        id: 'hitAddRg',
+    [FtN.hitAddRg]: {
+        id: FtN.hitAddRg,
         cnBrief: '猿',
         dataAreas: [[1, 1]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -465,8 +552,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻击中时，额外获得1点斗志，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得2点`;
         }
     },
-    hitKill: {
-        id: 'hitKill',
+    [FtN.hitKill]: {
+        id: FtN.hitKill,
         cnBrief: '灭',
         dataAreas: [[0.05, 0.03]],
         onAtk(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -476,8 +563,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `如果敌人血量少于20%，则普攻伤害提高${rdP(datas[0])}%`;
         }
     },
-    hitByRage: {
-        id: 'hitByRage',
+    [FtN.hitByRage]: {
+        id: FtN.hitByRage,
         cnBrief: '狂',
         dataAreas: [
             [70, -1],
@@ -490,8 +577,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `如果斗志大于${Math.max(datas[0], 50)}点，则普攻伤害提高${rdP(datas[1])}%`;
         }
     },
-    hitByHp: {
-        id: 'hitByHp',
+    [FtN.hitByHp]: {
+        id: FtN.hitByHp,
         cnBrief: '末',
         dataAreas: [
             [0.1, 0.01],
@@ -504,8 +591,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `如果血量小于${rdP(Math.min(datas[0], 0.3))}%，则普攻伤害提高${rdP(datas[1])}%`;
         }
     },
-    castMpDmg: {
-        id: 'castMpDmg',
+    [FtN.castMpDmg]: {
+        id: FtN.castMpDmg,
         cnBrief: '信',
         dataAreas: [
             [0.8, -0.01],
@@ -518,8 +605,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `如果灵能大于总量的${rdP(datas[0])}%，则招式伤害提高${rdP(datas[1])}%`;
         }
     },
-    castConDmg: {
-        id: 'castConDmg',
+    [FtN.castConDmg]: {
+        id: FtN.castConDmg,
         cnBrief: '慧',
         dataAreas: [[0.02, 0.01]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -529,8 +616,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `如果专注高于敌人，则招式伤害提高${rdP(datas[0])}%`;
         }
     },
-    castFire: {
-        id: 'castFire',
+    [FtN.castFire]: {
+        id: FtN.castFire,
         cnBrief: '焚',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -540,8 +627,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `火系伤害提高${rdP(datas[0])}%`;
         }
     },
-    castWater: {
-        id: 'castWater',
+    [FtN.castWater]: {
+        id: FtN.castWater,
         cnBrief: '寒',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -551,8 +638,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `水系伤害提高${rdP(datas[0])}%`;
         }
     },
-    castAir: {
-        id: 'castAir',
+    [FtN.castAir]: {
+        id: FtN.castAir,
         cnBrief: '苍',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -562,8 +649,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `空系伤害提高${rdP(datas[0])}%`;
         }
     },
-    castEarth: {
-        id: 'castEarth',
+    [FtN.castEarth]: {
+        id: FtN.castEarth,
         cnBrief: '势',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -573,8 +660,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `地系伤害提高${rdP(datas[0])}%`;
         }
     },
-    castLight: {
-        id: 'castLight',
+    [FtN.castLight]: {
+        id: FtN.castLight,
         cnBrief: '耀',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -584,8 +671,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `光系伤害提高${rdP(datas[0])}%`;
         }
     },
-    castDark: {
-        id: 'castDark',
+    [FtN.castDark]: {
+        id: FtN.castDark,
         cnBrief: '邪',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -595,8 +682,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `暗系伤害提高${rdP(datas[0])}%`;
         }
     },
-    castEleRein: {
-        id: 'castEleRein',
+    [FtN.castEleRein]: {
+        id: FtN.castEleRein,
         cnBrief: '猎',
         dataAreas: [[0.02, 0.02]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -606,8 +693,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `对被属性克制的敌人伤害提高${rdP(datas[0])}%`;
         }
     },
-    castHurtMe: {
-        id: 'castHurtMe',
+    [FtN.castHurtMe]: {
+        id: FtN.castHurtMe,
         cnBrief: '命',
         dataAreas: [[0.03, 0.03]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -618,8 +705,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `招式伤害提高${rdP(datas[0])}%，但自己也会受到等量伤害（不会致死）`;
         }
     },
-    castUlti: {
-        id: 'castUlti',
+    [FtN.castUlti]: {
+        id: FtN.castUlti,
         cnBrief: '绝',
         dataAreas: [[0.08, 0.08]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -629,8 +716,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `绝杀技伤害提高${rdP(datas[0])}%`;
         }
     },
-    castByCombo: {
-        id: 'castByCombo',
+    [FtN.castByCombo]: {
+        id: FtN.castByCombo,
         cnBrief: '狼',
         dataAreas: [[0.02, 0.02]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -641,8 +728,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `招式的连击伤害提高${rdP(datas[0])}%乘以连击次数`;
         }
     },
-    castByPetCount: {
-        id: 'castByPetCount',
+    [FtN.castByPetCount]: {
+        id: FtN.castByPetCount,
         cnBrief: '孤',
         dataAreas: [[0.02, 0.015]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -652,8 +739,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `如果战场己方人数小于敌方，则招式伤害提高${rdP(datas[0])}%`;
         }
     },
-    castFullRage: {
-        id: 'castFullRage',
+    [FtN.castFullRage]: {
+        id: FtN.castFullRage,
         cnBrief: '皇',
         dataAreas: [[0.08, 0.08]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -666,8 +753,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `当斗志大于100时，消耗10点斗志，招式伤害提高${rdP(datas[0])}%`;
         }
     },
-    hurtAndHurt: {
-        id: 'hurtAndHurt',
+    [FtN.hurtAndHurt]: {
+        id: FtN.hurtAndHurt,
         cnBrief: '荆',
         dataAreas: [[0.01, 0.01]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -677,8 +764,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `受伤时，敌人受到伤害总量${rdP(datas[0])}%的物理伤害（不会致死）`;
         }
     },
-    hurtGotMp: {
-        id: 'hurtGotMp',
+    [FtN.hurtGotMp]: {
+        id: FtN.hurtGotMp,
         cnBrief: '妖',
         dataAreas: [[1, 1]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -689,8 +776,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `受伤时，额外获得${datas[0]}点灵能`;
         }
     },
-    hurtGotRage: {
-        id: 'hurtGotRage',
+    [FtN.hurtGotRage]: {
+        id: FtN.hurtGotRage,
         cnBrief: '熊',
         dataAreas: [[1, 1]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -702,8 +789,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `受伤时，额外获得1点斗志，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得2点`;
         }
     },
-    hurtRdcMp: {
-        id: 'hurtRdcMp',
+    [FtN.hurtRdcMp]: {
+        id: FtN.hurtRdcMp,
         cnBrief: '橡',
         dataAreas: [[0.1, 0.09]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -719,8 +806,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `受伤时，如果有足够的灵能，则${rdP(datas[0])}%伤害由消耗灵能抵消（1MP=2HP*lv）`;
         }
     },
-    hurtWithMelee: {
-        id: 'hurtWithMelee',
+    [FtN.hurtWithMelee]: {
+        id: FtN.hurtWithMelee,
         cnBrief: '云',
         dataAreas: [[0.02, 0.02]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -731,8 +818,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `近战伤害减少${rdP(datas[0])}%`;
         }
     },
-    hurtWithShoot: {
-        id: 'hurtWithShoot',
+    [FtN.hurtWithShoot]: {
+        id: FtN.hurtWithShoot,
         cnBrief: '雀',
         dataAreas: [[0.02, 0.02]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -743,8 +830,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `射击伤害减少${rdP(datas[0])}%`;
         }
     },
-    hurtWithCharge: {
-        id: 'hurtWithCharge',
+    [FtN.hurtWithCharge]: {
+        id: FtN.hurtWithCharge,
         cnBrief: '山',
         dataAreas: [[0.02, 0.02]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -755,8 +842,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `冲锋减少${rdP(datas[0])}%`;
         }
     },
-    hurtWithAss: {
-        id: 'hurtWithAss',
+    [FtN.hurtWithAss]: {
+        id: FtN.hurtWithAss,
         cnBrief: '松',
         dataAreas: [[0.02, 0.02]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -767,8 +854,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `刺杀伤害减少${rdP(datas[0])}%`;
         }
     },
-    hurtByHp: {
-        id: 'hurtByHp',
+    [FtN.hurtByHp]: {
+        id: FtN.hurtByHp,
         cnBrief: '慑',
         dataAreas: [
             [0.8, -0.02],
@@ -781,8 +868,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `如果当前血量大于等于${rdP(Math.max(datas[0], 0.5))}%，则伤害减少${rdP(datas[1])}%`;
         }
     },
-    hurt: {
-        id: 'hurt',
+    [FtN.hurt]: {
+        id: FtN.hurt,
         cnBrief: '盾',
         dataAreas: [[0.01, 0.01]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -792,8 +879,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `伤害减少${rdP(datas[0])}%`;
         }
     },
-    hurtWithAtk: {
-        id: 'hurtWithAtk',
+    [FtN.hurtWithAtk]: {
+        id: FtN.hurtWithAtk,
         cnBrief: '障',
         dataAreas: [[0.02, 0.02]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -803,8 +890,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `普攻伤害减少${rdP(datas[0])}%`;
         }
     },
-    hurtWithCast: {
-        id: 'hurtWithCast',
+    [FtN.hurtWithCast]: {
+        id: FtN.hurtWithCast,
         cnBrief: '屏',
         dataAreas: [[0.02, 0.02]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -814,8 +901,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `招式伤害减少${rdP(datas[0])}%`;
         }
     },
-    hurtFullRage: {
-        id: 'hurtFullRage',
+    [FtN.hurtFullRage]: {
+        id: FtN.hurtFullRage,
         cnBrief: '羽',
         dataAreas: [[0.05, 0.05]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -828,8 +915,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `当斗志大于100时，消耗5点斗志，抵消${rdP(datas[0])}%伤害`;
         }
     },
-    hurtOthers: {
-        id: 'hurtOthers',
+    [FtN.hurtOthers]: {
+        id: FtN.hurtOthers,
         cnBrief: '链',
         dataAreas: [[0.1, 0.05]],
         onHurt(aim: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -846,8 +933,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `伤害的${rdP(Math.min(datas[0], 1))}%由其他己方精灵承担`;
         }
     },
-    heal: {
-        id: 'heal',
+    [FtN.heal]: {
+        id: FtN.heal,
         cnBrief: '医',
         dataAreas: [[0.02, 0.02]],
         onHeal(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -857,8 +944,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `治疗效果提高${rdP(datas[0])}%`;
         }
     },
-    healByHp: {
-        id: 'healByHp',
+    [FtN.healByHp]: {
+        id: FtN.healByHp,
         cnBrief: '恩',
         dataAreas: [[0.1, 0.1]],
         onHeal(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -868,8 +955,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `如果血量低于25%，治疗效果提高${rdP(datas[0])}%`;
         }
     },
-    healByCombo: {
-        id: 'healByCombo',
+    [FtN.healByCombo]: {
+        id: FtN.healByCombo,
         cnBrief: '鹿',
         dataAreas: [[0.04, 0.04]],
         onHeal(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
@@ -880,8 +967,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `连击时，治疗效果提高${rdP(datas[0])}%乘以连击次数`;
         }
     },
-    healAndHurt: {
-        id: 'healAndHurt',
+    [FtN.healAndHurt]: {
+        id: FtN.healAndHurt,
         cnBrief: '血',
         dataAreas: [
             [0.05, 0.05],
@@ -896,8 +983,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `治疗效果提高${rdP(datas[0])}%，但自己会受到${rdP(datas[1])}%的伤害（不会致死）`;
         }
     },
-    beginAddRage: {
-        id: 'beginAddRage',
+    [FtN.beginAddRage]: {
+        id: FtN.beginAddRage,
         cnBrief: '阳',
         dataAreas: [[5, 2]],
         onBtlStart(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
@@ -907,8 +994,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `战斗开始时，直接获取${Math.min(datas[0], RageMax)}点斗志`;
         }
     },
-    beginReLi: {
-        id: 'beginReLi',
+    [FtN.beginReLi]: {
+        id: FtN.beginReLi,
         cnBrief: '热',
         dataAreas: [[1, 1]],
         onBtlStart(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
@@ -918,8 +1005,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `战斗开始时，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得热力，持续3回合`;
         }
     },
-    killAddHp: {
-        id: 'killAddHp',
+    [FtN.killAddHp]: {
+        id: FtN.killAddHp,
         cnBrief: '恶',
         dataAreas: [[0.02, 0.015]],
         onEDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
@@ -929,8 +1016,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `敌人被击败时恢复血量，数值相当于敌人最大血量的${rdP(datas[0])}%`;
         }
     },
-    killAddAllHp: {
-        id: 'killAddAllHp',
+    [FtN.killAddAllHp]: {
+        id: FtN.killAddAllHp,
         cnBrief: '噬',
         dataAreas: [[0.03, 0.02]],
         onEDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
@@ -945,8 +1032,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `自己击败敌人时所有己方恢复血量，数值相当于敌人最大血量的${rdP(datas[0])}%`;
         }
     },
-    killAddMp: {
-        id: 'killAddMp',
+    [FtN.killAddMp]: {
+        id: FtN.killAddMp,
         cnBrief: '神',
         dataAreas: [[8, 8]],
         onEDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
@@ -957,8 +1044,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `敌人被击败时，灵能恢复${datas[0]}点`;
         }
     },
-    killRdcCD: {
-        id: 'killRdcCD',
+    [FtN.killRdcCD]: {
+        id: FtN.killRdcCD,
         cnBrief: '梦',
         dataAreas: [[1, 1]],
         onEDead(pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
@@ -969,8 +1056,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `敌人被击败时，所有冷却直接减少1回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率减少2回合`;
         }
     },
-    deadHurt: {
-        id: 'deadHurt',
+    [FtN.deadHurt]: {
+        id: FtN.deadHurt,
         cnBrief: '尽',
         dataAreas: [[0.02, 0.01]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
@@ -981,8 +1068,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `被击败时，对全体敌人造成自己最大血量${rdP(datas[0])}%的伤害（不会致死）`;
         }
     },
-    deadFangHu: {
-        id: 'deadFangHu',
+    [FtN.deadFangHu]: {
+        id: FtN.deadFangHu,
         cnBrief: '防',
         dataAreas: [[1, 1]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
@@ -995,8 +1082,8 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `被击败时，对己方其他精灵释放防护罩持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
         }
     },
-    deadHuiChun: {
-        id: 'deadHuiChun',
+    [FtN.deadHuiChun]: {
+        id: FtN.deadHuiChun,
         cnBrief: '春',
         dataAreas: [[1, 1]],
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {

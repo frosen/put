@@ -27,7 +27,7 @@ import { PagePkgSelection } from '../../page_pkg_selection/scripts/PagePkgSelect
 import { PagePkg } from '../../page_pkg/scripts/PagePkg';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
-import { PTKey } from '../../../configs/ProTtlModelDict';
+import { PTN } from '../../../configs/ProTtlModelDict';
 import { BtlCtrlr } from '../../../scripts/BtlCtrlr';
 import { skillModelDict } from '../../../configs/SkillModelDict';
 
@@ -181,9 +181,9 @@ export class PageActExpl extends BtlPageBase {
         this.btlTouchLayer.on(cc.Node.EventType.TOUCH_CANCEL, this.onBtlTouchEnd.bind(this));
 
         const gameData = this.ctrlr.memory.gameData;
-        this.canCtrlSelfAim = GameDataTool.hasProTtl(gameData, PTKey.ZhanShuDaShi);
-        this.canCtrlSelfSkl = GameDataTool.hasProTtl(gameData, PTKey.YiLingZhe);
-        this.canSeeEnemy = GameDataTool.hasProTtl(gameData, PTKey.YingYan);
+        this.canCtrlSelfAim = GameDataTool.hasProTtl(gameData, PTN.ZhanShuDaShi);
+        this.canCtrlSelfSkl = GameDataTool.hasProTtl(gameData, PTN.YiLingZhe);
+        this.canSeeEnemy = GameDataTool.hasProTtl(gameData, PTN.YingYan);
 
         // 层级上，sklForbidBtnLayer在aimLine下面
         if (this.canCtrlSelfSkl) {

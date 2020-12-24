@@ -29,7 +29,7 @@ import { PageActQuesterLVD } from './PageActQuesterLVD';
 import { CellQuest, QuestState } from '../cells/cell_quest/scripts/CellQuest';
 import { FuncBar } from '../../page_pet/scripts/FuncBar';
 import { questModelDict } from '../../../configs/QuestModelDict';
-import { PTKey } from '../../../configs/ProTtlModelDict';
+import { PTN } from '../../../configs/ProTtlModelDict';
 import { Pet2 } from '../../../scripts/DataOther';
 
 export const QuesterUpdateInterval: number = 12 * 60 * 60 * 1000; // 更新间隔毫秒
@@ -236,7 +236,7 @@ export class PageActQuester extends PageBase {
 
         const eleAmpl = PageActQuester.calcReputEleAmpl(gameData);
         const drinkAmpl = GameDataTool.getDrinkAmpl(gameData, null, AmplAttriType.reput);
-        const proTtlAmpl = GameDataTool.hasProTtl(gameData, PTKey.WangLuoMingRen) ? 1.25 : 1;
+        const proTtlAmpl = GameDataTool.hasProTtl(gameData, PTN.WangLuoMingRen) ? 1.25 : 1;
         awardReput *= eleAmpl * drinkAmpl * proTtlAmpl;
         awardReput = Math.floor(awardReput);
 

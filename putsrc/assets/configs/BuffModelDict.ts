@@ -17,11 +17,37 @@ function getSklDmgStr(pet2: Pet2, rate: number) {
     return `${fl1(pet2.sklDmgFrom * 0.1 * rate)}到${fl1(pet2.sklDmgTo * 0.1 * rate)}`;
 }
 
-export class BName {}
+export class BufN {
+    static ZhuoShao = 'ZhuoShao';
+    static HanLeng = 'HanLeng';
+    static ZhongDu = 'ZhongDu';
+    static ZhuiLuo = 'ZhuiLuo';
+    static JingJie = 'JingJie';
+    static ReLi = 'ReLi';
+    static KongJu = 'KongJu';
+    static ShanYao = 'ShanYao';
+    static GeShang = 'GeShang';
+    static ChaoFeng = 'ChaoFeng';
+    static FangHu = 'FangHu';
+    static DunQiang = 'DunQiang';
+    static FeiXing = 'FeiXing';
+    static HuiChun = 'HuiChun';
+    static JingZhi = 'JingZhi';
+    static MangMu = 'MangMu';
+    static XieE = 'XieE';
+    static JingJin = 'JingJin';
+    static NingJing = 'NingJing';
+    static QiangJi = 'QiangJi';
+    static ZhuanZhu = 'ZhuanZhu';
+    static ShengMen = 'ShengMen';
+    static SiMen = 'SiMen';
+    static LiuSha = 'LiuSha';
+    static KongWu = 'KongWu';
+}
 
 export const buffModelDict: { [key: string]: BuffModel } = {
-    ZhuoShao: {
-        id: 'ZhuoShao',
+    [BufN.ZhuoShao]: {
+        id: BufN.ZhuoShao,
         cnName: '灼烧',
         brief: '灼',
         buffType: BuffType.debuff,
@@ -33,8 +59,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `每回合对目标造成${getSklDmgStr(pet2, 0.7)}(70%释放者招式伤害)点火系伤害`;
         }
     },
-    HanLeng: {
-        id: 'HanLeng',
+    [BufN.HanLeng]: {
+        id: BufN.HanLeng,
         cnName: '寒冷',
         brief: '寒',
         buffType: BuffType.debuff,
@@ -52,8 +78,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `减速目标，且每回合对目标造成${getSklDmgStr(pet2, 0.5)}(50%释放者招式伤害)点水系伤害`;
         }
     },
-    ZhongDu: {
-        id: 'ZhongDu',
+    [BufN.ZhongDu]: {
+        id: BufN.ZhongDu,
         cnName: '中毒',
         brief: '毒',
         buffType: BuffType.debuff,
@@ -66,8 +92,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `每回合对目标造成最低40%最高80%释放者招式攻击的暗系伤害，血量越低伤害越高`;
         }
     },
-    ZhuiLuo: {
-        id: 'ZhuiLuo',
+    [BufN.ZhuiLuo]: {
+        id: BufN.ZhuiLuo,
         cnName: '坠落',
         brief: '落',
         buffType: BuffType.debuff,
@@ -79,8 +105,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `效果结束时对目标造成${getSklDmgStr(pet2, 1)}(100%释放者招式伤害)点地系伤害`;
         }
     },
-    JingJie: {
-        id: 'JingJie',
+    [BufN.JingJie]: {
+        id: BufN.JingJie,
         cnName: '警戒',
         brief: '警',
         buffType: BuffType.buff,
@@ -97,8 +123,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return '目标下次攻击必命中，必暴击';
         }
     },
-    ReLi: {
-        id: 'ReLi',
+    [BufN.ReLi]: {
+        id: BufN.ReLi,
         cnName: '热力',
         brief: '热',
         buffType: BuffType.buff,
@@ -119,8 +145,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标普攻伤害提高，相当于自身攻击的15%伤害外加释放者招式攻击的15%`;
         }
     },
-    KongJu: {
-        id: 'KongJu',
+    [BufN.KongJu]: {
+        id: BufN.KongJu,
         cnName: '恐惧',
         brief: '惧',
         buffType: BuffType.debuff,
@@ -145,8 +171,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标所有攻击降低80%伤害`;
         }
     },
-    ShanYao: {
-        id: 'ShanYao',
+    [BufN.ShanYao]: {
+        id: BufN.ShanYao,
         cnName: '闪耀',
         brief: '耀',
         buffType: BuffType.buff,
@@ -167,8 +193,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标命中率，闪躲率，暴击率和免伤各增加10%`;
         }
     },
-    GeShang: {
-        id: 'GeShang',
+    [BufN.GeShang]: {
+        id: BufN.GeShang,
         cnName: '割伤',
         brief: '割',
         buffType: BuffType.debuff,
@@ -180,8 +206,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `每回合对目标造成最大血量5%的空系伤害，且无视护甲`;
         }
     },
-    ChaoFeng: {
-        id: 'ChaoFeng',
+    [BufN.ChaoFeng]: {
+        id: BufN.ChaoFeng,
         cnName: '嘲讽',
         brief: '嘲',
         buffType: BuffType.debuff,
@@ -198,8 +224,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标战斗方式变成近战`;
         }
     },
-    FangHu: {
-        id: 'FangHu',
+    [BufN.FangHu]: {
+        id: BufN.FangHu,
         cnName: '防护',
         brief: '防',
         buffType: BuffType.buff,
@@ -214,8 +240,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标增加20%免伤`;
         }
     },
-    DunQiang: {
-        id: 'DunQiang',
+    [BufN.DunQiang]: {
+        id: BufN.DunQiang,
         cnName: '盾墙',
         brief: '墙',
         buffType: BuffType.buff,
@@ -230,8 +256,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标增加80%免伤`;
         }
     },
-    FeiXing: {
-        id: 'FeiXing',
+    [BufN.FeiXing]: {
+        id: BufN.FeiXing,
         cnName: '飞行',
         brief: '飞',
         buffType: BuffType.buff,
@@ -246,8 +272,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标速度升至最大值`;
         }
     },
-    HuiChun: {
-        id: 'HuiChun',
+    [BufN.HuiChun]: {
+        id: BufN.HuiChun,
         cnName: '回春',
         brief: '春',
         buffType: BuffType.buff,
@@ -259,8 +285,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标每回合恢复目标${getSklDmgStr(pet2, 0.8)}(80%释放者招式伤害)点血量`;
         }
     },
-    JingZhi: {
-        id: 'JingZhi',
+    [BufN.JingZhi]: {
+        id: BufN.JingZhi,
         cnName: '静止',
         brief: '止',
         buffType: BuffType.debuff,
@@ -276,8 +302,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标停止一切行动`;
         }
     },
-    MangMu: {
-        id: 'MangMu',
+    [BufN.MangMu]: {
+        id: BufN.MangMu,
         cnName: '盲目',
         brief: '盲',
         buffType: BuffType.debuff,
@@ -292,8 +318,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标命中率降低30%`;
         }
     },
-    XieE: {
-        id: 'XieE',
+    [BufN.XieE]: {
+        id: BufN.XieE,
         cnName: '邪恶',
         brief: '恶',
         buffType: BuffType.buff,
@@ -318,8 +344,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标最大伤害提高150%，但每回合都会受到相当于自身全部攻击30%的暗系伤害`;
         }
     },
-    JingJin: {
-        id: 'JingJin',
+    [BufN.JingJin]: {
+        id: BufN.JingJin,
         cnName: '精尽',
         brief: '尽',
         buffType: BuffType.debuff,
@@ -338,8 +364,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标每回合燃烧掉目标${mp}点灵能，如果灵能不足${mp}点，则造成${dmg}(120%释放者招式伤害)点火系伤害`;
         }
     },
-    NingJing: {
-        id: 'NingJing',
+    [BufN.NingJing]: {
+        id: BufN.NingJing,
         cnName: '宁静',
         brief: '宁',
         buffType: BuffType.debuff,
@@ -351,8 +377,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标每回合减少目标3点斗志`;
         }
     },
-    QiangJi: {
-        id: 'QiangJi',
+    [BufN.QiangJi]: {
+        id: BufN.QiangJi,
         cnName: '强击',
         brief: '强',
         buffType: BuffType.buff,
@@ -373,8 +399,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标普攻伤害提高60%`;
         }
     },
-    ZhuanZhu: {
-        id: 'ZhuanZhu',
+    [BufN.ZhuanZhu]: {
+        id: BufN.ZhuanZhu,
         cnName: '专注',
         brief: '专',
         buffType: BuffType.buff,
@@ -395,38 +421,48 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `目标招式伤害提高40%`;
         }
     },
-    ShengMen: {
-        id: 'ShengMen',
+    [BufN.ShengMen]: {
+        id: BufN.ShengMen,
         cnName: '生门',
         brief: '生',
         buffType: BuffType.buff,
         eleType: EleType.earth,
         onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             const r = ctrlr.ranSd();
-            const id = r < 0.2 ? 'ReLi' : r < 0.4 ? 'JingJie' : r < 0.6 ? 'HuiChun' : r < 0.8 ? 'ZhuanZhu' : 'ShanYao';
+            let id!: string;
+            if (r < 0.2) id = BufN.ReLi;
+            else if (r < 0.4) id = BufN.JingJie;
+            else if (r < 0.6) id = BufN.HuiChun;
+            else if (r < 0.8) id = BufN.ZhuanZhu;
+            else id = BufN.ShanYao;
             return { newBuffs: [{ id, time: 3 }] };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `目标每回合随机获得增益效果`;
         }
     },
-    SiMen: {
-        id: 'SiMen',
+    [BufN.SiMen]: {
+        id: BufN.SiMen,
         cnName: '死门',
         brief: '死',
         buffType: BuffType.debuff,
         eleType: EleType.earth,
         onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             const r = ctrlr.ranSd();
-            const id = r < 0.2 ? 'ZhuoShao' : r < 0.4 ? 'HanLeng' : r < 0.6 ? 'GeShang' : r < 0.8 ? 'ZhuiLuo' : 'ZhongDu';
+            let id!: string;
+            if (r < 0.2) id = BufN.ZhuoShao;
+            else if (r < 0.4) id = BufN.HanLeng;
+            else if (r < 0.6) id = BufN.GeShang;
+            else if (r < 0.8) id = BufN.ZhuiLuo;
+            else id = BufN.ZhongDu;
             return { newBuffs: [{ id, time: 3 }] };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `目标每回合随机获得减益效果`;
         }
     },
-    LiuSha: {
-        id: 'LiuSha',
+    [BufN.LiuSha]: {
+        id: BufN.LiuSha,
         cnName: '流沙',
         brief: '沙',
         buffType: BuffType.debuff,
@@ -438,8 +474,8 @@ export const buffModelDict: { [key: string]: BuffModel } = {
             return `每回合结束时，目标10%几率获得静止效果`;
         }
     },
-    KongWu: {
-        id: 'KongWu',
+    [BufN.KongWu]: {
+        id: BufN.KongWu,
         cnName: '空舞',
         brief: '舞',
         buffType: BuffType.buff,
@@ -452,7 +488,7 @@ export const buffModelDict: { [key: string]: BuffModel } = {
         onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             if (ctrlr.ranSd() < 0.15) {
                 const newPet = ctrlr.getTeam(aim).pets.getOne(pet => pet.hp > 0 && pet.pet2.speed < aim.pet2.speed);
-                if (newPet) return { newBuffs: [{ aim: newPet, id: 'KongWu', time: 3 }] };
+                if (newPet) return { newBuffs: [{ aim: newPet, id: BufN.KongWu, time: 3 }] };
             }
         },
         onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {

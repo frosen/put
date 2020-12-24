@@ -6,7 +6,7 @@
 
 import { ProTtlModel, ProTtlType } from '../scripts/DataModel';
 
-export class PTKey {
+export class PTN {
     static DaShanRen = 'DaShanRen';
     static XueBa = 'XueBa';
     static ShouCangJia = 'ShouCangJia';
@@ -34,63 +34,63 @@ export class PTKey {
 }
 
 const ProTtlModelDict: { [key: string]: ProTtlModel } = {
-    [PTKey.DaShanRen]: {
-        id: PTKey.DaShanRen,
+    [PTN.DaShanRen]: {
+        id: PTN.DaShanRen,
         cnName: d => `大善人${d}`,
         proTtlType: ProTtlType.kind,
         info: 'thx'
     },
-    [PTKey.XueBa]: {
-        id: PTKey.XueBa,
+    [PTN.XueBa]: {
+        id: PTN.XueBa,
         cnName: '学霸',
         proTtlType: ProTtlType.purchase,
         order: 1,
         info: '精灵战斗获取的经验+25%'
     },
-    [PTKey.ShouCangJia]: {
-        id: PTKey.ShouCangJia,
+    [PTN.ShouCangJia]: {
+        id: PTN.ShouCangJia,
         cnName: '收藏家',
         proTtlType: ProTtlType.purchase,
         order: 2,
         info: '可以获得成就系统中的额外超级奖励'
     },
-    [PTKey.KongJianGuiHuaShi]: {
-        id: PTKey.KongJianGuiHuaShi,
+    [PTN.KongJianGuiHuaShi]: {
+        id: PTN.KongJianGuiHuaShi,
         cnName: '空间规划师',
         proTtlType: ProTtlType.purchase,
         order: 3,
         info: '道具持有上限加倍'
     },
-    [PTKey.WangLuoMingRen]: {
-        id: PTKey.WangLuoMingRen,
+    [PTN.WangLuoMingRen]: {
+        id: PTN.WangLuoMingRen,
         cnName: '网络名人',
         proTtlType: ProTtlType.purchase,
         order: 4,
         info: '完成任务获取的声望+25%'
     },
-    [PTKey.JiYiDaShi]: {
-        id: PTKey.JiYiDaShi,
+    [PTN.JiYiDaShi]: {
+        id: PTN.JiYiDaShi,
         cnName: '记忆大师',
         proTtlType: ProTtlType.purchase,
         order: 5,
         info: '直接获得10颗[永恒记忆碎片]，之后每周获得2颗直到拥有10颗；[永恒记忆碎片]可用于解除绑定和更改名称'
     },
-    [PTKey.JingLingWang]: {
-        id: PTKey.JingLingWang,
+    [PTN.JingLingWang]: {
+        id: PTN.JingLingWang,
         cnName: '精灵王',
         proTtlType: ProTtlType.purchase,
         order: 6,
         info: '精灵持有上限增加3格；可以给精灵起更多字的名字；精灵战斗后再额外获得15%的经验'
     },
-    [PTKey.LingXiu]: {
-        id: PTKey.LingXiu,
+    [PTN.LingXiu]: {
+        id: PTN.LingXiu,
         cnName: '领袖',
         proTtlType: ProTtlType.purchase,
         order: 7,
         info: '公会等级提高速度增加15%，最多200%；公会所有会员额外获得1%经验，最多100%；'
     },
-    [PTKey.YeZhiShen]: {
-        id: PTKey.YeZhiShen,
+    [PTN.YeZhiShen]: {
+        id: PTN.YeZhiShen,
         cnName: '夜之神',
         proTtlType: ProTtlType.purchase,
         order: 8,
@@ -99,65 +99,65 @@ const ProTtlModelDict: { [key: string]: ProTtlModel } = {
 
     // -----------------------------------------------------------------
 
-    [PTKey.DaXueSheng]: {
-        id: PTKey.DaXueSheng,
+    [PTN.DaXueSheng]: {
+        id: PTN.DaXueSheng,
         cnName: d => `大学生L${d}`,
         proTtlType: ProTtlType.pet,
         order: 1,
         info: d => `魔法精灵经验+${d * 5}%`
     },
-    [PTKey.JiXieShi]: {
-        id: PTKey.JiXieShi,
+    [PTN.JiXieShi]: {
+        id: PTN.JiXieShi,
         cnName: d => `机械师L${d}`,
         proTtlType: ProTtlType.pet,
         order: 2,
         info: d => `机械精灵经验+${d * 5}%`
     },
-    [PTKey.SiYangYuan]: {
-        id: PTKey.SiYangYuan,
+    [PTN.SiYangYuan]: {
+        id: PTN.SiYangYuan,
         cnName: d => `饲养员L{d}`,
         proTtlType: ProTtlType.pet,
         order: 3,
         info: d => `自然精灵经验+${d * 5}%`
     },
 
-    [PTKey.ZongHuoZhe]: {
-        id: PTKey.ZongHuoZhe,
+    [PTN.ZongHuoZhe]: {
+        id: PTN.ZongHuoZhe,
         cnName: d => `纵火者L{d}`,
         proTtlType: ProTtlType.pet,
         order: 11,
         info: d => `火系精灵经验+${d * 5}%`
     },
-    [PTKey.YuShuiZhe]: {
-        id: PTKey.YuShuiZhe,
+    [PTN.YuShuiZhe]: {
+        id: PTN.YuShuiZhe,
         cnName: d => `御水者L{d}`,
         proTtlType: ProTtlType.pet,
         order: 12,
         info: d => `水系精灵经验+${d * 5}%`
     },
-    [PTKey.KongWuZhe]: {
-        id: PTKey.KongWuZhe,
+    [PTN.KongWuZhe]: {
+        id: PTN.KongWuZhe,
         cnName: d => `空舞者L{d}`,
         proTtlType: ProTtlType.pet,
         order: 13,
         info: d => `空系精灵经验+${d * 5}%`
     },
-    [PTKey.DiFuZhe]: {
-        id: PTKey.DiFuZhe,
+    [PTN.DiFuZhe]: {
+        id: PTN.DiFuZhe,
         cnName: d => `地缚者L{d}`,
         proTtlType: ProTtlType.pet,
         order: 14,
         info: d => `地系精灵经验+${d * 5}%`
     },
-    [PTKey.GuangShi]: {
-        id: PTKey.GuangShi,
+    [PTN.GuangShi]: {
+        id: PTN.GuangShi,
         cnName: d => `光使L{d}`,
         proTtlType: ProTtlType.pet,
         order: 15,
         info: d => `光系精灵经验+${d * 5}%`
     },
-    [PTKey.AnShi]: {
-        id: PTKey.AnShi,
+    [PTN.AnShi]: {
+        id: PTN.AnShi,
         cnName: d => `暗使L{d}`,
         proTtlType: ProTtlType.pet,
         order: 16,
@@ -166,20 +166,20 @@ const ProTtlModelDict: { [key: string]: ProTtlModel } = {
 
     // -----------------------------------------------------------------
 
-    [PTKey.ZhanShuDaShi]: {
-        id: PTKey.ZhanShuDaShi,
+    [PTN.ZhanShuDaShi]: {
+        id: PTN.ZhanShuDaShi,
         cnName: '战术大师',
         proTtlType: ProTtlType.function,
         info: ''
     },
-    [PTKey.YiLingZhe]: {
-        id: PTKey.YiLingZhe,
+    [PTN.YiLingZhe]: {
+        id: PTN.YiLingZhe,
         cnName: '抑灵者',
         proTtlType: ProTtlType.function,
         info: ''
     },
-    [PTKey.YingYan]: {
-        id: PTKey.YingYan,
+    [PTN.YingYan]: {
+        id: PTN.YingYan,
         cnName: '鹰眼',
         proTtlType: ProTtlType.function,
         info: ''

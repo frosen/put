@@ -5,11 +5,19 @@
  */
 
 import { ActPosModel, ActPosType } from '../scripts/DataModel';
+import { drinkModelDict } from './DrinkModelDict';
+import { eqpAmplrModelDict } from './EqpAmplrModelDict';
+import { equipModelDict } from './EquipModelDict';
 import { petModelDict } from './PetModelDict';
+import { questModelDict } from './QuestModelDict';
 
 const p = petModelDict;
+const e = equipModelDict;
+const eI = eqpAmplrModelDict;
+const dI = drinkModelDict;
+const q = questModelDict;
 
-export class PName {
+export class PosN {
     static YiShanJiDi = 'YiShanJiDi';
     static KeChuangXiaoJing = 'KeChuangXiaoJing';
     static GuangJiDianGongChang = 'GuangJiDianGongChang';
@@ -28,20 +36,20 @@ export class PAKey {
 }
 
 export const actPosModelDict: { [key: string]: ActPosModel } = {
-    [PName.YiShanJiDi]: {
-        id: PName.YiShanJiDi,
+    [PosN.YiShanJiDi]: {
+        id: PosN.YiShanJiDi,
         cnName: '亦山基地',
         lv: 1,
         type: ActPosType.town,
         evts: [],
         actMDict: {
             [PAKey.shop]: {
-                goodsIdList: ['DaMoShi', 'DaMoShi', 'LingGanYaoJi1']
+                goodsIdList: [eI.DaMoShi.id, eI.DaMoShi.id, dI.LingGanYaoJi1.id]
             },
             [PAKey.eqpMkt]: {
                 eqpIdLists: [
-                    ['DuanJian', 'ChangRenJian'],
-                    ['TieZhiYuGan', 'JingZhiYuGan']
+                    [e.DuanJian.id, e.ChangRenJian.id],
+                    [e.TieZhiYuGan.id, e.JingZhiYuGan.id]
                 ]
             },
             [PAKey.petMkt]: {
@@ -52,24 +60,24 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
             },
             [PAKey.work]: {},
             [PAKey.quester]: {
-                questIdList: ['LingJianHuiShou', 'CeShiBaoGao', 'GuiXunYuChengFa', 'AnQuanSongDa', 'HuiYiTongZhi']
+                questIdList: [q.LingJianHuiShou.id, q.CeShiBaoGao.id, q.GuiXunYuChengFa.id, q.AnQuanSongDa.id, q.HuiYiTongZhi.id]
             },
             [PAKey.aCntr]: {
                 awardList: [
-                    { need: 1, price: 25, fullId: 'DaMoShi' },
-                    { need: 2, price: 250, fullId: 'DaMoShi' },
-                    { need: 3, price: 25, fullId: 'DaMoShi' },
-                    { need: 4, price: 250, fullId: 'DaMoShi' }
+                    { need: 1, price: 25, fullId: eI.DaMoShi.id },
+                    { need: 2, price: 250, fullId: eI.DaMoShi.id },
+                    { need: 3, price: 25, fullId: eI.DaMoShi.id },
+                    { need: 4, price: 250, fullId: eI.DaMoShi.id }
                 ]
             },
             [PAKey.rcclr]: {},
             [PAKey.merger]: {}
         },
-        movs: [{ id: PName.KeChuangXiaoJing, price: 0 }],
+        movs: [{ id: PosN.KeChuangXiaoJing, price: 0 }],
         loc: { x: 1000, y: 100 }
     },
-    [PName.KeChuangXiaoJing]: {
-        id: PName.KeChuangXiaoJing,
+    [PosN.KeChuangXiaoJing]: {
+        id: PosN.KeChuangXiaoJing,
         cnName: '科创小径',
         lv: 30,
         type: ActPosType.wild,
@@ -81,28 +89,28 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                     [p.NeiRanJiShou.id, p.FangShengJiXieBi.id, p.YaHuHanJuRen.id, p.ZiJingMieHuoQi.id, p.CaoPingShouGeZhe.id],
                     [p.NeiRanJiShou.id, p.FangShengJiXieBi.id, p.ZiJingMieHuoQi.id, p.ShuiLengJiQiRen.id, p.DianZiShouWei.id]
                 ],
-                itemIdLists: [['DaMoShi'], ['DaMoShi']],
+                itemIdLists: [[eI.DaMoShi.id], [eI.DaMoShi.id]],
                 eqpIdLists: []
             }
         },
         movs: [
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.YiShanJiDi, price: 0 },
-            { id: PName.GuangJiDianGongChang, price: 0 }
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.YiShanJiDi, price: 0 },
+            { id: PosN.GuangJiDianGongChang, price: 0 }
         ],
         loc: { x: 1100, y: 100 }
     },
-    [PName.GuangJiDianGongChang]: {
-        id: PName.GuangJiDianGongChang,
+    [PosN.GuangJiDianGongChang]: {
+        id: PosN.GuangJiDianGongChang,
         cnName: '光机电工厂',
         lv: 5,
         type: ActPosType.wild,
@@ -114,11 +122,11 @@ export const actPosModelDict: { [key: string]: ActPosModel } = {
                     [p.NeiRanJiShou.id, p.FangShengJiXieBi.id, p.YaHuHanJuRen.id, p.ZiJingMieHuoQi.id, p.CaoPingShouGeZhe.id],
                     [p.NeiRanJiShou.id, p.FangShengJiXieBi.id, p.ZiJingMieHuoQi.id, p.ShuiLengJiQiRen.id, p.DianZiShouWei.id]
                 ],
-                itemIdLists: [['DaMoShi'], ['DaMoShi']],
+                itemIdLists: [[eI.DaMoShi.id], [eI.DaMoShi.id]],
                 eqpIdLists: []
             }
         },
-        movs: [{ id: PName.KeChuangXiaoJing, price: 0 }],
+        movs: [{ id: PosN.KeChuangXiaoJing, price: 0 }],
         loc: { x: 1100, y: 100 }
     }
 };

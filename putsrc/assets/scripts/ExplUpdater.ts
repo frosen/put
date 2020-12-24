@@ -40,7 +40,7 @@ import {
 } from './DataModel';
 import { catcherModelDict } from '../configs/CatcherModelDict';
 import { petModelDict } from '../configs/PetModelDict';
-import { PTKey } from '../configs/ProTtlModelDict';
+import { PTN } from '../configs/ProTtlModelDict';
 
 export enum ExplState {
     none,
@@ -1224,30 +1224,30 @@ export class ExplUpdater {
     addExpToPet(pet: Pet, exp: number): { realExp: number; curExpPercent: number } {
         const gd = this.gameData;
         let ampl = GameDataTool.getDrinkAmpl(null, pet, AmplAttriType.exp);
-        if (GameDataTool.hasProTtl(gd, PTKey.XueBa)) ampl += 0.25;
-        if (GameDataTool.hasProTtl(gd, PTKey.JingLingWang)) ampl += 0.15;
+        if (GameDataTool.hasProTtl(gd, PTN.XueBa)) ampl += 0.25;
+        if (GameDataTool.hasProTtl(gd, PTN.JingLingWang)) ampl += 0.15;
 
         const model = petModelDict[pet.id];
         if (model.bioType === BioType.magic) {
-            if (GameDataTool.hasProTtl(gd, PTKey.DaXueSheng)) ampl += 0.05 * gd.proTtlDict[PTKey.DaXueSheng].data;
+            if (GameDataTool.hasProTtl(gd, PTN.DaXueSheng)) ampl += 0.05 * gd.proTtlDict[PTN.DaXueSheng].data;
         } else if (model.bioType === BioType.mech) {
-            if (GameDataTool.hasProTtl(gd, PTKey.JiXieShi)) ampl += 0.05 * gd.proTtlDict[PTKey.JiXieShi].data;
+            if (GameDataTool.hasProTtl(gd, PTN.JiXieShi)) ampl += 0.05 * gd.proTtlDict[PTN.JiXieShi].data;
         } else if (model.bioType === BioType.nature) {
-            if (GameDataTool.hasProTtl(gd, PTKey.SiYangYuan)) ampl += 0.05 * gd.proTtlDict[PTKey.SiYangYuan].data;
+            if (GameDataTool.hasProTtl(gd, PTN.SiYangYuan)) ampl += 0.05 * gd.proTtlDict[PTN.SiYangYuan].data;
         }
 
         if (model.eleType === EleType.fire) {
-            if (GameDataTool.hasProTtl(gd, PTKey.ZongHuoZhe)) ampl += 0.05 * gd.proTtlDict[PTKey.ZongHuoZhe].data;
+            if (GameDataTool.hasProTtl(gd, PTN.ZongHuoZhe)) ampl += 0.05 * gd.proTtlDict[PTN.ZongHuoZhe].data;
         } else if (model.eleType === EleType.water) {
-            if (GameDataTool.hasProTtl(gd, PTKey.YuShuiZhe)) ampl += 0.05 * gd.proTtlDict[PTKey.YuShuiZhe].data;
+            if (GameDataTool.hasProTtl(gd, PTN.YuShuiZhe)) ampl += 0.05 * gd.proTtlDict[PTN.YuShuiZhe].data;
         } else if (model.eleType === EleType.air) {
-            if (GameDataTool.hasProTtl(gd, PTKey.KongWuZhe)) ampl += 0.05 * gd.proTtlDict[PTKey.KongWuZhe].data;
+            if (GameDataTool.hasProTtl(gd, PTN.KongWuZhe)) ampl += 0.05 * gd.proTtlDict[PTN.KongWuZhe].data;
         } else if (model.eleType === EleType.earth) {
-            if (GameDataTool.hasProTtl(gd, PTKey.DiFuZhe)) ampl += 0.05 * gd.proTtlDict[PTKey.DiFuZhe].data;
+            if (GameDataTool.hasProTtl(gd, PTN.DiFuZhe)) ampl += 0.05 * gd.proTtlDict[PTN.DiFuZhe].data;
         } else if (model.eleType === EleType.light) {
-            if (GameDataTool.hasProTtl(gd, PTKey.GuangShi)) ampl += 0.05 * gd.proTtlDict[PTKey.GuangShi].data;
+            if (GameDataTool.hasProTtl(gd, PTN.GuangShi)) ampl += 0.05 * gd.proTtlDict[PTN.GuangShi].data;
         } else if (model.eleType === EleType.dark) {
-            if (GameDataTool.hasProTtl(gd, PTKey.AnShi)) ampl += 0.05 * gd.proTtlDict[PTKey.AnShi].data;
+            if (GameDataTool.hasProTtl(gd, PTN.AnShi)) ampl += 0.05 * gd.proTtlDict[PTN.AnShi].data;
         }
 
         const realExp = Math.ceil(exp * ampl);
