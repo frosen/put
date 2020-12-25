@@ -283,7 +283,8 @@ export class ExplUpdater {
             eqps: [],
             pets: [],
             itemDict: {},
-            moveCnt: 0
+            moveCnt: 0,
+            petDeadCnts: [0, 0, 0, 0, 0]
         };
 
         const selfPets = GameDataTool.getReadyPets(this.gameData);
@@ -294,8 +295,9 @@ export class ExplUpdater {
         let spanCnt = 0;
 
         const recalcSpanIndexs = [0, 1, 2, 3, 5]; // 不用每次都重新计算，不计算的使用上一次的
-        let btlDuraUpdCnt = 0;
-        let btlWinRate = 0;
+        let btlDuraUpdCnt!: number;
+        let btlWinRate!: number;
+        let petAliveRates!: number[];
 
         while (true) {
             // 战斗状态
@@ -305,13 +307,14 @@ export class ExplUpdater {
                 const calcRzt = this.calcBtlDuraUpdCntAndWinRate(gameData);
                 btlDuraUpdCnt = calcRzt.btlDuraUpdCnt;
                 btlWinRate = calcRzt.btlWinRate;
+                petAliveRates = calcRzt.petAliveRates;
             } else {
                 this.resetSelfTeamData(); // getPosPetAgiRate等需要selfTeamData，而上面calcBtl带有resetSelfTeam
             }
             const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.btlCtrlr);
             const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.btlCtrlr);
             const eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.btlCtrlr);
-            const petSt = { selfLv, enemyLv, btlDuraUpdCnt, btlWinRate, agiRate, sensRate, eleRate };
+            const petSt = { selfLv, enemyLv, btlDuraUpdCnt, btlWinRate, petAliveRates, agiRate, sensRate, eleRate };
 
             const nextUpdCnt = curExpl.chngUpdCnt + EachSpanUpdCnt;
             const nextTime = nextUpdCnt * ExplInterval + curExpl.stepEnterTime;
@@ -435,7 +438,7 @@ export class ExplUpdater {
         this.btlCtrlr.endCallback = bw => (win = bw);
         this.btlCtrlr.logging = logging;
 
-        this.btlCtrlr.resetSelfTeam(mmr);
+        this.btlCtrlr.resetSelfTeam(mmr.selfs.length > 0 ? mmr : undefined);
         this.btlCtrlr.resetBattle(mmr);
         while (true) {
             if (updCallback(this.btlCtrlr.realBattle)) break;
@@ -464,6 +467,7 @@ export class ExplUpdater {
             enemyLv: number;
             btlDuraUpdCnt: number;
             btlWinRate: number;
+            petAliveRates: number[];
             agiRate: number;
             sensRate: number;
             eleRate: number;
@@ -478,6 +482,7 @@ export class ExplUpdater {
             pets: any[];
             itemDict: { [key: string]: number };
             moveCnt: number;
+            petDeadCnts: number[];
         }
     ) {
         // 计算回合数和胜利数量 ------------------------------------------
@@ -513,6 +518,13 @@ export class ExplUpdater {
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
+
+        // 计算因死亡而损失的默契
+        for (let index = 0; index < selfPets.length; index++) {
+            const petDeadCnt = Math.floor((1 - petSt.petAliveRates[index]) * bigRdCnt);
+            this.rdcPetPrvtyByDead(selfPets[index]);
+            rztSt.petDeadCnts[index] += petDeadCnt;
+        }
 
         // 计算捕获
         do {
@@ -629,7 +641,7 @@ export class ExplUpdater {
         }
     }
 
-    calcBtlDuraUpdCntAndWinRate(gameData: GameData): { btlDuraUpdCnt: number; btlWinRate: number } {
+    calcBtlDuraUpdCntAndWinRate(gameData: GameData): { btlDuraUpdCnt: number; btlWinRate: number; petAliveRates: number[] } {
         const curExpl = gameData.curExpl!;
         const posId = curExpl.curPosId;
         const curPosModel = actPosModelDict[posId];
@@ -639,17 +651,22 @@ export class ExplUpdater {
         const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
         const petCnt = RealBattle.getEnemyPetCountByLv(lvBase);
 
+        const rb = this.btlCtrlr.realBattle;
+        const selfs = rb.selfTeam.pets;
+        const enemys = rb.enemyTeam.pets;
+
         let updCntTotal: number = 0;
         let winRateTotal: number = 0;
+        const petAliveRates: number[] = [0, 0, 0, 0, 0];
 
         const curLvs = [lvBase - lvRange, lvBase, lvBase, lvBase + lvRange];
         const winHpMax = 0.5;
         for (let index = 0; index < curLvs.length; index++) {
             const curLv = curLvs[index];
-            const enemys: EPetMmr[] = [];
+            const eMmrs: EPetMmr[] = [];
             for (let index = 0; index < petCnt; index++) {
                 const ePet = PetTool.createWithRandomFeature(petList[index], curLv);
-                enemys.push({
+                eMmrs.push({
                     id: ePet.id,
                     lv: ePet.lv,
                     exFeatureIds: ePet.exFeatureIds,
@@ -660,7 +677,7 @@ export class ExplUpdater {
                 startUpdCnt: 0,
                 seed: 0,
                 selfs: [],
-                enemys,
+                enemys: eMmrs,
                 spcBtlId: '',
                 hiding: curExpl.hiding
             };
@@ -671,24 +688,29 @@ export class ExplUpdater {
                 return false;
             });
 
-            const rb = this.btlCtrlr.realBattle;
             if (win) {
                 let hpRateTotal = 0;
-                for (const bPet of rb.selfTeam.pets) hpRateTotal += bPet.hp / bPet.hpMax;
-                winRateTotal += 0.5 + (Math.min(winHpMax, hpRateTotal / rb.selfTeam.pets.length) / winHpMax) * 0.5;
+                for (let index = 0; index < selfs.length; index++) {
+                    const bPet = selfs[index];
+                    hpRateTotal += bPet.hp / bPet.hpMax;
+                    petAliveRates[index] += bPet.hp > 0 ? 1 : 0;
+                }
+                winRateTotal += 0.5 + (Math.min(winHpMax, hpRateTotal / selfs.length) / winHpMax) * 0.5;
             } else {
                 let hpRateTotal = 0;
-                for (const bPet of rb.enemyTeam.pets) hpRateTotal += bPet.hp / bPet.hpMax;
-                winRateTotal += 0.5 - (Math.min(winHpMax, hpRateTotal / rb.enemyTeam.pets.length) / winHpMax) * 0.5;
+                for (const bPet of enemys) hpRateTotal += bPet.hp / bPet.hpMax;
+                winRateTotal += 0.5 - (Math.min(winHpMax, hpRateTotal / enemys.length) / winHpMax) * 0.5;
             }
         }
 
         const btlDuraUpdCnt = Math.floor(updCntTotal / curLvs.length);
         const btlWinRate = winRateTotal / curLvs.length;
+        for (let index = 0; index < petAliveRates.length; index++) petAliveRates[index] /= curLvs.length;
 
         return {
             btlDuraUpdCnt,
-            btlWinRate
+            btlWinRate,
+            petAliveRates
         };
     }
 
@@ -1200,6 +1222,7 @@ export class ExplUpdater {
             const curExpl = this.gameData.curExpl!;
             this.rdcExplDegreeByBtlFail(curExpl.curStep);
         }
+        this.rdcBPetsPrvtyByDead();
         this.startRecover();
     }
 
@@ -1356,6 +1379,17 @@ export class ExplUpdater {
 
     rdcExplDegreeByBtlFail(curStep: number, failCnt: number = 1) {
         this.changeExplDegree(RdcUpdCntForFailByStep[curStep] * failCnt);
+    }
+
+    rdcBPetsPrvtyByDead() {
+        const rb = this.btlCtrlr.realBattle;
+        for (const selfBPet of rb.selfTeam.pets) {
+            if (selfBPet.hp <= 0) this.rdcPetPrvtyByDead(selfBPet.pet);
+        }
+    }
+
+    rdcPetPrvtyByDead(pet: Pet, deadCnt: number = 1) {
+        pet.prvty = Math.floor(pet.prvty - deadCnt * 300);
     }
 
     // -----------------------------------------------------------------

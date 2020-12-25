@@ -8,7 +8,7 @@ const { ccclass, property, executionOrder } = cc._decorator;
 import { BtlPageBase } from '../../../scripts/BtlPageBase';
 import { ExplUpdater, ExplLogData, ExplState } from '../../../scripts/ExplUpdater';
 import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors, BattleType } from '../../../scripts/DataSaved';
-import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames } from '../../../scripts/DataModel';
+import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, SkillType } from '../../../scripts/DataModel';
 import { BattlePet, RageMax, BattlePetLenMax, BossMaster } from '../../../scripts/DataOther';
 import { ListView } from '../../../scripts/ListView';
 import { GameDataTool, PetTool } from '../../../scripts/Memory';
@@ -665,13 +665,13 @@ export class PageActExpl extends BtlPageBase {
         if (curBeEnemy) {
             if (this.enmeyAimIdxs.includes(curIdx)) {
                 btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, false, curIdx);
-                this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + '设定对敌战斗目标');
+                this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + '设定对敌目标');
             }
         } else {
             if (this.selfAimIdxs.includes(curIdx)) {
                 if (curIdx === this.startIdx && curPos.x > 352) return; // 对自己使用，需要多往左划一点
                 btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, true, curIdx);
-                this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + '设定对己方的战斗目标');
+                this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + '设定对己方的目标');
             }
         }
     }
@@ -711,7 +711,8 @@ export class PageActExpl extends BtlPageBase {
             const forbidFlag = bPet.sklForbidFlag;
             for (let index = 0; index < 4; index++) {
                 if (index < skillIds.length) {
-                    const name = skillModelDict[skillIds[index]].cnName;
+                    const model = skillModelDict[skillIds[index]];
+                    const name = model.cnName + (model.skillType === SkillType.ultimate ? '[绝]' : '');
                     const state = ((forbidFlag >> index) & 1) === 1 ? SklForbidBtnState.forbid : SklForbidBtnState.open;
                     this.sklForbidBtnLayer.setData(index, name, state);
                 } else {
