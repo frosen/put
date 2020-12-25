@@ -17,6 +17,13 @@
       false,
       false,
       false
+    ],
+    [
+      false,
+      false,
+      false,
+      false,
+      false
     ]
   ],
   "excluded-modules": [
@@ -37,7 +44,8 @@
     "default",
     "after1",
     "after2",
-    "after3"
+    "after3",
+    "afterAll"
   ],
   "start-scene": "2d2f792f-a40c-49bb-a189-ed176a246e49",
   "design-resolution-width": 1080,
@@ -65,5 +73,7 @@
   },
   "migrate-history": [
     "cloud-function"
-  ]
+  ],
+  "preview-port": 7456,
+  "clear-simulator-cache": true
 }
