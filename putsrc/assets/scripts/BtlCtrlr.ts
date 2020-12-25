@@ -352,8 +352,8 @@ export class BtlCtrlr {
                 buffData.time--;
 
                 const buffModel = buffModelDict[buffData.id];
-                if (buffModel.hasOwnProperty('onTurnEnd')) {
-                    const buffOutput = buffModel.onTurnEnd!(pet, buffData, this);
+                if (buffModel.onTurnEnd) {
+                    const buffOutput = buffModel.onTurnEnd(pet, buffData, this);
                     if (buffOutput) {
                         if (buffOutput.hp) {
                             let dmg = buffOutput.hp;
@@ -387,7 +387,7 @@ export class BtlCtrlr {
                 }
 
                 if (buffData.time === 0) {
-                    if (buffModel.hasOwnProperty('onEnd')) buffModel.onEnd!(pet, buffData.caster, this, buffData.data);
+                    if (buffModel.onEnd) buffModel.onEnd(pet, buffData.caster, this, buffData.data);
                     if (this.page) this.page.removeBuff(pet.beEnemy, pet.idx, buffIdx);
                     pet.buffDatas.splice(buffIdx, 1);
                 } else {
@@ -642,7 +642,7 @@ export class BtlCtrlr {
         buffData.caster = caster;
         aim.buffDatas.push(buffData);
 
-        if (buffModel.hasOwnProperty('onStarted')) buffData.data = buffModel.onStarted!(aim, caster, this);
+        if (buffModel.onStarted) buffData.data = buffModel.onStarted(aim, caster, this);
         if (this.page) this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime, aim.buffDatas.length - 1);
         if (this.logging) this.logBuff(aim, buffModel.cnName);
     }

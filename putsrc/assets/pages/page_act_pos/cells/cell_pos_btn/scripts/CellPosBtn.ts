@@ -76,7 +76,7 @@ export class CellPosBtn extends ListViewCell {
     }
 
     getSubInfo(actInfo: CellActInfo): { str: string; color?: cc.Color } {
-        if (actInfo.hasOwnProperty('getSubInfo')) {
+        if (actInfo.getSubInfo) {
             return actInfo.getSubInfo(this.ctrlr) || { str: null };
         } else return { str: null };
     }

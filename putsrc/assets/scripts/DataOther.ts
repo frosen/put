@@ -131,7 +131,7 @@ export class Pet2 {
 
         // 特性加成
         PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
-            if (model.hasOwnProperty('onBaseSetting')) model.onBaseSetting!(this, datas);
+            if (model.onBaseSetting) model.onBaseSetting(this, datas);
         });
 
         // 装备加成
@@ -180,7 +180,7 @@ export class Pet2 {
 
         // 特性加成
         PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
-            if (model.hasOwnProperty('onSetting')) model.onSetting!(this, datas);
+            if (model.onSetting) model.onSetting(this, datas);
         });
 
         // 限制
@@ -239,7 +239,7 @@ export class Pet2 {
 
     static handlePet2ForCalc(pet2: Pet2, pet: Pet) {
         PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
-            if (model.hasOwnProperty('onBaseSetting')) model.onBaseSetting!(pet2, datas);
+            if (model.onBaseSetting) model.onBaseSetting(pet2, datas);
         });
 
         for (const equip of pet.equips) {
@@ -247,7 +247,7 @@ export class Pet2 {
         }
 
         PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
-            if (model.hasOwnProperty('onSetting')) model.onSetting!(pet2, datas);
+            if (model.onSetting) model.onSetting(pet2, datas);
         });
     }
 

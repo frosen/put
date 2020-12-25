@@ -174,7 +174,7 @@ export class PageActPosLVD extends ListViewDelegate {
 
         for (let index = 0; index < this.curActPosModel.evts.length; index++) {
             const evtModel = this.curActPosModel.evts[index];
-            if (evtModel && evtModel.hasOwnProperty('useCond')) {
+            if (evtModel && evtModel.useCond) {
                 // if (evtModel.condFunc(gameData)) this.curEvts.push(evtModel);
             } else this.curEvts.push(evtModel);
         }
@@ -182,14 +182,14 @@ export class PageActPosLVD extends ListViewDelegate {
         for (const pakey in this.curActPosModel.actMDict) {
             if (!this.curActPosModel.actMDict.hasOwnProperty(pakey)) continue;
             const actModel = this.curActPosModel.actMDict[pakey];
-            if (actModel && actModel.hasOwnProperty('useCond')) {
+            if (actModel && actModel.useCond) {
                 // if (actModel.condFunc(gameData)) this.curActKeys.push(pakey);
             } else this.curActKeys.push(pakey);
         }
 
         for (let index = 0; index < this.curActPosModel.movs.length; index++) {
             const movModel = this.curActPosModel.movs[index];
-            if (movModel && movModel.hasOwnProperty('useCond')) {
+            if (movModel && movModel.useCond) {
                 // if (movModel.condFunc(gameData)) this.curMovs.push(movModel);
             } else this.curMovs.push(movModel);
         }
@@ -264,7 +264,7 @@ export class PageActPosLVD extends ListViewDelegate {
     }
 
     onClickCellPosBtn(actInfo: CellActInfo) {
-        if (actInfo.hasOwnProperty('check')) {
+        if (actInfo.check) {
             const errorStr = actInfo.check(this.ctrlr);
             if (errorStr) {
                 this.ctrlr.popToast(errorStr);
@@ -272,7 +272,7 @@ export class PageActPosLVD extends ListViewDelegate {
             }
         }
 
-        if (actInfo.hasOwnProperty('beforeEnter')) {
+        if (actInfo.beforeEnter) {
             actInfo.beforeEnter(this.ctrlr, pageData => {
                 this.ctrlr.pushPage(actInfo.page, pageData);
             });
