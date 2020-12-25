@@ -369,14 +369,15 @@ export class BattlePet {
 
     sklForbidFlag: number = 0; // 二进制flag，位数代表禁用的索引
 
-    static addFeatureFunc(
+    static addFeatureFuncToList(
         bPet: BattlePet,
-        attri: keyof BattlePet,
+        listName: keyof BattlePet,
         funcName: keyof FeatureModel,
         model: FeatureModel,
         datas: number[]
     ) {
-        const list: { func: any; datas: number[]; id: string }[] = bPet[attri] as any;
+        if (!model.hasOwnProperty(funcName)) return;
+        const list: { func: any; datas: number[]; id: string }[] = bPet[listName] as any;
         for (const featureInList of list) {
             if (featureInList.id !== model.id) continue;
             for (let index = 0; index < featureInList.datas.length; index++) {
@@ -421,14 +422,14 @@ export class BattlePet {
         this.turnFeatures.length = 0;
 
         PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
-            BattlePet.addFeatureFunc(this, 'startFeatures', 'onBtlStart', model, datas);
-            BattlePet.addFeatureFunc(this, 'atkFeatures', 'onAtk', model, datas);
-            BattlePet.addFeatureFunc(this, 'castFeatures', 'onCast', model, datas);
-            BattlePet.addFeatureFunc(this, 'hurtFeatures', 'onHurt', model, datas);
-            BattlePet.addFeatureFunc(this, 'healFeatures', 'onHeal', model, datas);
-            BattlePet.addFeatureFunc(this, 'eDeadFeatures', 'onEDead', model, datas);
-            BattlePet.addFeatureFunc(this, 'deadFeatures', 'onDead', model, datas);
-            BattlePet.addFeatureFunc(this, 'turnFeatures', 'onTurn', model, datas);
+            BattlePet.addFeatureFuncToList(this, 'startFeatures', 'onBtlStart', model, datas);
+            BattlePet.addFeatureFuncToList(this, 'atkFeatures', 'onAtk', model, datas);
+            BattlePet.addFeatureFuncToList(this, 'castFeatures', 'onCast', model, datas);
+            BattlePet.addFeatureFuncToList(this, 'hurtFeatures', 'onHurt', model, datas);
+            BattlePet.addFeatureFuncToList(this, 'healFeatures', 'onHeal', model, datas);
+            BattlePet.addFeatureFuncToList(this, 'eDeadFeatures', 'onEDead', model, datas);
+            BattlePet.addFeatureFuncToList(this, 'deadFeatures', 'onDead', model, datas);
+            BattlePet.addFeatureFuncToList(this, 'turnFeatures', 'onTurn', model, datas);
         });
 
         // 招式

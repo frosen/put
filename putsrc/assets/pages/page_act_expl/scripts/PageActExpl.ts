@@ -282,7 +282,7 @@ export class PageActExpl extends BtlPageBase {
             this.updater.init(this, this.spcBtlId, this.startStep);
 
             // 仅用于从setData到start传递数据，传输后直接clear
-            this.spcBtlId = 0;
+            this.spcBtlId = '';
             this.startStep = 0;
         }
 

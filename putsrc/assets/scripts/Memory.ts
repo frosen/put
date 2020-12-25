@@ -77,7 +77,7 @@ import { materialModelDict } from '../configs/MaterialModelDict';
 
 import { PTN } from '../configs/ProTtlModelDict';
 import { featureModelDict } from '../configs/FeatureModelDict';
-import { PAKey } from '../configs/ActPosModelDict';
+import { PAKey, PosN } from '../configs/ActPosModelDict';
 
 import { Tea } from './Tea';
 
@@ -349,27 +349,17 @@ export class Memory {
     // -----------------------------------------------------------------
 
     test() {
-        this.gameData.curPosId = 'KeChuangXiaoJing';
+        this.gameData.curPosId = PosN.KeChuangXiaoJing;
         this.gameData.proTtlDict = {
-            ShouCangJia: {
-                gainTime: 1
-            },
-            XueBa: {
-                gainTime: 1
-            },
-            KongJianGuiHuaShi: {
-                gainTime: 1
-            },
-            JiYiDaShi: {
-                gainTime: 1
-            },
-            JingLingWang: {
-                gainTime: 1
-            },
-            JiXieShi: {
-                gainTime: 1,
-                data: 1
-            }
+            [PTN.ShouCangJia]: { gainTime: 1 },
+            [PTN.XueBa]: { gainTime: 1 },
+            [PTN.KongJianGuiHuaShi]: { gainTime: 1 },
+            [PTN.JiYiDaShi]: { gainTime: 1 },
+            [PTN.JingLingWang]: { gainTime: 1 },
+            [PTN.JiXieShi]: { gainTime: 1, data: 1 },
+            [PTN.ZhanShuDaShi]: { gainTime: 1 },
+            [PTN.YingYan]: { gainTime: 1 },
+            [PTN.YiLingZhe]: { gainTime: 1 }
         };
 
         let pet = PetTool.createWithRandomFeature('FaTiaoWa', 30);
