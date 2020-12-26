@@ -824,21 +824,23 @@ export class BtlCtrlr {
         const rb = this.realBattle;
 
         let aimPets: BattlePet[];
-        if (toSelf) {
-            aimPets = battlePet.beEnemy ? rb.enemyTeam.pets : rb.selfTeam.pets;
+        if (battlePet.beEnemy) {
+            aimPets = toSelf ? rb.enemyTeam.pets : rb.selfTeam.pets;
         } else {
-            aimPets = battlePet.beEnemy ? rb.selfTeam.pets : rb.enemyTeam.pets;
+            aimPets = toSelf ? rb.selfTeam.pets : rb.enemyTeam.pets;
         }
 
         const battleType = BtlCtrlr.getBattleType(battlePet, skillModel);
-        const ctrlAimIdx = toSelf ? battlePet.ctrlSelfAimIdx : battlePet.ctrlEnemyAimIdx;
-        if (ctrlAimIdx !== -1 && (!skillModel || !skillModel.spBattleType)) {
-            const ctrlAim = aimPets[ctrlAimIdx];
-            if (ctrlAim.hp === 0 || battleType === BattleType.stay || battleType === BattleType.chaos) {
-                this.setSelfPetCtrlAimIdx(battlePet, toSelf, -1);
-            } else {
-                rb.lastAim = ctrlAim;
-                return ctrlAim;
+        if (!battlePet.beEnemy) {
+            const ctrlAimIdx = toSelf ? battlePet.ctrlSelfAimIdx : battlePet.ctrlEnemyAimIdx;
+            if (ctrlAimIdx !== -1 && (!skillModel || !skillModel.spBattleType)) {
+                const ctrlAim = aimPets[ctrlAimIdx];
+                if (ctrlAim.hp === 0 || battleType === BattleType.stay || battleType === BattleType.chaos) {
+                    this.setSelfPetCtrlAimIdx(battlePet, toSelf, -1);
+                } else {
+                    rb.lastAim = ctrlAim;
+                    return ctrlAim;
+                }
             }
         }
 
@@ -914,16 +916,22 @@ export class BtlCtrlr {
     // -----------------------------------------------------------------
 
     setSelfPetCtrlAimIdx(selfBPet: BattlePet, toSelf: boolean, aimIdx: number) {
-        if (toSelf) selfBPet.ctrlSelfAimIdx = aimIdx;
-        else selfBPet.ctrlEnemyAimIdx = aimIdx;
-        if (this.page) this.page.setSelfAim(selfBPet.idx, toSelf, aimIdx);
+        if (toSelf) {
+            if (selfBPet.ctrlSelfAimIdx === aimIdx) selfBPet.ctrlSelfAimIdx = -1;
+            else selfBPet.ctrlSelfAimIdx = aimIdx;
+            if (this.page) this.page.setSelfAim(selfBPet.idx, toSelf, selfBPet.ctrlSelfAimIdx);
+        } else {
+            if (selfBPet.ctrlEnemyAimIdx === aimIdx) selfBPet.ctrlEnemyAimIdx = -1;
+            else selfBPet.ctrlEnemyAimIdx = aimIdx;
+            if (this.page) this.page.setSelfAim(selfBPet.idx, toSelf, selfBPet.ctrlEnemyAimIdx);
+        }
     }
 
     switchSelfPetForbidSkl(selfBPet: BattlePet, sklIdx: number): boolean {
         if (sklIdx >= 0) {
-            const curIsNotForbid = ((selfBPet.sklForbidFlag >> sklIdx) & 1) === 0;
-            if (curIsNotForbid) selfBPet.sklForbidFlag = selfBPet.sklForbidFlag | (1 << sklIdx);
-            else selfBPet.sklForbidFlag = selfBPet.sklForbidFlag & ~(1 << sklIdx);
+            const curIsForbid = ((selfBPet.sklForbidFlag >> sklIdx) & 1) === 1;
+            if (curIsForbid) selfBPet.sklForbidFlag = selfBPet.sklForbidFlag & ~(1 << sklIdx);
+            else selfBPet.sklForbidFlag = selfBPet.sklForbidFlag | (1 << sklIdx);
 
             if (this.page) {
                 const flag = selfBPet.sklForbidFlag;
@@ -933,7 +941,7 @@ export class BtlCtrlr {
                 const fbd4 = ((flag >> 3) & 1) === 1;
                 this.page.setSelfSklForbid(selfBPet.idx, fbd1, fbd2, fbd3, fbd4);
             }
-            return !curIsNotForbid;
+            return !curIsForbid;
         } else {
             selfBPet.sklForbidFlag = 0;
             if (this.page) this.page.setSelfSklForbid(selfBPet.idx, false, false, false, false);

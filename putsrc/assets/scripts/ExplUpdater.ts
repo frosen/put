@@ -1389,7 +1389,7 @@ export class ExplUpdater {
     }
 
     rdcPetPrvtyByDead(pet: Pet, deadCnt: number = 1) {
-        pet.prvty = Math.floor(pet.prvty - deadCnt * 300);
+        pet.prvty = Math.floor(pet.prvty - deadCnt * 100);
     }
 
     // -----------------------------------------------------------------

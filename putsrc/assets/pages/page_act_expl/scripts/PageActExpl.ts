@@ -573,17 +573,20 @@ export class PageActExpl extends BtlPageBase {
 
         const wPos = event.getLocation();
         const curPos = this.node.convertToNodeSpaceAR(wPos);
-        this.handleSelfSklForbidBtn(curPos);
+        const forbiding = this.handleSelfSklForbidBtn(curPos);
+
+        if (forbiding) return; // 执行了禁止就不执行后面的任务了
 
         const state = this.calcTouchState(curPos);
         if (!state) return;
         this.handleSelfAimLine(state.touchEnemy, state.touchIdx, curPos);
     }
 
-    calcTouchState(pos: cc.Vec2): { touchEnemy: boolean; touchIdx: number } | null {
+    calcTouchState(pos: cc.Vec2): { touchEnemy: boolean; touchIdx: number } | undefined {
+        if (460 < pos.x && pos.x < 620) return undefined; // 这是中间的空白地带，不算点中
         const touchEnemy = pos.x > 540;
         let touchIdx = Math.floor(pos.y / btlUnitH);
-        if (touchIdx >= BattlePetLenMax) return null;
+        if (touchIdx >= BattlePetLenMax) return undefined;
         const uis = touchEnemy ? this.enemyPetUIs : this.selfPetUIs;
         const ui = uis[touchIdx];
         touchIdx = ui.node.active === true ? touchIdx : -1;
@@ -665,13 +668,15 @@ export class PageActExpl extends BtlPageBase {
         if (curBeEnemy) {
             if (this.enmeyAimIdxs.includes(curIdx)) {
                 btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, false, curIdx);
-                this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + '设定对敌目标');
+                const actStr = selfBPet.ctrlEnemyAimIdx !== -1 ? '设定对敌目标' : '取消对敌目标';
+                this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + actStr);
             }
         } else {
             if (this.selfAimIdxs.includes(curIdx)) {
                 if (curIdx === this.startIdx && curPos.x > 352) return; // 对自己使用，需要多往左划一点
                 btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, true, curIdx);
-                this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + '设定对己方的目标');
+                const actStr = selfBPet.ctrlSelfAimIdx !== -1 ? '设定对己方的目标' : '取消对己方的目标';
+                this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + actStr);
             }
         }
     }
@@ -740,8 +745,8 @@ export class PageActExpl extends BtlPageBase {
         }
     }
 
-    handleSelfSklForbidBtn(curPos: cc.Vec2) {
-        if (!this.sklForbidBtnShowing) return;
+    handleSelfSklForbidBtn(curPos: cc.Vec2): boolean {
+        if (!this.sklForbidBtnShowing) return false;
         for (let index = 0; index < 4; index++) {
             const btn = this.sklForbidBtnLayer.btns[index];
             if (btn.state === SklForbidBtnState.unuse) continue;
@@ -754,9 +759,10 @@ export class PageActExpl extends BtlPageBase {
                 const actName = forbid ? '封印招式' : '解封招式';
                 const sklName = skillModelDict[selfBPet.pet2.skillIds[index]].cnName;
                 this.ctrlr.popToast(petName + actName + sklName);
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     hideSelfSklForbidBtn() {
@@ -820,8 +826,6 @@ export class PageActExpl extends BtlPageBase {
     }
 
     updateAimLine() {
-        if (!this.ctrlLineShowing) return;
-
         const btlCtrlr = this.updater.btlCtrlr;
         const selfBPets = btlCtrlr.realBattle.selfTeam.pets;
         for (let index = 0; index < BattlePetLenMax; index++) {
