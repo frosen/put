@@ -35,7 +35,7 @@ export class PAKey {
     static merger = 'merger';
 }
 
-export const actPosModelDict: { [key: string]: ActPosModel } = {
+export const ActPosModelDict: { [key: string]: ActPosModel } = {
     [PosN.YiShanJiDi]: {
         id: PosN.YiShanJiDi,
         cnName: '亦山基地',

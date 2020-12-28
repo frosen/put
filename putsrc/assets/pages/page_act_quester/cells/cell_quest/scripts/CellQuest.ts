@@ -22,7 +22,7 @@ import {
     StepTypesByMax,
     SupportQuestNeed
 } from '../../../../../scripts/DataModel';
-import { actPosModelDict, PAKey } from '../../../../../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../../../../../configs/ActPosModelDict';
 import { CellUpdateDisplay } from '../../../../page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
 
 export enum QuestState {
@@ -166,7 +166,7 @@ export class CellQuest extends ListViewCell {
             }
             case QuestType.gather: {
                 const need = questModel.need as GatherQuestNeed;
-                const posModel = actPosModelDict[need.posId];
+                const posModel = ActPosModelDict[need.posId];
                 const explModel: ExplModel = posModel.actMDict[PAKey.expl] as ExplModel;
                 const stepMax = explModel.stepMax;
                 const stepType = StepTypesByMax[stepMax][need.step];
@@ -182,7 +182,7 @@ export class CellQuest extends ListViewCell {
             }
             case QuestType.search: {
                 const need = questModel.need as SearchQuestNeed;
-                const posModel = actPosModelDict[need.posId];
+                const posModel = ActPosModelDict[need.posId];
                 const explModel: ExplModel = posModel.actMDict[PAKey.expl] as ExplModel;
                 const stepMax = explModel.stepMax;
                 const stepType = StepTypesByMax[stepMax][need.step];

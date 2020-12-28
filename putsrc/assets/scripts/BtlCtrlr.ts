@@ -29,7 +29,7 @@ import {
     EDeadFeature,
     TurnFeature
 } from '../scripts/DataOther';
-import { battleSequence } from '../configs/BattleSequence';
+import { BattleSequence } from '../configs/BattleSequence';
 import { ExplUpdater, ExplLogType } from './ExplUpdater';
 
 // random with seed -----------------------------------------------------------------
@@ -315,7 +315,7 @@ export class BtlCtrlr {
 
         let petAliveCnt = 0;
         for (const bPet of rb.order) if (bPet.hp > 0) petAliveCnt++;
-        const sequennceList = battleSequence[petAliveCnt];
+        const sequennceList = BattleSequence[petAliveCnt];
         rb.sequnence = sequennceList[ranSdInt(sequennceList.length)];
 
         rb.curOrderIdx = -1;

@@ -6,7 +6,7 @@
 
 import { BookModel } from '../scripts/DataModel';
 
-export const bookModelDict: { [key: string]: BookModel } = {
+export const BookModelDict: { [key: string]: BookModel } = {
     castAirBook: {
         id: 'castAirBook',
         cnName: '苍之手卷',

@@ -12,7 +12,7 @@ import { PosData } from '../../../scripts/DataSaved';
 import { GameDataTool } from '../../../scripts/Memory';
 import { PageActExpl } from '../../page_act_expl/scripts/PageActExpl';
 import { PanelPosInfo } from './PanelPosInfo';
-import { actPosModelDict } from '../../../configs/ActPosModelDict';
+import { ActPosModelDict } from '../../../configs/ActPosModelDict';
 
 @ccclass
 export class PageActPos extends PageBase {
@@ -53,7 +53,7 @@ export class PageActPos extends PageBase {
             this.dirtyToken = curDirtyToken;
             this.resetListview();
 
-            const actPosModel = actPosModelDict[this.curPosId];
+            const actPosModel = ActPosModelDict[this.curPosId];
             this.posInfo.setData(actPosModel, gameData);
         }
     }

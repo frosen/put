@@ -15,7 +15,7 @@ import { GameDataTool, PetTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 
 import { buffModelDict } from '../../../configs/BuffModelDict';
-import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 
 import { PetUI } from './PetUI';
 import { AimLine, LineType } from './AimLine';
@@ -244,7 +244,7 @@ export class PageActExpl extends BtlPageBase {
         });
 
         const posId = this.ctrlr.memory.gameData.curPosId;
-        const posName = actPosModelDict[posId].cnName;
+        const posName = ActPosModelDict[posId].cnName;
         navBar.setTitle('探索' + posName);
     }
 
@@ -311,7 +311,7 @@ export class PageActExpl extends BtlPageBase {
         if (!curExpl) return this.navBar.setSubTitle('');
 
         const posId = curExpl.curPosId;
-        const curPosModel = actPosModelDict[posId];
+        const curPosModel = ActPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
         const curStep = curExpl.curStep;
@@ -912,9 +912,9 @@ export class PageActExpl extends BtlPageBase {
             cc.tween(this.enterTipNode).to(0.3, { opacity: 255 }).start();
 
             const curExpl = this.ctrlr.memory.gameData.curExpl;
-            const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+            const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
             const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep + 1] || 0;
-            this.enterTipLbl1.string = actPosModelDict[curExpl.curPosId].cnName;
+            this.enterTipLbl1.string = ActPosModelDict[curExpl.curPosId].cnName;
             this.enterTipLbl2.string = ExplStepNames[stepType];
 
             // @ts-ignore

@@ -23,7 +23,7 @@ import {
     QuestDLineType
 } from '../../../scripts/DataSaved';
 import { ActPosModel, QuesterModel, QuestModel, QuestType, SupportQuestNeed, AmplAttriType } from '../../../scripts/DataModel';
-import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { getRandomOneInList, randomInt, randomRate } from '../../../scripts/Random';
 import { PageActQuesterLVD } from './PageActQuesterLVD';
 import { CellQuest, QuestState } from '../cells/cell_quest/scripts/CellQuest';
@@ -87,7 +87,7 @@ export class PageActQuester extends PageBase {
 
         if (!pADQuester.updateTime || now > pADQuester.updateTime + QuesterUpdateInterval) {
             pADQuester.updateTime = now;
-            this.resetCurQuestList(pADQuester, actPosModelDict[posId]);
+            this.resetCurQuestList(pADQuester, ActPosModelDict[posId]);
         }
         this.pADQuester = pADQuester;
     }
@@ -293,7 +293,7 @@ export class PageActQuester extends PageBase {
     }
 
     static getPosSubAttriSbstValue(gameData: GameData) {
-        const curPosLv = actPosModelDict[gameData.curPosId].lv;
+        const curPosLv = ActPosModelDict[gameData.curPosId].lv;
         return 100 + curPosLv * 15;
     }
 

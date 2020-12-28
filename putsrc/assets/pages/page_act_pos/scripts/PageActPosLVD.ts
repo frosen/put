@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
 import { ListView } from '../../../scripts/ListView';
-import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
@@ -48,7 +48,7 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
             const gameData = ctrlr.memory.gameData;
             if (gameData.curExpl) {
                 if (gameData.curPosId !== gameData.curExpl.curPosId) {
-                    const name = actPosModelDict[gameData.curExpl.curPosId].cnName;
+                    const name = ActPosModelDict[gameData.curExpl.curPosId].cnName;
                     return `精灵仍在${name}战斗`;
                 }
             }
@@ -66,7 +66,7 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
             if (pADExpl.doneStep === 0) return callback(null);
 
             const posId = gameData.curPosId;
-            const curPosModel = actPosModelDict[posId];
+            const curPosModel = ActPosModelDict[posId];
             const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
             const stepMax = explModel.stepMax;
@@ -166,7 +166,7 @@ export class PageActPosLVD extends ListViewDelegate {
         const gameData = this.ctrlr.memory.gameData;
         this.curPosId = gameData.curPosId;
         this.curPos = gameData.posDataDict[this.curPosId];
-        this.curActPosModel = actPosModelDict[this.curPosId];
+        this.curActPosModel = ActPosModelDict[this.curPosId];
 
         this.curEvts.length = 0;
         this.curActKeys.length = 0;
@@ -258,7 +258,7 @@ export class PageActPosLVD extends ListViewDelegate {
 
             const moveType = this.curMovs[movIdx];
             const posId = moveType.id;
-            const movPosModel = actPosModelDict[posId];
+            const movPosModel = ActPosModelDict[posId];
             cell.setData(movPosModel, moveType.price);
         }
     }

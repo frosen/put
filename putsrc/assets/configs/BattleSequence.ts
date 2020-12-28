@@ -4,7 +4,7 @@
  * luleyan
  */
 
-export const battleSequence: { [key: number]: number[][] } = {
+export const BattleSequence: { [key: number]: number[][] } = {
     2: [[1, 2]],
     3: [[1, 2, 3]],
     4: [[1, 2, 3, 4]],

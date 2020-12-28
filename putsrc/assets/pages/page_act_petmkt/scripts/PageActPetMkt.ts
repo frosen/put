@@ -13,7 +13,7 @@ import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
 import { ListView } from '../../../scripts/ListView';
 import { Money, PADPetMkt, CaughtPet } from '../../../scripts/DataSaved';
 import { ActPosModel, PetMktModel, ReputRank } from '../../../scripts/DataModel';
-import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from '../../../scripts/Random';
 import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { PageActPetMktLVD } from './PageActPetMktLVD';
@@ -47,7 +47,7 @@ export class PageActPetMkt extends PageBase {
         const now = Date.now();
         if (!pADPetMkt.updateTime || now > pADPetMkt.updateTime + PetMktUpdataInterval) {
             pADPetMkt.updateTime = now;
-            this.resetMktGoods(pADPetMkt, actPosModelDict[posId]);
+            this.resetMktGoods(pADPetMkt, ActPosModelDict[posId]);
         }
         this.resetCurData(pADPetMkt);
 
@@ -227,7 +227,7 @@ export class PageActPetMkt extends PageBase {
         const pADPetMkt: PADPetMkt = GameDataTool.addPA(gameData, posId, PAKey.petMkt) as PADPetMkt;
         pADPetMkt.updateTime = Date.now();
         pADPetMkt.refreshCnt++;
-        this.resetMktGoods(pADPetMkt, actPosModelDict[posId]);
+        this.resetMktGoods(pADPetMkt, ActPosModelDict[posId]);
         this.resetCurData(pADPetMkt);
 
         this.list.resetContent();

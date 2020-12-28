@@ -11,7 +11,7 @@ import { PageBase } from '../../../scripts/PageBase';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageActShopLVD } from './PageActShopLVD';
 import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
-import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { ListView } from '../../../scripts/ListView';
 import { CellTransaction } from '../cells/cell_transaction/scripts/CellTransaction';
 import { Money } from '../../../scripts/DataSaved';
@@ -36,7 +36,7 @@ export class PageActShop extends PageBase {
 
         if (CC_EDITOR) return;
         const posId = this.ctrlr.memory.gameData.curPosId;
-        const shopModel = actPosModelDict[posId].actMDict[PAKey.shop] as ShopModel;
+        const shopModel = ActPosModelDict[posId].actMDict[PAKey.shop] as ShopModel;
         this.goodsIds = shopModel.goodsIdList;
 
         const lvd = this.list.delegate as PageActShopLVD;

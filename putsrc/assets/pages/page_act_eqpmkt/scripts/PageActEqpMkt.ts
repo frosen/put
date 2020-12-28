@@ -13,7 +13,7 @@ import { NavBar } from '../../../scripts/NavBar';
 import { ListView } from '../../../scripts/ListView';
 import { Money, Equip, PADEqpMkt } from '../../../scripts/DataSaved';
 import { ActPosModel, EqpMktModel, ReputRank } from '../../../scripts/DataModel';
-import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from '../../../scripts/Random';
 import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
@@ -45,7 +45,7 @@ export class PageActEqpMkt extends PageBase {
         const now = Date.now();
         if (!pADEqpMkt.updateTime || now > pADEqpMkt.updateTime + EqpMktUpdataInterval) {
             pADEqpMkt.updateTime = now;
-            this.resetMktGoods(pADEqpMkt, actPosModelDict[posId]);
+            this.resetMktGoods(pADEqpMkt, ActPosModelDict[posId]);
         }
 
         this.resetCurData(pADEqpMkt);
@@ -223,7 +223,7 @@ export class PageActEqpMkt extends PageBase {
         const pADEqpMkt: PADEqpMkt = GameDataTool.addPA(gameData, gameData.curPosId, PAKey.eqpMkt) as PADEqpMkt;
         pADEqpMkt.updateTime = Date.now();
         pADEqpMkt.refreshCnt++;
-        this.resetMktGoods(pADEqpMkt, actPosModelDict[gameData.curPosId]);
+        this.resetMktGoods(pADEqpMkt, ActPosModelDict[gameData.curPosId]);
         this.resetCurData(pADEqpMkt);
 
         this.list.resetContent();

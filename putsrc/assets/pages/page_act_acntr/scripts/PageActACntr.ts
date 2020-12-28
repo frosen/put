@@ -13,7 +13,7 @@ import { PageActACntrLVD } from './PageActACntrLVD';
 import { ListView } from '../../../scripts/ListView';
 import { Equip, Money, PADACntr } from '../../../scripts/DataSaved';
 import { ACntrModel, ReputAwardModel } from '../../../scripts/DataModel';
-import { actPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 
 import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
 import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
@@ -42,7 +42,7 @@ export class PageActACntr extends PageBase {
         const pADACntr = GameDataTool.addPA(gameData, posId, PAKey.aCntr) as PADACntr;
         const soldoutList = pADACntr.soldoutList;
 
-        const aCntrModel = actPosModelDict[posId].actMDict[PAKey.aCntr] as ACntrModel;
+        const aCntrModel = ActPosModelDict[posId].actMDict[PAKey.aCntr] as ACntrModel;
         const awardList = aCntrModel.awardList;
         for (let index = 0; index < awardList.length; index++) {
             const award = awardList[index];

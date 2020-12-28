@@ -71,7 +71,7 @@ import { questModelDict } from '../configs/QuestModelDict';
 import { drinkModelDict } from '../configs/DrinkModelDict';
 import { catcherModelDict } from '../configs/CatcherModelDict';
 import { eqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
-import { bookModelDict } from '../configs/BookModelDict';
+import { BookModelDict } from '../configs/BookModelDict';
 import { spcModelDict } from '../configs/SpcModelDict';
 import { materialModelDict } from '../configs/MaterialModelDict';
 
@@ -659,7 +659,7 @@ export class PetTool {
         if (petFeature) petFeature.lv += feature.lv;
         else pet.lndFeatures.push(FeatureTool.clone(feature));
 
-        pet.prvty = Math.max(pet.prvty - 2500 * 100, 0); // merge会减少默契
+        pet.prvty = Math.max(pet.prvty - this.PrvtyMergeNeed, 0); // merge会减少默契
 
         const mergeData = newInsWithChecker(Merge);
         mergeData.oPetLv = pet.lv;
@@ -668,6 +668,8 @@ export class PetTool {
         mergeData.featureLv = feature.lv;
         pet.merges.push(mergeData);
     }
+
+    static PrvtyMergeNeed: number = 1225 * 100;
 
     static getCurMergeLv(pet: Pet): number {
         return pet.merges.length * 5 + 15;
@@ -686,7 +688,7 @@ export class CnsumTool {
         if (cnsumId in drinkModelDict) return CnsumType.drink;
         else if (cnsumId in catcherModelDict) return CnsumType.catcher;
         else if (cnsumId in eqpAmplrModelDict) return CnsumType.eqpAmplr;
-        else if (cnsumId in bookModelDict) return CnsumType.book;
+        else if (cnsumId in BookModelDict) return CnsumType.book;
         else if (cnsumId in spcModelDict) return CnsumType.special;
         else if (cnsumId in materialModelDict) return CnsumType.material;
         else return undefined;
@@ -696,7 +698,7 @@ export class CnsumTool {
         if (cnsumId in drinkModelDict) return drinkModelDict[cnsumId];
         else if (cnsumId in catcherModelDict) return catcherModelDict[cnsumId];
         else if (cnsumId in eqpAmplrModelDict) return eqpAmplrModelDict[cnsumId];
-        else if (cnsumId in bookModelDict) return bookModelDict[cnsumId];
+        else if (cnsumId in BookModelDict) return BookModelDict[cnsumId];
         else if (cnsumId in spcModelDict) return spcModelDict[cnsumId];
         else if (cnsumId in materialModelDict) return materialModelDict[cnsumId];
         else return undefined;
@@ -706,7 +708,7 @@ export class CnsumTool {
         if (cnsumId in drinkModelDict) return Drink;
         else if (cnsumId in catcherModelDict) return Catcher;
         else if (cnsumId in eqpAmplrModelDict) return EqpAmplr;
-        else if (cnsumId in bookModelDict) return Book;
+        else if (cnsumId in BookModelDict) return Book;
         else if (cnsumId in spcModelDict) return Special;
         else if (cnsumId in materialModelDict) return Material;
         else return undefined;
@@ -1194,6 +1196,8 @@ export class GameDataTool {
 
     static checkMergePet(gameData: GameData, pet: Pet): string {
         if (pet.state !== PetState.rest) return '精灵未在休息状态，无法融合';
+
+        if (pet.prvty < PetTool.PrvtyMergeNeed) return '精灵融合需要默契值';
 
         const mergeLv = PetTool.getCurMergeLv(pet);
         if (pet.lv < mergeLv) return `精灵下次融合需达到${mergeLv}级，目前无法融合`;

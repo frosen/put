@@ -24,7 +24,7 @@ import {
     EleType
 } from '../scripts/DataSaved';
 import { RealBattle, BattlePet } from './DataOther';
-import { actPosModelDict, PAKey } from '../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../configs/ActPosModelDict';
 import { randomInt, randomRate, getRandomOneInList, randomAreaInt, random, randomRound, randomAreaByIntRange } from './Random';
 import {
     ExplModel,
@@ -226,7 +226,7 @@ export class ExplUpdater {
         nowTime -= MockSpan;
 
         const posId = curExpl.curPosId;
-        const curPosModel = actPosModelDict[posId];
+        const curPosModel = ActPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
         // 捕捉状态
@@ -389,7 +389,7 @@ export class ExplUpdater {
     }
 
     recoverExplStepPercent(curExpl: ExplMmr) {
-        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const curStep = curExpl.curStep;
 
         if (curStep >= curExplModel.stepMax - 1) {
@@ -516,7 +516,7 @@ export class ExplUpdater {
 
         const curStep = curExpl.curStep;
         const posId = curExpl.curPosId;
-        const curPosModel = actPosModelDict[posId];
+        const curPosModel = ActPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
         // 计算因死亡而损失的默契
@@ -644,7 +644,7 @@ export class ExplUpdater {
     calcBtlDuraUpdCntAndWinRate(gameData: GameData): { btlDuraUpdCnt: number; btlWinRate: number; petAliveRates: number[] } {
         const curExpl = gameData.curExpl!;
         const posId = curExpl.curPosId;
-        const curPosModel = actPosModelDict[posId];
+        const curPosModel = ActPosModelDict[posId];
         const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
         const curStep = curExpl.curStep;
         const petList = curExplModel.petIdLists[curStep];
@@ -861,7 +861,7 @@ export class ExplUpdater {
 
         if (this.explRdCnt > 1) {
             const posId = curExpl.curPosId;
-            const curPosModel = actPosModelDict[posId];
+            const curPosModel = ActPosModelDict[posId];
             const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
             const curStep = curExpl.curStep;
             const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.btlCtrlr);
@@ -981,7 +981,7 @@ export class ExplUpdater {
     }
 
     static getPosSubAttriSbstValue(curExpl: ExplMmr) {
-        const curPosLv = actPosModelDict[curExpl.curPosId].lv;
+        const curPosLv = ActPosModelDict[curExpl.curPosId].lv;
         return (100 + curPosLv * 15) * (1 + curExpl.curStep * 0.4);
     }
 
@@ -1008,7 +1008,7 @@ export class ExplUpdater {
 
     doExploration() {
         const curExpl = this.gameData.curExpl!;
-        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const curStep = curExpl.curStep;
 
         if (this.stepEntering === true) {
@@ -1083,17 +1083,17 @@ export class ExplUpdater {
 
     logEnter() {
         const curExpl = this.gameData.curExpl!;
-        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
-        this.log(ExplLogType.rich, `进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`);
+        this.log(ExplLogType.rich, `进入 ${ActPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`);
     }
 
     popToastForEnter() {
         const curExpl = this.gameData.curExpl!;
-        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
         if (this.page) {
-            const str = `进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`;
+            const str = `进入 ${ActPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`;
             this.page.ctrlr.popToast(str);
         }
     }
@@ -1106,7 +1106,7 @@ export class ExplUpdater {
 
     gainRes() {
         const curExpl = this.gameData.curExpl!;
-        const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const curStep = curExpl.curStep;
 
         if (this.gatherQuestDoing) {
@@ -1456,9 +1456,9 @@ export class ExplUpdater {
                 this.page.setEnterReady(false);
                 if (this.state !== ExplState.explore) {
                     const curExpl = this.gameData.curExpl!;
-                    const curExplModel = actPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
+                    const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
                     const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep + 1] || 0;
-                    const str = `准备进入 ${actPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`;
+                    const str = `准备进入 ${ActPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`;
                     this.page.ctrlr.popToast(str);
                 }
             }

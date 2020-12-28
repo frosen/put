@@ -40,7 +40,7 @@ import { deepCopy } from './Utils';
 import { buffModelDict } from '../configs/BuffModelDict';
 import { BtlCtrlr } from './BtlCtrlr';
 import { randomRate, getRandomOneInList, normalRandom } from './Random';
-import { actPosModelDict, PAKey } from '../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../configs/ActPosModelDict';
 import { expModels } from '../configs/ExpModels';
 import { spcBtlModelDict } from '../configs/SpcBtlModelDict';
 
@@ -663,7 +663,7 @@ export class RealBattle {
 
     static createRandomEnemyPetData(curExpl: ExplMmr): { id: string; lv: number }[] {
         const posId = curExpl.curPosId;
-        const curPosModel = actPosModelDict[posId];
+        const curPosModel = ActPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
         const curStep = curExpl.curStep;

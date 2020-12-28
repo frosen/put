@@ -5,7 +5,7 @@
  */
 
 import { petModelDict } from '../configs/PetModelDict';
-import { actPosModelDict, PAKey } from '../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey } from '../configs/ActPosModelDict';
 import { skillModelDict } from '../configs/SkillModelDict';
 import { buffModelDict } from '../configs/BuffModelDict';
 import { featureModelDict, normalFeatureModelDict } from '../configs/FeatureModelDict';
@@ -33,8 +33,8 @@ function needAtLeast(ins: any, attris: string[], num: number, name: string) {
 }
 
 function checkActPosModelDict() {
-    for (const key in actPosModelDict) {
-        const model = actPosModelDict[key];
+    for (const key in ActPosModelDict) {
+        const model = ActPosModelDict[key];
         if (model.id !== key) cc.error('ActPosModelDict中，id与dict的key不符', key, model.id);
 
         for (const pakey in model.actMDict) {
@@ -99,7 +99,7 @@ function checkActPosModelDict() {
         }
 
         for (const mov of model.movs) {
-            if (!Object.keys(actPosModelDict).includes(mov.id)) cc.error('ActPosModelDict中，mov的id不存在', mov.id);
+            if (!Object.keys(ActPosModelDict).includes(mov.id)) cc.error('ActPosModelDict中，mov的id不存在', mov.id);
         }
     }
 }
