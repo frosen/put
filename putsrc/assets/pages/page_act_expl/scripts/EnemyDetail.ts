@@ -7,10 +7,15 @@
 const { ccclass, property } = cc._decorator;
 
 import { PetModelDict } from '../../../configs/PetModelDict';
+import { FeatureModelDict } from '../../../configs/FeatureModelDict';
+
 import { BattlePet } from '../../../scripts/DataOther';
-import { BattleTypeNames, BioTypeNames, EleTypeNames } from '../../../scripts/DataSaved';
+import { BattleTypeNames, BioTypeNames, EleColors, EleTypeNames, Feature, Pet } from '../../../scripts/DataSaved';
 import { PetTool } from '../../../scripts/Memory';
 import { petAttrNumStr } from '../../page_pet_detail/scripts/PagePetDetailLVD';
+import { ListViewCell } from '../../../scripts/ListViewCell';
+import { SkillModelDict } from '../../../configs/SkillModelDict';
+import { SkillType } from '../../../scripts/DataModel';
 
 @ccclass
 export class EnemyDetail extends cc.Component {
@@ -48,7 +53,13 @@ export class EnemyDetail extends cc.Component {
     sklLayout: cc.Label = null;
 
     @property(cc.Layout)
-    featureLayout: cc.Label = null;
+    featureLayout1: cc.Label = null;
+
+    @property(cc.Layout)
+    featureLayout2: cc.Label = null;
+
+    @property(cc.Prefab)
+    infoNodePrefab: cc.Prefab = null;
 
     show() {
         this.node.stopAllActions();
@@ -88,6 +99,66 @@ export class EnemyDetail extends cc.Component {
         this.eleg.string = petAttrNumStr(pet2.elegant);
 
         this.sklTtl.string = `战斗招式（${pet2.skillIds.length}）`;
-        this.featureTtl.string = `精灵特性（${pet.inbFeatures.length + pet.lndFeatures.length}）`;
+        this.featureTtl.string = `精灵特性（${pet.inbFeatures.length}）`;
+
+        for (let index = 0; index < 2; index++) {
+            this.setSklInfoNode(index, pet2.skillIds[index]);
+        }
+
+        let featureCnt = 0;
+        for (const feature of pet.inbFeatures) {
+            this.setFeatureInfoNode(featureCnt, feature, pet);
+            featureCnt++;
+        }
+
+        for (let index = featureCnt; index < 8; index++) {
+            this.setFeatureInfoNode(index);
+        }
+    }
+
+    setSklInfoNode(idx: number, skillId?: string) {
+        if (skillId) {
+            const infoNode = this.sklLayout.node.children[idx]!;
+            infoNode.opacity = 255;
+            const skillModel = SkillModelDict[skillId];
+            infoNode.color = EleColors[skillModel.eleType];
+            const lbl = infoNode.children[0].getComponent(cc.Label);
+            const typeStr = skillModel.skillType === SkillType.ultimate ? '绝・' : '招・';
+            lbl.string = typeStr + skillModel.cnName;
+            ListViewCell.rerenderLbl(lbl);
+            infoNode.getComponent(cc.Layout).updateLayout();
+        } else {
+            this.sklLayout.node.children[idx]!.opacity = 0;
+        }
+    }
+
+    setFeatureInfoNode(idx: number, feature?: Feature, pet?: Pet) {
+        let infoNode: cc.Node | undefined;
+        if (idx < 4) {
+            infoNode = this.featureLayout1.node.children[idx];
+            if (!infoNode) {
+                infoNode = cc.instantiate(this.infoNodePrefab);
+                infoNode.parent = this.featureLayout1.node;
+            }
+        } else {
+            infoNode = this.featureLayout1.node.children[idx - 4];
+            if (!infoNode) {
+                infoNode = cc.instantiate(this.infoNodePrefab);
+                infoNode.parent = this.featureLayout2.node;
+            }
+        }
+
+        if (feature) {
+            infoNode.opacity = 255;
+            const name = FeatureModelDict[feature.id].cnBrief + String(feature.lv);
+            const color = pet.exFeatureIds.includes(feature.id) ? cc.Color.RED : cc.Color.BLUE;
+            infoNode!.color = color;
+            const lbl = infoNode!.children[0].getComponent(cc.Label);
+            lbl.string = name;
+            ListViewCell.rerenderLbl(lbl);
+            infoNode!.getComponent(cc.Layout).updateLayout();
+        } else {
+            infoNode.opacity = 0;
+        }
     }
 }
