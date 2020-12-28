@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 import { Feature } from '../../../../../scripts/DataSaved';
 import { FeatureModel } from '../../../../../scripts/DataModel';
-import { featureModelDict } from '../../../../../configs/FeatureModelDict';
+import { FeatureModelDict } from '../../../../../configs/FeatureModelDict';
 import { FeatureTool } from '../../../../../scripts/Memory';
 
 export enum FeatureGainType {
@@ -42,7 +42,7 @@ export class CellFeature extends ListViewCell {
     setData(feature: Feature, type: FeatureGainType) {
         this.feature = feature;
         this.gainType = type;
-        const featureModel: FeatureModel = featureModelDict[feature.id];
+        const featureModel: FeatureModel = FeatureModelDict[feature.id];
 
         this.nameLbl.string = FeatureGainNames[type] + '特性・' + featureModel.cnBrief;
         this.lvLbl.string = `[L${feature.lv}]`;

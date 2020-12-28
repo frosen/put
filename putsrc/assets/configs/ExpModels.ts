@@ -3,8 +3,8 @@
  * 数据列表，从document中转义而来
  * luleyan
  */
-  
-export const expModels = [
+
+export const ExpModels = [
     0,
     20,
     180,

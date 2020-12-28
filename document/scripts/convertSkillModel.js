@@ -12,7 +12,7 @@ let sklJson = convert(
     '../put.xls',
     '../../putsrc/assets/configs/SkillModelDict.ts',
     'skill',
-    'skillModelDict',
+    'SkillModelDict',
     'SkillModel',
     function (data) {
         let sklJson = {};
@@ -77,7 +77,7 @@ let sklJson = convert(
 );
 
 if (sklJson) {
-    convert('../put.xls', '../../putsrc/assets/configs/SkillIdsByEleType.ts', 'skill', 'skillIdsByEleType', null, function (d) {
+    convert('../put.xls', '../../putsrc/assets/configs/SkillIdsByEleType.ts', 'skill', 'SkillIdsByEleType', null, function (d) {
         let skillIds = [];
         for (const sklId in sklJson) {
             if (!sklJson.hasOwnProperty(sklId)) continue;

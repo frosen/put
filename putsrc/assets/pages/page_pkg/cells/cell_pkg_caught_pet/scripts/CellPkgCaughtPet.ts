@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { CellPkgBase } from '../../../scripts/CellPkgBase';
 import { CaughtPet } from '../../../../../scripts/DataSaved';
-import { featureModelDict } from '../../../../../configs/FeatureModelDict';
+import { FeatureModelDict } from '../../../../../configs/FeatureModelDict';
 import { CaughtPetTool } from '../../../../../scripts/Memory';
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
@@ -34,7 +34,7 @@ export class CellPkgCaughtPet extends CellPkgBase {
         this.hideAllInfoNode();
         let index = 0;
         for (const feature of caughtPet.features) {
-            const cnName = featureModelDict[feature.id].cnBrief;
+            const cnName = FeatureModelDict[feature.id].cnBrief;
             const lv = feature.lv;
             const ex = caughtPet.exFeatureIds.includes(feature.id);
             this.setInfoNode(index, cnName + String(lv), ex ? cc.Color.RED : cc.Color.BLUE);

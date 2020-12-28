@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { Material } from '../../../../../scripts/DataSaved';
-import { materialModelDict } from '../../../../../configs/MaterialModelDict';
+import { MaterialModelDict } from '../../../../../configs/MaterialModelDict';
 import { CellPkgCnsum } from '../../../scripts/CellPkgCnsum';
 import { MaterialModel } from '../../../../../scripts/DataModel';
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
@@ -22,7 +22,7 @@ export class CellPkgMaterial extends CellPkgCnsum {
 
     setData(itemIdx: number, material: Material) {
         super.setData(itemIdx, material);
-        const materialModel = materialModelDict[material.id];
+        const materialModel = MaterialModelDict[material.id];
         this.setModelData(materialModel);
         this.setCount(material.count);
     }

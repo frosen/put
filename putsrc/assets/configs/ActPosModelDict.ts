@@ -5,17 +5,17 @@
  */
 
 import { ActPosModel, ActPosType } from '../scripts/DataModel';
-import { drinkModelDict } from './DrinkModelDict';
-import { eqpAmplrModelDict } from './EqpAmplrModelDict';
-import { equipModelDict } from './EquipModelDict';
-import { petModelDict } from './PetModelDict';
-import { questModelDict } from './QuestModelDict';
+import { DrinkModelDict } from './DrinkModelDict';
+import { EqpAmplrModelDict } from './EqpAmplrModelDict';
+import { EquipModelDict } from './EquipModelDict';
+import { PetModelDict } from './PetModelDict';
+import { QuestModelDict } from './QuestModelDict';
 
-const p = petModelDict;
-const e = equipModelDict;
-const eI = eqpAmplrModelDict;
-const dI = drinkModelDict;
-const q = questModelDict;
+const p = PetModelDict;
+const e = EquipModelDict;
+const eI = EqpAmplrModelDict;
+const dI = DrinkModelDict;
+const q = QuestModelDict;
 
 export class PosN {
     static YiShanJiDi = 'YiShanJiDi';

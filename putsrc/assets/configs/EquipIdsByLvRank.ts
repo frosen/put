@@ -3,8 +3,8 @@
  * 数据列表，从document中转义而来
  * luleyan
  */
-  
-export const equipIdsByLvRank = [
+
+export const EquipIdsByLvRank = [
     [],
     [],
     [],
@@ -14,184 +14,53 @@ export const equipIdsByLvRank = [
     [],
     [],
     [
-        [
-            'DuanJian',
-            'TieZhiYuGan',
-            'JingLingMoZhang'
-        ],
-        [
-            'ChangRenJian',
-            'JingZhiYuGan',
-            'YuHuaMoZhang'
-        ]
+        ['DuanJian', 'TieZhiYuGan', 'JingLingMoZhang'],
+        ['ChangRenJian', 'JingZhiYuGan', 'YuHuaMoZhang']
+    ],
+    [['WanDao'], ['HongYingDao']],
+    [
+        ['ZhongChui', 'BanShou'],
+        ['ChaiLangZhanChui', 'WanNengBanShou']
     ],
     [
-        [
-            'WanDao'
-        ],
-        [
-            'HongYingDao'
-        ]
+        ['LieGong', 'MoFaJian'],
+        ['QingXingLieGong', 'FuWenJian'],
+        ['JianXiaoLieGong', 'AoFaChangJian']
     ],
     [
-        [
-            'ZhongChui',
-            'BanShou'
-        ],
-        [
-            'ChaiLangZhanChui',
-            'WanNengBanShou'
-        ]
+        ['MiNiDianHuoQi', 'DaLüBangZi'],
+        ['JiSuDianHuoQi', 'PoSuiDeLüBangZi'],
+        ['DiJingDianHuoQi', 'HunRanLüBangZi']
     ],
     [
-        [
-            'LieGong',
-            'MoFaJian'
-        ],
-        [
-            'QingXingLieGong',
-            'FuWenJian'
-        ],
-        [
-            'JianXiaoLieGong',
-            'AoFaChangJian'
-        ]
+        ['MoShiBiShou', 'DuanJiFu', 'HuanYuZhiJing', 'WuShiZhangZhang', 'TieQuanShouTao'],
+        ['ShuiJingBiShou', 'SuiLieFu', 'QingShanZhiJing', 'YuYanShiZhangZhang', 'QiangJiShouTao']
     ],
     [
-        [
-            'MiNiDianHuoQi',
-            'DaLüBangZi'
-        ],
-        [
-            'JiSuDianHuoQi',
-            'PoSuiDeLüBangZi'
-        ],
-        [
-            'DiJingDianHuoQi',
-            'HunRanLüBangZi'
-        ]
+        ['DaChiLun', 'MaiChongFaSheQi', 'DianXingGun'],
+        ['ZhongXingChiLun', 'MaiChongPao', 'GaoYaDianQiang']
     ],
     [
-        [
-            'MoShiBiShou',
-            'DuanJiFu',
-            'HuanYuZhiJing',
-            'WuShiZhangZhang',
-            'TieQuanShouTao'
-        ],
-        [
-            'ShuiJingBiShou',
-            'SuiLieFu',
-            'QingShanZhiJing',
-            'YuYanShiZhangZhang',
-            'QiangJiShouTao'
-        ]
+        ['PouYuDao', 'FengShuShuZhi', 'TuLuXiaoDao'],
+        ['FeiYuCha', 'FengLingQuanZhang', 'BaoPiRen']
     ],
     [
-        [
-            'DaChiLun',
-            'MaiChongFaSheQi',
-            'DianXingGun'
-        ],
-        [
-            'ZhongXingChiLun',
-            'MaiChongPao',
-            'GaoYaDianQiang'
-        ]
+        ['DaiJianDeTieBang', 'DanShouNu'],
+        ['MangCiTieBang', 'XunJieLianNu']
+    ],
+    [['TieShan', 'FenChaFu', 'HeFengShouZhang'], ['YuHunShan', 'XingGuangZhanFu', 'YuFengFaZhang'], ['LiMingZhiRen']],
+    [
+        ['GuoLuJiaoBanQi', 'HuoYanPenSheQi', 'DuYinHuoQiang'],
+        ['XuanFengQi', 'RongNengQiang', 'ShanGuangBuQiang'],
+        ['ShuiJingZhiDanQi']
     ],
     [
-        [
-            'PouYuDao',
-            'FengShuShuZhi',
-            'TuLuXiaoDao'
-        ],
-        [
-            'FeiYuCha',
-            'FengLingQuanZhang',
-            'BaoPiRen'
-        ]
+        ['FaMuFu', 'ShiHuaJingGu', 'TengBian', 'JianDingZhiJian'],
+        ['KaiShanFu', 'GuShouJingGu', 'JingJiCi', 'YongQiZhiJian'],
+        ['ShenShouJingGu', 'WangZheZhiJian']
     ],
-    [
-        [
-            'DaiJianDeTieBang',
-            'DanShouNu'
-        ],
-        [
-            'MangCiTieBang',
-            'XunJieLianNu'
-        ]
-    ],
-    [
-        [
-            'TieShan',
-            'FenChaFu',
-            'HeFengShouZhang'
-        ],
-        [
-            'YuHunShan',
-            'XingGuangZhanFu',
-            'YuFengFaZhang'
-        ],
-        [
-            'LiMingZhiRen'
-        ]
-    ],
-    [
-        [
-            'GuoLuJiaoBanQi',
-            'HuoYanPenSheQi',
-            'DuYinHuoQiang'
-        ],
-        [
-            'XuanFengQi',
-            'RongNengQiang',
-            'ShanGuangBuQiang'
-        ],
-        [
-            'ShuiJingZhiDanQi'
-        ]
-    ],
-    [
-        [
-            'FaMuFu',
-            'ShiHuaJingGu',
-            'TengBian',
-            'JianDingZhiJian'
-        ],
-        [
-            'KaiShanFu',
-            'GuShouJingGu',
-            'JingJiCi',
-            'YongQiZhiJian'
-        ],
-        [
-            'ShenShouJingGu',
-            'WangZheZhiJian'
-        ]
-    ],
-    [
-        [
-            'LieDanZhiHu'
-        ],
-        [
-            'ZhiMingZhiHu'
-        ]
-    ],
-    [
-        [
-            'JiSiFaZhang',
-            'MoLiDuanGong',
-            'ZhanDouWaiYi'
-        ],
-        [
-            'DiYuFaZhang',
-            'MoLongDuanGong',
-            'ZhuJiangWaiYi'
-        ],
-        [
-            'MoLongSiYaoZhiGong'
-        ]
-    ],
+    [['LieDanZhiHu'], ['ZhiMingZhiHu']],
+    [['JiSiFaZhang', 'MoLiDuanGong', 'ZhanDouWaiYi'], ['DiYuFaZhang', 'MoLongDuanGong', 'ZhuJiangWaiYi'], ['MoLongSiYaoZhiGong']],
     [
         [
             'KunLunShan',
@@ -221,126 +90,37 @@ export const equipIdsByLvRank = [
         ]
     ],
     [
-        [
-            'TiGuDao',
-            'GuoYeDeKaoYangTui',
-            'TongZhiHuXiong'
-        ],
-        [
-            'XiuRouDao',
-            'QuNianDeKaoYangTui',
-            'GangZhiXiongJia'
-        ]
+        ['TiGuDao', 'GuoYeDeKaoYangTui', 'TongZhiHuXiong'],
+        ['XiuRouDao', 'QuNianDeKaoYangTui', 'GangZhiXiongJia']
+    ],
+    [['XiaoYuanDun'], ['JingBingYuanDun']],
+    [
+        ['FeiCuiChangDi', 'YeSeChangQiang', 'ZhongJinShuJuJian', 'CanFengSan', 'HaiDaoDeZhuaGou', 'ChiHouWaiTao'],
+        ['ShengYuChangDi', 'YueYingChangQiang', 'XuanTieJuJian', 'BiYueSan', 'HaiDaoJiaTui', 'MiCaiFu'],
+        ['YueShenChangQiang', 'ShouHuZheJuJian']
     ],
     [
-        [
-            'XiaoYuanDun'
-        ],
-        [
-            'JingBingYuanDun'
-        ]
+        ['MiNiFeiDanCang', 'JiXieDao', 'GaoSuZuanTou', 'QiBingDingJia'],
+        ['MiNiHuoShenPao', 'ZhanJiDao', 'GuangSuZuanTou', 'ShouHuZheWaiTao'],
+        ['PoJiDao']
     ],
     [
-        [
-            'FeiCuiChangDi',
-            'YeSeChangQiang',
-            'ZhongJinShuJuJian',
-            'CanFengSan',
-            'HaiDaoDeZhuaGou',
-            'ChiHouWaiTao'
-        ],
-        [
-            'ShengYuChangDi',
-            'YueYingChangQiang',
-            'XuanTieJuJian',
-            'BiYueSan',
-            'HaiDaoJiaTui',
-            'MiCaiFu'
-        ],
-        [
-            'YueShenChangQiang',
-            'ShouHuZheJuJian'
-        ]
+        ['YingHuoZhiZhang', 'LieHuZhao', 'DuanYa', 'GangTieZhuangJia', 'YouMingHuJia', 'ShiGuiDun'],
+        ['XingZhiZhang', 'FeiLongGou', 'EQuanDeDuanYa', 'JieNengZhuangJia', 'MengYanHuJia', 'ShiGuiHuJia'],
+        ['GuLangDeDuanYa']
     ],
     [
-        [
-            'MiNiFeiDanCang',
-            'JiXieDao',
-            'GaoSuZuanTou',
-            'QiBingDingJia'
-        ],
-        [
-            'MiNiHuoShenPao',
-            'ZhanJiDao',
-            'GuangSuZuanTou',
-            'ShouHuZheWaiTao'
-        ],
-        [
-            'PoJiDao'
-        ]
+        ['YuanSeTiDao', 'ShengChui', 'FuYaoSan', 'BaoJunBanJia'],
+        ['HuoYuanTiDao', 'QiShiZhiChui', 'XiaoYaoSan', 'BaZhuBanJia']
     ],
     [
-        [
-            'YingHuoZhiZhang',
-            'LieHuZhao',
-            'DuanYa',
-            'GangTieZhuangJia',
-            'YouMingHuJia',
-            'ShiGuiDun'
-        ],
-        [
-            'XingZhiZhang',
-            'FeiLongGou',
-            'EQuanDeDuanYa',
-            'JieNengZhuangJia',
-            'MengYanHuJia',
-            'ShiGuiHuJia'
-        ],
-        [
-            'GuLangDeDuanYa'
-        ]
+        ['EHunChangMao', 'ShiSengJianDao', 'XueZheChangPao'],
+        ['NiuQuZhiMao', 'ShiXiangGuiZhiYa', 'ShangGuFaPao']
     ],
     [
-        [
-            'YuanSeTiDao',
-            'ShengChui',
-            'FuYaoSan',
-            'BaoJunBanJia'
-        ],
-        [
-            'HuoYuanTiDao',
-            'QiShiZhiChui',
-            'XiaoYaoSan',
-            'BaZhuBanJia'
-        ]
-    ],
-    [
-        [
-            'EHunChangMao',
-            'ShiSengJianDao',
-            'XueZheChangPao'
-        ],
-        [
-            'NiuQuZhiMao',
-            'ShiXiangGuiZhiYa',
-            'ShangGuFaPao'
-        ]
-    ],
-    [
-        [
-            'ZhengQiTieQuan',
-            'ShiSeBian',
-            'HeiTieFangDun'
-        ],
-        [
-            'JiXieTieQuan',
-            'YuSheBian',
-            'XueSeFangDun'
-        ],
-        [
-            'ZhiNengTieQuan',
-            'QingLongBian'
-        ]
+        ['ZhengQiTieQuan', 'ShiSeBian', 'HeiTieFangDun'],
+        ['JiXieTieQuan', 'YuSheBian', 'XueSeFangDun'],
+        ['ZhiNengTieQuan', 'QingLongBian']
     ],
     [
         [
@@ -367,31 +147,12 @@ export const equipIdsByLvRank = [
             'XinLingHuFu',
             'HongBaoShiZhiJie'
         ],
-        [
-            'BuFengTuDao',
-            'GuangSuHuiXuanBiao',
-            'BuMieZhiZhu',
-            'CaiGuangZhuangJia',
-            'XianZhiChangPao',
-            'XunMengLongHuJia'
-        ]
+        ['BuFengTuDao', 'GuangSuHuiXuanBiao', 'BuMieZhiZhu', 'CaiGuangZhuangJia', 'XianZhiChangPao', 'XunMengLongHuJia']
     ],
     [
-        [
-            'BingZhiJian',
-            'YingHuaZhanChui',
-            'ShiZheDunPai'
-        ],
-        [
-            'XueNüZhiJian',
-            'YeZhuZhanChui',
-            'WangHunZhiDun'
-        ],
-        [
-            'LeiJingZhiXiRen',
-            'KuangZhanChui',
-            'HuiMieZhiDun'
-        ]
+        ['BingZhiJian', 'YingHuaZhanChui', 'ShiZheDunPai'],
+        ['XueNüZhiJian', 'YeZhuZhanChui', 'WangHunZhiDun'],
+        ['LeiJingZhiXiRen', 'KuangZhanChui', 'HuiMieZhiDun']
     ],
     [
         [
@@ -414,29 +175,12 @@ export const equipIdsByLvRank = [
             'LongXinBiZhang',
             'ZiRanZhiYuHuFu'
         ],
-        [
-            'TuLongBiShou',
-            'MoYanFaSheQi',
-            'JingGongShiZiGao',
-            'YingXiongPiFeng'
-        ]
+        ['TuLongBiShou', 'MoYanFaSheQi', 'JingGongShiZiGao', 'YingXiongPiFeng']
     ],
     [
-        [
-            'JuXingLianDao',
-            'YuFengShan',
-            'HuaLiZhanJia'
-        ],
-        [
-            'WangZheLianDao',
-            'LiuYunShan',
-            'ShuiYinZhanJia'
-        ],
-        [
-            'SiGeLianDao',
-            'TianLingShan',
-            'WeiGuangZhanJia'
-        ]
+        ['JuXingLianDao', 'YuFengShan', 'HuaLiZhanJia'],
+        ['WangZheLianDao', 'LiuYunShan', 'ShuiYinZhanJia'],
+        ['SiGeLianDao', 'TianLingShan', 'WeiGuangZhanJia']
     ],
     [
         [

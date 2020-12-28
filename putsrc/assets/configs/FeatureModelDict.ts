@@ -109,7 +109,7 @@ export class FtN {
 
 export class BFtN {}
 
-export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
+export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
     [FtN.strength]: {
         id: FtN.strength,
         cnBrief: '壮',
@@ -1098,6 +1098,6 @@ export const normalFeatureModelDict: { [key: string]: FeatureModel } = {
     }
 };
 
-export const bossFeatureModelDict: { [key: string]: FeatureModel } = {};
+export const BossFeatureModelDict: { [key: string]: FeatureModel } = {};
 
-export const featureModelDict: { [key: string]: FeatureModel } = Object.assign({}, normalFeatureModelDict, bossFeatureModelDict);
+export const FeatureModelDict: { [key: string]: FeatureModel } = Object.assign({}, NormalFeatureModelDict, BossFeatureModelDict);

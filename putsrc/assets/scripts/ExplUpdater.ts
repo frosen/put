@@ -38,8 +38,8 @@ import {
     SearchQuestNeed,
     AmplAttriType
 } from './DataModel';
-import { catcherModelDict } from '../configs/CatcherModelDict';
-import { petModelDict } from '../configs/PetModelDict';
+import { CatcherModelDict } from '../configs/CatcherModelDict';
+import { PetModelDict } from '../configs/PetModelDict';
 import { PTN } from '../configs/ProTtlModelDict';
 
 export enum ExplState {
@@ -244,7 +244,7 @@ export class ExplUpdater {
                     break;
                 }
                 const catcher = gameData.items[catcherIdx] as Catcher;
-                const catcherModel: CatcherModel = catcherModelDict[catcher.id];
+                const catcherModel: CatcherModel = CatcherModelDict[catcher.id];
 
                 const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
                 let lvMin = lvBase - lvRange;
@@ -258,7 +258,7 @@ export class ExplUpdater {
                 const petIds = petIdLists[curStep];
                 const realPetIds = [];
                 for (const petId of petIds) {
-                    const petModel = petModelDict[petId];
+                    const petModel = PetModelDict[petId];
                     if (petModel.bioType === BioType.human || petModel.bioType === BioType.unknown) continue;
                     if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;
                     if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) continue;
@@ -532,7 +532,7 @@ export class ExplUpdater {
             if (catcherIdx === -1) break;
 
             const catcher = gameData.items[catcherIdx] as Catcher;
-            const catcherModel: CatcherModel = catcherModelDict[catcher.id];
+            const catcherModel: CatcherModel = CatcherModelDict[catcher.id];
 
             const rate = ExplUpdater.calcCatchRateByEleRate(catcherModel, petSt.eleRate);
             let catchCount = Math.floor(rate * winCount);
@@ -1255,7 +1255,7 @@ export class ExplUpdater {
         if (GameDataTool.hasProTtl(gd, PTN.XueBa)) ampl += 0.25;
         if (GameDataTool.hasProTtl(gd, PTN.JingLingWang)) ampl += 0.15;
 
-        const model = petModelDict[pet.id];
+        const model = PetModelDict[pet.id];
         if (model.bioType === BioType.magic) {
             if (GameDataTool.hasProTtl(gd, PTN.DaXueSheng)) ampl += 0.05 * gd.proTtlDict[PTN.DaXueSheng].data;
         } else if (model.bioType === BioType.mech) {
@@ -1302,7 +1302,7 @@ export class ExplUpdater {
             return;
         }
 
-        const catcherModel: CatcherModel = catcherModelDict[catcherId];
+        const catcherModel: CatcherModel = CatcherModelDict[catcherId];
         const eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.btlCtrlr);
         const catchRate = ExplUpdater.calcCatchRateByEleRate(catcherModel, eleRate);
 
@@ -1312,7 +1312,7 @@ export class ExplUpdater {
             const pet = battlePet.pet;
             if (pet.master) continue;
 
-            const petModel = petModelDict[pet.id];
+            const petModel = PetModelDict[pet.id];
             if (petModel.bioType === BioType.human || petModel.bioType === BioType.unknown) continue;
             if (pet.lv < catcherModel.lvMin || catcherModel.lvMax < pet.lv) continue;
             if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;

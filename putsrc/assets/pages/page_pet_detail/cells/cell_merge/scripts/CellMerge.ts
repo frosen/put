@@ -7,10 +7,10 @@
 const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
-import { petModelDict } from '../../../../../configs/PetModelDict';
+import { PetModelDict } from '../../../../../configs/PetModelDict';
 
 import { Merge } from '../../../../../scripts/DataSaved';
-import { featureModelDict } from '../../../../../configs/FeatureModelDict';
+import { FeatureModelDict } from '../../../../../configs/FeatureModelDict';
 
 @ccclass
 export class CellMerge extends ListViewCell {
@@ -31,8 +31,8 @@ export class CellMerge extends ListViewCell {
 
     setData(mergeData: Merge) {
         this.lvLbl.string = `${mergeData.oPetLv}级时`;
-        this.nameLbl.string = petModelDict[mergeData.petId].cnName;
-        this.featureLbl.string = `[${featureModelDict[mergeData.featureId].cnBrief} +${mergeData.featureLv}]`;
+        this.nameLbl.string = PetModelDict[mergeData.petId].cnName;
+        this.featureLbl.string = `[${FeatureModelDict[mergeData.featureId].cnBrief} +${mergeData.featureLv}]`;
 
         ListViewCell.rerenderLbl(this.lvLbl);
         ListViewCell.rerenderLbl(this.nameLbl);

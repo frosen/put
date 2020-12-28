@@ -28,7 +28,7 @@ import { getRandomOneInList, randomInt, randomRate } from '../../../scripts/Rand
 import { PageActQuesterLVD } from './PageActQuesterLVD';
 import { CellQuest, QuestState } from '../cells/cell_quest/scripts/CellQuest';
 import { FuncBar } from '../../page_pet/scripts/FuncBar';
-import { questModelDict } from '../../../configs/QuestModelDict';
+import { QuestModelDict } from '../../../configs/QuestModelDict';
 import { PTN } from '../../../configs/ProTtlModelDict';
 import { Pet2 } from '../../../scripts/DataOther';
 
@@ -301,7 +301,7 @@ export class PageActQuester extends PageBase {
         const gameData = this.ctrlr.memory.gameData;
         const quest = this.pADQuester.quests[cellIdx - 1];
         const questId = quest.id;
-        const model = questModelDict[questId];
+        const model = QuestModelDict[questId];
         this.ctrlr.popAlert(`确定删除任务 ${model.cnName} 吗`, (key: number) => {
             if (key === 1) {
                 GameDataTool.removeAcceQuest(gameData, questId, gameData.curPosId);

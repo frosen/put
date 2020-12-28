@@ -11,7 +11,7 @@ import { NavBar } from '../../../scripts/NavBar';
 import { CaughtPet, Feature, ItemType, Pet } from '../../../scripts/DataSaved';
 import { CaughtPetTool, GameDataTool, MoneyTool, PetTool } from '../../../scripts/Memory';
 
-import { featureModelDict } from '../../../configs/FeatureModelDict';
+import { FeatureModelDict } from '../../../configs/FeatureModelDict';
 
 import { PagePetDetail } from '../../page_pet_detail/scripts/PagePetDetail';
 import { CellPet } from '../../page_pet/cells/cell_pet/scripts/CellPet';
@@ -257,7 +257,7 @@ export class PageActMerger extends PageBase {
 
         const petName = PetTool.getCnName(this.curPet);
         const cPetName = CaughtPetTool.getCnName(this.curCaughtPet);
-        const featureName = featureModelDict[this.curFeature.id].cnBrief;
+        const featureName = FeatureModelDict[this.curFeature.id].cnBrief;
         const str = `确定把${cPetName}的特性“${featureName}”\n融合到${petName}身上吗？\n注意：你将失去${cPetName}`;
         this.ctrlr.popAlert(str, (key: number) => {
             if (key === 1) this.merge();
@@ -279,7 +279,7 @@ export class PageActMerger extends PageBase {
         if (rzt !== GameDataTool.SUC) return this.ctrlr.popToast(rzt);
 
         const petName = PetTool.getCnName(this.curPet);
-        const featureName = featureModelDict[this.curFeature.id].cnBrief;
+        const featureName = FeatureModelDict[this.curFeature.id].cnBrief;
         this.ctrlr.popToast(`融合成功\n${petName} 特性：${featureName} +${this.curFeature.lv}`);
 
         this.clearPet();

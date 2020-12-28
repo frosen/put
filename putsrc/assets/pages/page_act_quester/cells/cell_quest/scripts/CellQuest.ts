@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
-import { petModelDict } from '../../../../../configs/PetModelDict';
+import { PetModelDict } from '../../../../../configs/PetModelDict';
 
 import { AcceQuestInfo, Quest, QuestDLines } from '../../../../../scripts/DataSaved';
 import { CnsumTool, EquipTool, MoneyTool, QuestTool } from '../../../../../scripts/Memory';
@@ -150,7 +150,7 @@ export class CellQuest extends ListViewCell {
                 let petStr = '';
                 for (let index = 0; ; index++) {
                     const petId = need.petIds[index];
-                    const petModel = petModelDict[petId];
+                    const petModel = PetModelDict[petId];
                     petStr += petModel.cnName;
                     if (index === need.petIds.length - 1) break;
                     petStr += ', ';

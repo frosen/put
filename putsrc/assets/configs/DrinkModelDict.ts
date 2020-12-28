@@ -5,8 +5,8 @@
  */
 
 import { DrinkModel } from '../scripts/DataModel';
-  
-export const drinkModelDict: { [key: string]: DrinkModel } = {
+
+export const DrinkModelDict: { [key: string]: DrinkModel } = {
     LingGanYaoJi1: {
         id: 'LingGanYaoJi1',
         cnName: '灵感药剂',

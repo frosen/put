@@ -15,16 +15,16 @@ import { PagePkgEquip } from '../../page_pkg_equip/scripts/PagePkgEquip';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { FuncBar } from '../../page_pet/scripts/FuncBar';
 import { PagePet } from '../../page_pet/scripts/PagePet';
-import { drinkModelDict } from '../../../configs/DrinkModelDict';
+import { DrinkModelDict } from '../../../configs/DrinkModelDict';
 import { PagePkgSelection } from '../../page_pkg_selection/scripts/PagePkgSelection';
-import { equipModelDict } from '../../../configs/EquipModelDict';
-import { eqpAmplrModelDict } from '../../../configs/EqpAmplrModelDict';
+import { EquipModelDict } from '../../../configs/EquipModelDict';
+import { EqpAmplrModelDict } from '../../../configs/EqpAmplrModelDict';
 import { PagePetCellType } from '../../page_pet/scripts/PagePetLVD';
 import { NavBar } from '../../../scripts/NavBar';
 import { PkgSelectionBar } from './PkgSelectionBar';
-import { catcherModelDict } from '../../../configs/CatcherModelDict';
-import { petModelDict } from '../../../configs/PetModelDict';
-import { spcModelDict } from '../../../configs/SpcModelDict';
+import { CatcherModelDict } from '../../../configs/CatcherModelDict';
+import { PetModelDict } from '../../../configs/PetModelDict';
+import { SpcModelDict } from '../../../configs/SpcModelDict';
 
 const WIDTH = 1080;
 
@@ -201,7 +201,7 @@ export class PagePkg extends PagePkgBase {
                     name: '选择精灵',
                     callback: (cellIdx: number, curPet: Pet) => {
                         if (!this.checkMasterHere(curPet)) return;
-                        const drinkModel = drinkModelDict[cnsum.id];
+                        const drinkModel = DrinkModelDict[cnsum.id];
                         this.ctrlr.popAlert(
                             `确定对“${PetTool.getCnName(curPet)}”使用“${drinkModel.cnName}”吗？`,
                             (key: number) => {
@@ -214,7 +214,7 @@ export class PagePkg extends PagePkgBase {
                                     if (rzt === GameDataTool.SUC) {
                                         this.ctrlr.popPage();
                                         const petName = PetTool.getCnName(curPet);
-                                        const drinkModel = drinkModelDict[cnsum.id];
+                                        const drinkModel = DrinkModelDict[cnsum.id];
                                         this.ctrlr.popToast(`${petName}获得${drinkModel.cnName}效果`);
                                     } else this.ctrlr.popToast(rzt);
                                 }
@@ -227,8 +227,8 @@ export class PagePkg extends PagePkgBase {
                     cellPetType: PagePetCellType.selection,
                     name: '选择精灵',
                     callback: (cellIdx: number, curPet: Pet) => {
-                        const catcherModel = catcherModelDict[cnsum.id];
-                        const petModel = petModelDict[curPet.id];
+                        const catcherModel = CatcherModelDict[cnsum.id];
+                        const petModel = PetModelDict[curPet.id];
                         if (curPet.lv < catcherModel.lvMin || catcherModel.lvMax < curPet.lv) {
                             return this.ctrlr.popToast('等级不符，无法使用');
                         }
@@ -275,8 +275,8 @@ export class PagePkg extends PagePkgBase {
                             this.ctrlr.popToast('该武器成长等级已达到上限');
                             return;
                         }
-                        const equipModel = equipModelDict[equip.id];
-                        const eAModel = eqpAmplrModelDict[cnsum.id];
+                        const equipModel = EquipModelDict[equip.id];
+                        const eAModel = EqpAmplrModelDict[cnsum.id];
                         if (equipModel.lv > eAModel.lvMax) {
                             this.ctrlr.popToast(`该武器等级超过“${eAModel.cnName}”等级上限Lv${eAModel.lvMax}\n无法使用`);
                             return;
@@ -307,13 +307,13 @@ export class PagePkg extends PagePkgBase {
                 });
             } else if (cnsum.cnsumType === CnsumType.book) {
             } else if (cnsum.cnsumType === CnsumType.special) {
-                const spcModel = spcModelDict[cnsum.id];
+                const spcModel = SpcModelDict[cnsum.id];
                 if (cnsum.id === 'YiWangShuiJing') {
                     this.ctrlr.pushPage(PagePet, {
                         cellPetType: PagePetCellType.selection,
                         name: '选择精灵',
                         callback: (cellIdx: number, curPet: Pet) => {
-                            const petModel = petModelDict[curPet.id];
+                            const petModel = PetModelDict[curPet.id];
                             if (!curPet.nickname) this.ctrlr.popToast(petModel.cnName + '并未起名');
                             if (!this.checkMasterHere(curPet)) return;
                             this.ctrlr.popAlert(

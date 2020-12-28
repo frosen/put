@@ -16,7 +16,7 @@ import {
     BioColors,
     BattleTypeColors
 } from '../../../../../scripts/DataSaved';
-import { catcherModelDict } from '../../../../../configs/CatcherModelDict';
+import { CatcherModelDict } from '../../../../../configs/CatcherModelDict';
 import { CatcherModel } from '../../../../../scripts/DataModel';
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
@@ -42,7 +42,7 @@ export class CellPkgCatcher extends CellPkgCnsum {
 
     setData(itemIdx: number, catcher: Catcher) {
         super.setData(itemIdx, catcher);
-        const catcherModel = catcherModelDict[catcher.id];
+        const catcherModel = CatcherModelDict[catcher.id];
 
         this.setModelData(catcherModel);
 

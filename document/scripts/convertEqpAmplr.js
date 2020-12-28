@@ -8,7 +8,7 @@ convert(
     '../put.xls',
     '../../putsrc/assets/configs/EqpAmplrModelDict.ts',
     'eqpAmplr',
-    'eqpAmplrModelDict',
+    'EqpAmplrModelDict',
     'EqpAmplrModel',
     data => {
         let drinkJson = {};

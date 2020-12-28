@@ -13,8 +13,8 @@ import { CellAttri } from '../cells/cell_attri/scripts/CellAttri';
 import { CellAttri2 } from '../cells/cell_attri2/scripts/CellAttri2';
 import { CellPetName } from '../cells/cell_pet_name/scripts/CellPetName';
 import { CellTitle } from '../cells/cell_title/scripts/CellTitle';
-import { petModelDict } from '../../../configs/PetModelDict';
-import { expModels } from '../../../configs/ExpModels';
+import { PetModelDict } from '../../../configs/PetModelDict';
+import { ExpModels } from '../../../configs/ExpModels';
 import { Pet, BioTypeNames, EleTypeNames, BattleTypeNames, Feature } from '../../../scripts/DataSaved';
 import { Pet2 } from '../../../scripts/DataOther';
 import { PetModel } from '../../../scripts/DataModel';
@@ -24,7 +24,7 @@ import { CellPkgEquipBlank } from '../../page_pkg/cells/cell_pkg_equip_blank/scr
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PetTool } from '../../../scripts/Memory';
-import { drinkModelDict } from '../../../configs/DrinkModelDict';
+import { DrinkModelDict } from '../../../configs/DrinkModelDict';
 import { CellMerge } from '../cells/cell_merge/scripts/CellMerge';
 
 const PETNAME = 'p';
@@ -258,7 +258,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
     setCellForRow(listView: ListView, rowIdx: number, cell: DetailCell) {
         const pet = this.curPet;
         const pet2 = this.curPet2;
-        const petModel: PetModel = petModelDict[pet.id];
+        const petModel: PetModel = PetModelDict[pet.id];
 
         // 第一组
         if (rowIdx === 0) {
@@ -270,7 +270,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData1('默契值', String(PetTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
             let drinkStr: string;
             if (pet.drinkId) {
-                const drinkModel = drinkModelDict[pet.drinkId];
+                const drinkModel = DrinkModelDict[pet.drinkId];
                 const endTime = pet.drinkTime + drinkModel.dura;
                 const leftMins = Math.floor((endTime - Date.now()) / 1000 / 60);
                 drinkStr = `${drinkModel.cnName} [${leftMins >= 1 ? leftMins : '<1'}min]`;
@@ -278,12 +278,12 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData2('增益', drinkStr, DRINK_TIP);
         } else if (rowIdx === 3) {
             let exp: number, expMax: number;
-            if (pet.lv >= expModels.length) {
+            if (pet.lv >= ExpModels.length) {
                 exp = 1;
                 expMax = 1;
             } else {
                 exp = pet.exp;
-                expMax = expModels[pet.lv];
+                expMax = ExpModels[pet.lv];
             }
             cell.setData('当前经验', `${exp} / ${expMax}`, exp / expMax);
         }

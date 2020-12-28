@@ -4,7 +4,7 @@
 
 let convert = require('./xlsToJs');
 
-convert('../put.xls', '../../putsrc/assets/configs/ExpModels.ts', 'exp', 'expModels', null, function (data) {
+convert('../put.xls', '../../putsrc/assets/configs/ExpModels.ts', 'exp', 'ExpModels', null, function (data) {
     let expJson = [0];
     for (let rowIdx = 1; rowIdx < data.length; rowIdx++) {
         const rowData = data[rowIdx];

@@ -8,7 +8,7 @@ convert(
     '../put.xls',
     '../../putsrc/assets/configs/MaterialModelDict.ts',
     'material',
-    'materialModelDict',
+    'MaterialModelDict',
     'MaterialModel',
     data => {
         let json = {};

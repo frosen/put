@@ -6,4 +6,4 @@
 
 import { SpcBtlModel } from '../scripts/DataModel';
 
-export const spcBtlModelDict: { [key: string]: SpcBtlModel } = {};
+export const SpcBtlModelDict: { [key: string]: SpcBtlModel } = {};

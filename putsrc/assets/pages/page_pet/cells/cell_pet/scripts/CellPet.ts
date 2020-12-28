@@ -7,10 +7,10 @@
 const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
-import { petModelDict } from '../../../../../configs/PetModelDict';
+import { PetModelDict } from '../../../../../configs/PetModelDict';
 
 import { Pet, PetStateNames, EleColors, BioType } from '../../../../../scripts/DataSaved';
-import { featureModelDict } from '../../../../../configs/FeatureModelDict';
+import { FeatureModelDict } from '../../../../../configs/FeatureModelDict';
 import { PetTool } from '../../../../../scripts/Memory';
 import { RunningImgMgr } from '../../../../../scripts/RunningImgMgr';
 
@@ -95,7 +95,7 @@ export class CellPet extends ListViewCell {
         this.setInfoNode(`默契 ${realPrvty}`, cc.color(100, 50 + realPrvty, 100));
 
         for (const feature of pet.inbFeatures) {
-            const cnName = featureModelDict[feature.id].cnBrief;
+            const cnName = FeatureModelDict[feature.id].cnBrief;
             const color = pet.exFeatureIds.includes(feature.id) ? cc.Color.RED : cc.Color.BLUE;
             this.setInfoNode(cnName + String(feature.lv), color);
         }
@@ -110,7 +110,7 @@ export class CellPet extends ListViewCell {
     }
 
     static getPetIcon(pet: Pet, rImgMgr: RunningImgMgr): { img: cc.SpriteFrame; color: cc.Color } {
-        const petModel = petModelDict[pet.id];
+        const petModel = PetModelDict[pet.id];
         const color = EleColors[petModel.eleType];
 
         switch (petModel.bioType) {

@@ -4,7 +4,7 @@
 
 let convert = require('./xlsToJs');
 
-convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.ts', 'pet', 'petModelDict', 'PetModel', function (data) {
+convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.ts', 'pet', 'PetModelDict', 'PetModel', function (data) {
     let petJson = {};
     for (let rowIdx = 1; rowIdx < data.length; rowIdx++) {
         const rowData = data[rowIdx];

@@ -10,7 +10,7 @@ import { Pet, PetStateNames } from '../../../../../scripts/DataSaved';
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 import { GameDataTool, PetTool } from '../../../../../scripts/Memory';
 import { PageBase } from '../../../../../scripts/PageBase';
-import { sensitiveWords } from '../../../../../configs/SensitiveWords';
+import { SensitiveWords } from '../../../../../configs/SensitiveWords';
 import { CellPet } from '../../../../page_pet/cells/cell_pet/scripts/CellPet';
 import { PTN } from '../../../../../configs/ProTtlModelDict';
 
@@ -106,7 +106,7 @@ export class CellPetName extends ListViewCell {
         }
 
         let sWord = null;
-        for (const sensitiveWord of sensitiveWords) {
+        for (const sensitiveWord of SensitiveWords) {
             if (str.includes(sensitiveWord)) {
                 sWord = sensitiveWord;
                 break;

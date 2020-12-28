@@ -7,8 +7,8 @@
 const { ccclass, property } = cc._decorator;
 
 import { PAKey } from '../../../configs/ActPosModelDict';
-import { proTtlModelDict } from '../../../configs/ProTtlModelDict';
-import { questModelDict } from '../../../configs/QuestModelDict';
+import { ProTtlModelDict } from '../../../configs/ProTtlModelDict';
+import { QuestModelDict } from '../../../configs/QuestModelDict';
 import { GameData, PADQuester, Quest } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
@@ -61,8 +61,8 @@ export class PageSelfLVD extends ListViewDelegate {
 
         this.ttlIds = Object.keys(gameData.proTtlDict);
         this.ttlIds.sort((a: string, b: string) => {
-            const aModel = proTtlModelDict[a];
-            const bModel = proTtlModelDict[b];
+            const aModel = ProTtlModelDict[a];
+            const bModel = ProTtlModelDict[b];
 
             const diff1 = aModel.proTtlType - bModel.proTtlType;
             if (diff1 !== 0) return diff1;
@@ -144,14 +144,14 @@ export class PageSelfLVD extends ListViewDelegate {
             const idx = rowIdx - 2 - 1;
             const ttlId = this.ttlIds[idx];
             const proTtl = this.gameData.proTtlDict[ttlId];
-            const model = proTtlModelDict[ttlId];
+            const model = ProTtlModelDict[ttlId];
             cell.setData(proTtl, model);
         } else if (rowIdx === 3 + this.ttlCellLen) {
             cell.setData(`当前任务（${this.questCellLen}）`);
         } else if (rowIdx <= 3 + this.ttlCellLen + this.questCellLen) {
             const idx = rowIdx - 3 - this.ttlCellLen - 1;
             const questInfo = this.gameData.acceQuestInfos[idx];
-            const questModel = questModelDict[questInfo.questId];
+            const questModel = QuestModelDict[questInfo.questId];
             const posData = this.gameData.posDataDict[questInfo.posId];
             const quests = (posData.actDict[PAKey.quester] as PADQuester).quests;
             const quest = quests.find((value: Quest) => value.id === questModel.id);

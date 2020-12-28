@@ -33,7 +33,7 @@ export class PTN {
     static YingYan = 'YingYan';
 }
 
-const ProTtlModelDict: { [key: string]: ProTtlModel } = {
+export const ProTtlModelDict: { [key: string]: ProTtlModel } = {
     [PTN.DaShanRen]: {
         id: PTN.DaShanRen,
         cnName: d => `大善人${d}`,
@@ -185,5 +185,3 @@ const ProTtlModelDict: { [key: string]: ProTtlModel } = {
         info: ''
     }
 };
-
-export const proTtlModelDict: { [key: string]: ProTtlModel } = ProTtlModelDict as { [key: string]: ProTtlModel };

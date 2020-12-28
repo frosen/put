@@ -6,7 +6,7 @@
 
 import { SkillModel } from '../scripts/DataModel';
 
-export const skillModelDict: { [key: string]: SkillModel } = {
+export const SkillModelDict: { [key: string]: SkillModel } = {
     HuoYanDan: {
         id: 'HuoYanDan',
         cnName: '火焰弹',

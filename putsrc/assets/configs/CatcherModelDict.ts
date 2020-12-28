@@ -5,8 +5,8 @@
  */
 
 import { CatcherModel } from '../scripts/DataModel';
-  
-export const catcherModelDict: { [key: string]: CatcherModel } = {
+
+export const CatcherModelDict: { [key: string]: CatcherModel } = {
     PuTongXianJing1: {
         id: 'PuTongXianJing1',
         cnName: '普通陷阱',

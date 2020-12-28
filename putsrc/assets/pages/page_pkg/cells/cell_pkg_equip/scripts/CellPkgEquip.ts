@@ -9,9 +9,9 @@ const { ccclass, property } = cc._decorator;
 import { CellPkgBase } from '../../../scripts/CellPkgBase';
 import { Equip, EleColors } from '../../../../../scripts/DataSaved';
 import { EquipTool } from '../../../../../scripts/Memory';
-import { skillModelDict } from '../../../../../configs/SkillModelDict';
-import { equipModelDict } from '../../../../../configs/EquipModelDict';
-import { featureModelDict } from '../../../../../configs/FeatureModelDict';
+import { SkillModelDict } from '../../../../../configs/SkillModelDict';
+import { EquipModelDict } from '../../../../../configs/EquipModelDict';
+import { FeatureModelDict } from '../../../../../configs/FeatureModelDict';
 import { SkillType } from '../../../../../scripts/DataModel';
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
@@ -62,13 +62,13 @@ export class CellPkgEquip extends CellPkgBase {
 
     setData(itemIdx: number, equip: Equip) {
         super.setData(itemIdx, equip);
-        const equipModel = equipModelDict[equip.id];
+        const equipModel = EquipModelDict[equip.id];
         this.nameLbl.string = EquipTool.getCnName(equip, true);
         this.nameLbl.node.color = RankColor[equipModel.rank];
         this.lvLbl.string = `[L${equipModel.lv}${equip.growth > 0 ? `+${equip.growth}` : ''}]`;
 
         if (equip.skillId) {
-            const skillModel = skillModelDict[equip.skillId];
+            const skillModel = SkillModelDict[equip.skillId];
             const typeStr = skillModel.skillType === SkillType.ultimate ? '绝・' : '招・';
             this.skillLbl.string = typeStr + skillModel.cnName;
 
@@ -92,13 +92,13 @@ export class CellPkgEquip extends CellPkgBase {
 
         for (let index = 0; index < equip.selfFeatureLvs.length; index++) {
             const id = equipModel.featureIds[index];
-            const featureModel = featureModelDict[id];
+            const featureModel = FeatureModelDict[id];
             const cnName = featureModel.cnBrief;
             const lv = equip.selfFeatureLvs[index];
             attriInfos.push({ str: cnName + String(lv), c: cc.Color.RED });
         }
         for (const feature of equip.affixes) {
-            const featureModel = featureModelDict[feature.id];
+            const featureModel = FeatureModelDict[feature.id];
             attriInfos.push({ str: featureModel.cnBrief + String(feature.lv), c: cc.Color.RED });
         }
 

@@ -19,7 +19,7 @@ import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scri
 import { PageActPetMktLVD } from './PageActPetMktLVD';
 import { RealBattle } from '../../../scripts/DataOther';
 import { normalRandom } from '../../../scripts/Random';
-import { expModels } from '../../../configs/ExpModels';
+import { ExpModels } from '../../../configs/ExpModels';
 
 export const PetMktCountMax: number = 1;
 export const PetMktUpdataInterval: number = 24 * 60 * 60 * 1000; // 更新间隔毫秒
@@ -73,7 +73,7 @@ export class PageActPetMkt extends PageBase {
             const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(posModel, step);
 
             let lv = lvBase - lvRange + normalRandom(lvRange * 2);
-            lv = Math.min(Math.max(1, lv), expModels.length);
+            lv = Math.min(Math.max(1, lv), ExpModels.length);
 
             const pet = PetTool.createWithRandomFeature(petId, lv);
             const cPet = CaughtPetTool.createByPet(pet);

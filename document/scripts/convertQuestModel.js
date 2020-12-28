@@ -4,7 +4,7 @@
 
 let convert = require('./xlsToJs');
 
-convert('../put.xls', '../../putsrc/assets/configs/QuestModelDict.ts', 'quest', 'questModelDict', 'QuestModel', data => {
+convert('../put.xls', '../../putsrc/assets/configs/QuestModelDict.ts', 'quest', 'QuestModelDict', 'QuestModel', data => {
     let questJson = {};
     for (let rowIdx = 1; rowIdx < data.length; rowIdx++) {
         const rowData = data[rowIdx];

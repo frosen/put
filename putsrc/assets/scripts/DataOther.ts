@@ -34,15 +34,15 @@ import {
     PrvtyMax
 } from './DataSaved';
 
-import { petModelDict } from '../configs/PetModelDict';
-import { skillModelDict } from '../configs/SkillModelDict';
+import { PetModelDict } from '../configs/PetModelDict';
+import { SkillModelDict } from '../configs/SkillModelDict';
 import { deepCopy } from './Utils';
-import { buffModelDict } from '../configs/BuffModelDict';
+import { BuffModelDict } from '../configs/BuffModelDict';
 import { BtlCtrlr } from './BtlCtrlr';
 import { randomRate, getRandomOneInList, normalRandom } from './Random';
 import { ActPosModelDict, PAKey } from '../configs/ActPosModelDict';
-import { expModels } from '../configs/ExpModels';
-import { spcBtlModelDict } from '../configs/SpcBtlModelDict';
+import { ExpModels } from '../configs/ExpModels';
+import { SpcBtlModelDict } from '../configs/SpcBtlModelDict';
 
 // -----------------------------------------------------------------
 
@@ -104,7 +104,7 @@ export class Pet2 {
     skillIds!: string[];
 
     setData(pet: Pet, ampl: number, exPrvty: number, exDrinkId?: string, exEquips?: (Equip | undefined)[]) {
-        const petModel: PetModel = petModelDict[pet.id];
+        const petModel: PetModel = PetModelDict[pet.id];
 
         const lv = pet.lv;
         const bioType = petModel.bioType;
@@ -252,7 +252,7 @@ export class Pet2 {
     }
 
     static calcSensitivity(pet: Pet): number {
-        const petModel: PetModel = petModelDict[pet.id];
+        const petModel: PetModel = PetModelDict[pet.id];
         const pet2 = this.getPet2ForCalc();
         pet2.sensitivityOri = Math.floor(petModel.baseSensitivity + petModel.addSensitivity * pet.lv);
         pet2.sensitivity = pet2.sensitivityOri;
@@ -261,7 +261,7 @@ export class Pet2 {
     }
 
     static calcElegant(pet: Pet): number {
-        const petModel: PetModel = petModelDict[pet.id];
+        const petModel: PetModel = PetModelDict[pet.id];
         const pet2 = this.getPet2ForCalc();
         pet2.elegantOri = Math.floor(petModel.baseElegant + petModel.addElegant * pet.lv);
         pet2.elegant = pet2.elegantOri;
@@ -389,9 +389,9 @@ export class BattlePet {
     }
 
     static getSkillMpUsing(skillId: string, pet: Pet) {
-        const skillModel: SkillModel = skillModelDict[skillId];
+        const skillModel: SkillModel = SkillModelDict[skillId];
         if (skillModel.skillType === SkillType.ultimate) return 0;
-        const petModel = petModelDict[pet.id];
+        const petModel = PetModelDict[pet.id];
 
         if (petModel.eleType === skillModel.eleType) return Math.floor(skillModel.mp * 0.9);
         else return skillModel.mp;
@@ -606,7 +606,7 @@ export class RealBattle {
         if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
 
         if (spcBtlId) {
-            const spcBtlModel = spcBtlModelDict[spcBtlId];
+            const spcBtlModel = SpcBtlModelDict[spcBtlId];
             this.enemyTeam.reset(spcBtlModel.pets.length, true, (bPet: BattlePet, petIdx: number) => {
                 const spcBtlPet = spcBtlModel.pets[petIdx];
                 const ePet = PetTool.create(spcBtlPet.id, spcBtlPet.lv, [], spcBtlPet.features);
@@ -683,7 +683,7 @@ export class RealBattle {
         for (let index = 0; index < petCount; index++) {
             const id = randomRate(0.5) ? enmeyPetType1 : enmeyPetType2;
             let lv = lvBase - lvRange + normalRandom(lvRange * 2);
-            lv = Math.min(Math.max(1, lv), expModels.length);
+            lv = Math.min(Math.max(1, lv), ExpModels.length);
             petDatas.push({ id, lv });
         }
         return petDatas;
@@ -743,7 +743,7 @@ export class SkillInfo {
     static get(id: string): string {
         if (this.infoDict[id]) return this.infoDict[id];
 
-        const skl: SkillModel = skillModelDict[id];
+        const skl: SkillModel = SkillModelDict[id];
         let info = '';
         let aim: string;
         if (skl.dirType === SkillDirType.enemy) {
@@ -834,7 +834,7 @@ export class SkillInfo {
         let info = '';
         if (buffId) {
             if (dmg) info += '并';
-            info += `获得${buffTime}回合${buffModelDict[buffId].cnName}效果`;
+            info += `获得${buffTime}回合${BuffModelDict[buffId].cnName}效果`;
         }
 
         return info;
@@ -848,7 +848,7 @@ export class SkillInfo {
 
     static getRealSklStr(skillId: string, pet2: Pet2): string {
         const info = this.get(skillId);
-        const skl: SkillModel = skillModelDict[skillId];
+        const skl: SkillModel = SkillModelDict[skillId];
         const mainDmgStr = this.getSklDmgStr(pet2, skl.mainDmg * 0.01);
         const subDmgStr = this.getSklDmgStr(pet2, skl.subDmg * 0.01);
         return info.replace('##', mainDmgStr).replace('^^', subDmgStr);

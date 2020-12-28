@@ -1,4 +1,4 @@
-export const sensitiveWords: string[] = [
+export const SensitiveWords: string[] = [
     '第一代领导',
     '第二代领导',
     '第三代领导',

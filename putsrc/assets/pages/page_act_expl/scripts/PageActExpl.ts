@@ -14,7 +14,7 @@ import { ListView } from '../../../scripts/ListView';
 import { GameDataTool, PetTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 
-import { buffModelDict } from '../../../configs/BuffModelDict';
+import { BuffModelDict } from '../../../configs/BuffModelDict';
 import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 
 import { PetUI } from './PetUI';
@@ -29,7 +29,7 @@ import { ListViewCell } from '../../../scripts/ListViewCell';
 import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
 import { PTN } from '../../../configs/ProTtlModelDict';
 import { BtlCtrlr } from '../../../scripts/BtlCtrlr';
-import { skillModelDict } from '../../../configs/SkillModelDict';
+import { SkillModelDict } from '../../../configs/SkillModelDict';
 
 const btlUnitH = -172;
 const BattleUnitYs = [0, btlUnitH, btlUnitH * 2, btlUnitH * 3, btlUnitH * 4];
@@ -470,7 +470,7 @@ export class PageActExpl extends BtlPageBase {
             if (buffIdx >= this.buffDisplayMax) buffNode.opacity = 0;
         }
 
-        const buffModel = buffModelDict[buffId] as BuffModel;
+        const buffModel = BuffModelDict[buffId] as BuffModel;
         const buffBrief = buffModel.brief;
         buffNode.getComponent(cc.Label).string = '[' + buffBrief + String(buffTime) + ']';
         buffNode.color = PageActExpl.getBuffColor(buffModel);
@@ -486,7 +486,7 @@ export class PageActExpl extends BtlPageBase {
         const ui = uis[petIdx];
         const buffNode = ui.buffNode.children[buffIdx];
         if (buffNode) {
-            const buffBrief = (buffModelDict[buffId] as BuffModel).brief;
+            const buffBrief = (BuffModelDict[buffId] as BuffModel).brief;
             const newBuffStr = '[' + buffBrief + String(buffTime) + ']';
             buffNode.getComponent(cc.Label).string = newBuffStr;
         }
@@ -716,7 +716,7 @@ export class PageActExpl extends BtlPageBase {
             const forbidFlag = bPet.sklForbidFlag;
             for (let index = 0; index < 4; index++) {
                 if (index < skillIds.length) {
-                    const model = skillModelDict[skillIds[index]];
+                    const model = SkillModelDict[skillIds[index]];
                     const name = model.cnName + (model.skillType === SkillType.ultimate ? '[绝]' : '');
                     const state = ((forbidFlag >> index) & 1) === 1 ? SklForbidBtnState.forbid : SklForbidBtnState.open;
                     this.sklForbidBtnLayer.setData(index, name, state);
@@ -757,7 +757,7 @@ export class PageActExpl extends BtlPageBase {
                 const forbid = btlCtrlr.switchSelfPetForbidSkl(selfBPet, index);
                 const petName = PetTool.getCnName(selfBPet.pet);
                 const actName = forbid ? '封印招式' : '解封招式';
-                const sklName = skillModelDict[selfBPet.pet2.skillIds[index]].cnName;
+                const sklName = SkillModelDict[selfBPet.pet2.skillIds[index]].cnName;
                 this.ctrlr.popToast(petName + actName + sklName);
                 return true;
             }

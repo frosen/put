@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { Drink } from '../../../../../scripts/DataSaved';
 import { AmplAttriNames, DrinkModel } from '../../../../../scripts/DataModel';
-import { drinkModelDict } from '../../../../../configs/DrinkModelDict';
+import { DrinkModelDict } from '../../../../../configs/DrinkModelDict';
 import { CellPkgCnsum } from '../../../scripts/CellPkgCnsum';
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
@@ -28,7 +28,7 @@ export class CellPkgDrink extends CellPkgCnsum {
 
     setData(itemIdx: number, drink: Drink) {
         super.setData(itemIdx, drink);
-        const drinkModel = drinkModelDict[drink.id];
+        const drinkModel = DrinkModelDict[drink.id];
         this.setModelData(drinkModel);
 
         this.setCount(drink.count);

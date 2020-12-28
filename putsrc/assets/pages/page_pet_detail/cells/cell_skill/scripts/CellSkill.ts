@@ -9,8 +9,8 @@ const { ccclass, property } = cc._decorator;
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 import { EleColors, EleTypeNames } from '../../../../../scripts/DataSaved';
 import { SkillModel } from '../../../../../scripts/DataModel';
-import { skillModelDict } from '../../../../../configs/SkillModelDict';
-import { buffModelDict } from '../../../../../configs/BuffModelDict';
+import { SkillModelDict } from '../../../../../configs/SkillModelDict';
+import { BuffModelDict } from '../../../../../configs/BuffModelDict';
 
 const SkillTypeCellNames = ['', '・招式', '・瞬发招式', '・绝杀技'];
 const SkillDirTypeCellNames = ['', '', '・增益'];
@@ -45,7 +45,7 @@ export class CellSkill extends ListViewCell {
 
     setData(skillId: string) {
         this.skillId = skillId;
-        const skillModel: SkillModel = skillModelDict[skillId];
+        const skillModel: SkillModel = SkillModelDict[skillId];
 
         this.nameLbl.string = skillModel.cnName;
         const ele = EleTypeNames[skillModel.eleType];
@@ -72,7 +72,7 @@ export class CellSkill extends ListViewCell {
 
         if (skillModel.mainBuffId) {
             this.buffLbl.node.parent.scaleX = 1;
-            const buffModel = buffModelDict[skillModel.mainBuffId];
+            const buffModel = BuffModelDict[skillModel.mainBuffId];
             this.buffLbl.node.parent.color = EleColors[buffModel.eleType];
             this.buffLbl.string = buffModel.cnName;
         } else {

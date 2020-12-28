@@ -8,7 +8,7 @@ let equipJson = convert(
     '../put.xls',
     '../../putsrc/assets/configs/EquipModelDict.ts',
     'equip',
-    'equipModelDict',
+    'EquipModelDict',
     'EquipModel',
     data => {
         let equipJson = {};
@@ -121,7 +121,7 @@ let equipJson = convert(
 );
 
 if (equipJson) {
-    convert('../put.xls', '../../putsrc/assets/configs/EquipIdsByLvRank.ts', 'equip', 'equipIdsByLvRank', null, function (data) {
+    convert('../put.xls', '../../putsrc/assets/configs/EquipIdsByLvRank.ts', 'equip', 'EquipIdsByLvRank', null, function (data) {
         let equipIds = [];
         for (const equipId in equipJson) {
             if (!equipJson.hasOwnProperty(equipId)) continue;

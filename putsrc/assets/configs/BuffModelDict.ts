@@ -45,7 +45,7 @@ export class BufN {
     static KongWu = 'KongWu';
 }
 
-export const buffModelDict: { [key: string]: BuffModel } = {
+export const BuffModelDict: { [key: string]: BuffModel } = {
     [BufN.ZhuoShao]: {
         id: BufN.ZhuoShao,
         cnName: '灼烧',

@@ -62,21 +62,21 @@ import {
 
 import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
 
-import { petModelDict } from '../configs/PetModelDict';
-import { equipModelDict } from '../configs/EquipModelDict';
-import { equipIdsByLvRank } from '../configs/EquipIdsByLvRank';
-import { skillIdsByEleType } from '../configs/SkillIdsByEleType';
-import { expModels } from '../configs/ExpModels';
-import { questModelDict } from '../configs/QuestModelDict';
-import { drinkModelDict } from '../configs/DrinkModelDict';
-import { catcherModelDict } from '../configs/CatcherModelDict';
-import { eqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
+import { PetModelDict } from '../configs/PetModelDict';
+import { EquipModelDict } from '../configs/EquipModelDict';
+import { EquipIdsByLvRank } from '../configs/EquipIdsByLvRank';
+import { SkillIdsByEleType } from '../configs/SkillIdsByEleType';
+import { ExpModels } from '../configs/ExpModels';
+import { QuestModelDict } from '../configs/QuestModelDict';
+import { DrinkModelDict } from '../configs/DrinkModelDict';
+import { CatcherModelDict } from '../configs/CatcherModelDict';
+import { EqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
 import { BookModelDict } from '../configs/BookModelDict';
-import { spcModelDict } from '../configs/SpcModelDict';
-import { materialModelDict } from '../configs/MaterialModelDict';
+import { SpcModelDict } from '../configs/SpcModelDict';
+import { MaterialModelDict } from '../configs/MaterialModelDict';
 
 import { PTN } from '../configs/ProTtlModelDict';
-import { featureModelDict } from '../configs/FeatureModelDict';
+import { FeatureModelDict } from '../configs/FeatureModelDict';
 import { PAKey, PosN } from '../configs/ActPosModelDict';
 
 import { Tea } from './Tea';
@@ -330,7 +330,7 @@ export class Memory {
         const count = Math.floor(diff / Interval);
         pet.prvtyTime += Interval * count;
 
-        if (petModelDict[pet.id].eleType === EleType.dark && !GameDataTool.hasProTtl(gameData, PTN.YeZhiShen)) {
+        if (PetModelDict[pet.id].eleType === EleType.dark && !GameDataTool.hasProTtl(gameData, PTN.YeZhiShen)) {
             return; // 非夜之神不能培养dark精灵
         }
 
@@ -340,7 +340,7 @@ export class Memory {
 
     static updatePetDrink(gameData: GameData, pet: Pet, petIdx: number, curTime: number) {
         if (pet.drinkId) {
-            if (curTime - pet.drinkTime >= drinkModelDict[pet.drinkId].dura) {
+            if (curTime - pet.drinkTime >= DrinkModelDict[pet.drinkId].dura) {
                 GameDataTool.clearDrinkFromPet(gameData, petIdx);
             }
         }
@@ -464,7 +464,7 @@ export class FeatureTool {
     }
 
     static getDatas(featureId: string, lv: number) {
-        const featureModel = featureModelDict[featureId];
+        const featureModel = FeatureModelDict[featureId];
         const datas = [];
         for (const dataArea of featureModel.dataAreas) {
             const data = dataArea[0] + (lv - 1) * dataArea[1];
@@ -515,7 +515,7 @@ export class PetTool {
     }
 
     static createWithRandomFeature(id: string, lv: number): Pet {
-        const model = petModelDict[id];
+        const model = PetModelDict[id];
         const selfFeatureIds = model.selfFeatureIds;
 
         const exFIds = [];
@@ -546,12 +546,12 @@ export class PetTool {
 
     static getBaseCnName(pet: Pet, needSpace: boolean = false): string {
         if (pet.exFeatureIds.length === 1) {
-            const name = featureModelDict[pet.exFeatureIds[0]].cnBrief;
+            const name = FeatureModelDict[pet.exFeatureIds[0]].cnBrief;
             return name + (needSpace ? ' 之 ' : '之') + PetTool.getOriNameById(pet.id);
         } else if (pet.exFeatureIds.length === 2) {
             let name = '';
-            name += featureModelDict[pet.exFeatureIds[1]].cnBrief;
-            name += featureModelDict[pet.exFeatureIds[0]].cnBrief;
+            name += FeatureModelDict[pet.exFeatureIds[1]].cnBrief;
+            name += FeatureModelDict[pet.exFeatureIds[0]].cnBrief;
             return name + (needSpace ? ' ' : '') + PetTool.getOriNameById(pet.id);
         } else {
             return PetTool.getOriNameById(pet.id);
@@ -559,34 +559,34 @@ export class PetTool {
     }
 
     static getOriNameById(id: string): string {
-        return petModelDict[id].cnName;
+        return PetModelDict[id].cnName;
     }
 
     static eachFeatures(pet: Pet, callback: (featureModel: FeatureModel, datas: number[]) => void) {
         for (const equip of pet.equips) {
             if (!equip) continue;
-            const equipModel = equipModelDict[equip.id];
+            const equipModel = EquipModelDict[equip.id];
             for (let index = 0; index < equipModel.featureIds.length; index++) {
                 const featureId = equipModel.featureIds[index];
                 const lv = equip.selfFeatureLvs[index];
-                callback(featureModelDict[featureId], FeatureTool.getDatas(featureId, lv));
+                callback(FeatureModelDict[featureId], FeatureTool.getDatas(featureId, lv));
             }
             for (const feature of equip.affixes) {
-                callback(featureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
+                callback(FeatureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
             }
         }
 
         for (const feature of pet.inbFeatures) {
-            callback(featureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
+            callback(FeatureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
         }
 
         for (const feature of pet.lndFeatures) {
-            callback(featureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
+            callback(FeatureModelDict[feature.id], FeatureTool.getDatas(feature.id, feature.lv));
         }
     }
 
     static getSelfSkillIdByCurLv(pet: Pet): string[] {
-        const skillIds = petModelDict[pet.id].selfSkillIds;
+        const skillIds = PetModelDict[pet.id].selfSkillIds;
         if (pet.lv >= 30) {
             return [skillIds[0], skillIds[1]];
         } else if (pet.lv >= 10) {
@@ -605,8 +605,8 @@ export class PetTool {
         let newExp = pet.exp + exp;
         let lv = pet.lv;
         while (true) {
-            if (lv >= expModels.length) return 0;
-            const curExpMax = expModels[lv];
+            if (lv >= ExpModels.length) return 0;
+            const curExpMax = ExpModels[lv];
 
             if (newExp < curExpMax) {
                 pet.exp = newExp;
@@ -632,7 +632,7 @@ export class PetTool {
     static addFeatureByLvUp(pet: Pet, curLv: number) {
         if (curLv >= 11 && (curLv - 11) % 3 === 0) {
             const addLv = 1;
-            const model = petModelDict[pet.id];
+            const model = PetModelDict[pet.id];
             // 相邻次获取不一样的，不让一个feature格外的大
             const fromFront = (curLv - 11) % 6 === 0;
             const selfFeatureIds = fromFront ? model.selfFeatureIds.slice(0, 3) : model.selfFeatureIds.slice(3, 6);
@@ -685,32 +685,32 @@ export class CnsumTool {
     }
 
     static getTypeById(cnsumId: string): CnsumType | undefined {
-        if (cnsumId in drinkModelDict) return CnsumType.drink;
-        else if (cnsumId in catcherModelDict) return CnsumType.catcher;
-        else if (cnsumId in eqpAmplrModelDict) return CnsumType.eqpAmplr;
+        if (cnsumId in DrinkModelDict) return CnsumType.drink;
+        else if (cnsumId in CatcherModelDict) return CnsumType.catcher;
+        else if (cnsumId in EqpAmplrModelDict) return CnsumType.eqpAmplr;
         else if (cnsumId in BookModelDict) return CnsumType.book;
-        else if (cnsumId in spcModelDict) return CnsumType.special;
-        else if (cnsumId in materialModelDict) return CnsumType.material;
+        else if (cnsumId in SpcModelDict) return CnsumType.special;
+        else if (cnsumId in MaterialModelDict) return CnsumType.material;
         else return undefined;
     }
 
     static getModelById(cnsumId: string): CnsumModel | undefined {
-        if (cnsumId in drinkModelDict) return drinkModelDict[cnsumId];
-        else if (cnsumId in catcherModelDict) return catcherModelDict[cnsumId];
-        else if (cnsumId in eqpAmplrModelDict) return eqpAmplrModelDict[cnsumId];
+        if (cnsumId in DrinkModelDict) return DrinkModelDict[cnsumId];
+        else if (cnsumId in CatcherModelDict) return CatcherModelDict[cnsumId];
+        else if (cnsumId in EqpAmplrModelDict) return EqpAmplrModelDict[cnsumId];
         else if (cnsumId in BookModelDict) return BookModelDict[cnsumId];
-        else if (cnsumId in spcModelDict) return spcModelDict[cnsumId];
-        else if (cnsumId in materialModelDict) return materialModelDict[cnsumId];
+        else if (cnsumId in SpcModelDict) return SpcModelDict[cnsumId];
+        else if (cnsumId in MaterialModelDict) return MaterialModelDict[cnsumId];
         else return undefined;
     }
 
     static getClassById(cnsumId: string): { new (): Cnsum } | undefined {
-        if (cnsumId in drinkModelDict) return Drink;
-        else if (cnsumId in catcherModelDict) return Catcher;
-        else if (cnsumId in eqpAmplrModelDict) return EqpAmplr;
+        if (cnsumId in DrinkModelDict) return Drink;
+        else if (cnsumId in CatcherModelDict) return Catcher;
+        else if (cnsumId in EqpAmplrModelDict) return EqpAmplr;
         else if (cnsumId in BookModelDict) return Book;
-        else if (cnsumId in spcModelDict) return Special;
-        else if (cnsumId in materialModelDict) return Material;
+        else if (cnsumId in SpcModelDict) return Special;
+        else if (cnsumId in MaterialModelDict) return Material;
         else return undefined;
     }
 }
@@ -787,11 +787,11 @@ export class EquipTool {
     }
 
     static createRandomById(equipId: string): Equip {
-        const equipModel = equipModelDict[equipId];
+        const equipModel = EquipModelDict[equipId];
         const lv = equipModel.lv;
 
         let skillId: string;
-        const skillIds = skillIdsByEleType[equipModel.eleType];
+        const skillIds = SkillIdsByEleType[equipModel.eleType];
         if (skillIds) {
             skillId = getRandomOneInList(skillIds);
         } else {
@@ -806,7 +806,7 @@ export class EquipTool {
 
         const affixes: Feature[] = [];
         if (randomRate(0.5)) {
-            const featureIds = Object.keys(featureModelDict);
+            const featureIds = Object.keys(FeatureModelDict);
             const featureId = getRandomOneInList(featureIds);
             const feature = new Feature();
             feature.id = featureId;
@@ -821,8 +821,8 @@ export class EquipTool {
         let equipIds: string[];
         let lv = lvFrom + randomInt(lvTo - lvFrom + 1);
         if (lv < 0) lv = 0;
-        if (lv >= equipIdsByLvRank.length) lv = equipIdsByLvRank.length - 1;
-        const equipIdsByRank = equipIdsByLvRank[lv];
+        if (lv >= EquipIdsByLvRank.length) lv = EquipIdsByLvRank.length - 1;
+        const equipIdsByRank = EquipIdsByLvRank[lv];
         const len = Math.min(equipIdsByRank.length, rankMax);
         switch (len) {
             case 0:
@@ -877,21 +877,21 @@ export class EquipTool {
     }
 
     static getLv(equip: Equip): number {
-        return equipModelDict[equip.id].lv + equip.growth;
+        return EquipModelDict[equip.id].lv + equip.growth;
     }
 
     static getCnName(equip: Equip, needSpace: boolean = false): string {
         let afName = '';
         for (let index = equip.affixes.length - 1; index >= 0; index--) {
             const affix = equip.affixes[index];
-            afName += featureModelDict[affix.id].cnBrief;
+            afName += FeatureModelDict[affix.id].cnBrief;
         }
         let mid: string;
         if (afName.length === 0) mid = '';
         else if (afName.length === 1) mid = needSpace ? ' 之 ' : '之';
         else mid = needSpace ? ' ' : '';
 
-        return afName + mid + equipModelDict[equip.id].cnName;
+        return afName + mid + EquipModelDict[equip.id].cnName;
     }
 
     static getToken(e?: Equip): string {
@@ -904,7 +904,7 @@ export class EquipTool {
             if (equipModel[key] > 0) (attris[key] as number) += (equipModel[key] as number) + growth;
         };
 
-        const equipModel = equipModelDict[equip.id];
+        const equipModel = EquipModelDict[equip.id];
         const finalAttris: Partial<EquipModel> = attris || {
             strength: 0,
             concentration: 0,
@@ -948,12 +948,12 @@ export class CaughtPetTool {
     static getCnName(cPet: CaughtPet, needSpace: boolean = false): string {
         let cnName: string;
         if (cPet.exFeatureIds.length === 1) {
-            const name = featureModelDict[cPet.exFeatureIds[0]].cnBrief;
+            const name = FeatureModelDict[cPet.exFeatureIds[0]].cnBrief;
             cnName = name + (needSpace ? ' 之 ' : '之') + PetTool.getOriNameById(cPet.petId);
         } else if (cPet.exFeatureIds.length === 2) {
             let name = '';
-            name += featureModelDict[cPet.exFeatureIds[1]].cnBrief;
-            name += featureModelDict[cPet.exFeatureIds[0]].cnBrief;
+            name += FeatureModelDict[cPet.exFeatureIds[1]].cnBrief;
+            name += FeatureModelDict[cPet.exFeatureIds[0]].cnBrief;
             cnName = name + (needSpace ? ' ' : '') + PetTool.getOriNameById(cPet.petId);
         } else {
             cnName = PetTool.getOriNameById(cPet.petId);
@@ -1024,19 +1024,19 @@ export class QuestTool {
     }
 
     static getRealCount(quest: Quest): number {
-        const model = questModelDict[quest.id];
+        const model = QuestModelDict[quest.id];
         const count = model.need.count;
         return Math.floor(count * QuestAmplRates[quest.ampl]);
     }
 
     static getRealReput(quest: Quest): number {
-        const model = questModelDict[quest.id];
+        const model = QuestModelDict[quest.id];
         const reput = model.awardReput;
         return Math.floor(reput * QuestAmplAwardRates[quest.ampl] * QuestDLineAwardRates[quest.dLine]);
     }
 
     static getRealMoney(quest: Quest): number {
-        const model = questModelDict[quest.id];
+        const model = QuestModelDict[quest.id];
         const money = model.awardMoney;
         return Math.floor(money * QuestAmplAwardRates[quest.ampl] * QuestDLineAwardRates[quest.dLine]);
     }
@@ -1207,7 +1207,7 @@ export class GameDataTool {
 
     static checkMergeCaughtPet(gameData: GameData, pet: Pet, caughtPet: CaughtPet): string {
         if (caughtPet.features.length === 0) {
-            const petName = petModelDict[caughtPet.petId].cnName;
+            const petName = PetModelDict[caughtPet.petId].cnName;
             return `${petName}目前尚未获得天赋特性`;
         }
 
@@ -1216,7 +1216,7 @@ export class GameDataTool {
 
         for (const merged of pet.merges) {
             if (merged.petId === caughtPet.petId) {
-                const petName = petModelDict[caughtPet.petId].cnName;
+                const petName = PetModelDict[caughtPet.petId].cnName;
                 return `${petName}已被融合过\n不得融入2只同种类精灵`;
             }
         }
@@ -1252,7 +1252,7 @@ export class GameDataTool {
     static useDrinkToPet(gameData: GameData, petIdx: number, drinkIdx: number, curTime?: number): string {
         const pet = gameData.pets[petIdx];
         const drink = gameData.items[drinkIdx];
-        const drinkModel: DrinkModel = drinkModelDict[drink.id];
+        const drinkModel: DrinkModel = DrinkModelDict[drink.id];
 
         if (pet.drinkTime > 0) {
             if (Date.now() - pet.drinkTime < 10 * 60 * 1000) return '10分钟内不能重复使用饮品';
@@ -1283,7 +1283,7 @@ export class GameDataTool {
         } else if (petOrDrinkId) {
             const drinkId = typeof petOrDrinkId === 'string' ? petOrDrinkId : petOrDrinkId.drinkId;
             if (!drinkId) return base;
-            const drinkModel = drinkModelDict[drinkId];
+            const drinkModel = DrinkModelDict[drinkId];
 
             if (drinkModel.mainAttri === attri) return drinkModel.mainPercent * 0.01 + base;
             else if (drinkModel.subAttri === attri) return drinkModel.subPercent * 0.01 + base;
@@ -1439,16 +1439,16 @@ export class GameDataTool {
             if (!item || item.itemType !== ItemType.equip) return '装备索引有误';
 
             const equip = item as Equip;
-            const equipPosType = equipModelDict[equip.id].equipPosType;
+            const equipPosType = EquipModelDict[equip.id].equipPosType;
             for (const equipHeld of pet.equips) {
                 if (!equipHeld) continue;
-                if (equipModelDict[equipHeld.id].equipPosType !== equipPosType) continue;
+                if (EquipModelDict[equipHeld.id].equipPosType !== equipPosType) continue;
                 const strs = ['', '武器', '防具', '饰品'];
                 return '一只精灵同时只能持有一件' + strs[equipPosType];
             }
 
-            const equipModel = equipModelDict[equip.id];
-            const petModel = petModelDict[pet.id];
+            const equipModel = EquipModelDict[equip.id];
+            const petModel = PetModelDict[pet.id];
             const sameBio = equipModel.bioType === petModel.bioType;
             const lvReduce = -2;
             const equipCalcLv = equipModel.lv + (sameBio ? lvReduce : 0);
@@ -1616,7 +1616,7 @@ export class GameDataTool {
         check: (quest: Quest, model: QuestModel) => boolean
     ): { quest: Quest; model: QuestModel } | undefined {
         for (const questInfo of gameData.acceQuestInfos) {
-            const model = questModelDict[questInfo.questId];
+            const model = QuestModelDict[questInfo.questId];
             if (model.type !== questType) continue;
             const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
             for (const quest of quests) {
@@ -1631,7 +1631,7 @@ export class GameDataTool {
 
     static eachNeedQuest(gameData: GameData, questType: QuestType, call: (quest: Quest, model: QuestModel) => void) {
         for (const questInfo of gameData.acceQuestInfos) {
-            const model = questModelDict[questInfo.questId];
+            const model = QuestModelDict[questInfo.questId];
             if (model.type !== questType) continue;
             const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
             for (const quest of quests) {

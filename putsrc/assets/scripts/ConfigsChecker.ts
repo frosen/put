@@ -4,15 +4,15 @@
  * luleyan
  */
 
-import { petModelDict } from '../configs/PetModelDict';
+import { PetModelDict } from '../configs/PetModelDict';
 import { ActPosModelDict, PAKey } from '../configs/ActPosModelDict';
-import { skillModelDict } from '../configs/SkillModelDict';
-import { buffModelDict } from '../configs/BuffModelDict';
-import { featureModelDict, normalFeatureModelDict } from '../configs/FeatureModelDict';
-import { equipModelDict } from '../configs/EquipModelDict';
-import { drinkModelDict } from '../configs/DrinkModelDict';
-import { catcherModelDict } from '../configs/CatcherModelDict';
-import { eqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
+import { SkillModelDict } from '../configs/SkillModelDict';
+import { BuffModelDict } from '../configs/BuffModelDict';
+import { FeatureModelDict, NormalFeatureModelDict } from '../configs/FeatureModelDict';
+import { EquipModelDict } from '../configs/EquipModelDict';
+import { DrinkModelDict } from '../configs/DrinkModelDict';
+import { CatcherModelDict } from '../configs/CatcherModelDict';
+import { EqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
 import { ACntrModel, EqpMktModel, ExplModel, PetMktModel, QuesterModel, ShopModel } from './DataModel';
 import { CnsumTool } from './Memory';
 
@@ -40,8 +40,8 @@ function checkActPosModelDict() {
         for (const pakey in model.actMDict) {
             const actModel = model.actMDict[pakey];
 
-            const petDictKeys = Object.keys(petModelDict);
-            const eqpDictKeys = Object.keys(equipModelDict);
+            const petDictKeys = Object.keys(PetModelDict);
+            const eqpDictKeys = Object.keys(EquipModelDict);
             if (pakey === PAKey.expl) {
                 need(actModel, Object.keys(ExplModel), key + ':' + pakey);
 
@@ -57,7 +57,7 @@ function checkActPosModelDict() {
                     if (!eqpIdList) continue;
                     for (const eqpId of eqpIdList) {
                         if (!eqpDictKeys.includes(eqpId))
-                            cc.error('ActPosModelDict expl中，equipModelDict中的eqpId有误', key, eqpId);
+                            cc.error('ActPosModelDict expl中，EquipModelDict中的eqpId有误', key, eqpId);
                     }
                 }
                 for (const itemIdList of (actModel as ExplModel).itemIdLists) {
@@ -79,7 +79,7 @@ function checkActPosModelDict() {
                     if (!eqpIdList) continue;
                     for (const eqpId of eqpIdList) {
                         if (!eqpDictKeys.includes(eqpId))
-                            cc.error('ActPosModelDict eqpMkt中，equipModelDict中的eqpId有误', key, eqpId);
+                            cc.error('ActPosModelDict eqpMkt中，EquipModelDict中的eqpId有误', key, eqpId);
                     }
                 }
             } else if (pakey === PAKey.petMkt) {
@@ -106,28 +106,28 @@ function checkActPosModelDict() {
 
 function checkPetModelDict() {
     const nameDict = {};
-    for (const key in petModelDict) {
-        const model = petModelDict[key];
-        if (model.id !== key) cc.error('petModelDict中，id与dict的key不符', key, model.id);
-        if (nameDict[model.cnName] === true) cc.error('petModelDict中，name重复了', key);
+    for (const key in PetModelDict) {
+        const model = PetModelDict[key];
+        if (model.id !== key) cc.error('PetModelDict中，id与dict的key不符', key, model.id);
+        if (nameDict[model.cnName] === true) cc.error('PetModelDict中，name重复了', key);
         nameDict[model.cnName] = true;
 
         for (const skillId of model.selfSkillIds) {
-            if (!skillModelDict.hasOwnProperty(skillId)) cc.error('pet model中的skillId有误', key, skillId);
+            if (!SkillModelDict.hasOwnProperty(skillId)) cc.error('pet model中的skillId有误', key, skillId);
         }
 
         for (const featureId of model.selfFeatureIds) {
-            if (!normalFeatureModelDict.hasOwnProperty(featureId)) cc.error('pet model中的featureId有误', key, featureId);
+            if (!NormalFeatureModelDict.hasOwnProperty(featureId)) cc.error('pet model中的featureId有误', key, featureId);
         }
     }
 }
 
 function checkSkillModelDict() {
-    const buffDictKeys = Object.keys(buffModelDict);
+    const buffDictKeys = Object.keys(BuffModelDict);
     const nameDict = {};
-    for (const key in skillModelDict) {
-        const model = skillModelDict[key];
-        if (model.id !== key) cc.error('skillModelDict中，id与dict的key不符', key, model.id);
+    for (const key in SkillModelDict) {
+        const model = SkillModelDict[key];
+        if (model.id !== key) cc.error('SkillModelDict中，id与dict的key不符', key, model.id);
         if (nameDict[model.cnName] === true) cc.error('skillBriefDict中，name重复了', key);
         nameDict[model.cnName] = true;
 
@@ -140,13 +140,13 @@ function checkSkillModelDict() {
 
 function checkBuffModelDict() {
     const nameDict = {};
-    for (const key in buffModelDict) {
-        const model = buffModelDict[key];
-        if (model.id !== key) cc.error('buffModelDict中，id与dict的key不符', key, model.id);
-        needAtLeast(model, ['onStarted', 'onEnd', 'onTurnEnd'], 1, 'buffModelDict');
+    for (const key in BuffModelDict) {
+        const model = BuffModelDict[key];
+        if (model.id !== key) cc.error('BuffModelDict中，id与dict的key不符', key, model.id);
+        needAtLeast(model, ['onStarted', 'onEnd', 'onTurnEnd'], 1, 'BuffModelDict');
 
-        if (nameDict[model.brief] === true) cc.error('buffModelDict中，brief重复了', key);
-        if (nameDict[model.cnName] === true) cc.error('buffModelDict中，cnName重复了', key);
+        if (nameDict[model.brief] === true) cc.error('BuffModelDict中，brief重复了', key);
+        if (nameDict[model.cnName] === true) cc.error('BuffModelDict中，cnName重复了', key);
         nameDict[model.brief] = true;
         nameDict[model.cnName] = true;
     }
@@ -155,32 +155,32 @@ function checkBuffModelDict() {
 function checkFeatureModelDict() {
     const nameDict = {};
 
-    for (const key in featureModelDict) {
-        const model = featureModelDict[key];
-        if (model.id !== key) cc.error('featureModelDict中，id与dict的key不符：', key, model.id);
-        if (nameDict[model.cnBrief] === true) cc.error('featureModelDict中，cnBrief重复了：', key);
+    for (const key in FeatureModelDict) {
+        const model = FeatureModelDict[key];
+        if (model.id !== key) cc.error('FeatureModelDict中，id与dict的key不符：', key, model.id);
+        if (nameDict[model.cnBrief] === true) cc.error('FeatureModelDict中，cnBrief重复了：', key);
         nameDict[model.cnBrief] = true;
         needAtLeast(
             model,
             ['onBaseSetting', 'onSetting', 'onBtlStart', 'onAtk', 'onCast', 'onHurt', 'onHeal', 'onEDead', 'onDead'],
             1,
-            'featureModelDict'
+            'FeatureModelDict'
         );
     }
 }
 
 function checkEquipModelDict() {
     const nameDict = {};
-    for (const key in equipModelDict) {
-        const model = equipModelDict[key];
-        if (model.id !== key) cc.error('equipModelDict中，id与dict的key不符：', key, model.id);
-        if (nameDict[model.cnName] === true) cc.error('equipModelDict中，name重复了', key);
+    for (const key in EquipModelDict) {
+        const model = EquipModelDict[key];
+        if (model.id !== key) cc.error('EquipModelDict中，id与dict的key不符：', key, model.id);
+        if (nameDict[model.cnName] === true) cc.error('EquipModelDict中，name重复了', key);
         nameDict[model.cnName] = true;
 
         const featureIds = model.featureIds;
         for (const featureId of featureIds) {
-            if (!normalFeatureModelDict.hasOwnProperty(featureId)) {
-                cc.error('equipModelDict中，feature有误：', key, featureId);
+            if (!NormalFeatureModelDict.hasOwnProperty(featureId)) {
+                cc.error('EquipModelDict中，feature有误：', key, featureId);
             }
         }
     }
@@ -199,10 +199,10 @@ function checkItems() {
         for (const key in dict) checkKey(key, name);
     }
 
-    checkAllKeys(equipModelDict, 'equipModelDict');
-    checkAllKeys(drinkModelDict, 'drinkModelDict');
-    checkAllKeys(catcherModelDict, 'catcherModelDict');
-    checkAllKeys(eqpAmplrModelDict, 'eqpAmplrModelDict');
+    checkAllKeys(EquipModelDict, 'EquipModelDict');
+    checkAllKeys(DrinkModelDict, 'DrinkModelDict');
+    checkAllKeys(CatcherModelDict, 'CatcherModelDict');
+    checkAllKeys(EqpAmplrModelDict, 'EqpAmplrModelDict');
 }
 
 export function checkConfigs() {

@@ -5,8 +5,8 @@
  */
 
 import { QuestModel } from '../scripts/DataModel';
-  
-export const questModelDict: { [key: string]: QuestModel } = {
+
+export const QuestModelDict: { [key: string]: QuestModel } = {
     LingJianHuiShou: {
         id: 'LingJianHuiShou',
         type: 1,
@@ -32,11 +32,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
             '那么，现在就去帮忙收集一份最新的数据吧；'
         ],
         need: {
-            petIds: [
-                'NeiRanJiShou',
-                'FangShengJiXieBi',
-                'YaHuHanJuRen'
-            ],
+            petIds: ['NeiRanJiShou', 'FangShengJiXieBi', 'YaHuHanJuRen'],
             name: '测试数据',
             count: 20
         },
@@ -53,9 +49,7 @@ export const questModelDict: { [key: string]: QuestModel } = {
             '如果你看到失控的一定要先制服他，然后把他们的能源插件带回来以供调查；'
         ],
         need: {
-            petIds: [
-                'NeiRanJiShou'
-            ],
+            petIds: ['NeiRanJiShou'],
             name: '能源插件',
             count: 10
         },

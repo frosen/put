@@ -5,8 +5,8 @@
  */
 
 import { EquipModel } from '../scripts/DataModel';
-  
-export const equipModelDict: { [key: string]: EquipModel } = {
+
+export const EquipModelDict: { [key: string]: EquipModel } = {
     DuanJian: {
         id: 'DuanJian',
         cnName: '短剑',
@@ -28,9 +28,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ChangRenJian: {
         id: 'ChangRenJian',
         cnName: '长刃剑',
-        featureIds: [
-            'baseStrength'
-        ],
+        featureIds: ['baseStrength'],
         rank: 2,
         lv: 8,
         equipPosType: 1,
@@ -66,9 +64,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     JingZhiYuGan: {
         id: 'JingZhiYuGan',
         cnName: '精致鱼竿',
-        featureIds: [
-            'addCritRate'
-        ],
+        featureIds: ['addCritRate'],
         rank: 2,
         lv: 8,
         equipPosType: 1,
@@ -104,9 +100,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YuHuaMoZhang: {
         id: 'YuHuaMoZhang',
         cnName: '羽化魔杖',
-        featureIds: [
-            'addMpMax'
-        ],
+        featureIds: ['addMpMax'],
         rank: 2,
         lv: 8,
         equipPosType: 1,
@@ -142,9 +136,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     HongYingDao: {
         id: 'HongYingDao',
         cnName: '红缨刀',
-        featureIds: [
-            'addAtkDmg'
-        ],
+        featureIds: ['addAtkDmg'],
         rank: 2,
         lv: 9,
         equipPosType: 1,
@@ -180,9 +172,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ChaiLangZhanChui: {
         id: 'ChaiLangZhanChui',
         cnName: '豺狼战锤',
-        featureIds: [
-            'addHpRdcMp'
-        ],
+        featureIds: ['addHpRdcMp'],
         rank: 2,
         lv: 10,
         equipPosType: 1,
@@ -218,9 +208,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     WanNengBanShou: {
         id: 'WanNengBanShou',
         cnName: '万能扳手',
-        featureIds: [
-            'addByLuck'
-        ],
+        featureIds: ['addByLuck'],
         rank: 2,
         lv: 10,
         equipPosType: 1,
@@ -256,9 +244,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     QingXingLieGong: {
         id: 'QingXingLieGong',
         cnName: '轻型猎弓',
-        featureIds: [
-            'baseAgility'
-        ],
+        featureIds: ['baseAgility'],
         rank: 2,
         lv: 11,
         equipPosType: 1,
@@ -276,10 +262,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     JianXiaoLieGong: {
         id: 'JianXiaoLieGong',
         cnName: '尖啸猎弓',
-        featureIds: [
-            'baseAgility',
-            'addHitRate'
-        ],
+        featureIds: ['baseAgility', 'addHitRate'],
         rank: 3,
         lv: 11,
         equipPosType: 1,
@@ -315,9 +298,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     FuWenJian: {
         id: 'FuWenJian',
         cnName: '符文剑',
-        featureIds: [
-            'baseConcentration'
-        ],
+        featureIds: ['baseConcentration'],
         rank: 2,
         lv: 11,
         equipPosType: 1,
@@ -335,10 +316,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     AoFaChangJian: {
         id: 'AoFaChangJian',
         cnName: '奥法长剑',
-        featureIds: [
-            'baseConcentration',
-            'hitWithLight'
-        ],
+        featureIds: ['baseConcentration', 'hitWithLight'],
         rank: 3,
         lv: 11,
         equipPosType: 1,
@@ -374,9 +352,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     JiSuDianHuoQi: {
         id: 'JiSuDianHuoQi',
         cnName: '急速点火器',
-        featureIds: [
-            'castFire'
-        ],
+        featureIds: ['castFire'],
         rank: 2,
         lv: 12,
         equipPosType: 1,
@@ -394,10 +370,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     DiJingDianHuoQi: {
         id: 'DiJingDianHuoQi',
         cnName: '地精点火器',
-        featureIds: [
-            'castFire',
-            'hitAddRg'
-        ],
+        featureIds: ['castFire', 'hitAddRg'],
         rank: 3,
         lv: 12,
         equipPosType: 1,
@@ -412,7 +385,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
         elegant: 0,
         armor: 0
     },
-    'DaLüBangZi': {
+    DaLüBangZi: {
         id: 'DaLüBangZi',
         cnName: '大绿棒子',
         featureIds: [],
@@ -430,12 +403,10 @@ export const equipModelDict: { [key: string]: EquipModel } = {
         elegant: 150,
         armor: 0
     },
-    'PoSuiDeLüBangZi': {
+    PoSuiDeLüBangZi: {
         id: 'PoSuiDeLüBangZi',
         cnName: '破碎的绿棒子',
-        featureIds: [
-            'addDmgRdcHp'
-        ],
+        featureIds: ['addDmgRdcHp'],
         rank: 2,
         lv: 12,
         equipPosType: 1,
@@ -450,13 +421,10 @@ export const equipModelDict: { [key: string]: EquipModel } = {
         elegant: 160,
         armor: 0
     },
-    'HunRanLüBangZi': {
+    HunRanLüBangZi: {
         id: 'HunRanLüBangZi',
         cnName: '魂染绿棒子',
-        featureIds: [
-            'addDmgRdcHp',
-            'hurtGotMp'
-        ],
+        featureIds: ['addDmgRdcHp', 'hurtGotMp'],
         rank: 3,
         lv: 12,
         equipPosType: 1,
@@ -492,9 +460,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShuiJingBiShou: {
         id: 'ShuiJingBiShou',
         cnName: '水晶匕首',
-        featureIds: [
-            'castConDmg'
-        ],
+        featureIds: ['castConDmg'],
         rank: 2,
         lv: 13,
         equipPosType: 1,
@@ -530,9 +496,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     SuiLieFu: {
         id: 'SuiLieFu',
         cnName: '碎裂斧',
-        featureIds: [
-            'hitKill'
-        ],
+        featureIds: ['hitKill'],
         rank: 2,
         lv: 13,
         equipPosType: 1,
@@ -568,9 +532,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     QingShanZhiJing: {
         id: 'QingShanZhiJing',
         cnName: '青山之镜',
-        featureIds: [
-            'castEarth'
-        ],
+        featureIds: ['castEarth'],
         rank: 2,
         lv: 13,
         equipPosType: 1,
@@ -606,9 +568,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YuYanShiZhangZhang: {
         id: 'YuYanShiZhangZhang',
         cnName: '预言师长杖',
-        featureIds: [
-            'hurtRdcMp'
-        ],
+        featureIds: ['hurtRdcMp'],
         rank: 2,
         lv: 13,
         equipPosType: 1,
@@ -644,9 +604,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     QiangJiShouTao: {
         id: 'QiangJiShouTao',
         cnName: '强击手套',
-        featureIds: [
-            'hitByRage'
-        ],
+        featureIds: ['hitByRage'],
         rank: 2,
         lv: 13,
         equipPosType: 1,
@@ -682,9 +640,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ZhongXingChiLun: {
         id: 'ZhongXingChiLun',
         cnName: '重型齿轮',
-        featureIds: [
-            'addHpMax'
-        ],
+        featureIds: ['addHpMax'],
         rank: 2,
         lv: 14,
         equipPosType: 1,
@@ -720,9 +676,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     MaiChongPao: {
         id: 'MaiChongPao',
         cnName: '脉冲炮',
-        featureIds: [
-            'castByCombo'
-        ],
+        featureIds: ['castByCombo'],
         rank: 2,
         lv: 14,
         equipPosType: 1,
@@ -758,9 +712,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     GaoYaDianQiang: {
         id: 'GaoYaDianQiang',
         cnName: '高压电枪',
-        featureIds: [
-            'addSklMax'
-        ],
+        featureIds: ['addSklMax'],
         rank: 2,
         lv: 14,
         equipPosType: 1,
@@ -796,9 +748,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     FeiYuCha: {
         id: 'FeiYuCha',
         cnName: '飞鱼叉',
-        featureIds: [
-            'hitWithWater'
-        ],
+        featureIds: ['hitWithWater'],
         rank: 2,
         lv: 15,
         equipPosType: 1,
@@ -834,9 +784,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     FengLingQuanZhang: {
         id: 'FengLingQuanZhang',
         cnName: '枫灵权杖',
-        featureIds: [
-            'heal'
-        ],
+        featureIds: ['heal'],
         rank: 2,
         lv: 15,
         equipPosType: 1,
@@ -872,9 +820,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     BaoPiRen: {
         id: 'BaoPiRen',
         cnName: '剥皮刃',
-        featureIds: [
-            'hitAddRg'
-        ],
+        featureIds: ['hitAddRg'],
         rank: 2,
         lv: 15,
         equipPosType: 1,
@@ -910,9 +856,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     MangCiTieBang: {
         id: 'MangCiTieBang',
         cnName: '芒刺铁棒',
-        featureIds: [
-            'castHurtMe'
-        ],
+        featureIds: ['castHurtMe'],
         rank: 2,
         lv: 16,
         equipPosType: 1,
@@ -948,9 +892,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XunJieLianNu: {
         id: 'XunJieLianNu',
         cnName: '迅捷连弩',
-        featureIds: [
-            'castEleRein'
-        ],
+        featureIds: ['castEleRein'],
         rank: 2,
         lv: 16,
         equipPosType: 1,
@@ -986,9 +928,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YuHunShan: {
         id: 'YuHunShan',
         cnName: '御魂扇',
-        featureIds: [
-            'hitAddMp'
-        ],
+        featureIds: ['hitAddMp'],
         rank: 2,
         lv: 17,
         equipPosType: 1,
@@ -1024,9 +964,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XingGuangZhanFu: {
         id: 'XingGuangZhanFu',
         cnName: '星光战斧',
-        featureIds: [
-            'addDfsRate'
-        ],
+        featureIds: ['addDfsRate'],
         rank: 2,
         lv: 17,
         equipPosType: 1,
@@ -1044,10 +982,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     LiMingZhiRen: {
         id: 'LiMingZhiRen',
         cnName: '黎明之刃',
-        featureIds: [
-            'addDfsRate',
-            'killRdcCD'
-        ],
+        featureIds: ['addDfsRate', 'killRdcCD'],
         rank: 3,
         lv: 17,
         equipPosType: 1,
@@ -1083,9 +1018,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YuFengFaZhang: {
         id: 'YuFengFaZhang',
         cnName: '御风法杖',
-        featureIds: [
-            'castAir'
-        ],
+        featureIds: ['castAir'],
         rank: 2,
         lv: 17,
         equipPosType: 1,
@@ -1121,9 +1054,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XuanFengQi: {
         id: 'XuanFengQi',
         cnName: '旋风器',
-        featureIds: [
-            'hitWithAir'
-        ],
+        featureIds: ['hitWithAir'],
         rank: 2,
         lv: 18,
         equipPosType: 1,
@@ -1159,9 +1090,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     RongNengQiang: {
         id: 'RongNengQiang',
         cnName: '融能枪',
-        featureIds: [
-            'hitWithFire'
-        ],
+        featureIds: ['hitWithFire'],
         rank: 2,
         lv: 18,
         equipPosType: 1,
@@ -1197,9 +1126,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShanGuangBuQiang: {
         id: 'ShanGuangBuQiang',
         cnName: '闪光步枪',
-        featureIds: [
-            'addEvdRate'
-        ],
+        featureIds: ['addEvdRate'],
         rank: 2,
         lv: 18,
         equipPosType: 1,
@@ -1217,10 +1144,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShuiJingZhiDanQi: {
         id: 'ShuiJingZhiDanQi',
         cnName: '水晶掷弹器',
-        featureIds: [
-            'addEvdRate',
-            'hitAddMp'
-        ],
+        featureIds: ['addEvdRate', 'hitAddMp'],
         rank: 3,
         lv: 18,
         equipPosType: 1,
@@ -1256,9 +1180,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     KaiShanFu: {
         id: 'KaiShanFu',
         cnName: '开山斧',
-        featureIds: [
-            'hitWithEarth'
-        ],
+        featureIds: ['hitWithEarth'],
         rank: 2,
         lv: 19,
         equipPosType: 1,
@@ -1294,9 +1216,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     GuShouJingGu: {
         id: 'GuShouJingGu',
         cnName: '古兽胫骨',
-        featureIds: [
-            'hurtWithShoot'
-        ],
+        featureIds: ['hurtWithShoot'],
         rank: 2,
         lv: 19,
         equipPosType: 1,
@@ -1314,10 +1234,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShenShouJingGu: {
         id: 'ShenShouJingGu',
         cnName: '神兽胫骨',
-        featureIds: [
-            'hurtWithShoot',
-            'beginAddRage'
-        ],
+        featureIds: ['hurtWithShoot', 'beginAddRage'],
         rank: 3,
         lv: 19,
         equipPosType: 1,
@@ -1353,9 +1270,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     JingJiCi: {
         id: 'JingJiCi',
         cnName: '荆棘刺',
-        featureIds: [
-            'hurtAndHurt'
-        ],
+        featureIds: ['hurtAndHurt'],
         rank: 2,
         lv: 19,
         equipPosType: 1,
@@ -1391,9 +1306,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YongQiZhiJian: {
         id: 'YongQiZhiJian',
         cnName: '勇气之剑',
-        featureIds: [
-            'castMpDmg'
-        ],
+        featureIds: ['castMpDmg'],
         rank: 2,
         lv: 19,
         equipPosType: 1,
@@ -1411,10 +1324,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     WangZheZhiJian: {
         id: 'WangZheZhiJian',
         cnName: '王者之剑',
-        featureIds: [
-            'castMpDmg',
-            'castUlti'
-        ],
+        featureIds: ['castMpDmg', 'castUlti'],
         rank: 3,
         lv: 19,
         equipPosType: 1,
@@ -1450,9 +1360,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ZhiMingZhiHu: {
         id: 'ZhiMingZhiHu',
         cnName: '致命指虎',
-        featureIds: [
-            'hitWithDark'
-        ],
+        featureIds: ['hitWithDark'],
         rank: 2,
         lv: 20,
         equipPosType: 1,
@@ -1488,9 +1396,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     DiYuFaZhang: {
         id: 'DiYuFaZhang',
         cnName: '地狱法杖',
-        featureIds: [
-            'deadHurt'
-        ],
+        featureIds: ['deadHurt'],
         rank: 2,
         lv: 21,
         equipPosType: 1,
@@ -1526,9 +1432,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     MoLongDuanGong: {
         id: 'MoLongDuanGong',
         cnName: '魔龙短弓',
-        featureIds: [
-            'addCritDmgRate'
-        ],
+        featureIds: ['addCritDmgRate'],
         rank: 2,
         lv: 21,
         equipPosType: 1,
@@ -1546,10 +1450,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     MoLongSiYaoZhiGong: {
         id: 'MoLongSiYaoZhiGong',
         cnName: '魔龙撕咬之弓',
-        featureIds: [
-            'addCritDmgRate',
-            'hitStlHp'
-        ],
+        featureIds: ['addCritDmgRate', 'hitStlHp'],
         rank: 3,
         lv: 21,
         equipPosType: 1,
@@ -1585,9 +1486,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XuWuShan: {
         id: 'XuWuShan',
         cnName: '虚无扇',
-        featureIds: [
-            'hitRdcMp'
-        ],
+        featureIds: ['hitRdcMp'],
         rank: 2,
         lv: 22,
         equipPosType: 1,
@@ -1623,9 +1522,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     HanShuangFaSheQiang: {
         id: 'HanShuangFaSheQiang',
         cnName: '寒霜发射枪',
-        featureIds: [
-            'castWater'
-        ],
+        featureIds: ['castWater'],
         rank: 2,
         lv: 22,
         equipPosType: 1,
@@ -1661,9 +1558,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ChongNengDianCiJian: {
         id: 'ChongNengDianCiJian',
         cnName: '充能电磁剑',
-        featureIds: [
-            'hitAddMp'
-        ],
+        featureIds: ['hitAddMp'],
         rank: 2,
         lv: 22,
         equipPosType: 1,
@@ -1699,9 +1594,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     FengShaZhanChui: {
         id: 'FengShaZhanChui',
         cnName: '风沙战锤',
-        featureIds: [
-            'hurtWithCast'
-        ],
+        featureIds: ['hurtWithCast'],
         rank: 2,
         lv: 22,
         equipPosType: 1,
@@ -1737,9 +1630,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShaYingDuanQiang: {
         id: 'ShaYingDuanQiang',
         cnName: '沙鹰短枪',
-        featureIds: [
-            'addCritRate'
-        ],
+        featureIds: ['addCritRate'],
         rank: 2,
         lv: 22,
         equipPosType: 1,
@@ -1775,9 +1666,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YingYanChangGong: {
         id: 'YingYanChangGong',
         cnName: '鹰眼长弓',
-        featureIds: [
-            'baseSensitivity'
-        ],
+        featureIds: ['baseSensitivity'],
         rank: 2,
         lv: 22,
         equipPosType: 1,
@@ -1813,9 +1702,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShanHuQuanZhang: {
         id: 'ShanHuQuanZhang',
         cnName: '珊瑚权杖',
-        featureIds: [
-            'addMpMax'
-        ],
+        featureIds: ['addMpMax'],
         rank: 2,
         lv: 22,
         equipPosType: 1,
@@ -1851,9 +1738,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XiuRouDao: {
         id: 'XiuRouDao',
         cnName: '修肉刀',
-        featureIds: [
-            'hitByHp'
-        ],
+        featureIds: ['hitByHp'],
         rank: 2,
         lv: 23,
         equipPosType: 1,
@@ -1889,9 +1774,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     QuNianDeKaoYangTui: {
         id: 'QuNianDeKaoYangTui',
         cnName: '去年的烤羊腿',
-        featureIds: [
-            'castByPetCount'
-        ],
+        featureIds: ['castByPetCount'],
         rank: 2,
         lv: 23,
         equipPosType: 1,
@@ -1927,9 +1810,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShengYuChangDi: {
         id: 'ShengYuChangDi',
         cnName: '圣玉长笛',
-        featureIds: [
-            'healByHp'
-        ],
+        featureIds: ['healByHp'],
         rank: 2,
         lv: 25,
         equipPosType: 1,
@@ -1965,9 +1846,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YueYingChangQiang: {
         id: 'YueYingChangQiang',
         cnName: '月影长枪',
-        featureIds: [
-            'castLight'
-        ],
+        featureIds: ['castLight'],
         rank: 2,
         lv: 25,
         equipPosType: 1,
@@ -1985,10 +1864,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YueShenChangQiang: {
         id: 'YueShenChangQiang',
         cnName: '月神长枪',
-        featureIds: [
-            'castLight',
-            'addSklMax'
-        ],
+        featureIds: ['castLight', 'addSklMax'],
         rank: 3,
         lv: 25,
         equipPosType: 1,
@@ -2024,9 +1900,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XuanTieJuJian: {
         id: 'XuanTieJuJian',
         cnName: '玄铁巨剑',
-        featureIds: [
-            'baseStrength'
-        ],
+        featureIds: ['baseStrength'],
         rank: 2,
         lv: 25,
         equipPosType: 1,
@@ -2044,10 +1918,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShouHuZheJuJian: {
         id: 'ShouHuZheJuJian',
         cnName: '守护者巨剑',
-        featureIds: [
-            'baseStrength',
-            'hurtWithAtk'
-        ],
+        featureIds: ['baseStrength', 'hurtWithAtk'],
         rank: 3,
         lv: 25,
         equipPosType: 1,
@@ -2083,9 +1954,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     BiYueSan: {
         id: 'BiYueSan',
         cnName: '闭月伞',
-        featureIds: [
-            'hitRdcRg'
-        ],
+        featureIds: ['hitRdcRg'],
         rank: 2,
         lv: 25,
         equipPosType: 1,
@@ -2121,9 +1990,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     HaiDaoJiaTui: {
         id: 'HaiDaoJiaTui',
         cnName: '海盗假腿',
-        featureIds: [
-            'addDmgRdcHp'
-        ],
+        featureIds: ['addDmgRdcHp'],
         rank: 2,
         lv: 25,
         equipPosType: 1,
@@ -2159,9 +2026,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     MiNiHuoShenPao: {
         id: 'MiNiHuoShenPao',
         cnName: '迷你火神炮',
-        featureIds: [
-            'hitKill'
-        ],
+        featureIds: ['hitKill'],
         rank: 2,
         lv: 26,
         equipPosType: 1,
@@ -2197,9 +2062,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ZhanJiDao: {
         id: 'ZhanJiDao',
         cnName: '斩机刀',
-        featureIds: [
-            'addAtkMax'
-        ],
+        featureIds: ['addAtkMax'],
         rank: 2,
         lv: 26,
         equipPosType: 1,
@@ -2217,10 +2080,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     PoJiDao: {
         id: 'PoJiDao',
         cnName: '破机刀',
-        featureIds: [
-            'addAtkMax',
-            'addCritDmgRate'
-        ],
+        featureIds: ['addAtkMax', 'addCritDmgRate'],
         rank: 3,
         lv: 26,
         equipPosType: 1,
@@ -2256,9 +2116,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     GuangSuZuanTou: {
         id: 'GuangSuZuanTou',
         cnName: '光速钻头',
-        featureIds: [
-            'castUlti'
-        ],
+        featureIds: ['castUlti'],
         rank: 2,
         lv: 26,
         equipPosType: 1,
@@ -2294,9 +2152,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XingZhiZhang: {
         id: 'XingZhiZhang',
         cnName: '星之杖',
-        featureIds: [
-            'hurtByHp'
-        ],
+        featureIds: ['hurtByHp'],
         rank: 2,
         lv: 27,
         equipPosType: 1,
@@ -2332,9 +2188,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     FeiLongGou: {
         id: 'FeiLongGou',
         cnName: '飞龙钩',
-        featureIds: [
-            'addHitRate'
-        ],
+        featureIds: ['addHitRate'],
         rank: 2,
         lv: 27,
         equipPosType: 1,
@@ -2370,9 +2224,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     EQuanDeDuanYa: {
         id: 'EQuanDeDuanYa',
         cnName: '恶犬的断牙',
-        featureIds: [
-            'hitStlHp'
-        ],
+        featureIds: ['hitStlHp'],
         rank: 2,
         lv: 27,
         equipPosType: 1,
@@ -2390,10 +2242,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     GuLangDeDuanYa: {
         id: 'GuLangDeDuanYa',
         cnName: '孤狼的断牙',
-        featureIds: [
-            'hitStlHp',
-            'killAddHp'
-        ],
+        featureIds: ['hitStlHp', 'killAddHp'],
         rank: 3,
         lv: 27,
         equipPosType: 1,
@@ -2429,9 +2278,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     HuoYuanTiDao: {
         id: 'HuoYuanTiDao',
         cnName: '祸源剃刀',
-        featureIds: [
-            'hitAddRg'
-        ],
+        featureIds: ['hitAddRg'],
         rank: 2,
         lv: 28,
         equipPosType: 1,
@@ -2467,9 +2314,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     QiShiZhiChui: {
         id: 'QiShiZhiChui',
         cnName: '骑士之锤',
-        featureIds: [
-            'killAddMp'
-        ],
+        featureIds: ['killAddMp'],
         rank: 2,
         lv: 28,
         equipPosType: 1,
@@ -2505,9 +2350,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XiaoYaoSan: {
         id: 'XiaoYaoSan',
         cnName: '逍遥伞',
-        featureIds: [
-            'baseElegant'
-        ],
+        featureIds: ['baseElegant'],
         rank: 2,
         lv: 28,
         equipPosType: 1,
@@ -2543,9 +2386,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     NiuQuZhiMao: {
         id: 'NiuQuZhiMao',
         cnName: '扭曲之矛',
-        featureIds: [
-            'castDark'
-        ],
+        featureIds: ['castDark'],
         rank: 2,
         lv: 29,
         equipPosType: 1,
@@ -2581,9 +2422,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShiXiangGuiZhiYa: {
         id: 'ShiXiangGuiZhiYa',
         cnName: '石像鬼之牙',
-        featureIds: [
-            'hurtWithAss'
-        ],
+        featureIds: ['hurtWithAss'],
         rank: 2,
         lv: 29,
         equipPosType: 1,
@@ -2619,9 +2458,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     JiXieTieQuan: {
         id: 'JiXieTieQuan',
         cnName: '机械铁拳',
-        featureIds: [
-            'castHurtMe'
-        ],
+        featureIds: ['castHurtMe'],
         rank: 2,
         lv: 30,
         equipPosType: 1,
@@ -2639,10 +2476,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ZhiNengTieQuan: {
         id: 'ZhiNengTieQuan',
         cnName: '智能铁拳',
-        featureIds: [
-            'castHurtMe',
-            'castEleRein'
-        ],
+        featureIds: ['castHurtMe', 'castEleRein'],
         rank: 3,
         lv: 30,
         equipPosType: 1,
@@ -2678,9 +2512,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YuSheBian: {
         id: 'YuSheBian',
         cnName: '玉蛇鞭',
-        featureIds: [
-            'castAir'
-        ],
+        featureIds: ['castAir'],
         rank: 2,
         lv: 30,
         equipPosType: 1,
@@ -2698,10 +2530,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     QingLongBian: {
         id: 'QingLongBian',
         cnName: '青龙鞭',
-        featureIds: [
-            'castAir',
-            'baseConcentration'
-        ],
+        featureIds: ['castAir', 'baseConcentration'],
         rank: 3,
         lv: 30,
         equipPosType: 1,
@@ -2737,9 +2566,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     QingTianZhiRen: {
         id: 'QingTianZhiRen',
         cnName: '擎天之刃',
-        featureIds: [
-            'castByCombo'
-        ],
+        featureIds: ['castByCombo'],
         rank: 2,
         lv: 31,
         equipPosType: 1,
@@ -2757,10 +2584,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     BuFengTuDao: {
         id: 'BuFengTuDao',
         cnName: '布冯屠刀',
-        featureIds: [
-            'castByCombo',
-            'addAtkMax'
-        ],
+        featureIds: ['castByCombo', 'addAtkMax'],
         rank: 3,
         lv: 31,
         equipPosType: 1,
@@ -2796,9 +2620,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YinSuHuiXuanBiao: {
         id: 'YinSuHuiXuanBiao',
         cnName: '音速回旋镖',
-        featureIds: [
-            'hitWithAir'
-        ],
+        featureIds: ['hitWithAir'],
         rank: 2,
         lv: 31,
         equipPosType: 1,
@@ -2816,10 +2638,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     GuangSuHuiXuanBiao: {
         id: 'GuangSuHuiXuanBiao',
         cnName: '光速回旋镖',
-        featureIds: [
-            'hitWithAir',
-            'hurtWithShoot'
-        ],
+        featureIds: ['hitWithAir', 'hurtWithShoot'],
         rank: 3,
         lv: 31,
         equipPosType: 1,
@@ -2855,9 +2674,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShenShengLaZhu: {
         id: 'ShenShengLaZhu',
         cnName: '神圣蜡烛',
-        featureIds: [
-            'castLight'
-        ],
+        featureIds: ['castLight'],
         rank: 2,
         lv: 31,
         equipPosType: 1,
@@ -2875,10 +2692,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     BuMieZhiZhu: {
         id: 'BuMieZhiZhu',
         cnName: '不灭之烛',
-        featureIds: [
-            'castLight',
-            'killAddMp'
-        ],
+        featureIds: ['castLight', 'killAddMp'],
         rank: 3,
         lv: 31,
         equipPosType: 1,
@@ -2911,12 +2725,10 @@ export const equipModelDict: { [key: string]: EquipModel } = {
         elegant: 350,
         armor: 0
     },
-    'XueNüZhiJian': {
+    XueNüZhiJian: {
         id: 'XueNüZhiJian',
         cnName: '雪女之剑',
-        featureIds: [
-            'hitAddMp'
-        ],
+        featureIds: ['hitAddMp'],
         rank: 2,
         lv: 32,
         equipPosType: 1,
@@ -2934,10 +2746,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     LeiJingZhiXiRen: {
         id: 'LeiJingZhiXiRen',
         cnName: '泪晶之细刃',
-        featureIds: [
-            'hitAddMp',
-            'hitWithWater'
-        ],
+        featureIds: ['hitAddMp', 'hitWithWater'],
         rank: 3,
         lv: 32,
         equipPosType: 1,
@@ -2973,9 +2782,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YeZhuZhanChui: {
         id: 'YeZhuZhanChui',
         cnName: '野猪战锤',
-        featureIds: [
-            'addDfsRate'
-        ],
+        featureIds: ['addDfsRate'],
         rank: 2,
         lv: 32,
         equipPosType: 1,
@@ -2993,10 +2800,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     KuangZhanChui: {
         id: 'KuangZhanChui',
         cnName: '狂战锤',
-        featureIds: [
-            'addDfsRate',
-            'hurtGotRage'
-        ],
+        featureIds: ['addDfsRate', 'hurtGotRage'],
         rank: 3,
         lv: 32,
         equipPosType: 1,
@@ -3032,9 +2836,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     TuHuBiShou: {
         id: 'TuHuBiShou',
         cnName: '屠虎匕首',
-        featureIds: [
-            'addEvdRate'
-        ],
+        featureIds: ['addEvdRate'],
         rank: 2,
         lv: 33,
         equipPosType: 1,
@@ -3052,10 +2854,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     TuLongBiShou: {
         id: 'TuLongBiShou',
         cnName: '屠龙匕首',
-        featureIds: [
-            'addEvdRate',
-            'castUlti'
-        ],
+        featureIds: ['addEvdRate', 'castUlti'],
         rank: 3,
         lv: 33,
         equipPosType: 1,
@@ -3091,9 +2890,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     AnLuHuoQiang: {
         id: 'AnLuHuoQiang',
         cnName: '暗炉火枪',
-        featureIds: [
-            'hitWithFire'
-        ],
+        featureIds: ['hitWithFire'],
         rank: 2,
         lv: 33,
         equipPosType: 1,
@@ -3111,10 +2908,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     MoYanFaSheQi: {
         id: 'MoYanFaSheQi',
         cnName: '魔炎发射器',
-        featureIds: [
-            'hitWithFire',
-            'beginAddRage'
-        ],
+        featureIds: ['hitWithFire', 'beginAddRage'],
         rank: 3,
         lv: 33,
         equipPosType: 1,
@@ -3150,9 +2944,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ZhongXingShiZiGao: {
         id: 'ZhongXingShiZiGao',
         cnName: '重型十字镐',
-        featureIds: [
-            'hitByRage'
-        ],
+        featureIds: ['hitByRage'],
         rank: 2,
         lv: 33,
         equipPosType: 1,
@@ -3170,10 +2962,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     JingGongShiZiGao: {
         id: 'JingGongShiZiGao',
         cnName: '精工十字镐',
-        featureIds: [
-            'hitByRage',
-            'addByLuck'
-        ],
+        featureIds: ['hitByRage', 'addByLuck'],
         rank: 3,
         lv: 33,
         equipPosType: 1,
@@ -3209,9 +2998,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     WangZheLianDao: {
         id: 'WangZheLianDao',
         cnName: '亡者镰刀',
-        featureIds: [
-            'hitRdcMp'
-        ],
+        featureIds: ['hitRdcMp'],
         rank: 2,
         lv: 34,
         equipPosType: 1,
@@ -3229,10 +3016,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     SiGeLianDao: {
         id: 'SiGeLianDao',
         cnName: '死歌镰刀',
-        featureIds: [
-            'hitRdcMp',
-            'addCritDmgRate'
-        ],
+        featureIds: ['hitRdcMp', 'addCritDmgRate'],
         rank: 3,
         lv: 34,
         equipPosType: 1,
@@ -3268,9 +3052,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     LiuYunShan: {
         id: 'LiuYunShan',
         cnName: '流云扇',
-        featureIds: [
-            'castWater'
-        ],
+        featureIds: ['castWater'],
         rank: 2,
         lv: 34,
         equipPosType: 1,
@@ -3288,10 +3070,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     TianLingShan: {
         id: 'TianLingShan',
         cnName: '天凌扇',
-        featureIds: [
-            'castWater',
-            'hitRdcRg'
-        ],
+        featureIds: ['castWater', 'hitRdcRg'],
         rank: 3,
         lv: 34,
         equipPosType: 1,
@@ -3327,9 +3106,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     DiJingHanQiang: {
         id: 'DiJingHanQiang',
         cnName: '地精焊枪',
-        featureIds: [
-            'addHpRdcMp'
-        ],
+        featureIds: ['addHpRdcMp'],
         rank: 2,
         lv: 35,
         equipPosType: 1,
@@ -3347,10 +3124,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     BeiErHanQiang: {
         id: 'BeiErHanQiang',
         cnName: '贝尔焊枪',
-        featureIds: [
-            'addHpRdcMp',
-            'hitKill'
-        ],
+        featureIds: ['addHpRdcMp', 'hitKill'],
         rank: 3,
         lv: 35,
         equipPosType: 1,
@@ -3386,9 +3160,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     AiRenShouChiPao: {
         id: 'AiRenShouChiPao',
         cnName: '矮人手持炮',
-        featureIds: [
-            'addDmgRdcHp'
-        ],
+        featureIds: ['addDmgRdcHp'],
         rank: 2,
         lv: 35,
         equipPosType: 1,
@@ -3406,10 +3178,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     JiaLinShouChiPao: {
         id: 'JiaLinShouChiPao',
         cnName: '加林手持炮',
-        featureIds: [
-            'addDmgRdcHp',
-            'castByPetCount'
-        ],
+        featureIds: ['addDmgRdcHp', 'castByPetCount'],
         rank: 3,
         lv: 35,
         equipPosType: 1,
@@ -3445,9 +3214,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     GuiZuPeiJian: {
         id: 'GuiZuPeiJian',
         cnName: '贵族佩剑',
-        featureIds: [
-            'hitWithLight'
-        ],
+        featureIds: ['hitWithLight'],
         rank: 2,
         lv: 35,
         equipPosType: 1,
@@ -3465,10 +3232,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     BaoShiZhiJian: {
         id: 'BaoShiZhiJian',
         cnName: '宝石之剑',
-        featureIds: [
-            'hitWithLight',
-            'hurtGotMp'
-        ],
+        featureIds: ['hitWithLight', 'hurtGotMp'],
         rank: 3,
         lv: 35,
         equipPosType: 1,
@@ -3504,9 +3268,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YuanSuJieZhang: {
         id: 'YuanSuJieZhang',
         cnName: '元素节杖',
-        featureIds: [
-            'addSklMax'
-        ],
+        featureIds: ['addSklMax'],
         rank: 2,
         lv: 35,
         equipPosType: 1,
@@ -3524,10 +3286,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     TiaoHeJieZhang: {
         id: 'TiaoHeJieZhang',
         cnName: '调和节杖',
-        featureIds: [
-            'addSklMax',
-            'castConDmg'
-        ],
+        featureIds: ['addSklMax', 'castConDmg'],
         rank: 3,
         lv: 35,
         equipPosType: 1,
@@ -3563,9 +3322,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YingRenYuMaoCi: {
         id: 'YingRenYuMaoCi',
         cnName: '鹰人羽毛刺',
-        featureIds: [
-            'hurtWithCast'
-        ],
+        featureIds: ['hurtWithCast'],
         rank: 2,
         lv: 35,
         equipPosType: 1,
@@ -3583,10 +3340,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YingRenFengYiZhen: {
         id: 'YingRenFengYiZhen',
         cnName: '鹰人缝衣针',
-        featureIds: [
-            'hurtWithCast',
-            'addSklDmg'
-        ],
+        featureIds: ['hurtWithCast', 'addSklDmg'],
         rank: 3,
         lv: 35,
         equipPosType: 1,
@@ -3622,9 +3376,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     DaDiZhanFu: {
         id: 'DaDiZhanFu',
         cnName: '大地战斧',
-        featureIds: [
-            'deadFangHu'
-        ],
+        featureIds: ['deadFangHu'],
         rank: 2,
         lv: 35,
         equipPosType: 1,
@@ -3642,10 +3394,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShanLingYiZhiZhanFu: {
         id: 'ShanLingYiZhiZhanFu',
         cnName: '山岭意志战斧',
-        featureIds: [
-            'deadFangHu',
-            'hitWithEarth'
-        ],
+        featureIds: ['deadFangHu', 'hitWithEarth'],
         rank: 3,
         lv: 35,
         equipPosType: 1,
@@ -3681,9 +3430,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ZhuJiangWaiYi: {
         id: 'ZhuJiangWaiYi',
         cnName: '主将外衣',
-        featureIds: [
-            'hitAddRg'
-        ],
+        featureIds: ['hitAddRg'],
         rank: 2,
         lv: 21,
         equipPosType: 2,
@@ -3719,9 +3466,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     TieXinLianJia: {
         id: 'TieXinLianJia',
         cnName: '铁心链甲',
-        featureIds: [
-            'addHpMax'
-        ],
+        featureIds: ['addHpMax'],
         rank: 2,
         lv: 22,
         equipPosType: 2,
@@ -3757,9 +3502,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     LiZiHuZhao: {
         id: 'LiZiHuZhao',
         cnName: '离子护罩',
-        featureIds: [
-            'hurtFullRage'
-        ],
+        featureIds: ['hurtFullRage'],
         rank: 2,
         lv: 22,
         equipPosType: 2,
@@ -3795,9 +3538,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     PoMoPiFeng: {
         id: 'PoMoPiFeng',
         cnName: '破魔披风',
-        featureIds: [
-            'hurtWithCast'
-        ],
+        featureIds: ['hurtWithCast'],
         rank: 2,
         lv: 22,
         equipPosType: 2,
@@ -3833,9 +3574,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     JingJiZhiJia: {
         id: 'JingJiZhiJia',
         cnName: '荆棘之甲',
-        featureIds: [
-            'hurtAndHurt'
-        ],
+        featureIds: ['hurtAndHurt'],
         rank: 2,
         lv: 22,
         equipPosType: 2,
@@ -3871,9 +3610,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     GangZhiXiongJia: {
         id: 'GangZhiXiongJia',
         cnName: '钢制胸甲',
-        featureIds: [
-            'baseDurability'
-        ],
+        featureIds: ['baseDurability'],
         rank: 2,
         lv: 23,
         equipPosType: 2,
@@ -3909,9 +3646,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     JingBingYuanDun: {
         id: 'JingBingYuanDun',
         cnName: '精兵圆盾',
-        featureIds: [
-            'beginReLi'
-        ],
+        featureIds: ['beginReLi'],
         rank: 2,
         lv: 24,
         equipPosType: 2,
@@ -3947,9 +3682,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     MiCaiFu: {
         id: 'MiCaiFu',
         cnName: '迷彩服',
-        featureIds: [
-            'addEvdRate'
-        ],
+        featureIds: ['addEvdRate'],
         rank: 2,
         lv: 25,
         equipPosType: 2,
@@ -3985,9 +3718,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShouHuZheWaiTao: {
         id: 'ShouHuZheWaiTao',
         cnName: '守护者外套',
-        featureIds: [
-            'addDfsRate'
-        ],
+        featureIds: ['addDfsRate'],
         rank: 2,
         lv: 26,
         equipPosType: 2,
@@ -4023,9 +3754,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     JieNengZhuangJia: {
         id: 'JieNengZhuangJia',
         cnName: '节能装甲',
-        featureIds: [
-            'hitAddMp'
-        ],
+        featureIds: ['hitAddMp'],
         rank: 2,
         lv: 27,
         equipPosType: 2,
@@ -4061,9 +3790,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     MengYanHuJia: {
         id: 'MengYanHuJia',
         cnName: '梦魇护甲',
-        featureIds: [
-            'hitWithDark'
-        ],
+        featureIds: ['hitWithDark'],
         rank: 2,
         lv: 27,
         equipPosType: 2,
@@ -4099,9 +3826,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShiGuiHuJia: {
         id: 'ShiGuiHuJia',
         cnName: '石龟护甲',
-        featureIds: [
-            'hurt'
-        ],
+        featureIds: ['hurt'],
         rank: 2,
         lv: 27,
         equipPosType: 2,
@@ -4137,9 +3862,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     BaZhuBanJia: {
         id: 'BaZhuBanJia',
         cnName: '霸主板甲',
-        featureIds: [
-            'hurtGotRage'
-        ],
+        featureIds: ['hurtGotRage'],
         rank: 2,
         lv: 28,
         equipPosType: 2,
@@ -4175,9 +3898,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShangGuFaPao: {
         id: 'ShangGuFaPao',
         cnName: '上古法袍',
-        featureIds: [
-            'hurtGotMp'
-        ],
+        featureIds: ['hurtGotMp'],
         rank: 2,
         lv: 29,
         equipPosType: 2,
@@ -4213,9 +3934,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XueSeFangDun: {
         id: 'XueSeFangDun',
         cnName: '血色方盾',
-        featureIds: [
-            'healAndHurt'
-        ],
+        featureIds: ['healAndHurt'],
         rank: 2,
         lv: 30,
         equipPosType: 2,
@@ -4251,9 +3970,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     FuSheZhuangJia: {
         id: 'FuSheZhuangJia',
         cnName: '辐射装甲',
-        featureIds: [
-            'deadHurt'
-        ],
+        featureIds: ['deadHurt'],
         rank: 2,
         lv: 31,
         equipPosType: 2,
@@ -4271,10 +3988,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     CaiGuangZhuangJia: {
         id: 'CaiGuangZhuangJia',
         cnName: '彩光装甲',
-        featureIds: [
-            'deadHurt',
-            'castLight'
-        ],
+        featureIds: ['deadHurt', 'castLight'],
         rank: 3,
         lv: 31,
         equipPosType: 2,
@@ -4310,9 +4024,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     RuiZhiChangPao: {
         id: 'RuiZhiChangPao',
         cnName: '睿智长袍',
-        featureIds: [
-            'baseConcentration'
-        ],
+        featureIds: ['baseConcentration'],
         rank: 2,
         lv: 31,
         equipPosType: 2,
@@ -4330,10 +4042,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XianZhiChangPao: {
         id: 'XianZhiChangPao',
         cnName: '先知长袍',
-        featureIds: [
-            'baseConcentration',
-            'hurtWithShoot'
-        ],
+        featureIds: ['baseConcentration', 'hurtWithShoot'],
         rank: 3,
         lv: 31,
         equipPosType: 2,
@@ -4369,9 +4078,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XiongShiHuJia: {
         id: 'XiongShiHuJia',
         cnName: '雄狮护甲',
-        featureIds: [
-            'addCritRate'
-        ],
+        featureIds: ['addCritRate'],
         rank: 2,
         lv: 31,
         equipPosType: 2,
@@ -4389,10 +4096,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XunMengLongHuJia: {
         id: 'XunMengLongHuJia',
         cnName: '迅猛龙护甲',
-        featureIds: [
-            'addCritRate',
-            'addCritDmgRate'
-        ],
+        featureIds: ['addCritRate', 'addCritDmgRate'],
         rank: 3,
         lv: 31,
         equipPosType: 2,
@@ -4428,9 +4132,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     WangHunZhiDun: {
         id: 'WangHunZhiDun',
         cnName: '亡魂之盾',
-        featureIds: [
-            'killAddAllHp'
-        ],
+        featureIds: ['killAddAllHp'],
         rank: 2,
         lv: 32,
         equipPosType: 2,
@@ -4448,10 +4150,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     HuiMieZhiDun: {
         id: 'HuiMieZhiDun',
         cnName: '毁灭之盾',
-        featureIds: [
-            'killAddAllHp',
-            'addAtkMax'
-        ],
+        featureIds: ['killAddAllHp', 'addAtkMax'],
         rank: 3,
         lv: 32,
         equipPosType: 2,
@@ -4487,9 +4186,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     DaShiPiFeng: {
         id: 'DaShiPiFeng',
         cnName: '大师披风',
-        featureIds: [
-            'baseStrength'
-        ],
+        featureIds: ['baseStrength'],
         rank: 2,
         lv: 33,
         equipPosType: 2,
@@ -4507,10 +4204,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YingXiongPiFeng: {
         id: 'YingXiongPiFeng',
         cnName: '英雄披风',
-        featureIds: [
-            'baseStrength',
-            'hurtWithAtk'
-        ],
+        featureIds: ['baseStrength', 'hurtWithAtk'],
         rank: 3,
         lv: 33,
         equipPosType: 2,
@@ -4546,9 +4240,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShuiYinZhanJia: {
         id: 'ShuiYinZhanJia',
         cnName: '水银战甲',
-        featureIds: [
-            'castWater'
-        ],
+        featureIds: ['castWater'],
         rank: 2,
         lv: 34,
         equipPosType: 2,
@@ -4566,10 +4258,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     WeiGuangZhanJia: {
         id: 'WeiGuangZhanJia',
         cnName: '微光战甲',
-        featureIds: [
-            'castWater',
-            'addHitRate'
-        ],
+        featureIds: ['castWater', 'addHitRate'],
         rank: 3,
         lv: 34,
         equipPosType: 2,
@@ -4605,9 +4294,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     DianZiDunPai: {
         id: 'DianZiDunPai',
         cnName: '电子盾牌',
-        featureIds: [
-            'hurtByHp'
-        ],
+        featureIds: ['hurtByHp'],
         rank: 2,
         lv: 35,
         equipPosType: 2,
@@ -4625,10 +4312,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     KeJiDunPai: {
         id: 'KeJiDunPai',
         cnName: '科技盾牌',
-        featureIds: [
-            'hurtByHp',
-            'hurtOthers'
-        ],
+        featureIds: ['hurtByHp', 'hurtOthers'],
         rank: 3,
         lv: 35,
         equipPosType: 2,
@@ -4664,9 +4348,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     BaoZangFaPao: {
         id: 'BaoZangFaPao',
         cnName: '薄葬法袍',
-        featureIds: [
-            'healByCombo'
-        ],
+        featureIds: ['healByCombo'],
         rank: 2,
         lv: 35,
         equipPosType: 2,
@@ -4684,10 +4366,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YongShengFaPao: {
         id: 'YongShengFaPao',
         cnName: '永生法袍',
-        featureIds: [
-            'healByCombo',
-            'hurtRdcMp'
-        ],
+        featureIds: ['healByCombo', 'hurtRdcMp'],
         rank: 3,
         lv: 35,
         equipPosType: 2,
@@ -4723,9 +4402,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ShengMingTuTeng: {
         id: 'ShengMingTuTeng',
         cnName: '生命图腾',
-        featureIds: [
-            'hitStlHp'
-        ],
+        featureIds: ['hitStlHp'],
         rank: 2,
         lv: 35,
         equipPosType: 2,
@@ -4743,10 +4420,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ChongShengTuTeng: {
         id: 'ChongShengTuTeng',
         cnName: '重生图腾',
-        featureIds: [
-            'hitStlHp',
-            'deadHuiChun'
-        ],
+        featureIds: ['hitStlHp', 'deadHuiChun'],
         rank: 3,
         lv: 35,
         equipPosType: 2,
@@ -4782,9 +4456,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     YongQiZhiHuan: {
         id: 'YongQiZhiHuan',
         cnName: '勇气指环',
-        featureIds: [
-            'beginReLi'
-        ],
+        featureIds: ['beginReLi'],
         rank: 2,
         lv: 31,
         equipPosType: 3,
@@ -4820,9 +4492,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ChiLunYinJi: {
         id: 'ChiLunYinJi',
         cnName: '齿轮印记',
-        featureIds: [
-            'addSklDmg'
-        ],
+        featureIds: ['addSklDmg'],
         rank: 2,
         lv: 31,
         equipPosType: 3,
@@ -4858,9 +4528,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XinLingHuFu: {
         id: 'XinLingHuFu',
         cnName: '心灵护符',
-        featureIds: [
-            'hurtWithCast'
-        ],
+        featureIds: ['hurtWithCast'],
         rank: 2,
         lv: 31,
         equipPosType: 3,
@@ -4896,9 +4564,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     HongBaoShiZhiJie: {
         id: 'HongBaoShiZhiJie',
         cnName: '红宝石之戒',
-        featureIds: [
-            'addHpMax'
-        ],
+        featureIds: ['addHpMax'],
         rank: 2,
         lv: 31,
         equipPosType: 3,
@@ -4934,9 +4600,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     WanMeiXiangLian: {
         id: 'WanMeiXiangLian',
         cnName: '完美项链',
-        featureIds: [
-            'baseElegant'
-        ],
+        featureIds: ['baseElegant'],
         rank: 2,
         lv: 33,
         equipPosType: 3,
@@ -4972,9 +4636,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ZhiNengShouHuan: {
         id: 'ZhiNengShouHuan',
         cnName: '智能手环',
-        featureIds: [
-            'addEvdRate'
-        ],
+        featureIds: ['addEvdRate'],
         rank: 2,
         lv: 33,
         equipPosType: 3,
@@ -5010,9 +4672,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     LongXinBiZhang: {
         id: 'LongXinBiZhang',
         cnName: '龙心臂章',
-        featureIds: [
-            'addDmgRdcHp'
-        ],
+        featureIds: ['addDmgRdcHp'],
         rank: 2,
         lv: 33,
         equipPosType: 3,
@@ -5048,9 +4708,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ZiRanZhiYuHuFu: {
         id: 'ZiRanZhiYuHuFu',
         cnName: '自然之语护符',
-        featureIds: [
-            'hurtRdcMp'
-        ],
+        featureIds: ['hurtRdcMp'],
         rank: 2,
         lv: 33,
         equipPosType: 3,
@@ -5086,9 +4744,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     CuiHuoZhiHuan: {
         id: 'CuiHuoZhiHuan',
         cnName: '淬火指环',
-        featureIds: [
-            'hitWithFire'
-        ],
+        featureIds: ['hitWithFire'],
         rank: 2,
         lv: 35,
         equipPosType: 3,
@@ -5106,10 +4762,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     RanJinZhiJie: {
         id: 'RanJinZhiJie',
         cnName: '燃尽之戒',
-        featureIds: [
-            'hitWithFire',
-            'addHpRdcMp'
-        ],
+        featureIds: ['hitWithFire', 'addHpRdcMp'],
         rank: 3,
         lv: 35,
         equipPosType: 3,
@@ -5145,9 +4798,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     HeiShiWanBiao: {
         id: 'HeiShiWanBiao',
         cnName: '黑石腕表',
-        featureIds: [
-            'baseSensitivity'
-        ],
+        featureIds: ['baseSensitivity'],
         rank: 2,
         lv: 35,
         equipPosType: 3,
@@ -5165,10 +4816,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     LeiDaWanBiao: {
         id: 'LeiDaWanBiao',
         cnName: '雷达腕表',
-        featureIds: [
-            'baseSensitivity',
-            'addHitRate'
-        ],
+        featureIds: ['baseSensitivity', 'addHitRate'],
         rank: 3,
         lv: 35,
         equipPosType: 3,
@@ -5204,9 +4852,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     TianQiongHuiZhang: {
         id: 'TianQiongHuiZhang',
         cnName: '天穹徽章',
-        featureIds: [
-            'addMpMax'
-        ],
+        featureIds: ['addMpMax'],
         rank: 2,
         lv: 35,
         equipPosType: 3,
@@ -5224,10 +4870,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     LieKongHuiZhang: {
         id: 'LieKongHuiZhang',
         cnName: '猎空徽章',
-        featureIds: [
-            'addMpMax',
-            'hurtWithShoot'
-        ],
+        featureIds: ['addMpMax', 'hurtWithShoot'],
         rank: 3,
         lv: 35,
         equipPosType: 3,
@@ -5263,9 +4906,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     ChaoXiDiaoZhui: {
         id: 'ChaoXiDiaoZhui',
         cnName: '潮汐吊坠',
-        featureIds: [
-            'hitAddMp'
-        ],
+        featureIds: ['hitAddMp'],
         rank: 2,
         lv: 35,
         equipPosType: 3,
@@ -5283,10 +4924,7 @@ export const equipModelDict: { [key: string]: EquipModel } = {
     XuanWoZhiLiDiaoZhui: {
         id: 'XuanWoZhiLiDiaoZhui',
         cnName: '旋涡之力吊坠',
-        featureIds: [
-            'hitAddMp',
-            'hurtAndHurt'
-        ],
+        featureIds: ['hitAddMp', 'hurtAndHurt'],
         rank: 3,
         lv: 35,
         equipPosType: 3,

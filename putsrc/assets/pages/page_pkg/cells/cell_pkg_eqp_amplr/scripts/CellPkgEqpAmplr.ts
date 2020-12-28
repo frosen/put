@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { EqpAmplr } from '../../../../../scripts/DataSaved';
-import { eqpAmplrModelDict } from '../../../../../configs/EqpAmplrModelDict';
+import { EqpAmplrModelDict } from '../../../../../configs/EqpAmplrModelDict';
 import { CellPkgCnsum } from '../../../scripts/CellPkgCnsum';
 import { EqpAmplrModel } from '../../../../../scripts/DataModel';
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
@@ -22,7 +22,7 @@ export class CellPkgEqpAmplr extends CellPkgCnsum {
 
     setData(itemIdx: number, eqpAmplr: EqpAmplr) {
         super.setData(itemIdx, eqpAmplr);
-        const eqpAmplrModel = eqpAmplrModelDict[eqpAmplr.id];
+        const eqpAmplrModel = EqpAmplrModelDict[eqpAmplr.id];
         this.setModelData(eqpAmplrModel);
 
         this.setCount(eqpAmplr.count);

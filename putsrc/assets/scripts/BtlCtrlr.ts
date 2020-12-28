@@ -7,9 +7,9 @@
 import { GameDataTool, PetTool } from '../scripts/Memory';
 import { BtlPageBase } from './BtlPageBase';
 
-import { skillModelDict } from '../configs/SkillModelDict';
-import { buffModelDict } from '../configs/BuffModelDict';
-import { petModelDict } from '../configs/PetModelDict';
+import { SkillModelDict } from '../configs/SkillModelDict';
+import { BuffModelDict } from '../configs/BuffModelDict';
+import { PetModelDict } from '../configs/PetModelDict';
 
 import { deepCopy } from '../scripts/Utils';
 import { SkillModel, SkillType, SkillAimtype, SkillDirType } from '../scripts/DataModel';
@@ -351,7 +351,7 @@ export class BtlCtrlr {
                 const buffData = pet.buffDatas[buffIdx];
                 buffData.time--;
 
-                const buffModel = buffModelDict[buffData.id];
+                const buffModel = BuffModelDict[buffData.id];
                 if (buffModel.onTurnEnd) {
                     const buffOutput = buffModel.onTurnEnd(pet, buffData, this);
                     if (buffOutput) {
@@ -453,7 +453,7 @@ export class BtlCtrlr {
             const skillData = battlePet.skillDatas[index];
             if (skillData.cd > 0) continue;
 
-            const skillModel: SkillModel = skillModelDict[skillData.id];
+            const skillModel: SkillModel = SkillModelDict[skillData.id];
             if (skillModel.skillType !== SkillType.ultimate) continue;
 
             const rageNeed = skillModel.rage;
@@ -479,7 +479,7 @@ export class BtlCtrlr {
             const skillData = battlePet.skillDatas[index];
             if (skillData.cd > 0) continue;
 
-            const skillModel: SkillModel = skillModelDict[skillData.id];
+            const skillModel: SkillModel = SkillModelDict[skillData.id];
             if (skillModel.skillType === SkillType.ultimate) continue;
 
             const mpNeed = skillData.mpUsing;
@@ -626,7 +626,7 @@ export class BtlCtrlr {
     }
 
     addBuff(aim: BattlePet, caster: BattlePet, buffId: string, buffTime: number) {
-        const buffModel = buffModelDict[buffId];
+        const buffModel = BuffModelDict[buffId];
         for (let index = 0; index < aim.buffDatas.length; index++) {
             const buffData = aim.buffDatas[index];
             if (buffData.id === buffId) {
@@ -901,16 +901,16 @@ export class BtlCtrlr {
     }
 
     static getBioType(casterBPet: BattlePet): BioType {
-        return casterBPet.pet2.exBioTypes.getLast() || petModelDict[casterBPet.pet.id].bioType;
+        return casterBPet.pet2.exBioTypes.getLast() || PetModelDict[casterBPet.pet.id].bioType;
     }
 
     static getEleType(casterBPet: BattlePet): EleType {
-        return casterBPet.pet2.exEleTypes.getLast() || petModelDict[casterBPet.pet.id].eleType;
+        return casterBPet.pet2.exEleTypes.getLast() || PetModelDict[casterBPet.pet.id].eleType;
     }
 
     static getBattleType(casterBPet: BattlePet, skillModel?: SkillModel): BattleType {
         const spBT = skillModel ? skillModel.spBattleType : undefined;
-        return spBT || casterBPet.pet2.exBattleTypes.getLast() || petModelDict[casterBPet.pet.id].battleType;
+        return spBT || casterBPet.pet2.exBattleTypes.getLast() || PetModelDict[casterBPet.pet.id].battleType;
     }
 
     // -----------------------------------------------------------------

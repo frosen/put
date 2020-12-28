@@ -12,7 +12,7 @@ import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CellUpdateDisplay } from '../../page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
 import { PageActQuester } from './PageActQuester';
 import { CellQuest } from '../cells/cell_quest/scripts/CellQuest';
-import { questModelDict } from '../../../configs/QuestModelDict';
+import { QuestModelDict } from '../../../configs/QuestModelDict';
 
 @ccclass
 export class PageActQuesterLVD extends ListViewDelegate {
@@ -58,7 +58,7 @@ export class PageActQuesterLVD extends ListViewDelegate {
         } else {
             const idx = rowIdx - 1;
             const quest = this.page.pADQuester.quests[idx];
-            const questModel = questModelDict[quest.id];
+            const questModel = QuestModelDict[quest.id];
             const questInfo = this.page.acceQuestDict[quest.id] || null;
             cell.setData(questModel, quest, questInfo);
         }
