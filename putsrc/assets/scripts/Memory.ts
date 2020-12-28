@@ -1197,7 +1197,7 @@ export class GameDataTool {
     static checkMergePet(gameData: GameData, pet: Pet): string {
         if (pet.state !== PetState.rest) return '精灵未在休息状态，无法融合';
 
-        if (pet.prvty < PetTool.PrvtyMergeNeed) return '精灵融合需要默契值';
+        if (pet.prvty < PetTool.PrvtyMergeNeed) return '融合需要精灵默契值至少35点';
 
         const mergeLv = PetTool.getCurMergeLv(pet);
         if (pet.lv < mergeLv) return `精灵下次融合需达到${mergeLv}级，目前无法融合`;
