@@ -807,7 +807,7 @@ export const SkillModelDict: { [key: string]: SkillModel } = {
     },
     JingShenRanJin: {
         id: 'JingShenRanJin',
-        cnName: '灵能燃尽',
+        cnName: '精神燃尽',
         skillType: 2,
         dirType: 1,
         aimType: 1,

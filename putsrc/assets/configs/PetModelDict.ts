@@ -26,8 +26,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 16,
         baseElegant: 100,
         addElegant: 9,
-        selfSkillIds: ['FangHuZhao', 'BengHuai'],
-        selfFeatureIds: ['addAtkDmg', 'hurtGotRage', 'baseDurability', 'deadFangHu', 'addHpMax', 'hitWithEarth']
+        selfSkillIds: [
+            'FangHuZhao',
+            'BengHuai'
+        ],
+        selfFeatureIds: [
+            'addAtkDmg',
+            'hurtGotRage',
+            'baseDurability',
+            'deadFangHu',
+            'addHpMax',
+            'hitWithEarth'
+        ]
     },
     NeiRanJiShou: {
         id: 'NeiRanJiShou',
@@ -48,8 +58,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 15,
         baseElegant: 100,
         addElegant: 15,
-        selfSkillIds: ['HuoYanDan', 'BaoZha'],
-        selfFeatureIds: ['baseStrength', 'addCritRate', 'addCritDmgRate', 'castUlti', 'castFire', 'hurtWithAss']
+        selfSkillIds: [
+            'HuoYanDan',
+            'BaoZha'
+        ],
+        selfFeatureIds: [
+            'baseStrength',
+            'addCritRate',
+            'addCritDmgRate',
+            'castUlti',
+            'castFire',
+            'hurtWithAss'
+        ]
     },
     FangShengJiXieBi: {
         id: 'FangShengJiXieBi',
@@ -70,8 +90,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 8,
         baseElegant: 120,
         addElegant: 13,
-        selfSkillIds: ['ChaoZhongJi', 'FangHuZhao'],
-        selfFeatureIds: ['addAtkMax', 'beginReLi', 'hitKill', 'killAddHp', 'addEvdRate', 'baseAgility']
+        selfSkillIds: [
+            'ChaoZhongJi',
+            'FangHuZhao'
+        ],
+        selfFeatureIds: [
+            'addAtkMax',
+            'beginReLi',
+            'hitKill',
+            'killAddHp',
+            'addEvdRate',
+            'baseAgility'
+        ]
     },
     YaHuHanJuRen: {
         id: 'YaHuHanJuRen',
@@ -92,8 +122,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 14,
         baseElegant: 50,
         addElegant: 18,
-        selfSkillIds: ['ZhuoShao', 'HuoYanDan'],
-        selfFeatureIds: ['addSklDmg', 'hitWithFire', 'castByPetCount', 'castByCombo', 'hurtRdcMp', 'addSklMax']
+        selfSkillIds: [
+            'ZhuoShao',
+            'HuoYanDan'
+        ],
+        selfFeatureIds: [
+            'addSklDmg',
+            'hitWithFire',
+            'castByPetCount',
+            'castByCombo',
+            'hurtRdcMp',
+            'addSklMax'
+        ]
     },
     ZiJingMieHuoQi: {
         id: 'ZiJingMieHuoQi',
@@ -114,8 +154,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 21,
         baseElegant: 90,
         addElegant: 12,
-        selfSkillIds: ['JingJie', 'JingZhongChangMing'],
-        selfFeatureIds: ['hitRdcRg', 'baseSensitivity', 'killAddAllHp', 'hitRdcMp', 'hitWithWater', 'hurtWithAtk']
+        selfSkillIds: [
+            'JingJie',
+            'JingZhongChangMing'
+        ],
+        selfFeatureIds: [
+            'hitRdcRg',
+            'baseSensitivity',
+            'killAddAllHp',
+            'hitRdcMp',
+            'hitWithWater',
+            'hurtWithAtk'
+        ]
     },
     ShuiLengJiQiRen: {
         id: 'ShuiLengJiQiRen',
@@ -136,8 +186,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 11,
         baseElegant: 80,
         addElegant: 16,
-        selfSkillIds: ['ShuiLengDan', 'ShuangDong'],
-        selfFeatureIds: ['castWater', 'addByLuck', 'hurtByHp', 'killRdcCD', 'hitByHp', 'baseConcentration']
+        selfSkillIds: [
+            'ShuiLengDan',
+            'ShuangDong'
+        ],
+        selfFeatureIds: [
+            'castWater',
+            'addByLuck',
+            'hurtByHp',
+            'killRdcCD',
+            'hitByHp',
+            'baseConcentration'
+        ]
     },
     JiXieMaoMi: {
         id: 'JiXieMaoMi',
@@ -158,8 +218,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 19,
         baseElegant: 150,
         addElegant: 21,
-        selfSkillIds: ['ReLi', 'JingShenRanJin'],
-        selfFeatureIds: ['addMpMax', 'baseElegant', 'addAtkBySkl', 'hurtGotMp', 'hurtWithShoot', 'hitAddMp']
+        selfSkillIds: [
+            'ReLi',
+            'JingShenRanJin'
+        ],
+        selfFeatureIds: [
+            'addMpMax',
+            'baseElegant',
+            'addAtkBySkl',
+            'hurtGotMp',
+            'hurtWithShoot',
+            'hitAddMp'
+        ]
     },
     HeiFengWuRenJi: {
         id: 'HeiFengWuRenJi',
@@ -180,8 +250,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 7,
         baseElegant: 100,
         addElegant: 13,
-        selfSkillIds: ['YinSuQiLiu', 'TaiKongWu'],
-        selfFeatureIds: ['addHitRate', 'addDmgRdcHp', 'baseAgility', 'hitByHp', 'hitWithAir', 'killAddAllHp']
+        selfSkillIds: [
+            'YinSuQiLiu',
+            'TaiKongWu'
+        ],
+        selfFeatureIds: [
+            'addHitRate',
+            'addDmgRdcHp',
+            'baseAgility',
+            'hitByHp',
+            'hitWithAir',
+            'killAddAllHp'
+        ]
     },
     CiHuaYouLing: {
         id: 'CiHuaYouLing',
@@ -202,8 +282,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 13,
         baseElegant: 130,
         addElegant: 11,
-        selfSkillIds: ['DianZiMaiChong', 'ZhiMang'],
-        selfFeatureIds: ['hitWithLight', 'castLight', 'addDfsRate', 'addHpRdcMp', 'baseDurability', 'castConDmg']
+        selfSkillIds: [
+            'DianZiMaiChong',
+            'ZhiMang'
+        ],
+        selfFeatureIds: [
+            'hitWithLight',
+            'castLight',
+            'addDfsRate',
+            'addHpRdcMp',
+            'baseDurability',
+            'castConDmg'
+        ]
     },
     DianZiShouWei: {
         id: 'DianZiShouWei',
@@ -224,8 +314,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 12,
         baseElegant: 80,
         addElegant: 12,
-        selfSkillIds: ['MieShi', 'ShengGuang'],
-        selfFeatureIds: ['addHpMax', 'beginAddRage', 'hurtAndHurt', 'hurt', 'addAtkMax', 'hurtOthers']
+        selfSkillIds: [
+            'MieShi',
+            'ShengGuang'
+        ],
+        selfFeatureIds: [
+            'addHpMax',
+            'beginAddRage',
+            'hurtAndHurt',
+            'hurt',
+            'addAtkMax',
+            'hurtOthers'
+        ]
     },
     CaoPingShouGeZhe: {
         id: 'CaoPingShouGeZhe',
@@ -246,8 +346,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 20,
         baseElegant: 90,
         addElegant: 10,
-        selfSkillIds: ['JiFengRen', 'TaiFeng'],
-        selfFeatureIds: ['killAddMp', 'addEvdRate', 'deadHurt', 'hurtFullRage', 'addCritDmgRate', 'baseSensitivity']
+        selfSkillIds: [
+            'JiFengRen',
+            'TaiFeng'
+        ],
+        selfFeatureIds: [
+            'killAddMp',
+            'addEvdRate',
+            'deadHurt',
+            'hurtFullRage',
+            'addCritDmgRate',
+            'baseSensitivity'
+        ]
     },
     JiXieXiuLiShi: {
         id: 'JiXieXiuLiShi',
@@ -268,8 +378,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 15,
         baseElegant: 60,
         addElegant: 8,
-        selfSkillIds: ['RongJie', 'KuangReZhiWu'],
-        selfFeatureIds: ['addSklMax', 'healByCombo', 'hitWithFire', 'baseConcentration', 'addMpMax', 'hurtByHp']
+        selfSkillIds: [
+            'RongJie',
+            'KuangReZhiWu'
+        ],
+        selfFeatureIds: [
+            'addSklMax',
+            'healByCombo',
+            'hitWithFire',
+            'baseConcentration',
+            'addMpMax',
+            'hurtByHp'
+        ]
     },
     HuoHuoTu: {
         id: 'HuoHuoTu',
@@ -290,8 +410,18 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 10,
         baseElegant: 100,
         addElegant: 17,
-        selfSkillIds: ['LiaoYuan', 'HuoYanDan'],
-        selfFeatureIds: ['castFire', 'hurtWithCast', 'castEleRein', 'hitAddRg', 'castByPetCount', 'baseStrength']
+        selfSkillIds: [
+            'LiaoYuan',
+            'HuoYanDan'
+        ],
+        selfFeatureIds: [
+            'castFire',
+            'hurtWithCast',
+            'castEleRein',
+            'hitAddRg',
+            'castByPetCount',
+            'baseStrength'
+        ]
     },
     BaiLanYuYan: {
         id: 'BaiLanYuYan',
@@ -312,7 +442,17 @@ export const PetModelDict: { [key: string]: PetModel } = {
         addSensitivity: 17,
         baseElegant: 60,
         addElegant: 18,
-        selfSkillIds: ['HuiChunShu', 'YuYiShengCheng'],
-        selfFeatureIds: ['heal', 'hurtWithAss', 'healByHp', 'deadHuiChun', 'addCritRate', 'hurtGotMp']
+        selfSkillIds: [
+            'HuiChunShu',
+            'YuYiShengCheng'
+        ],
+        selfFeatureIds: [
+            'heal',
+            'hurtWithAss',
+            'healByHp',
+            'deadHuiChun',
+            'addCritRate',
+            'hurtGotMp'
+        ]
     }
 };

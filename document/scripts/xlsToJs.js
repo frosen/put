@@ -40,7 +40,7 @@ module.exports = function (xlsFile, jsFile, sheetName, dataName, className, call
  * 数据列表，从document中转义而来
  * luleyan
  */
-${className ? '\nimport { ' + className + " } from '../scripts/DataModel';\n" : ''}  
+${className ? '\nimport { ' + className + " } from '../scripts/DataModel';\n" : ''}
 export const ${dataName}${className ? ': { [key: string]: ' + className + ' }' : ''} = `;
 
     Fs.writeFileSync(jsFile, head + jsStr + ';\n');
