@@ -104,13 +104,13 @@ type DetailCell = CellPetName &
     CellFeature &
     CellMerge;
 
-function numStr(n: number): string {
+export function petAttrNumStr(n: number): string {
     return (n * 0.1).toFixed(1);
 }
 
 function attriTip(attri: number, attriOri: number, tip: string): string {
-    const strO = numStr(attriOri);
-    const strD = numStr(attri - attriOri);
+    const strO = petAttrNumStr(attriOri);
+    const strD = petAttrNumStr(attri - attriOri);
     return `基础值 ${strO}\n装备特性加成 ${strD}\n${tip}`;
 }
 
@@ -301,14 +301,18 @@ export class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx === 7) {
             cell.setData('一级属性');
         } else if (rowIdx === 8) {
-            cell.setData1('力量', numStr(pet2.strength), attriTip(pet2.strength, pet2.strengthOri, STR_TIP));
-            cell.setData2('专注', numStr(pet2.concentration), attriTip(pet2.concentration, pet2.concentrationOri, CON_TIP));
+            cell.setData1('力量', petAttrNumStr(pet2.strength), attriTip(pet2.strength, pet2.strengthOri, STR_TIP));
+            cell.setData2(
+                '专注',
+                petAttrNumStr(pet2.concentration),
+                attriTip(pet2.concentration, pet2.concentrationOri, CON_TIP)
+            );
         } else if (rowIdx === 9) {
-            cell.setData1('耐久', numStr(pet2.durability), attriTip(pet2.durability, pet2.durabilityOri, DUN_TIP));
-            cell.setData2('灵敏', numStr(pet2.agility), attriTip(pet2.agility, pet2.agilityOri, AGI_TIP));
+            cell.setData1('耐久', petAttrNumStr(pet2.durability), attriTip(pet2.durability, pet2.durabilityOri, DUN_TIP));
+            cell.setData2('敏捷', petAttrNumStr(pet2.agility), attriTip(pet2.agility, pet2.agilityOri, AGI_TIP));
         } else if (rowIdx === 10) {
-            cell.setData1('感知', numStr(pet2.sensitivity), attriTip(pet2.durability, pet2.durabilityOri, SEN_TIP));
-            cell.setData2('优雅', numStr(pet2.elegant), attriTip(pet2.durability, pet2.durabilityOri, ELG_TIP));
+            cell.setData1('感知', petAttrNumStr(pet2.sensitivity), attriTip(pet2.sensitivity, pet2.sensitivityOri, SEN_TIP));
+            cell.setData2('优雅', petAttrNumStr(pet2.elegant), attriTip(pet2.elegant, pet2.elegantOri, ELG_TIP));
         }
         // 第四组
         else if (rowIdx === 11) {
@@ -317,8 +321,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData1('血量上限', String(Math.floor(pet2.hpMax * 0.1)), HP_TIP);
             cell.setData2('灵能上限', String(pet2.mpMax), MP_TIP);
         } else if (rowIdx === 13) {
-            cell.setData1('攻击伤害', `${numStr(pet2.atkDmgFrom)}~${numStr(pet2.atkDmgTo)}`, ATK_TIP);
-            cell.setData2('招式伤害', `${numStr(pet2.sklDmgFrom)}~${numStr(pet2.sklDmgTo)}`, SKL_TIP);
+            cell.setData1('攻击伤害', `${petAttrNumStr(pet2.atkDmgFrom)}~${petAttrNumStr(pet2.atkDmgTo)}`, ATK_TIP);
+            cell.setData2('招式伤害', `${petAttrNumStr(pet2.sklDmgFrom)}~${petAttrNumStr(pet2.sklDmgTo)}`, SKL_TIP);
         }
         // 第五组
         else if (rowIdx === 14) {

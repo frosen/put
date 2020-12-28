@@ -151,7 +151,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             pet.agility += datas[0] * 10;
         },
         getInfo(datas: number[]): string {
-            return `基础灵敏增加${datas[0]}点`;
+            return `基础敏捷增加${datas[0]}点`;
         }
     },
     [FtN.sensitivity]: {
@@ -217,7 +217,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             pet.agility += pet.agilityOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `基础灵敏增加${rdP(datas[0])}%`;
+            return `基础敏捷增加${rdP(datas[0])}%`;
         }
     },
     [FtN.baseSensitivity]: {
