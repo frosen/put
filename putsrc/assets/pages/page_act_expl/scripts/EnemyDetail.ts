@@ -141,7 +141,7 @@ export class EnemyDetail extends cc.Component {
                 infoNode.parent = this.featureLayout1.node;
             }
         } else {
-            infoNode = this.featureLayout1.node.children[idx - 4];
+            infoNode = this.featureLayout2.node.children[idx - 4];
             if (!infoNode) {
                 infoNode = cc.instantiate(this.infoNodePrefab);
                 infoNode.parent = this.featureLayout2.node;
