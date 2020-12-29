@@ -162,7 +162,7 @@ function checkFeatureModelDict() {
         nameDict[model.cnBrief] = true;
         needAtLeast(
             model,
-            ['onBaseSetting', 'onSetting', 'onBtlStart', 'onAtk', 'onCast', 'onHurt', 'onHeal', 'onEDead', 'onDead'],
+            ['onBaseSetting', 'onSetting', 'onBtlStart', 'onAtk', 'onCast', 'onHurt', 'onHeal', 'onEDead', 'onDead', 'onTurn'],
             1,
             'FeatureModelDict'
         );

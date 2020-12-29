@@ -8,7 +8,7 @@ import { GameDataTool, PetTool } from '../scripts/Memory';
 import { BtlPageBase } from './BtlPageBase';
 
 import { SkillModelDict } from '../configs/SkillModelDict';
-import { BuffModelDict } from '../configs/BuffModelDict';
+import { BuffModelDict, BufN } from '../configs/BuffModelDict';
 import { PetModelDict } from '../configs/PetModelDict';
 
 import { deepCopy } from '../scripts/Utils';
@@ -344,7 +344,7 @@ export class BtlCtrlr {
     }
 
     handleBuff(team: BattleTeam) {
-        const newBuffDataList: { aim: BattlePet; caster: BattlePet; id: string; time: number }[] = [];
+        const newBuffDataList: { aim: BattlePet; caster: BattlePet; id: string; time: number; src: string }[] = [];
 
         for (const pet of team.pets) {
             for (let buffIdx = pet.buffDatas.length - 1; buffIdx >= 0; buffIdx--) {
@@ -380,7 +380,9 @@ export class BtlCtrlr {
                         }
                         if (buffOutput.newBuffs) {
                             for (const { aim, id, time } of buffOutput.newBuffs) {
-                                newBuffDataList.push({ aim: aim || pet, caster: buffData.caster, id, time });
+                                const caster = buffData.caster;
+                                const src = buffModel.cnName + '效果';
+                                newBuffDataList.push({ aim: aim || pet, caster, id, time, src });
                             }
                         }
                     }
@@ -396,8 +398,8 @@ export class BtlCtrlr {
             }
         }
 
-        for (const { aim, caster, id, time } of newBuffDataList) {
-            this.addBuff(aim, caster, id, time);
+        for (const { aim, caster, id, time, src } of newBuffDataList) {
+            this.addBuff(aim, caster, id, time, src);
         }
     }
 
@@ -413,7 +415,7 @@ export class BtlCtrlr {
                 const selfPet = rb.selfTeam.pets[index];
                 const enemyPet = rb.enemyTeam.pets[index];
                 const times = BtlCtrlr.calcSneakAttackTimes(selfPet, enemyPet);
-                this.addBuff(enemyPet, selfPet, 'JingZhi', times);
+                this.addBuff(enemyPet, selfPet, BufN.JingZhi, times, '偷袭');
             }
         }
 
@@ -622,16 +624,16 @@ export class BtlCtrlr {
     castBuff(battlePet: BattlePet, aim: BattlePet, skillModel: SkillModel, beMain: boolean) {
         const buffId = beMain ? skillModel.mainBuffId : skillModel.subBuffId;
         const buffTime = beMain ? skillModel.mainBuffTime : skillModel.subBuffTime;
-        this.addBuff(aim, battlePet, buffId, buffTime);
+        this.addBuff(aim, battlePet, buffId, buffTime, skillModel.cnName);
     }
 
-    addBuff(aim: BattlePet, caster: BattlePet, buffId: string, buffTime: number) {
+    addBuff(aim: BattlePet, caster: BattlePet, buffId: string, buffTime: number, src: string) {
         const buffModel = BuffModelDict[buffId];
         for (let index = 0; index < aim.buffDatas.length; index++) {
             const buffData = aim.buffDatas[index];
             if (buffData.id === buffId) {
                 if (buffTime > buffData.time) buffData.time = buffTime;
-                if (this.logging) this.logBuff(aim, buffModel.cnName);
+                if (this.logging) this.logBuff(aim, buffModel.cnName, caster, src);
                 return;
             }
         }
@@ -644,7 +646,7 @@ export class BtlCtrlr {
 
         if (buffModel.onStarted) buffData.data = buffModel.onStarted(aim, caster, this);
         if (this.page) this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime, aim.buffDatas.length - 1);
-        if (this.logging) this.logBuff(aim, buffModel.cnName);
+        if (this.logging) this.logBuff(aim, buffModel.cnName, caster, src);
     }
 
     doNormalAttack(battlePet: BattlePet): boolean {
@@ -967,8 +969,8 @@ export class BtlCtrlr {
         this.updater.log(ExplLogType.miss, dataList);
     }
 
-    logBuff(aim: BattlePet, name: string) {
-        const dataList = [PetTool.getCnName(aim.pet), name];
+    logBuff(aim: BattlePet, buffName: string, caster: BattlePet, src: string) {
+        const dataList = [PetTool.getCnName(aim.pet), buffName, PetTool.getCnName(caster.pet), src];
         this.updater.log(ExplLogType.buff, dataList);
     }
 

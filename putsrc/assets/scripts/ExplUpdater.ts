@@ -1472,7 +1472,7 @@ export class ExplUpdater {
     logList: ExplLogData[] = [];
 
     log(type: ExplLogType, data: any) {
-        cc.log('PUT EXPL: ', type, JSON.stringify(data));
+        if (CC_DEBUG) cc.log('PUT EXPL: ', type, JSON.stringify(data));
         this.logList[this.logList.length] = { type, data };
     }
 

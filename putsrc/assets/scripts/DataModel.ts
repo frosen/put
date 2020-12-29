@@ -152,7 +152,7 @@ export class SpcBtlPet {
     lv!: number;
     ampl!: number;
     features!: Feature[];
-    bossName!: string;
+    bossName?: string;
     bossType!: BossType; // 类型以给boss名字加颜色
 }
 

@@ -546,6 +546,7 @@ export class BaseCtrlr extends cc.Component {
     initPops() {
         this.toastNode.opacity = 0;
 
+        this.alertNode.opacity = 0;
         this.alertLbl = this.alertNode.getChildByName('text_bg').getChildByName('text').getComponent(cc.Label);
         this.alertBtn1Node = this.alertNode.getChildByName('btn1');
         this.alertBtn2Node = this.alertNode.getChildByName('btn2');
@@ -653,8 +654,9 @@ export class BaseCtrlr extends cc.Component {
         this.alertLbl.node.parent.getComponent(cc.Layout).updateLayout();
         this.alertNode.getComponent(cc.Layout).updateLayout();
 
-        this.alertNode.y = -10;
         this.alertNode.stopAllActions();
+        this.alertNode.opacity = 255;
+        this.alertNode.y = -10;
         cc.tween(this.alertNode).to(0.3, { y: this.alertNode.height }, { easing: cc.easing.quadOut }).start();
 
         this.popMask();
@@ -662,7 +664,10 @@ export class BaseCtrlr extends cc.Component {
 
     closeAlert() {
         this.alertNode.stopAllActions();
-        cc.tween(this.alertNode).to(0.3, { y: -10 }, { easing: cc.easing.quadIn }).start();
+        cc.tween(this.alertNode)
+            .to(0.3, { y: -10 }, { easing: cc.easing.quadIn })
+            .call(() => (this.alertNode.opacity = 0))
+            .start();
 
         this.closeMask();
     }

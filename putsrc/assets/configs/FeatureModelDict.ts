@@ -8,6 +8,8 @@ import { BtlCtrlr } from '../scripts/BtlCtrlr';
 import { FeatureModel, FeatureBtlData, SkillType } from '../scripts/DataModel';
 import { Pet2, BattlePet, RageMax } from '../scripts/DataOther';
 import { EleType, BattleType } from '../scripts/DataSaved';
+import { BufN } from './BuffModelDict';
+import { SkillModelDict } from './SkillModelDict';
 
 function rd(n: number): string {
     if (Math.round(n) * 10 === Math.round(n * 10)) return String(Math.round(n));
@@ -107,7 +109,10 @@ export class FtN {
     static deadHuiChun = 'deadHuiChun';
 }
 
-export class BFtN {}
+export class BFtN {
+    static bossUlti = 'bossUlti';
+    static lightBomb = 'lightBomb';
+}
 
 export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
     [FtN.strength]: {
@@ -695,7 +700,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
     },
     [FtN.castHurtMe]: {
         id: FtN.castHurtMe,
-        cnBrief: '命',
+        cnBrief: '蜂',
         dataAreas: [[0.03, 0.03]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
             aim.hp -= bData.finalDmg * datas[0];
@@ -707,7 +712,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
     },
     [FtN.castUlti]: {
         id: FtN.castUlti,
-        cnBrief: '绝',
+        cnBrief: '星',
         dataAreas: [[0.08, 0.08]],
         onCast(pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData): void {
             if (bData.skillModel.skillType === SkillType.ultimate) aim.hp -= bData.finalDmg * datas[0];
@@ -999,7 +1004,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '热',
         dataAreas: [[1, 1]],
         onBtlStart(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
-            if (ctrlr.ranSd() < rate(datas[0], 0.05, 0.9)) ctrlr.addBuff(pet, pet, 'ReLi', 3);
+            if (ctrlr.ranSd() < rate(datas[0], 0.05, 0.9)) ctrlr.addBuff(pet, pet, 'ReLi', 3, this.cnBrief + '特性');
         },
         getInfo(datas: number[]): string {
             return `战斗开始时，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得热力，持续3回合`;
@@ -1075,7 +1080,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
             for (const petIn of ctrlr.getTeam(pet).pets) {
-                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, 'FangHu', cd);
+                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, 'FangHu', cd, this.cnBrief + '特性');
             }
         },
         getInfo(datas: number[]): string {
@@ -1089,7 +1094,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
             for (const petIn of ctrlr.getTeam(pet).pets) {
-                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, 'HuiChun', cd);
+                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, 'HuiChun', cd, this.cnBrief + '特性');
             }
         },
         getInfo(datas: number[]): string {
@@ -1098,6 +1103,38 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
     }
 };
 
-export const BossFeatureModelDict: { [key: string]: FeatureModel } = {};
+export const BossFeatureModelDict: { [key: string]: FeatureModel } = {
+    [BFtN.bossUlti]: {
+        id: BFtN.bossUlti,
+        cnBrief: '绝杀',
+        dataAreas: [[1, 1]],
+        onTurn(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) {
+            const cdMax = 10 - datas[0];
+            for (const sklData of pet.skillDatas) {
+                if (SkillModelDict[sklData.id].skillType === SkillType.ultimate && sklData.cd > cdMax) sklData.cd = cdMax;
+            }
+        },
+        getInfo(datas: number[]): string {
+            return `[BOSS]绝杀技冷却只有${10 - datas[0]}回合`;
+        }
+    },
+    [BFtN.lightBomb]: {
+        id: BFtN.lightBomb,
+        cnBrief: '强光',
+        dataAreas: [[1, 1]],
+        onTurn(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) {
+            const selected = ctrlr.getTeam(pet).pets[Math.floor(ctrlr.ranSd() * 5)];
+            ctrlr.addBuff(selected, pet, BufN.ShanYao, 5, this.cnBrief + '特性');
+        },
+        onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
+            for (const petIn of ctrlr.getTeam(pet).pets) {
+                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, BufN.ZhuoShao, 10, this.cnBrief + '特性');
+            }
+        },
+        getInfo(datas: number[]): string {
+            return `[BOSS]每回合给队友加Buff，但死后会爆炸`;
+        }
+    }
+};
 
 export const FeatureModelDict: { [key: string]: FeatureModel } = Object.assign({}, NormalFeatureModelDict, BossFeatureModelDict);

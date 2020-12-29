@@ -610,7 +610,7 @@ export class RealBattle {
             this.enemyTeam.reset(spcBtlModel.pets.length, true, (bPet: BattlePet, petIdx: number) => {
                 const spcBtlPet = spcBtlModel.pets[petIdx];
                 const ePet = PetTool.create(spcBtlPet.id, spcBtlPet.lv, [], spcBtlPet.features);
-                ePet.nickname = spcBtlPet.bossName;
+                ePet.nickname = spcBtlPet.bossName || '';
                 if (spcBtlPet.bossType === BossType.main) ePet.master = BossMaster.main;
                 else if (spcBtlPet.bossType === BossType.sub) ePet.master = BossMaster.sub;
                 bPet.init(ePet, spcBtlPet.ampl, PrvtyMax);
