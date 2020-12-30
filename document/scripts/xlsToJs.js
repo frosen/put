@@ -35,11 +35,20 @@ module.exports = function (xlsFile, jsFile, sheetName, dataName, className, call
 
     let path = require('path');
 
+    let nameClass = '';
+    if (!(json instanceof Array)) {
+        let names = Object.keys(json);
+        let rawName = className.slice(0, className.indexOf('Model')) + 'N';
+        nameClass = '\n\nexport class ' + rawName + ' {\n';
+        for (const name of names) nameClass += `    static ${name} = '${name}';\n`;
+        nameClass += '}';
+    }
+
     let head = `/*
  * ${path.basename(jsFile)}
  * 数据列表，从document中转义而来
  * luleyan
- */
+ */${nameClass}
 ${className ? '\nimport { ' + className + " } from '../scripts/DataModel';\n" : ''}
 export const ${dataName}${className ? ': { [key: string]: ' + className + ' }' : ''} = `;
 

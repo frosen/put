@@ -4,6 +4,33 @@
  * luleyan
  */
 
+export class DrinkN {
+    static LingGanYaoJi1 = 'LingGanYaoJi1';
+    static LingGanYaoJi2 = 'LingGanYaoJi2';
+    static LingGanYaoJi3 = 'LingGanYaoJi3';
+    static ZhiHuiYaoJi1 = 'ZhiHuiYaoJi1';
+    static ZhiHuiYaoJi2 = 'ZhiHuiYaoJi2';
+    static ZhiHuiYaoJi3 = 'ZhiHuiYaoJi3';
+    static MoXingKaFei1 = 'MoXingKaFei1';
+    static MoXingKaFei2 = 'MoXingKaFei2';
+    static MoXingKaFei3 = 'MoXingKaFei3';
+    static QingCaoCha1 = 'QingCaoCha1';
+    static QingCaoCha2 = 'QingCaoCha2';
+    static QingCaoCha3 = 'QingCaoCha3';
+    static MiJiu1 = 'MiJiu1';
+    static MiJiu2 = 'MiJiu2';
+    static MiJiu3 = 'MiJiu3';
+    static YueGuangJiu1 = 'YueGuangJiu1';
+    static YueGuangJiu2 = 'YueGuangJiu2';
+    static YueGuangJiu3 = 'YueGuangJiu3';
+    static QingShuangMoShui1 = 'QingShuangMoShui1';
+    static QingShuangMoShui2 = 'QingShuangMoShui2';
+    static QingShuangMoShui3 = 'QingShuangMoShui3';
+    static MeiLiMoShui1 = 'MeiLiMoShui1';
+    static MeiLiMoShui2 = 'MeiLiMoShui2';
+    static MeiLiMoShui3 = 'MeiLiMoShui3';
+}
+
 import { DrinkModel } from '../scripts/DataModel';
 
 export const DrinkModelDict: { [key: string]: DrinkModel } = {

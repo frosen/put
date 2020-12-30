@@ -4,19 +4,6 @@
  * luleyan
  */
 
-import { ActPosModel, ActPosType } from '../scripts/DataModel';
-import { DrinkModelDict } from './DrinkModelDict';
-import { EqpAmplrModelDict } from './EqpAmplrModelDict';
-import { EquipModelDict } from './EquipModelDict';
-import { PetModelDict } from './PetModelDict';
-import { QuestModelDict } from './QuestModelDict';
-
-const p = PetModelDict;
-const e = EquipModelDict;
-const eI = EqpAmplrModelDict;
-const dI = DrinkModelDict;
-const q = QuestModelDict;
-
 export class PosN {
     static YiShanJiDi = 'YiShanJiDi';
     static KeChuangXiaoJing = 'KeChuangXiaoJing';
@@ -35,6 +22,19 @@ export class PAKey {
     static merger = 'merger';
 }
 
+import { ActPosModel, ActPosType } from '../scripts/DataModel';
+import { DrinkN } from './DrinkModelDict';
+import { EqpAmplrN } from './EqpAmplrModelDict';
+import { EquipN } from './EquipModelDict';
+import { PetN } from './PetModelDict';
+import { QuestN } from './QuestModelDict';
+
+const p = PetN;
+const e = EquipN;
+const eI = EqpAmplrN;
+const dI = DrinkN;
+const q = QuestN;
+
 export const ActPosModelDict: { [key: string]: ActPosModel } = {
     [PosN.YiShanJiDi]: {
         id: PosN.YiShanJiDi,
@@ -44,30 +44,30 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
         evts: [],
         actMDict: {
             [PAKey.shop]: {
-                goodsIdList: [eI.DaMoShi.id, eI.DaMoShi.id, dI.LingGanYaoJi1.id]
+                goodsIdList: [eI.DaMoShi, eI.DaMoShi, dI.LingGanYaoJi1]
             },
             [PAKey.eqpMkt]: {
                 eqpIdLists: [
-                    [e.DuanJian.id, e.ChangRenJian.id],
-                    [e.TieZhiYuGan.id, e.JingZhiYuGan.id]
+                    [e.DuanJian, e.ChangRenJian],
+                    [e.TieZhiYuGan, e.JingZhiYuGan]
                 ]
             },
             [PAKey.petMkt]: {
                 petIdLists: [
-                    [p.NeiRanJiShou.id, p.FangShengJiXieBi.id, p.YaHuHanJuRen.id, p.ZiJingMieHuoQi.id, p.CaoPingShouGeZhe.id],
-                    [p.ShuiLengJiQiRen.id, p.DianZiShouWei.id]
+                    [p.NeiRanJiShou, p.FangShengJiXieBi, p.YaHuHanJuRen, p.ZiJingMieHuoQi, p.CaoPingShouGeZhe],
+                    [p.ShuiLengJiQiRen, p.DianZiShouWei]
                 ]
             },
             [PAKey.work]: {},
             [PAKey.quester]: {
-                questIdList: [q.LingJianHuiShou.id, q.CeShiBaoGao.id, q.GuiXunYuChengFa.id, q.AnQuanSongDa.id, q.HuiYiTongZhi.id]
+                questIdList: [q.LingJianHuiShou, q.CeShiBaoGao, q.GuiXunYuChengFa, q.AnQuanSongDa, q.HuiYiTongZhi]
             },
             [PAKey.aCntr]: {
                 awardList: [
-                    { need: 1, price: 25, fullId: eI.DaMoShi.id },
-                    { need: 2, price: 250, fullId: eI.DaMoShi.id },
-                    { need: 3, price: 25, fullId: eI.DaMoShi.id },
-                    { need: 4, price: 250, fullId: eI.DaMoShi.id }
+                    { need: 1, price: 25, fullId: eI.DaMoShi },
+                    { need: 2, price: 250, fullId: eI.DaMoShi },
+                    { need: 3, price: 25, fullId: eI.DaMoShi },
+                    { need: 4, price: 250, fullId: eI.DaMoShi }
                 ]
             },
             [PAKey.rcclr]: {},
@@ -86,10 +86,10 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
             [PAKey.expl]: {
                 stepMax: 2,
                 petIdLists: [
-                    [p.NeiRanJiShou.id, p.FangShengJiXieBi.id, p.YaHuHanJuRen.id, p.ZiJingMieHuoQi.id, p.CaoPingShouGeZhe.id],
-                    [p.NeiRanJiShou.id, p.FangShengJiXieBi.id, p.ZiJingMieHuoQi.id, p.ShuiLengJiQiRen.id, p.DianZiShouWei.id]
+                    [p.NeiRanJiShou, p.FangShengJiXieBi, p.YaHuHanJuRen, p.ZiJingMieHuoQi, p.CaoPingShouGeZhe],
+                    [p.NeiRanJiShou, p.FangShengJiXieBi, p.ZiJingMieHuoQi, p.ShuiLengJiQiRen, p.DianZiShouWei]
                 ],
-                itemIdLists: [[eI.DaMoShi.id], [eI.DaMoShi.id]],
+                itemIdLists: [[eI.DaMoShi], [eI.DaMoShi]],
                 eqpIdLists: []
             }
         },
@@ -119,10 +119,10 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
             [PAKey.expl]: {
                 stepMax: 2,
                 petIdLists: [
-                    [p.NeiRanJiShou.id, p.FangShengJiXieBi.id, p.YaHuHanJuRen.id, p.ZiJingMieHuoQi.id, p.CaoPingShouGeZhe.id],
-                    [p.NeiRanJiShou.id, p.FangShengJiXieBi.id, p.ZiJingMieHuoQi.id, p.ShuiLengJiQiRen.id, p.DianZiShouWei.id]
+                    [p.NeiRanJiShou, p.FangShengJiXieBi, p.YaHuHanJuRen, p.ZiJingMieHuoQi, p.CaoPingShouGeZhe],
+                    [p.NeiRanJiShou, p.FangShengJiXieBi, p.ZiJingMieHuoQi, p.ShuiLengJiQiRen, p.DianZiShouWei]
                 ],
-                itemIdLists: [[eI.DaMoShi.id], [eI.DaMoShi.id]],
+                itemIdLists: [[eI.DaMoShi], [eI.DaMoShi]],
                 eqpIdLists: []
             }
         },

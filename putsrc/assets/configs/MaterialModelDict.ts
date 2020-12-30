@@ -4,6 +4,12 @@
  * luleyan
  */
 
+export class MaterialN {
+    static YingZhiChiLun = 'YingZhiChiLun';
+    static WuLuCao = 'WuLuCao';
+    static LingQiSuiPian = 'LingQiSuiPian';
+}
+
 import { MaterialModel } from '../scripts/DataModel';
 
 export const MaterialModelDict: { [key: string]: MaterialModel } = {

@@ -4,6 +4,14 @@
  * luleyan
  */
 
+export class QuestN {
+    static LingJianHuiShou = 'LingJianHuiShou';
+    static CeShiBaoGao = 'CeShiBaoGao';
+    static GuiXunYuChengFa = 'GuiXunYuChengFa';
+    static AnQuanSongDa = 'AnQuanSongDa';
+    static HuiYiTongZhi = 'HuiYiTongZhi';
+}
+
 import { QuestModel } from '../scripts/DataModel';
 
 export const QuestModelDict: { [key: string]: QuestModel } = {

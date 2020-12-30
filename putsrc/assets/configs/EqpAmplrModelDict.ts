@@ -4,6 +4,15 @@
  * luleyan
  */
 
+export class EqpAmplrN {
+    static DaMoShi = 'DaMoShi';
+    static QiangHuaShi = 'QiangHuaShi';
+    static JingLianShi = 'JingLianShi';
+    static CuiHuoShi = 'CuiHuoShi';
+    static DianJinShi = 'DianJinShi';
+    static JingHeShi = 'JingHeShi';
+}
+
 import { EqpAmplrModel } from '../scripts/DataModel';
 
 export const EqpAmplrModelDict: { [key: string]: EqpAmplrModel } = {

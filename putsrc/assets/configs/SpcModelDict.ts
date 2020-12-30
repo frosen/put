@@ -4,6 +4,10 @@
  * luleyan
  */
 
+export class SpcN {
+    YiWangShuiJing = 'YiWangShuiJing';
+}
+
 import { SpcModel } from '../scripts/DataModel';
 
 export const SpcModelDict: { [key: string]: SpcModel } = {

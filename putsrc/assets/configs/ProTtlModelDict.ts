@@ -4,8 +4,6 @@
  * luleyan
  */
 
-import { ProTtlModel, ProTtlType } from '../scripts/DataModel';
-
 export class PTN {
     static DaShanRen = 'DaShanRen';
     static XueBa = 'XueBa';
@@ -32,6 +30,8 @@ export class PTN {
     static YiLingZhe = 'KongLingZhe';
     static YingYan = 'YingYan';
 }
+
+import { ProTtlModel, ProTtlType } from '../scripts/DataModel';
 
 export const ProTtlModelDict: { [key: string]: ProTtlModel } = {
     [PTN.DaShanRen]: {

@@ -4,6 +4,25 @@
  * luleyan
  */
 
+export class PetN {
+    static FaTiaoWa = 'FaTiaoWa';
+    static NeiRanJiShou = 'NeiRanJiShou';
+    static FangShengJiXieBi = 'FangShengJiXieBi';
+    static YaHuHanJuRen = 'YaHuHanJuRen';
+    static ZiJingMieHuoQi = 'ZiJingMieHuoQi';
+    static ShuiLengJiQiRen = 'ShuiLengJiQiRen';
+    static JiXieMaoMi = 'JiXieMaoMi';
+    static HeiFengWuRenJi = 'HeiFengWuRenJi';
+    static CiHuaYouLing = 'CiHuaYouLing';
+    static DianZiShouWei = 'DianZiShouWei';
+    static CaoPingShouGeZhe = 'CaoPingShouGeZhe';
+    static JiXieXiuLiShi = 'JiXieXiuLiShi';
+    static HuoHuoTu = 'HuoHuoTu';
+    static BaiLanYuYan = 'BaiLanYuYan';
+    static ZuoZhanQiQiu = 'ZuoZhanQiQiu';
+    static HeZiHeXin = 'HeZiHeXin';
+}
+
 import { PetModel } from '../scripts/DataModel';
 
 export const PetModelDict: { [key: string]: PetModel } = {

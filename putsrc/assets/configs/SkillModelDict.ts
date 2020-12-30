@@ -4,6 +4,55 @@
  * luleyan
  */
 
+export class SkillN {
+    static HuoYanDan = 'HuoYanDan';
+    static LiaoYuan = 'LiaoYuan';
+    static ZhuoShao = 'ZhuoShao';
+    static ReLi = 'ReLi';
+    static ShuiLengDan = 'ShuiLengDan';
+    static JingJie = 'JingJie';
+    static JingZhongChangMing = 'JingZhongChangMing';
+    static YinSuQiLiu = 'YinSuQiLiu';
+    static JiFengRen = 'JiFengRen';
+    static ChaoZhongJi = 'ChaoZhongJi';
+    static LuoShi = 'LuoShi';
+    static FangHuZhao = 'FangHuZhao';
+    static LiZiPao = 'LiZiPao';
+    static GuangLeng = 'GuangLeng';
+    static DianZiMaiChong = 'DianZiMaiChong';
+    static MieShi = 'MieShi';
+    static RongJie = 'RongJie';
+    static HuiChunShu = 'HuiChunShu';
+    static ZhiMang = 'ZhiMang';
+    static LingJing = 'LingJing';
+    static ShuangDong = 'ShuangDong';
+    static DiZhen = 'DiZhen';
+    static BengHuai = 'BengHuai';
+    static DiLie = 'DiLie';
+    static TaiFeng = 'TaiFeng';
+    static KongJuShu = 'KongJuShu';
+    static YueHuo = 'YueHuo';
+    static ShanYao = 'ShanYao';
+    static DuShang = 'DuShang';
+    static XiXueShu = 'XiXueShu';
+    static ZhongJie = 'ZhongJie';
+    static KuangReZhiWu = 'KuangReZhiWu';
+    static YuHe = 'YuHe';
+    static XinGuang = 'XinGuang';
+    static XieE = 'XieE';
+    static ELingGuiChao = 'ELingGuiChao';
+    static BaoZha = 'BaoZha';
+    static TaiKongWu = 'TaiKongWu';
+    static QiMenDunJia = 'QiMenDunJia';
+    static YinYingJiaoSha = 'YinYingJiaoSha';
+    static LiuSha = 'LiuSha';
+    static YuYiShengCheng = 'YuYiShengCheng';
+    static DunQiang = 'DunQiang';
+    static NingJingZhiYu = 'NingJingZhiYu';
+    static JingShenRanJin = 'JingShenRanJin';
+    static XiaZhi = 'XiaZhi';
+}
+
 import { SkillModel } from '../scripts/DataModel';
 
 export const SkillModelDict: { [key: string]: SkillModel } = {

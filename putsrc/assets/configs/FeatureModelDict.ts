@@ -4,30 +4,6 @@
  * luleyan
  */
 
-import { BtlCtrlr } from '../scripts/BtlCtrlr';
-import { FeatureModel, FeatureBtlData, SkillType } from '../scripts/DataModel';
-import { Pet2, BattlePet, RageMax } from '../scripts/DataOther';
-import { EleType, BattleType } from '../scripts/DataSaved';
-import { BufN } from './BuffModelDict';
-import { SkillModelDict } from './SkillModelDict';
-
-function rd(n: number): string {
-    if (Math.round(n) * 10 === Math.round(n * 10)) return String(Math.round(n));
-    else return n.toFixed(1);
-}
-
-function rdP(n: number): string {
-    return rd(n * 100);
-}
-
-function rate(data: number, from: number, range: number): number {
-    return (data / (data + 7)) * range + from;
-}
-
-function fName(model: FeatureModel): string {
-    return model.cnBrief + '特性';
-}
-
 export class FtN {
     static strength = 'strength';
     static concentration = 'concentration';
@@ -118,6 +94,30 @@ export class FtN {
     // boss feature
     static bossUlti = 'bossUlti';
     static lightBomb = 'lightBomb';
+}
+
+import { BtlCtrlr } from '../scripts/BtlCtrlr';
+import { FeatureModel, FeatureBtlData, SkillType } from '../scripts/DataModel';
+import { Pet2, BattlePet, RageMax } from '../scripts/DataOther';
+import { EleType, BattleType } from '../scripts/DataSaved';
+import { BufN } from './BuffModelDict';
+import { SkillModelDict } from './SkillModelDict';
+
+function rd(n: number): string {
+    if (Math.round(n) * 10 === Math.round(n * 10)) return String(Math.round(n));
+    else return n.toFixed(1);
+}
+
+function rdP(n: number): string {
+    return rd(n * 100);
+}
+
+function rate(data: number, from: number, range: number): number {
+    return (data / (data + 7)) * range + from;
+}
+
+function fName(model: FeatureModel): string {
+    return model.cnBrief + '特性';
 }
 
 export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {

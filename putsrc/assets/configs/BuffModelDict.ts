@@ -4,19 +4,6 @@
  * luleyan
  */
 
-import { EleType, BattleType, Pet } from '../scripts/DataSaved';
-import { BuffModel, BuffOutput, BuffType } from '../scripts/DataModel';
-import { BattlePet, BattleBuff, Pet2 } from '../scripts/DataOther';
-import { BtlCtrlr } from '../scripts/BtlCtrlr';
-
-function fl1(n: number) {
-    return n.toFixed(1);
-}
-
-function getSklDmgStr(pet2: Pet2, rate: number) {
-    return `${fl1(pet2.sklDmgFrom * 0.1 * rate)}到${fl1(pet2.sklDmgTo * 0.1 * rate)}`;
-}
-
 export class BufN {
     static ZhuoShao = 'ZhuoShao';
     static HanLeng = 'HanLeng';
@@ -43,6 +30,19 @@ export class BufN {
     static SiMen = 'SiMen';
     static LiuSha = 'LiuSha';
     static KongWu = 'KongWu';
+}
+
+import { EleType, BattleType, Pet } from '../scripts/DataSaved';
+import { BuffModel, BuffOutput, BuffType } from '../scripts/DataModel';
+import { BattlePet, BattleBuff, Pet2 } from '../scripts/DataOther';
+import { BtlCtrlr } from '../scripts/BtlCtrlr';
+
+function fl1(n: number) {
+    return n.toFixed(1);
+}
+
+function getSklDmgStr(pet2: Pet2, rate: number) {
+    return `${fl1(pet2.sklDmgFrom * 0.1 * rate)}到${fl1(pet2.sklDmgTo * 0.1 * rate)}`;
 }
 
 export const BuffModelDict: { [key: string]: BuffModel } = {

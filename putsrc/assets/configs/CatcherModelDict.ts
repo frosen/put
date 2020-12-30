@@ -4,6 +4,25 @@
  * luleyan
  */
 
+export class CatcherN {
+    static PuTongXianJing1 = 'PuTongXianJing1';
+    static PuTongXianJing2 = 'PuTongXianJing2';
+    static GaoJiXianJing1 = 'GaoJiXianJing1';
+    static GaoJiXianJing2 = 'GaoJiXianJing2';
+    static MoFaXianJing1 = 'MoFaXianJing1';
+    static MoFaXianJing2 = 'MoFaXianJing2';
+    static JiXieXianJing1 = 'JiXieXianJing1';
+    static JiXieXianJing2 = 'JiXieXianJing2';
+    static BuShouJia1 = 'BuShouJia1';
+    static BuShouJia2 = 'BuShouJia2';
+    static YouMoCao1 = 'YouMoCao1';
+    static YouMoCao2 = 'YouMoCao2';
+    static CiLiPan1 = 'CiLiPan1';
+    static CiLiPan2 = 'CiLiPan2';
+    static ShiXiangHua1 = 'ShiXiangHua1';
+    static ShiXiangHua2 = 'ShiXiangHua2';
+}
+
 import { CatcherModel } from '../scripts/DataModel';
 
 export const CatcherModelDict: { [key: string]: CatcherModel } = {

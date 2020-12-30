@@ -4,12 +4,12 @@
  * luleyan
  */
 
-import { SpcBtlModel, BossType } from '../scripts/DataModel';
-import { PetModelDict } from './PetModelDict';
-
 export class SpcBtlN {
     static KuangBaoHeXin = 'KuangBaoHeXin';
 }
+
+import { SpcBtlModel, BossType } from '../scripts/DataModel';
+import { PetModelDict } from './PetModelDict';
 
 export const SpcBtlModelDict: { [key: string]: SpcBtlModel } = {
     [SpcBtlN.KuangBaoHeXin]: {
