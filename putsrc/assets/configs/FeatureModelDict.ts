@@ -1136,14 +1136,14 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '鹰',
         dataAreas: [[1, 1]],
         onTurn(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) {
-            if (ctrlr.ranSd() < rate(datas[0], 0.2, 0.6)) {
+            if (ctrlr.ranSd() < rate(datas[0], 0, 0.3)) {
                 const pets = ctrlr.getTeam(pet).pets.filter(v => v.hp > 0);
                 const selected = pets[Math.floor(ctrlr.ranSd() * pets.length)];
                 ctrlr.addBuff(selected, pet, BufN.JingJie, 1, fName(this));
             }
         },
         getInfo(datas: number[]): string {
-            return `每回合${rdP(rate(datas[0], 0.2, 0.6))}%概率使己方随机一精灵获得警戒效果持续1回合`;
+            return `每回合${rdP(rate(datas[0], 0, 0.3))}%概率使己方随机一精灵获得警戒效果持续1回合`;
         }
     }
 };
