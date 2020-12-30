@@ -47,7 +47,11 @@ function checkActPosModelDict() {
 
                 for (const petIdList of (actModel as ExplModel).petIdLists) {
                     if (petIdList.length < 5) {
-                        cc.error('ActPosModelDict expl中，petIdList的len不能<5，否则影响恢复时回合数计算', key);
+                        cc.error(
+                            'ActPosModelDict expl中，petIdList的len不能<5',
+                            '否则在战斗恢复时，calcBtlDuraUpdCntAndWinRate的createWithRandomFeature会面临无效的pet',
+                            key
+                        );
                     }
                     for (const petId of petIdList) {
                         if (!petDictKeys.includes(petId)) cc.error('ActPosModelDict expl中，petIdLists中的petId有误', key, petId);
