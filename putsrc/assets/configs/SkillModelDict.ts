@@ -235,9 +235,28 @@ export const SkillModelDict: { [key: string]: SkillModel } = {
         rage: 0,
         hpLimit: 0
     },
-    DianZiMaiChong: {
-        id: 'DianZiMaiChong',
-        cnName: '电子脉冲',
+    LiZiPao: {
+        id: 'LiZiPao',
+        cnName: '粒子炮',
+        skillType: 1,
+        dirType: 1,
+        aimType: 1,
+        eleType: 5,
+        spBattleType: 0,
+        mainDmg: 340,
+        mainBuffId: '',
+        mainBuffTime: 0,
+        subDmg: 0,
+        subBuffId: '',
+        subBuffTime: 0,
+        cd: 3,
+        mp: 35,
+        rage: 0,
+        hpLimit: 0
+    },
+    GuangLeng: {
+        id: 'GuangLeng',
+        cnName: '光棱',
         skillType: 1,
         dirType: 1,
         aimType: 2,
@@ -251,6 +270,25 @@ export const SkillModelDict: { [key: string]: SkillModel } = {
         subBuffTime: 0,
         cd: 4,
         mp: 33,
+        rage: 0,
+        hpLimit: 0
+    },
+    DianZiMaiChong: {
+        id: 'DianZiMaiChong',
+        cnName: '电子脉冲',
+        skillType: 1,
+        dirType: 1,
+        aimType: 3,
+        eleType: 5,
+        spBattleType: 1,
+        mainDmg: 20,
+        mainBuffId: '',
+        mainBuffTime: 0,
+        subDmg: 130,
+        subBuffId: '',
+        subBuffTime: 0,
+        cd: 5,
+        mp: 50,
         rage: 0,
         hpLimit: 0
     },
@@ -596,9 +634,9 @@ export const SkillModelDict: { [key: string]: SkillModel } = {
         rage: 0,
         hpLimit: 50
     },
-    ShengGuang: {
-        id: 'ShengGuang',
-        cnName: '圣光',
+    XinGuang: {
+        id: 'XinGuang',
+        cnName: '新光',
         skillType: 3,
         dirType: 2,
         aimType: 3,

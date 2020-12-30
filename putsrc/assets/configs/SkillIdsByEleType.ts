@@ -46,12 +46,14 @@ export const SkillIdsByEleType = [
         'DunQiang'
     ],
     [
+        'LiZiPao',
+        'GuangLeng',
         'DianZiMaiChong',
         'MieShi',
         'ZhiMang',
         'YueHuo',
         'ShanYao',
-        'ShengGuang'
+        'XinGuang'
     ],
     [
         'KongJuShu',

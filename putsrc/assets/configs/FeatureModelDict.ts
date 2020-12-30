@@ -24,6 +24,10 @@ function rate(data: number, from: number, range: number): number {
     return (data / (data + 7)) * range + from;
 }
 
+function fName(model: FeatureModel): string {
+    return model.cnBrief + '特性';
+}
+
 export class FtN {
     static strength = 'strength';
     static concentration = 'concentration';
@@ -31,6 +35,7 @@ export class FtN {
     static agility = 'agility';
     static sensitivity = 'sensitivity';
     static elegant = 'elegant';
+    // random get feature
     static baseStrength = 'baseStrength';
     static baseConcentration = 'baseConcentration';
     static baseDurability = 'baseDurability';
@@ -107,9 +112,10 @@ export class FtN {
     static deadHurt = 'deadHurt';
     static deadFangHu = 'deadFangHu';
     static deadHuiChun = 'deadHuiChun';
-}
-
-export class BFtN {
+    static turnHeal = 'turnHeal';
+    static turnHealElse = 'turnHealElse';
+    static turnJingJie = 'turnJingJie';
+    // boss feature
     static bossUlti = 'bossUlti';
     static lightBomb = 'lightBomb';
 }
@@ -844,7 +850,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             if (battleType === BattleType.charge) aim.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `冲锋减少${rdP(datas[0])}%`;
+            return `冲锋伤害减少${rdP(datas[0])}%`;
         }
     },
     [FtN.hurtWithAss]: {
@@ -1004,10 +1010,10 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '热',
         dataAreas: [[1, 1]],
         onBtlStart(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
-            if (ctrlr.ranSd() < rate(datas[0], 0.05, 0.9)) ctrlr.addBuff(pet, pet, 'ReLi', 3, this.cnBrief + '特性');
+            if (ctrlr.ranSd() < rate(datas[0], 0.05, 0.9)) ctrlr.addBuff(pet, pet, BufN.ReLi, 3, fName(this));
         },
         getInfo(datas: number[]): string {
-            return `战斗开始时，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得热力，持续3回合`;
+            return `战斗开始时，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得热力效果，持续3回合`;
         }
     },
     [FtN.killAddHp]: {
@@ -1080,11 +1086,11 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
             for (const petIn of ctrlr.getTeam(pet).pets) {
-                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, 'FangHu', cd, this.cnBrief + '特性');
+                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, BufN.FangHu, cd, fName(this));
             }
         },
         getInfo(datas: number[]): string {
-            return `被击败时，对己方其他精灵释放防护罩持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
+            return `被击败时，使己方其他精灵获得防护效果持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
         }
     },
     [FtN.deadHuiChun]: {
@@ -1094,18 +1100,57 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             const cd = ctrlr.ranSd() < rate(datas[0], 0.2, 0.6) ? 4 : 2;
             for (const petIn of ctrlr.getTeam(pet).pets) {
-                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, 'HuiChun', cd, this.cnBrief + '特性');
+                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, BufN.HuiChun, cd, fName(this));
             }
         },
         getInfo(datas: number[]): string {
-            return `被击败时，对己方其他精灵释放回春术持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
+            return `被击败时，使己方其他精灵释放获得回春效果持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
+        }
+    },
+    [FtN.turnHeal]: {
+        id: FtN.turnHeal,
+        cnBrief: '玉',
+        dataAreas: [[0.01, 0.01]],
+        onTurn(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) {
+            pet.hp = Math.ceil(Math.min(pet.hpMax, pet.hp + BtlCtrlr.getSklDmg(pet, pet) * datas[0]));
+        },
+        getInfo(datas: number[]): string {
+            return `每回合为自己恢复相当于${rdP(datas[0])}%招式攻击的血量`;
+        }
+    },
+    [FtN.turnHealElse]: {
+        id: FtN.turnHealElse,
+        cnBrief: '仙',
+        dataAreas: [[0.004, 0.004]],
+        onTurn(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) {
+            const healHp = BtlCtrlr.getSklDmg(pet, pet) * datas[0];
+            const pets = ctrlr.getTeam(pet).pets.filter(v => v !== pet && v.hp > 0);
+            for (const petIn of pets) petIn.hp = Math.ceil(Math.min(petIn.hpMax, petIn.hp + healHp));
+        },
+        getInfo(datas: number[]): string {
+            return `每回合为己方其他精灵恢复相当于${rdP(datas[0])}%招式攻击的血量`;
+        }
+    },
+    [FtN.turnJingJie]: {
+        id: FtN.turnJingJie,
+        cnBrief: '鹰',
+        dataAreas: [[1, 1]],
+        onTurn(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) {
+            if (ctrlr.ranSd() < rate(datas[0], 0.2, 0.6)) {
+                const pets = ctrlr.getTeam(pet).pets.filter(v => v.hp > 0);
+                const selected = pets[Math.floor(ctrlr.ranSd() * pets.length)];
+                ctrlr.addBuff(selected, pet, BufN.JingJie, 1, fName(this));
+            }
+        },
+        getInfo(datas: number[]): string {
+            return `每回合${rdP(rate(datas[0], 0.2, 0.6))}%概率使己方随机一精灵获得警戒效果持续1回合`;
         }
     }
 };
 
 export const BossFeatureModelDict: { [key: string]: FeatureModel } = {
-    [BFtN.bossUlti]: {
-        id: BFtN.bossUlti,
+    [FtN.bossUlti]: {
+        id: FtN.bossUlti,
         cnBrief: '绝杀',
         dataAreas: [[1, 1]],
         onTurn(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) {
@@ -1118,17 +1163,18 @@ export const BossFeatureModelDict: { [key: string]: FeatureModel } = {
             return `[BOSS]绝杀技冷却只有${10 - datas[0]}回合`;
         }
     },
-    [BFtN.lightBomb]: {
-        id: BFtN.lightBomb,
+    [FtN.lightBomb]: {
+        id: FtN.lightBomb,
         cnBrief: '强光',
         dataAreas: [[1, 1]],
         onTurn(pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) {
-            const selected = ctrlr.getTeam(pet).pets[Math.floor(ctrlr.ranSd() * 5)];
-            ctrlr.addBuff(selected, pet, BufN.ShanYao, 5, this.cnBrief + '特性');
+            const pets = ctrlr.getTeam(pet).pets.filter(v => v.hp > 0);
+            const selected = pets[Math.floor(ctrlr.ranSd() * pets.length)];
+            ctrlr.addBuff(selected, pet, BufN.ShanYao, 5, fName(this));
         },
         onDead(pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr): void {
             for (const petIn of ctrlr.getTeam(pet).pets) {
-                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, BufN.ZhuoShao, 10, this.cnBrief + '特性');
+                if (petIn !== pet && petIn.hp > 0) ctrlr.addBuff(petIn, pet, BufN.ZhuoShao, 10, fName(this));
             }
         },
         getInfo(datas: number[]): string {

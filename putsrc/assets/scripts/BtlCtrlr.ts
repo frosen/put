@@ -329,6 +329,7 @@ export class BtlCtrlr {
 
         // 触发回合特性
         for (const pet of rb.order) {
+            if (pet.hp === 0) continue;
             pet.turnFeatures.forEach((value: TurnFeature) => {
                 value.func(pet, value.datas, this);
             });
