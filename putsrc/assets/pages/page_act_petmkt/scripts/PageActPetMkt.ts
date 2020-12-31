@@ -17,7 +17,7 @@ import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from '../../../scripts/Random';
 import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { PageActPetMktLVD } from './PageActPetMktLVD';
-import { RealBattle } from '../../../scripts/DataOther';
+import { RealBtl } from '../../../scripts/DataOther';
 import { normalRandom } from '../../../scripts/Random';
 import { ExpModels } from '../../../configs/ExpModels';
 
@@ -70,7 +70,7 @@ export class PageActPetMkt extends PageBase {
                 step = 1;
             }
             const petId = getRandomOneInList(petList);
-            const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(posModel, step);
+            const { base: lvBase, range: lvRange } = RealBtl.calcLvArea(posModel, step);
 
             let lv = lvBase - lvRange + normalRandom(lvRange * 2);
             lv = Math.min(Math.max(1, lv), ExpModels.length);

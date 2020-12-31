@@ -10,7 +10,7 @@ import {
     ExplMmr,
     PetState,
     SPetMmr,
-    BattleMmr,
+    BtlMmr,
     EPetMmr,
     GameData,
     Equip,
@@ -195,9 +195,9 @@ export class Memory {
         }
 
         // 移除自行离开状态
-        if (this.gameData.curExpl) {
-            this.gameData.curPosId = this.gameData.curExpl.curPosId;
-            this.gameData.curExpl.afb = false;
+        if (this.gameData.expl) {
+            this.gameData.curPosId = this.gameData.expl.curPosId;
+            this.gameData.expl.afb = false;
         }
     }
 
@@ -437,14 +437,14 @@ export class Memory {
         GameDataTool.addCaughtPet(this.gameData, cPet);
 
         // GameDataTool.createExpl(this.gameData, 0);
-        // this.gameData.curExpl.startTime = Date.now() - 1000 * 60 * 60 * 24 * 2;
-        // this.gameData.curExpl.catcherId = 'PuTongXianJing1';
-        // this.gameData.curExpl.chngUpdCnt = 2100;
+        // this.gameData.expl.startTime = Date.now() - 1000 * 60 * 60 * 24 * 2;
+        // this.gameData.expl.catcherId = 'PuTongXianJing1';
+        // this.gameData.expl.chngUpdCnt = 2100;
 
         // const ePets = [];
         // for (const index = 0; index < 3; index++) ePets.push(MmrTool.createPetMmr('FaTiaoWa', 2, 1, []));
-        // GameDataTool.createBattle(this.gameData, 100, (1000 * 60 * 100) / 750 - 10, 0, []);
-        // this.gameData.curExpl.curBattle.enemys = ePets;
+        // GameDataTool.createBtl(this.gameData, 100, (1000 * 60 * 100) / 750 - 10, 0, []);
+        // this.gameData.expl.btl.enemys = ePets;
     }
 }
 
@@ -1057,15 +1057,15 @@ export class MmrTool {
         return expl;
     }
 
-    static createBattleMmr(seed: number, startUpdCnt: number, spcBtlId: string, hiding: boolean): BattleMmr {
-        const battle = newInsWithChecker(BattleMmr);
-        battle.startUpdCnt = startUpdCnt;
-        battle.seed = seed;
-        battle.selfs = newList();
-        battle.enemys = newList();
-        battle.spcBtlId = spcBtlId;
-        battle.hiding = hiding;
-        return battle;
+    static createBtlMmr(seed: number, startUpdCnt: number, spcBtlId: string, hiding: boolean): BtlMmr {
+        const btl = newInsWithChecker(BtlMmr);
+        btl.startUpdCnt = startUpdCnt;
+        btl.seed = seed;
+        btl.selfs = newList();
+        btl.enemys = newList();
+        btl.spcBtlId = spcBtlId;
+        btl.hiding = hiding;
+        return btl;
     }
 
     static createSPetMmr(pet: Pet): SPetMmr {
@@ -1402,9 +1402,9 @@ export class GameDataTool {
                 cnsum.count -= count;
             }
         } else if (curItem.itemType === ItemType.equip) {
-            if (gameData.curExpl && gameData.curExpl.curBattle) {
+            if (gameData.expl && gameData.expl.btl) {
                 const curEquipToken = EquipTool.getToken(curItem as Equip);
-                for (const petMmr of gameData.curExpl.curBattle.selfs) {
+                for (const petMmr of gameData.expl.btl.selfs) {
                     for (const itemToken of petMmr.eqpTokens) {
                         if (curEquipToken === itemToken) return '该物品被战斗中精灵持有，无法丢弃';
                     }
@@ -1554,27 +1554,27 @@ export class GameDataTool {
     // -----------------------------------------------------------------
 
     static createExpl(gameData: GameData, startStep: number) {
-        if (gameData.curExpl) return;
+        if (gameData.expl) return;
         const expl = MmrTool.createExplMmr(gameData.curPosId, startStep);
-        gameData.curExpl = expl;
+        gameData.expl = expl;
     }
 
     static clearExpl(gameData: GameData) {
-        if (gameData.curExpl) gameData.curExpl = undefined;
+        if (gameData.expl) gameData.expl = undefined;
     }
 
-    static createBattle(gameData: GameData, seed: number, startUpdCnt: number, spcBtlId: string, ePets: Pet[]) {
-        cc.assert(gameData.curExpl, '创建battle前必有Expl');
-        const curExpl = gameData.curExpl!;
-        if (curExpl.curBattle) return;
-        const battle = MmrTool.createBattleMmr(seed, startUpdCnt, spcBtlId, curExpl.hiding);
+    static createBtl(gameData: GameData, seed: number, startUpdCnt: number, spcBtlId: string, ePets: Pet[]) {
+        cc.assert(gameData.expl, '创建btl前必有Expl');
+        const expl = gameData.expl!;
+        if (expl.btl) return;
+        const btl = MmrTool.createBtlMmr(seed, startUpdCnt, spcBtlId, expl.hiding);
 
-        for (const pet of this.getReadyPets(gameData)) battle.selfs.push(MmrTool.createSPetMmr(pet));
+        for (const pet of this.getReadyPets(gameData)) btl.selfs.push(MmrTool.createSPetMmr(pet));
         for (const pet of ePets) {
-            battle.enemys.push(MmrTool.createEPetMmr(pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures));
+            btl.enemys.push(MmrTool.createEPetMmr(pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures));
         }
 
-        curExpl.curBattle = battle;
+        expl.btl = btl;
     }
 
     static getReadyPets(gameData: GameData): Pet[] {
@@ -1586,9 +1586,9 @@ export class GameDataTool {
         return pets;
     }
 
-    static clearBattle(gameData: GameData) {
-        cc.assert(gameData.curExpl, '删除battle前必有Expl');
-        gameData.curExpl!.curBattle = undefined;
+    static clearBtl(gameData: GameData) {
+        cc.assert(gameData.expl, '删除btl前必有Expl');
+        gameData.expl!.btl = undefined;
     }
 
     // -----------------------------------------------------------------

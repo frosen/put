@@ -238,7 +238,7 @@ export class PagePkg extends PagePkgBase {
                         if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) {
                             return this.ctrlr.popToast('元素类型不符，无法使用');
                         }
-                        if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) {
+                        if (catcherModel.btlType && catcherModel.btlType !== petModel.btlType) {
                             return this.ctrlr.popToast('战斗类型不符，无法使用');
                         }
                         if (!this.checkMasterHere(curPet)) return;
@@ -357,7 +357,7 @@ export class PagePkg extends PagePkgBase {
 
     checkMasterHere(pet: Pet): boolean {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && gameData.curExpl.afb && pet.state === PetState.ready) {
+        if (gameData.expl && gameData.expl.afb && pet.state === PetState.ready) {
             this.ctrlr.popToast('无法对该精灵使用！\n精灵在战斗而训练师未与其在一起');
             return false;
         }

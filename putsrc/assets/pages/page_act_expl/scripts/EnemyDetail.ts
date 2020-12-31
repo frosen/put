@@ -9,8 +9,8 @@ const { ccclass, property } = cc._decorator;
 import { PetModelDict } from '../../../configs/PetModelDict';
 import { FeatureModelDict } from '../../../configs/FeatureModelDict';
 
-import { BattlePet } from '../../../scripts/DataOther';
-import { BattleTypeNames, BioTypeNames, EleColors, EleTypeNames, Feature, Pet } from '../../../scripts/DataSaved';
+import { BtlPet } from '../../../scripts/DataOther';
+import { BtlTypeNames, BioTypeNames, EleColors, EleTypeNames, Feature, Pet } from '../../../scripts/DataSaved';
 import { PetTool } from '../../../scripts/Memory';
 import { petAttrNumStr } from '../../page_pet_detail/scripts/PagePetDetailLVD';
 import { ListViewCell } from '../../../scripts/ListViewCell';
@@ -72,7 +72,7 @@ export class EnemyDetail extends cc.Component {
         else cc.tween(this.node).to(0.2, { opacity: 0 }).start();
     }
 
-    setData(bPet: BattlePet) {
+    setData(bPet: BtlPet) {
         const pet = bPet.pet;
         const petModel = PetModelDict[pet.id];
         const pet2 = bPet.pet2;
@@ -81,7 +81,7 @@ export class EnemyDetail extends cc.Component {
 
         const bioName = BioTypeNames[pet2.exBioTypes.getLast() || petModel.bioType];
         const eleName = EleTypeNames[pet2.exEleTypes.getLast() || petModel.eleType];
-        const btlName = BattleTypeNames[pet2.exBattleTypes.getLast() || petModel.battleType];
+        const btlName = BtlTypeNames[pet2.exBtlTypes.getLast() || petModel.btlType];
         let speedName: String | undefined;
         if (pet2.speed >= 80) speedName = '飞快';
         else if (pet2.speed >= 60) speedName = '快速';

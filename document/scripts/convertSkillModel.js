@@ -29,7 +29,7 @@ let sklJson = convert(
                 break;
             }
             let eleType = getEnum(rowData[3]);
-            let spBattleType = getEnum(rowData[6]);
+            let spBtlType = getEnum(rowData[6]);
 
             let mainDmg = Number(rowData[7]) || 0;
             let mainBuffId = rowData[8] || '';
@@ -59,7 +59,7 @@ let sklJson = convert(
                 dirType,
                 aimType,
                 eleType,
-                spBattleType,
+                spBtlType,
                 mainDmg,
                 mainBuffId,
                 mainBuffTime,

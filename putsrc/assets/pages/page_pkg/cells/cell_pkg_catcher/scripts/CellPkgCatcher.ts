@@ -11,10 +11,10 @@ import {
     Catcher,
     BioTypeNames,
     EleTypeNames,
-    BattleTypeNames,
+    BtlTypeNames,
     EleDarkColors,
     BioColors,
-    BattleTypeColors
+    BtlTypeColors
 } from '../../../../../scripts/DataSaved';
 import { CatcherModelDict } from '../../../../../configs/CatcherModelDict';
 import { CatcherModel } from '../../../../../scripts/DataModel';
@@ -66,7 +66,7 @@ export class CellPkgCatcher extends CellPkgCnsum {
         ListViewCell.rerenderLbl(this.rateLbl);
         CellPkgCatcher.setTypeName(catcherModel.bioType, BioTypeNames, BioColors, this.bioLbl);
         CellPkgCatcher.setTypeName(catcherModel.eleType, EleTypeNames, EleDarkColors, this.eleLbl);
-        CellPkgCatcher.setTypeName(catcherModel.battleType, BattleTypeNames, BattleTypeColors, this.btlTypeLbl);
+        CellPkgCatcher.setTypeName(catcherModel.btlType, BtlTypeNames, BtlTypeColors, this.btlTypeLbl);
 
         for (const layout of this.layouts) layout.updateLayout();
     }

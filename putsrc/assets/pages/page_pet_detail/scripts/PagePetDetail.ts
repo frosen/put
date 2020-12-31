@@ -135,7 +135,7 @@ export class PagePetDetail extends PageBase {
 
     checkMasterHere(): boolean {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && gameData.curExpl.afb && this.curPet.state === PetState.ready) {
+        if (gameData.expl && gameData.expl.afb && this.curPet.state === PetState.ready) {
             this.ctrlr.popToast('无法变更！\n精灵在战斗而训练师未与其在一起');
             return false;
         }

@@ -33,7 +33,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 15,
         bioType: 0,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 6,
         price: 100
     },
@@ -44,7 +44,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 15,
         bioType: 0,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 16,
         price: 200
     },
@@ -55,7 +55,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 15,
         bioType: 0,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 6,
         price: 100
     },
@@ -66,7 +66,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 15,
         bioType: 0,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 16,
         price: 200
     },
@@ -77,7 +77,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 2,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 6,
         price: 100
     },
@@ -88,7 +88,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 2,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 16,
         price: 200
     },
@@ -99,7 +99,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 3,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 6,
         price: 100
     },
@@ -110,7 +110,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 3,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 16,
         price: 200
     },
@@ -121,7 +121,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 4,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 6,
         price: 100
     },
@@ -132,7 +132,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 4,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 16,
         price: 200
     },
@@ -143,7 +143,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 2,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 6,
         price: 100
     },
@@ -154,7 +154,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 2,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 16,
         price: 200
     },
@@ -165,7 +165,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 3,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 6,
         price: 100
     },
@@ -176,7 +176,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 3,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 16,
         price: 200
     },
@@ -187,7 +187,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 4,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 6,
         price: 100
     },
@@ -198,7 +198,7 @@ export const CatcherModelDict: { [key: string]: CatcherModel } = {
         lvMax: 20,
         bioType: 4,
         eleType: 0,
-        battleType: 0,
+        btlType: 0,
         rate: 16,
         price: 200
     }

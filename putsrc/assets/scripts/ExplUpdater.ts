@@ -12,7 +12,7 @@ import {
     ExplMmr,
     Catcher,
     Pet,
-    BattleMmr,
+    BtlMmr,
     Money,
     PosData,
     PADExpl,
@@ -23,7 +23,7 @@ import {
     BioType,
     EleType
 } from '../scripts/DataSaved';
-import { RealBattle, BattlePet } from './DataOther';
+import { RealBtl, BtlPet } from './DataOther';
 import { ActPosModelDict, PAKey } from '../configs/ActPosModelDict';
 import { randomInt, randomRate, getRandomOneInList, randomAreaInt, random, randomRound, randomAreaByIntRange } from './Random';
 import {
@@ -111,8 +111,8 @@ export class ExplUpdater {
         this.btlCtrlr = new BtlCtrlr();
         this.btlCtrlr.init(this, this.onBattleEnd.bind(this));
 
-        const curExpl = this.gameData.curExpl;
-        if (!curExpl) this.createExpl(startStep, spcBtlId);
+        const expl = this.gameData.expl;
+        if (!expl) this.createExpl(startStep, spcBtlId);
         else this.recoverLastExpl(this.gameData);
     }
 
@@ -180,22 +180,22 @@ export class ExplUpdater {
     }
 
     recoverLastExpl(gameData: GameData) {
-        const curExpl = gameData.curExpl!;
-        const curStep = curExpl.curStep;
+        const expl = gameData.expl!;
+        const curStep = expl.curStep;
 
-        if (curExpl.curBattle) {
-            const { inBattle, win, updCnt, lastTime } = this.recoverExplInBattle(curExpl.curBattle, curExpl.stepEnterTime);
+        if (expl.btl) {
+            const { inBattle, win, updCnt, lastTime } = this.recoverExplInBattle(expl.btl, expl.stepEnterTime);
             if (inBattle) {
                 this.updCnt = updCnt;
                 this.lastTime = lastTime;
 
-                this.recoverExplStepPercent(curExpl);
+                this.recoverExplStepPercent(expl);
 
                 this.state = ExplState.battle;
                 this.resetAllUI();
                 return;
             } else {
-                curExpl.chngUpdCnt = updCnt;
+                expl.chngUpdCnt = updCnt;
                 if (win) {
                     this.receiveExp();
                     this.catchPet();
@@ -206,18 +206,18 @@ export class ExplUpdater {
         }
 
         let nowTime = Date.now();
-        const chngSpan = curExpl.chngUpdCnt * ExplInterval;
-        const lastTime = curExpl.stepEnterTime + chngSpan;
+        const chngSpan = expl.chngUpdCnt * ExplInterval;
+        const lastTime = expl.stepEnterTime + chngSpan;
 
         // MockSpan用于模拟日志，这部分时间靠update恢复，这样就可以保有日志了
         const MockSpan = (15 + randomInt(35)) * ExplInterval; // 使用一个随机数，让进入位置能分配到各个阶段，感觉更自然
         if (nowTime - lastTime <= MockSpan) {
-            this.updCnt = curExpl.chngUpdCnt;
+            this.updCnt = expl.chngUpdCnt;
             this.lastTime = lastTime;
 
             this.resetSelfTeamData();
             this.resetAllUI();
-            this.recoverExplStepPercent(curExpl);
+            this.recoverExplStepPercent(expl);
             this.startExpl();
             return;
         }
@@ -225,7 +225,7 @@ export class ExplUpdater {
         this.logList.length = 0;
         nowTime -= MockSpan;
 
-        const posId = curExpl.curPosId;
+        const posId = expl.curPosId;
         const curPosModel = ActPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
@@ -236,17 +236,17 @@ export class ExplUpdater {
             lvMin: 0,
             lvMax: 0
         };
-        if (curExpl.catcherId) {
+        if (expl.catcherId) {
             do {
-                const catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, curExpl.catcherId);
+                const catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, expl.catcherId);
                 if (catcherIdx === -1) {
-                    curExpl.catcherId = undefined;
+                    expl.catcherId = undefined;
                     break;
                 }
                 const catcher = gameData.items[catcherIdx] as Catcher;
                 const catcherModel: CatcherModel = CatcherModelDict[catcher.id];
 
-                const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
+                const { base: lvBase, range: lvRange } = RealBtl.calcLvArea(curPosModel, curStep);
                 let lvMin = lvBase - lvRange;
                 let lvMax = lvBase + lvRange;
 
@@ -262,7 +262,7 @@ export class ExplUpdater {
                     if (petModel.bioType === BioType.human || petModel.bioType === BioType.unknown) continue;
                     if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;
                     if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) continue;
-                    if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) continue;
+                    if (catcherModel.btlType && catcherModel.btlType !== petModel.btlType) continue;
                     realPetIds[realPetIds.length] = petId;
                 }
                 if (realPetIds.length === 0) break;
@@ -302,7 +302,7 @@ export class ExplUpdater {
         while (true) {
             // 战斗状态
             const selfLv = selfPets.getAvg((pet: Pet) => pet.lv);
-            const enemyLv: number = RealBattle.calcLvArea(curPosModel, curStep).base;
+            const enemyLv: number = RealBtl.calcLvArea(curPosModel, curStep).base;
             if (recalcSpanIndexs.includes(spanCnt)) {
                 const calcRzt = this.calcBtlDuraUpdCntAndWinRate(gameData);
                 btlDuraUpdCnt = calcRzt.btlDuraUpdCnt;
@@ -311,23 +311,23 @@ export class ExplUpdater {
             } else {
                 this.resetSelfTeamData(); // getPosPetAgiRate等需要selfTeamData，而上面calcBtl带有resetSelfTeam
             }
-            const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.btlCtrlr);
-            const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.btlCtrlr);
-            const eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.btlCtrlr);
+            const agiRate = ExplUpdater.getPosPetAgiRate(expl, this.btlCtrlr);
+            const sensRate = ExplUpdater.getPosPetSensRate(expl, this.btlCtrlr);
+            const eleRate = ExplUpdater.getPosPetEleRate(expl, this.btlCtrlr);
             const petSt = { selfLv, enemyLv, btlDuraUpdCnt, btlWinRate, petAliveRates, agiRate, sensRate, eleRate };
 
-            const nextUpdCnt = curExpl.chngUpdCnt + EachSpanUpdCnt;
-            const nextTime = nextUpdCnt * ExplInterval + curExpl.stepEnterTime;
+            const nextUpdCnt = expl.chngUpdCnt + EachSpanUpdCnt;
+            const nextTime = nextUpdCnt * ExplInterval + expl.stepEnterTime;
 
             if (nextTime < nowTime) {
-                this.recoverExplInExpl(curExpl.chngUpdCnt, nextUpdCnt, petSt, catchSt, rztSt);
-                curExpl.chngUpdCnt = nextUpdCnt;
+                this.recoverExplInExpl(expl.chngUpdCnt, nextUpdCnt, petSt, catchSt, rztSt);
+                expl.chngUpdCnt = nextUpdCnt;
             } else {
-                const curUpdCnt = Math.floor((nowTime - curExpl.stepEnterTime) / ExplInterval);
-                this.recoverExplInExpl(curExpl.chngUpdCnt, curUpdCnt, petSt, catchSt, rztSt);
-                curExpl.chngUpdCnt = curUpdCnt;
+                const curUpdCnt = Math.floor((nowTime - expl.stepEnterTime) / ExplInterval);
+                this.recoverExplInExpl(expl.chngUpdCnt, curUpdCnt, petSt, catchSt, rztSt);
+                expl.chngUpdCnt = curUpdCnt;
                 this.updCnt = curUpdCnt;
-                this.lastTime = curUpdCnt * ExplInterval + curExpl.stepEnterTime;
+                this.lastTime = curUpdCnt * ExplInterval + expl.stepEnterTime;
                 break;
             }
 
@@ -337,13 +337,13 @@ export class ExplUpdater {
             if (spanCnt >= HangMaxSpan) {
                 this.updCnt = nextUpdCnt;
                 this.lastTime = nowTime;
-                curExpl.stepEnterTime = nowTime - nextUpdCnt * ExplInterval;
+                expl.stepEnterTime = nowTime - nextUpdCnt * ExplInterval;
                 break;
             }
         }
 
         // 加速
-        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl!, this.btlCtrlr);
+        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.expl!, this.btlCtrlr);
         const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
         const speedChangeCnt = rztSt.moveCnt * speedUpCnt;
         this.changeExplDegree(speedChangeCnt);
@@ -376,23 +376,23 @@ export class ExplUpdater {
         GameDataTool.eachNeedQuest(gameData, QuestType.search, (quest: Quest, model: QuestModel) => {
             const need = model.need as SearchQuestNeed;
             const count = QuestTool.getRealCount(quest);
-            if (curExpl.curPosId === need.posId && curStep === need.step && this.updCnt >= count) {
+            if (expl.curPosId === need.posId && curStep === need.step && this.updCnt >= count) {
                 quest.progress = count;
             }
         });
 
         this.resetSelfTeamData();
         this.resetAllUI();
-        this.recoverExplStepPercent(curExpl);
+        this.recoverExplStepPercent(expl);
 
         this.startExpl();
     }
 
-    recoverExplStepPercent(curExpl: ExplMmr) {
-        const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-        const curStep = curExpl.curStep;
+    recoverExplStepPercent(expl: ExplMmr) {
+        const explModel = ActPosModelDict[expl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const curStep = expl.curStep;
 
-        if (curStep >= curExplModel.stepMax - 1) {
+        if (curStep >= explModel.stepMax - 1) {
             this.explStepPercent = 0;
         } else {
             const nextStepUpdCnt = NeedUpdCntByStep[curStep];
@@ -405,14 +405,14 @@ export class ExplUpdater {
     }
 
     recoverExplInBattle(
-        curBattle: BattleMmr,
+        btlMmr: BtlMmr,
         stepEnterTime: number
     ): { inBattle: boolean; win: boolean; updCnt: number; lastTime: number } {
-        let lastTime = curBattle.startUpdCnt * ExplInterval + stepEnterTime;
-        let updCnt = curBattle.startUpdCnt;
+        let lastTime = btlMmr.startUpdCnt * ExplInterval + stepEnterTime;
+        let updCnt = btlMmr.startUpdCnt;
 
-        const win = this.mockBattle(curBattle, true, (realBattle: RealBattle): boolean => {
-            if (realBattle.start === false) return true;
+        const win = this.mockBattle(btlMmr, true, (realBtl: RealBtl): boolean => {
+            if (realBtl.start === false) return true;
             if (lastTime + ExplInterval > Date.now()) return true;
 
             lastTime += ExplInterval;
@@ -429,7 +429,7 @@ export class ExplUpdater {
         };
     }
 
-    mockBattle(mmr: BattleMmr, logging: boolean, updCallback: (realBattle: RealBattle) => boolean): boolean {
+    mockBattle(mmr: BtlMmr, logging: boolean, updCallback: (realBtl: RealBtl) => boolean): boolean {
         const oldPage = this.page;
         const endCall = this.btlCtrlr.endCallback;
         let win: boolean = false;
@@ -441,7 +441,7 @@ export class ExplUpdater {
         this.btlCtrlr.resetSelfTeam(mmr.selfs.length > 0 ? mmr : undefined);
         this.btlCtrlr.resetBattle(mmr);
         while (true) {
-            if (updCallback(this.btlCtrlr.realBattle)) break;
+            if (updCallback(this.btlCtrlr.realBtl)) break;
             this.btlCtrlr.update();
         }
 
@@ -491,8 +491,8 @@ export class ExplUpdater {
         eachBigRdUpdCnt += petSt.btlDuraUpdCnt;
 
         const gameData = this.gameData;
-        const curExpl = gameData.curExpl!;
-        const eachHidingRdCnt = curExpl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
+        const expl = gameData.expl!;
+        const eachHidingRdCnt = expl.hiding ? ExplUpdater.calcHideExplRdCnt(petSt.agiRate) : 0;
         const realExplRdCnt = AvgExplRdCnt + eachHidingRdCnt;
         eachBigRdUpdCnt += realExplRdCnt * AvgUpdCntForEachExplRd;
         eachBigRdUpdCnt += 10; // 恢复10跳，长于非挂机
@@ -514,8 +514,8 @@ export class ExplUpdater {
         for (const selfPet of selfPets) this.addExpToPet(selfPet, expTotal);
         rztSt.exp += expTotal;
 
-        const curStep = curExpl.curStep;
-        const posId = curExpl.curPosId;
+        const curStep = expl.curStep;
+        const posId = expl.curPosId;
         const curPosModel = ActPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
@@ -551,7 +551,7 @@ export class ExplUpdater {
 
             if (catchIdx === catcher.count) {
                 catchSt.catcherIdx = -1;
-                curExpl.catcherId = undefined;
+                expl.catcherId = undefined;
             }
             GameDataTool.removeItem(gameData, catcherIdx, catchIdx);
         } while (false);
@@ -560,13 +560,13 @@ export class ExplUpdater {
         let gainCnt = bigRdCnt * (realExplRdCnt - 1);
 
         // 采集类任务
-        const gQuestRate = curExpl.hiding ? GatherQuestRateWhenHiding : GatherQuestRate;
+        const gQuestRate = expl.hiding ? GatherQuestRateWhenHiding : GatherQuestRate;
         const gQuestCntMax = Math.floor(gainCnt * gQuestRate);
         let gQuestCnt = 0;
         GameDataTool.eachNeedQuest(gameData, QuestType.gather, (quest: Quest, model: QuestModel) => {
             if (gQuestCnt === gQuestCntMax) return;
             const need = model.need as GatherQuestNeed;
-            if (curExpl.curPosId === need.posId && curStep === need.step) {
+            if (expl.curPosId === need.posId && curStep === need.step) {
                 let diff = QuestTool.getRealCount(quest) - quest.progress;
                 if (gQuestCnt + diff >= gQuestCntMax) diff = gQuestCntMax - gQuestCnt;
 
@@ -642,16 +642,16 @@ export class ExplUpdater {
     }
 
     calcBtlDuraUpdCntAndWinRate(gameData: GameData): { btlDuraUpdCnt: number; btlWinRate: number; petAliveRates: number[] } {
-        const curExpl = gameData.curExpl!;
-        const posId = curExpl.curPosId;
+        const expl = gameData.expl!;
+        const posId = expl.curPosId;
         const curPosModel = ActPosModelDict[posId];
-        const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
-        const curStep = curExpl.curStep;
-        const petList = curExplModel.petIdLists[curStep];
-        const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
-        const petCnt = RealBattle.getEnemyPetCountByLv(lvBase);
+        const explModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
+        const curStep = expl.curStep;
+        const petList = explModel.petIdLists[curStep];
+        const { base: lvBase, range: lvRange } = RealBtl.calcLvArea(curPosModel, curStep);
+        const petCnt = RealBtl.getEnemyPetCountByLv(lvBase);
 
-        const rb = this.btlCtrlr.realBattle;
+        const rb = this.btlCtrlr.realBtl;
         const selfs = rb.selfTeam.pets;
         const enemys = rb.enemyTeam.pets;
 
@@ -673,17 +673,17 @@ export class ExplUpdater {
                     features: ePet.inbFeatures
                 });
             }
-            const mockData: BattleMmr = {
+            const mockData: BtlMmr = {
                 startUpdCnt: 0,
                 seed: 0,
                 selfs: [],
                 enemys: eMmrs,
                 spcBtlId: '',
-                hiding: curExpl.hiding
+                hiding: expl.hiding
             };
 
-            const win = this.mockBattle(mockData, false, (realBattle: RealBattle): boolean => {
-                if (realBattle.start === false) return true;
+            const win = this.mockBattle(mockData, false, (realBtl: RealBtl): boolean => {
+                if (realBtl.start === false) return true;
                 updCntTotal++;
                 return false;
             });
@@ -717,20 +717,20 @@ export class ExplUpdater {
     resetAllUI() {
         if (!this.page) return;
 
-        if (this.btlCtrlr.realBattle.start) {
+        if (this.btlCtrlr.realBtl.start) {
             this.btlCtrlr.resetAllUI();
         } else {
             this.page.setUIOfSelfPet(-1);
 
-            const team = this.btlCtrlr.realBattle.selfTeam;
+            const team = this.btlCtrlr.realBtl.selfTeam;
             this.page.resetAttriBar(team.mp, team.mpMax, team.rage);
         }
 
-        const curExpl = this.gameData.curExpl!;
-        this.page.setCatchActive(curExpl.catcherId !== null);
-        this.page.setHideActive(curExpl.hiding);
+        const expl = this.gameData.expl!;
+        this.page.setCatchActive(expl.catcherId !== null);
+        this.page.setHideActive(expl.hiding);
 
-        this.page.setEnterReady(this.updCnt >= NeedUpdCntByStep[curExpl.curStep]);
+        this.page.setEnterReady(this.updCnt >= NeedUpdCntByStep[expl.curStep]);
     }
 
     // -----------------------------------------------------------------
@@ -801,7 +801,7 @@ export class ExplUpdater {
 
     // 每个探索+探索结果(battle，gain)后
     updateChgUpdCnt() {
-        this.gameData.curExpl!.chngUpdCnt = this.updCnt;
+        this.gameData.expl!.chngUpdCnt = this.updCnt;
     }
 
     // -----------------------------------------------------------------
@@ -837,7 +837,7 @@ export class ExplUpdater {
     startExpl() {
         this.handleSelfTeamChange();
 
-        const curExpl = this.gameData.curExpl!;
+        const expl = this.gameData.expl!;
 
         const enter = this.state !== ExplState.explore;
         this.state = ExplState.explore;
@@ -846,8 +846,8 @@ export class ExplUpdater {
 
         if (enter) {
             this.explRdCnt = randomAreaByIntRange(AvgExplRdCnt, 2);
-            if (curExpl.hiding) {
-                const agiRate = ExplUpdater.getPosPetAgiRate(curExpl, this.btlCtrlr);
+            if (expl.hiding) {
+                const agiRate = ExplUpdater.getPosPetAgiRate(expl, this.btlCtrlr);
                 this.explRdCnt += ExplUpdater.calcHideExplRdCnt(agiRate);
             }
             this.log(ExplLogType.repeat, '开始探索');
@@ -860,11 +860,11 @@ export class ExplUpdater {
         this.enemyFinding = false;
 
         if (this.explRdCnt > 1) {
-            const posId = curExpl.curPosId;
+            const posId = expl.curPosId;
             const curPosModel = ActPosModelDict[posId];
-            const curExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
-            const curStep = curExpl.curStep;
-            const sensRate = ExplUpdater.getPosPetSensRate(curExpl, this.btlCtrlr);
+            const explModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
+            const curStep = expl.curStep;
+            const sensRate = ExplUpdater.getPosPetSensRate(expl, this.btlCtrlr);
 
             const gQData = GameDataTool.getNeedQuest(
                 this.gameData,
@@ -875,17 +875,17 @@ export class ExplUpdater {
                 }
             );
 
-            const gQuestRate = curExpl.hiding ? GatherQuestRateWhenHiding : GatherQuestRate;
+            const gQuestRate = expl.hiding ? GatherQuestRateWhenHiding : GatherQuestRate;
             if (gQData && randomRate(gQuestRate)) {
                 this.gatherQuestDoing = true;
-            } else if (curExplModel.eqpIdLists.length > 0 && randomRate(ExplUpdater.calcTreasureRate(sensRate))) {
+            } else if (explModel.eqpIdLists.length > 0 && randomRate(ExplUpdater.calcTreasureRate(sensRate))) {
                 this.trsrFinding = true;
                 this.prefindCnt = 1 + randomInt(3);
             } else {
                 const gainCntRate = ExplUpdater.calcGainCntRate(sensRate);
                 this.moneyGaining = randomRate(MoneyGainRdEnterRate);
                 if (this.moneyGaining) {
-                    const gainCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, curExpl.curStep, gainCntRate);
+                    const gainCnt = ExplUpdater.calcMoneyGain(curPosModel.lv, expl.curStep, gainCntRate);
                     this.gainCnt = Math.floor(gainCnt * GameDataTool.getDrinkAmpl(AmplAttriType.expl, this.gameData));
                 } else {
                     this.gainCnt = randomRound(gainCntRate);
@@ -899,7 +899,7 @@ export class ExplUpdater {
                 }
             }
         } else {
-            if (curExpl.hiding) {
+            if (expl.hiding) {
                 this.enemyFinding = true;
                 this.prefindCnt = 1 + randomInt(3);
             }
@@ -911,7 +911,7 @@ export class ExplUpdater {
     }
 
     handleSpeedUp() {
-        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.curExpl!, this.btlCtrlr);
+        const agiRate = ExplUpdater.getPosPetAgiRate(this.gameData.expl!, this.btlCtrlr);
         const speedUpCnt = ExplUpdater.calcSpeedChangeCnt(agiRate);
         this.changeExplDegree(speedUpCnt);
     }
@@ -922,8 +922,8 @@ export class ExplUpdater {
         if (cnt > 0) realCnt = cnt;
         else realCnt = Math.max(-this.updCnt, cnt);
         this.updCnt += realCnt;
-        this.gameData.curExpl!.chngUpdCnt += realCnt; // 不用chngUpdCnt = updCnt是为了避免恢复时还没有updCnt造成问题
-        this.gameData.curExpl!.stepEnterTime -= realCnt * ExplInterval;
+        this.gameData.expl!.chngUpdCnt += realCnt; // 不用chngUpdCnt = updCnt是为了避免恢复时还没有updCnt造成问题
+        this.gameData.expl!.stepEnterTime -= realCnt * ExplInterval;
     }
 
     static calcHideExplRdCnt(rate: number): number {
@@ -962,27 +962,27 @@ export class ExplUpdater {
         else return 2;
     }
 
-    static getPosPetAgiRate(curExpl: ExplMmr, btlCtrlr: BtlCtrlr) {
-        const posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
-        const petValue = btlCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.agility);
+    static getPosPetAgiRate(expl: ExplMmr, btlCtrlr: BtlCtrlr) {
+        const posValue = ExplUpdater.getPosSubAttriSbstValue(expl);
+        const petValue = btlCtrlr.realBtl.selfTeam.pets.getMax((item: BtlPet) => item.pet2.agility);
         return petValue / posValue;
     }
 
-    static getPosPetSensRate(curExpl: ExplMmr, btlCtrlr: BtlCtrlr) {
-        const posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
-        const petValue = btlCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.sensitivity);
+    static getPosPetSensRate(expl: ExplMmr, btlCtrlr: BtlCtrlr) {
+        const posValue = ExplUpdater.getPosSubAttriSbstValue(expl);
+        const petValue = btlCtrlr.realBtl.selfTeam.pets.getMax((item: BtlPet) => item.pet2.sensitivity);
         return petValue / posValue;
     }
 
-    static getPosPetEleRate(curExpl: ExplMmr, btlCtrlr: BtlCtrlr) {
-        const posValue = ExplUpdater.getPosSubAttriSbstValue(curExpl);
-        const petValue = btlCtrlr.realBattle.selfTeam.pets.getMax((item: BattlePet) => item.pet2.elegant);
+    static getPosPetEleRate(expl: ExplMmr, btlCtrlr: BtlCtrlr) {
+        const posValue = ExplUpdater.getPosSubAttriSbstValue(expl);
+        const petValue = btlCtrlr.realBtl.selfTeam.pets.getMax((item: BtlPet) => item.pet2.elegant);
         return petValue / posValue;
     }
 
-    static getPosSubAttriSbstValue(curExpl: ExplMmr) {
-        const curPosLv = ActPosModelDict[curExpl.curPosId].lv;
-        return (100 + curPosLv * 15) * (1 + curExpl.curStep * 0.4);
+    static getPosSubAttriSbstValue(expl: ExplMmr) {
+        const curPosLv = ActPosModelDict[expl.curPosId].lv;
+        return (100 + curPosLv * 15) * (1 + expl.curStep * 0.4);
     }
 
     updateExpl() {
@@ -1007,15 +1007,15 @@ export class ExplUpdater {
     stepEntering: boolean = false;
 
     doExploration() {
-        const curExpl = this.gameData.curExpl!;
-        const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-        const curStep = curExpl.curStep;
+        const expl = this.gameData.expl!;
+        const explModel = ActPosModelDict[expl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const curStep = expl.curStep;
 
         if (this.stepEntering === true) {
             this.stepEntering = false;
-            curExpl.curStep++;
-            curExpl.stepEnterTime = this.lastTime;
-            this.saveNewStep(curExpl.curStep);
+            expl.curStep++;
+            expl.stepEnterTime = this.lastTime;
+            this.saveNewStep(expl.curStep);
 
             this.updCnt = 0;
             this.updateChgUpdCnt();
@@ -1027,7 +1027,7 @@ export class ExplUpdater {
             if (this.page) this.page.setExplStepUI();
             this.startExpl(); // 重新开始探索
             return;
-        } else if (curStep < curExplModel.stepMax - 1) {
+        } else if (curStep < explModel.stepMax - 1) {
             const nextStepUpdCnt = NeedUpdCntByStep[curStep];
             let percent = Math.floor((this.updCnt * 100) / nextStepUpdCnt);
             if (percent > 99) percent = 99; // 百分比在UI上需要禁止超过99%
@@ -1062,9 +1062,7 @@ export class ExplUpdater {
                     (quest: Quest, model: QuestModel): boolean => {
                         const need = model.need as SearchQuestNeed;
                         return (
-                            curExpl.curPosId === need.posId &&
-                            curStep === need.step &&
-                            this.updCnt >= QuestTool.getRealCount(quest)
+                            expl.curPosId === need.posId && curStep === need.step && this.updCnt >= QuestTool.getRealCount(quest)
                         );
                     }
                 );
@@ -1082,32 +1080,32 @@ export class ExplUpdater {
     }
 
     logEnter() {
-        const curExpl = this.gameData.curExpl!;
-        const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-        const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
-        this.log(ExplLogType.rich, `进入 ${ActPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`);
+        const expl = this.gameData.expl!;
+        const explModel = ActPosModelDict[expl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const stepType = StepTypesByMax[explModel.stepMax][expl.curStep];
+        this.log(ExplLogType.rich, `进入 ${ActPosModelDict[expl.curPosId].cnName} ${ExplStepNames[stepType]}`);
     }
 
     popToastForEnter() {
-        const curExpl = this.gameData.curExpl!;
-        const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-        const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep];
+        const expl = this.gameData.expl!;
+        const explModel = ActPosModelDict[expl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const stepType = StepTypesByMax[explModel.stepMax][expl.curStep];
         if (this.page) {
-            const str = `进入 ${ActPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`;
+            const str = `进入 ${ActPosModelDict[expl.curPosId].cnName} ${ExplStepNames[stepType]}`;
             this.page.ctrlr.popToast(str);
         }
     }
 
     saveNewStep(step: number) {
-        const posData: PosData = this.gameData.posDataDict[this.gameData.curExpl!.curPosId];
+        const posData: PosData = this.gameData.posDataDict[this.gameData.expl!.curPosId];
         const pADExpl: PADExpl = posData.actDict[PAKey.expl] as PADExpl;
         if (step > pADExpl.doneStep) pADExpl.doneStep = step;
     }
 
     gainRes() {
-        const curExpl = this.gameData.curExpl!;
-        const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-        const curStep = curExpl.curStep;
+        const expl = this.gameData.expl!;
+        const explModel = ActPosModelDict[expl.curPosId].actMDict[PAKey.expl] as ExplModel;
+        const curStep = expl.curStep;
 
         if (this.gatherQuestDoing) {
             const gQData = GameDataTool.getNeedQuest(
@@ -1115,7 +1113,7 @@ export class ExplUpdater {
                 QuestType.gather,
                 (quest: Quest, model: QuestModel): boolean => {
                     const need = model.need as GatherQuestNeed;
-                    return curExpl.curPosId === need.posId && curStep === need.step;
+                    return expl.curPosId === need.posId && curStep === need.step;
                 }
             );
             if (gQData) {
@@ -1127,7 +1125,7 @@ export class ExplUpdater {
                 if (quest.progress >= count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
             }
         } else if (this.trsrFinding) {
-            const eqpIdLists = curExplModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
+            const eqpIdLists = explModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
             const eqps = eqpIdLists[curStep];
             const eqpId = getRandomOneInList(eqps);
             const equip = EquipTool.createRandomById(eqpId);
@@ -1151,7 +1149,7 @@ export class ExplUpdater {
                 GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += this.gainCnt));
                 itemName = '可用物资，折合通用币' + MoneyTool.getStr(this.gainCnt).trim();
             } else {
-                const itemIdLists = curExplModel.itemIdLists;
+                const itemIdLists = explModel.itemIdLists;
                 const itemIds = itemIdLists[curStep];
                 const itemId = getRandomOneInList(itemIds);
 
@@ -1219,19 +1217,19 @@ export class ExplUpdater {
             this.catchPet();
             this.doFightQuest();
         } else {
-            const curExpl = this.gameData.curExpl!;
-            this.rdcExplDegreeByBtlFail(curExpl.curStep);
+            const expl = this.gameData.expl!;
+            this.rdcExplDegreeByBtlFail(expl.curStep);
         }
         this.rdcBPetsPrvtyByDead();
         this.startRecover();
     }
 
     receiveExp() {
-        const rb = this.btlCtrlr.realBattle;
+        const rb = this.btlCtrlr.realBtl;
 
         let exp: number;
-        const selfLv = Math.round(rb.selfTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
-        const enemyLv = Math.round(rb.enemyTeam.pets.getAvg((bPet: BattlePet) => bPet.pet.lv));
+        const selfLv = Math.round(rb.selfTeam.pets.getAvg((bPet: BtlPet) => bPet.pet.lv));
+        const enemyLv = Math.round(rb.enemyTeam.pets.getAvg((bPet: BtlPet) => bPet.pet.lv));
         exp = ExplUpdater.calcExpByLv(selfLv, enemyLv);
 
         for (const selfBPet of rb.selfTeam.pets) {
@@ -1291,25 +1289,25 @@ export class ExplUpdater {
 
     catchPet() {
         const gameData = this.gameData;
-        const curExpl = gameData.curExpl!;
-        const catcherId = curExpl.catcherId;
+        const expl = gameData.expl!;
+        const catcherId = expl.catcherId;
         if (!catcherId) return;
 
         const catcherIdx = ExplUpdater.getCatcherIdxInItemList(gameData, catcherId);
         if (catcherIdx === -1) {
-            curExpl.catcherId = undefined;
+            expl.catcherId = undefined;
             if (this.page) this.page.setCatchActive(false);
             return;
         }
 
         const catcherModel: CatcherModel = CatcherModelDict[catcherId];
-        const eleRate = ExplUpdater.getPosPetEleRate(curExpl, this.btlCtrlr);
+        const eleRate = ExplUpdater.getPosPetEleRate(expl, this.btlCtrlr);
         const catchRate = ExplUpdater.calcCatchRateByEleRate(catcherModel, eleRate);
 
-        const rb = this.btlCtrlr.realBattle;
-        for (const battlePet of rb.enemyTeam.pets) {
+        const rb = this.btlCtrlr.realBtl;
+        for (const btlPet of rb.enemyTeam.pets) {
             // 计算能否捕捉
-            const pet = battlePet.pet;
+            const pet = btlPet.pet;
             if (pet.master) continue;
 
             const petModel = PetModelDict[pet.id];
@@ -1317,7 +1315,7 @@ export class ExplUpdater {
             if (pet.lv < catcherModel.lvMin || catcherModel.lvMax < pet.lv) continue;
             if (catcherModel.bioType && catcherModel.bioType !== petModel.bioType) continue;
             if (catcherModel.eleType && catcherModel.eleType !== petModel.eleType) continue;
-            if (catcherModel.battleType && catcherModel.battleType !== petModel.battleType) continue;
+            if (catcherModel.btlType && catcherModel.btlType !== petModel.btlType) continue;
 
             // 计算成功几率
             const suc = randomRate(catchRate);
@@ -1329,7 +1327,7 @@ export class ExplUpdater {
                     this.log(ExplLogType.rich, `成功捕获${PetTool.getCnName(pet)}`);
                     const catcher = this.memory.gameData.items[catcherIdx] as Catcher;
                     if (catcher.count === 1) {
-                        curExpl.catcherId = undefined;
+                        expl.catcherId = undefined;
                         if (this.page) this.page.setCatchActive(false);
                     }
                     GameDataTool.removeItem(gameData, catcherIdx);
@@ -1362,7 +1360,7 @@ export class ExplUpdater {
     doFightQuest() {
         const fQData = GameDataTool.getNeedQuest(this.gameData, QuestType.fight, (quest: Quest, model: QuestModel): boolean => {
             const need = model.need as FightQuestNeed;
-            for (const ePet of this.btlCtrlr.realBattle.enemyTeam.pets) {
+            for (const ePet of this.btlCtrlr.realBtl.enemyTeam.pets) {
                 if (need.petIds.includes(ePet.pet.id)) return true;
             }
             return false;
@@ -1382,7 +1380,7 @@ export class ExplUpdater {
     }
 
     rdcBPetsPrvtyByDead() {
-        const rb = this.btlCtrlr.realBattle;
+        const rb = this.btlCtrlr.realBtl;
         for (const selfBPet of rb.selfTeam.pets) {
             if (selfBPet.hp <= 0) this.rdcPetPrvtyByDead(selfBPet.pet);
         }
@@ -1400,15 +1398,15 @@ export class ExplUpdater {
 
     updateRecover() {
         let done = true;
-        const selfTeam = this.btlCtrlr.realBattle.selfTeam;
-        const battlePets = selfTeam.pets;
-        for (let index = 0; index < battlePets.length; index++) {
-            const battlePet = battlePets[index];
-            const hpMax = battlePet.hpMax;
-            if (battlePet.hp < hpMax) {
+        const selfTeam = this.btlCtrlr.realBtl.selfTeam;
+        const btlPets = selfTeam.pets;
+        for (let index = 0; index < btlPets.length; index++) {
+            const btlPet = btlPets[index];
+            const hpMax = btlPet.hpMax;
+            if (btlPet.hp < hpMax) {
                 done = false;
-                battlePet.hp += Math.floor(hpMax * 0.1);
-                battlePet.hp = Math.min(hpMax, battlePet.hp);
+                btlPet.hp += Math.floor(hpMax * 0.1);
+                btlPet.hp = Math.min(hpMax, btlPet.hp);
                 if (this.page) this.page.setUIOfSelfPet(index);
             }
         }
@@ -1438,13 +1436,13 @@ export class ExplUpdater {
     // -----------------------------------------------------------------
 
     executeCatch(catcherId: string) {
-        this.gameData.curExpl!.catcherId = catcherId;
+        this.gameData.expl!.catcherId = catcherId;
         if (this.page) this.page.setCatchActive(catcherId !== null);
     }
 
     executeHide() {
-        const cur = !this.gameData.curExpl!.hiding;
-        this.gameData.curExpl!.hiding = cur;
+        const cur = !this.gameData.expl!.hiding;
+        this.gameData.expl!.hiding = cur;
         if (this.page) this.page.setHideActive(cur);
     }
 
@@ -1455,10 +1453,10 @@ export class ExplUpdater {
             if (this.page) {
                 this.page.setEnterReady(false);
                 if (this.state !== ExplState.explore) {
-                    const curExpl = this.gameData.curExpl!;
-                    const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-                    const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep + 1] || 0;
-                    const str = `准备进入 ${ActPosModelDict[curExpl.curPosId].cnName} ${ExplStepNames[stepType]}`;
+                    const expl = this.gameData.expl!;
+                    const explModel = ActPosModelDict[expl.curPosId].actMDict[PAKey.expl] as ExplModel;
+                    const stepType = StepTypesByMax[explModel.stepMax][expl.curStep + 1] || 0;
+                    const str = `准备进入 ${ActPosModelDict[expl.curPosId].cnName} ${ExplStepNames[stepType]}`;
                     this.page.ctrlr.popToast(str);
                 }
             }

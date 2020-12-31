@@ -7,9 +7,9 @@
 const { ccclass, property, executionOrder } = cc._decorator;
 import { BtlPageBase } from '../../../scripts/BtlPageBase';
 import { ExplUpdater, ExplLogData, ExplState } from '../../../scripts/ExplUpdater';
-import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors, BattleType } from '../../../scripts/DataSaved';
+import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors, BtlType } from '../../../scripts/DataSaved';
 import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, SkillType } from '../../../scripts/DataModel';
-import { BattlePet, RageMax, BattlePetLenMax, BossMaster } from '../../../scripts/DataOther';
+import { BtlPet, RageMax, BtlPetLenMax, BossMaster } from '../../../scripts/DataOther';
 import { ListView } from '../../../scripts/ListView';
 import { GameDataTool, PetTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
@@ -32,7 +32,7 @@ import { BtlCtrlr } from '../../../scripts/BtlCtrlr';
 import { SkillModelDict } from '../../../configs/SkillModelDict';
 
 const btlUnitH = -172;
-const BattleUnitYs = [0, btlUnitH, btlUnitH * 2, btlUnitH * 3, btlUnitH * 4];
+const BtlUnitYs = [0, btlUnitH, btlUnitH * 2, btlUnitH * 3, btlUnitH * 4];
 
 const DmgLblActParams: number[][] = [
     [97, 30],
@@ -147,8 +147,8 @@ export class PageActExpl extends BtlPageBase {
         this.lvd = this.getComponent(PageActExplLVD);
         this.lvd.page = this;
 
-        for (let index = 0; index < BattlePetLenMax; index++) {
-            const y = BattleUnitYs[index];
+        for (let index = 0; index < BtlPetLenMax; index++) {
+            const y = BtlUnitYs[index];
 
             const selfPetNode = cc.instantiate(this.selfPetPrefab);
             selfPetNode.y = y;
@@ -204,7 +204,7 @@ export class PageActExpl extends BtlPageBase {
                 return line;
             };
 
-            for (let index = 0; index < BattlePetLenMax; index++) {
+            for (let index = 0; index < BtlPetLenMax; index++) {
                 const lines = [];
                 lines.push(createAimLine(LineType.toSelf));
                 lines.push(createAimLine(LineType.toEnemy));
@@ -261,7 +261,7 @@ export class PageActExpl extends BtlPageBase {
                 }
             }
             this.updaterRetaining = true;
-            gameData.curExpl.afb = true;
+            gameData.expl.afb = true;
 
             this.ctrlr.popPage();
         }
@@ -271,12 +271,12 @@ export class PageActExpl extends BtlPageBase {
         if (CC_EDITOR) return;
 
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && gameData.curExpl.afb && ExplUpdater.haveUpdaterInBG()) {
+        if (gameData.expl && gameData.expl.afb && ExplUpdater.haveUpdaterInBG()) {
             this.updater = ExplUpdater.popUpdaterInBG();
             this.updater.runAt(this);
             this.updater.resetAllUI();
 
-            gameData.curExpl.afb = false;
+            gameData.expl.afb = false;
         } else {
             this.updater = new ExplUpdater();
             this.updater.init(this, this.spcBtlId, this.startStep);
@@ -307,14 +307,14 @@ export class PageActExpl extends BtlPageBase {
     setExplStepUI() {
         if (this.ctrlr.getCurPage() !== this) return;
 
-        const curExpl = this.ctrlr.memory.gameData.curExpl;
-        if (!curExpl) return this.navBar.setSubTitle('');
+        const expl = this.ctrlr.memory.gameData.expl;
+        if (!expl) return this.navBar.setSubTitle('');
 
-        const posId = curExpl.curPosId;
+        const posId = expl.curPosId;
         const curPosModel = ActPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
-        const curStep = curExpl.curStep;
+        const curStep = expl.curStep;
         const stepMax = explModel.stepMax;
         const stepType = StepTypesByMax[stepMax][curStep];
         const stepName = ExplStepNames[stepType];
@@ -347,18 +347,18 @@ export class PageActExpl extends BtlPageBase {
     // ui -----------------------------------------------------------------
 
     setUIOfSelfPet(index: number) {
-        const pets = this.updater.btlCtrlr.realBattle.selfTeam.pets;
+        const pets = this.updater.btlCtrlr.realBtl.selfTeam.pets;
         if (index === -1) {
             let petIdx = 0;
             for (; petIdx < pets.length; petIdx++) this.setUIOfSelfPet(petIdx);
-            for (; petIdx < BattlePetLenMax; petIdx++) this.clearUIOfSelfPet(petIdx);
+            for (; petIdx < BtlPetLenMax; petIdx++) this.clearUIOfSelfPet(petIdx);
         } else {
             this.setUIOfPet(pets[index], this.selfPetUIs[index]);
         }
     }
 
     setUIOfEnemyPet(index: number) {
-        const pets = this.updater.btlCtrlr.realBattle.enemyTeam.pets;
+        const pets = this.updater.btlCtrlr.realBtl.enemyTeam.pets;
         if (index === -1) {
             for (let petIdx = 0; petIdx < pets.length; petIdx++) this.setUIOfEnemyPet(petIdx);
         } else {
@@ -371,14 +371,14 @@ export class PageActExpl extends BtlPageBase {
         }
     }
 
-    setUIOfPet(battlePet: BattlePet, ui: PetUI) {
+    setUIOfPet(btlPet: BtlPet, ui: PetUI) {
         ui.node.active = true;
-        const pet = battlePet.pet;
+        const pet = btlPet.pet;
         ui.petName.string = PetTool.getCnName(pet);
         ui.subName.string = pet.nickname ? PetTool.getBaseCnName(pet) : '';
         ui.petLv.string = `L${pet.lv}`;
-        ui.bar.progress = battlePet.hp / battlePet.hpMax;
-        ui.petHP.string = `${Math.ceil(battlePet.hp * 0.1)} / ${Math.ceil(battlePet.hpMax * 0.1)}`;
+        ui.bar.progress = btlPet.hp / btlPet.hpMax;
+        ui.petHP.string = `${Math.ceil(btlPet.hp * 0.1)} / ${Math.ceil(btlPet.hpMax * 0.1)}`;
         ui.node.stopAllActions();
         ui.node.x = 0;
 
@@ -435,7 +435,7 @@ export class PageActExpl extends BtlPageBase {
 
         const node = dmgLbl.node;
         node.x = beEnemy ? 1080 - 25 - 435 : 25 + 435;
-        node.y = BattleUnitYs[idx] - 68;
+        node.y = BtlUnitYs[idx] - 68;
         node.scale = big ? 1.2 : 1;
         node.color = color;
 
@@ -586,7 +586,7 @@ export class PageActExpl extends BtlPageBase {
         if (460 < pos.x && pos.x < 620) return undefined; // 这是中间的空白地带，不算点中
         const touchEnemy = pos.x > 540;
         let touchIdx = Math.floor(pos.y / btlUnitH);
-        if (touchIdx >= BattlePetLenMax) return undefined;
+        if (touchIdx >= BtlPetLenMax) return undefined;
         const uis = touchEnemy ? this.enemyPetUIs : this.selfPetUIs;
         const ui = uis[touchIdx];
         touchIdx = ui.node.active === true ? touchIdx : -1;
@@ -615,15 +615,15 @@ export class PageActExpl extends BtlPageBase {
         this.selfAimIdxs.length = 0;
         this.enmeyAimIdxs.length = 0;
 
-        const rb = this.updater.btlCtrlr.realBattle;
+        const rb = this.updater.btlCtrlr.realBtl;
         const selfBPets = rb.selfTeam.pets;
         const enemyBPets = rb.enemyTeam.pets;
 
         const curBPet = selfBPets[this.startIdx];
-        const battleType = BtlCtrlr.getBattleType(curBPet);
-        const aimRangeIdxs = PageActExpl.getAimRange(this.startIdx, battleType);
+        const btlType = BtlCtrlr.getBtlType(curBPet);
+        const aimRangeIdxs = PageActExpl.getAimRange(this.startIdx, btlType);
 
-        for (let index = 0; index < BattlePetLenMax; index++) {
+        for (let index = 0; index < BtlPetLenMax; index++) {
             do {
                 const selfUI = this.selfPetUIs[index];
                 if (!selfUI.node.active) break;
@@ -652,19 +652,19 @@ export class PageActExpl extends BtlPageBase {
         }
     }
 
-    static getAimRange(curIdx: number, battleType: BattleType) {
-        if (battleType === BattleType.melee) return [curIdx - 1, curIdx, curIdx + 1];
-        else if (battleType === BattleType.charge) return [0, curIdx - 1, curIdx, curIdx + 1];
-        else if (battleType === BattleType.shoot) return [0, 1, 2, 3, 4];
-        else if (battleType === BattleType.assassinate) return [curIdx - 1, curIdx, curIdx + 1];
-        else if (battleType === BattleType.combo) return [curIdx - 1, curIdx, curIdx + 1];
+    static getAimRange(curIdx: number, btlType: BtlType) {
+        if (btlType === BtlType.melee) return [curIdx - 1, curIdx, curIdx + 1];
+        else if (btlType === BtlType.charge) return [0, curIdx - 1, curIdx, curIdx + 1];
+        else if (btlType === BtlType.shoot) return [0, 1, 2, 3, 4];
+        else if (btlType === BtlType.assassinate) return [curIdx - 1, curIdx, curIdx + 1];
+        else if (btlType === BtlType.combo) return [curIdx - 1, curIdx, curIdx + 1];
         else return [];
     }
 
     handleSelfAimLine(curBeEnemy: boolean, curIdx: number, curPos: cc.Vec2) {
         if (!this.ctrlLineShowing) return;
         const btlCtrlr = this.updater.btlCtrlr;
-        const selfBPet = btlCtrlr.realBattle.selfTeam.pets[this.startIdx];
+        const selfBPet = btlCtrlr.realBtl.selfTeam.pets[this.startIdx];
         if (curBeEnemy) {
             if (this.enmeyAimIdxs.includes(curIdx)) {
                 btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, false, curIdx);
@@ -686,13 +686,13 @@ export class PageActExpl extends BtlPageBase {
         this.ctrlLineShowing = false;
         this.hideAimRange();
 
-        for (let index = 0; index < BattlePetLenMax; index++) {
+        for (let index = 0; index < BtlPetLenMax; index++) {
             this.aimLiness[index][2].hide();
         }
     }
 
     hideAimRange() {
-        for (let index = 0; index < BattlePetLenMax; index++) {
+        for (let index = 0; index < BtlPetLenMax; index++) {
             const selfUINode = this.selfPetUIs[index].node;
             selfUINode.stopAllActions();
             cc.tween(selfUINode).to(0.2, { opacity: 255 }).start();
@@ -711,7 +711,7 @@ export class PageActExpl extends BtlPageBase {
 
         if (!this.sklForbidBtnShowing) {
             this.sklForbidBtnShowing = true;
-            const bPet = this.updater.btlCtrlr.realBattle.selfTeam.pets[this.startIdx];
+            const bPet = this.updater.btlCtrlr.realBtl.selfTeam.pets[this.startIdx];
             const skillIds = bPet.pet2.skillIds;
             const forbidFlag = bPet.sklForbidFlag;
             for (let index = 0; index < 4; index++) {
@@ -753,7 +753,7 @@ export class PageActExpl extends BtlPageBase {
             const rect = this.sklForbidBtnLayer.getRect(index);
             if (rect.contains(curPos)) {
                 const btlCtrlr = this.updater.btlCtrlr;
-                const selfBPet = btlCtrlr.realBattle.selfTeam.pets[this.startIdx];
+                const selfBPet = btlCtrlr.realBtl.selfTeam.pets[this.startIdx];
                 const forbid = btlCtrlr.switchSelfPetForbidSkl(selfBPet, index);
                 const petName = PetTool.getCnName(selfBPet.pet);
                 const actName = forbid ? '封印招式' : '解封招式';
@@ -781,14 +781,14 @@ export class PageActExpl extends BtlPageBase {
     showEnemyDetail() {
         if (!this.startBeEnemy || this.startIdx === -1 || !this.canSeeEnemy) return;
         this.enemyDetail.show();
-        this.enemyDetail.setData(this.updater.btlCtrlr.realBattle.enemyTeam.pets[this.startIdx]);
+        this.enemyDetail.setData(this.updater.btlCtrlr.realBtl.enemyTeam.pets[this.startIdx]);
     }
 
     changeEnemyDetail(curBeEnemy: boolean, curIdx: number) {
         if (!this.startBeEnemy || this.startIdx === -1 || !this.canSeeEnemy) return;
         if (!curBeEnemy || curIdx === -1 || curIdx === this.startIdx) return;
         this.startIdx = curIdx;
-        this.enemyDetail.setData(this.updater.btlCtrlr.realBattle.enemyTeam.pets[this.startIdx]);
+        this.enemyDetail.setData(this.updater.btlCtrlr.realBtl.enemyTeam.pets[this.startIdx]);
     }
 
     hideEnemyDetail() {
@@ -827,8 +827,8 @@ export class PageActExpl extends BtlPageBase {
 
     updateAimLine() {
         const btlCtrlr = this.updater.btlCtrlr;
-        const selfBPets = btlCtrlr.realBattle.selfTeam.pets;
-        for (let index = 0; index < BattlePetLenMax; index++) {
+        const selfBPets = btlCtrlr.realBtl.selfTeam.pets;
+        for (let index = 0; index < BtlPetLenMax; index++) {
             if (index >= selfBPets.length) break;
 
             const selfPetNode = this.selfPetUIs[index].node;
@@ -870,20 +870,20 @@ export class PageActExpl extends BtlPageBase {
     // button -----------------------------------------------------------------
 
     onClickCatch() {
-        if (!this.ctrlr.memory.gameData.curExpl.catcherId) {
+        if (!this.ctrlr.memory.gameData.expl.catcherId) {
             const idxs = [];
             PagePkg.getoutItemIdxsByType(this.ctrlr.memory.gameData.items, idxs, ItemType.cnsum, CnsumType.catcher);
             this.ctrlr.pushPage(PagePkgSelection, {
                 name: '选择捕捉器',
                 curItemIdxs: idxs,
                 callback: (index: number, itemIdx: number, catcher: Catcher) => {
-                    this.ctrlr.memory.gameData.curExpl.catcherId = catcher.id;
+                    this.ctrlr.memory.gameData.expl.catcherId = catcher.id;
                     this.setCatchActive(true);
                     this.ctrlr.popPage();
                 }
             });
         } else {
-            this.ctrlr.memory.gameData.curExpl.catcherId = null;
+            this.ctrlr.memory.gameData.expl.catcherId = null;
             this.setCatchActive(false);
         }
     }
@@ -911,10 +911,10 @@ export class PageActExpl extends BtlPageBase {
             this.lblBtnEnter.node.color = cc.Color.BLACK;
             cc.tween(this.enterTipNode).to(0.3, { opacity: 255 }).start();
 
-            const curExpl = this.ctrlr.memory.gameData.curExpl;
-            const curExplModel = ActPosModelDict[curExpl.curPosId].actMDict[PAKey.expl] as ExplModel;
-            const stepType = StepTypesByMax[curExplModel.stepMax][curExpl.curStep + 1] || 0;
-            this.enterTipLbl1.string = ActPosModelDict[curExpl.curPosId].cnName;
+            const expl = this.ctrlr.memory.gameData.expl;
+            const explModel = ActPosModelDict[expl.curPosId].actMDict[PAKey.expl] as ExplModel;
+            const stepType = StepTypesByMax[explModel.stepMax][expl.curStep + 1] || 0;
+            this.enterTipLbl1.string = ActPosModelDict[expl.curPosId].cnName;
             this.enterTipLbl2.string = ExplStepNames[stepType];
 
             // @ts-ignore

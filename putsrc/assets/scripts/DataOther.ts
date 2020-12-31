@@ -21,7 +21,7 @@ import {
 import {
     BioType,
     EleType,
-    BattleType,
+    BtlType,
     Pet,
     EleTypeNames,
     ExplMmr,
@@ -91,7 +91,7 @@ export class Pet2 {
     /** 额外元素类型 */
     exEleTypes!: EleType[];
     /** 额外战斗类型 */
-    exBattleTypes!: BattleType[];
+    exBtlTypes!: BtlType[];
 
     critRate!: number;
     critDmgRate!: number;
@@ -167,7 +167,7 @@ export class Pet2 {
 
         this.exBioTypes = [];
         this.exEleTypes = [];
-        this.exBattleTypes = [];
+        this.exBtlTypes = [];
 
         // 其他属性
         const realPrvty = PetTool.getRealPrvty(pet, exPrvty);
@@ -273,77 +273,77 @@ export class Pet2 {
 // battle -----------------------------------------------------------------
 
 export class StartFeature {
-    func!: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    func!: (pet: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;
     datas!: number[];
     id!: string;
 }
 
 export class AtkFeature {
-    func!: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    func!: (pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData) => void;
     datas!: number[];
     id!: string;
 }
 
 export class CastFeature {
-    func!: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    func!: (pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData) => void;
     datas!: number[];
     id!: string;
 }
 
 export class HurtFeature {
-    func!: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    func!: (pet: BtlPet, caster: BtlPet, datas: number[], bData: FeatureBtlData) => void;
     datas!: number[];
     id!: string;
 }
 
 export class HealFeature {
-    func!: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
+    func!: (pet: BtlPet, caster: BtlPet, datas: number[], bData: FeatureBtlData) => void;
     datas!: number[];
     id!: string;
 }
 
 export class EDeadFeature {
-    func!: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    func!: (pet: BtlPet, aim: BtlPet, caster: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;
     datas!: number[];
     id!: string;
 }
 
 export class DeadFeature {
-    func!: (pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    func!: (pet: BtlPet, caster: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;
     datas!: number[];
     id!: string;
 }
 
 export class TurnFeature {
-    func!: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    func!: (pet: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;
     datas!: number[];
     id!: string;
 }
 
-export class BattleSkill {
+export class BtlSkill {
     id!: string;
     cd: number = 0;
     mpUsing: number = 0;
 }
 
-export class BattleBuff {
+export class BtlBuff {
     id!: string;
     time!: number;
-    caster!: BattlePet;
+    caster!: BtlPet;
     data: any;
 }
 
 export const RageMax: number = 150;
-export const BattlePetLenMax: number = 5;
+export const BtlPetLenMax: number = 5;
 
-export class BattlePet {
+export class BtlPet {
     idx: number = 0;
 
     fromationIdx: number = 0;
     beEnemy: boolean = false;
 
-    last?: BattlePet;
-    next?: BattlePet;
+    last?: BtlPet;
+    next?: BtlPet;
 
     pet!: Pet;
     pet2!: Pet2;
@@ -360,9 +360,9 @@ export class BattlePet {
     deadFeatures: DeadFeature[] = [];
     turnFeatures: TurnFeature[] = [];
 
-    skillDatas: BattleSkill[] = [];
+    skillDatas: BtlSkill[] = [];
 
-    buffDatas: BattleBuff[] = [];
+    buffDatas: BtlBuff[] = [];
 
     ctrlSelfAimIdx: number = -1;
     ctrlEnemyAimIdx: number = -1;
@@ -370,8 +370,8 @@ export class BattlePet {
     sklForbidFlag: number = 0; // 二进制flag，位数代表禁用的索引
 
     static addFeatureFuncToList(
-        bPet: BattlePet,
-        listName: keyof BattlePet,
+        bPet: BtlPet,
+        listName: keyof BtlPet,
         funcName: keyof FeatureModel,
         model: FeatureModel,
         datas: number[]
@@ -422,35 +422,35 @@ export class BattlePet {
         this.turnFeatures.length = 0;
 
         PetTool.eachFeatures(pet, (model: FeatureModel, datas: number[]) => {
-            BattlePet.addFeatureFuncToList(this, 'startFeatures', 'onBtlStart', model, datas);
-            BattlePet.addFeatureFuncToList(this, 'atkFeatures', 'onAtk', model, datas);
-            BattlePet.addFeatureFuncToList(this, 'castFeatures', 'onCast', model, datas);
-            BattlePet.addFeatureFuncToList(this, 'hurtFeatures', 'onHurt', model, datas);
-            BattlePet.addFeatureFuncToList(this, 'healFeatures', 'onHeal', model, datas);
-            BattlePet.addFeatureFuncToList(this, 'eDeadFeatures', 'onEDead', model, datas);
-            BattlePet.addFeatureFuncToList(this, 'deadFeatures', 'onDead', model, datas);
-            BattlePet.addFeatureFuncToList(this, 'turnFeatures', 'onTurn', model, datas);
+            BtlPet.addFeatureFuncToList(this, 'startFeatures', 'onBtlStart', model, datas);
+            BtlPet.addFeatureFuncToList(this, 'atkFeatures', 'onAtk', model, datas);
+            BtlPet.addFeatureFuncToList(this, 'castFeatures', 'onCast', model, datas);
+            BtlPet.addFeatureFuncToList(this, 'hurtFeatures', 'onHurt', model, datas);
+            BtlPet.addFeatureFuncToList(this, 'healFeatures', 'onHeal', model, datas);
+            BtlPet.addFeatureFuncToList(this, 'eDeadFeatures', 'onEDead', model, datas);
+            BtlPet.addFeatureFuncToList(this, 'deadFeatures', 'onDead', model, datas);
+            BtlPet.addFeatureFuncToList(this, 'turnFeatures', 'onTurn', model, datas);
         });
 
         // 招式
         this.skillDatas.length = this.pet2.skillIds.length;
         for (let index = 0; index < this.pet2.skillIds.length; index++) {
             const skillId = this.pet2.skillIds[index];
-            const skill = this.skillDatas[index] || new BattleSkill();
+            const skill = this.skillDatas[index] || new BtlSkill();
             skill.id = skillId;
-            skill.mpUsing = BattlePet.getSkillMpUsing(skillId, pet);
+            skill.mpUsing = BtlPet.getSkillMpUsing(skillId, pet);
             this.skillDatas[index] = skill;
         }
     }
 
     clone() {
-        const newBPet = new BattlePet();
+        const newBPet = new BtlPet();
         newBPet.idx = this.idx;
         newBPet.fromationIdx = this.fromationIdx;
         newBPet.beEnemy = this.beEnemy;
 
-        newBPet.last = this.last; // 暂时指向旧数据，在RealBattle的clone中更新
-        newBPet.next = this.next; // 暂时指向旧数据，在RealBattle的clone中更新
+        newBPet.last = this.last; // 暂时指向旧数据，在RealBtl的clone中更新
+        newBPet.next = this.next; // 暂时指向旧数据，在RealBtl的clone中更新
 
         newBPet.pet = this.pet;
         newBPet.pet2 = deepCopy(this.pet2);
@@ -467,14 +467,14 @@ export class BattlePet {
         newBPet.deadFeatures = this.deadFeatures;
 
         for (const skill of this.skillDatas) {
-            const newSkill = new BattleSkill();
+            const newSkill = new BtlSkill();
             newSkill.cd = skill.cd;
             newSkill.id = skill.id;
             newBPet.skillDatas.push(newSkill);
         }
 
         for (const buff of this.buffDatas) {
-            const newBuff = new BattleBuff();
+            const newBuff = new BtlBuff();
             newBuff.id = buff.id;
             newBuff.caster = buff.caster;
             newBuff.time = buff.time;
@@ -486,32 +486,32 @@ export class BattlePet {
     }
 }
 
-export class BattleTeam {
-    pets: BattlePet[] = [];
+export class BtlTeam {
+    pets: BtlPet[] = [];
 
     mpMax: number = 0;
     mp: number = 0;
     rage: number = 0;
 
-    reset(len: number, beEnemy: boolean, call: (bPet: BattlePet, petIdx: number) => void) {
+    reset(len: number, beEnemy: boolean, call: (bPet: BtlPet, petIdx: number) => void) {
         this.pets.length = len;
         let mpMax = 0;
-        let last: BattlePet | undefined;
+        let last: BtlPet | undefined;
         for (let petIdx = 0; petIdx < len; petIdx++) {
-            const battlePet = this.pets[petIdx] || new BattlePet();
-            const fIdx = BattlePetLenMax - len + petIdx;
-            battlePet.initPosition(petIdx, fIdx, beEnemy);
-            call(battlePet, petIdx);
+            const btlPet = this.pets[petIdx] || new BtlPet();
+            const fIdx = BtlPetLenMax - len + petIdx;
+            btlPet.initPosition(petIdx, fIdx, beEnemy);
+            call(btlPet, petIdx);
             if (last) {
-                battlePet.last = last;
-                battlePet.next = undefined;
-                last.next = battlePet;
-            } else battlePet.last = undefined;
-            last = battlePet;
+                btlPet.last = last;
+                btlPet.next = undefined;
+                last.next = btlPet;
+            } else btlPet.last = undefined;
+            last = btlPet;
 
-            this.pets[petIdx] = battlePet;
+            this.pets[petIdx] = btlPet;
 
-            mpMax += battlePet.pet2.mpMax;
+            mpMax += btlPet.pet2.mpMax;
         }
 
         this.mpMax = mpMax;
@@ -525,25 +525,25 @@ export class BossMaster {
     static sub: string = 'sub';
 }
 
-export class RealBattle {
+export class RealBtl {
     start: boolean = false;
 
-    selfTeam!: BattleTeam;
-    enemyTeam!: BattleTeam;
+    selfTeam!: BtlTeam;
+    enemyTeam!: BtlTeam;
 
-    battleRound: number = 0;
+    btlRd: number = 0;
     atkRound: number = 0;
 
-    order: BattlePet[] = [];
+    order: BtlPet[] = [];
     curOrderIdx: number = 0;
     sequnence!: number[];
     curSequenceIdx!: number;
 
-    lastAim?: BattlePet;
+    lastAim?: BtlPet;
     combo: number = 1;
 
     resetSelf(gameData: GameData, sPetMmrs?: SPetMmr[]) {
-        if (!this.selfTeam) this.selfTeam = new BattleTeam();
+        if (!this.selfTeam) this.selfTeam = new BtlTeam();
 
         let sPets: Pet[];
         const exPrvtys: number[] = [];
@@ -597,17 +597,17 @@ export class RealBattle {
             }
         } else sPets = GameDataTool.getReadyPets(gameData);
 
-        this.selfTeam.reset(sPets.length, false, (bPet: BattlePet, petIdx: number) => {
+        this.selfTeam.reset(sPets.length, false, (bPet: BtlPet, petIdx: number) => {
             bPet.init(sPets[petIdx], 1, exPrvtys[petIdx], exDrinkIds[petIdx], exEquipss[petIdx]);
         });
     }
 
-    resetEnemy(curExpl: ExplMmr, spcBtlId?: string, ePetMmrs?: EPetMmr[]) {
-        if (!this.enemyTeam) this.enemyTeam = new BattleTeam();
+    resetEnemy(expl: ExplMmr, spcBtlId?: string, ePetMmrs?: EPetMmr[]) {
+        if (!this.enemyTeam) this.enemyTeam = new BtlTeam();
 
         if (spcBtlId) {
             const spcBtlModel = SpcBtlModelDict[spcBtlId];
-            this.enemyTeam.reset(spcBtlModel.pets.length, true, (bPet: BattlePet, petIdx: number) => {
+            this.enemyTeam.reset(spcBtlModel.pets.length, true, (bPet: BtlPet, petIdx: number) => {
                 const spcBtlPet = spcBtlModel.pets[petIdx];
                 const ePet = PetTool.create(spcBtlPet.id, spcBtlPet.lv, [], spcBtlPet.features);
                 ePet.nickname = spcBtlPet.bossName || '';
@@ -616,16 +616,16 @@ export class RealBattle {
                 bPet.init(ePet, spcBtlPet.ampl, PrvtyMax);
             });
         } else if (ePetMmrs) {
-            const { ampl, prvty } = RealBattle.getEnemyAmplAndPrvtyByStep(curExpl.curStep);
-            this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BattlePet, petIdx: number) => {
+            const { ampl, prvty } = RealBtl.getEnemyAmplAndPrvtyByStep(expl.curStep);
+            this.enemyTeam.reset(ePetMmrs.length, true, (bPet: BtlPet, petIdx: number) => {
                 const ePetMmr = ePetMmrs[petIdx];
                 const ePet = PetTool.create(ePetMmr.id, ePetMmr.lv, ePetMmr.exFeatureIds, ePetMmr.features);
                 bPet.init(ePet, ampl, prvty);
             });
         } else {
-            const { ampl, prvty } = RealBattle.getEnemyAmplAndPrvtyByStep(curExpl.curStep);
-            const ePetsDatas = RealBattle.createRandomEnemyPetData(curExpl);
-            this.enemyTeam.reset(ePetsDatas.length, true, (bPet: BattlePet, petIdx: number) => {
+            const { ampl, prvty } = RealBtl.getEnemyAmplAndPrvtyByStep(expl.curStep);
+            const ePetsDatas = RealBtl.createRandomEnemyPetData(expl);
+            this.enemyTeam.reset(ePetsDatas.length, true, (bPet: BtlPet, petIdx: number) => {
                 const ePetData = ePetsDatas[petIdx];
                 const ePet = PetTool.createWithRandomFeature(ePetData.id, ePetData.lv);
                 bPet.init(ePet, ampl, prvty);
@@ -644,7 +644,7 @@ export class RealBattle {
             }
         }
 
-        this.battleRound = 0;
+        this.btlRound = 0;
         this.atkRound = 0;
 
         this.order.length = 0;
@@ -661,12 +661,12 @@ export class RealBattle {
         else return { ampl: 1.3, prvty: 90 };
     }
 
-    static createRandomEnemyPetData(curExpl: ExplMmr): { id: string; lv: number }[] {
-        const posId = curExpl.curPosId;
+    static createRandomEnemyPetData(expl: ExplMmr): { id: string; lv: number }[] {
+        const posId = expl.curPosId;
         const curPosModel = ActPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
 
-        const curStep = curExpl.curStep;
+        const curStep = expl.curStep;
         const petIdLists = explModel.petIdLists;
         if (!petIdLists || petIdLists.length === 0) cc.error(`${curPosModel.cnName}没有精灵列表petIdLists，无法战斗`);
         const petIds = petIdLists[curStep];
@@ -674,9 +674,9 @@ export class RealBattle {
         const enmeyPetType1 = getRandomOneInList(petIds);
         const enmeyPetType2 = getRandomOneInList(petIds);
 
-        const { base: lvBase, range: lvRange } = RealBattle.calcLvArea(curPosModel, curStep);
+        const { base: lvBase, range: lvRange } = RealBtl.calcLvArea(curPosModel, curStep);
 
-        let petCount = RealBattle.getEnemyPetCountByLv(lvBase);
+        let petCount = RealBtl.getEnemyPetCountByLv(lvBase);
         if (randomRate(0.5)) petCount -= 1; // 增加一些随机感
 
         const petDatas: { id: string; lv: number }[] = [];
@@ -700,11 +700,11 @@ export class RealBattle {
     }
 
     clone() {
-        const newRB = new RealBattle();
+        const newRB = new RealBtl();
         newRB.start = this.start;
-        newRB.selfTeam = deepCopy(this.selfTeam) as BattleTeam;
-        newRB.enemyTeam = deepCopy(this.enemyTeam) as BattleTeam;
-        newRB.battleRound = this.battleRound;
+        newRB.selfTeam = deepCopy(this.selfTeam) as BtlTeam;
+        newRB.enemyTeam = deepCopy(this.enemyTeam) as BtlTeam;
+        newRB.btlRound = this.btlRound;
         newRB.atkRound = this.atkRound;
         for (const bPet of this.order) {
             newRB.order.push(this.copyAim(newRB, bPet)!);
@@ -729,7 +729,7 @@ export class RealBattle {
         return newRB;
     }
 
-    copyAim(to: RealBattle, aim?: BattlePet): BattlePet | undefined {
+    copyAim(to: RealBtl, aim?: BtlPet): BtlPet | undefined {
         if (!aim) return undefined;
         const team = aim.beEnemy ? to.enemyTeam : to.selfTeam;
         return team.pets[aim.idx];
@@ -747,38 +747,38 @@ export class SkillInfo {
         let info = '';
         let aim: string;
         if (skl.dirType === SkillDirType.enemy) {
-            switch (skl.spBattleType) {
-                case BattleType.none:
+            switch (skl.spBtlType) {
+                case BtlType.none:
                     aim = '敌方单体目标';
                     break;
-                case BattleType.melee:
+                case BtlType.melee:
                     aim = '敌方最近单体目标';
                     break;
-                case BattleType.shoot:
+                case BtlType.shoot:
                     aim = '敌方随机单体目标';
                     break;
-                case BattleType.charge:
+                case BtlType.charge:
                     aim = '敌方排头目标';
                     break;
-                case BattleType.assassinate:
+                case BtlType.assassinate:
                     aim = '敌方血量最少目标';
                     break;
             }
         } else {
-            switch (skl.spBattleType) {
-                case BattleType.none:
+            switch (skl.spBtlType) {
+                case BtlType.none:
                     aim = '己方单体目标';
                     break;
-                case BattleType.melee:
+                case BtlType.melee:
                     aim = '自己';
                     break;
-                case BattleType.shoot:
+                case BtlType.shoot:
                     aim = '己方随机单体目标';
                     break;
-                case BattleType.charge:
+                case BtlType.charge:
                     aim = '己方排头目标';
                     break;
-                case BattleType.assassinate:
+                case BtlType.assassinate:
                     aim = '己方血量最少目标';
                     break;
             }

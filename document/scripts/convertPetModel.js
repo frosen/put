@@ -19,7 +19,7 @@ convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.ts', 'pet', 'Pet
         }
         let bioType = Number(rowData[2].substr(0, 1));
         let eleType = Number(rowData[3].substr(0, 1));
-        let battleType = Number(rowData[4].substr(0, 1));
+        let btlType = Number(rowData[4].substr(0, 1));
         let speed = Number(rowData[5]);
 
         let baseStrength = Number(rowData[6]);
@@ -61,7 +61,7 @@ convert('../put.xls', '../../putsrc/assets/configs/PetModelDict.ts', 'pet', 'Pet
             cnName,
             bioType,
             eleType,
-            battleType,
+            btlType,
             speed,
             baseStrength,
             addStrength,

@@ -40,15 +40,15 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
         cnName: '探索',
         getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } => {
             const gameData = ctrlr.memory.gameData;
-            const ing = gameData.curExpl && gameData.curExpl.curPosId === gameData.curPosId ? 'ing' : '';
+            const ing = gameData.expl && gameData.expl.curPosId === gameData.curPosId ? 'ing' : '';
             return { str: String(`${ing}`), color: cc.color(255, 102, 0) };
         },
         page: PageActExpl,
         check: (ctrlr: BaseCtrlr): string => {
             const gameData = ctrlr.memory.gameData;
-            if (gameData.curExpl) {
-                if (gameData.curPosId !== gameData.curExpl.curPosId) {
-                    const name = ActPosModelDict[gameData.curExpl.curPosId].cnName;
+            if (gameData.expl) {
+                if (gameData.curPosId !== gameData.expl.curPosId) {
+                    const name = ActPosModelDict[gameData.expl.curPosId].cnName;
                     return `精灵仍在${name}战斗`;
                 }
             }
@@ -59,7 +59,7 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
         },
         beforeEnter: (ctrlr: BaseCtrlr, callback: (data: any) => void): any => {
             const gameData = ctrlr.memory.gameData;
-            if (gameData.curExpl) return callback(null);
+            if (gameData.expl) return callback(null);
             const posData = gameData.posDataDict[gameData.curPosId];
             if (!posData.actDict.hasOwnProperty(PAKey.expl)) return callback(null);
             const pADExpl = posData.actDict[PAKey.expl] as PADExpl;

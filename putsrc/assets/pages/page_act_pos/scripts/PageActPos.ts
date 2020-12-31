@@ -40,7 +40,7 @@ export class PageActPos extends PageBase {
 
     onPageShow() {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && !gameData.curExpl.afb) return;
+        if (gameData.expl && !gameData.expl.afb) return;
 
         const posId = gameData.curPosId;
 
@@ -70,7 +70,7 @@ export class PageActPos extends PageBase {
 
     afterPageShowAnim() {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && !gameData.curExpl.afb) this.ctrlr.pushPage(PageActExpl, null, false);
+        if (gameData.expl && !gameData.expl.afb) this.ctrlr.pushPage(PageActExpl, null, false);
     }
 
     static ListViewPosDict: { [key: string]: number } = {};

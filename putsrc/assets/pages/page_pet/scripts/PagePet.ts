@@ -118,12 +118,12 @@ export class PagePet extends PageBase {
             return this.ctrlr.popToast('无法改变状态！备战状态的精灵不得大于五只');
         }
 
-        if (gameData.curExpl) {
+        if (gameData.expl) {
             if (pet.state === PetState.ready && GameDataTool.getReadyPets(gameData).length <= 2) {
                 return this.ctrlr.popToast('无法改变状态！探索中，备战状态的精灵不得少于两只');
             }
 
-            if (gameData.curExpl.curBattle) {
+            if (gameData.expl.btl) {
                 return this.ctrlr.popToast('无法改变状态！当前处于交战状态');
             }
         }
@@ -170,7 +170,7 @@ export class PagePet extends PageBase {
 
     checkMasterHere(pet: Pet = null): boolean {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.curExpl && gameData.curExpl.afb && (pet ? pet.state === PetState.ready : true)) {
+        if (gameData.expl && gameData.expl.afb && (pet ? pet.state === PetState.ready : true)) {
             this.ctrlr.popToast('无法变更！\n精灵在战斗而训练师未与其在一起');
             return false;
         }

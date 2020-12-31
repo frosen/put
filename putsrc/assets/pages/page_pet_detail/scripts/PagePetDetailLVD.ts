@@ -15,7 +15,7 @@ import { CellPetName } from '../cells/cell_pet_name/scripts/CellPetName';
 import { CellTitle } from '../cells/cell_title/scripts/CellTitle';
 import { PetModelDict } from '../../../configs/PetModelDict';
 import { ExpModels } from '../../../configs/ExpModels';
-import { Pet, BioTypeNames, EleTypeNames, BattleTypeNames, Feature } from '../../../scripts/DataSaved';
+import { Pet, BioTypeNames, EleTypeNames, BtlTypeNames, Feature } from '../../../scripts/DataSaved';
 import { Pet2 } from '../../../scripts/DataOther';
 import { PetModel } from '../../../scripts/DataModel';
 import { CellPkgEquip } from '../../page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
@@ -294,7 +294,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData1('生物', BioTypeNames[pet2.exBioTypes.getLast() || petModel.bioType], BIO_TIP);
             cell.setData2('元素', EleTypeNames[pet2.exEleTypes.getLast() || petModel.eleType], ELE_TIP);
         } else if (rowIdx === 6) {
-            cell.setData1('战斗', BattleTypeNames[pet2.exBattleTypes.getLast() || petModel.battleType], BATTLE_TIP);
+            cell.setData1('战斗', BtlTypeNames[pet2.exBtlTypes.getLast() || petModel.btlType], BATTLE_TIP);
             cell.setData2('速度', String(pet2.speed), SPEED_TIP);
         }
         // 第三组

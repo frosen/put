@@ -5,8 +5,8 @@
  */
 
 import { BtlCtrlr } from './BtlCtrlr';
-import { EleType, BattleType, BioType, Pet, Feature } from './DataSaved';
-import { Pet2, BattlePet, BattleBuff } from './DataOther';
+import { EleType, BtlType, BioType, Pet, Feature } from './DataSaved';
+import { Pet2, BtlPet, BtlBuff } from './DataOther';
 
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
@@ -15,7 +15,7 @@ export class BuffOutput {
     hp?: number;
     mp?: number;
     rage?: number;
-    newBuffs?: { aim?: BattlePet; id: string; time: number }[];
+    newBuffs?: { aim?: BtlPet; id: string; time: number }[];
 }
 
 export enum BuffType {
@@ -30,9 +30,9 @@ export class BuffModel {
     brief!: string;
     buffType!: BuffType;
     eleType!: EleType;
-    onStarted?: (thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr) => any;
-    onEnd?: (thisPet: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) => void;
-    onTurnEnd?: (thisPet: BattlePet, buff: BattleBuff, ctrlr: BtlCtrlr) => BuffOutput | void;
+    onStarted?: (thisPet: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr) => any;
+    onEnd?: (thisPet: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) => void;
+    onTurnEnd?: (thisPet: BtlPet, buff: BtlBuff, ctrlr: BtlCtrlr) => BuffOutput | void;
     getInfo!: (pet: Readonly<Pet>, pet2: Readonly<Pet2>) => string;
 }
 
@@ -64,7 +64,7 @@ export class SkillModel {
     dirType!: SkillDirType;
     aimType!: SkillAimtype;
     eleType!: EleType;
-    spBattleType!: BattleType;
+    spBtlType!: BtlType;
 
     mainDmg!: number;
     mainBuffId!: string;
@@ -93,15 +93,15 @@ export class FeatureModel {
     dataAreas!: number[][];
     onBaseSetting?: (pet: Pet2, datas: number[]) => void;
     onSetting?: (pet: Pet2, datas: number[]) => void;
-    onBtlStart?: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
-    onAtk?: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
-    onCast?: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
-    onHurt?: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
-    onHeal?: (pet: BattlePet, aim: BattlePet, datas: number[], bData: FeatureBtlData) => void;
-    onBuff?: (pet: BattlePet, caster: BattlePet, datas: number[], bData: FeatureBtlData) => void;
-    onEDead?: (pet: BattlePet, aim: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
-    onDead?: (pet: BattlePet, caster: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
-    onTurn?: (pet: BattlePet, datas: number[], ctrlr: BtlCtrlr) => void;
+    onBtlStart?: (pet: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;
+    onAtk?: (pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData) => void;
+    onCast?: (pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData) => void;
+    onHurt?: (pet: BtlPet, caster: BtlPet, datas: number[], bData: FeatureBtlData) => void;
+    onHeal?: (pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData) => void;
+    onBuff?: (pet: BtlPet, caster: BtlPet, datas: number[], bData: FeatureBtlData) => void;
+    onEDead?: (pet: BtlPet, aim: BtlPet, caster: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;
+    onDead?: (pet: BtlPet, caster: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;
+    onTurn?: (pet: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;
     getInfo!: (datas: number[]) => string;
 }
 
@@ -114,7 +114,7 @@ export class PetModel {
     /** 元素类型 */
     eleType!: EleType;
     /** 战斗类型 */
-    battleType!: BattleType;
+    btlType!: BtlType;
     /** 速度 */
     speed!: number;
 
@@ -199,7 +199,7 @@ export class CatcherModel extends CnsumModel {
     lvMax: number;
     bioType: BioType;
     eleType: EleType;
-    battleType: BattleType;
+    btlType: BtlType;
     rate: number;
 }
 

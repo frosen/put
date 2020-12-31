@@ -32,9 +32,9 @@ export class BufN {
     static KongWu = 'KongWu';
 }
 
-import { EleType, BattleType, Pet } from '../scripts/DataSaved';
+import { EleType, BtlType, Pet } from '../scripts/DataSaved';
 import { BuffModel, BuffOutput, BuffType } from '../scripts/DataModel';
-import { BattlePet, BattleBuff, Pet2 } from '../scripts/DataOther';
+import { BtlPet, BtlBuff, Pet2 } from '../scripts/DataOther';
 import { BtlCtrlr } from '../scripts/BtlCtrlr';
 
 function fl1(n: number) {
@@ -52,7 +52,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '灼',
         buffType: BuffType.debuff,
         eleType: EleType.fire,
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * 0.7 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -65,13 +65,13 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '寒',
         buffType: BuffType.debuff,
         eleType: EleType.water,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             aim.pet2.speed -= 10;
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.speed += 10;
         },
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * 0.5 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -84,7 +84,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '毒',
         buffType: BuffType.debuff,
         eleType: EleType.dark,
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             const rate = (1 - aim.hp / aim.hpMax) * 0.4 + 0.4;
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * rate };
         },
@@ -98,7 +98,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '落',
         buffType: BuffType.debuff,
         eleType: EleType.earth,
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             if (buff.time === 0) return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -111,11 +111,11 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '警',
         buffType: BuffType.buff,
         eleType: EleType.water,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             aim.pet2.hitRate += 10;
             aim.pet2.critRate += 10;
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.hitRate -= 10;
             aim.pet2.critRate -= 10;
         },
@@ -129,14 +129,14 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '热',
         buffType: BuffType.buff,
         eleType: EleType.fire,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             const from = caster.pet2.sklDmgFrom * 0.15 + aim.pet2.atkDmgFrom * 0.15;
             const to = caster.pet2.sklDmgTo * 0.15 + aim.pet2.atkDmgTo * 0.15;
             aim.pet2.atkDmgFrom += from;
             aim.pet2.atkDmgTo += to;
             return { from, to };
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             const { from, to } = data;
             aim.pet2.atkDmgFrom -= from;
             aim.pet2.atkDmgTo -= to;
@@ -151,7 +151,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '惧',
         buffType: BuffType.debuff,
         eleType: EleType.dark,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             const atkRdc = aim.pet2.atkDmgFrom * 0.8;
             aim.pet2.atkDmgFrom -= atkRdc;
             aim.pet2.atkDmgTo -= atkRdc;
@@ -160,7 +160,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.sklDmgTo -= sklRdc;
             return { atkRdc, sklRdc };
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             const { atkRdc, sklRdc } = data;
             aim.pet2.atkDmgFrom += atkRdc;
             aim.pet2.atkDmgTo += atkRdc;
@@ -177,13 +177,13 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '耀',
         buffType: BuffType.buff,
         eleType: EleType.light,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             aim.pet2.hitRate += 0.1;
             aim.pet2.critRate += 0.1;
             aim.pet2.evdRate += 0.1;
             aim.pet2.dfsRate += 0.1;
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.hitRate -= 0.1;
             aim.pet2.critRate -= 0.1;
             aim.pet2.evdRate -= 0.1;
@@ -199,7 +199,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '割',
         buffType: BuffType.debuff,
         eleType: EleType.air,
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             return { hp: Math.floor(aim.hpMax * 0.05) };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -212,13 +212,13 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '嘲',
         buffType: BuffType.debuff,
         eleType: EleType.dark,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
-            aim.pet2.exBattleTypes.push(BattleType.melee);
-            return aim.pet2.exBattleTypes.length - 1;
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
+            aim.pet2.exBtlTypes.push(BtlType.melee);
+            return aim.pet2.exBtlTypes.length - 1;
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             const idx: number = data;
-            aim.pet2.exBattleTypes.removeIndex(idx);
+            aim.pet2.exBtlTypes.removeIndex(idx);
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `目标战斗方式变成近战`;
@@ -230,10 +230,10 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '防',
         buffType: BuffType.buff,
         eleType: EleType.earth,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             aim.pet2.dfsRate += 0.2;
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.dfsRate -= 0.2;
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -246,10 +246,10 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '墙',
         buffType: BuffType.buff,
         eleType: EleType.earth,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             aim.pet2.dfsRate += 0.8;
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.dfsRate -= 0.8;
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -262,10 +262,10 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '飞',
         buffType: BuffType.buff,
         eleType: EleType.air,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             aim.pet2.speed += 100;
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.speed -= 100;
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -278,7 +278,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '春',
         buffType: BuffType.buff,
         eleType: EleType.air,
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, null) * 0.8 * -1 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -291,12 +291,12 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '止',
         buffType: BuffType.debuff,
         eleType: EleType.air,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
-            aim.pet2.exBattleTypes.push(BattleType.stay);
-            return aim.pet2.exBattleTypes.length - 1;
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
+            aim.pet2.exBtlTypes.push(BtlType.stay);
+            return aim.pet2.exBtlTypes.length - 1;
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
-            aim.pet2.exBattleTypes.removeIndex(data);
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
+            aim.pet2.exBtlTypes.removeIndex(data);
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `目标停止一切行动`;
@@ -308,10 +308,10 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '盲',
         buffType: BuffType.debuff,
         eleType: EleType.light,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             aim.pet2.hitRate -= 0.3;
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.hitRate += 0.3;
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -324,19 +324,19 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '恶',
         buffType: BuffType.buff,
         eleType: EleType.dark,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             const atk = aim.pet2.atkDmgTo * 1.5;
             const skl = aim.pet2.sklDmgTo * 1.5;
             aim.pet2.atkDmgTo += atk;
             aim.pet2.sklDmgTo += skl;
             return { atk, skl };
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             const { atk, skl } = data;
             aim.pet2.atkDmgTo -= atk;
             aim.pet2.sklDmgTo -= skl;
         },
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             const dmg = BtlCtrlr.getAtkDmg(aim, aim) + BtlCtrlr.getSklDmg(aim, aim);
             return { hp: Math.floor(dmg * 0.3) };
         },
@@ -350,7 +350,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '尽',
         buffType: BuffType.debuff,
         eleType: EleType.fire,
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             const mp = 20 + Math.floor(buff.caster.pet.lv / 10);
             if (ctrlr.getTeam(aim).mp >= mp) {
                 return { mp };
@@ -370,7 +370,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '宁',
         buffType: BuffType.debuff,
         eleType: EleType.water,
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             return { rage: 3 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -383,14 +383,14 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '强',
         buffType: BuffType.buff,
         eleType: EleType.earth,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             const from = aim.pet2.atkDmgFrom * 0.6;
             const to = aim.pet2.atkDmgTo * 0.6;
             aim.pet2.atkDmgFrom += from;
             aim.pet2.atkDmgTo += to;
             return { from, to };
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             const { from, to } = data;
             aim.pet2.atkDmgFrom -= from;
             aim.pet2.atkDmgTo -= to;
@@ -405,14 +405,14 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '专',
         buffType: BuffType.buff,
         eleType: EleType.earth,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             const from = aim.pet2.sklDmgFrom * 0.4;
             const to = aim.pet2.sklDmgTo * 0.4;
             aim.pet2.sklDmgFrom += from;
             aim.pet2.sklDmgTo += to;
             return { from, to };
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             const { from, to } = data;
             aim.pet2.sklDmgFrom -= from;
             aim.pet2.sklDmgTo -= to;
@@ -427,7 +427,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '生',
         buffType: BuffType.buff,
         eleType: EleType.earth,
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             const r = ctrlr.ranSd();
             let id!: string;
             if (r < 0.2) id = BufN.ReLi;
@@ -447,7 +447,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '死',
         buffType: BuffType.debuff,
         eleType: EleType.earth,
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             const r = ctrlr.ranSd();
             let id!: string;
             if (r < 0.2) id = BufN.ZhuoShao;
@@ -467,7 +467,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '沙',
         buffType: BuffType.debuff,
         eleType: EleType.earth,
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             if (ctrlr.ranSd() < 0.1) return { newBuffs: [{ id: 'JingZhi', time: 1 }] };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
@@ -480,18 +480,18 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         brief: '舞',
         buffType: BuffType.buff,
         eleType: EleType.air,
-        onStarted(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr): any {
+        onStarted(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr): any {
             aim.pet2.speed += 50;
             aim.pet2.hitRate += 0.1;
             aim.pet2.evdRate += 0.1;
         },
-        onTurnEnd(aim: Readonly<BattlePet>, buff: Readonly<BattleBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
+        onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             if (ctrlr.ranSd() < 0.15) {
                 const newPet = ctrlr.getTeam(aim).pets.getOne(pet => pet.hp > 0 && pet.pet2.speed < aim.pet2.speed);
                 if (newPet) return { newBuffs: [{ aim: newPet, id: BufN.KongWu, time: 3 }] };
             }
         },
-        onEnd(aim: Readonly<BattlePet>, caster: Readonly<BattlePet>, ctrlr: BtlCtrlr, data: any) {
+        onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.speed -= 50;
             aim.pet2.hitRate -= 0.1;
             aim.pet2.evdRate -= 0.1;

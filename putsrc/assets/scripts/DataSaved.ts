@@ -79,7 +79,7 @@ export const EleDarkColors = [
     cc.color(125, 25, 195)
 ];
 
-export enum BattleType {
+export enum BtlType {
     none,
     melee,
     shoot,
@@ -90,8 +90,8 @@ export enum BattleType {
     chaos
 }
 
-export const BattleTypeNames = ['', '近战', '射击', '冲锋', '刺杀', '连段', '停止', '混乱'];
-export const BattleTypeColors = [
+export const BtlTypeNames = ['', '近战', '射击', '冲锋', '刺杀', '连段', '停止', '混乱'];
+export const BtlTypeColors = [
     null,
     cc.color(200, 50, 50),
     cc.color(50, 50, 200),
@@ -331,7 +331,7 @@ export class EPetMmr {
     features: Feature[];
 }
 
-export class BattleMmr {
+export class BtlMmr {
     startUpdCnt: number;
     seed: number;
     selfs: SPetMmr[];
@@ -350,7 +350,7 @@ export class ExplMmr {
     stepEnterTime!: number;
     curStep!: number;
     chngUpdCnt!: number;
-    curBattle?: BattleMmr;
+    btl?: BtlMmr;
     hiding!: boolean;
     catcherId?: string;
     afb!: boolean; // away from battle
@@ -387,7 +387,7 @@ export class GameData {
     curPosId!: string;
     posDataDict!: { [key: string]: PosData };
 
-    curExpl?: ExplMmr;
+    expl?: ExplMmr;
 
     acceQuestInfos!: AcceQuestInfo[]; // 已经接受了的quest
 
