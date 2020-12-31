@@ -9,39 +9,51 @@ export class SpcBtlN {
 }
 
 import { SpcBtlModel, BossType } from '../scripts/DataModel';
-import { PetModelDict } from './PetModelDict';
+import { FtN } from './FeatureModelDict';
+import { PetN } from './PetModelDict';
 
 export const SpcBtlModelDict: { [key: string]: SpcBtlModel } = {
     [SpcBtlN.KuangBaoHeXin]: {
         id: SpcBtlN.KuangBaoHeXin,
         pets: [
             {
-                id: PetModelDict.DianZiShouWei.id,
+                id: PetN.DianZiShouWei,
                 lv: 10,
                 ampl: 3,
                 features: [],
                 bossType: BossType.sub
             },
             {
-                id: PetModelDict.DianZiShouWei.id,
+                id: PetN.DianZiShouWei,
                 lv: 10,
                 ampl: 3,
                 features: [],
                 bossType: BossType.sub
             },
             {
-                id: PetModelDict.DianZiShouWei.id,
+                id: PetN.DianZiShouWei,
                 lv: 10,
                 ampl: 3,
                 features: [],
                 bossType: BossType.sub
             },
             {
-                id: PetModelDict.DianZiShouWei.id,
+                id: PetN.DianZiShouWei,
                 lv: 10,
                 ampl: 3,
                 features: [],
                 bossType: BossType.sub
+            },
+            {
+                id: PetN.HeZiHeXin,
+                lv: 10,
+                ampl: 3,
+                features: [
+                    { id: FtN.bossUlti, lv: 1 },
+                    { id: FtN.lightBomb, lv: 1 }
+                ],
+                bossName: '狂暴核心',
+                bossType: BossType.main
             }
         ]
     }

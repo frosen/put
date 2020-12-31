@@ -385,7 +385,7 @@ export class BtlPet {
             }
             return;
         }
-        list.push({ func: model[funcName], datas, id: model.id });
+        list.push({ func: (model[funcName] as Function).bind(model), datas, id: model.id });
     }
 
     static getSkillMpUsing(skillId: string, pet: Pet) {

@@ -172,7 +172,7 @@ export class ExplUpdater {
             this.logEnter();
             this.startExpl();
         } else {
-            this.startBtl(spcBtlId); // 专属作战直接进入战斗
+            this.prepareToBtl(spcBtlId); // 专属作战有个准备时间，然后直接进入战斗，不进入探索
         }
         this.lastTime = Date.now();
 

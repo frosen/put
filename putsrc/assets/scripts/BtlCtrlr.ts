@@ -185,7 +185,7 @@ export class BtlCtrlr {
             )
         );
 
-        this.initBtl(this.realBtl);
+        this.initBtl(this.realBtl, spcBtlId);
         this.hiding = expl.hiding;
 
         if (this.debugMode) {
@@ -202,7 +202,7 @@ export class BtlCtrlr {
         // 更新battle
         const expl = this.gameData.expl;
         this.realBtl.resetEnemy(expl, btlMmr.spcBtlId, btlMmr.enemys);
-        this.initBtl(this.realBtl);
+        this.initBtl(this.realBtl, btlMmr.spcBtlId);
         this.hiding = btlMmr.hiding;
 
         if (this.debugMode) {
@@ -212,19 +212,21 @@ export class BtlCtrlr {
         this.goReadyToBtl();
     }
 
-    initBtl(rb: RealBtl) {
+    initBtl(rb: RealBtl, spcBtlId?: string) {
         // 更新UI和日志
         if (this.page) this.page.setUIOfEnemyPet(-1);
 
         const petNameDict: { [key: string]: boolean } = {};
         for (const ePet of this.realBtl.enemyTeam.pets) {
-            const cnName = PetTool.getOriNameById(ePet.pet.id); // 避免太长，都用原始名
+            const cnName = ePet.pet.nickname || PetTool.getOriNameById(ePet.pet.id); // 避免太长，都用原始名
             petNameDict[cnName] = true;
         }
 
         if (this.logging) {
             const petNames = Object.keys(petNameDict);
-            const str = '发现：' + petNames.join(', ') + '，进入战斗';
+            let str = spcBtlId ? '发现BOSS：' : '发现：';
+            str += petNames.join('、');
+            str += spcBtlId ? '，准备战斗' : '，进入战斗';
             this.updater.log(ExplLogType.rich, str);
         }
     }
