@@ -79,8 +79,8 @@ export class FtN {
     static healByHp = 'healByHp';
     static healByCombo = 'healByCombo';
     static healAndHurt = 'healAndHurt';
-    static beginAddRage = 'beginAddRage';
-    static beginReLi = 'beginReLi';
+    static startAddRage = 'startAddRage';
+    static startReLi = 'startReLi';
     static killAddHp = 'killAddHp';
     static killAddAllHp = 'killAddAllHp';
     static killAddMp = 'killAddMp';
@@ -994,8 +994,8 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `治疗效果提高${rdP(datas[0])}%，但自己会受到${rdP(datas[1])}%的伤害（不会致死）`;
         }
     },
-    [FtN.beginAddRage]: {
-        id: FtN.beginAddRage,
+    [FtN.startAddRage]: {
+        id: FtN.startAddRage,
         cnBrief: '阳',
         dataAreas: [[5, 2]],
         onBtlStart(pet: BtlPet, datas: number[], ctrlr: BtlCtrlr): void {
@@ -1005,8 +1005,8 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             return `战斗开始时，直接获取${Math.min(datas[0], RageMax)}点斗志`;
         }
     },
-    [FtN.beginReLi]: {
-        id: FtN.beginReLi,
+    [FtN.startReLi]: {
+        id: FtN.startReLi,
         cnBrief: '热',
         dataAreas: [[1, 1]],
         onBtlStart(pet: BtlPet, datas: number[], ctrlr: BtlCtrlr): void {

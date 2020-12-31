@@ -88,8 +88,8 @@ export class BtlCtrlr {
         this.realBtl = new RealBtl();
 
         // 快捷键
-        this.page!.ctrlr.debugTool.setShortCut('rr', this.resetBattleDataToBegin.bind(this));
-        this.page!.ctrlr.debugTool.setShortCut('bb', this.resetBattleDataToTurnBegin.bind(this));
+        this.page!.ctrlr.debugTool.setShortCut('rr', this.resetBtlDataToStart.bind(this));
+        this.page!.ctrlr.debugTool.setShortCut('bb', this.resetBtlDataToTurnStart.bind(this));
 
         if (CC_DEBUG) this.debugMode = true;
 
@@ -97,7 +97,7 @@ export class BtlCtrlr {
         if (this.debugMode) window.btlCtrlr = this; // 便于测试
     }
 
-    resetBattleDataToBegin() {
+    resetBtlDataToStart() {
         if (!this.realBtl.start) {
             cc.log('PUT 没有战斗');
             return;
@@ -108,10 +108,10 @@ export class BtlCtrlr {
         setSeed(this.realBtlCopys[0].seed);
         this.realBtlCopys.length = 1;
         this.resetAllUI();
-        this.goReadyToBattle();
+        this.goReadyToBtl();
     }
 
-    resetBattleDataToTurnBegin() {
+    resetBtlDataToTurnStart() {
         if (!this.realBtl.start) {
             cc.log('PUT 没有战斗');
             return;
@@ -119,7 +119,7 @@ export class BtlCtrlr {
         cc.log('PUT 回到上次回合开始');
 
         if (this.realBtlCopys.length <= 1) {
-            this.resetBattleDataToBegin();
+            this.resetBtlDataToStart();
         } else {
             const last = this.realBtlCopys.pop()!;
             this.realBtl = deepCopy(last.rb) as RealBtl;
@@ -164,7 +164,7 @@ export class BtlCtrlr {
         }
     }
 
-    startBattle(startUpdCnt: number, spcBtlId?: string) {
+    startBtl(startUpdCnt: number, spcBtlId?: string) {
         const seed = Date.now();
         setSeed(seed);
 
@@ -185,7 +185,7 @@ export class BtlCtrlr {
             )
         );
 
-        this.initBattle(this.realBtl);
+        this.initBtl(this.realBtl);
         this.hiding = expl.hiding;
 
         if (this.debugMode) {
@@ -193,26 +193,26 @@ export class BtlCtrlr {
             this.realBtlCopys.push({ seed: getCurSeed(), rb: <RealBtl>deepCopy(this.realBtl) });
         }
 
-        this.goReadyToBattle();
+        this.goReadyToBtl();
     }
 
-    resetBattle(btlMmr: BtlMmr) {
+    resetBtl(btlMmr: BtlMmr) {
         setSeed(btlMmr.seed);
 
         // 更新battle
         const expl = this.gameData.expl;
         this.realBtl.resetEnemy(expl, btlMmr.spcBtlId, btlMmr.enemys);
-        this.initBattle(this.realBtl);
+        this.initBtl(this.realBtl);
         this.hiding = btlMmr.hiding;
 
         if (this.debugMode) {
             this.realBtlCopys.length = 0;
             this.realBtlCopys.push({ seed: getCurSeed(), rb: <RealBtl>deepCopy(this.realBtl) });
         }
-        this.goReadyToBattle();
+        this.goReadyToBtl();
     }
 
-    initBattle(rb: RealBtl) {
+    initBtl(rb: RealBtl) {
         // 更新UI和日志
         if (this.page) this.page.setUIOfEnemyPet(-1);
 
@@ -233,7 +233,7 @@ export class BtlCtrlr {
         return Math.ceil(selfPet.pet2.agility / enemyPet.pet2.agility); // 敏捷每大于敌人100%，会让敌人多静止1回合
     }
 
-    goReadyToBattle() {
+    goReadyToBtl() {
         this.realBtl.curOrderIdx = 99; // 强制下次update切换回合
     }
 
@@ -788,16 +788,16 @@ export class BtlCtrlr {
 
             if (this.realBtl.lastAim === btlPet) this.realBtl.lastAim = undefined;
         } else {
-            this.endBattle(btlPet.beEnemy);
+            this.endBtl(btlPet.beEnemy);
         }
     }
 
-    endBattle(selfWin: boolean) {
+    endBtl(selfWin: boolean) {
         if (this.logging) this.updater.log(ExplLogType.repeat, selfWin ? '战斗胜利' : '战斗失败');
-        this.exitBattle(selfWin);
+        this.exitBtl(selfWin);
     }
 
-    exitBattle(selfWin: boolean) {
+    exitBtl(selfWin: boolean) {
         const rb = this.realBtl;
         rb.start = false;
 

@@ -531,7 +531,7 @@ export class RealBtl {
     selfTeam!: BtlTeam;
     enemyTeam!: BtlTeam;
 
-    btlRd: number = 0;
+    btlRound: number = 0;
     atkRound: number = 0;
 
     order: BtlPet[] = [];

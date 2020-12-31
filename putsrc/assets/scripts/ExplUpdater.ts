@@ -109,7 +109,7 @@ export class ExplUpdater {
         this.page.ctrlr.debugTool.setShortCut('ff', this.fastUpdate.bind(this));
 
         this.btlCtrlr = new BtlCtrlr();
-        this.btlCtrlr.init(this, this.onBattleEnd.bind(this));
+        this.btlCtrlr.init(this, this.onBtlEnd.bind(this));
 
         const expl = this.gameData.expl;
         if (!expl) this.createExpl(startStep, spcBtlId);
@@ -172,7 +172,7 @@ export class ExplUpdater {
             this.logEnter();
             this.startExpl();
         } else {
-            this.startBattle(spcBtlId); // 专属作战直接进入战斗
+            this.startBtl(spcBtlId); // 专属作战直接进入战斗
         }
         this.lastTime = Date.now();
 
@@ -184,8 +184,8 @@ export class ExplUpdater {
         const curStep = expl.curStep;
 
         if (expl.btl) {
-            const { inBattle, win, updCnt, lastTime } = this.recoverExplInBattle(expl.btl, expl.stepEnterTime);
-            if (inBattle) {
+            const { inBtl, win, updCnt, lastTime } = this.recoverExplInBtl(expl.btl, expl.stepEnterTime);
+            if (inBtl) {
                 this.updCnt = updCnt;
                 this.lastTime = lastTime;
 
@@ -404,14 +404,11 @@ export class ExplUpdater {
         if (this.page) this.page.setExplStepUI();
     }
 
-    recoverExplInBattle(
-        btlMmr: BtlMmr,
-        stepEnterTime: number
-    ): { inBattle: boolean; win: boolean; updCnt: number; lastTime: number } {
+    recoverExplInBtl(btlMmr: BtlMmr, stepEnterTime: number): { inBtl: boolean; win: boolean; updCnt: number; lastTime: number } {
         let lastTime = btlMmr.startUpdCnt * ExplInterval + stepEnterTime;
         let updCnt = btlMmr.startUpdCnt;
 
-        const win = this.mockBattle(btlMmr, true, (realBtl: RealBtl): boolean => {
+        const win = this.mockBtl(btlMmr, true, (realBtl: RealBtl): boolean => {
             if (realBtl.start === false) return true;
             if (lastTime + ExplInterval > Date.now()) return true;
 
@@ -422,14 +419,14 @@ export class ExplUpdater {
         });
 
         return {
-            inBattle: win === null,
+            inBtl: win === null,
             win,
             updCnt,
             lastTime
         };
     }
 
-    mockBattle(mmr: BtlMmr, logging: boolean, updCallback: (realBtl: RealBtl) => boolean): boolean {
+    mockBtl(mmr: BtlMmr, logging: boolean, updCallback: (realBtl: RealBtl) => boolean): boolean {
         const oldPage = this.page;
         const endCall = this.btlCtrlr.endCallback;
         let win: boolean = false;
@@ -439,7 +436,7 @@ export class ExplUpdater {
         this.btlCtrlr.logging = logging;
 
         this.btlCtrlr.resetSelfTeam(mmr.selfs.length > 0 ? mmr : undefined);
-        this.btlCtrlr.resetBattle(mmr);
+        this.btlCtrlr.resetBtl(mmr);
         while (true) {
             if (updCallback(this.btlCtrlr.realBtl)) break;
             this.btlCtrlr.update();
@@ -682,7 +679,7 @@ export class ExplUpdater {
                 hiding: expl.hiding
             };
 
-            const win = this.mockBattle(mockData, false, (realBtl: RealBtl): boolean => {
+            const win = this.mockBtl(mockData, false, (realBtl: RealBtl): boolean => {
                 if (realBtl.start === false) return true;
                 updCntTotal++;
                 return false;
@@ -786,7 +783,7 @@ export class ExplUpdater {
     onUpdate() {
         if (this.state === ExplState.explore) this.updateExpl();
         else if (this.state === ExplState.prepare) this.updatePrepare();
-        else if (this.state === ExplState.battle) this.updateBattle();
+        else if (this.state === ExplState.battle) this.updateBtl();
         else if (this.state === ExplState.recover) this.updateRecover();
 
         if (this.page) this.page.handleLog();
@@ -989,7 +986,7 @@ export class ExplUpdater {
         const result = this.getExplResult();
         if (result === ExplResult.doing) this.doExploration();
         else if (result === ExplResult.gain) this.gainRes();
-        else if (result === ExplResult.battle) this.startBattle();
+        else if (result === ExplResult.battle) this.startBtl();
     }
 
     getExplResult(): ExplResult {
@@ -1174,11 +1171,11 @@ export class ExplUpdater {
 
     prepareUpdCnt: number = 0;
 
-    prepareToBattle(spcBtlId: string) {
+    prepareToBtl(spcBtlId: string) {
         this.handleSelfTeamChange();
 
         this.state = ExplState.prepare;
-        this.btlCtrlr.startBattle(this.updCnt, spcBtlId);
+        this.btlCtrlr.startBtl(this.updCnt, spcBtlId);
 
         this.prepareUpdCnt = 15;
     }
@@ -1189,28 +1186,28 @@ export class ExplUpdater {
             this.log(ExplLogType.rich, `备战！剩余${this.prepareUpdCnt}回合`);
         } else {
             this.log(ExplLogType.rich, `出击！！!`);
-            this.startBattleAfterPrepare();
+            this.startBtlAfterPrepare();
         }
     }
 
     // -----------------------------------------------------------------
 
-    startBattle(spcBtlId?: string) {
+    startBtl(spcBtlId?: string) {
         this.handleSelfTeamChange();
 
         this.state = ExplState.battle;
-        this.btlCtrlr.startBattle(this.updCnt, spcBtlId);
+        this.btlCtrlr.startBtl(this.updCnt, spcBtlId);
     }
 
-    startBattleAfterPrepare() {
+    startBtlAfterPrepare() {
         this.state = ExplState.battle;
     }
 
-    updateBattle() {
+    updateBtl() {
         this.btlCtrlr.update();
     }
 
-    onBattleEnd(win: boolean) {
+    onBtlEnd(win: boolean) {
         this.updateChgUpdCnt();
         if (win) {
             this.receiveExp();
