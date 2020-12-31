@@ -93,7 +93,8 @@ export class FtN {
     static turnJingJie = 'turnJingJie';
     // boss feature
     static bossUlti = 'bossUlti';
-    static lightBomb = 'lightBomb';
+    static bossGetDebuff = 'bossGetDebuff';
+    static bossLightBomb = 'bossLightBomb';
 }
 
 import { BtlCtrlr } from '../scripts/BtlCtrlr';
@@ -1163,8 +1164,22 @@ export const BossFeatureModelDict: { [key: string]: FeatureModel } = {
             return `[BOSS]绝杀技冷却只有${10 - datas[0]}回合`;
         }
     },
-    [FtN.lightBomb]: {
-        id: FtN.lightBomb,
+    [FtN.bossGetDebuff]: {
+        id: FtN.bossGetDebuff,
+        cnBrief: '霸体',
+        dataAreas: [[1, 1]],
+        onTurn(pet: BtlPet, datas: number[], ctrlr: BtlCtrlr) {
+            const btlType = pet.pet2.exBtlTypes.getLast();
+            if (btlType === BtlType.stay || btlType === BtlType.chaos) {
+                ctrlr.addBuff(pet, pet, BufN.ChaoFeng, 1, fName(this));
+            }
+        },
+        getInfo(datas: number[]): string {
+            return `[BOSS]免疫控制`;
+        }
+    },
+    [FtN.bossLightBomb]: {
+        id: FtN.bossLightBomb,
         cnBrief: '强光',
         dataAreas: [[1, 1]],
         onTurn(pet: BtlPet, datas: number[], ctrlr: BtlCtrlr) {

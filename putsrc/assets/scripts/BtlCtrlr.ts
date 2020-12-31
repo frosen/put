@@ -331,10 +331,8 @@ export class BtlCtrlr {
 
         // 触发回合特性
         for (const pet of rb.order) {
-            if (pet.hp === 0) continue;
-            pet.turnFeatures.forEach((value: TurnFeature) => {
-                value.func(pet, value.datas, this);
-            });
+            if (pet.hp <= 0) continue;
+            pet.turnFeatures.forEach(value => value.func(pet, value.datas, this));
         }
     }
 
@@ -424,9 +422,7 @@ export class BtlCtrlr {
 
         // 触发进入战斗特性
         for (const pet of rb.order) {
-            pet.startFeatures.forEach((value: StartFeature) => {
-                value.func(pet, value.datas, this);
-            });
+            pet.startFeatures.forEach(value => value.func(pet, value.datas, this));
         }
     }
 
@@ -571,20 +567,15 @@ export class BtlCtrlr {
         const lastHp = aim.hp;
         aim.hp -= finalDmg;
 
+        const btlData = { ctrlr: this, finalDmg, skillModel };
         if (dmgRate > 0) {
-            btlPet.castFeatures.forEach((value: AtkFeature) => {
-                value.func(btlPet, aim, value.datas, { ctrlr: this, finalDmg, skillModel });
-            });
-            aim.hurtFeatures.forEach((value: HurtFeature) => {
-                value.func(aim, btlPet, value.datas, { ctrlr: this, finalDmg, skillModel });
-            });
+            btlPet.castFeatures.forEach(value => value.func(btlPet, aim, value.datas, btlData));
+            aim.hurtFeatures.forEach(value => value.func(aim, btlPet, value.datas, btlData));
             aim.hp = Math.floor(aim.hp);
             if (aim.hp < 0) aim.hp = 0;
             else if (aim.hp > lastHp - 1) aim.hp = lastHp - 1;
         } else {
-            btlPet.healFeatures.forEach((value: HealFeature) => {
-                value.func(btlPet, aim, value.datas, { ctrlr: this, finalDmg, skillModel });
-            });
+            btlPet.healFeatures.forEach(value => value.func(btlPet, aim, value.datas, btlData));
             aim.hp = Math.floor(aim.hp);
             if (aim.hp > aim.hpMax) aim.hp = aim.hpMax;
         }
@@ -670,12 +661,9 @@ export class BtlCtrlr {
 
         aim.hp -= finalDmg;
 
-        btlPet.atkFeatures.forEach((value: AtkFeature) => {
-            value.func(btlPet, aim, value.datas, { ctrlr: this, finalDmg });
-        });
-        aim.hurtFeatures.forEach((value: HurtFeature) => {
-            value.func(aim, btlPet, value.datas, { ctrlr: this, finalDmg });
-        });
+        const btlData = { ctrlr: this, finalDmg };
+        btlPet.atkFeatures.forEach(value => value.func(btlPet, aim, value.datas, btlData));
+        aim.hurtFeatures.forEach(value => value.func(aim, btlPet, value.datas, btlData));
 
         aim.hp = Math.floor(aim.hp);
         if (aim.hp < 0) aim.hp = 0;
@@ -763,16 +751,11 @@ export class BtlCtrlr {
         }
 
         if (alive) {
-            btlPet.deadFeatures.forEach((value: DeadFeature) => {
-                value.func(btlPet, caster, value.datas, this);
-            });
-            this.getTeam(caster).pets.forEach((bPet: BtlPet) => {
-                if (bPet.hp > 0) {
-                    bPet.eDeadFeatures.forEach((value: EDeadFeature) => {
-                        value.func(bPet, btlPet, caster, value.datas, this);
-                    });
-                }
-            });
+            btlPet.deadFeatures.forEach(value => value.func(btlPet, caster, value.datas, this));
+            for (const bPet of this.getTeam(caster).pets) {
+                if (bPet.hp <= 0) continue;
+                bPet.eDeadFeatures.forEach(value => value.func(bPet, btlPet, caster, value.datas, this));
+            }
 
             btlPet.buffDatas.length = 0;
             if (this.page) this.page.removeBuff(btlPet.beEnemy, btlPet.idx, -1);

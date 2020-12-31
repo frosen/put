@@ -83,7 +83,7 @@ export class SkillModel {
 
 export class FeatureBtlData {
     ctrlr!: BtlCtrlr;
-    finalDmg!: number;
+    readonly finalDmg!: number;
     skillModel?: SkillModel;
 }
 
@@ -98,7 +98,6 @@ export class FeatureModel {
     onCast?: (pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData) => void;
     onHurt?: (pet: BtlPet, caster: BtlPet, datas: number[], bData: FeatureBtlData) => void;
     onHeal?: (pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData) => void;
-    onBuff?: (pet: BtlPet, caster: BtlPet, datas: number[], bData: FeatureBtlData) => void;
     onEDead?: (pet: BtlPet, aim: BtlPet, caster: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;
     onDead?: (pet: BtlPet, caster: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;
     onTurn?: (pet: BtlPet, datas: number[], ctrlr: BtlCtrlr) => void;

@@ -465,6 +465,7 @@ export class BtlPet {
         newBPet.healFeatures = this.healFeatures;
         newBPet.eDeadFeatures = this.eDeadFeatures;
         newBPet.deadFeatures = this.deadFeatures;
+        newBPet.turnFeatures = this.turnFeatures;
 
         for (const skill of this.skillDatas) {
             const newSkill = new BtlSkill();

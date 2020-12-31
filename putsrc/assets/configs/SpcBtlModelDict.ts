@@ -50,7 +50,8 @@ export const SpcBtlModelDict: { [key: string]: SpcBtlModel } = {
                 ampl: 3,
                 features: [
                     { id: FtN.bossUlti, lv: 1 },
-                    { id: FtN.lightBomb, lv: 1 }
+                    { id: FtN.bossGetDebuff, lv: 1 },
+                    { id: FtN.bossLightBomb, lv: 1 }
                 ],
                 bossName: '狂暴核心',
                 bossType: BossType.main
