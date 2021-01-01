@@ -7,7 +7,7 @@
 const { ccclass, property, executionOrder } = cc._decorator;
 import { BtlPageBase } from '../../../scripts/BtlPageBase';
 import { ExplUpdater, ExplLogData, ExplState } from '../../../scripts/ExplUpdater';
-import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors, BtlType } from '../../../scripts/DataSaved';
+import { ItemType, CnsumType, Catcher, EleColors, EleDarkColors, BtlType, BtlTypeNames } from '../../../scripts/DataSaved';
 import { BuffModel, BuffType, ExplModel, StepTypesByMax, ExplStepNames, SkillType } from '../../../scripts/DataModel';
 import { BtlPet, RageMax, BtlPetLenMax, BossMaster } from '../../../scripts/DataOther';
 import { ListView } from '../../../scripts/ListView';
@@ -30,6 +30,7 @@ import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
 import { PTN } from '../../../configs/ProTtlModelDict';
 import { BtlCtrlr } from '../../../scripts/BtlCtrlr';
 import { SkillModelDict } from '../../../configs/SkillModelDict';
+import { PetModelDict } from '../../../configs/PetModelDict';
 
 const btlUnitH = -172;
 const BtlUnitYs = [0, btlUnitH, btlUnitH * 2, btlUnitH * 3, btlUnitH * 4];
@@ -414,15 +415,13 @@ export class PageActExpl extends BtlPageBase {
         ui.bar.progress = hp / hpMax;
         ui.petHP.string = `${Math.ceil(hp * 0.1)} / ${Math.ceil(hpMax * 0.1)}`;
 
-        if (combo > 0) {
-            let dmgStr = String(Math.floor(dmg * 0.1 * -1));
-            if (crit) dmgStr += '!';
-            this.showLbl(dmgStr, beEnemy, idx, crit, 0.1 * (combo - 1), dmg > 0 ? cc.Color.RED : cc.Color.GREEN);
-        }
+        let dmgStr = String(Math.floor(dmg * 0.1 * -1));
+        if (crit) dmgStr += '!';
+        this.showLbl(dmgStr, beEnemy, idx, crit, 0.1 * (combo - 1), dmg > 0 ? cc.Color.RED : cc.Color.GREEN);
     }
 
     doMiss(beEnemy: boolean, idx: number, combo: number) {
-        this.showLbl('miss', beEnemy, idx, false, 0.1 * (combo - 1), cc.Color.RED);
+        this.showLbl('miss', beEnemy, idx, false, 0.1 * combo, cc.Color.RED);
     }
 
     showLbl(str: string, beEnemy: boolean, idx: number, big: boolean, delay: number, color: cc.Color) {
@@ -586,7 +585,7 @@ export class PageActExpl extends BtlPageBase {
         if (460 < pos.x && pos.x < 620) return undefined; // 这是中间的空白地带，不算点中
         const touchEnemy = pos.x > 540;
         let touchIdx = Math.floor(pos.y / btlUnitH);
-        if (touchIdx >= BtlPetLenMax) return undefined;
+        if (touchIdx >= BtlPetLenMax || touchIdx < 0) return undefined;
         const uis = touchEnemy ? this.enemyPetUIs : this.selfPetUIs;
         const ui = uis[touchIdx];
         touchIdx = ui.node.active === true ? touchIdx : -1;
@@ -665,8 +664,10 @@ export class PageActExpl extends BtlPageBase {
         if (!this.ctrlLineShowing) return;
         const btlCtrlr = this.updater.btlCtrlr;
         const selfBPet = btlCtrlr.realBtl.selfTeam.pets[this.startIdx];
+
         if (curBeEnemy) {
             if (this.enmeyAimIdxs.includes(curIdx)) {
+                if (!this.checkBtlTypeWhenSetAim(selfBPet)) return;
                 btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, false, curIdx);
                 const actStr = selfBPet.ctrlEnemyAimIdx !== -1 ? '设定对敌目标' : '取消对敌目标';
                 this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + actStr);
@@ -674,11 +675,22 @@ export class PageActExpl extends BtlPageBase {
         } else {
             if (this.selfAimIdxs.includes(curIdx)) {
                 if (curIdx === this.startIdx && curPos.x > 352) return; // 对自己使用，需要多往左划一点
+                if (!this.checkBtlTypeWhenSetAim(selfBPet)) return;
                 btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, true, curIdx);
                 const actStr = selfBPet.ctrlSelfAimIdx !== -1 ? '设定对己方的目标' : '取消对己方的目标';
                 this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + actStr);
             }
         }
+    }
+
+    checkBtlTypeWhenSetAim(selfBPet: BtlPet): boolean {
+        const btlType = PetModelDict[selfBPet.pet.id].btlType;
+        if (btlType === BtlType.stay || btlType === BtlType.chaos) {
+            const str = `${PetTool.getCnName(selfBPet.pet)}的战斗类型为${BtlTypeNames[btlType]}\n不能设置目标`;
+            this.ctrlr.popToast(str);
+            return false;
+        }
+        return true;
     }
 
     hideSelfAimLine() {

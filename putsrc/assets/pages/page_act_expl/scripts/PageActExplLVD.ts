@@ -22,10 +22,11 @@ const RichLog = 'Rich';
 const ALog = 'A';
 const MLog = 'M';
 const BLog = 'B';
+const BHLog = 'BH';
 const SLog = 'S';
 const DLog = 'D';
 const RdLog = 'Rd';
-const CellIdsByLogType = ['', RepeatLog, RichLog, ALog, MLog, BLog, SLog, DLog, RdLog];
+const CellIdsByLogType = ['', RepeatLog, RichLog, ALog, MLog, BLog, BHLog, SLog, DLog, RdLog];
 const BLANK = 'bl';
 
 cc.macro.CLEANUP_IMAGE_CACHE = false;
@@ -106,6 +107,9 @@ export class PageActExplLVD extends ListViewDelegate {
     buffLogCellPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
+    buffHurtLogCellPrefab: cc.Prefab = null;
+
+    @property(cc.Prefab)
     stopLogCellPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
@@ -145,6 +149,8 @@ export class PageActExplLVD extends ListViewDelegate {
                 return cc.instantiate(this.missLogCellPrefab).getComponent(CellLogBase);
             case BLog:
                 return cc.instantiate(this.buffLogCellPrefab).getComponent(CellLogBase);
+            case BHLog:
+                return cc.instantiate(this.buffHurtLogCellPrefab).getComponent(CellLogBase);
             case SLog:
                 return cc.instantiate(this.stopLogCellPrefab).getComponent(CellLogBase);
             case DLog:

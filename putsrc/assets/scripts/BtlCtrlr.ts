@@ -348,6 +348,7 @@ export class BtlCtrlr {
         const newBuffDataList: { aim: BtlPet; caster: BtlPet; id: string; time: number; src: string }[] = [];
 
         for (const pet of team.pets) {
+            let finalDmg = 0;
             for (let buffIdx = pet.buffDatas.length - 1; buffIdx >= 0; buffIdx--) {
                 const buffData = pet.buffDatas[buffIdx];
                 buffData.time--;
@@ -366,7 +367,7 @@ export class BtlCtrlr {
                             pet.hp = Math.floor(pet.hp);
                             if (pet.hp < 1) pet.hp = 1;
                             else if (pet.hp > pet.hpMax) pet.hp = pet.hpMax;
-                            if (this.page) this.page.doHurt(pet.beEnemy, pet.idx, pet.hp, pet.hpMax, 0, false, 0);
+                            finalDmg += dmg;
                         }
                         // handleBuff中的mp和rage变化不用同步到UI上，因为handleBuff在gotoNextRound中，而此函数出现的地方CenterBar可控
                         if (buffOutput.mp) {
@@ -396,6 +397,11 @@ export class BtlCtrlr {
                 } else {
                     if (this.page) this.page.resetBuffTime(pet.beEnemy, pet.idx, buffData.id, buffData.time, buffIdx);
                 }
+            }
+
+            if (finalDmg !== 0) {
+                if (this.page) this.page.doHurt(pet.beEnemy, pet.idx, pet.hp, pet.hpMax, finalDmg, false, 0);
+                if (this.logging) this.logBuffHurt(pet, finalDmg);
             }
         }
 
@@ -622,22 +628,13 @@ export class BtlCtrlr {
     }
 
     addBuff(aim: BtlPet, caster: BtlPet, buffId: string, buffTime: number, src: string) {
-        const buffModel = BuffModelDict[buffId];
-        for (let index = 0; index < aim.buffDatas.length; index++) {
-            const buffData = aim.buffDatas[index];
-            if (buffData.id === buffId) {
-                if (buffTime > buffData.time) buffData.time = buffTime;
-                if (this.logging) this.logBuff(aim, buffModel.cnName, caster, src);
-                return;
-            }
-        }
-
         const buffData = new BtlBuff();
         buffData.id = buffId;
         buffData.time = buffTime;
         buffData.caster = caster;
         aim.buffDatas.push(buffData);
 
+        const buffModel = BuffModelDict[buffId];
         if (buffModel.onStarted) buffData.data = buffModel.onStarted(aim, caster, this);
         if (this.page) this.page.addBuff(aim.beEnemy, aim.idx, buffId, buffTime, aim.buffDatas.length - 1);
         if (this.logging) this.logBuff(aim, buffModel.cnName, caster, src);
@@ -818,12 +815,11 @@ export class BtlCtrlr {
             aimPets = toSelf ? rb.selfTeam.pets : rb.enemyTeam.pets;
         }
 
-        const btlType = BtlCtrlr.getBtlType(btlPet, skillModel);
-        if (!btlPet.beEnemy) {
+        if (!btlPet.beEnemy && !btlPet.pet2.exBtlTypes.getLast() && !(skillModel && skillModel.spBtlType)) {
             const ctrlAimIdx = toSelf ? btlPet.ctrlSelfAimIdx : btlPet.ctrlEnemyAimIdx;
-            if (ctrlAimIdx !== -1 && (!skillModel || !skillModel.spBtlType)) {
+            if (ctrlAimIdx !== -1) {
                 const ctrlAim = aimPets[ctrlAimIdx];
-                if (ctrlAim.hp === 0 || btlType === BtlType.stay || btlType === BtlType.chaos) {
+                if (ctrlAim.hp <= 0) {
                     this.setSelfPetCtrlAimIdx(btlPet, toSelf, -1);
                 } else {
                     rb.lastAim = ctrlAim;
@@ -833,7 +829,7 @@ export class BtlCtrlr {
         }
 
         let aim: BtlPet | undefined;
-        switch (btlType) {
+        switch (BtlCtrlr.getBtlType(btlPet, skillModel)) {
             case BtlType.melee:
                 aim = BtlCtrlr.getPetAlive(aimPets[btlPet.idx] || aimPets.getLast());
                 break;
@@ -952,6 +948,11 @@ export class BtlCtrlr {
     logBuff(aim: BtlPet, buffName: string, caster: BtlPet, src: string) {
         const dataList = [PetTool.getCnName(aim.pet), buffName, PetTool.getCnName(caster.pet), src];
         this.updater.log(ExplLogType.buff, dataList);
+    }
+
+    logBuffHurt(aim: BtlPet, dmg: number) {
+        const dataList = [PetTool.getCnName(aim.pet), Math.floor(dmg * 0.1)];
+        this.updater.log(ExplLogType.buffHurt, dataList);
     }
 
     logStop(btlPet: BtlPet) {

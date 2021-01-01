@@ -74,6 +74,7 @@ export enum ExplLogType {
     atk,
     miss,
     buff,
+    buffHurt,
     stop,
     dead,
     round
