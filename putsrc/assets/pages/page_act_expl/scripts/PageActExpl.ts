@@ -243,8 +243,14 @@ export class PageActExpl extends BtlPageBase {
             this.ctrlr.popAlert('确定退出探索？', this.onClickBack.bind(this), '确定', '仅训练师自己离开，留精灵继续战斗');
             return false;
         });
-        this.navBar.setTitle('');
-        this.navBar.setSubTitle('');
+
+        if (this.spcBtlId) {
+            navBar.setTitle('BOSS战');
+        } else {
+            const posId = this.ctrlr.memory.gameData.curPosId;
+            const posName = ActPosModelDict[posId].cnName;
+            navBar.setTitle('探索' + posName);
+        }
     }
 
     onClickBack(key: number) {
@@ -279,10 +285,6 @@ export class PageActExpl extends BtlPageBase {
         } else {
             this.updater = new ExplUpdater();
             this.updater.init(this, this.spcBtlId, this.startStep);
-
-            // 仅用于从setData到start传递数据，传输后直接clear
-            this.spcBtlId = '';
-            this.startStep = 0;
         }
 
         this.preloadLVDData();

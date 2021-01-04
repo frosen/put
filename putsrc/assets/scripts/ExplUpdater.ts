@@ -855,7 +855,6 @@ export class ExplUpdater {
                 this.explRdCnt += ExplUpdater.calcHideExplRdCnt(agiRate);
             }
             this.log(ExplLogType.repeat, '开始探索');
-            if (this.page) this.page.setExplStepUI();
         } else {
             this.explRdCnt--;
         }
