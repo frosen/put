@@ -366,8 +366,7 @@ export class AcceQuestInfo {
 export enum PsgeType {
     normal = 1,
     selection,
-    quest,
-    battle
+    quest
 }
 
 export class Psge {
@@ -397,12 +396,27 @@ export class Story {
     psges!: Psge[];
 }
 
+export enum EvtType {
+    story = 1,
+    battle
+}
+
 export class Evt {
     id!: string;
     cnName!: string;
-    story!: Story;
+    type: EvtType;
     progress!: number;
+}
+
+export class StoryEvt extends Evt {
+    type: EvtType = EvtType.story;
+    story!: Story;
     slcDict!: { [key: string]: string };
+}
+
+// 战斗事件的id等于其特殊战斗的id
+export class BtlEvt extends Evt {
+    type: EvtType = EvtType.battle;
 }
 
 // -----------------------------------------------------------------

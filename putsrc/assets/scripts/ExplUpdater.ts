@@ -113,8 +113,11 @@ export class ExplUpdater {
         this.btlCtrlr.init(this, this.onBtlEnd.bind(this));
 
         const expl = this.gameData.expl;
-        if (!expl) this.createExpl(startStep, spcBtlId);
-        else this.recoverLastExpl(this.gameData);
+        if (!expl) {
+            this.createExpl(startStep, spcBtlId);
+        } else {
+            this.recoverLastExpl(this.gameData);
+        }
     }
 
     pauseOrResume() {
@@ -185,6 +188,7 @@ export class ExplUpdater {
         const curStep = expl.curStep;
 
         if (expl.btl) {
+            const spcBtlId = expl.btl.spcBtlId;
             const { inBtl, win, updCnt, lastTime } = this.recoverExplInBtl(expl.btl, expl.stepEnterTime);
             if (inBtl) {
                 this.updCnt = updCnt;
@@ -200,6 +204,8 @@ export class ExplUpdater {
                 if (win) {
                     this.receiveExp();
                     this.catchPet();
+                    this.doFightQuest();
+                    if (spcBtlId) this.doEvt(spcBtlId);
                 } else {
                     this.rdcExplDegreeByBtlFail(curStep);
                 }
@@ -849,6 +855,7 @@ export class ExplUpdater {
                 this.explRdCnt += ExplUpdater.calcHideExplRdCnt(agiRate);
             }
             this.log(ExplLogType.repeat, '开始探索');
+            if (this.page) this.page.setExplStepUI();
         } else {
             this.explRdCnt--;
         }
@@ -1210,15 +1217,17 @@ export class ExplUpdater {
 
     onBtlEnd(win: boolean) {
         this.updateChgUpdCnt();
+        const expl = this.gameData.expl!;
         if (win) {
             this.receiveExp();
             this.catchPet();
             this.doFightQuest();
+            if (expl.btl!.spcBtlId) this.doEvt(expl.btl!.spcBtlId);
         } else {
-            const expl = this.gameData.expl!;
             this.rdcExplDegreeByBtlFail(expl.curStep);
         }
         this.rdcBPetsPrvtyByDead();
+
         this.startRecover();
     }
 
@@ -1372,6 +1381,8 @@ export class ExplUpdater {
             if (quest.progress >= count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
         }
     }
+
+    doEvt(spcBtlId: string) {}
 
     rdcExplDegreeByBtlFail(curStep: number, failCnt: number = 1) {
         this.changeExplDegree(RdcUpdCntForFailByStep[curStep] * failCnt);

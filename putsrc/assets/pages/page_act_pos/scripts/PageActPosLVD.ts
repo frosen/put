@@ -40,7 +40,15 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
         cnName: '探索',
         getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } => {
             const gameData = ctrlr.memory.gameData;
-            const ing = gameData.expl && gameData.expl.curPosId === gameData.curPosId ? 'ing' : '';
+            let ing: string | undefined;
+            if (
+                gameData.expl &&
+                gameData.expl.curPosId === gameData.curPosId &&
+                !(gameData.expl.btl && gameData.expl.btl.spcBtlId)
+            ) {
+                ing = 'ing';
+            } else ing = '';
+
             return { str: String(`${ing}`), color: cc.color(255, 102, 0) };
         },
         page: PageActExpl,
@@ -49,7 +57,11 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
             if (gameData.expl) {
                 if (gameData.curPosId !== gameData.expl.curPosId) {
                     const name = ActPosModelDict[gameData.expl.curPosId].cnName;
-                    return `精灵仍在${name}战斗`;
+                    return `无法进入，精灵仍在${name}战斗`;
+                } else if (gameData.expl.btl && gameData.expl.btl.spcBtlId) {
+                    const EvtModelDict: any = {}; // llytodo
+                    const cnName = EvtModelDict[gameData.expl.btl.spcBtlId].cnName;
+                    return `无法进入，精灵处于“${cnName}”事件`;
                 }
             }
             if (GameDataTool.getReadyPets(ctrlr.memory.gameData).length < 2) {

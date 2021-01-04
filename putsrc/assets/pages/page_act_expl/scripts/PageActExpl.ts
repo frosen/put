@@ -243,10 +243,8 @@ export class PageActExpl extends BtlPageBase {
             this.ctrlr.popAlert('确定退出探索？', this.onClickBack.bind(this), '确定', '仅训练师自己离开，留精灵继续战斗');
             return false;
         });
-
-        const posId = this.ctrlr.memory.gameData.curPosId;
-        const posName = ActPosModelDict[posId].cnName;
-        navBar.setTitle('探索' + posName);
+        this.navBar.setTitle('');
+        this.navBar.setSubTitle('');
     }
 
     onClickBack(key: number) {
@@ -309,11 +307,19 @@ export class PageActExpl extends BtlPageBase {
         if (this.ctrlr.getCurPage() !== this) return;
 
         const expl = this.ctrlr.memory.gameData.expl;
-        if (!expl) return this.navBar.setSubTitle('');
+        if (!expl) return;
+
+        if (expl.btl && expl.btl.spcBtlId) {
+            this.navBar.setTitle('BOSS战');
+            this.navBar.setSubTitle('');
+            return;
+        }
 
         const posId = expl.curPosId;
         const curPosModel = ActPosModelDict[posId];
         const explModel: ExplModel = curPosModel.actMDict[PAKey.expl] as ExplModel;
+
+        this.navBar.setTitle('探索' + curPosModel.cnName);
 
         const curStep = expl.curStep;
         const stepMax = explModel.stepMax;
