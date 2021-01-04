@@ -14,7 +14,6 @@ import { PagePkgEquip } from './PagePkgEquip';
 import { CellPkgEquip } from '../../page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { CellPetBrief } from '../cells/cell_pet_brief/scripts/CellPetBrief';
 import { CellPkgEquipBlank } from '../../page_pkg/cells/cell_pkg_equip_blank/scripts/CellPkgEquipBlank';
-import { PetTool } from '../../../scripts/Memory';
 
 const PET_INFO = 'p';
 const EQUIP = 'e';
@@ -89,7 +88,7 @@ export class PkgEquipPetLVD extends ListViewDelegate {
         const data = this.dataList[rowIdx];
         if (data.equipIndex === -1) {
             const pet = data.pet;
-            (cell as CellPetBrief).setData(PetTool.getCnName(pet), pet.state);
+            (cell as CellPetBrief).setData(pet);
         } else {
             const equip = data.equip;
             if (equip) (cell as CellPkgEquip).setData(-1, equip);
