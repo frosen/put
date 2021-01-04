@@ -193,12 +193,6 @@ export class Memory {
             cc.log('PUT load Game Data');
             this.gameData = turnToDataWithChecker(lastGameData);
         }
-
-        // 移除自行离开状态
-        if (this.gameData.expl) {
-            this.gameData.curPosId = this.gameData.expl.curPosId;
-            this.gameData.expl.afb = false;
-        }
     }
 
     firstFrameIgnored: boolean = false; // 忽略第一次update，因为此时可能还没有恢复完成

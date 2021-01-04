@@ -366,7 +366,8 @@ export class AcceQuestInfo {
 export enum PsgeType {
     normal = 1,
     selection,
-    quest
+    quest,
+    evt
 }
 
 export class Psge {
@@ -388,6 +389,7 @@ export class StoryGain {
 }
 
 export class NormalPsge extends Psge {
+    type: PsgeType.normal;
     str!: string;
     gain?: StoryGain;
 }

@@ -41,6 +41,7 @@ import {
 import { CatcherModelDict } from '../configs/CatcherModelDict';
 import { PetModelDict } from '../configs/PetModelDict';
 import { PTN } from '../configs/ProTtlModelDict';
+import { BaseCtrlr } from './BaseCtrlr';
 
 export enum ExplState {
     none,
@@ -86,6 +87,7 @@ export class ExplLogData {
 }
 
 export class ExplUpdater {
+    ctrlr!: BaseCtrlr;
     page?: BtlPageBase;
     memory!: Memory;
     gameData!: GameData;
@@ -98,16 +100,17 @@ export class ExplUpdater {
     inited: boolean = false;
     pausing: boolean = false;
 
-    init(page: BtlPageBase, spcBtlId: string, startStep: number) {
+    init(ctrlr: BaseCtrlr, page: BtlPageBase | undefined, spcBtlId: string, startStep: number) {
+        this.ctrlr = ctrlr;
         this.page = page;
-        this.memory = this.page.ctrlr.memory;
+        this.memory = this.ctrlr.memory;
         this.gameData = this.memory.gameData;
 
         cc.director.getScheduler().scheduleUpdate(this, 0, false);
 
-        this.page.ctrlr.debugTool.setShortCut('ww', this.pauseOrResume.bind(this));
-        this.page.ctrlr.debugTool.setShortCut('gg', this.goNext.bind(this));
-        this.page.ctrlr.debugTool.setShortCut('ff', this.fastUpdate.bind(this));
+        this.ctrlr.debugTool.setShortCut('ww', this.pauseOrResume.bind(this));
+        this.ctrlr.debugTool.setShortCut('gg', this.goNext.bind(this));
+        this.ctrlr.debugTool.setShortCut('ff', this.fastUpdate.bind(this));
 
         this.btlCtrlr = new BtlCtrlr();
         this.btlCtrlr.init(this, this.onBtlEnd.bind(this));
@@ -147,7 +150,7 @@ export class ExplUpdater {
     // -----------------------------------------------------------------
 
     /** 如果为null，则表示后台运行 */
-    runAt(page: BtlPageBase) {
+    runAt(page?: BtlPageBase) {
         this.page = page;
         this.btlCtrlr.page = page;
     }
@@ -743,9 +746,9 @@ export class ExplUpdater {
         cc.director.getScheduler().unscheduleUpdate(this);
         GameDataTool.clearExpl(this.gameData);
         this.memory.removeDataListener(this);
-        this.page!.ctrlr.debugTool.removeShortCut('ww');
-        this.page!.ctrlr.debugTool.removeShortCut('gg');
-        this.page!.ctrlr.debugTool.removeShortCut('ff');
+        this.ctrlr.debugTool.removeShortCut('ww');
+        this.ctrlr.debugTool.removeShortCut('gg');
+        this.ctrlr.debugTool.removeShortCut('ff');
         this.btlCtrlr.destroy();
     }
 

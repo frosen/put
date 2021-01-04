@@ -284,7 +284,8 @@ export class PageActExpl extends BtlPageBase {
             gameData.expl.afb = false;
         } else {
             this.updater = new ExplUpdater();
-            this.updater.init(this, this.spcBtlId, this.startStep);
+            this.updater.init(this.ctrlr, this, this.spcBtlId, this.startStep);
+            ExplUpdater.save(this.updater);
         }
 
         this.preloadLVDData();
@@ -346,7 +347,7 @@ export class PageActExpl extends BtlPageBase {
         if (willDestroy) {
             if (!this.updaterRetaining) this.updater.destroy();
             else {
-                this.updater.runAt(null);
+                this.updater.runAt(undefined);
                 ExplUpdater.save(this.updater);
             }
         }
