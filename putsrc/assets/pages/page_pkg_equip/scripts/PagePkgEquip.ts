@@ -82,10 +82,10 @@ export class PagePkgEquip extends PageBase {
 
         let cellIdx: number = -1;
         if (this.dataForInit) {
-            const selectedEquipIdx = this.dataForInit.idx;
+            const slcEqpIdx = this.dataForInit.idx;
             if (!this.dataForInit.pet) {
                 for (let index = 0; index < idxs.length; index++) {
-                    if (selectedEquipIdx === idxs[index]) {
+                    if (slcEqpIdx === idxs[index]) {
                         cellIdx = index;
                         break;
                     }
@@ -96,7 +96,7 @@ export class PagePkgEquip extends PageBase {
                 const curPet = this.dataForInit.pet;
                 for (let index = 0; index < petEquipDataList.length; index++) {
                     const petEquipData = petEquipDataList[index];
-                    if (petEquipData.pet === curPet && petEquipData.equipIndex === selectedEquipIdx) {
+                    if (petEquipData.pet === curPet && petEquipData.equipIndex === slcEqpIdx) {
                         cellIdx = index;
                         break;
                     }
@@ -126,14 +126,14 @@ export class PagePkgEquip extends PageBase {
 
     // -----------------------------------------------------------------
 
-    selectedItemEquipCell: ListViewCell = null;
-    selectedPetEquipCell: ListViewCell = null;
+    slcItemEquipCell: ListViewCell = null;
+    slcPetEquipCell: ListViewCell = null;
 
     onItemCellClick(cell: ListViewCell) {
-        if (this.selectedItemEquipCell === cell) return;
-        this.selectedItemEquipCell = cell;
+        if (this.slcItemEquipCell === cell) return;
+        this.slcItemEquipCell = cell;
 
-        if (!this.selectedPetEquipCell) this.selectItemEquip();
+        if (!this.slcPetEquipCell) this.selectItemEquip();
         else {
             this.executeEquipChange(() => {
                 this.hideItemSelection();
@@ -144,7 +144,7 @@ export class PagePkgEquip extends PageBase {
     onItemCellClickDetailBtn(cell: ListViewCell) {}
 
     onPetCellClick(cell: ListViewCell) {
-        if (this.selectedPetEquipCell === cell) return;
+        if (this.slcPetEquipCell === cell) return;
 
         const petLVD = this.petEquipList.delegate as PkgEquipPetLVD;
         const pet = petLVD.dataList[cell.curCellIdx].pet;
@@ -153,8 +153,8 @@ export class PagePkgEquip extends PageBase {
             return this.ctrlr.popToast('无法变更！\n精灵在战斗而训练师未与其在一起');
         }
 
-        this.selectedPetEquipCell = cell;
-        if (!this.selectedItemEquipCell) this.selectPetEquip();
+        this.slcPetEquipCell = cell;
+        if (!this.slcItemEquipCell) this.selectPetEquip();
         else {
             this.executeEquipChange(() => {
                 this.hidePetSelection();
@@ -180,8 +180,8 @@ export class PagePkgEquip extends PageBase {
     }
 
     setItemEquipCellPos() {
-        if (!this.selectedItemEquipCell) return;
-        const wp = this.selectedItemEquipCell.node.convertToWorldSpaceAR(cc.v2(0, 0));
+        if (!this.slcItemEquipCell) return;
+        const wp = this.slcItemEquipCell.node.convertToWorldSpaceAR(cc.v2(0, 0));
         const realY = cc.v2(this.node.convertToNodeSpaceAR(wp)).y;
         this.itemEquipSelection.y = realY - 78;
     }
@@ -192,7 +192,7 @@ export class PagePkgEquip extends PageBase {
             .to(0.1, { scale: 6 })
             .call(() => {
                 this.itemEquipSelection.parent.scaleX = 0;
-                this.selectedItemEquipCell = null;
+                this.slcItemEquipCell = null;
             })
             .start();
     }
@@ -206,8 +206,8 @@ export class PagePkgEquip extends PageBase {
     }
 
     setPetEquipCellPos() {
-        if (!this.selectedPetEquipCell) return;
-        const wp = this.selectedPetEquipCell.node.convertToWorldSpaceAR(cc.v2(0, 0));
+        if (!this.slcPetEquipCell) return;
+        const wp = this.slcPetEquipCell.node.convertToWorldSpaceAR(cc.v2(0, 0));
         const realY = cc.v2(this.petEquipLayer.convertToNodeSpaceAR(wp)).y;
         this.petEquipSelection.y = realY - 78;
     }
@@ -218,16 +218,16 @@ export class PagePkgEquip extends PageBase {
             .to(0.1, { scale: 6 })
             .call(() => {
                 this.petEquipSelection.parent.scaleX = 0;
-                this.selectedPetEquipCell = null;
+                this.slcPetEquipCell = null;
             })
             .start();
     }
 
     executeEquipChange(callback: () => void) {
-        if (!this.selectedItemEquipCell || !this.selectedPetEquipCell) return;
-        const itemIdx = (this.selectedItemEquipCell as CellPkgEquip).curItemIdx || GameDataTool.UNWIELD;
+        if (!this.slcItemEquipCell || !this.slcPetEquipCell) return;
+        const itemIdx = (this.slcItemEquipCell as CellPkgEquip).curItemIdx || GameDataTool.UNWIELD;
         const petLVD = this.petEquipList.delegate as PkgEquipPetLVD;
-        const data = petLVD.dataList[this.selectedPetEquipCell.curCellIdx];
+        const data = petLVD.dataList[this.slcPetEquipCell.curCellIdx];
         const gameData = this.ctrlr.memory.gameData;
         const petIdx = GameDataTool.getPetIdx(gameData, data.pet);
         if (petIdx === -1) return this.ctrlr.popToast('精灵有误');

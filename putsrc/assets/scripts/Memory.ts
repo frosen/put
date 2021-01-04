@@ -1149,7 +1149,7 @@ export class GameDataTool {
         gameData.totalPetCount++;
 
         const pet = PetTool.create(id, lv, exFeatureIds, features);
-        pet.master = 'XXX'; // llytodo 自己的名字
+        pet.master = gameData.roleName;
         pet.catchTime = Date.now();
         pet.catchIdx = gameData.totalPetCount;
         pet.catchLv = pet.lv;

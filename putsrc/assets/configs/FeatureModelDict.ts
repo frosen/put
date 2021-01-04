@@ -1139,8 +1139,8 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         onTurn(pet: BtlPet, datas: number[], ctrlr: BtlCtrlr) {
             if (ctrlr.ranSd() < rate(datas[0], 0, 0.3)) {
                 const pets = ctrlr.getTeam(pet).pets.filter(v => v.hp > 0);
-                const selected = pets[Math.floor(ctrlr.ranSd() * pets.length)];
-                ctrlr.addBuff(selected, pet, BufN.JingJie, 1, fName(this));
+                const slcPet = pets[Math.floor(ctrlr.ranSd() * pets.length)];
+                ctrlr.addBuff(slcPet, pet, BufN.JingJie, 1, fName(this));
             }
         },
         getInfo(datas: number[]): string {
@@ -1184,8 +1184,8 @@ export const BossFeatureModelDict: { [key: string]: FeatureModel } = {
         dataAreas: [[1, 1]],
         onTurn(pet: BtlPet, datas: number[], ctrlr: BtlCtrlr) {
             const pets = ctrlr.getTeam(pet).pets.filter(v => v.hp > 0);
-            const selected = pets[Math.floor(ctrlr.ranSd() * pets.length)];
-            ctrlr.addBuff(selected, pet, BufN.ShanYao, 5, fName(this));
+            const slcPet = pets[Math.floor(ctrlr.ranSd() * pets.length)];
+            ctrlr.addBuff(slcPet, pet, BufN.ShanYao, 5, fName(this));
         },
         onDead(pet: BtlPet, caster: BtlPet, datas: number[], ctrlr: BtlCtrlr): void {
             for (const petIn of ctrlr.getTeam(pet).pets) {

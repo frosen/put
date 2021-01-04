@@ -363,8 +363,46 @@ export class AcceQuestInfo {
     questId: string;
 }
 
+export enum PsgeType {
+    normal = 1,
+    selection,
+    quest,
+    battle
+}
+
+export class Psge {
+    idx!: number;
+    type!: PsgeType;
+    h!: number;
+}
+
+export enum StoryGainType {
+    cnsum = 1,
+    equip,
+    pet,
+    proTtl
+}
+
+export class StoryGain {
+    type!: StoryGainType;
+    id!: string;
+}
+
+export class NormalPsge extends Psge {
+    str!: string;
+    gain?: StoryGain;
+}
+
+export class Story {
+    psges!: Psge[];
+}
+
 export class Evt {
-    progress: number;
+    id!: string;
+    cnName!: string;
+    story!: Story;
+    progress!: number;
+    slcDict!: { [key: string]: string };
 }
 
 // -----------------------------------------------------------------

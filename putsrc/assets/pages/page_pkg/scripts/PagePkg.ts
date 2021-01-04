@@ -254,8 +254,8 @@ export class PagePkg extends PagePkgBase {
                                     const cPet = CaughtPetTool.createByPet(curPet);
                                     const rzt = GameDataTool.removePet(gameData, petIdx);
                                     if (rzt === GameDataTool.SUC) {
-                                        GameDataTool.removeItem(gameData, catcherIdx);
                                         GameDataTool.addCaughtPet(gameData, cPet);
+                                        GameDataTool.removeItem(gameData, catcherIdx);
                                         this.ctrlr.popPage();
                                         this.ctrlr.popToast('成功使用' + catcherModel.cnName);
                                     } else this.ctrlr.popToast(rzt);
@@ -294,12 +294,14 @@ export class PagePkg extends PagePkgBase {
                         this.ctrlr.popAlert(str, (key: number) => {
                             if (key === 1) {
                                 const eqpIdx = GameDataTool.getItemIdx(gameData, equip);
-                                if (eqpIdx === -1) return this.ctrlr.popToast('物品有误');
+                                if (eqpIdx === -1) return this.ctrlr.popToast('装备有误');
+                                const eqpAmplrIdx = GameDataTool.getItemIdx(gameData, cnsum);
+                                if (eqpAmplrIdx === -1) return this.ctrlr.popToast('物品有误');
                                 const rzt = GameDataTool.makeEquipGrow(gameData, eqpIdx);
                                 if (rzt === GameDataTool.SUC) {
-                                    GameDataTool.removeItem(gameData, eqpIdx);
-                                    this.ctrlr.popToast(`“${EquipTool.getCnName(equip)}”的成长等级升至${equip.growth}级`);
+                                    GameDataTool.removeItem(gameData, eqpAmplrIdx);
                                     this.ctrlr.popPage();
+                                    this.ctrlr.popToast(`“${EquipTool.getCnName(equip)}”的成长等级升至${equip.growth}级`);
                                 } else this.ctrlr.popToast(rzt);
                             }
                         });
