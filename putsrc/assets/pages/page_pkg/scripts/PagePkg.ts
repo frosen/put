@@ -200,7 +200,7 @@ export class PagePkg extends PagePkgBase {
                     cellPetType: PagePetCellType.selection,
                     name: '选择精灵',
                     callback: (cellIdx: number, curPet: Pet) => {
-                        if (!this.checkMasterHere(curPet)) return;
+                        if (!this.checkPetWithMaster(curPet)) return;
                         const drinkModel = DrinkModelDict[cnsum.id];
                         this.ctrlr.popAlert(
                             `确定对“${PetTool.getCnName(curPet)}”使用“${drinkModel.cnName}”吗？`,
@@ -241,7 +241,7 @@ export class PagePkg extends PagePkgBase {
                         if (catcherModel.btlType && catcherModel.btlType !== petModel.btlType) {
                             return this.ctrlr.popToast('战斗类型不符，无法使用');
                         }
-                        if (!this.checkMasterHere(curPet)) return;
+                        if (!this.checkPetWithMaster(curPet)) return;
 
                         this.ctrlr.popAlert(
                             `确定对“${PetTool.getCnName(curPet)}”使用“${catcherModel.cnName}”吗？`,
@@ -317,7 +317,7 @@ export class PagePkg extends PagePkgBase {
                         callback: (cellIdx: number, curPet: Pet) => {
                             const petModel = PetModelDict[curPet.id];
                             if (!curPet.nickname) this.ctrlr.popToast(petModel.cnName + '并未起名');
-                            if (!this.checkMasterHere(curPet)) return;
+                            if (!this.checkPetWithMaster(curPet)) return;
                             this.ctrlr.popAlert(
                                 `确定对“${PetTool.getCnName(curPet)}”使用“${spcModel.cnName}”吗？`,
                                 (key: number) => {
@@ -357,10 +357,11 @@ export class PagePkg extends PagePkgBase {
         }
     }
 
-    checkMasterHere(pet: Pet): boolean {
+    checkPetWithMaster(pet: Pet): boolean {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.expl && gameData.expl.afb && pet.state === PetState.ready) {
-            this.ctrlr.popToast('无法对该精灵使用！\n精灵在战斗而训练师未与其在一起');
+        const withRzt = GameDataTool.checkPetWithMaster(gameData, pet);
+        if (withRzt !== GameDataTool.SUC) {
+            this.ctrlr.popToast('无法对该精灵使用！\n' + withRzt);
             return false;
         }
         return true;

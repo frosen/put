@@ -98,7 +98,7 @@ export class PagePetDetail extends PageBase {
     }
 
     onEquipBlankCellClick(index: number, cell: ListViewCell) {
-        if (!this.checkMasterHere()) return;
+        if (!this.checkPetWithMaster()) return;
         this.ctrlr.pushPage(PagePkgEquip, { pet: this.curPet, idx: index });
     }
 
@@ -109,12 +109,11 @@ export class PagePetDetail extends PageBase {
     // -----------------------------------------------------------------
 
     onChangeEquip(cellIdx: number) {
-        if (!this.checkMasterHere()) return;
+        if (!this.checkPetWithMaster()) return;
         this.ctrlr.pushPage(PagePkgEquip, { pet: this.curPet, idx: this.curEquipIdx });
     }
 
     onMoveUpCell(cellIdx: number) {
-        if (!this.checkMasterHere()) return;
         const gameData = this.ctrlr.memory.gameData;
         const petIdx = GameDataTool.getPetIdx(gameData, this.curPet);
         if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
@@ -124,7 +123,6 @@ export class PagePetDetail extends PageBase {
     }
 
     onMoveDownCell(cellIdx: number) {
-        if (!this.checkMasterHere()) return;
         const gameData = this.ctrlr.memory.gameData;
         const petIdx = GameDataTool.getPetIdx(gameData, this.curPet);
         if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
@@ -133,10 +131,11 @@ export class PagePetDetail extends PageBase {
         else this.ctrlr.popToast(rzt);
     }
 
-    checkMasterHere(): boolean {
+    checkPetWithMaster(): boolean {
         const gameData = this.ctrlr.memory.gameData;
-        if (gameData.expl && gameData.expl.afb && this.curPet.state === PetState.ready) {
-            this.ctrlr.popToast('无法变更！\n精灵在战斗而训练师未与其在一起');
+        const withRzt = GameDataTool.checkPetWithMaster(gameData, this.curPet);
+        if (withRzt !== GameDataTool.SUC) {
+            this.ctrlr.popToast('无法变更！\n' + withRzt);
             return false;
         }
         return true;

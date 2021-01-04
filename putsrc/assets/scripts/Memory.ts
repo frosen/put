@@ -1163,9 +1163,18 @@ export class GameDataTool {
         return this.SUC;
     }
 
+    static checkPetWithMaster(gameData: GameData, pet?: Pet): string {
+        if (gameData.expl && gameData.expl.afb && (pet ? pet.state === PetState.ready : true)) {
+            return '精灵未与训练师在一起';
+        } else return this.SUC;
+    }
+
     static movePetInList(gameData: GameData, from: number, to: number): string {
         if (from < 0 || gameData.pets.length <= from || to < 0 || gameData.pets.length <= to) return '请勿把项目移出列表范围';
         const pet = gameData.pets[from];
+        const withRzt = this.checkPetWithMaster(gameData, pet);
+        if (withRzt !== this.SUC) return withRzt;
+
         gameData.pets.splice(from, 1);
         gameData.pets.splice(to, 0, pet);
         this.sortPetsByState(gameData);
@@ -1251,6 +1260,9 @@ export class GameDataTool {
 
     static useDrinkToPet(gameData: GameData, petIdx: number, drinkIdx: number, curTime?: number): string {
         const pet = gameData.pets[petIdx];
+        const withRzt = this.checkPetWithMaster(gameData, pet);
+        if (withRzt !== this.SUC) return withRzt;
+
         const drink = gameData.items[drinkIdx];
         const drinkModel: DrinkModel = DrinkModelDict[drink.id];
 
@@ -1433,6 +1445,9 @@ export class GameDataTool {
 
     static wieldEquip(gameData: GameData, itemIdx: number, petIdx: number, petEquipIdx: number): string {
         const pet = gameData.pets[petIdx];
+        const withRzt = this.checkPetWithMaster(gameData, pet);
+        if (withRzt !== this.SUC) return withRzt;
+
         if (petEquipIdx < 0 || PetEquipCountMax <= petEquipIdx) return '精灵装备栏索引错误';
         if (itemIdx !== this.UNWIELD) {
             const item = gameData.items[itemIdx];
@@ -1453,7 +1468,7 @@ export class GameDataTool {
             const lvReduce = -2;
             const equipCalcLv = equipModel.lv + (sameBio ? lvReduce : 0);
             if (pet.lv < equipCalcLv) {
-                const sameBioStr = sameBio ? `\n（生物类型一致，需求${lvReduce}）` : '';
+                const sameBioStr = sameBio ? `\n（生物类型一致，需求等级${lvReduce}）` : '';
                 return `精灵等级L${pet.lv}不满足该装备需求等级L${equipCalcLv}${sameBioStr}`;
             }
 
@@ -1497,6 +1512,9 @@ export class GameDataTool {
 
     static moveEquipInPetList(gameData: GameData, petIdx: number, from: number, to: number): string {
         const pet = gameData.pets[petIdx];
+        const withRzt = this.checkPetWithMaster(gameData, pet);
+        if (withRzt !== this.SUC) return withRzt;
+
         const equips = pet.equips;
         if (from < 0 || equips.length <= from || to < 0 || equips.length <= to) return '请勿把项目移出列表范围';
 
