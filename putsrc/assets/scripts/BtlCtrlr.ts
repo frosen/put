@@ -88,8 +88,8 @@ export class BtlCtrlr {
         this.realBtl = new RealBtl();
 
         // 快捷键
-        this.page!.ctrlr.debugTool.setShortCut('rr', this.resetBtlDataToStart.bind(this));
-        this.page!.ctrlr.debugTool.setShortCut('bb', this.resetBtlDataToTurnStart.bind(this));
+        this.updater.ctrlr.debugTool.setShortCut('rr', this.resetBtlDataToStart.bind(this));
+        this.updater.ctrlr.debugTool.setShortCut('bb', this.resetBtlDataToTurnStart.bind(this));
 
         if (CC_DEBUG) this.debugMode = true;
 
@@ -151,8 +151,8 @@ export class BtlCtrlr {
     }
 
     destroy() {
-        this.page!.ctrlr.debugTool.removeShortCut('rr');
-        this.page!.ctrlr.debugTool.removeShortCut('bb');
+        this.updater.ctrlr.debugTool.removeShortCut('rr');
+        this.updater.ctrlr.debugTool.removeShortCut('bb');
     }
 
     resetSelfTeam(mmr?: BtlMmr) {

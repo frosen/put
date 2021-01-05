@@ -285,10 +285,11 @@ export class Memory {
 
     decodeSaveData(encodeStr: string): { g: any; t: number } | undefined {
         try {
-            const decodeStr = Tea.Tea.decrypt(encodeStr, '0x5d627c');
+            const decodeStr = Tea.decrypt(encodeStr, '0x5d627c');
             const data = JSON.parse(decodeStr) as { g: any; t: number };
             return data;
         } catch (error) {
+            cc.error('PUT decode error', error);
             return undefined;
         }
     }
