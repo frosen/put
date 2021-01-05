@@ -28,6 +28,7 @@ import { EqpAmplrN } from './EqpAmplrModelDict';
 import { EquipN } from './EquipModelDict';
 import { PetN } from './PetModelDict';
 import { QuestN } from './QuestModelDict';
+import { SpcBtlN } from './SpcBtlModelDict';
 
 const p = PetN;
 const e = EquipN;
@@ -81,7 +82,7 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
         cnName: '科创小径',
         lv: 30,
         type: ActPosType.wild,
-        evts: [],
+        evts: [SpcBtlN.KuangBaoHeXin],
         actMDict: {
             [PAKey.expl]: {
                 stepMax: 2,

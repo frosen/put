@@ -11,6 +11,26 @@ import { Pet2, BtlPet, BtlBuff } from './DataOther';
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
+export enum ProTtlType {
+    kind = 1,
+    purchase,
+    pet,
+    function,
+    story
+}
+
+export class ProTtlModel {
+    id: string;
+    cnName: string | ((d: any) => string);
+    info: string | ((d: any) => string);
+    proTtlType: ProTtlType;
+    order?: number;
+    sbstId?: string; // 替代另一个ProTtl
+}
+
+// -----------------------------------------------------------------
+// -----------------------------------------------------------------
+
 export class BuffOutput {
     hp?: number;
     mp?: number;
@@ -251,15 +271,13 @@ export class EquipModel {
 // -----------------------------------------------------------------
 
 export class UseCond {
-    evtId: string;
-    progress: number;
+    startEvt: string;
+    startProg: number;
+    endEvt?: string;
+    endProg?: number;
 }
 
-export class EvtModel {
-    id: string;
-    useCond?: UseCond;
-}
-
+// -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
 export abstract class PAModel {
@@ -316,51 +334,6 @@ export class WorkModel extends PAModel {}
 
 // -----------------------------------------------------------------
 
-export enum QuestType {
-    support = 1,
-    fight,
-    gather,
-    search
-}
-
-export abstract class QuestNeed {
-    count: number;
-}
-
-export class SupportQuestNeed extends QuestNeed {
-    itemId: string;
-}
-
-export class FightQuestNeed extends QuestNeed {
-    petIds: string[];
-    name: string;
-}
-
-export class GatherQuestNeed extends QuestNeed {
-    posId: string;
-    step: number;
-    name: string;
-}
-
-export class SearchQuestNeed extends QuestNeed {
-    posId: string;
-    step: number;
-    name: string;
-}
-
-type AllQuestNeed = SupportQuestNeed | FightQuestNeed | GatherQuestNeed | SearchQuestNeed;
-
-export class QuestModel {
-    id: string;
-    type: QuestType;
-    cnName: string;
-    descs: string[];
-    need: AllQuestNeed;
-    awardReput: number;
-    awardMoney: number;
-    awardItemIds: string[];
-}
-
 export class QuesterModel extends PAModel {
     questIdList: string[];
 }
@@ -409,7 +382,7 @@ export class ActPosModel {
     cnName: string;
     lv: number;
     type: ActPosType;
-    evts: EvtModel[];
+    evtIds: string;
     actMDict: { [key: string]: AllPAModel };
     movs: MovModel[];
     loc: Partial<cc.Vec2>;
@@ -418,19 +391,103 @@ export class ActPosModel {
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
-export enum ProTtlType {
-    kind = 1,
-    purchase,
-    pet,
-    function,
-    story
+export enum QuestType {
+    support = 1,
+    fight,
+    gather,
+    search
 }
 
-export class ProTtlModel {
-    id: string;
-    cnName: string | ((d: any) => string);
-    info: string | ((d: any) => string);
-    proTtlType: ProTtlType;
-    order?: number;
-    sbstId?: string; // 替代另一个ProTtl
+export abstract class QuestNeed {
+    count: number;
 }
+
+export class SupportQuestNeed extends QuestNeed {
+    itemId: string;
+}
+
+export class FightQuestNeed extends QuestNeed {
+    petIds: string[];
+    name: string;
+}
+
+export class GatherQuestNeed extends QuestNeed {
+    posId: string;
+    step: number;
+    name: string;
+}
+
+export class SearchQuestNeed extends QuestNeed {
+    posId: string;
+    step: number;
+    name: string;
+}
+
+type AllQuestNeed = SupportQuestNeed | FightQuestNeed | GatherQuestNeed | SearchQuestNeed;
+
+export class QuestModel {
+    id: string;
+    type: QuestType;
+    cnName: string;
+    descs: string[];
+    need: AllQuestNeed;
+    awardReput: number;
+    awardMoney: number;
+    awardItemIds: string[];
+}
+
+// -----------------------------------------------------------------
+// -----------------------------------------------------------------
+
+export enum PsgeType {
+    normal = 1,
+    selection,
+    quest,
+    evt
+}
+
+export class Psge {
+    idx!: number;
+    type!: PsgeType;
+    h!: number;
+}
+
+export enum StoryGainType {
+    cnsum = 1,
+    equip,
+    pet,
+    proTtl
+}
+
+export class StoryGain {
+    type!: StoryGainType;
+    id!: string;
+}
+
+export class NormalPsge extends Psge {
+    type: PsgeType.normal;
+    str!: string;
+    gain?: StoryGain;
+}
+
+export class Story {
+    psges!: Psge[];
+}
+
+export enum EvtType {
+    story = 1,
+    battle
+}
+
+export class EvtModel {
+    id!: string;
+    useCond!: UseCond;
+}
+
+export class StoryEvtModel extends EvtModel {
+    cnName!: string;
+    story!: Story;
+}
+
+// 战斗事件的id等于其特殊战斗的id
+export class BtlEvtModel extends EvtModel {}

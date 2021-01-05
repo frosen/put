@@ -16,9 +16,9 @@ export class PageAct extends PageBase {
         super.onLoad();
         if (CC_EDITOR) return;
 
+        // 初始化时恢复应有的updater
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.expl && gameData.expl.afb && !ExplUpdater.haveUpdaterInBG()) {
-            // 初始化时恢复应有的updater
             const updater = new ExplUpdater();
             updater.init(this.ctrlr, undefined, '', -1);
             ExplUpdater.save(updater);

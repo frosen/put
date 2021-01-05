@@ -317,6 +317,19 @@ export class PosData {
 
 // -----------------------------------------------------------------
 
+export class AcceQuestInfo {
+    posId: string;
+    questId: string;
+}
+
+export class Evt {
+    id!: string;
+    progress!: number;
+    slcDict?: { [key: string]: string };
+}
+
+// -----------------------------------------------------------------
+
 export class SPetMmr {
     catchIdx: number; // 战斗开始后，可能会变化的只有如下几项
     prvty: number;
@@ -358,71 +371,6 @@ export class ExplMmr {
 
 // -----------------------------------------------------------------
 
-export class AcceQuestInfo {
-    posId: string;
-    questId: string;
-}
-
-export enum PsgeType {
-    normal = 1,
-    selection,
-    quest,
-    evt
-}
-
-export class Psge {
-    idx!: number;
-    type!: PsgeType;
-    h!: number;
-}
-
-export enum StoryGainType {
-    cnsum = 1,
-    equip,
-    pet,
-    proTtl
-}
-
-export class StoryGain {
-    type!: StoryGainType;
-    id!: string;
-}
-
-export class NormalPsge extends Psge {
-    type: PsgeType.normal;
-    str!: string;
-    gain?: StoryGain;
-}
-
-export class Story {
-    psges!: Psge[];
-}
-
-export enum EvtType {
-    story = 1,
-    battle
-}
-
-export class Evt {
-    id!: string;
-    cnName!: string;
-    type: EvtType;
-    progress!: number;
-}
-
-export class StoryEvt extends Evt {
-    type: EvtType = EvtType.story;
-    story!: Story;
-    slcDict!: { [key: string]: string };
-}
-
-// 战斗事件的id等于其特殊战斗的id
-export class BtlEvt extends Evt {
-    type: EvtType = EvtType.battle;
-}
-
-// -----------------------------------------------------------------
-
 export class GameData {
     roleName!: string;
     userData?: UserData;
@@ -441,11 +389,12 @@ export class GameData {
     curPosId!: string;
     posDataDict!: { [key: string]: PosData };
 
-    expl?: ExplMmr;
-
     acceQuestInfos!: AcceQuestInfo[]; // 已经接受了的quest
 
     evtDict!: { [key: string]: Evt };
+    curEvtId: string;
     ongoingEvtIds!: string[];
     finishedEvtIds!: string[];
+
+    expl?: ExplMmr;
 }
