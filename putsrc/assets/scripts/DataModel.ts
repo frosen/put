@@ -449,7 +449,6 @@ export enum PsgeType {
 export class Psge {
     idx!: number;
     type!: PsgeType;
-    h!: number;
 }
 
 export enum StoryGainType {
@@ -479,9 +478,16 @@ export enum EvtType {
     battle
 }
 
+export enum EvtRank {
+    main = 1,
+    sub
+}
+
 export class EvtModel {
     id!: string;
-    useCond!: UseCond;
+    lv!: number;
+    rank: EvtRank;
+    useCond?: UseCond;
 }
 
 export class StoryEvtModel extends EvtModel {
