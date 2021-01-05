@@ -13,7 +13,6 @@ import { GameDataTool } from '../../../scripts/Memory';
 import { PageActExpl } from '../../page_act_expl/scripts/PageActExpl';
 import { PanelPosInfo } from './PanelPosInfo';
 import { ActPosModelDict } from '../../../configs/ActPosModelDict';
-import { ExplUpdater } from '../../../scripts/ExplUpdater';
 
 @ccclass
 export class PageActPos extends PageBase {
@@ -37,14 +36,6 @@ export class PageActPos extends PageBase {
         this.listView.node.on(ListView.EventType.scrolling, this.onScrolling.bind(this));
 
         this.posInfo.ctrlr = this.ctrlr;
-
-        const gameData = this.ctrlr.memory.gameData;
-        if (gameData.expl && gameData.expl.afb && !ExplUpdater.haveUpdaterInBG()) {
-            // 初始化时恢复应有的updater
-            const updater = new ExplUpdater();
-            updater.init(this.ctrlr, undefined, '', -1);
-            ExplUpdater.save(updater);
-        }
     }
 
     onPageShow() {
