@@ -201,12 +201,12 @@ export class PageActQuester extends PageBase {
                 return;
             }
 
-            quest.progress += realCount;
+            quest.prog += realCount;
 
-            if (quest.progress >= count) {
+            if (quest.prog >= count) {
                 this.ctrlr.popToast(`完成任务 ${questModel.cnName}`);
             } else {
-                this.ctrlr.popToast(`任务完成度 ${quest.progress} / ${count}`);
+                this.ctrlr.popToast(`任务完成度 ${quest.prog} / ${count}`);
             }
 
             this.resetAcceptedQuestDict(gameData);

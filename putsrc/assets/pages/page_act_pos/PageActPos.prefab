@@ -911,6 +911,9 @@
     "infoPrefab": {
       "__uuid__": "1ad03a07-710d-49dd-ba83-4a422c04b253"
     },
+    "evtPrefab": {
+      "__uuid__": "ad4b36f2-1c66-42ef-b993-0761bd2f437b"
+    },
     "btnPrefab": {
       "__uuid__": "d647cc1b-7960-427f-a6cd-e2ef74ae4335"
     },

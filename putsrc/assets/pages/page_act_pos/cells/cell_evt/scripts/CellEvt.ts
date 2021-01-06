@@ -7,8 +7,6 @@
 const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
-import { EvtModel } from '../../../../../scripts/DataModel';
-import { Evt } from '../../../../../scripts/DataSaved';
 
 @ccclass('EvtUI')
 export class EvtUI {
@@ -25,10 +23,10 @@ export class CellEvt extends ListViewCell {
     @property(EvtUI) evtUI1: EvtUI = null;
     @property(EvtUI) evtUI2: EvtUI = null;
 
-    clickCallback: (evt: Evt, evtModel: EvtModel) => void = null;
+    clickCallback!: (evtId: string) => void;
 
-    evtData1: { evt: Evt; evtModel: EvtModel } = null;
-    evtData2: { evt: Evt; evtModel: EvtModel } = null;
+    evtId1!: string;
+    evtId2?: string;
 
     onLoad() {
         super.onLoad();
@@ -41,27 +39,31 @@ export class CellEvt extends ListViewCell {
         this.evtUI2.btn.node.scaleX = 0;
     }
 
-    setEvt1(evt: Evt, evtModel: EvtModel) {
-        this.evtData1 = { evt, evtModel };
+    setEvt1(evtId: string) {
+        this.evtId1 = evtId;
+        this.setEvtUI(this.evtUI1, this.evtId1);
     }
 
-    setEvt2(evt: Evt, evtModel: EvtModel) {
-        if (!evt) {
+    setEvt2(evtId?: string) {
+        if (!evtId) {
             this.evtUI2.btn.node.opacity = 0;
             this.evtUI2.btn.node.scaleX = 0;
-            this.evtData2 = null;
+            this.evtId2 = undefined;
         } else {
             this.evtUI2.btn.node.opacity = 255;
             this.evtUI2.btn.node.scaleX = 1;
-            this.evtData2 = { evt, evtModel };
+            this.evtId2 = evtId;
+            this.setEvtUI(this.evtUI2, this.evtId2);
         }
     }
 
+    setEvtUI(evtUI: EvtUI, evtId: string) {}
+
     callback1() {
-        if (this.evtData1) this.clickCallback(this.evtData1.evt, this.evtData1.evtModel);
+        this.clickCallback(this.evtId1);
     }
 
     callback2() {
-        if (this.evtData2) this.clickCallback(this.evtData2.evt, this.evtData2.evtModel);
+        if (this.evtId2) this.clickCallback(this.evtId2);
     }
 }

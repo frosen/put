@@ -43,10 +43,10 @@ export class PageActPos extends PageBase {
         if (gameData.expl && !gameData.expl.afb) return;
 
         const posId = gameData.curPosId;
-
         GameDataTool.addPos(gameData, posId);
-        const pd: PosData = gameData.posDataDict[posId];
+        GameDataTool.addEvt(gameData, posId);
 
+        const pd: PosData = gameData.posDataDict[posId];
         const curDirtyToken = this.ctrlr.memory.dirtyToken;
         if (this.curPosId !== pd.id || this.dirtyToken !== curDirtyToken) {
             this.curPosId = pd.id;

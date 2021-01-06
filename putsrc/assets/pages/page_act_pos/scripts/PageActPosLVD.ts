@@ -15,7 +15,7 @@ import { PageActPos } from './PageActPos';
 import { PageSwitchAnim, BaseCtrlr } from '../../../scripts/BaseCtrlr';
 import { PageActExpl } from '../../page_act_expl/scripts/PageActExpl';
 import { PosData, PADExpl, PADEqpMkt, PADPetMkt } from '../../../scripts/DataSaved';
-import { ActPosModel, StepTypesByMax, ExplStepNames, ExplModel, EvtModel, MovModel } from '../../../scripts/DataModel';
+import { ActPosModel, StepTypesByMax, ExplStepNames, ExplModel, MovModel, UseCond } from '../../../scripts/DataModel';
 import { GameDataTool } from '../../../scripts/Memory';
 import { PageBase } from '../../../scripts/PageBase';
 import { PageActShop } from '../../page_act_shop/scripts/PageActShop';
@@ -26,7 +26,8 @@ import { PageActRcclr } from '../../page_act_rcclr/scripts/PageActRcclr';
 import { PageActACntr } from '../../page_act_acntr/scripts/PageActACntr';
 import { PageActQuester } from '../../page_act_quester/scripts/PageActQuester';
 import { PageActMerger } from '../../page_act_merger/scripts/PageActMerger';
-import { EvtModelDict } from '../../../configs/EvtModelDict';
+import { EvtModelDict, SpcBtlModelDict, StoryModelDict } from '../../../configs/EvtModelDict';
+import { CellEvt } from '../cells/cell_evt/scripts/CellEvt';
 
 export class CellActInfo {
     cnName: string;
@@ -167,7 +168,7 @@ export class PageActPosLVD extends ListViewDelegate {
     curPos: PosData;
     curActPosModel: ActPosModel;
 
-    curEvts: EvtModel[] = [];
+    curEvtIds: string[] = [];
     curActKeys: string[] = [];
     curMovs: MovModel[] = [];
 
@@ -181,36 +182,52 @@ export class PageActPosLVD extends ListViewDelegate {
         this.curPos = gameData.posDataDict[this.curPosId];
         this.curActPosModel = ActPosModelDict[this.curPosId];
 
-        this.curEvts.length = 0;
+        this.curEvtIds.length = 0;
         this.curActKeys.length = 0;
         this.curMovs.length = 0;
 
         for (let index = 0; index < this.curActPosModel.evtIds.length; index++) {
             const evtId = this.curActPosModel.evtIds[index];
+            if (!gameData.ongoingEvtIds.includes(evtId)) continue;
             const evtModel = EvtModelDict[evtId];
-            if (evtModel && evtModel.useCond) {
-                // if (evtModel.condFunc(gameData)) this.curEvts.push(evtModel);
-            } else this.curEvts.push(evtModel);
+            if (evtModel.useCond) {
+                if (this.checkUseCond(evtModel.useCond)) this.curEvtIds.push(evtId);
+            } else this.curEvtIds.push(evtId);
         }
 
         for (const pakey in this.curActPosModel.actMDict) {
             if (!this.curActPosModel.actMDict.hasOwnProperty(pakey)) continue;
             const actModel = this.curActPosModel.actMDict[pakey];
-            if (actModel && actModel.useCond) {
-                // if (actModel.condFunc(gameData)) this.curActKeys.push(pakey);
+            if (actModel.useCond) {
+                if (this.checkUseCond(actModel.useCond)) this.curActKeys.push(pakey);
             } else this.curActKeys.push(pakey);
         }
 
         for (let index = 0; index < this.curActPosModel.movs.length; index++) {
             const movModel = this.curActPosModel.movs[index];
-            if (movModel && movModel.useCond) {
-                // if (movModel.condFunc(gameData)) this.curMovs.push(movModel);
+            if (movModel.useCond) {
+                if (this.checkUseCond(movModel.useCond)) this.curMovs.push(movModel);
             } else this.curMovs.push(movModel);
         }
 
-        this.evtCellLen = Math.ceil(this.curEvts.length * 0.5);
+        this.evtCellLen = Math.ceil(this.curEvtIds.length * 0.5);
         this.actCellLen = Math.ceil(this.curActKeys.length * 0.5);
         this.movCellLen = this.curMovs.length;
+    }
+
+    checkUseCond(useCond: UseCond): boolean {
+        const gameData = this.ctrlr.memory.gameData;
+        for (const evtData of useCond.startEvts) {
+            const evt = gameData.evtDict[evtData.id];
+            if (!evt || evt.prog < evtData.prog) return false;
+        }
+
+        for (const evtData of useCond.endEvts) {
+            const evt = gameData.evtDict[evtData.id];
+            if (evt && evt.prog >= evtData.prog) return false;
+        }
+
+        return true;
     }
 
     numberOfRows(listView: ListView): number {
@@ -237,8 +254,11 @@ export class PageActPosLVD extends ListViewDelegate {
         switch (cellId) {
             case INFO:
                 return cc.instantiate(this.infoPrefab).getComponent(ListViewCell);
-            case EVT:
-                return cc.instantiate(this.evtPrefab).getComponent(ListViewCell);
+            case EVT: {
+                const cell = cc.instantiate(this.evtPrefab).getComponent(CellEvt);
+                cell.clickCallback = this.onClickCellEvt.bind(this);
+                return cell;
+            }
             case ACT: {
                 const cell = cc.instantiate(this.btnPrefab).getComponent(CellPosBtn);
                 cell.clickCallback = this.onClickCellPosBtn.bind(this);
@@ -252,10 +272,17 @@ export class PageActPosLVD extends ListViewDelegate {
         }
     }
 
-    setCellForRow(listView: ListView, rowIdx: number, cell: CellPosBtn & CellPosMov) {
+    setCellForRow(listView: ListView, rowIdx: number, cell: CellEvt & CellPosBtn & CellPosMov) {
         if (rowIdx === 0) {
         } else if (rowIdx <= this.evtCellLen) {
-            //
+            const evtIdx = (rowIdx - 1) * 2;
+            const evtId1 = this.curEvtIds[evtIdx];
+            cell.setEvt1(evtId1);
+
+            if (evtIdx + 1 < this.curEvtIds.length) {
+                const evtId2 = this.curEvtIds[evtIdx + 1];
+                cell.setEvt2(evtId2);
+            } else cell.setEvt2(undefined);
         } else if (rowIdx <= this.evtCellLen + this.actCellLen) {
             const actIdx = (rowIdx - 1 - this.evtCellLen) * 2;
             const actKey1 = this.curActKeys[actIdx];
@@ -274,6 +301,14 @@ export class PageActPosLVD extends ListViewDelegate {
             const posId = moveType.id;
             const movPosModel = ActPosModelDict[posId];
             cell.setData(movPosModel, moveType.price);
+        }
+    }
+
+    onClickCellEvt(evtId: string) {
+        if (evtId in StoryModelDict) {
+        } else {
+            const spcBtlModel = SpcBtlModelDict[evtId];
+            this.ctrlr.pushPage(PageActExpl, { spcBtlId: spcBtlModel.id });
         }
     }
 

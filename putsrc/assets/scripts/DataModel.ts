@@ -251,10 +251,8 @@ export class EquipModel {
 // -----------------------------------------------------------------
 
 export class UseCond {
-    startEvt: string;
-    startProg: number;
-    endEvt?: string;
-    endProg?: number;
+    startEvts: { id: string; prog: number }[];
+    endEvts?: { id: string; prog: number }[];
 }
 
 // -----------------------------------------------------------------
@@ -362,7 +360,7 @@ export class ActPosModel {
     cnName: string;
     lv: number;
     type: ActPosType;
-    evtIds: string;
+    evtIds: string[];
     actMDict: { [key: string]: AllPAModel };
     movs: MovModel[];
     loc: Partial<cc.Vec2>;
@@ -418,11 +416,6 @@ export class QuestModel {
 
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
-
-export enum EvtType {
-    story = 1,
-    battle
-}
 
 export class EvtModel {
     id!: string;

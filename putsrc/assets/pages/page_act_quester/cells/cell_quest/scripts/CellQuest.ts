@@ -95,13 +95,13 @@ export class CellQuest extends ListViewCell {
             this.state = QuestState.toAccept;
             stateStr = '';
             tipStr = '（点击接受）';
-        } else if (quest.progress >= QuestTool.getRealCount(quest)) {
+        } else if (quest.prog >= QuestTool.getRealCount(quest)) {
             this.state = QuestState.toSubmit;
             stateStr = '  完成';
             tipStr = this.atQuester ? '（点击提交）' : '';
         } else if (questModel.type === QuestType.support) {
             this.state = QuestState.toRefresh;
-            stateStr = `  ${quest.progress} / ${QuestTool.getRealCount(quest)}`;
+            stateStr = `  ${quest.prog} / ${QuestTool.getRealCount(quest)}`;
             tipStr = '（点击刷新）';
         } else if (questModel.type === QuestType.search) {
             this.state = QuestState.toFinish;
@@ -109,7 +109,7 @@ export class CellQuest extends ListViewCell {
             tipStr = '';
         } else {
             this.state = QuestState.toFinish;
-            stateStr = `  ${quest.progress} / ${QuestTool.getRealCount(quest)}`;
+            stateStr = `  ${quest.prog} / ${QuestTool.getRealCount(quest)}`;
             tipStr = '';
         }
 

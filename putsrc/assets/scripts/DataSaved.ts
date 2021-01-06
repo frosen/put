@@ -294,7 +294,7 @@ export const QuestAmplAwardRates = [1, 1.2, 1.5];
 export class Quest {
     id: string;
     startTime: number;
-    progress: number;
+    prog: number;
     dLine: QuestDLineType;
     ampl: QuestAmplType;
 }
@@ -324,7 +324,7 @@ export class AcceQuestInfo {
 
 export class Evt {
     id!: string;
-    progress!: number;
+    prog!: number;
     slcDict?: { [key: string]: string };
 }
 

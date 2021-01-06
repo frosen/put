@@ -46,7 +46,8 @@ import {
     Merge,
     Book,
     Special,
-    EleType
+    EleType,
+    Evt
 } from './DataSaved';
 import {
     FeatureModel,
@@ -77,7 +78,7 @@ import { MaterialModelDict } from '../configs/MaterialModelDict';
 
 import { PTN } from '../configs/ProTtlModelDict';
 import { FeatureModelDict } from '../configs/FeatureModelDict';
-import { PAKey, PosN } from '../configs/ActPosModelDict';
+import { ActPosModelDict, PAKey, PosN } from '../configs/ActPosModelDict';
 
 import { Tea } from './Tea';
 
@@ -1012,7 +1013,7 @@ export class QuestTool {
         const quest = newInsWithChecker(Quest);
         quest.id = id;
         quest.startTime = Date.now();
-        quest.progress = 0;
+        quest.prog = 0;
         quest.dLine = dLine;
         quest.ampl = ampl;
         return quest;
@@ -1034,6 +1035,15 @@ export class QuestTool {
         const model = QuestModelDict[quest.id];
         const money = model.awardMoney;
         return Math.floor(money * QuestAmplAwardRates[quest.ampl] * QuestDLineAwardRates[quest.dLine]);
+    }
+}
+
+export class EvtTool {
+    static create(id: string): Evt {
+        const evt = newInsWithChecker(Evt);
+        evt.id = id;
+        evt.prog = 0;
+        return evt;
     }
 }
 
@@ -1560,9 +1570,25 @@ export class GameDataTool {
     }
 
     static getCurReputData(gameData: GameData, posId: string): { rank: ReputRank; value: number; max: number } {
-        const reput = gameData.posDataDict[posId].reput;
+        const reput = gameData.posDataDict[posId].reput; // llytodo
         return { rank: ReputRank.renown, value: 450, max: 10000 };
     }
+
+    // -----------------------------------------------------------------
+
+    static addEvt(gameData: GameData, posId: string) {
+        const actPosModel = ActPosModelDict[posId];
+        cc.log('STORM cc ^_^ >> ', actPosModel, actPosModel.evtIds);
+        for (const evtId of actPosModel.evtIds) {
+            if (!(evtId in gameData.evtDict)) {
+                gameData.evtDict[evtId] = EvtTool.create(evtId);
+                gameData.ongoingEvtIds.push(evtId);
+            }
+        }
+        cc.log('STORM cc ^_^ <<< ');
+    }
+
+    static finishEvt() {}
 
     // -----------------------------------------------------------------
 
@@ -1634,7 +1660,7 @@ export class GameDataTool {
             const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
             for (const quest of quests) {
                 if (quest.id !== questInfo.questId) continue;
-                if (quest.progress >= QuestTool.getRealCount(quest)) continue;
+                if (quest.prog >= QuestTool.getRealCount(quest)) continue;
                 if (!check(quest, model)) continue;
                 return { quest, model };
             }
@@ -1649,7 +1675,7 @@ export class GameDataTool {
             const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
             for (const quest of quests) {
                 if (quest.id !== questInfo.questId) continue;
-                if (quest.progress >= QuestTool.getRealCount(quest)) continue;
+                if (quest.prog >= QuestTool.getRealCount(quest)) continue;
                 call(quest, model);
             }
         }

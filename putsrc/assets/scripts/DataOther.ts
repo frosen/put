@@ -15,7 +15,6 @@ import {
     ExplModel,
     ActPosModel,
     AmplAttriType,
-    BossType,
     FeatureBtlData
 } from './DataModel';
 import {

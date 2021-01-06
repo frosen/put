@@ -42,7 +42,7 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
         cnName: '亦山基地',
         lv: 1,
         type: ActPosType.town,
-        evts: [],
+        evtIds: [],
         actMDict: {
             [PAKey.shop]: {
                 goodsIdList: [eI.DaMoShi, eI.DaMoShi, dI.LingGanYaoJi1]
@@ -82,7 +82,7 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
         cnName: '科创小径',
         lv: 30,
         type: ActPosType.wild,
-        evts: [SpcBtlN.KuangBaoHeXin],
+        evtIds: [SpcBtlN.KuangBaoHeXin],
         actMDict: {
             [PAKey.expl]: {
                 stepMax: 2,
@@ -115,7 +115,7 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
         cnName: '光机电工厂',
         lv: 5,
         type: ActPosType.wild,
-        evts: [],
+        evtIds: [],
         actMDict: {
             [PAKey.expl]: {
                 stepMax: 2,
