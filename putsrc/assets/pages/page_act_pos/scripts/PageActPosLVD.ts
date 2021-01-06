@@ -26,6 +26,7 @@ import { PageActRcclr } from '../../page_act_rcclr/scripts/PageActRcclr';
 import { PageActACntr } from '../../page_act_acntr/scripts/PageActACntr';
 import { PageActQuester } from '../../page_act_quester/scripts/PageActQuester';
 import { PageActMerger } from '../../page_act_merger/scripts/PageActMerger';
+import { EvtModelDict } from '../../../configs/EvtModelDict';
 
 export class CellActInfo {
     cnName: string;
@@ -184,8 +185,9 @@ export class PageActPosLVD extends ListViewDelegate {
         this.curActKeys.length = 0;
         this.curMovs.length = 0;
 
-        for (let index = 0; index < this.curActPosModel.evts.length; index++) {
-            const evtModel = this.curActPosModel.evts[index];
+        for (let index = 0; index < this.curActPosModel.evtIds.length; index++) {
+            const evtId = this.curActPosModel.evtIds[index];
+            const evtModel = EvtModelDict[evtId];
             if (evtModel && evtModel.useCond) {
                 // if (evtModel.condFunc(gameData)) this.curEvts.push(evtModel);
             } else this.curEvts.push(evtModel);

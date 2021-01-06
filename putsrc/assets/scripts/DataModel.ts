@@ -467,31 +467,21 @@ export class NormalPsge extends Psge {
     gain?: StoryGain;
 }
 
-export class Story {
-    psges!: Psge[];
-}
-
-export class StoryEvtModel extends EvtModel {
+export class StoryModel extends EvtModel {
     cnName!: string;
     rank: EvtRank;
-    story!: Story;
+    psges!: Psge[];
 }
 
 // -----------------------------------------------------------------
 
-export enum BossType {
-    main = 1,
-    sub,
-    normal
-}
-
 export class SpcBtlPet {
     id!: string;
+    name?: string;
     lv!: number;
     ampl!: number;
-    features!: Feature[];
-    bossName?: string;
-    bossType!: BossType; // 类型以给boss名字加颜色
+    main?: boolean; // 类型以给boss名字加颜色
+    features?: Feature[];
 }
 
 export class SpcBtlModel extends EvtModel {
