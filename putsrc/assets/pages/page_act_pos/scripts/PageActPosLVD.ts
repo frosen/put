@@ -57,13 +57,14 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
         check: (ctrlr: BaseCtrlr): string => {
             const gameData = ctrlr.memory.gameData;
             if (gameData.expl) {
-                if (gameData.curPosId !== gameData.expl.curPosId) {
-                    const name = ActPosModelDict[gameData.expl.curPosId].cnName;
+                const expl = gameData.expl;
+                if (gameData.curPosId !== expl.curPosId) {
+                    const name = ActPosModelDict[expl.curPosId].cnName;
                     return `无法进入，精灵仍在${name}战斗`;
-                } else if (gameData.expl.btl && gameData.expl.btl.spcBtlId) {
-                    const EvtModelDict: any = {}; // llytodo
-                    const cnName = EvtModelDict[gameData.expl.btl.spcBtlId].cnName;
-                    return `无法进入，精灵处于“${cnName}”事件`;
+                }
+                if (expl.btl && expl.btl.spcBtlId) {
+                    const cnName = SpcBtlModelDict[expl.btl.spcBtlId].cnName;
+                    return `无法进入，精灵处于“${cnName}”的战斗中`;
                 }
             }
             if (GameDataTool.getReadyPets(ctrlr.memory.gameData).length < 2) {
@@ -308,6 +309,24 @@ export class PageActPosLVD extends ListViewDelegate {
         if (evtId in StoryModelDict) {
         } else {
             const spcBtlModel = SpcBtlModelDict[evtId];
+
+            const gameData = this.ctrlr.memory.gameData;
+            if (gameData.expl) {
+                const expl = gameData.expl;
+                if (gameData.curPosId !== expl.curPosId) {
+                    const name = ActPosModelDict[expl.curPosId].cnName;
+                    return `无法进入，精灵仍在${name}战斗`;
+                }
+                if (!expl.btl || !expl.btl.spcBtlId) return '无法进入，没有这个战斗';
+                if (expl.btl.spcBtlId !== evtId) {
+                    const cnName = SpcBtlModelDict[expl.btl.spcBtlId].cnName;
+                    return `无法进入，精灵处于“${cnName}”的战斗中`;
+                }
+            }
+            if (GameDataTool.getReadyPets(this.ctrlr.memory.gameData).length < 2) {
+                return '前方危险，请保证你队伍中有至少两只精灵，且处于备战状态！（精灵列表中点击状态按钮可变更状态）';
+            }
+
             this.ctrlr.pushPage(PageActExpl, { spcBtlId: spcBtlModel.id });
         }
     }
