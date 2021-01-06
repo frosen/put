@@ -6,6 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
+import { SpcBtlModelDict, StoryModelDict } from '../../../../../configs/EvtModelDict';
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass('EvtUI')
@@ -57,7 +58,17 @@ export class CellEvt extends ListViewCell {
         }
     }
 
-    setEvtUI(evtUI: EvtUI, evtId: string) {}
+    setEvtUI(evtUI: EvtUI, evtId: string) {
+        if (evtId in StoryModelDict) {
+            const storyModel = StoryModelDict[evtId];
+            evtUI.name.string = storyModel.cnName;
+            evtUI.lv.string = '[L' + storyModel.lv + ']';
+        } else {
+            const spcBtlModel = SpcBtlModelDict[evtId];
+            evtUI.name.string = spcBtlModel.cnName;
+            evtUI.lv.string = '[L' + spcBtlModel.lv + ']';
+        }
+    }
 
     callback1() {
         this.clickCallback(this.evtId1);

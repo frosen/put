@@ -419,15 +419,17 @@ export class QuestModel {
 
 export class EvtModel {
     id!: string;
+    cnName!: string;
     lv!: number;
     useCond?: UseCond;
 }
 
 // -----------------------------------------------------------------
 
-export enum EvtRank {
+export enum StoryType {
     main = 1,
-    sub
+    sub,
+    new
 }
 
 export enum PsgeType {
@@ -455,18 +457,22 @@ export class StoryGain {
 }
 
 export class NormalPsge extends Psge {
-    type: PsgeType.normal;
+    type!: PsgeType;
     str!: string;
     gain?: StoryGain;
 }
 
 export class StoryModel extends EvtModel {
-    cnName!: string;
-    rank: EvtRank;
+    type!: StoryType;
     psges!: Psge[];
 }
 
 // -----------------------------------------------------------------
+
+export enum SpcBtlType {
+    story = 1,
+    random
+}
 
 export class SpcBtlPet {
     id!: string;
@@ -478,5 +484,6 @@ export class SpcBtlPet {
 }
 
 export class SpcBtlModel extends EvtModel {
+    type!: SpcBtlType;
     pets!: SpcBtlPet[];
 }
