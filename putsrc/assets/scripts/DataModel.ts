@@ -160,26 +160,6 @@ export class PetModel {
     selfSkillIds!: string[];
 }
 
-export enum BossType {
-    main = 1,
-    sub,
-    normal
-}
-
-export class SpcBtlPet {
-    id!: string;
-    lv!: number;
-    ampl!: number;
-    features!: Feature[];
-    bossName?: string;
-    bossType!: BossType; // 类型以给boss名字加颜色
-}
-
-export class SpcBtlModel {
-    id!: string;
-    pets!: SpcBtlPet[];
-}
-
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
@@ -439,6 +419,24 @@ export class QuestModel {
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
+export enum EvtType {
+    story = 1,
+    battle
+}
+
+export class EvtModel {
+    id!: string;
+    lv!: number;
+    useCond?: UseCond;
+}
+
+// -----------------------------------------------------------------
+
+export enum EvtRank {
+    main = 1,
+    sub
+}
+
 export enum PsgeType {
     normal = 1,
     selection,
@@ -473,27 +471,29 @@ export class Story {
     psges!: Psge[];
 }
 
-export enum EvtType {
-    story = 1,
-    battle
-}
-
-export enum EvtRank {
-    main = 1,
-    sub
-}
-
-export class EvtModel {
-    id!: string;
-    lv!: number;
-    rank: EvtRank;
-    useCond?: UseCond;
-}
-
 export class StoryEvtModel extends EvtModel {
     cnName!: string;
+    rank: EvtRank;
     story!: Story;
 }
 
-// 战斗事件的id等于其特殊战斗的id
-export class BtlEvtModel extends EvtModel {}
+// -----------------------------------------------------------------
+
+export enum BossType {
+    main = 1,
+    sub,
+    normal
+}
+
+export class SpcBtlPet {
+    id!: string;
+    lv!: number;
+    ampl!: number;
+    features!: Feature[];
+    bossName?: string;
+    bossType!: BossType; // 类型以给boss名字加颜色
+}
+
+export class SpcBtlModel extends EvtModel {
+    pets!: SpcBtlPet[];
+}

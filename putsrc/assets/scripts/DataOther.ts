@@ -42,7 +42,7 @@ import { BtlCtrlr } from './BtlCtrlr';
 import { randomRate, getRandomOneInList, normalRandom } from './Random';
 import { ActPosModelDict, PAKey } from '../configs/ActPosModelDict';
 import { ExpModels } from '../configs/ExpModels';
-import { SpcBtlModelDict } from '../configs/SpcBtlModelDict';
+import { SpcBtlModelDict } from '../configs/EvtModelDict';
 
 // -----------------------------------------------------------------
 

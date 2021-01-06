@@ -28,7 +28,7 @@ import { EqpAmplrN } from './EqpAmplrModelDict';
 import { EquipN } from './EquipModelDict';
 import { PetN } from './PetModelDict';
 import { QuestN } from './QuestModelDict';
-import { SpcBtlN } from './SpcBtlModelDict';
+import { SpcBtlN } from './EvtModelDict';
 
 const p = PetN;
 const e = EquipN;

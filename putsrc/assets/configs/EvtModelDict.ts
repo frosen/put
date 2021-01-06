@@ -1,6 +1,6 @@
 /*
- * SpcBtlDict.ts
- * 特殊战斗（Boss战）
+ * EvtModelDict.ts
+ * 事件
  * luleyan
  */
 
@@ -15,6 +15,7 @@ import { PetN } from './PetModelDict';
 export const SpcBtlModelDict: { [key: string]: SpcBtlModel } = {
     [SpcBtlN.KuangBaoHeXin]: {
         id: SpcBtlN.KuangBaoHeXin,
+        lv: 30,
         pets: [
             {
                 id: PetN.DianZiShouWei,
