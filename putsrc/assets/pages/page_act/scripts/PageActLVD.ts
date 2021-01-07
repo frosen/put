@@ -156,8 +156,8 @@ export class PageActLVD extends ListViewDelegate {
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellEvt & CellPosBtn & CellPosMov) {
         if (rowIdx === 0) {
-        } else if (rowIdx <= this.evtCellLen + this.actCellLen) {
-            const actIdx = (rowIdx - 1 - this.evtCellLen) * 2;
+        } else if (rowIdx <= this.actCellLen) {
+            const actIdx = (rowIdx - 1) * 2;
             const actKey1 = this.curActKeys[actIdx];
             cell.setBtn1(actKey1, this.getActPosInfo(actKey1));
 
@@ -165,8 +165,8 @@ export class PageActLVD extends ListViewDelegate {
                 const actKey2 = this.curActKeys[actIdx + 1];
                 cell.setBtn1(actKey2, this.getActPosInfo(actKey2));
             } else cell.setBtn2(undefined);
-        } else if (rowIdx <= this.evtCellLen) {
-            const evtIdx = (rowIdx - 1) * 2;
+        } else if (rowIdx <= this.evtCellLen + this.actCellLen) {
+            const evtIdx = (rowIdx - 1 - this.evtCellLen) * 2;
             const evtId1 = this.curEvtIds[evtIdx];
             cell.setEvt1(evtId1);
 
@@ -189,7 +189,7 @@ export class PageActLVD extends ListViewDelegate {
         let info: string | undefined;
         let infoColor: cc.Color | undefined;
         if (actInfo.getSubInfo) {
-            ({ str: info, color: infoColor } = this.getSubInfo(actInfo));
+            ({ str: info, color: infoColor } = actInfo.getSubInfo(this.ctrlr) || { str: undefined });
         } else {
             info = '';
             infoColor = cc.color(120, 120, 120);
@@ -199,11 +199,5 @@ export class PageActLVD extends ListViewDelegate {
             info,
             infoColor
         };
-    }
-
-    getSubInfo(actInfo: CellActInfo): { str?: string; color?: cc.Color } {
-        if (actInfo.getSubInfo) {
-            return actInfo.getSubInfo(this.ctrlr) || { str: undefined };
-        } else return { str: undefined };
     }
 }
