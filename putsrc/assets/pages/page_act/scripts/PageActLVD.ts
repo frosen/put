@@ -1,5 +1,5 @@
 /*
- * PageActPosLVD.ts
+ * PageActLVD.ts
  * 位置页面列表的代理
  * luleyan
  */
@@ -11,7 +11,7 @@ import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
-import { PageActPos } from './PageActPos';
+import { PageAct } from './PageAct';
 import { PageSwitchAnim, BaseCtrlr } from '../../../scripts/BaseCtrlr';
 import { PageActExpl } from '../../page_act_expl/scripts/PageActExpl';
 import { PosData, PADExpl, PADEqpMkt, PADPetMkt } from '../../../scripts/DataSaved';
@@ -152,7 +152,7 @@ const ACT = 'a';
 const MOV = 'm';
 
 @ccclass
-export class PageActPosLVD extends ListViewDelegate {
+export class PageActLVD extends ListViewDelegate {
     @property(cc.Prefab)
     infoPrefab: cc.Prefab = null;
 
@@ -379,6 +379,6 @@ export class PageActPosLVD extends ListViewDelegate {
         }
 
         this.ctrlr.memory.gameData.curPosId = nextPosModel.id;
-        this.ctrlr.switchCurPage(PageActPos, null, switchAnim);
+        this.ctrlr.switchCurPage(PageAct, null, switchAnim);
     }
 }
