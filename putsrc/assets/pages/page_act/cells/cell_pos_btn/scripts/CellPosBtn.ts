@@ -6,7 +6,6 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { CellActInfo } from '../../../scripts/PageActLVD';
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
@@ -29,10 +28,10 @@ export class CellPosBtn extends ListViewCell {
     @property(cc.Label)
     lblSub2: cc.Label = null;
 
-    clickCallback: (info: CellActInfo) => void = null;
+    clickCallback: (pAKey: string) => void = null;
 
-    cellInfo1: CellActInfo = null;
-    cellInfo2: CellActInfo = null;
+    pAKey1: string;
+    pAKey2?: string;
 
     onLoad() {
         super.onLoad();
@@ -41,43 +40,31 @@ export class CellPosBtn extends ListViewCell {
         this.btn2.node.on('click', this.callback2.bind(this));
     }
 
-    setBtn1(cellInfo: CellActInfo) {
-        this.cellInfo1 = cellInfo;
-        if (this.cellInfo1) {
-            this.lblMain1.string = cellInfo.cnName || '';
-            const { str, color } = this.getSubInfo(cellInfo);
-            this.lblSub1.string = str || '';
-            this.lblSub1.node.color = color || cc.color(120, 120, 120);
-        } else {
-            this.lblMain1.string = '';
-            this.lblSub1.string = '';
-        }
+    setBtn1(pAKey: string, data: { name: string; info: string; infoColor: cc.Color }) {
+        this.pAKey1 = pAKey;
+        this.lblMain1.string = data.name;
+        this.lblSub1.string = data.info;
+        this.lblSub1.node.color = data.infoColor;
     }
 
-    setBtn2(cellInfo: CellActInfo) {
-        this.cellInfo2 = cellInfo;
-        if (this.cellInfo2) {
-            this.lblMain2.string = cellInfo.cnName || '';
-            const { str, color } = this.getSubInfo(cellInfo);
-            this.lblSub2.string = str || '';
-            this.lblSub2.node.color = color || cc.color(120, 120, 120);
+    setBtn2(pAKey?: string, data?: { name: string; info: string; infoColor: cc.Color }) {
+        if (pAKey) {
+            this.pAKey2 = pAKey;
+            this.lblMain2.string = data.name;
+            this.lblSub2.string = data.info;
+            this.lblSub2.node.color = data.infoColor;
         } else {
+            this.pAKey2 = undefined;
             this.lblMain2.string = '';
             this.lblSub2.string = '';
         }
     }
 
     callback1() {
-        if (this.cellInfo1) this.clickCallback(this.cellInfo1);
+        this.clickCallback(this.pAKey1);
     }
 
     callback2() {
-        if (this.cellInfo2) this.clickCallback(this.cellInfo2);
-    }
-
-    getSubInfo(actInfo: CellActInfo): { str: string; color?: cc.Color } {
-        if (actInfo.getSubInfo) {
-            return actInfo.getSubInfo(this.ctrlr) || { str: null };
-        } else return { str: null };
+        if (this.pAKey2) this.clickCallback(this.pAKey2);
     }
 }
