@@ -1384,7 +1384,11 @@ export class ExplUpdater {
         }
     }
 
-    doEvt(spcBtlId: string) {}
+    doEvt(spcBtlId: string) {
+        const evt = this.gameData.evtDict[spcBtlId];
+        evt.prog = 1;
+        GameDataTool.finishEvt(this.gameData, spcBtlId);
+    }
 
     rdcExplDegreeByBtlFail(curStep: number, failCnt: number = 1) {
         this.changeExplDegree(RdcUpdCntForFailByStep[curStep] * failCnt);

@@ -157,10 +157,10 @@ export class PageActPosLVD extends ListViewDelegate {
     infoPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
-    evtPrefab: cc.Prefab = null;
+    btnPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
-    btnPrefab: cc.Prefab = null;
+    evtPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
     movPrefab: cc.Prefab = null;
@@ -169,12 +169,12 @@ export class PageActPosLVD extends ListViewDelegate {
     curPos: PosData;
     curActPosModel: ActPosModel;
 
-    curEvtIds: string[] = [];
     curActKeys: string[] = [];
+    curEvtIds: string[] = [];
     curMovs: MovModel[] = [];
 
-    evtCellLen: number;
     actCellLen: number;
+    evtCellLen: number;
     movCellLen: number;
 
     initData() {
@@ -183,9 +183,17 @@ export class PageActPosLVD extends ListViewDelegate {
         this.curPos = gameData.posDataDict[this.curPosId];
         this.curActPosModel = ActPosModelDict[this.curPosId];
 
-        this.curEvtIds.length = 0;
         this.curActKeys.length = 0;
+        this.curEvtIds.length = 0;
         this.curMovs.length = 0;
+
+        for (const pakey in this.curActPosModel.actMDict) {
+            if (!this.curActPosModel.actMDict.hasOwnProperty(pakey)) continue;
+            const actModel = this.curActPosModel.actMDict[pakey];
+            if (actModel.useCond) {
+                if (this.checkUseCond(actModel.useCond)) this.curActKeys.push(pakey);
+            } else this.curActKeys.push(pakey);
+        }
 
         for (let index = 0; index < this.curActPosModel.evtIds.length; index++) {
             const evtId = this.curActPosModel.evtIds[index];
@@ -196,14 +204,6 @@ export class PageActPosLVD extends ListViewDelegate {
             } else this.curEvtIds.push(evtId);
         }
 
-        for (const pakey in this.curActPosModel.actMDict) {
-            if (!this.curActPosModel.actMDict.hasOwnProperty(pakey)) continue;
-            const actModel = this.curActPosModel.actMDict[pakey];
-            if (actModel.useCond) {
-                if (this.checkUseCond(actModel.useCond)) this.curActKeys.push(pakey);
-            } else this.curActKeys.push(pakey);
-        }
-
         for (let index = 0; index < this.curActPosModel.movs.length; index++) {
             const movModel = this.curActPosModel.movs[index];
             if (movModel.useCond) {
@@ -211,55 +211,63 @@ export class PageActPosLVD extends ListViewDelegate {
             } else this.curMovs.push(movModel);
         }
 
-        this.evtCellLen = Math.ceil(this.curEvtIds.length * 0.5);
         this.actCellLen = Math.ceil(this.curActKeys.length * 0.5);
+        this.evtCellLen = Math.ceil(this.curEvtIds.length * 0.5);
         this.movCellLen = this.curMovs.length;
     }
 
     checkUseCond(useCond: UseCond): boolean {
         const gameData = this.ctrlr.memory.gameData;
+        if (useCond.needTtlIds) {
+            for (const ttlId of useCond.needTtlIds) {
+                if (!gameData.proTtlDict.hasOwnProperty(ttlId)) return false;
+            }
+        }
+
         for (const evtData of useCond.startEvts) {
             const evt = gameData.evtDict[evtData.id];
             if (!evt || evt.prog < evtData.prog) return false;
         }
 
-        for (const evtData of useCond.endEvts) {
-            const evt = gameData.evtDict[evtData.id];
-            if (evt && evt.prog >= evtData.prog) return false;
+        if (useCond.endEvts) {
+            for (const evtData of useCond.endEvts) {
+                const evt = gameData.evtDict[evtData.id];
+                if (evt && evt.prog >= evtData.prog) return false;
+            }
         }
 
         return true;
     }
 
     numberOfRows(listView: ListView): number {
-        return 1 + this.evtCellLen + this.actCellLen + this.movCellLen;
+        return 1 + this.actCellLen + this.evtCellLen + this.movCellLen;
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
         if (rowIdx === 0) return 552;
-        else if (rowIdx < this.evtCellLen) return 204;
-        else if (rowIdx === this.evtCellLen) return 246;
-        else if (rowIdx < this.evtCellLen + this.actCellLen) return 139;
-        else if (rowIdx === this.evtCellLen + this.actCellLen) return 181;
+        else if (rowIdx < this.actCellLen) return 139;
+        else if (rowIdx === this.actCellLen) return 181;
+        else if (rowIdx < this.evtCellLen + this.actCellLen) return 204;
+        else if (rowIdx === this.evtCellLen + this.actCellLen) return 246;
         else return 154;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
         if (rowIdx === 0) return INFO;
-        else if (rowIdx <= this.evtCellLen) return EVT;
-        else if (rowIdx <= this.evtCellLen + this.actCellLen) return ACT;
+        else if (rowIdx <= this.actCellLen) return ACT;
+        else if (rowIdx <= this.evtCellLen + this.actCellLen) return EVT;
         else return MOV;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
         switch (cellId) {
-            case INFO:
-                return cc.instantiate(this.infoPrefab).getComponent(ListViewCell);
             case EVT: {
                 const cell = cc.instantiate(this.evtPrefab).getComponent(CellEvt);
                 cell.clickCallback = this.onClickCellEvt.bind(this);
                 return cell;
             }
+            case INFO:
+                return cc.instantiate(this.infoPrefab).getComponent(ListViewCell);
             case ACT: {
                 const cell = cc.instantiate(this.btnPrefab).getComponent(CellPosBtn);
                 cell.clickCallback = this.onClickCellPosBtn.bind(this);
@@ -275,15 +283,6 @@ export class PageActPosLVD extends ListViewDelegate {
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellEvt & CellPosBtn & CellPosMov) {
         if (rowIdx === 0) {
-        } else if (rowIdx <= this.evtCellLen) {
-            const evtIdx = (rowIdx - 1) * 2;
-            const evtId1 = this.curEvtIds[evtIdx];
-            cell.setEvt1(evtId1);
-
-            if (evtIdx + 1 < this.curEvtIds.length) {
-                const evtId2 = this.curEvtIds[evtIdx + 1];
-                cell.setEvt2(evtId2);
-            } else cell.setEvt2(undefined);
         } else if (rowIdx <= this.evtCellLen + this.actCellLen) {
             const actIdx = (rowIdx - 1 - this.evtCellLen) * 2;
             const actKey1 = this.curActKeys[actIdx];
@@ -295,6 +294,15 @@ export class PageActPosLVD extends ListViewDelegate {
                 const actInfo2 = CellActInfoDict[actKey2];
                 cell.setBtn2(actInfo2);
             } else cell.setBtn2(null);
+        } else if (rowIdx <= this.evtCellLen) {
+            const evtIdx = (rowIdx - 1) * 2;
+            const evtId1 = this.curEvtIds[evtIdx];
+            cell.setEvt1(evtId1);
+
+            if (evtIdx + 1 < this.curEvtIds.length) {
+                const evtId2 = this.curEvtIds[evtIdx + 1];
+                cell.setEvt2(evtId2);
+            } else cell.setEvt2(undefined);
         } else {
             const movIdx = rowIdx - 1 - this.evtCellLen - this.actCellLen;
 
@@ -303,6 +311,22 @@ export class PageActPosLVD extends ListViewDelegate {
             const movPosModel = ActPosModelDict[posId];
             cell.setData(movPosModel, moveType.price);
         }
+    }
+
+    onClickCellPosBtn(actInfo: CellActInfo) {
+        if (actInfo.check) {
+            const errorStr = actInfo.check(this.ctrlr);
+            if (errorStr) {
+                this.ctrlr.popToast(errorStr);
+                return;
+            }
+        }
+
+        if (actInfo.beforeEnter) {
+            actInfo.beforeEnter(this.ctrlr, pageData => {
+                this.ctrlr.pushPage(actInfo.page, pageData);
+            });
+        } else this.ctrlr.pushPage(actInfo.page);
     }
 
     onClickCellEvt(evtId: string) {
@@ -329,22 +353,6 @@ export class PageActPosLVD extends ListViewDelegate {
 
             this.ctrlr.pushPage(PageActExpl, { spcBtlId: spcBtlModel.id });
         }
-    }
-
-    onClickCellPosBtn(actInfo: CellActInfo) {
-        if (actInfo.check) {
-            const errorStr = actInfo.check(this.ctrlr);
-            if (errorStr) {
-                this.ctrlr.popToast(errorStr);
-                return;
-            }
-        }
-
-        if (actInfo.beforeEnter) {
-            actInfo.beforeEnter(this.ctrlr, pageData => {
-                this.ctrlr.pushPage(actInfo.page, pageData);
-            });
-        } else this.ctrlr.pushPage(actInfo.page);
     }
 
     onClickCellPosMov(cell: CellPosMov) {

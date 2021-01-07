@@ -251,6 +251,7 @@ export class EquipModel {
 // -----------------------------------------------------------------
 
 export class UseCond {
+    needTtlIds?: string[];
     startEvts: { id: string; prog: number }[];
     endEvts?: { id: string; prog: number }[];
 }

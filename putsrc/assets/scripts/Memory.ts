@@ -1578,17 +1578,19 @@ export class GameDataTool {
 
     static addEvt(gameData: GameData, posId: string) {
         const actPosModel = ActPosModelDict[posId];
-        cc.log('STORM cc ^_^ >> ', actPosModel, actPosModel.evtIds);
         for (const evtId of actPosModel.evtIds) {
             if (!(evtId in gameData.evtDict)) {
                 gameData.evtDict[evtId] = EvtTool.create(evtId);
                 gameData.ongoingEvtIds.push(evtId);
             }
         }
-        cc.log('STORM cc ^_^ <<< ');
     }
 
-    static finishEvt() {}
+    static finishEvt(gameData: GameData, evtId: string) {
+        const idx = gameData.ongoingEvtIds.indexOf(evtId);
+        if (idx !== -1) gameData.ongoingEvtIds.splice(idx, 1);
+        gameData.finishedEvtIds.push(evtId);
+    }
 
     // -----------------------------------------------------------------
 
