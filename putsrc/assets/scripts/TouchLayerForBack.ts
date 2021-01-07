@@ -13,16 +13,16 @@ const BACK_MARK_BUFFER: number = 50;
 @ccclass
 export class TouchLayerForBack extends cc.Component {
     @property(cc.Node)
-    mark: cc.Node = null;
+    mark: cc.Node = null!;
 
-    touchId: number = null;
-    lastX: number;
-    lastY: number;
-    startedX: number;
+    touchId?: number;
+    lastX!: number;
+    lastY!: number;
+    startedX!: number;
 
-    readyX: number;
+    readyX!: number;
 
-    ctrlr: BaseCtrlr = null;
+    ctrlr!: BaseCtrlr;
 
     init(ctrlr: BaseCtrlr) {
         this.ctrlr = ctrlr;
@@ -42,7 +42,7 @@ export class TouchLayerForBack extends cc.Component {
     onGestureStarted(event: cc.Event.EventTouch) {
         const navBar = this.ctrlr.getCurPage().navBar;
         if (!navBar || !navBar.backBtnActive || this.mark.getNumberOfRunningActions() > 0) {
-            this.touchId = null;
+            this.touchId = undefined;
             return;
         }
 
@@ -58,28 +58,28 @@ export class TouchLayerForBack extends cc.Component {
     }
 
     onGestureMoved(event: cc.Event.EventTouch) {
-        if (this.touchId === null || event.getID() !== this.touchId) return;
+        if (!this.touchId || event.getID() !== this.touchId) return;
 
         const curX = event.getLocationX();
         const curY = event.getLocationY();
 
         if (Math.abs(curY - this.lastY) > Math.abs(curX - this.lastX)) {
-            this.touchId = null;
+            this.touchId = undefined;
             return;
         }
         this.mark.x = Math.min(curX - this.startedX, this.readyX);
     }
 
     onGestureEnd(event: cc.Event.EventTouch) {
-        if (this.touchId === null || event.getID() !== this.touchId) return;
-        this.touchId = null;
+        if (!this.touchId || event.getID() !== this.touchId) return;
+        this.touchId = undefined;
         if (this.mark.x >= this.readyX - 1) this.goBack();
         this.moveBack();
     }
 
     onGestureCancel(event: cc.Event.EventTouch) {
-        if (this.touchId === null || event.getID() !== this.touchId) return;
-        this.touchId = null;
+        if (!this.touchId || event.getID() !== this.touchId) return;
+        this.touchId = undefined;
         this.moveBack();
     }
 

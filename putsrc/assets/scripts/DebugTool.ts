@@ -37,7 +37,7 @@ export class DebugTool {
         this.doShortCut(event.keyCode);
     }
 
-    getValeByShortCut(key: number): string {
+    getValeByShortCut(key: number): string | undefined {
         if (key === cc.macro.KEY.a) return 'a';
         if (key === cc.macro.KEY.b) return 'b';
         if (key === cc.macro.KEY.c) return 'c';
@@ -64,17 +64,17 @@ export class DebugTool {
         if (key === cc.macro.KEY.x) return 'x';
         if (key === cc.macro.KEY.y) return 'y';
         if (key === cc.macro.KEY.z) return 'z';
-        if (key === cc.macro.KEY['9'] || key === cc.macro.KEY.num9) return '9';
-        if (key === cc.macro.KEY['8'] || key === cc.macro.KEY.num8) return '8';
-        if (key === cc.macro.KEY['7'] || key === cc.macro.KEY.num7) return '7';
-        if (key === cc.macro.KEY['6'] || key === cc.macro.KEY.num6) return '6';
-        if (key === cc.macro.KEY['5'] || key === cc.macro.KEY.num5) return '5';
-        if (key === cc.macro.KEY['4'] || key === cc.macro.KEY.num4) return '4';
-        if (key === cc.macro.KEY['3'] || key === cc.macro.KEY.num3) return '3';
-        if (key === cc.macro.KEY['2'] || key === cc.macro.KEY.num2) return '2';
-        if (key === cc.macro.KEY['1'] || key === cc.macro.KEY.num1) return '1';
-        if (key === cc.macro.KEY['0'] || key === cc.macro.KEY.num0) return '0';
-        return null;
+        if (key === cc.macro.KEY.num9) return '9';
+        if (key === cc.macro.KEY.num8) return '8';
+        if (key === cc.macro.KEY.num7) return '7';
+        if (key === cc.macro.KEY.num6) return '6';
+        if (key === cc.macro.KEY.num5) return '5';
+        if (key === cc.macro.KEY.num4) return '4';
+        if (key === cc.macro.KEY.num3) return '3';
+        if (key === cc.macro.KEY.num2) return '2';
+        if (key === cc.macro.KEY.num1) return '1';
+        if (key === cc.macro.KEY.num0) return '0';
+        return undefined;
     }
 
     doShortCut(key: number) {

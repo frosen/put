@@ -8,36 +8,36 @@ const { ccclass, property, executeInEditMode } = cc._decorator;
 
 @ccclass('PosImgData')
 export class PosImgData {
-    @property(cc.SpriteFrame) icon: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame) bg: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame) icon: cc.SpriteFrame = null!;
+    @property(cc.SpriteFrame) bg: cc.SpriteFrame = null!;
 }
 
 @ccclass
 @executeInEditMode
 export class RunningImgMgr extends cc.Component {
-    @property(cc.SpriteFrame) detail: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame) detail: cc.SpriteFrame = null!;
 
     // icon range -----------------------------------------------------------------
 
-    @property(cc.SpriteFrame) iconBG0: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame) iconBG4: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame) iconBG6: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame) iconBG0: cc.SpriteFrame = null!;
+    @property(cc.SpriteFrame) iconBG4: cc.SpriteFrame = null!;
+    @property(cc.SpriteFrame) iconBG6: cc.SpriteFrame = null!;
 
     // pet -----------------------------------------------------------------
 
-    @property(cc.SpriteFrame) humanPet: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame) magicPet: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame) mechPet: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame) naturePet: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame) unknownPet: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame) humanPet: cc.SpriteFrame = null!;
+    @property(cc.SpriteFrame) magicPet: cc.SpriteFrame = null!;
+    @property(cc.SpriteFrame) mechPet: cc.SpriteFrame = null!;
+    @property(cc.SpriteFrame) naturePet: cc.SpriteFrame = null!;
+    @property(cc.SpriteFrame) unknownPet: cc.SpriteFrame = null!;
 
     // item -----------------------------------------------------------------
 
     // pos -----------------------------------------------------------------
 
-    @property(PosImgData) YiShanJiDi: PosImgData = null;
-    @property(PosImgData) KeChuangXiaoJing: PosImgData = null;
-    @property(PosImgData) GuangJiDianGongChang: PosImgData = null;
+    @property(PosImgData) YiShanJiDi: PosImgData = null!;
+    @property(PosImgData) KeChuangXiaoJing: PosImgData = null!;
+    @property(PosImgData) GuangJiDianGongChang: PosImgData = null!;
 
     // quester -----------------------------------------------------------------
 

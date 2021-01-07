@@ -1586,6 +1586,14 @@ export class GameDataTool {
         }
     }
 
+    static enterEvt(gameData: GameData, evtId: string) {
+        gameData.curEvtId = evtId;
+    }
+
+    static leaveEvt(gameData: GameData, evtId: string) {
+        gameData.curEvtId = undefined;
+    }
+
     static finishEvt(gameData: GameData, evtId: string) {
         const idx = gameData.ongoingEvtIds.indexOf(evtId);
         if (idx !== -1) gameData.ongoingEvtIds.splice(idx, 1);

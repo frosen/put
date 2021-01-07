@@ -17,15 +17,15 @@ export class ListView extends cc.Component {
     };
 
     @property(ListViewDelegate)
-    delegate: ListViewDelegate = null;
+    delegate: ListViewDelegate = null!;
 
     @property({
         tooltip: '0为不固定宽度，使用delegate的heightForRow指定'
     })
     fixedHeight: number = 0;
 
-    scrollView: cc.ScrollView = null;
-    content: cc.Node = null;
+    scrollView!: cc.ScrollView;
+    content!: cc.Node;
 
     rowCount: number = 0;
 
@@ -186,7 +186,7 @@ export class ListView extends cc.Component {
         this.node.emit(ListView.EventType.scrolling, this);
     }
 
-    updateDisTopRowData(disTop: number) {
+    updateDisTopRowData(disTop: number): void {
         if (disTop < this.disTopRowPos) {
             if (this.disTopRowIdx > 0) {
                 this.disTopRowIdx--;
@@ -214,7 +214,7 @@ export class ListView extends cc.Component {
         }
     }
 
-    updateDisBtmRowData(disBtm: number) {
+    updateDisBtmRowData(disBtm: number): void {
         if (disBtm <= this.disBtmRowPos) {
             if (this.disBtmRowIdx > 0) {
                 const cellData = this.disCellDataDict[this.disBtmRowIdx];
@@ -282,13 +282,13 @@ export class ListView extends cc.Component {
         }
 
         const reuseList = this.reuseCellsDict[cellId];
-        let unusedCell: ListViewCell = null;
+        let unusedCell: ListViewCell;
         if (reuseList.length === 0) {
             unusedCell = this.delegate.createCellForRow(this, rowIdx, cellId);
             cc.assert(unusedCell, `创建cell没有成功：${rowIdx}, ${cellId}`);
             unusedCell.node.parent = this.content;
         } else {
-            unusedCell = reuseList.pop();
+            unusedCell = reuseList.pop()!;
             unusedCell.node.active = true;
         }
 

@@ -169,7 +169,7 @@ export class BtlCtrlr {
         setSeed(seed);
 
         // 更新battle
-        const expl = this.gameData.expl;
+        const expl = this.gameData.expl!;
         this.realBtl.resetEnemy(expl, spcBtlId, undefined);
 
         // 更新memory
@@ -200,7 +200,7 @@ export class BtlCtrlr {
         setSeed(btlMmr.seed);
 
         // 更新battle
-        const expl = this.gameData.expl;
+        const expl = this.gameData.expl!;
         this.realBtl.resetEnemy(expl, btlMmr.spcBtlId, btlMmr.enemys);
         this.initBtl(this.realBtl, btlMmr.spcBtlId);
         this.hiding = btlMmr.hiding;
@@ -879,7 +879,7 @@ export class BtlCtrlr {
                 if (curPet.next) curPet = curPet.next;
                 else usingNext = false;
             } else {
-                curPet = curPet.last;
+                curPet = curPet.last!;
             }
         }
     }

@@ -179,6 +179,7 @@ export class ExplUpdater {
             this.logEnter();
             this.startExpl();
         } else {
+            GameDataTool.enterEvt(this.gameData, spcBtlId);
             this.prepareToBtl(spcBtlId); // 专属作战有个准备时间，然后直接进入战斗，不进入探索
         }
         this.lastTime = Date.now();
@@ -192,6 +193,7 @@ export class ExplUpdater {
 
         if (expl.btl) {
             const spcBtlId = expl.btl.spcBtlId;
+            GameDataTool.enterEvt(this.gameData, spcBtlId);
             const { inBtl, win, updCnt, lastTime } = this.recoverExplInBtl(expl.btl, expl.stepEnterTime);
             if (inBtl) {
                 this.updCnt = updCnt;
@@ -208,7 +210,7 @@ export class ExplUpdater {
                     this.receiveExp();
                     this.catchPet();
                     this.doFightQuest();
-                    if (spcBtlId) this.doEvt(spcBtlId);
+                    if (spcBtlId) this.finishEvt(spcBtlId);
                 } else {
                     this.rdcExplDegreeByBtlFail(curStep);
                 }
@@ -743,8 +745,12 @@ export class ExplUpdater {
     // -----------------------------------------------------------------
 
     destroy() {
-        cc.director.getScheduler().unscheduleUpdate(this);
+        if (this.gameData.expl!.btl && this.gameData.expl!.btl.spcBtlId) {
+            GameDataTool.leaveEvt(this.gameData, this.gameData.expl!.btl.spcBtlId);
+        }
         GameDataTool.clearExpl(this.gameData);
+
+        cc.director.getScheduler().unscheduleUpdate(this);
         this.memory.removeDataListener(this);
         this.ctrlr.debugTool.removeShortCut('ww');
         this.ctrlr.debugTool.removeShortCut('gg');
@@ -1224,7 +1230,7 @@ export class ExplUpdater {
             this.receiveExp();
             this.catchPet();
             this.doFightQuest();
-            if (expl.btl!.spcBtlId) this.doEvt(expl.btl!.spcBtlId);
+            if (expl.btl!.spcBtlId) this.finishEvt(expl.btl!.spcBtlId);
         } else {
             this.rdcExplDegreeByBtlFail(expl.curStep);
         }
@@ -1384,10 +1390,11 @@ export class ExplUpdater {
         }
     }
 
-    doEvt(spcBtlId: string) {
+    finishEvt(spcBtlId: string) {
         const evt = this.gameData.evtDict[spcBtlId];
         evt.prog = 1;
         GameDataTool.finishEvt(this.gameData, spcBtlId);
+        GameDataTool.leaveEvt(this.gameData, spcBtlId);
     }
 
     rdcExplDegreeByBtlFail(curStep: number, failCnt: number = 1) {

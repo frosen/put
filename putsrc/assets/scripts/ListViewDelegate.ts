@@ -17,7 +17,7 @@ export abstract class ListViewDelegate extends cc.Component {
         if (!this._ctrlr) this._ctrlr = window.baseCtrlr;
         return this._ctrlr;
     }
-    _ctrlr: BaseCtrlr = null;
+    _ctrlr!: BaseCtrlr;
 
     abstract numberOfRows(listView: ListView): number;
     heightForRow(listView: ListView, rowIdx: number): number {

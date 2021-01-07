@@ -5,13 +5,12 @@
  */
 
 export class UserData {
-    id: string;
-    phone: number;
-    guildId: string;
+    id!: string;
+    phone?: number;
 }
 
 export class ProTtl {
-    gainTime: number;
+    gainTime!: number;
     data?: any;
 }
 
@@ -109,62 +108,62 @@ export enum PetState {
 export const PetStateNames = ['', '备战中', '休息中'];
 
 export class Feature {
-    id: string;
-    lv: number;
+    id!: string;
+    lv!: number;
 }
 
 export const PetEquipCountMax: number = 3;
 export const PrvtyMax: number = 1000000;
 
 export class Merge {
-    oPetLv: number;
-    petId: string;
-    featureId: string;
-    featureLv: number;
+    oPetLv!: number;
+    petId!: string;
+    featureId!: string;
+    featureLv!: number;
 }
 
 export class Pet {
     /** 类型 */
-    id: string;
+    id!: string;
 
-    nickname: string;
-    master: string;
+    nickname!: string;
+    master!: string;
 
-    catchTime: number;
-    catchIdx: number;
-    catchLv: number;
+    catchTime!: number;
+    catchIdx!: number;
+    catchLv!: number;
 
-    state: PetState;
+    state!: PetState;
 
     /** 等级 */
-    lv: number;
+    lv!: number;
 
     /** 默契值 */
-    prvty: number;
-    prvtyTime: number;
+    prvty!: number;
+    prvtyTime!: number;
 
     /** 当前食物 */
-    drinkId: string;
-    drinkTime: number;
+    drinkId!: string;
+    drinkTime!: number;
 
     /** 当前经验 */
-    exp: number;
+    exp!: number;
 
     /** 专精特性id */
-    exFeatureIds: string[];
+    exFeatureIds!: string[];
     /** 天赋特性 */
-    inbFeatures: Feature[];
+    inbFeatures!: Feature[];
     /** 习得特性 */
-    lndFeatures: Feature[];
+    lndFeatures!: Feature[];
 
     /** 装备 */
     equips!: (Equip | undefined)[];
 
     /** 融合 */
-    merges: Merge[];
+    merges!: Merge[];
 
     /** 解绑次数 */
-    unbindCnt: number;
+    unbindCnt!: number;
 }
 
 // -----------------------------------------------------------------
@@ -177,8 +176,8 @@ export enum ItemType {
 }
 
 export class Item {
-    id: string;
-    itemType: ItemType;
+    id!: string;
+    itemType!: ItemType;
 }
 
 export const ZUAN = '钻';
@@ -188,7 +187,7 @@ export const KUAI = '块';
 export class Money extends Item {
     itemType: ItemType = ItemType.money;
     id: string = 'money';
-    sum: number;
+    sum!: number;
 }
 
 export enum CnsumType {
@@ -202,8 +201,8 @@ export enum CnsumType {
 
 export class Cnsum extends Item {
     itemType: ItemType = ItemType.cnsum;
-    count: number;
-    cnsumType: CnsumType;
+    count!: number;
+    cnsumType!: CnsumType;
 }
 
 export class Drink extends Cnsum {
@@ -233,26 +232,26 @@ export class Material extends Cnsum {
 export class Equip extends Item {
     itemType: ItemType = ItemType.equip;
 
-    skillId: string;
-    growth: number;
-    selfFeatureLvs: number[];
+    skillId!: string;
+    growth!: number;
+    selfFeatureLvs!: number[];
 
-    affixes: Feature[];
+    affixes!: Feature[];
     /** 锻造次数，锻造增加affixes，但次数有限 */
-    forgeCnt: number;
+    forgeCnt!: number;
 
-    catchIdx: number;
+    catchIdx!: number;
 
     /** 解绑次数 */
-    unbindCnt: number;
+    unbindCnt!: number;
 }
 
 export class CaughtPet extends Item {
     itemType: ItemType = ItemType.caughtPet;
-    petId: string;
-    lv: number;
-    exFeatureIds: string[];
-    features: Feature[];
+    petId!: string;
+    lv!: number;
+    exFeatureIds!: string[];
+    features!: Feature[];
 }
 
 // -----------------------------------------------------------------
@@ -260,19 +259,19 @@ export class CaughtPet extends Item {
 export abstract class PADBase {}
 
 export class PADExpl extends PADBase {
-    doneStep: number;
+    doneStep!: number;
 }
 
 export class PADEqpMkt extends PADBase {
-    updateTime: number;
-    refreshCnt: number;
-    eqps: Equip[];
+    updateTime!: number;
+    refreshCnt!: number;
+    eqps!: Equip[];
 }
 
 export class PADPetMkt extends PADBase {
-    updateTime: number;
-    refreshCnt: number;
-    pets: CaughtPet[];
+    updateTime!: number;
+    refreshCnt!: number;
+    pets!: CaughtPet[];
 }
 
 export enum QuestDLineType {
@@ -292,34 +291,34 @@ export const QuestAmplRates = [1, 1.5, 2];
 export const QuestAmplAwardRates = [1, 1.2, 1.5];
 
 export class Quest {
-    id: string;
-    startTime: number;
-    prog: number;
-    dLine: QuestDLineType;
-    ampl: QuestAmplType;
+    id!: string;
+    startTime!: number;
+    prog!: number;
+    dLine!: QuestDLineType;
+    ampl!: QuestAmplType;
 }
 
 export class PADQuester extends PADBase {
-    updateTime: number;
-    quests: Quest[];
-    doneTimeDict: { [key: string]: number };
+    updateTime!: number;
+    quests!: Quest[];
+    doneTimeDict!: { [key: string]: number };
 }
 
 export class PADACntr extends PADBase {
-    soldoutList: boolean[];
+    soldoutList!: boolean[];
 }
 
 export class PosData {
-    id: string;
-    reput: number;
-    actDict: { [key: string]: PADBase };
+    id!: string;
+    reput!: number;
+    actDict!: { [key: string]: PADBase };
 }
 
 // -----------------------------------------------------------------
 
 export class AcceQuestInfo {
-    posId: string;
-    questId: string;
+    posId!: string;
+    questId!: string;
 }
 
 export class Evt {
@@ -331,26 +330,26 @@ export class Evt {
 // -----------------------------------------------------------------
 
 export class SPetMmr {
-    catchIdx: number; // 战斗开始后，可能会变化的只有如下几项
-    prvty: number;
-    drinkId: string;
-    eqpTokens: string[];
+    catchIdx!: number; // 战斗开始后，可能会变化的只有如下几项
+    prvty!: number;
+    drinkId!: string;
+    eqpTokens!: string[];
 }
 
 export class EPetMmr {
-    id: string;
-    lv: number;
-    exFeatureIds: string[];
-    features: Feature[];
+    id!: string;
+    lv!: number;
+    exFeatureIds!: string[];
+    features!: Feature[];
 }
 
 export class BtlMmr {
-    startUpdCnt: number;
-    seed: number;
-    selfs: SPetMmr[];
-    enemys: EPetMmr[];
-    spcBtlId: string; // 特殊战斗的id
-    hiding: boolean;
+    startUpdCnt!: number;
+    seed!: number;
+    selfs!: SPetMmr[];
+    enemys!: EPetMmr[];
+    spcBtlId!: string; // 特殊战斗的id
+    hiding!: boolean;
 }
 
 export const NeedUpdCntByStep = [1600, 4800, 14400];
@@ -392,7 +391,7 @@ export class GameData {
     acceQuestInfos!: AcceQuestInfo[]; // 已经接受了的quest
 
     evtDict!: { [key: string]: Evt };
-    curEvtId: string;
+    curEvtId?: string;
     ongoingEvtIds!: string[];
     finishedEvtIds!: string[];
 

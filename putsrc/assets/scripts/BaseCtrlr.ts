@@ -52,22 +52,22 @@ export enum PageSwitchAnim {
 @executeInEditMode
 export class BaseCtrlr extends cc.Component {
     @property(cc.Node)
-    pageBed: cc.Node = null;
+    pageBed: cc.Node = null!;
 
     @property(cc.Node)
-    touchLayerForBack: cc.Node = null;
+    touchLayerForBack: cc.Node = null!;
 
     @property(cc.Node)
-    touchLayerForToast: cc.Node = null;
+    touchLayerForToast: cc.Node = null!;
 
     @property(cc.Node)
-    navBed: cc.Node = null;
+    navBed: cc.Node = null!;
 
     @property(cc.Prefab)
-    navPrefab: cc.Prefab = null;
+    navPrefab: cc.Prefab = null!;
 
     @property(cc.Node)
-    tabBed: cc.Node = null;
+    tabBed: cc.Node = null!;
 
     @property({
         displayName: '[操作]刷新页面列表'
@@ -78,22 +78,22 @@ export class BaseCtrlr extends cc.Component {
     pagePrefabList: cc.Prefab[] = [];
 
     @property(TabBtnData)
-    actTBData: TabBtnData = null;
+    actTBData: TabBtnData = null!;
 
     @property(TabBtnData)
-    msgTBData: TabBtnData = null;
+    msgTBData: TabBtnData = null!;
 
     @property(TabBtnData)
-    petTBData: TabBtnData = null;
+    petTBData: TabBtnData = null!;
 
     @property(TabBtnData)
-    pkgTBData: TabBtnData = null;
+    pkgTBData: TabBtnData = null!;
 
     @property(TabBtnData)
-    selfTBData: TabBtnData = null;
+    selfTBData: TabBtnData = null!;
 
     @property(RunningImgMgr)
-    runningImgMgr: RunningImgMgr = null;
+    runningImgMgr: RunningImgMgr = null!;
 
     memory!: Memory;
 
@@ -527,10 +527,10 @@ export class BaseCtrlr extends cc.Component {
     // pop -----------------------------------------------------------------
 
     @property(cc.Node)
-    toastNode: cc.Node = null;
+    toastNode: cc.Node = null!;
 
     @property(cc.Node)
-    alertNode: cc.Node = null;
+    alertNode: cc.Node = null!;
     alertLbl!: cc.Label;
     alertBtn1Node!: cc.Node;
     alertBtn2Node!: cc.Node;
@@ -539,7 +539,7 @@ export class BaseCtrlr extends cc.Component {
     alertBtnCancelNode!: cc.Node;
 
     @property(cc.Node)
-    maskNode: cc.Node = null;
+    maskNode: cc.Node = null!;
 
     alertCallback?: (key: number) => void;
 

@@ -109,7 +109,7 @@ function checkActPosModelDict() {
 }
 
 function checkPetModelDict() {
-    const nameDict = {};
+    const nameDict: any = {};
     for (const key in PetModelDict) {
         const model = PetModelDict[key];
         if (model.id !== key) cc.error('PetModelDict中，id与dict的key不符', key, model.id);
@@ -128,7 +128,7 @@ function checkPetModelDict() {
 
 function checkSkillModelDict() {
     const buffDictKeys = Object.keys(BuffModelDict);
-    const nameDict = {};
+    const nameDict: any = {};
     for (const key in SkillModelDict) {
         const model = SkillModelDict[key];
         if (model.id !== key) cc.error('SkillModelDict中，id与dict的key不符', key, model.id);
@@ -143,7 +143,7 @@ function checkSkillModelDict() {
 }
 
 function checkBuffModelDict() {
-    const nameDict = {};
+    const nameDict: any = {};
     for (const key in BuffModelDict) {
         const model = BuffModelDict[key];
         if (model.id !== key) cc.error('BuffModelDict中，id与dict的key不符', key, model.id);
@@ -157,8 +157,7 @@ function checkBuffModelDict() {
 }
 
 function checkFeatureModelDict() {
-    const nameDict = {};
-
+    const nameDict: any = {};
     for (const key in FeatureModelDict) {
         const model = FeatureModelDict[key];
         if (model.id !== key) cc.error('FeatureModelDict中，id与dict的key不符：', key, model.id);
@@ -174,7 +173,7 @@ function checkFeatureModelDict() {
 }
 
 function checkEquipModelDict() {
-    const nameDict = {};
+    const nameDict: any = {};
     for (const key in EquipModelDict) {
         const model = EquipModelDict[key];
         if (model.id !== key) cc.error('EquipModelDict中，id与dict的key不符：', key, model.id);
@@ -191,7 +190,7 @@ function checkEquipModelDict() {
 }
 
 function checkItems() {
-    const allKeys = {};
+    const allKeys: any = {};
     function checkKey(key: string, dictName: string) {
         if (allKeys.hasOwnProperty(key)) {
             cc.error(`${dictName}中存在重复的id${key}`);

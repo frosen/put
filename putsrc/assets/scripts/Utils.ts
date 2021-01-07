@@ -8,10 +8,9 @@
 export function deepCopy<T>(o: T): T {
     //先判断Array
     if (o instanceof Array) {
-        // @ts-ignore
-        const n: T = [];
+        const n: any[] = [];
         for (let i = 0; i < o.length; ++i) n[i] = deepCopy(o[i]);
-        return n;
+        return (n as unknown) as T;
     } else if (o instanceof Object) {
         if ('clone' in o) {
             // @ts-ignore
@@ -32,11 +31,12 @@ export function eachChild(node: cc.Node, func: (node: cc.Node) => boolean): bool
         if (func(child)) return true;
         if (eachChild(child, func)) return true;
     }
+    return false;
 }
 
-export function getNodeByUuid(uuid: string): cc.Node {
+export function getNodeByUuid(uuid: string): cc.Node | undefined {
     const scene = cc.director.getScene();
-    let thisNode = null;
+    let thisNode: cc.Node | undefined;
     eachChild(scene, (node: cc.Node): boolean => {
         if (node.uuid === uuid) {
             thisNode = node;
@@ -44,10 +44,6 @@ export function getNodeByUuid(uuid: string): cc.Node {
         } else return false;
     });
     return thisNode;
-}
-
-export function getNodeByDir(dir: string): cc.Node {
-    return null;
 }
 
 // -----------------------------------------------------------------

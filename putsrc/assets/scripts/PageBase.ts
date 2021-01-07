@@ -17,7 +17,7 @@ export class PageBase extends cc.Component {
         if (!this._ctrlr) this._ctrlr = window.baseCtrlr;
         return this._ctrlr;
     }
-    _ctrlr: BaseCtrlr = null;
+    _ctrlr: BaseCtrlr = null!;
 
     init() {
         this.node.height = this.ctrlr.pageBed.height;
@@ -31,7 +31,7 @@ export class PageBase extends cc.Component {
     /** 隐藏导航栏 */
     navHidden: boolean = false;
 
-    navBar: NavBar = null;
+    navBar!: NavBar;
 
     onLoadNavBar(navBar: NavBar) {}
 

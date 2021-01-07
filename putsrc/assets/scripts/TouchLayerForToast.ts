@@ -10,7 +10,7 @@ import { BaseCtrlr } from './BaseCtrlr';
 
 @ccclass
 export class TouchLayerForToast extends cc.Component {
-    ctrlr: BaseCtrlr = null;
+    ctrlr!: BaseCtrlr;
 
     init(ctrlr: BaseCtrlr) {
         this.ctrlr = ctrlr;

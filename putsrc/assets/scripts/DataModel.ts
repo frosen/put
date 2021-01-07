@@ -20,10 +20,10 @@ export enum ProTtlType {
 }
 
 export class ProTtlModel {
-    id: string;
-    cnName: string | ((d: any) => string);
-    info: string | ((d: any) => string);
-    proTtlType: ProTtlType;
+    id!: string;
+    cnName!: string | ((d: any) => string);
+    info!: string | ((d: any) => string);
+    proTtlType!: ProTtlType;
     order?: number;
     sbstId?: string; // 替代另一个ProTtl
 }
@@ -164,9 +164,9 @@ export class PetModel {
 // -----------------------------------------------------------------
 
 export class CnsumModel {
-    id: string;
-    cnName: string;
-    price: number;
+    id!: string;
+    cnName!: string;
+    price!: number;
 }
 
 export enum AmplAttriType {
@@ -184,26 +184,26 @@ export enum AmplAttriType {
 export const AmplAttriNames = ['', '经验', '探索受益', '工作受益', '默契', '声望', '力量', '专注', '耐久'];
 
 export class DrinkModel extends CnsumModel {
-    lvMax: number;
-    rank: number;
-    mainAttri: AmplAttriType;
-    mainPercent: number;
-    subAttri: AmplAttriType;
-    subPercent: number;
-    dura: number;
+    lvMax!: number;
+    rank!: number;
+    mainAttri!: AmplAttriType;
+    mainPercent!: number;
+    subAttri!: AmplAttriType;
+    subPercent!: number;
+    dura!: number;
 }
 
 export class CatcherModel extends CnsumModel {
-    lvMin: number;
-    lvMax: number;
-    bioType: BioType;
-    eleType: EleType;
-    btlType: BtlType;
-    rate: number;
+    lvMin!: number;
+    lvMax!: number;
+    bioType!: BioType;
+    eleType!: EleType;
+    btlType!: BtlType;
+    rate!: number;
 }
 
 export class EqpAmplrModel extends CnsumModel {
-    lvMax: number;
+    lvMax!: number;
 }
 
 export class BookModel extends CnsumModel {}
@@ -211,7 +211,7 @@ export class BookModel extends CnsumModel {}
 export class SpcModel extends CnsumModel {}
 
 export class MaterialModel extends CnsumModel {
-    lvMax: number;
+    lvMax!: number;
 }
 
 export enum EquipPosType {
@@ -229,22 +229,22 @@ export enum EquipAttriType {
 }
 
 export class EquipModel {
-    id: string;
-    cnName: string;
-    featureIds: string[];
-    rank: number;
-    lv: number;
-    equipPosType: EquipPosType;
-    bioType: BioType;
-    attriType: EquipAttriType;
-    eleType: EleType;
-    strength: number;
-    concentration: number;
-    durability: number;
-    agility: number;
-    sensitivity: number;
-    elegant: number;
-    armor: number;
+    id!: string;
+    cnName!: string;
+    featureIds!: string[];
+    rank!: number;
+    lv!: number;
+    equipPosType!: EquipPosType;
+    bioType!: BioType;
+    attriType!: EquipAttriType;
+    eleType!: EleType;
+    strength!: number;
+    concentration!: number;
+    durability!: number;
+    agility!: number;
+    sensitivity!: number;
+    elegant!: number;
+    armor!: number;
 }
 
 // -----------------------------------------------------------------
@@ -252,7 +252,7 @@ export class EquipModel {
 
 export class UseCond {
     needTtlIds?: string[];
-    startEvts: { id: string; prog: number }[];
+    startEvts!: { id: string; prog: number }[];
     endEvts?: { id: string; prog: number }[];
 }
 
@@ -283,28 +283,28 @@ export const StepTypesByMax = [
 ];
 
 export class ExplModel extends PAModel {
-    stepMax: number;
-    petIdLists: string[][]; // 不同stepType对应的精灵列表
-    itemIdLists: string[][];
-    eqpIdLists: string[][];
+    stepMax!: number;
+    petIdLists!: string[][]; // 不同stepType对应的精灵列表
+    itemIdLists!: string[][];
+    eqpIdLists!: string[][];
 }
 
 // -----------------------------------------------------------------
 
 export class ShopModel extends PAModel {
-    goodsIdList: string[];
+    goodsIdList!: string[];
 }
 
 // -----------------------------------------------------------------
 
 export class EqpMktModel extends PAModel {
-    eqpIdLists: string[][]; // 不同稀有度对应的装备列表
+    eqpIdLists!: string[][]; // 不同稀有度对应的装备列表
 }
 
 // -----------------------------------------------------------------
 
 export class PetMktModel extends PAModel {
-    petIdLists: string[][]; // 不同稀有度对应的精灵列表
+    petIdLists!: string[][]; // 不同稀有度对应的精灵列表
 }
 
 // -----------------------------------------------------------------
@@ -314,7 +314,7 @@ export class WorkModel extends PAModel {}
 // -----------------------------------------------------------------
 
 export class QuesterModel extends PAModel {
-    questIdList: string[];
+    questIdList!: string[];
 }
 
 // -----------------------------------------------------------------
@@ -330,13 +330,13 @@ export enum ReputRank {
 export const ReputNames = ['', '无视', '闻名', '尊敬', '崇敬', '崇拜'];
 
 export class ReputAwardModel {
-    need: ReputRank;
-    price: number;
-    fullId: string;
+    need!: ReputRank;
+    price!: number;
+    fullId!: string;
 }
 
 export class ACntrModel extends PAModel {
-    awardList: ReputAwardModel[];
+    awardList!: ReputAwardModel[];
 }
 
 type AllPAModel = ExplModel | ShopModel | EqpMktModel | PetMktModel | WorkModel | QuesterModel | ACntrModel;
@@ -344,8 +344,8 @@ type AllPAModel = ExplModel | ShopModel | EqpMktModel | PetMktModel | WorkModel 
 // -----------------------------------------------------------------
 
 export class MovModel {
-    id: string;
-    price: number;
+    id!: string;
+    price!: number;
     useCond?: UseCond;
 }
 
@@ -357,14 +357,14 @@ export enum ActPosType {
 }
 
 export class ActPosModel {
-    id: string;
-    cnName: string;
-    lv: number;
-    type: ActPosType;
-    evtIds: string[];
-    actMDict: { [key: string]: AllPAModel };
-    movs: MovModel[];
-    loc: Partial<cc.Vec2>;
+    id!: string;
+    cnName!: string;
+    lv!: number;
+    type!: ActPosType;
+    evtIds!: string[];
+    actMDict!: { [key: string]: AllPAModel };
+    movs!: MovModel[];
+    loc!: Partial<cc.Vec2>;
 }
 
 // -----------------------------------------------------------------
@@ -378,41 +378,41 @@ export enum QuestType {
 }
 
 export abstract class QuestNeed {
-    count: number;
+    count!: number;
 }
 
 export class SupportQuestNeed extends QuestNeed {
-    itemId: string;
+    itemId!: string;
 }
 
 export class FightQuestNeed extends QuestNeed {
-    petIds: string[];
-    name: string;
+    petIds!: string[];
+    name!: string;
 }
 
 export class GatherQuestNeed extends QuestNeed {
-    posId: string;
-    step: number;
-    name: string;
+    posId!: string;
+    step!: number;
+    name!: string;
 }
 
 export class SearchQuestNeed extends QuestNeed {
-    posId: string;
-    step: number;
-    name: string;
+    posId!: string;
+    step!: number;
+    name!: string;
 }
 
 type AllQuestNeed = SupportQuestNeed | FightQuestNeed | GatherQuestNeed | SearchQuestNeed;
 
 export class QuestModel {
-    id: string;
-    type: QuestType;
-    cnName: string;
-    descs: string[];
-    need: AllQuestNeed;
-    awardReput: number;
-    awardMoney: number;
-    awardItemIds: string[];
+    id!: string;
+    type!: QuestType;
+    cnName!: string;
+    descs!: string[];
+    need!: AllQuestNeed;
+    awardReput!: number;
+    awardMoney!: number;
+    awardItemIds!: string[];
 }
 
 // -----------------------------------------------------------------

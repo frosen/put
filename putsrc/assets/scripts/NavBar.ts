@@ -14,15 +14,15 @@ const FUNC_BTN_POS_BASE = 1080 - 63;
 @ccclass
 export class NavBar extends cc.Component {
     @property(cc.Node)
-    backBtnNode: cc.Node = null;
+    backBtnNode: cc.Node = null!;
 
     @property(cc.Label)
-    title: cc.Label = null;
+    title: cc.Label = null!;
 
     @property(cc.Label)
-    subTitle: cc.Label = null;
+    subTitle: cc.Label = null!;
 
-    ctrlr: BaseCtrlr = null;
+    ctrlr: BaseCtrlr = null!;
 
     setTitle(title: string) {
         this.title.string = title;
@@ -36,12 +36,12 @@ export class NavBar extends cc.Component {
     }
 
     backBtnActive: boolean = false;
-    backBtnCallback: () => boolean = null;
+    backBtnCallback?: () => boolean;
 
-    setBackBtnEnabled(e: boolean, callback: () => boolean = null) {
+    setBackBtnEnabled(e: boolean, callback?: () => boolean) {
         this.backBtnActive = e;
         this.backBtnNode.active = e;
-        this.backBtnCallback = e ? callback : null;
+        this.backBtnCallback = e ? callback : undefined;
     }
 
     onClickBack() {
@@ -54,7 +54,7 @@ export class NavBar extends cc.Component {
     }
 
     @property(cc.Prefab)
-    funcBtnPrefab: cc.Prefab = null;
+    funcBtnPrefab: cc.Prefab = null!;
 
     btnX: number = FUNC_BTN_POS_BASE;
 
