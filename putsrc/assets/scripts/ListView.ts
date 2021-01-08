@@ -261,7 +261,6 @@ export class ListView extends cc.Component {
                 disTop = 0;
                 disBtm = this.node.height;
             }
-            this.content.y = disTop;
         }
         return { disTop, disBtm };
     }
