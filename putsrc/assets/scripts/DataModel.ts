@@ -460,13 +460,25 @@ export class StoryGain {
 export class NormalPsge extends Psge {
     str!: string;
     gain?: StoryGain;
+    go?: number;
 }
 
-export class SelectionPsge extends Psge {}
+export class PsgeOption {
+    str!: string;
+    rzt?: string;
+    go!: number;
+}
+
+export class SelectionPsge extends Psge {
+    id!: string;
+    options!: PsgeOption[];
+}
 
 export class QuestPsge extends Psge {}
 
 export class EvtPsge extends Psge {}
+
+export class NameInputPsge extends Psge {}
 
 export class StoryModel extends EvtModel {
     type!: StoryType;
