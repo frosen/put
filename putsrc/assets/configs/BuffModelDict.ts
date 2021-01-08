@@ -279,7 +279,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         buffType: BuffType.buff,
         eleType: EleType.air,
         onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
-            return { hp: BtlCtrlr.getSklDmg(buff.caster, null) * 0.8 * -1 };
+            return { hp: BtlCtrlr.getSklDmg(buff.caster) * 0.8 * -1 };
         },
         getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
             return `目标每回合恢复目标${getSklDmgStr(pet2, 0.8)}(80%释放者招式伤害)点血量`;

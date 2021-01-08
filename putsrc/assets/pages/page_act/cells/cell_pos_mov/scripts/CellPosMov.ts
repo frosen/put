@@ -12,23 +12,23 @@ import { ListViewCell } from '../../../../../scripts/ListViewCell';
 @ccclass
 export class CellPosMov extends ListViewCell {
     @property(cc.Sprite)
-    icon: cc.Sprite = null;
+    icon: cc.Sprite = null!;
 
     @property(cc.Label)
-    posNameLbl: cc.Label = null;
+    posNameLbl: cc.Label = null!;
 
     @property(cc.Label)
-    priceLbl: cc.Label = null;
+    priceLbl: cc.Label = null!;
 
     @property(cc.Layout)
-    layout: cc.Layout = null;
+    layout: cc.Layout = null!;
 
     @property(cc.Button)
-    infoBtn: cc.Button = null;
+    infoBtn: cc.Button = null!;
 
-    clickCallback: (cell: ListViewCell) => void = null;
+    clickCallback!: (cell: CellPosMov) => void;
 
-    movPosModel: ActPosModel = null;
+    movPosModel!: ActPosModel;
     price: number = 0;
 
     onLoad() {
@@ -41,7 +41,7 @@ export class CellPosMov extends ListViewCell {
         this.movPosModel = movPosModel;
         this.price = price;
 
-        this.icon.spriteFrame = this.ctrlr.runningImgMgr[movPosModel.id].icon;
+        this.icon.spriteFrame = this.ctrlr.runningImgMgr.get(movPosModel.id).icon;
         this.posNameLbl.string = '前往：' + movPosModel.cnName;
         this.priceLbl.string = '花费：' + String(price);
 

@@ -11,26 +11,26 @@ import { ListViewCell } from '../../../../../scripts/ListViewCell';
 @ccclass
 export class CellPosBtn extends ListViewCell {
     @property(cc.Button)
-    btn1: cc.Button = null;
+    btn1: cc.Button = null!;
 
     @property(cc.Label)
-    lblMain1: cc.Label = null;
+    lblMain1: cc.Label = null!;
 
     @property(cc.Label)
-    lblSub1: cc.Label = null;
+    lblSub1: cc.Label = null!;
 
     @property(cc.Button)
-    btn2: cc.Button = null;
+    btn2: cc.Button = null!;
 
     @property(cc.Label)
-    lblMain2: cc.Label = null;
+    lblMain2: cc.Label = null!;
 
     @property(cc.Label)
-    lblSub2: cc.Label = null;
+    lblSub2: cc.Label = null!;
 
-    clickCallback: (pAKey: string) => void = null;
+    clickCallback!: (pAKey: string) => void;
 
-    pAKey1: string;
+    pAKey1!: string;
     pAKey2?: string;
 
     onLoad() {
@@ -50,9 +50,9 @@ export class CellPosBtn extends ListViewCell {
     setBtn2(pAKey?: string, data?: { name: string; info: string; infoColor: cc.Color }) {
         if (pAKey) {
             this.pAKey2 = pAKey;
-            this.lblMain2.string = data.name;
-            this.lblSub2.string = data.info;
-            this.lblSub2.node.color = data.infoColor;
+            this.lblMain2.string = data!.name;
+            this.lblSub2.string = data!.info;
+            this.lblSub2.node.color = data!.infoColor;
         } else {
             this.pAKey2 = undefined;
             this.lblMain2.string = '';

@@ -11,18 +11,18 @@ import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass('EvtUI')
 export class EvtUI {
-    @property(cc.Button) btn: cc.Button = null;
-    @property(cc.Sprite) icon: cc.Sprite = null;
+    @property(cc.Button) btn: cc.Button = null!;
+    @property(cc.Sprite) icon: cc.Sprite = null!;
 
-    @property(cc.Label) name: cc.Label = null;
-    @property(cc.Label) lv: cc.Label = null;
-    @property(cc.Label) info: cc.Label = null;
+    @property(cc.Label) name: cc.Label = null!;
+    @property(cc.Label) lv: cc.Label = null!;
+    @property(cc.Label) info: cc.Label = null!;
 }
 
 @ccclass
 export class CellEvt extends ListViewCell {
-    @property(EvtUI) evtUI1: EvtUI = null;
-    @property(EvtUI) evtUI2: EvtUI = null;
+    @property(EvtUI) evtUI1: EvtUI = null!;
+    @property(EvtUI) evtUI2: EvtUI = null!;
 
     clickCallback!: (evtId: string) => void;
 

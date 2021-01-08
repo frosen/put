@@ -16,40 +16,40 @@ const NavBarHeight = 141;
 
 @ccclass
 export class PanelPosInfo extends cc.Component {
-    ctrlr: BaseCtrlr = null;
+    ctrlr: BaseCtrlr = null!;
 
     @property(cc.Sprite)
-    bg: cc.Sprite = null;
+    bg: cc.Sprite = null!;
 
     @property(cc.Sprite)
-    icon: cc.Sprite = null;
+    icon: cc.Sprite = null!;
 
     @property(cc.Node)
-    uiScaleNode: cc.Node = null;
+    uiScaleNode: cc.Node = null!;
 
     @property(cc.Label)
-    posName: cc.Label = null;
+    posName: cc.Label = null!;
 
     @property(cc.Label)
-    typeName: cc.Label = null;
+    typeName: cc.Label = null!;
 
     @property(cc.Label)
-    subData: cc.Label = null;
+    subData: cc.Label = null!;
 
     @property(cc.Layout)
-    layout: cc.Layout = null;
+    layout: cc.Layout = null!;
 
     @property(cc.Node)
-    townUI: cc.Node = null;
+    townUI: cc.Node = null!;
 
     @property(cc.ProgressBar)
-    townBar: cc.ProgressBar = null;
+    townBar: cc.ProgressBar = null!;
 
     @property(cc.Label)
-    townLbl: cc.Label = null;
+    townLbl: cc.Label = null!;
 
     @property(cc.Node)
-    wildUI: cc.Node = null;
+    wildUI: cc.Node = null!;
 
     @property([cc.Node])
     wildStates: cc.Node[] = [];
@@ -57,8 +57,8 @@ export class PanelPosInfo extends cc.Component {
     setData(actPosModel: ActPosModel, gameData: GameData) {
         const posId = actPosModel.id;
 
-        this.bg.spriteFrame = this.ctrlr.runningImgMgr[posId].bg;
-        this.icon.spriteFrame = this.ctrlr.runningImgMgr[posId].icon;
+        this.bg.spriteFrame = this.ctrlr.runningImgMgr.get(posId).bg;
+        this.icon.spriteFrame = this.ctrlr.runningImgMgr.get(posId).icon;
 
         this.posName.string = actPosModel.cnName;
         ListViewCell.rerenderLbl(this.posName);

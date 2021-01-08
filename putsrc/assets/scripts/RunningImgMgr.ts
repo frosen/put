@@ -41,7 +41,11 @@ export class RunningImgMgr extends cc.Component {
 
     // quester -----------------------------------------------------------------
 
-    // 检测 -----------------------------------------------------------------
+    // 方法 -----------------------------------------------------------------
+
+    get(str: string): cc.SpriteFrame & PosImgData {
+        return this[str as keyof RunningImgMgr];
+    }
 
     update() {
         if (CC_EDITOR) this.check();

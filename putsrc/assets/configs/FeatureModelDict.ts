@@ -633,7 +633,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '焚',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.skillModel.eleType === EleType.fire) aim.hp -= bData.finalDmg * datas[0];
+            if (bData.skillModel!.eleType === EleType.fire) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `火系伤害提高${rdP(datas[0])}%`;
@@ -644,7 +644,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '寒',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.skillModel.eleType === EleType.water) aim.hp -= bData.finalDmg * datas[0];
+            if (bData.skillModel!.eleType === EleType.water) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `水系伤害提高${rdP(datas[0])}%`;
@@ -655,7 +655,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '苍',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.skillModel.eleType === EleType.air) aim.hp -= bData.finalDmg * datas[0];
+            if (bData.skillModel!.eleType === EleType.air) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `空系伤害提高${rdP(datas[0])}%`;
@@ -666,7 +666,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '势',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.skillModel.eleType === EleType.earth) aim.hp -= bData.finalDmg * datas[0];
+            if (bData.skillModel!.eleType === EleType.earth) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `地系伤害提高${rdP(datas[0])}%`;
@@ -677,7 +677,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '耀',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.skillModel.eleType === EleType.light) aim.hp -= bData.finalDmg * datas[0];
+            if (bData.skillModel!.eleType === EleType.light) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `光系伤害提高${rdP(datas[0])}%`;
@@ -688,7 +688,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '邪',
         dataAreas: [[0.01, 0.01]],
         onCast(pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.skillModel.eleType === EleType.dark) aim.hp -= bData.finalDmg * datas[0];
+            if (bData.skillModel!.eleType === EleType.dark) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `暗系伤害提高${rdP(datas[0])}%`;
@@ -699,7 +699,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '猎',
         dataAreas: [[0.02, 0.02]],
         onCast(pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData): void {
-            if (BtlCtrlr.getEleDmgRate(bData.skillModel.eleType, aim) > 1) aim.hp -= bData.finalDmg * datas[0];
+            if (BtlCtrlr.getEleDmgRate(bData.skillModel!.eleType, aim) > 1) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `对被属性克制的敌人伤害提高${rdP(datas[0])}%`;
@@ -722,7 +722,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
         cnBrief: '星',
         dataAreas: [[0.08, 0.08]],
         onCast(pet: BtlPet, aim: BtlPet, datas: number[], bData: FeatureBtlData): void {
-            if (bData.skillModel.skillType === SkillType.ultimate) aim.hp -= bData.finalDmg * datas[0];
+            if (bData.skillModel!.skillType === SkillType.ultimate) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
             return `绝杀技伤害提高${rdP(datas[0])}%`;

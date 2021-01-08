@@ -27,9 +27,9 @@ import { ActPosModel, ExplModel, ExplStepNames, StepTypesByMax } from '../../../
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 
 export class CellActInfo {
-    cnName: string;
-    getSubInfo?: (ctrlr: BaseCtrlr) => { str: string; color?: cc.Color };
-    page?: { new (): PageBase };
+    cnName!: string;
+    getSubInfo?: (ctrlr: BaseCtrlr) => { str: string; color?: cc.Color } | undefined;
+    page!: { new (): PageBase };
     check?: (ctrlr: BaseCtrlr) => string;
     beforeEnter?: (ctrlr: BaseCtrlr, callback: (data: any) => void) => void;
 }
@@ -37,7 +37,7 @@ export class CellActInfo {
 export const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.expl]: {
         cnName: '探索',
-        getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } => {
+        getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } | undefined => {
             const gameData = ctrlr.memory.gameData;
             let ing: string | undefined;
             if (
@@ -104,15 +104,15 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
     [PAKey.shop]: { cnName: '物资商店', page: PageActShop },
     [PAKey.eqpMkt]: {
         cnName: '装备市场',
-        getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } => {
+        getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } | undefined => {
             const gameData = ctrlr.memory.gameData;
             const posData = gameData.posDataDict[gameData.curPosId];
 
-            if (!posData.actDict.hasOwnProperty(PAKey.eqpMkt)) return null;
+            if (!posData.actDict.hasOwnProperty(PAKey.eqpMkt)) return undefined;
             const pADEqpMkt = posData.actDict[PAKey.eqpMkt] as PADEqpMkt;
             const nextTime = (pADEqpMkt.updateTime || 0) + EqpMktUpdataInterval;
             const diff = nextTime - Date.now();
-            if (diff < 0) return null;
+            if (diff < 0) return undefined;
 
             const str = `[${CellUpdateDisplay.getDiffStr(diff)}]`;
             return { str, color: cc.color(120, 120, 120) };
@@ -121,22 +121,21 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
     },
     [PAKey.petMkt]: {
         cnName: '精灵市场',
-        getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } => {
+        getSubInfo: (ctrlr: BaseCtrlr): { str: string; color?: cc.Color } | undefined => {
             const gameData = ctrlr.memory.gameData;
             const posData = gameData.posDataDict[gameData.curPosId];
 
-            if (!posData.actDict.hasOwnProperty(PAKey.petMkt)) return null;
+            if (!posData.actDict.hasOwnProperty(PAKey.petMkt)) return undefined;
             const pADPetMkt = posData.actDict[PAKey.petMkt] as PADPetMkt;
             const nextTime = (pADPetMkt.updateTime || 0) + EqpMktUpdataInterval;
             const diff = nextTime - Date.now();
-            if (diff < 0) return null;
+            if (diff < 0) return undefined;
 
             const str = `[${CellUpdateDisplay.getDiffStr(diff)}]`;
             return { str, color: cc.color(120, 120, 120) };
         },
         page: PageActPetMkt
     },
-    [PAKey.work]: { cnName: '精灵应聘广场' },
     [PAKey.quester]: { cnName: '任务大厅', page: PageActQuester },
     [PAKey.aCntr]: { cnName: '奖励中心', page: PageActACntr },
     [PAKey.rcclr]: { cnName: '回收站', page: PageActRcclr },
@@ -148,11 +147,11 @@ export class PageAct extends PageBase {
     navHidden: boolean = true;
 
     @property(ListView)
-    listView: ListView = null;
-    lvd: PageActLVD = null;
+    listView: ListView = null!;
+    lvd!: PageActLVD;
 
     @property(PanelPosInfo)
-    posInfo: PanelPosInfo = null;
+    posInfo: PanelPosInfo = null!;
 
     curPosId: string = '';
     dirtyToken: number = 0;
@@ -213,7 +212,8 @@ export class PageAct extends PageBase {
 
     // -----------------------------------------------------------------
 
-    onClickCellPosBtn(actInfo: CellActInfo) {
+    onClickCellPosBtn(pAKey: string) {
+        const actInfo = CellActInfoDict[pAKey];
         if (actInfo.check) {
             const errorStr = actInfo.check(this.ctrlr);
             if (errorStr) {

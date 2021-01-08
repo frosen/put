@@ -723,13 +723,13 @@ export class BtlCtrlr {
         return hitResult;
     }
 
-    static getAtkDmg(thisPet: BtlPet, aim: BtlPet) {
+    static getAtkDmg(thisPet: BtlPet, aim?: BtlPet) {
         const pet2 = thisPet.pet2;
         const dmg = pet2.atkDmgFrom + ranSdInt(1 + pet2.atkDmgTo - pet2.atkDmgFrom);
         return aim ? Math.max(dmg - aim.pet2.armor, 1) : dmg;
     }
 
-    static getSklDmg(thisPet: BtlPet, aim: BtlPet) {
+    static getSklDmg(thisPet: BtlPet, aim?: BtlPet) {
         const pet2 = thisPet.pet2;
         const dmg = pet2.sklDmgFrom + ranSdInt(1 + pet2.sklDmgTo - pet2.sklDmgFrom);
         return aim ? Math.max(dmg - aim.pet2.armor, 1) : dmg;

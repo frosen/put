@@ -15,7 +15,6 @@ export class PAKey {
     static shop = 'shop';
     static eqpMkt = 'equipMarket';
     static petMkt = 'petMarket';
-    static work = 'work';
     static quester = 'quester';
     static aCntr = 'awardsCenter';
     static rcclr = 'recycler';
@@ -59,7 +58,6 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
                     [p.ShuiLengJiQiRen, p.DianZiShouWei]
                 ]
             },
-            [PAKey.work]: {},
             [PAKey.quester]: {
                 questIdList: [q.LingJianHuiShou, q.CeShiBaoGao, q.GuiXunYuChengFa, q.AnQuanSongDa, q.HuiYiTongZhi]
             },

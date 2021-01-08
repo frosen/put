@@ -25,30 +25,30 @@ const MOV = 'm';
 @ccclass
 export class PageActLVD extends ListViewDelegate {
     @property(cc.Prefab)
-    infoPrefab: cc.Prefab = null;
+    infoPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    btnPrefab: cc.Prefab = null;
+    btnPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    evtPrefab: cc.Prefab = null;
+    evtPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    movPrefab: cc.Prefab = null;
+    movPrefab: cc.Prefab = null!;
 
     page!: PageAct;
 
-    curPosId: string;
-    curPos: PosData;
-    curActPosModel: ActPosModel;
+    curPosId!: string;
+    curPos!: PosData;
+    curActPosModel!: ActPosModel;
 
     curActKeys: string[] = [];
     curEvtIds: string[] = [];
     curMovs: MovModel[] = [];
 
-    actCellLen: number;
-    evtCellLen: number;
-    movCellLen: number;
+    actCellLen!: number;
+    evtCellLen!: number;
+    movCellLen!: number;
 
     initData() {
         const gameData = this.ctrlr.memory.gameData;
@@ -152,6 +152,7 @@ export class PageActLVD extends ListViewDelegate {
                 return cell;
             }
         }
+        return undefined!;
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellEvt & CellPosBtn & CellPosMov) {
@@ -189,15 +190,16 @@ export class PageActLVD extends ListViewDelegate {
         let info: string | undefined;
         let infoColor: cc.Color | undefined;
         if (actInfo.getSubInfo) {
-            ({ str: info, color: infoColor } = actInfo.getSubInfo(this.ctrlr) || { str: undefined });
-        } else {
-            info = '';
-            infoColor = cc.color(120, 120, 120);
+            const infoData = actInfo.getSubInfo(this.ctrlr);
+            if (infoData) {
+                info = infoData.str;
+                infoColor = infoData.color;
+            }
         }
         return {
             name: actInfo.cnName,
-            info,
-            infoColor
+            info: info || '',
+            infoColor: infoColor || cc.color(120, 120, 120)
         };
     }
 }

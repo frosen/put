@@ -364,7 +364,7 @@ export class ActPosModel {
     evtIds!: string[];
     actMDict!: { [key: string]: AllPAModel };
     movs!: MovModel[];
-    loc!: Partial<cc.Vec2>;
+    loc!: cc.Vec2;
 }
 
 // -----------------------------------------------------------------
