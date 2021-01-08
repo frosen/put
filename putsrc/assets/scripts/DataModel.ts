@@ -458,10 +458,15 @@ export class StoryGain {
 }
 
 export class NormalPsge extends Psge {
-    type!: PsgeType;
     str!: string;
     gain?: StoryGain;
 }
+
+export class SelectionPsge extends Psge {}
+
+export class QuestPsge extends Psge {}
+
+export class EvtPsge extends Psge {}
 
 export class StoryModel extends EvtModel {
     type!: StoryType;
