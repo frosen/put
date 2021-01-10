@@ -34,6 +34,11 @@ export class PageStoryLVD extends ListViewDelegate {
     initData() {}
 
     numberOfRows(listView: ListView): number {
+        return this.psges.length;
+    }
+
+    heightForRow(listView: ListView, rowIdx: number): number {
+        const curPsge = this.psges[rowIdx];
         return 0;
     }
 
