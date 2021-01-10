@@ -32,12 +32,6 @@ export class CellAttri2 extends ListViewCell {
     tip2: string = null;
 
     onLoad() {
-        // 故意不加 super.onLoad();
-        if (CC_EDITOR) {
-            this.check();
-            return;
-        }
-
         this.attri1.on(cc.Node.EventType.TOUCH_END, this.onClickAttri1, this);
         this.attri2.on(cc.Node.EventType.TOUCH_END, this.onClickAttri2, this);
     }

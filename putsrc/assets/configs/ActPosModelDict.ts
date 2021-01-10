@@ -73,7 +73,7 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
             [PAKey.merger]: {}
         },
         movs: [{ id: PosN.KeChuangXiaoJing, price: 0 }],
-        loc: { x: 1000, y: 100 }
+        loc: cc.v2(1000, 100)
     },
     [PosN.KeChuangXiaoJing]: {
         id: PosN.KeChuangXiaoJing,
@@ -106,7 +106,7 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
             { id: PosN.YiShanJiDi, price: 0 },
             { id: PosN.GuangJiDianGongChang, price: 0 }
         ],
-        loc: { x: 1100, y: 100 }
+        loc: cc.v2(1100, 100)
     },
     [PosN.GuangJiDianGongChang]: {
         id: PosN.GuangJiDianGongChang,
@@ -126,6 +126,6 @@ export const ActPosModelDict: { [key: string]: ActPosModel } = {
             }
         },
         movs: [{ id: PosN.KeChuangXiaoJing, price: 0 }],
-        loc: { x: 1100, y: 100 }
+        loc: cc.v2(1000, 120)
     }
 };

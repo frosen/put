@@ -136,19 +136,19 @@ export class PageActLVD extends ListViewDelegate {
         switch (cellId) {
             case EVT: {
                 const cell = cc.instantiate(this.evtPrefab).getComponent(CellEvt);
-                cell.clickCallback = this.page.onClickCellEvt.bind(this);
+                cell.clickCallback = this.page.onClickCellEvt.bind(this.page);
                 return cell;
             }
             case INFO:
                 return cc.instantiate(this.infoPrefab).getComponent(ListViewCell);
             case ACT: {
                 const cell = cc.instantiate(this.btnPrefab).getComponent(CellPosBtn);
-                cell.clickCallback = this.page.onClickCellPosBtn.bind(this);
+                cell.clickCallback = this.page.onClickCellPosBtn.bind(this.page);
                 return cell;
             }
             case MOV: {
                 const cell = cc.instantiate(this.movPrefab).getComponent(CellPosMov);
-                cell.clickCallback = this.page.onClickCellPosMov.bind(this);
+                cell.clickCallback = this.page.onClickCellPosMov.bind(this.page);
                 return cell;
             }
         }
@@ -164,7 +164,7 @@ export class PageActLVD extends ListViewDelegate {
 
             if (actIdx + 1 < this.curActKeys.length) {
                 const actKey2 = this.curActKeys[actIdx + 1];
-                cell.setBtn1(actKey2, this.getActPosInfo(actKey2));
+                cell.setBtn2(actKey2, this.getActPosInfo(actKey2));
             } else cell.setBtn2(undefined);
         } else if (rowIdx <= this.evtCellLen + this.actCellLen) {
             const evtIdx = (rowIdx - 1 - this.evtCellLen) * 2;
