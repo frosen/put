@@ -465,12 +465,12 @@ export class NormalPsge extends Psge {
 
 export class PsgeOption {
     str!: string;
-    rzt?: string;
     go!: number;
 }
 
 export class SelectionPsge extends Psge {
     id!: string;
+    iprtCnt!: number;
     options!: PsgeOption[];
 }
 

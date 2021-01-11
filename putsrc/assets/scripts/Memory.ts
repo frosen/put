@@ -1045,6 +1045,17 @@ export class EvtTool {
         evt.prog = 0;
         return evt;
     }
+
+    static setSlcRzt(slcDict: { [key: string]: number }, id: string, idx: number, rzt: number) {
+        let slcNum = slcDict[id] || 0;
+        slcDict[id] = slcNum + rzt * Math.pow(10, idx);
+    }
+
+    static getSlcRzt(slcDict: { [key: string]: number }, id: string, idx: number): number {
+        let slcNum = slcDict[id] || 0;
+        slcNum = Math.floor(slcNum / Math.pow(10, idx));
+        return slcNum % 10;
+    }
 }
 
 export class MmrTool {
