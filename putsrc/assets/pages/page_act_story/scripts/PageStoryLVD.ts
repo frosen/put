@@ -7,12 +7,21 @@
 const { ccclass, property } = cc._decorator;
 
 import { NormalPsge, Psge, PsgeType, SelectionPsge } from '../../../scripts/DataModel';
+import { Evt } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
 import { EvtTool } from '../../../scripts/Memory';
+import { CellPsgeEvt } from '../cells/cell_psge_evt/scripts/CellPsgeEvt';
 import { CellPsgeNormal } from '../cells/cell_psge_normal/scripts/CellPsgeNormal';
+import { CellPsgeQuest } from '../cells/cell_psge_quest/scripts/CellPsgeQuest';
+import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
 import { PageStory } from './PageStory';
+
+const NORMAL = 'n';
+const SELECTION = 's';
+const QUEST = 'q';
+const EVT = 'e';
 
 @ccclass
 export class PageStoryLVD extends ListViewDelegate {
@@ -21,10 +30,19 @@ export class PageStoryLVD extends ListViewDelegate {
     @property(cc.Prefab)
     normalPsgePrefab: cc.Prefab = null!;
 
+    @property(cc.Prefab)
+    selectionPsgePrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    questPsgePrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    evtPsgePrefab: cc.Prefab = null!;
+
     cellForCalcHeight!: CellPsgeNormal;
 
     psgesInList!: Psge[];
-    optionIdxDictForList: { [key: number]: number } = {};
+    optionIdxDictForList!: { [key: number]: number };
 
     onLoad() {
         const nodeForCalcHeight = cc.instantiate(this.normalPsgePrefab);
@@ -38,6 +56,7 @@ export class PageStoryLVD extends ListViewDelegate {
         const curProg = this.page.evt.prog;
         const psgesInModel = this.page.storyModel.psges;
         const psges: Psge[] = [];
+        const optionIdxDict: { [key: number]: number } = {};
 
         const slcDict = this.page.evt.slcDict;
         const slcDictTemp: { [key: string]: number } = {};
@@ -65,7 +84,7 @@ export class PageStoryLVD extends ListViewDelegate {
                     let slcIdx = slcPsge.iprtCnt;
                     while (true) {
                         if (slcIdx >= slcPsge.options.length) {
-                            this.optionIdxDictForList[psges.length - 1] = optionIdx;
+                            optionIdxDict[psges.length - 1] = optionIdx;
                             index = slcPsge.options[optionIdx].go;
                             break;
                         }
@@ -74,7 +93,7 @@ export class PageStoryLVD extends ListViewDelegate {
                             const tempRzt = EvtTool.getSlcRzt(slcDictTemp, slcId, slcIdx);
                             if (tempRzt !== 1) {
                                 EvtTool.setSlcRzt(slcDictTemp, slcId, slcIdx, 1);
-                                this.optionIdxDictForList[psges.length - 1] = slcIdx;
+                                optionIdxDict[psges.length - 1] = slcIdx;
                                 index = slcPsge.options[slcIdx].go;
                                 break;
                             }
@@ -98,6 +117,9 @@ export class PageStoryLVD extends ListViewDelegate {
         }
 
         this.psgesInList = psges;
+        this.optionIdxDictForList = optionIdxDict;
+
+        this.heightDict = {};
     }
 
     numberOfRows(listView: ListView): number {
@@ -115,11 +137,26 @@ export class PageStoryLVD extends ListViewDelegate {
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        return 'msg';
+        const t = this.psgesInList[rowIdx].type;
+        if (t === PsgeType.normal) return NORMAL;
+        else if (t === PsgeType.selection) return SELECTION;
+        else if (t === PsgeType.quest) return QUEST;
+        else return EVT;
     }
 
-    createCellForRow(listView: ListView, rowIdx: number): ListViewCell {
-        return null;
+    createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
+        if (cellId === NORMAL) {
+            return cc.instantiate(this.normalPsgePrefab).getComponent(ListViewCell);
+        } else if (cellId === SELECTION) {
+            const cell = cc.instantiate(this.selectionPsgePrefab).getComponent(CellPsgeSelection);
+            return cell;
+        } else if (cellId === QUEST) {
+            const cell = cc.instantiate(this.questPsgePrefab).getComponent(CellPsgeQuest);
+            return cell;
+        } else {
+            const cell = cc.instantiate(this.evtPsgePrefab).getComponent(CellPsgeEvt);
+            return cell;
+        }
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: any) {}
