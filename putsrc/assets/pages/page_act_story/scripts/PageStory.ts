@@ -22,7 +22,7 @@ export class PageStory extends PageBase {
     storyModel!: StoryModel;
     evt!: Evt;
 
-    dirtyToken: number = 0;
+    listRunning: boolean = false;
 
     onLoad() {
         super.onLoad();
@@ -30,6 +30,8 @@ export class PageStory extends PageBase {
 
         this.lvd = this.listView.delegate as PageStoryLVD;
         this.lvd.page = this;
+
+        this.listView.node.on(ListView.EventType.cellShow, this.onCellShow.bind(this));
     }
 
     setData(data: { evtId: string }) {
@@ -40,15 +42,28 @@ export class PageStory extends PageBase {
     }
 
     onPageShow() {
-        const curDirtyToken = this.ctrlr.memory.dirtyToken;
-        if (this.dirtyToken !== curDirtyToken) {
-            this.dirtyToken = curDirtyToken;
-            this.resetListview();
+        if (!this.listRunning) {
+            this.listRunning = true;
+            this.runListview();
+        } else {
+            this.updateCurCells();
         }
     }
 
-    resetListview() {
+    runListview() {
         this.lvd.initData();
-        this.listView.resetContent(true);
+
+        let allCellH = 0;
+        for (let index = 0; index < this.evt.prog; index++) {
+            const cellH = this.lvd.heightForRow(this.listView, index);
+            allCellH += cellH;
+        }
+        const curY = Math.max(allCellH - this.listView.node.height, 0);
+        this.listView.clearContent();
+        this.listView.createContent(curY);
     }
+
+    updateCurCells() {}
+
+    onCellShow(listView: ListView, key: string, idx: number) {}
 }

@@ -631,6 +631,15 @@
     "normalPsgePrefab": {
       "__uuid__": "15b46d29-5cf4-496c-8eb3-655d61539b07"
     },
+    "selectionPsgePrefab": {
+      "__uuid__": "a71d78a4-4351-4d5e-8afc-d204e309d9da"
+    },
+    "questPsgePrefab": {
+      "__uuid__": "22eba963-d3dd-416c-baf8-a49e17e42519"
+    },
+    "evtPsgePrefab": {
+      "__uuid__": "40a74a48-3f37-403e-ac1a-5f661d613c5a"
+    },
     "_id": ""
   },
   {

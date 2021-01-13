@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "CellPsgeNormal",
+    "_name": "CellPsgeEvt",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -251,7 +251,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "15b46d29-5cf4-496c-8eb3-655d61539b07"
+      "__uuid__": "40a74a48-3f37-403e-ac1a-5f661d613c5a"
     },
     "fileId": "9fdFwL55xEdJQFhdxy6OTJ",
     "sync": false
@@ -289,7 +289,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "15b46d29-5cf4-496c-8eb3-655d61539b07"
+      "__uuid__": "40a74a48-3f37-403e-ac1a-5f661d613c5a"
     },
     "fileId": "c2bpjgfTxInqYSf84ERRFg",
     "sync": false
@@ -391,22 +391,19 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "15b46d29-5cf4-496c-8eb3-655d61539b07"
+      "__uuid__": "40a74a48-3f37-403e-ac1a-5f661d613c5a"
     },
     "fileId": "1a5hWzDr1C3bVR/Szy+riW",
     "sync": false
   },
   {
-    "__type__": "49df9Xd8J1DcZcgSxyAmk0S",
+    "__type__": "b0997n5ki1KlZY6vkEpTJ3/",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "lbl": {
-      "__id__": 4
-    },
     "_id": ""
   },
   {
@@ -415,7 +412,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "15b46d29-5cf4-496c-8eb3-655d61539b07"
+      "__uuid__": "40a74a48-3f37-403e-ac1a-5f661d613c5a"
     },
     "fileId": "",
     "sync": false

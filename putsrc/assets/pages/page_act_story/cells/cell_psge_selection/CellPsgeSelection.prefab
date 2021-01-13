@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "CellPsgeNormal",
+    "_name": "CellPsgeSelection",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -21,17 +21,17 @@
         "__id__": 2
       },
       {
-        "__id__": 8
+        "__id__": 5
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 11
+        "__id__": 8
       }
     ],
     "_prefab": {
-      "__id__": 12
+      "__id__": 9
     },
     "_opacity": 255,
     "_color": {
@@ -87,19 +87,15 @@
     "_parent": {
       "__id__": 1
     },
-    "_children": [
+    "_children": [],
+    "_active": true,
+    "_components": [
       {
         "__id__": 3
       }
     ],
-    "_active": true,
-    "_components": [
-      {
-        "__id__": 6
-      }
-    ],
     "_prefab": {
-      "__id__": 7
+      "__id__": 4
     },
     "_opacity": 255,
     "_color": {
@@ -149,114 +145,6 @@
     "_id": ""
   },
   {
-    "__type__": "cc.Node",
-    "_name": "lbl",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 2
-    },
-    "_children": [],
-    "_active": true,
-    "_components": [
-      {
-        "__id__": 4
-      }
-    ],
-    "_prefab": {
-      "__id__": 5
-    },
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 43,
-      "g": 33,
-      "b": 4,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 955,
-      "height": 187.57999999999998
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 1
-    },
-    "_trs": {
-      "__type__": "TypedArray",
-      "ctor": "Float64Array",
-      "array": [
-        62,
-        -15,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1
-      ]
-    },
-    "_eulerAngles": {
-      "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_is3DNode": false,
-    "_groupIndex": 0,
-    "groupIndex": 0,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.Label",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 3
-    },
-    "_enabled": true,
-    "_materials": [
-      {
-        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
-      }
-    ],
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
-    "_string": "下面的世界哈既往，可观测的区哈域晴朗，无风，云层稀薄",
-    "_N$string": "下面的世界哈既往，可观测的区哈域晴朗，无风，云层稀薄",
-    "_fontSize": 50,
-    "_lineHeight": 83,
-    "_enableWrapText": true,
-    "_N$file": null,
-    "_isSystemFontUsed": true,
-    "_spacingX": 0,
-    "_batchAsBitmap": false,
-    "_styleFlags": 0,
-    "_underlineHeight": 0,
-    "_N$horizontalAlign": 0,
-    "_N$verticalAlign": 1,
-    "_N$fontFamily": "Arial",
-    "_N$overflow": 3,
-    "_N$cacheMode": 0,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.PrefabInfo",
-    "root": {
-      "__id__": 1
-    },
-    "asset": {
-      "__uuid__": "15b46d29-5cf4-496c-8eb3-655d61539b07"
-    },
-    "fileId": "9fdFwL55xEdJQFhdxy6OTJ",
-    "sync": false
-  },
-  {
     "__type__": "cc.Widget",
     "_name": "",
     "_objFlags": 0,
@@ -289,7 +177,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "15b46d29-5cf4-496c-8eb3-655d61539b07"
+      "__uuid__": "a71d78a4-4351-4d5e-8afc-d204e309d9da"
     },
     "fileId": "c2bpjgfTxInqYSf84ERRFg",
     "sync": false
@@ -305,11 +193,11 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 9
+        "__id__": 6
       }
     ],
     "_prefab": {
-      "__id__": 10
+      "__id__": 7
     },
     "_opacity": 255,
     "_color": {
@@ -363,7 +251,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 8
+      "__id__": 5
     },
     "_enabled": true,
     "alignMode": 1,
@@ -391,22 +279,19 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "15b46d29-5cf4-496c-8eb3-655d61539b07"
+      "__uuid__": "a71d78a4-4351-4d5e-8afc-d204e309d9da"
     },
     "fileId": "1a5hWzDr1C3bVR/Szy+riW",
     "sync": false
   },
   {
-    "__type__": "49df9Xd8J1DcZcgSxyAmk0S",
+    "__type__": "7b016LW3khBHIwnlS2225K3",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "lbl": {
-      "__id__": 4
-    },
     "_id": ""
   },
   {
@@ -415,7 +300,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "15b46d29-5cf4-496c-8eb3-655d61539b07"
+      "__uuid__": "a71d78a4-4351-4d5e-8afc-d204e309d9da"
     },
     "fileId": "",
     "sync": false

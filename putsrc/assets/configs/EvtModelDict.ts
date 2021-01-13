@@ -4,17 +4,28 @@
  * luleyan
  */
 
-export class StoryN {}
+export class StoryN {
+    static RuZhiBaoDao = 'RuZhiBaoDao';
+}
 
 export class SpcBtlN {
     static KuangBaoHeXin = 'KuangBaoHeXin';
 }
 
-import { SpcBtlModel, EvtModel, StoryModel, SpcBtlType } from '../scripts/DataModel';
+import { SpcBtlModel, EvtModel, StoryModel, SpcBtlType, StoryType } from '../scripts/DataModel';
 import { FtN } from './FeatureModelDict';
 import { PetN } from './PetModelDict';
+import { PsgesDict } from './PsgesDict';
 
-export const StoryModelDict: { [key: string]: StoryModel } = {};
+export const StoryModelDict: { [key: string]: StoryModel } = {
+    [StoryN.RuZhiBaoDao]: {
+        id: StoryN.RuZhiBaoDao,
+        cnName: '入职报到',
+        lv: 1,
+        type: StoryType.new,
+        psges: PsgesDict[StoryN.RuZhiBaoDao]
+    }
+};
 
 export const SpcBtlModelDict: { [key: string]: SpcBtlModel } = {
     [SpcBtlN.KuangBaoHeXin]: {

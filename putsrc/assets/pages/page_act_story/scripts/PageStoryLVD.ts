@@ -7,7 +7,6 @@
 const { ccclass, property } = cc._decorator;
 
 import { NormalPsge, Psge, PsgeType, SelectionPsge } from '../../../scripts/DataModel';
-import { Evt } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
@@ -43,6 +42,8 @@ export class PageStoryLVD extends ListViewDelegate {
 
     psgesInList!: Psge[];
     optionIdxDictForList!: { [key: number]: number };
+
+    heights: number[] = [];
 
     onLoad() {
         const nodeForCalcHeight = cc.instantiate(this.normalPsgePrefab);
@@ -119,7 +120,7 @@ export class PageStoryLVD extends ListViewDelegate {
         this.psgesInList = psges;
         this.optionIdxDictForList = optionIdxDict;
 
-        this.heightDict = {};
+        this.heights.length = 0;
     }
 
     numberOfRows(listView: ListView): number {
@@ -127,13 +128,17 @@ export class PageStoryLVD extends ListViewDelegate {
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
+        let h = this.heights[rowIdx];
+        if (h) return h;
         const psge = this.psgesInList[rowIdx];
         if (psge.type === PsgeType.normal) {
             this.cellForCalcHeight.setData((psge as NormalPsge).str);
-            return this.cellForCalcHeight.node.height;
+            h = this.cellForCalcHeight.node.height;
         } else if (psge.type === PsgeType.selection) {
+            h = CellPsgeSelection.getHeight((psge as SelectionPsge).options.length);
         }
-        return 0;
+        this.heights[rowIdx] = h;
+        return h;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {

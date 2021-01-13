@@ -13,7 +13,14 @@ import { ListViewCell } from './ListViewCell';
 @requireComponent(cc.ScrollView)
 export class ListView extends cc.Component {
     static EventType = {
-        scrolling: 'lvsing'
+        scrolling: 'lvsing',
+        cellShow: 'cshow',
+        cellHide: 'chide'
+    };
+
+    static CellEventKey = {
+        top: 'top',
+        btm: 'btm'
     };
 
     @property(ListViewDelegate)
@@ -196,11 +203,13 @@ export class ListView extends cc.Component {
                 const cellData = this.getUnusedCellData(this.disTopRowIdx);
                 this.setCellPos(cellData.cell, this.disTopRowPos);
                 this.disCellDataDict[this.disTopRowIdx] = cellData;
+                this.node.emit(ListView.EventType.cellShow, this, ListView.CellEventKey.top, this.disTopRowIdx);
 
                 return this.updateDisTopRowData(disTop);
             }
         } else if (this.disTopRowPos + this.disTopRowH <= disTop) {
             if (this.disTopRowIdx < this.rowCount - 1) {
+                this.node.emit(ListView.EventType.cellHide, this, ListView.CellEventKey.top, this.disTopRowIdx);
                 const cellData = this.disCellDataDict[this.disTopRowIdx];
                 this.reclaimCell(cellData, this.disTopRowIdx);
                 delete this.disCellDataDict[this.disTopRowIdx];
@@ -217,6 +226,7 @@ export class ListView extends cc.Component {
     updateDisBtmRowData(disBtm: number): void {
         if (disBtm <= this.disBtmRowPos) {
             if (this.disBtmRowIdx > 0) {
+                this.node.emit(ListView.EventType.cellHide, this, ListView.CellEventKey.btm, this.disBtmRowIdx);
                 const cellData = this.disCellDataDict[this.disBtmRowIdx];
                 this.reclaimCell(cellData, this.disBtmRowIdx);
                 delete this.disCellDataDict[this.disBtmRowIdx];
@@ -236,6 +246,7 @@ export class ListView extends cc.Component {
                 const cellData = this.getUnusedCellData(this.disBtmRowIdx);
                 this.setCellPos(cellData.cell, this.disBtmRowPos);
                 this.disCellDataDict[this.disBtmRowIdx] = cellData;
+                this.node.emit(ListView.EventType.cellShow, this, ListView.CellEventKey.btm, this.disBtmRowIdx);
 
                 return this.updateDisBtmRowData(disBtm);
             }
