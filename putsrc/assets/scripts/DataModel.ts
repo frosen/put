@@ -447,7 +447,7 @@ export class Psge {
 
 export class NormalPsge extends Psge {
     str!: string;
-    gain?: StoryGain;
+    gains?: StoryGain[];
     go?: number;
 }
 
