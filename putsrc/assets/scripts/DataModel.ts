@@ -5,7 +5,7 @@
  */
 
 import { BtlCtrlr } from './BtlCtrlr';
-import { EleType, BtlType, BioType, Pet, Feature } from './DataSaved';
+import { EleType, BtlType, BioType, Pet, Feature, StoryGain } from './DataSaved';
 import { Pet2, BtlPet, BtlBuff } from './DataOther';
 
 // -----------------------------------------------------------------
@@ -443,18 +443,6 @@ export enum PsgeType {
 export class Psge {
     idx!: number;
     type!: PsgeType;
-}
-
-export enum StoryGainType {
-    cnsum = 1,
-    equip,
-    pet,
-    proTtl
-}
-
-export class StoryGain {
-    type!: StoryGainType;
-    id!: string;
 }
 
 export class NormalPsge extends Psge {

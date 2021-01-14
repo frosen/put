@@ -327,6 +327,23 @@ export class Evt {
     slcDict?: { [key: string]: number }; // number的个位表示选择了哪个选项，从1开始，0表示未选择；十位及以上表示非主要选择的结果
 }
 
+export enum StoryGainType {
+    cnsum = 1,
+    equip,
+    pet,
+    proTtl
+}
+
+export class StoryGain {
+    type!: StoryGainType;
+    id!: string;
+}
+
+export class StoryJIT {
+    startProg: number;
+    gains: StoryGain[];
+}
+
 // -----------------------------------------------------------------
 
 export class SPetMmr {
@@ -392,6 +409,7 @@ export class GameData {
 
     evtDict!: { [key: string]: Evt };
     curEvtId?: string;
+    storyJIT?: StoryJIT;
     ongoingEvtIds!: string[];
     finishedEvtIds!: string[];
 

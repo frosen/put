@@ -49,10 +49,10 @@ export class PagePkgEquip extends PageBase {
 
     dataForInit: { pet: Pet; idx: number } = null;
 
-    setData(data: any) {
-        if (data) {
-            this.dataForInit = data;
-            cc.assert(data.idx || data.idx === 0, 'PUT 装备更新页面初始化需要索引');
+    setData(pageData: any) {
+        if (pageData) {
+            this.dataForInit = pageData;
+            cc.assert(pageData.idx || pageData.idx === 0, 'PUT 装备更新页面初始化需要索引');
         }
     }
 

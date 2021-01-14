@@ -6,7 +6,7 @@
 
 import { Psge } from '../scripts/DataModel';
 
-import { RuZhiBaoDao } from '../storys/RuZhiBaoDao';
+import { RuZhiBaoDao } from '../stories/RuZhiBaoDao';
 
 export const PsgesDict: { [key: string]: Psge[] } = {
     RuZhiBaoDao: RuZhiBaoDao

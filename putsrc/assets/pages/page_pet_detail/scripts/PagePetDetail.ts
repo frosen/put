@@ -50,10 +50,10 @@ export class PagePetDetail extends PageBase {
         ]);
     }
 
-    setData(data: { pet: Pet; immutable: boolean }) {
-        cc.assert(data && data.pet, 'PUT 精灵详情必有精灵属性');
-        this.curPet = data.pet;
-        this.immutable = data.immutable || false;
+    setData(pageData: { pet: Pet; immutable: boolean }) {
+        cc.assert(pageData && pageData.pet, 'PUT 精灵详情必有精灵属性');
+        this.curPet = pageData.pet;
+        this.immutable = pageData.immutable || false;
     }
 
     onLoadNavBar(navBar: NavBar) {

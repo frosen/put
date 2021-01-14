@@ -55,17 +55,17 @@ export class PagePet extends PageBase {
      * callback
      * pets
      */
-    setData(data: any) {
-        if (data) {
+    setData(pageData: any) {
+        if (pageData) {
             const lvd = this.list.delegate as PagePetLVD;
-            lvd.cellType = data.cellPetType;
-            this.specialPageName = data.name;
-            this.clickCallback = data.callback;
+            lvd.cellType = pageData.cellPetType;
+            this.specialPageName = pageData.name;
+            this.clickCallback = pageData.callback;
             cc.assert(lvd.cellType, 'PUT 特别的精灵列表必须有类型');
             cc.assert(this.specialPageName, 'PUT 特别的精灵列表必须有名字');
             cc.assert(this.clickCallback, 'PUT 特别的精灵列表必须有回调');
             this.needBackBtn = true;
-            if (data.pets) lvd.setSpecialPets(data.pets);
+            if (pageData.pets) lvd.setSpecialPets(pageData.pets);
         }
     }
 

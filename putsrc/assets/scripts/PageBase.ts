@@ -26,7 +26,7 @@ export class PageBase extends cc.Component {
         for (const widget of widgets) widget.updateAlignment();
     }
 
-    setData(data: any) {}
+    setData(pageData: any) {}
 
     /** 隐藏导航栏 */
     navHidden: boolean = false;

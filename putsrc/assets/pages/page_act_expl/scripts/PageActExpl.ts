@@ -231,10 +231,10 @@ export class PageActExpl extends BtlPageBase {
     spcBtlId: string = '';
     startStep: number = 0;
 
-    setData(data: any) {
-        if (data) {
-            this.spcBtlId = data.spcBtlId || '';
-            this.startStep = data.startStep || 0;
+    setData(pageData: { spcBtlId: string; startStep: number }) {
+        if (pageData) {
+            this.spcBtlId = pageData.spcBtlId || '';
+            this.startStep = pageData.startStep || 0;
         }
     }
 

@@ -7,8 +7,10 @@
 const { ccclass, property } = cc._decorator;
 
 import { StoryModel } from '../../../scripts/DataModel';
-import { Evt } from '../../../scripts/DataSaved';
+import { Evt, StoryGainType } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
+import { GameDataTool } from '../../../scripts/Memory';
+import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
 import { PageStoryLVD } from './PageStoryLVD';
 
@@ -34,11 +36,39 @@ export class PageStory extends PageBase {
         this.listView.node.on(ListView.EventType.cellShow, this.onCellShow.bind(this));
     }
 
-    setData(data: { evtId: string }) {
-        cc.assert(data && data.evtId, 'PUT Story必有evtId');
-        this.evtId = data.evtId;
+    setData(pageData: { evtId: string }) {
+        cc.assert(pageData && pageData.evtId, 'PUT Story必有evtId');
+        const gameData = this.ctrlr.memory.gameData;
+
+        this.evtId = pageData.evtId;
         this.storyModel = StoryModel[this.evtId];
-        this.evt = this.ctrlr.memory.gameData.evtDict[this.evtId];
+        this.evt = gameData.evtDict[this.evtId];
+
+        if (!gameData.curEvtId) GameDataTool.enterEvt(gameData, this.evtId);
+    }
+
+    onLoadNavBar(navBar: NavBar) {
+        navBar.setBackBtnEnabled(true, (): boolean => {
+            this.ctrlr.popAlert('确定退出？', this.onClickBack.bind(this));
+            return false;
+        });
+
+        navBar.setTitle(this.storyModel.cnName);
+    }
+
+    onClickBack(key: number) {
+        if (key === 1) {
+            const storyJIT = this.ctrlr.memory.gameData.storyJIT;
+            for (const gain of storyJIT.gains) {
+                const t = gain.type;
+                if (t === StoryGainType.cnsum) {
+                } else if (t === StoryGainType.equip) {
+                } else if (t === StoryGainType.pet) {
+                } else {
+                }
+            }
+            this.ctrlr.popPage();
+        }
     }
 
     onPageShow() {
@@ -66,4 +96,10 @@ export class PageStory extends PageBase {
     updateCurCells() {}
 
     onCellShow(listView: ListView, key: string, idx: number) {}
+
+    beforePageHideAnim(willDestroy: boolean) {
+        if (willDestroy) {
+            GameDataTool.leaveEvt(this.ctrlr.memory.gameData, this.evtId);
+        }
+    }
 }

@@ -47,7 +47,8 @@ import {
     Book,
     Special,
     EleType,
-    Evt
+    Evt,
+    StoryJIT
 } from './DataSaved';
 import {
     FeatureModel,
@@ -81,6 +82,7 @@ import { FeatureModelDict } from '../configs/FeatureModelDict';
 import { ActPosModelDict, PAKey, PosN } from '../configs/ActPosModelDict';
 
 import { Tea } from './Tea';
+import { StoryModelDict } from '../configs/EvtModelDict';
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = -1;
@@ -1046,6 +1048,13 @@ export class EvtTool {
         return evt;
     }
 
+    static createStoryJIT(startProg: number): StoryJIT {
+        const jit = newInsWithChecker(StoryJIT);
+        jit.startProg = startProg;
+        jit.gains = [];
+        return jit;
+    }
+
     static setSlcRzt(slcDict: { [key: string]: number }, id: string, idx: number, rzt: number) {
         let slcNum = slcDict[id] || 0;
         slcDict[id] = slcNum + rzt * Math.pow(10, idx);
@@ -1599,10 +1608,14 @@ export class GameDataTool {
 
     static enterEvt(gameData: GameData, evtId: string) {
         gameData.curEvtId = evtId;
+        if (StoryModelDict[evtId]) {
+            gameData.storyJIT = EvtTool.createStoryJIT(gameData.evtDict[evtId].prog);
+        }
     }
 
     static leaveEvt(gameData: GameData, evtId: string) {
         gameData.curEvtId = undefined;
+        gameData.storyJIT = undefined;
     }
 
     static finishEvt(gameData: GameData, evtId: string) {

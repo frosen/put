@@ -38,10 +38,10 @@ export class PagePkgSelection extends PagePkgBase {
      * curItemIdxs
      * callback
      */
-    setData(data: any) {
-        this.pageName = data.name;
-        this.curItemIdxs = data.curItemIdxs;
-        this.clickCallback = data.callback;
+    setData(pageData: any) {
+        this.pageName = pageData.name;
+        this.curItemIdxs = pageData.curItemIdxs;
+        this.clickCallback = pageData.callback;
         cc.assert(this.pageName, 'PUT 物品选择页面必须有名字');
         cc.assert(this.curItemIdxs, 'PUT 物品选择页面必须有物品序号列表');
         cc.assert(this.clickCallback, 'PUT 物品选择页面必须有回调');

@@ -25,6 +25,7 @@ import { BaseCtrlr, PageSwitchAnim } from '../../../scripts/BaseCtrlr';
 import { SpcBtlModelDict, StoryModelDict } from '../../../configs/EvtModelDict';
 import { ActPosModel, ExplModel, ExplStepNames, StepTypesByMax } from '../../../scripts/DataModel';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
+import { PageStory } from '../../page_act_story/scripts/PageStory';
 
 export class CellActInfo {
     cnName!: string;
@@ -167,6 +168,8 @@ export class PageAct extends PageBase {
         this.posInfo.ctrlr = this.ctrlr;
     }
 
+    // PageAct不用setData，是因为多个PageAct使用switch切换时，不进入setData
+
     onPageShow() {
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.expl && !gameData.expl.afb) return;
@@ -200,6 +203,7 @@ export class PageAct extends PageBase {
     afterPageShowAnim() {
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.expl && !gameData.expl.afb) this.ctrlr.pushPage(PageActExpl, null, false);
+        else if (gameData.curEvtId) this.ctrlr.pushPage(PageStory, { evtId: gameData.curEvtId }, false);
     }
 
     static ListViewPosDict: { [key: string]: number } = {};
@@ -231,6 +235,7 @@ export class PageAct extends PageBase {
 
     onClickCellEvt(evtId: string) {
         if (evtId in StoryModelDict) {
+            this.ctrlr.pushPage(PageStory, { evtId });
         } else {
             const spcBtlModel = SpcBtlModelDict[evtId];
 

@@ -40,11 +40,11 @@ export class PagePetFeature extends PageBase {
      * gainTypes
      * callback
      */
-    setData(data: any) {
-        this.pageName = data.name;
-        this.features = data.features;
-        this.gainTypes = data.gainTypes;
-        this.clickCallback = data.callback;
+    setData(pageData: any) {
+        this.pageName = pageData.name;
+        this.features = pageData.features;
+        this.gainTypes = pageData.gainTypes;
+        this.clickCallback = pageData.callback;
         cc.assert(this.pageName, 'PUT 精灵特性选择页面必须有名字');
         cc.assert(this.features, 'PUT 精灵特性选择页面必须有特性列表');
         cc.assert(this.gainTypes, 'PUT 精灵特性选择页面必须有特性来源列表');
