@@ -34,7 +34,7 @@ export class PsgeSelctionBtn extends cc.Component {
         this.index = index;
     }
 
-    setData(str: string, iprt: boolean, state: PSBState) {
+    setData(str: string, main: boolean, state: PSBState) {
         this.lbl.string = str;
         if (state === PSBState.normal) this.node.resumeSystemEvents(false);
         else this.node.pauseSystemEvents(false);

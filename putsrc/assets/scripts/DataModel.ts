@@ -458,7 +458,7 @@ export class PsgeOption {
 
 export class SelectionPsge extends Psge {
     id!: string;
-    iprtCnt!: number;
+    mainCnt!: number;
     options!: PsgeOption[];
 }
 

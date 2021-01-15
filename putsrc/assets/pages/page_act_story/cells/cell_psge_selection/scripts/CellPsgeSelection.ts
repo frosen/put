@@ -26,7 +26,7 @@ export class CellPsgeSelection extends ListViewCell {
 
     activeBtnLen: number = 0;
 
-    setData(datas: { str: string; iprt: boolean }[], slc: number) {
+    setData(datas: { str: string; main: boolean }[], slc: number) {
         let index = 0;
         for (const data of datas) {
             let btn: PsgeSelctionBtn;
@@ -44,7 +44,7 @@ export class CellPsgeSelection extends ListViewCell {
             if (slc === -1) state = PSBState.normal;
             else if (slc === index) state = PSBState.pressed;
             else state = PSBState.noPressed;
-            btn.setData(data.str, data.iprt, state);
+            btn.setData(data.str, data.main, state);
 
             const node = btn.node;
             node.opacity = 255;

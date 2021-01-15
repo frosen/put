@@ -75,14 +75,14 @@ export class PageStoryLVD extends ListViewDelegate {
                 const slcId = slcPsge.id;
 
                 let optionIdx = -1;
-                for (let index = 0; index < slcPsge.iprtCnt; index++) {
+                for (let index = 0; index < slcPsge.mainCnt; index++) {
                     if (EvtTool.getSlcRzt(slcDict, slcId, index) !== 1) continue;
                     optionIdx = index;
                     break;
                 }
 
                 if (optionIdx !== -1) {
-                    let slcIdx = slcPsge.iprtCnt;
+                    let slcIdx = slcPsge.mainCnt;
                     while (true) {
                         if (slcIdx >= slcPsge.options.length) {
                             optionIdxDict[psges.length - 1] = optionIdx;
