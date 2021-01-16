@@ -6,6 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
+import { StoryModelDict } from '../../../configs/EvtModelDict';
 import { StoryModel } from '../../../scripts/DataModel';
 import { Evt, StoryGainType } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
@@ -41,7 +42,7 @@ export class PageStory extends PageBase {
         const gameData = this.ctrlr.memory.gameData;
 
         this.evtId = pageData.evtId;
-        this.storyModel = StoryModel[this.evtId];
+        this.storyModel = StoryModelDict[this.evtId];
         this.evt = gameData.evtDict[this.evtId];
 
         if (!gameData.curEvtId) GameDataTool.enterEvt(gameData, this.evtId);
@@ -52,7 +53,6 @@ export class PageStory extends PageBase {
             this.ctrlr.popAlert('确定退出？', this.onClickBack.bind(this));
             return false;
         });
-
         navBar.setTitle(this.storyModel.cnName);
     }
 

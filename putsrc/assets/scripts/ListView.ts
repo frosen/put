@@ -65,15 +65,14 @@ export class ListView extends cc.Component {
 
         const self = this;
 
-        // @ts-ignore
-        const oldFunc = this.scrollView.verticalScrollBar._setOpacity;
-        // @ts-ignore
-        this.scrollView.verticalScrollBar._setOpacity = function (opacity) {
-            if (this.node)
-                if (self._touching || opacity <= this.node.opacity) {
-                    oldFunc.call(this, opacity);
-                }
-        };
+        if (this.scrollView.verticalScrollBar) {
+            // @ts-ignore
+            const oldFunc = this.scrollView.verticalScrollBar._setOpacity;
+            // @ts-ignore
+            this.scrollView.verticalScrollBar._setOpacity = function (opacity) {
+                if (this.node && (self._touching || opacity <= this.node.opacity)) oldFunc.call(this, opacity);
+            };
+        }
 
         // @ts-ignore
         const oldPressFunc = this.scrollView._handlePressLogic;
