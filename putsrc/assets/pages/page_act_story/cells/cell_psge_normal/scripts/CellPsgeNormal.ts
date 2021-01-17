@@ -18,6 +18,6 @@ export class CellPsgeNormal extends ListViewCell {
     setData(str: string) {
         this.lbl.string = str;
         ListViewCell.rerenderLbl(this.lbl);
-        this.node.height = this.lbl.node.height + 30; // label上下边各留出15像素
+        this.node.height = this.lbl.node.height + 40; // label上下边各留出20像素
     }
 }

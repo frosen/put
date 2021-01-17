@@ -22,6 +22,8 @@ const SELECTION = 's';
 const QUEST = 'q';
 const EVT = 'e';
 
+type CellPsge = CellPsgeNormal & CellPsgeSelection & CellPsgeQuest & CellPsgeEvt;
+
 @ccclass
 export class PageStoryLVD extends ListViewDelegate {
     page!: PageStory;
@@ -44,6 +46,7 @@ export class PageStoryLVD extends ListViewDelegate {
     optionIdxDictForList!: { [key: number]: number };
 
     heights: number[] = [];
+    realStrs: string[] = [];
 
     onLoad() {
         const nodeForCalcHeight = cc.instantiate(this.normalPsgePrefab);
@@ -111,10 +114,12 @@ export class PageStoryLVD extends ListViewDelegate {
         let addCnt = 10;
         while (true) {
             const psge = psgesInModel[index];
+            if (!psge) break;
             psges[psges.length] = psge;
             if (psge.type !== PsgeType.normal) break;
             addCnt--;
             if (addCnt === 0) break;
+            index++;
         }
 
         this.psgesInList = psges;
@@ -132,13 +137,23 @@ export class PageStoryLVD extends ListViewDelegate {
         if (h) return h;
         const psge = this.psgesInList[rowIdx];
         if (psge.type === PsgeType.normal) {
-            this.cellForCalcHeight.setData((psge as NormalPsge).str);
+            this.cellForCalcHeight.setData(this.getRealPsgeStr(psge as NormalPsge));
             h = this.cellForCalcHeight.node.height;
         } else if (psge.type === PsgeType.selection) {
             h = CellPsgeSelection.getHeight((psge as SelectionPsge).options.length);
         }
         this.heights[rowIdx] = h;
         return h;
+    }
+
+    getRealPsgeStr(psge: NormalPsge): string {
+        const curStr = this.realStrs[psge.idx];
+        if (curStr) return curStr;
+
+        const gameData = this.ctrlr.memory.gameData;
+        const realStr = psge.str.replace(/RRR/g, gameData.roleName);
+        this.realStrs[psge.idx] = realStr;
+        return realStr;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
@@ -164,5 +179,13 @@ export class PageStoryLVD extends ListViewDelegate {
         }
     }
 
-    setCellForRow(listView: ListView, rowIdx: number, cell: any) {}
+    setCellForRow(listView: ListView, rowIdx: number, cell: CellPsge) {
+        const t = this.psgesInList[rowIdx].type;
+        if (t === PsgeType.normal) {
+            const psge = this.psgesInList[rowIdx];
+            cell.setData(this.getRealPsgeStr(psge as NormalPsge));
+        } else if (t === PsgeType.selection) return SELECTION;
+        else if (t === PsgeType.quest) return QUEST;
+        else return EVT;
+    }
 }

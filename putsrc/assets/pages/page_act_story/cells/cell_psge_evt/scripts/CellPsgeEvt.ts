@@ -9,4 +9,6 @@ const { ccclass, property } = cc._decorator;
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 
 @ccclass
-export class CellPsgeEvt extends ListViewCell {}
+export class CellPsgeEvt extends ListViewCell {
+    checkBake() {}
+}
