@@ -112,28 +112,43 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
 
 // -----------------------------------------------------------------
 
+function runExec(command, needExit = true, options = { cwd: __dirname }) {
+    return new Promise((resolve, reject) => {
+        // console.log('cmd: ', command);
+        let workerProcess = require('child_process').exec(command, options, (error, stdout, stderr) => {
+            if (!error) {
+                // console.log('成功', stdout);
+                return resolve(stdout);
+            } else {
+                console.log('失败:::', command, error, stdout, stderr);
+                if (needExit) process.exit(-1);
+                else return resolve(null);
+            }
+        });
+
+        workerProcess.stdout.on('data', function (data) {
+            console.log('stdout: ' + data);
+        });
+
+        workerProcess.stderr.on('data', function (data) {
+            console.log('stderr: ' + data);
+        });
+    });
+}
+
 const head = `/*
-* AAA.ts
-* 故事，从document/story中转义而来
-* luleyan
-*/
+ * AAA.ts
+ * 故事，从document/story中转义而来
+ * luleyan
+ */
 
 export const AAA: any[] = `;
 
-for (const { name, datas } of dataList) {
-    const curHead = head.replace(/AAA/g, name);
-    const jsonStr = JSON.stringify(datas, null, 4)
-        .replace(/\"([a-zA-Z0-9]*?)\":/g, '$1:')
-        .replace(/\"/g, "'");
-    const finalStr = curHead + jsonStr;
-    // console.log(finalStr);
-}
-
 const indexHead = `/*
-* PsgesDict.ts
-* 每个story的psges的索引
-* luleyan
-*/
+ * PsgesDict.ts
+ * 每个story的psges的索引
+ * luleyan
+ */
 
 import { Psge } from '../scripts/DataModel';
 
@@ -144,12 +159,39 @@ BBB};
 const importStr = "import { AAA } from '../stories/AAA';\n";
 const lineStr = '    AAA: AAA\n';
 
-let importStrs = '';
-let lineStrs = '';
-for (const { name } of dataList) {
-    importStrs += importStr.replace(/AAA/g, name);
-    lineStrs += lineStr.replace(/AAA/g, name);
-}
+(async () => {
+    if (Fs.existsSync(dstDir)) {
+        await runExec(`rm -rf ${dstDir}*`);
+    }
+    await runExec(`mkdir -p ${dstDir}`);
 
-const finalIndexStr = indexHead.replace('AAA', importStrs).replace('BBB', lineStrs);
-console.log(finalIndexStr);
+    for (const { name, datas } of dataList) {
+        const curHead = head.replace(/AAA/g, name);
+        const jsonStr = JSON.stringify(datas, null, 4)
+            .replace(/\"([a-zA-Z0-9]*?)\":/g, '$1:')
+            .replace(/\"/g, "'");
+        const finalStr = curHead + jsonStr;
+
+        const filePath = dstDir + name + '.ts';
+        Fs.writeFileSync(filePath, finalStr);
+        console.log('生成故事 ' + filePath);
+    }
+
+    if (Fs.existsSync(indexPath)) {
+        await runExec(`rm -rf ${indexPath}`);
+    }
+
+    let importStrs = '';
+    let lineStrs = '';
+    for (const { name } of dataList) {
+        importStrs += importStr.replace(/AAA/g, name);
+        lineStrs += lineStr.replace(/AAA/g, name);
+    }
+
+    const finalIndexStr = indexHead.replace('AAA', importStrs).replace('BBB', lineStrs);
+    Fs.writeFileSync(indexPath, finalIndexStr);
+
+    console.log('生成索引 ' + indexPath);
+
+    console.log('Done!');
+})();

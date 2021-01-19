@@ -48,6 +48,11 @@ export class PageStory extends PageBase {
         if (!gameData.curEvtId) GameDataTool.enterEvt(gameData, this.evtId);
     }
 
+    update() {
+        const sa = cc.Label._shareAtlas;
+        if (sa) cc.log('STORM cc ^_^ >> ', sa._x, sa._y);
+    }
+
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
             this.ctrlr.popAlert('确定退出？', this.onClickBack.bind(this));

@@ -111,7 +111,7 @@ export class PageStoryLVD extends ListViewDelegate {
         }
 
         // 加载随后的
-        let addCnt = 10;
+        let addCnt = 20;
         while (true) {
             const psge = psgesInModel[index];
             if (!psge) break;
