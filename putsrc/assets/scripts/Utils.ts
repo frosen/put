@@ -26,27 +26,21 @@ export function deepCopy<T>(o: T): T {
     }
 }
 
-export function eachChild(node: cc.Node, func: (node: cc.Node) => boolean): boolean {
-    for (const child of node.children) {
-        if (func(child)) return true;
-        if (eachChild(child, func)) return true;
-    }
-    return false;
+// math -----------------------------------------------------------------
+
+export function getDigit(num: number): number {
+    if (num > 0) return 1 + Math.floor(Math.log10(num));
+    else if (num === 0) return 0;
+    else return 1 + Math.floor(Math.log10(-num));
 }
 
-export function getNodeByUuid(uuid: string): cc.Node | undefined {
-    const scene = cc.director.getScene();
-    let thisNode: cc.Node | undefined;
-    eachChild(scene, (node: cc.Node): boolean => {
-        if (node.uuid === uuid) {
-            thisNode = node;
-            return true;
-        } else return false;
-    });
-    return thisNode;
+export function getNumInDigit(num: number, digit: number): number {
+    const max = getDigit(num);
+    if (digit <= 0 || max < digit) return 0;
+    return Math.floor((num / Math.pow(10, digit - 1)) % 10);
 }
 
-// -----------------------------------------------------------------
+// array -----------------------------------------------------------------
 
 // @ts-ignore
 Array.prototype.removeIndex = function (ridx) {

@@ -437,7 +437,9 @@ export enum PsgeType {
     normal = 1,
     selection,
     quest,
-    evt
+    evt,
+    nameInput,
+    end
 }
 
 export class Psge {
@@ -467,6 +469,8 @@ export class QuestPsge extends Psge {}
 export class EvtPsge extends Psge {}
 
 export class NameInputPsge extends Psge {}
+
+export class EndPsge extends Psge {}
 
 export class StoryModel extends EvtModel {
     type!: StoryType;

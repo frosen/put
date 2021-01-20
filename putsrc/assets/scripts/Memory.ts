@@ -83,6 +83,7 @@ import { ActPosModelDict, PAKey, PosN } from '../configs/ActPosModelDict';
 
 import { Tea } from './Tea';
 import { StoryModelDict } from '../configs/EvtModelDict';
+import { getDigit, getNumInDigit } from './Utils';
 
 let memoryDirtyToken: number = -1;
 let sfbdCount: number = -1;
@@ -1055,15 +1056,15 @@ export class EvtTool {
         return jit;
     }
 
-    static setSlcRzt(slcDict: { [key: string]: number }, id: string, idx: number, rzt: number) {
-        let slcNum = slcDict[id] || 0;
-        slcDict[id] = slcNum + rzt * Math.pow(10, idx);
+    static pushOption(slcDict: { [key: string]: number }, slcId: string, opt: number) {
+        let slcNum = slcDict[slcId] || 0;
+        slcNum += (opt + 1) * Math.pow(10, getDigit(slcNum));
+        slcDict[slcId] = slcNum;
     }
 
-    static getSlcRzt(slcDict: { [key: string]: number }, id: string, idx: number): number {
-        let slcNum = slcDict[id] || 0;
-        slcNum = Math.floor(slcNum / Math.pow(10, idx));
-        return slcNum % 10;
+    static getOption(slcDict: { [key: string]: number }, id: string, idx: number): number {
+        const slcNum = slcDict[id] || 0;
+        return getNumInDigit(slcNum, idx) - 1;
     }
 }
 

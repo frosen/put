@@ -324,7 +324,7 @@ export class AcceQuestInfo {
 export class Evt {
     id!: string;
     prog!: number;
-    slcDict?: { [key: string]: number }; // number的个位表示选择了哪个选项，从1开始，0表示未选择；十位及以上表示非主要选择的结果
+    slcDict?: { [key: string]: number }; // number从个位开始表示每一次选择的选项索引值，索引值从1开始
 }
 
 export enum StoryGainType {
