@@ -13,7 +13,7 @@ import { ListView } from '../../../scripts/ListView';
 import { GameDataTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
-import { PageStoryLVD } from './PageStoryLVD';
+import { PageStoryLVD, TOPCKR, BTMCKR } from './PageStoryLVD';
 
 @ccclass
 export class PageStory extends PageBase {
@@ -48,11 +48,6 @@ export class PageStory extends PageBase {
         if (!gameData.curEvtId) GameDataTool.enterEvt(gameData, this.evtId);
     }
 
-    update() {
-        const sa = cc.Label._shareAtlas;
-        if (sa) cc.log('STORM cc ^_^ >> ', sa._x, sa._y);
-    }
-
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
             this.ctrlr.popAlert('确定退出？', this.onClickBack.bind(this));
@@ -65,7 +60,7 @@ export class PageStory extends PageBase {
         if (key === 1) {
             const storyJIT = this.ctrlr.memory.gameData.storyJIT;
             for (const gain of storyJIT.gains) {
-                const t = gain.type;
+                const t = gain.gType;
                 if (t === StoryGainType.cnsum) {
                 } else if (t === StoryGainType.equip) {
                 } else if (t === StoryGainType.pet) {
@@ -100,7 +95,11 @@ export class PageStory extends PageBase {
 
     updateCurCells() {}
 
-    onCellShow(listView: ListView, key: string, idx: number) {}
+    onCellShow(listView: ListView, key: string, idx: number) {
+        if (key === TOPCKR) {
+        } else if (key === BTMCKR) {
+        }
+    }
 
     beforePageHideAnim(willDestroy: boolean) {
         if (willDestroy) {

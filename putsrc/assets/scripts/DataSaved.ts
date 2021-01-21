@@ -335,7 +335,7 @@ export enum StoryGainType {
 }
 
 export class StoryGain {
-    type!: StoryGainType;
+    gType!: StoryGainType;
     id!: string;
 }
 

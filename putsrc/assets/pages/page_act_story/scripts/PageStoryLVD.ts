@@ -12,22 +12,34 @@ import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
 import { EvtTool } from '../../../scripts/Memory';
+import { CellPsgeEnd } from '../cells/cell_psge_end/scripts/CellPsgeEnd';
 import { CellPsgeEvt } from '../cells/cell_psge_evt/scripts/CellPsgeEvt';
+import { CellPsgeHead } from '../cells/cell_psge_head/scripts/CellPsgeHead';
+import { CellPsgeNameInput } from '../cells/cell_psge_name_input/scripts/CellPsgeNameInput';
 import { CellPsgeNormal } from '../cells/cell_psge_normal/scripts/CellPsgeNormal';
 import { CellPsgeQuest } from '../cells/cell_psge_quest/scripts/CellPsgeQuest';
 import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
 import { PageStory } from './PageStory';
 
+const HEAD = 'h';
 const NORMAL = 'n';
 const SELECTION = 's';
 const QUEST = 'q';
 const EVT = 'e';
+const NAMEINPUT = 'ni';
+const END = 'end';
+const CHECKERBLANK = 'cb';
+export const TOPCKR = 'tckr';
+export const BTMCKR = 'bckr';
 
 type CellPsge = CellPsgeNormal & CellPsgeSelection & CellPsgeQuest & CellPsgeEvt;
 
 @ccclass
 export class PageStoryLVD extends ListViewDelegate {
     page!: PageStory;
+
+    @property(cc.Prefab)
+    headPsgePrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
     normalPsgePrefab: cc.Prefab = null!;
@@ -40,6 +52,18 @@ export class PageStoryLVD extends ListViewDelegate {
 
     @property(cc.Prefab)
     evtPsgePrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    nameInputPsgePrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    endPsgePrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    checkerBlankPrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    checkerPrefab: cc.Prefab = null!;
 
     cellForCalcHeight!: CellPsgeNormal;
 
@@ -85,9 +109,9 @@ export class PageStoryLVD extends ListViewDelegate {
             const psge = psgesInModel[index];
             psges[psges.length] = psge;
 
-            if (psge.type === PsgeType.normal) {
+            if (psge.pType === PsgeType.normal) {
                 index = (psge as NormalPsge).go || index + 1;
-            } else if (psge.type === PsgeType.selection) {
+            } else if (psge.pType === PsgeType.selection) {
                 const slcPsge = psge as SelectionPsge;
                 const slcId = slcPsge.id;
 
@@ -115,9 +139,9 @@ export class PageStoryLVD extends ListViewDelegate {
                 if (!psge) break;
                 psges[psges.length] = psge;
 
-                if (psge.type === PsgeType.normal) {
+                if (psge.pType === PsgeType.normal) {
                     index = (psge as NormalPsge).go || index + 1;
-                } else if (psge.type === PsgeType.selection) {
+                } else if (psge.pType === PsgeType.selection) {
                     break;
                 } else {
                     index++;
@@ -145,8 +169,8 @@ export class PageStoryLVD extends ListViewDelegate {
 
         for (let index = this.from; index < this.to; index++) {
             const psge = psges[index];
-
-            if (psge.type === PsgeType.normal) {
+            const t = psge.pType;
+            if (t === PsgeType.normal) {
                 const str = PageStoryLVD.getRealPsgeStr(gameData, psge as NormalPsge);
                 PageStoryLVD.monitorLabelCharAtlas();
                 this.cellForCalcHeight.setData(str);
@@ -157,8 +181,13 @@ export class PageStoryLVD extends ListViewDelegate {
                 }
                 heights[psges.length] = this.cellForCalcHeight.node.height;
                 strs[psges.length] = str;
-            } else if (psge.type === PsgeType.selection) {
+            } else if (t === PsgeType.selection) {
                 heights[psges.length] = CellPsgeSelection.getHeight((psge as SelectionPsge).options.length);
+            } else if (t === PsgeType.quest) {
+            } else if (t === PsgeType.evt) {
+            } else if (t === PsgeType.nameInput) {
+            } else if (t === PsgeType.head) {
+            } else if (t === PsgeType.end) {
             }
         }
 
@@ -189,19 +218,37 @@ export class PageStoryLVD extends ListViewDelegate {
     }
 
     numberOfRows(listView: ListView): number {
-        return this.psgesInList.length;
+        return this.to - this.from + 3; // 3代表endblank和2个checker
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
-        return this.heightsInList[rowIdx];
+        if (rowIdx === 0) {
+            return 200;
+        } else {
+            const realIdx = rowIdx - 1 + this.from;
+            if (realIdx < this.to) return this.heightsInList[realIdx];
+            else if (realIdx === this.to) return 200;
+            else return 200;
+        }
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        const t = this.psgesInList[rowIdx].type;
-        if (t === PsgeType.normal) return NORMAL;
-        else if (t === PsgeType.selection) return SELECTION;
-        else if (t === PsgeType.quest) return QUEST;
-        else return EVT;
+        if (rowIdx === 0) {
+            return TOPCKR;
+        } else {
+            const realIdx = rowIdx - 1 + this.from;
+            if (realIdx < this.to) {
+                const t = this.psgesInList[realIdx].pType;
+                if (t === PsgeType.normal) return NORMAL;
+                else if (t === PsgeType.selection) return SELECTION;
+                else if (t === PsgeType.quest) return QUEST;
+                else if (t === PsgeType.evt) return EVT;
+                else if (t === PsgeType.nameInput) return NAMEINPUT;
+                else if (t === PsgeType.head) return HEAD;
+                else if (t === PsgeType.end) return END;
+            } else if (realIdx === this.to) return CHECKERBLANK;
+            else return BTMCKR;
+        }
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
@@ -213,18 +260,39 @@ export class PageStoryLVD extends ListViewDelegate {
         } else if (cellId === QUEST) {
             const cell = cc.instantiate(this.questPsgePrefab).getComponent(CellPsgeQuest);
             return cell;
-        } else {
+        } else if (cellId === EVT) {
             const cell = cc.instantiate(this.evtPsgePrefab).getComponent(CellPsgeEvt);
             return cell;
+        } else if (cellId === NAMEINPUT) {
+            const cell = cc.instantiate(this.nameInputPsgePrefab).getComponent(CellPsgeNameInput);
+            return cell;
+        } else if (cellId === HEAD) {
+            const cell = cc.instantiate(this.headPsgePrefab).getComponent(CellPsgeHead);
+            return cell;
+        } else if (cellId === END) {
+            const cell = cc.instantiate(this.endPsgePrefab).getComponent(CellPsgeEnd);
+            return cell;
+        } else if (cellId === TOPCKR) {
+            return cc.instantiate(this.checkerPrefab).getComponent(ListViewCell);
+        } else if (cellId === CHECKERBLANK) {
+            return cc.instantiate(this.checkerBlankPrefab).getComponent(ListViewCell);
+        } else if (cellId === BTMCKR) {
+            return cc.instantiate(this.checkerPrefab).getComponent(ListViewCell);
         }
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPsge) {
-        const t = this.psgesInList[rowIdx].type;
-        if (t === PsgeType.normal) {
-            cell.setData(this.strsInList[rowIdx]);
-        } else if (t === PsgeType.selection) return SELECTION;
-        else if (t === PsgeType.quest) return QUEST;
-        else return EVT;
+        if (rowIdx > 0) {
+            const realIdx = rowIdx - 1 + this.from;
+            if (realIdx < this.to) {
+                const t = this.psgesInList[realIdx].pType;
+                if (t === PsgeType.normal) {
+                    cell.setData(this.strsInList[realIdx]);
+                } else if (t === PsgeType.selection) {
+                } else if (t === PsgeType.quest) {
+                } else if (t === PsgeType.evt) {
+                }
+            }
+        }
     }
 }

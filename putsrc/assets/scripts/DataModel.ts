@@ -434,7 +434,8 @@ export enum StoryType {
 }
 
 export enum PsgeType {
-    normal = 1,
+    head = 1,
+    normal,
     selection,
     quest,
     evt,
@@ -444,8 +445,10 @@ export enum PsgeType {
 
 export class Psge {
     idx!: number;
-    type!: PsgeType;
+    pType!: PsgeType;
 }
+
+export class HeadPsge extends Psge {}
 
 export class NormalPsge extends Psge {
     str!: string;

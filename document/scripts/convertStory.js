@@ -14,13 +14,23 @@ const storySrcFileNames = Fs.readdirSync(srcDir);
 
 function getGain(line) {
     const result = htmlparser.parseDOM(line)[0];
-    return { type: result.attribs.t, id: result.children[0].data };
+    return { gType: result.attribs.t, id: result.children[0].data };
 }
 
 function getSelection(line) {
     const result = htmlparser.parseDOM(line)[0];
     return { main: result.attribs.main === '1', str: result.attribs.str, id: result.attribs.id };
 }
+
+const PTYPE = {
+    head: 1,
+    normal: 2,
+    selection: 3,
+    quest: 4,
+    evt: 5,
+    nameInput: 6,
+    end: 7
+};
 
 const dataList = [];
 for (let index = 0; index < storySrcFileNames.length; index++) {
@@ -33,6 +43,8 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
     const datas = [];
     const optionsList = [[]];
 
+    datas[datas.length] = { pType: PTYPE.head };
+
     for (let index = 0; index < lines.length; index++) {
         let line = lines[index];
         line = line.trimStart();
@@ -42,27 +54,31 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
 
         if (line[0] === '<') {
             if (line[1] === 'g') {
+                // gain
                 if (!datas[datas.length - 1].gains) datas[datas.length - 1].gains = [];
                 datas[datas.length - 1].gains.push(getGain(line));
             } else if (line[1] === 'o') {
+                // option
                 const slcParam = getSelection(line);
                 const curOptions = optionsList[optionsList.length - 1];
                 if (curOptions.length === 0) {
-                    datas[datas.length] = { id: slcParam.id, type: 2 };
+                    datas[datas.length] = { id: slcParam.id, pType: PTYPE.selection };
                 }
                 curOptions.push({ slcIdx: datas.length - 1, go: datas.length, data: slcParam });
                 optionsList.push([]);
             } else if (line[1] === '/' && line[2] === 'o') {
+                // </option>
                 optionsList.pop();
                 const curOptions = optionsList[optionsList.length - 1];
                 const lastOption = curOptions[curOptions.length - 1];
                 const lastData = datas[datas.length - 1];
-                if (lastData.type !== 1) throw '选择里面没有文字：' + String(lastData);
-                lastOption.end = datas.length - 1;
+                if (lastData.pType !== PTYPE.normal) throw '选择里面没有文字：' + JSON.stringify(lastData);
+                lastOption.endNPsgeIdx = datas.length - 1;
             }
         } else {
             const curOptions = optionsList[optionsList.length - 1];
             if (curOptions.length === 1) throw '只有一个选项: ' + line;
+            else if (curOptions.length > 8) throw '选项太多了吧' + line;
             else if (curOptions.length > 1) {
                 let id = '/';
                 let main = true;
@@ -90,17 +106,21 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 slcData.options = finalOptions;
 
                 for (const option of curOptions) {
-                    const endData = datas[option.end];
-                    if (option.data.main) endData.go = datas.length;
-                    else endData.go = curOptions[0].slcIdx;
+                    const endNPsgeData = datas[option.endNPsgeIdx];
+                    // 所有option结束后的第一个psge
+                    if (option.data.main) endNPsgeData.go = datas.length;
+                    // selectionPsge的索引
+                    else endNPsgeData.go = curOptions[0].slcIdx;
                 }
 
                 curOptions.length = 0;
             }
 
-            datas[datas.length] = { str: line, type: 1 };
+            datas[datas.length] = { str: line, pType: PTYPE.normal };
         }
     }
+
+    datas[datas.length] = { pType: PTYPE.end };
 
     for (let index = 0; index < datas.length; index++) {
         const data = datas[index];
