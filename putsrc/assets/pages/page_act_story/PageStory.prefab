@@ -640,6 +640,18 @@
     "evtPsgePrefab": {
       "__uuid__": "40a74a48-3f37-403e-ac1a-5f661d613c5a"
     },
+    "nameInputPsgePrefab": {
+      "__uuid__": "8c7f39c1-17c0-4961-ac02-4eb4eee63315"
+    },
+    "headPsgePrefab": {
+      "__uuid__": "30ec0b8b-a8bd-4558-8b8f-bf6e621d3780"
+    },
+    "endPsgePrefab": {
+      "__uuid__": "c0339629-8118-4cf5-8665-ff3422cce8de"
+    },
+    "blankPrefab": {
+      "__uuid__": "5e23c232-b60f-4055-b051-01c838baa8c0"
+    },
     "_id": ""
   },
   {

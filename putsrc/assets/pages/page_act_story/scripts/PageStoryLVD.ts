@@ -39,9 +39,6 @@ export class PageStoryLVD extends ListViewDelegate {
     page!: PageStory;
 
     @property(cc.Prefab)
-    headPsgePrefab: cc.Prefab = null!;
-
-    @property(cc.Prefab)
     normalPsgePrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
@@ -57,13 +54,13 @@ export class PageStoryLVD extends ListViewDelegate {
     nameInputPsgePrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
+    headPsgePrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
     endPsgePrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    checkerBlankPrefab: cc.Prefab = null!;
-
-    @property(cc.Prefab)
-    checkerPrefab: cc.Prefab = null!;
+    blankPrefab: cc.Prefab = null!;
 
     cellForCalcHeight!: CellPsgeNormal;
 
@@ -179,15 +176,17 @@ export class PageStoryLVD extends ListViewDelegate {
                     cc.Label.clearCharCache();
                     return this.initStrData();
                 }
-                heights[psges.length] = this.cellForCalcHeight.node.height;
-                strs[psges.length] = str;
+                heights[index] = this.cellForCalcHeight.node.height;
+                strs[index] = str;
             } else if (t === PsgeType.selection) {
-                heights[psges.length] = CellPsgeSelection.getHeight((psge as SelectionPsge).options.length);
+                heights[index] = CellPsgeSelection.getHeight((psge as SelectionPsge).options.length);
             } else if (t === PsgeType.quest) {
             } else if (t === PsgeType.evt) {
             } else if (t === PsgeType.nameInput) {
             } else if (t === PsgeType.head) {
+                heights[index] = 300;
             } else if (t === PsgeType.end) {
+                heights[index] = 300;
             }
         }
 
@@ -273,11 +272,11 @@ export class PageStoryLVD extends ListViewDelegate {
             const cell = cc.instantiate(this.endPsgePrefab).getComponent(CellPsgeEnd);
             return cell;
         } else if (cellId === TOPCKR) {
-            return cc.instantiate(this.checkerPrefab).getComponent(ListViewCell);
+            return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);
         } else if (cellId === CHECKERBLANK) {
-            return cc.instantiate(this.checkerBlankPrefab).getComponent(ListViewCell);
+            return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);
         } else if (cellId === BTMCKR) {
-            return cc.instantiate(this.checkerPrefab).getComponent(ListViewCell);
+            return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);
         }
     }
 
