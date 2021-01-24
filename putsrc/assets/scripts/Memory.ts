@@ -1046,6 +1046,7 @@ export class EvtTool {
         const evt = newInsWithChecker(Evt);
         evt.id = id;
         evt.prog = 0;
+        evt.rztDict = newDict();
         return evt;
     }
 
@@ -1062,9 +1063,9 @@ export class EvtTool {
         slcDict[slcId] = slcNum;
     }
 
-    static getOption(slcDict: { [key: string]: number }, id: string, idx: number): number {
+    static getOption(slcDict: { [key: string]: number }, id: string, usingDigit: number): number {
         const slcNum = slcDict[id] || 0;
-        return getNumInDigit(slcNum, idx) - 1;
+        return getNumInDigit(slcNum, usingDigit) - 1;
     }
 }
 

@@ -35,6 +35,9 @@ export class PageStory extends PageBase {
         this.lvd.page = this;
 
         this.listView.node.on(ListView.EventType.cellShow, this.onCellShow.bind(this));
+
+        this.listView.node.on(cc.Node.EventType.TOUCH_MOVE, this.onListMove.bind(this));
+        cc.director.on(cc.Director.EVENT_AFTER_DRAW, this.afterDraw.bind(this));
     }
 
     setData(pageData: { evtId: string }) {
@@ -100,8 +103,37 @@ export class PageStory extends PageBase {
             cc.log('^_^! get top');
         } else if (idx === this.lvd.numberOfRows(listView) - 1 && key === ListView.CellEventKey.btm) {
             cc.log('^_^! get bottom');
+            this.lvd.updateListStrData(this.lvd.to, true);
+            this.listView.resetContent(true);
         }
     }
+
+    // 优化：如果当前帧无位置变化则更新 -----------------------------------------------------------------
+
+    optimizing: boolean = false;
+
+    onListMove() {
+        this.optimizing = true;
+    }
+
+    lastY: number = 0;
+    interval: number = 0;
+
+    afterDraw() {
+        if (this.optimizing) {
+            const curY = this.listView.content.y;
+            if (curY === this.lastY) {
+                if (this.interval <= 0) {
+                    this.interval = 15;
+                    this.lvd.loadNextStrData();
+                }
+            } else this.lastY = curY;
+
+            this.interval--;
+        }
+    }
+
+    // 退出 -----------------------------------------------------------------
 
     beforePageHideAnim(willDestroy: boolean) {
         if (willDestroy) {

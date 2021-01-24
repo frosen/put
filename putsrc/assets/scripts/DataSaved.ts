@@ -323,8 +323,17 @@ export class AcceQuestInfo {
 
 export class Evt {
     id!: string;
+    /**
+     * 代表事件已经到达的文章段落，这个值对应psge的idx
+     */
     prog!: number;
-    slcDict?: { [key: string]: number }; // number从个位开始表示每一次选择的选项索引值，索引值从1开始
+    /**
+     * 选择结果，任务完成结果和最终结果都记录在此
+     * 选择结果：number从个位开始表示每一次选择的选项索引值，索引值从1开始
+     * 任务结果：1代表完成
+     * 最终结果：-D-的值为1表示全部完成
+     */
+    rztDict?: { [key: string]: number };
 }
 
 export enum StoryGainType {

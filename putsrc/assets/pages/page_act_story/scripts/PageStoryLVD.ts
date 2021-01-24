@@ -64,15 +64,18 @@ export class PageStoryLVD extends ListViewDelegate {
 
     cellForCalcHeight!: CellPsgeNormal;
 
-    psgesInList!: Psge[];
-    optionIdxDictForList!: { [key: number]: number };
+    psgesInList: Psge[] = [];
+    optionUsingDict: { [key: string]: number } = {};
 
     heightsInList: number[] = [];
     strsInList: string[] = [];
 
-    from: number = 0;
-    to: number = 0;
+    from: number = -1;
+    to: number = -1;
     radius: number = 16;
+
+    next: number = -1;
+    curNext: number = -1;
 
     onLoad() {
         const nodeForCalcHeight = cc.instantiate(this.normalPsgePrefab);
@@ -83,115 +86,123 @@ export class PageStoryLVD extends ListViewDelegate {
     }
 
     initData() {
-        this.initPsgeData();
-        this.initStrData();
+        this.updateListPsgeData();
+        this.updateListStrData(this.getListPosByProg(this.page.evt.prog));
     }
 
-    initPsgeData() {
-        const curProg = this.page.evt.prog;
+    updateListPsgeData() {
         const psgesInModel = this.page.storyModel.psges;
+        const rztDict = this.page.evt.rztDict;
 
-        const psges: Psge[] = [];
-        const optionIdxDict: { [key: number]: number } = {};
+        const psges = this.psgesInList;
+        const optDict = this.optionUsingDict;
 
-        const slcDict = this.page.evt.slcDict;
-        const tempSlcUsingDict: { [key: string]: number } = {};
-
-        let needNext = true;
-
-        // 加载之前的
-        let index = 0;
-        while (true) {
-            if (index >= curProg) break;
-            const psge = psgesInModel[index];
-            psges[psges.length] = psge;
-
+        const handlePsge = (psge: Psge, index: number): number => {
             if (psge.pType === PsgeType.normal) {
-                index = (psge as NormalPsge).go || index + 1;
+                return (psge as NormalPsge).go || index + 1;
             } else if (psge.pType === PsgeType.selection) {
                 const slcPsge = psge as SelectionPsge;
                 const slcId = slcPsge.id;
 
-                const curSlcNumUsing = (tempSlcUsingDict[slcId] || 0) + 1;
-                const optionIdx = EvtTool.getOption(slcDict, slcId, curSlcNumUsing);
+                const curOptUsing = (optDict[slcId] || 0) + 1;
+                const optionIdx = EvtTool.getOption(rztDict, slcId, curOptUsing);
+                if (optionIdx === -1) return -1;
 
-                if (optionIdx !== -1) {
-                    index = slcPsge.options[optionIdx].go;
-                } else {
-                    needNext = false;
-                    break;
-                }
-
-                tempSlcUsingDict[slcId] = curSlcNumUsing;
+                optDict[slcId] = curOptUsing;
+                return slcPsge.options[optionIdx].go;
             } else {
-                index++;
+                return index + 1;
             }
+        };
+
+        let startIdx: number;
+        if (psges.length > 0) {
+            const lastIndex = psges[psges.length - 1].idx;
+            const lastPsge = psgesInModel[lastIndex];
+            const rzt = handlePsge(lastPsge, lastIndex);
+            if (rzt === -1) return;
+            startIdx = lastIndex + 1;
+        } else startIdx = 0;
+
+        // 按顺序价值psge到list中，直到最后或者被卡住的选择和索要
+        let curIdx = startIdx;
+        while (true) {
+            if (curIdx >= psgesInModel.length) break;
+            const psge = psgesInModel[curIdx];
+            psges[psges.length] = psge;
+            const nextIdx = handlePsge(psge, curIdx);
+            if (nextIdx === -1) break;
+            curIdx = nextIdx;
         }
-
-        // 加载随后的
-        if (needNext) {
-            let addCnt = 10;
-            while (true) {
-                const psge = psgesInModel[index];
-                if (!psge) break;
-                psges[psges.length] = psge;
-
-                if (psge.pType === PsgeType.normal) {
-                    index = (psge as NormalPsge).go || index + 1;
-                } else if (psge.pType === PsgeType.selection) {
-                    break;
-                } else {
-                    index++;
-                }
-
-                addCnt--;
-                if (addCnt === 0) break;
-            }
-        }
-
-        this.psgesInList = psges;
-        this.optionIdxDictForList = optionIdxDict;
     }
 
-    initStrData() {
-        const curProg = this.page.evt.prog;
-        const gameData = this.ctrlr.memory.gameData;
+    getListPosByProg(prog: number): number {
+        for (let index = this.psgesInList.length - 1; index >= 0; index--) {
+            if (this.psgesInList[index].idx === prog) return index;
+        }
+        return 0;
+    }
+
+    /**
+     * btm代表是否是往下文更新
+     */
+    updateListStrData(pos: number, btm: boolean = true) {
         const psges = this.psgesInList;
 
-        this.from = Math.max(curProg - this.radius, 0);
-        this.to = Math.min(curProg + this.radius, psges.length);
-
-        const heights: number[] = [];
-        const strs: string[] = [];
-
-        for (let index = this.from; index < this.to; index++) {
-            const psge = psges[index];
-            const t = psge.pType;
-            if (t === PsgeType.normal) {
-                const str = PageStoryLVD.getRealPsgeStr(gameData, psge as NormalPsge);
-                PageStoryLVD.monitorLabelCharAtlas();
-                this.cellForCalcHeight.setData(str);
-                if (PageStoryLVD.labelCharError) {
-                    // 监测label发现char不能正确生成，大概率因为保存的char缓存已满，需清理缓存重新初始化
-                    cc.Label.clearCharCache();
-                    return this.initStrData();
-                }
-                heights[index] = this.cellForCalcHeight.node.height;
-                strs[index] = str;
-            } else if (t === PsgeType.selection) {
-                heights[index] = CellPsgeSelection.getHeight((psge as SelectionPsge).options.length);
-            } else if (t === PsgeType.quest) {
-            } else if (t === PsgeType.evt) {
-            } else if (t === PsgeType.nameInput) {
-            } else if (t === PsgeType.head) {
-                heights[index] = 300;
-            } else if (t === PsgeType.end) {
-                heights[index] = 300;
-            }
+        if (this.from === -1) {
+            this.from = Math.max(pos - this.radius, 0);
+        } else if (!btm) {
         }
 
-        this.heightsInList = heights;
-        this.strsInList = strs;
+        if (this.to === -1) {
+            this.to = Math.min(pos + this.radius, psges.length);
+        } else if (btm) {
+            this.to = Math.min(this.to + this.radius, psges.length);
+        }
+
+        this.next = Math.min(this.to + this.radius, psges.length);
+        this.curNext = this.to;
+
+        for (let index = this.from; index < this.to; index++) {
+            this.calcStrData(index);
+            if (PageStoryLVD.labelCharError) {
+                // 监测label发现char不能正确生成，大概率因为保存的char缓存已满，需清理缓存重新初始化
+                cc.Label.clearCharCache();
+                this.radius--; // 减少字符数量，避免进入无限循环
+                return this.updateListStrData(pos, btm);
+            }
+        }
+    }
+
+    loadNextStrData() {
+        if (this.curNext === this.next) return;
+        if (PageStoryLVD.labelCharError) return;
+        this.calcStrData(this.curNext);
+        if (PageStoryLVD.labelCharError) return;
+        this.curNext++;
+    }
+
+    calcStrData(index: number) {
+        if (this.heightsInList[index]) return;
+        const psge = this.psgesInList[index];
+        const t = psge.pType;
+        if (t === PsgeType.normal) {
+            const gameData = this.ctrlr.memory.gameData;
+            PageStoryLVD.startLabelCharAtlasMonitor();
+            const str = PageStoryLVD.getRealPsgeStr(gameData, psge as NormalPsge);
+            this.cellForCalcHeight.setData(str);
+            this.heightsInList[index] = this.cellForCalcHeight.node.height;
+            this.strsInList[index] = str;
+        } else if (t === PsgeType.selection) {
+            this.heightsInList[index] = CellPsgeSelection.getHeight((psge as SelectionPsge).options.length);
+        } else if (t === PsgeType.quest) {
+        } else if (t === PsgeType.evt) {
+        } else if (t === PsgeType.nameInput) {
+        } else if (t === PsgeType.head) {
+            this.heightsInList[index] = 300;
+        } else if (t === PsgeType.end) {
+            this.heightsInList[index] = 300;
+        }
     }
 
     static getRealPsgeStr(gameData: GameData, psge: NormalPsge): string {
@@ -201,7 +212,7 @@ export class PageStoryLVD extends ListViewDelegate {
     static monitored: boolean = false;
     static labelCharError: boolean = false;
 
-    static monitorLabelCharAtlas() {
+    static startLabelCharAtlasMonitor() {
         if (this.monitored) return;
         // @ts-ignore
         const shareAtlas = cc.Label._shareAtlas;
@@ -214,6 +225,14 @@ export class PageStoryLVD extends ListViewDelegate {
                 return letter;
             };
         }
+    }
+
+    clearStrData() {
+        this.from = -1;
+        this.to = -1;
+        this.heightsInList.length = 0;
+        this.strsInList.length = 0;
+        cc.Label.clearCharCache();
     }
 
     // -----------------------------------------------------------------
