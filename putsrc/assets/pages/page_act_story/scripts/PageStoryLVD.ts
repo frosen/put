@@ -29,8 +29,8 @@ const EVT = 'e';
 const NAMEINPUT = 'ni';
 const END = 'end';
 const CHECKERBLANK = 'cb';
-export const TOPCKR = 'tckr';
-export const BTMCKR = 'bckr';
+const TOPCKR = 'tckr';
+const BTMCKR = 'bckr';
 
 type CellPsge = CellPsgeNormal & CellPsgeSelection & CellPsgeQuest & CellPsgeEvt;
 
@@ -215,6 +215,8 @@ export class PageStoryLVD extends ListViewDelegate {
             };
         }
     }
+
+    // -----------------------------------------------------------------
 
     numberOfRows(listView: ListView): number {
         return this.to - this.from + 3; // 3代表endblank和2个checker

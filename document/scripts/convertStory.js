@@ -116,7 +116,7 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 curOptions.length = 0;
             }
 
-            datas[datas.length] = { str: line, pType: PTYPE.normal };
+            datas[datas.length] = { str: '       ' + line, pType: PTYPE.normal };
         }
     }
 

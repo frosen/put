@@ -13,7 +13,7 @@ import { ListView } from '../../../scripts/ListView';
 import { GameDataTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
-import { PageStoryLVD, TOPCKR, BTMCKR } from './PageStoryLVD';
+import { PageStoryLVD } from './PageStoryLVD';
 
 @ccclass
 export class PageStory extends PageBase {
@@ -96,8 +96,10 @@ export class PageStory extends PageBase {
     updateCurCells() {}
 
     onCellShow(listView: ListView, key: string, idx: number) {
-        if (key === TOPCKR) {
-        } else if (key === BTMCKR) {
+        if (idx === 0 && key === ListView.CellEventKey.top) {
+            cc.log('^_^! get top');
+        } else if (idx === this.lvd.numberOfRows(listView) - 1 && key === ListView.CellEventKey.btm) {
+            cc.log('^_^! get bottom');
         }
     }
 
