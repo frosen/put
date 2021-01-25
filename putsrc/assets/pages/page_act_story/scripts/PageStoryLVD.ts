@@ -28,7 +28,6 @@ const QUEST = 'q';
 const EVT = 'e';
 const NAMEINPUT = 'ni';
 const END = 'end';
-const CHECKERBLANK = 'cb';
 const TOPCKR = 'tckr';
 const BTMCKR = 'bckr';
 
@@ -238,7 +237,7 @@ export class PageStoryLVD extends ListViewDelegate {
     // -----------------------------------------------------------------
 
     numberOfRows(listView: ListView): number {
-        return this.to - this.from + 3; // 3代表endblank和2个checker
+        return this.to - this.from + 2; // 2个checker
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
@@ -247,7 +246,6 @@ export class PageStoryLVD extends ListViewDelegate {
         } else {
             const realIdx = rowIdx - 1 + this.from;
             if (realIdx < this.to) return this.heightsInList[realIdx];
-            else if (realIdx === this.to) return 200;
             else return 200;
         }
     }
@@ -266,8 +264,7 @@ export class PageStoryLVD extends ListViewDelegate {
                 else if (t === PsgeType.nameInput) return NAMEINPUT;
                 else if (t === PsgeType.head) return HEAD;
                 else if (t === PsgeType.end) return END;
-            } else if (realIdx === this.to) return CHECKERBLANK;
-            else return BTMCKR;
+            } else return BTMCKR;
         }
     }
 
@@ -294,8 +291,6 @@ export class PageStoryLVD extends ListViewDelegate {
             return cell;
         } else if (cellId === TOPCKR) {
             return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);
-        } else if (cellId === CHECKERBLANK) {
-            return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);
         } else if (cellId === BTMCKR) {
             return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);
         }
@@ -314,5 +309,12 @@ export class PageStoryLVD extends ListViewDelegate {
                 }
             }
         }
+    }
+
+    getPsgeByRowIdx(idx: number): Psge | undefined {
+        if (idx === 0) return undefined;
+        const realIdx = idx - 1 + this.from;
+        if (realIdx >= this.to) return undefined;
+        return this.psgesInList[realIdx];
     }
 }

@@ -6,9 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 
 @ccclass
-export class CellPsgeQuest extends ListViewCell {
-    checkBake() {}
-}
+export class CellPsgeQuest extends CellPsgeBase {}

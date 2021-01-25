@@ -24,11 +24,11 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 5
+        "__id__": 4
       }
     ],
     "_prefab": {
-      "__id__": 6
+      "__id__": 5
     },
     "_opacity": 255,
     "_color": {
@@ -79,45 +79,41 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "lbl",
+    "_name": "root",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
     },
     "_children": [],
     "_active": true,
-    "_components": [
-      {
-        "__id__": 3
-      }
-    ],
+    "_components": [],
     "_prefab": {
-      "__id__": 4
+      "__id__": 3
     },
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 43,
-      "g": 33,
-      "b": 4,
+      "r": 255,
+      "g": 255,
+      "b": 255,
       "a": 255
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 955,
-      "height": 187.57999999999998
+      "width": 0,
+      "height": 0
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 1
+      "x": 0.5,
+      "y": 0.5
     },
     "_trs": {
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        62,
-        -15,
+        0,
+        0,
         0,
         0,
         0,
@@ -142,39 +138,6 @@
     "_id": ""
   },
   {
-    "__type__": "cc.Label",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 2
-    },
-    "_enabled": true,
-    "_materials": [
-      {
-        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
-      }
-    ],
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
-    "_string": "下面的世界哈既往，可观测的区哈域晴朗，无风，云层稀薄",
-    "_N$string": "下面的世界哈既往，可观测的区哈域晴朗，无风，云层稀薄",
-    "_fontSize": 50,
-    "_lineHeight": 83,
-    "_enableWrapText": true,
-    "_N$file": null,
-    "_isSystemFontUsed": true,
-    "_spacingX": 0,
-    "_batchAsBitmap": false,
-    "_styleFlags": 0,
-    "_underlineHeight": 0,
-    "_N$horizontalAlign": 0,
-    "_N$verticalAlign": 1,
-    "_N$fontFamily": "Arial",
-    "_N$overflow": 3,
-    "_N$cacheMode": 0,
-    "_id": ""
-  },
-  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
@@ -182,7 +145,7 @@
     "asset": {
       "__uuid__": "c0339629-8118-4cf5-8665-ff3422cce8de"
     },
-    "fileId": "66fGrp0alIlLBXwiCot0gq",
+    "fileId": "c6T1fc5elNJY7cvg232UuX",
     "sync": false
   },
   {
@@ -193,6 +156,9 @@
       "__id__": 1
     },
     "_enabled": true,
+    "root": {
+      "__id__": 2
+    },
     "_id": ""
   },
   {

@@ -6,16 +6,13 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 import { PSBState, PsgeSelctionBtn } from './PsgeSelectionBtn';
 
-const SideH = 15;
 const BtnH = 100;
 
 @ccclass
-export class CellPsgeSelection extends ListViewCell {
-    checkBake() {}
-
+export class CellPsgeSelection extends CellPsgeBase {
     @property(cc.Node)
     baseNode: cc.Node = null!;
 

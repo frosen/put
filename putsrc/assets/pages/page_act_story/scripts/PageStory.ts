@@ -34,6 +34,7 @@ export class PageStory extends PageBase {
         this.lvd = this.listView.delegate as PageStoryLVD;
         this.lvd.page = this;
 
+        this.listView.node.on(ListView.EventType.scrolling, this.onScrolling.bind(this));
         this.listView.node.on(ListView.EventType.cellShow, this.onCellShow.bind(this));
 
         this.listView.node.on(cc.Node.EventType.TOUCH_MOVE, this.onListMove.bind(this));
@@ -98,11 +99,29 @@ export class PageStory extends PageBase {
 
     updateCurCells() {}
 
+    onScrolling(listView: ListView) {
+        cc.log('STORM cc ^_^ >>>>>>> ');
+        const disCellDataDict = listView.disCellDataDict;
+        for (let index = listView.disBtmRowIdx; index >= listView.disTopRowIdx; index--) {
+            const data = disCellDataDict[index];
+            const psge = this.lvd.getPsgeByRowIdx(index);
+            if (!psge) continue;
+            this.evt.prog;
+            cc.log(
+                'STORM cc ^_^  ',
+                index,
+                data.id,
+                data.cell.node.y + listView.content.y + listView.node.height - 200 > 0,
+                psge ? psge.idx : '??'
+            );
+        }
+    }
+
     onCellShow(listView: ListView, key: string, idx: number) {
         if (idx === 0 && key === ListView.CellEventKey.top) {
-            cc.log('^_^! get top');
+            cc.log('PUT Story get top');
         } else if (idx === this.lvd.numberOfRows(listView) - 1 && key === ListView.CellEventKey.btm) {
-            cc.log('^_^! get bottom');
+            cc.log('PUT Story get bottom');
             this.lvd.updateListStrData(this.lvd.to, true);
             this.listView.resetContent(true);
         }
