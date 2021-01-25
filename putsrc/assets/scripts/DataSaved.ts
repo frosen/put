@@ -326,7 +326,7 @@ export class Evt {
     /**
      * 代表事件已经到达的文章段落，这个值对应psge的idx
      */
-    prog!: number;
+    sProg!: number;
     /**
      * 选择结果，任务完成结果和最终结果都记录在此
      * 选择结果：number从个位开始表示每一次选择的选项索引值，索引值从1开始
@@ -349,7 +349,8 @@ export class StoryGain {
 }
 
 export class StoryJIT {
-    startProg: number;
+    startSProg: number;
+    startLProg: number;
     gains: StoryGain[];
 }
 

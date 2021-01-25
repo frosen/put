@@ -99,13 +99,13 @@ export class PageActLVD extends ListViewDelegate {
 
         for (const evtData of useCond.startEvts) {
             const evt = gameData.evtDict[evtData.id];
-            if (!evt || evt.prog < evtData.prog) return false;
+            if (!evt || evt.sProg < evtData.prog) return false;
         }
 
         if (useCond.endEvts) {
             for (const evtData of useCond.endEvts) {
                 const evt = gameData.evtDict[evtData.id];
-                if (evt && evt.prog >= evtData.prog) return false;
+                if (evt && evt.sProg >= evtData.prog) return false;
             }
         }
 

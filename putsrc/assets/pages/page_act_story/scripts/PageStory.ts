@@ -87,11 +87,18 @@ export class PageStory extends PageBase {
     runListview() {
         this.lvd.initData();
 
+        const lPos = this.lvd.getListPosByProg(this.evt.sProg);
         let allCellH = 0;
-        for (let index = 0; index < this.evt.prog; index++) {
-            const cellH = this.lvd.heightForRow(this.listView, index);
+        let rowIdx = 0;
+        while (true) {
+            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(rowIdx);
+            if (psgeIdx > lPos) break;
+            const cellH = this.lvd.heightForRow(this.listView, rowIdx);
             allCellH += cellH;
+            rowIdx++;
         }
+
+        allCellH -= 50;
         const curY = Math.max(allCellH - this.listView.node.height, 0);
         this.listView.clearContent();
         this.listView.createContent(curY);
@@ -104,9 +111,9 @@ export class PageStory extends PageBase {
         const disCellDataDict = listView.disCellDataDict;
         for (let index = listView.disBtmRowIdx; index >= listView.disTopRowIdx; index--) {
             const data = disCellDataDict[index];
-            const psge = this.lvd.getPsgeByRowIdx(index);
-            if (!psge) continue;
-            this.evt.prog;
+            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
+            if (psgeIdx < 0) continue;
+            const psge = this.lvd.psgesInList[psgeIdx];
             cc.log(
                 'STORM cc ^_^  ',
                 index,

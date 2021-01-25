@@ -1050,9 +1050,10 @@ export class EvtTool {
         return evt;
     }
 
-    static createStoryJIT(startProg: number): StoryJIT {
+    static createStoryJIT(startSProg: number, startLProg): StoryJIT {
         const jit = newInsWithChecker(StoryJIT);
-        jit.startProg = startProg;
+        jit.startSProg = startSProg;
+        jit.startLProg = startLProg;
         jit.gains = [];
         return jit;
     }
@@ -1611,7 +1612,8 @@ export class GameDataTool {
     static enterEvt(gameData: GameData, evtId: string) {
         gameData.curEvtId = evtId;
         if (StoryModelDict[evtId]) {
-            gameData.storyJIT = EvtTool.createStoryJIT(gameData.evtDict[evtId].prog);
+            const evt = gameData.evtDict[evtId];
+            gameData.storyJIT = EvtTool.createStoryJIT(evt.sProg, evt.lProg);
         }
     }
 

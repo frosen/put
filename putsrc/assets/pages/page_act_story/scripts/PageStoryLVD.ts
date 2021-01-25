@@ -86,7 +86,7 @@ export class PageStoryLVD extends ListViewDelegate {
 
     initData() {
         this.updateListPsgeData();
-        this.updateListStrData(this.getListPosByProg(this.page.evt.prog));
+        this.updateListStrData(this.getListPosByProg(this.page.evt.sProg));
     }
 
     updateListPsgeData() {
@@ -311,10 +311,10 @@ export class PageStoryLVD extends ListViewDelegate {
         }
     }
 
-    getPsgeByRowIdx(idx: number): Psge | undefined {
-        if (idx === 0) return undefined;
+    getPsgeIdxByRowIdx(idx: number): number {
+        if (idx === 0) return -1;
         const realIdx = idx - 1 + this.from;
-        if (realIdx >= this.to) return undefined;
-        return this.psgesInList[realIdx];
+        if (realIdx >= this.to) return -1;
+        return realIdx;
     }
 }
