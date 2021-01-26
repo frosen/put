@@ -350,7 +350,6 @@ export class StoryGain {
 
 export class StoryJIT {
     startSProg: number;
-    startLProg: number;
     gains: StoryGain[];
 }
 

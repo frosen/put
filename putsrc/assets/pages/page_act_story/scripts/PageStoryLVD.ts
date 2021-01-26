@@ -300,7 +300,10 @@ export class PageStoryLVD extends ListViewDelegate {
         if (rowIdx > 0) {
             const realIdx = rowIdx - 1 + this.from;
             if (realIdx < this.to) {
-                const t = this.psgesInList[realIdx].pType;
+                const psge = this.psgesInList[realIdx];
+                cell.psge = psge;
+                cell.show(); // 先默认展示
+                const t = psge.pType;
                 if (t === PsgeType.normal) {
                     cell.setData(this.strsInList[realIdx]);
                 } else if (t === PsgeType.selection) {

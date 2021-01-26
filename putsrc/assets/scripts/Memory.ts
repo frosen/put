@@ -1045,15 +1045,14 @@ export class EvtTool {
     static create(id: string): Evt {
         const evt = newInsWithChecker(Evt);
         evt.id = id;
-        evt.prog = 0;
+        evt.sProg = -1;
         evt.rztDict = newDict();
         return evt;
     }
 
-    static createStoryJIT(startSProg: number, startLProg): StoryJIT {
+    static createStoryJIT(startSProg: number): StoryJIT {
         const jit = newInsWithChecker(StoryJIT);
         jit.startSProg = startSProg;
-        jit.startLProg = startLProg;
         jit.gains = [];
         return jit;
     }
@@ -1613,7 +1612,7 @@ export class GameDataTool {
         gameData.curEvtId = evtId;
         if (StoryModelDict[evtId]) {
             const evt = gameData.evtDict[evtId];
-            gameData.storyJIT = EvtTool.createStoryJIT(evt.sProg, evt.lProg);
+            gameData.storyJIT = EvtTool.createStoryJIT(evt.sProg);
         }
     }
 

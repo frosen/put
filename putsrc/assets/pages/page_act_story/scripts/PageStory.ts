@@ -14,6 +14,7 @@ import { ListViewCell } from '../../../scripts/ListViewCell';
 import { GameDataTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
+import { CellPsgeBase } from './CellPsgeBase';
 import { PageStoryLVD } from './PageStoryLVD';
 
 @ccclass
@@ -105,38 +106,58 @@ export class PageStory extends PageBase {
         lv.createContent(curY);
 
         // 根据最终显示位置，更新进度，并显示动画
-        const btmCellData = lv.disCellDataDict[lv.disBtmRowIdx];
+        let progMax = -1;
+        let delay = 0;
+        const disCellDataDict = lv.disCellDataDict;
+        for (let index = lv.disTopRowIdx; index <= lv.disBtmRowIdx; index++) {
+            const cell = disCellDataDict[index].cell;
+            if (!(cell instanceof CellPsgeBase)) continue;
+            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
+            progMax = psgeIdx;
+            cell.hide();
+            cell.showWithAction(delay);
+            delay += 0.1;
+        }
+
+        this.evt.sProg = progMax;
     }
 
     updateCurCells() {}
 
     onScrolling(listView: ListView) {
-        cc.log('STORM cc ^_^ >>>>>>> ');
+        let progSet = false;
         const disCellDataDict = listView.disCellDataDict;
         for (let index = listView.disBtmRowIdx; index >= listView.disTopRowIdx; index--) {
-            const data = disCellDataDict[index];
-            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
-            if (psgeIdx < 0) continue;
-            const psge = this.lvd.psgesInList[psgeIdx];
-            cc.log(
-                'STORM cc ^_^  ',
-                index,
-                data.id,
-                data.cell.node.y + listView.content.y + listView.node.height - 200 > 0,
-                psge ? psge.idx : '??'
-            );
+            const cell = disCellDataDict[index].cell;
+            if (!(cell instanceof CellPsgeBase)) continue;
+            if (!cell.isHidden()) break;
+            const y = cell.node.y + listView.content.y + listView.node.height - 200;
+            if (y < 0) continue;
+
+            cell.showWithAction();
+            if (!progSet) {
+                progSet = true;
+                this.evt.sProg = cell.psge.idx;
+            }
         }
     }
 
     onCellShow(listView: ListView, key: string, idx: number, cellData: { cell: ListViewCell; id: string }) {
-        if (idx === 0 && key === ListView.CellEventKey.top) {
-            cc.log('PUT Story get top');
-        } else if (idx === this.lvd.numberOfRows(listView) - 1) {
-            if (key === ListView.CellEventKey.btm) {
-                cc.log('PUT Story get bottom');
-                this.lvd.updateListStrData(this.lvd.to, true);
-                this.listView.resetContent(true);
+        if (key === ListView.CellEventKey.top && idx === 0) {
+            if (idx > 0) {
             } else {
+                cc.log('PUT Story get top');
+            }
+        } else if (key === ListView.CellEventKey.btm) {
+            if (idx < this.lvd.numberOfRows(listView) - 1) {
+                const lPos = this.lvd.getListPosByProg(this.evt.sProg);
+                const psgeIdx = this.lvd.getPsgeIdxByRowIdx(idx);
+                if (psgeIdx > lPos) (cellData.cell as CellPsgeBase).hide();
+            } else {
+                cc.log('PUT Story get bottom');
+                const lastTo = this.lvd.to;
+                this.lvd.updateListStrData(this.lvd.to, true);
+                if (this.lvd.to > lastTo) this.listView.resetContent(true);
             }
         }
     }
