@@ -259,20 +259,24 @@ export class BaseCtrlr extends cc.Component {
     doPushPageAnim(curNode: cc.Node, nextNode: cc.Node, callback: () => void) {
         curNode.x = 0;
         curNode.y = 0;
-        cc.tween(curNode)
-            .to(0.2, { x: this.pageBed.width * -0.25 }, { easing: cc.easing.sineInOut })
-            .start();
+        setTimeout(() => {
+            cc.tween(curNode)
+                .to(0.2, { x: this.pageBed.width * -0.25 }, { easing: cc.easing.sineInOut })
+                .start();
+        });
 
         nextNode.x = this.pageBed.width;
         nextNode.y = 0;
-        cc.tween(nextNode)
-            .to(0.2, { x: 0 }, { easing: cc.easing.sineInOut })
-            .call(() => {
-                setTimeout(() => {
-                    callback();
-                });
-            })
-            .start();
+        setTimeout(() => {
+            cc.tween(nextNode)
+                .to(0.2, { x: 0 }, { easing: cc.easing.sineInOut })
+                .call(() => {
+                    setTimeout(() => {
+                        callback();
+                    });
+                })
+                .start();
+        });
     }
 
     popPage(withAnim: boolean = true) {
@@ -311,18 +315,22 @@ export class BaseCtrlr extends cc.Component {
     doPopPageAnim(curNode: cc.Node, nextNode: cc.Node, callback: () => void) {
         curNode.x = 0;
         curNode.y = 0;
-        cc.tween(curNode).to(0.2, { x: this.pageBed.width }, { easing: cc.easing.sineInOut }).start();
+        setTimeout(() => {
+            cc.tween(curNode).to(0.2, { x: this.pageBed.width }, { easing: cc.easing.sineInOut }).start();
+        });
 
         nextNode.x = this.pageBed.width * -0.25;
         nextNode.y = 0;
-        cc.tween(nextNode)
-            .to(0.2, { x: 0 }, { easing: cc.easing.sineInOut })
-            .call(() => {
-                setTimeout(() => {
-                    callback();
-                });
-            })
-            .start();
+        setTimeout(() => {
+            cc.tween(nextNode)
+                .to(0.2, { x: 0 }, { easing: cc.easing.sineInOut })
+                .call(() => {
+                    setTimeout(() => {
+                        callback();
+                    });
+                })
+                .start();
+        });
     }
 
     switchCurPage<T extends PageBase>(
@@ -399,50 +407,62 @@ export class BaseCtrlr extends cc.Component {
             curNode.y = 0;
             const curToX = anim === PageSwitchAnim.fromLeft ? this.pageBed.width : -this.pageBed.width;
             const curToY = 0;
-            cc.tween(curNode).to(0.2, { x: curToX, y: curToY }, { easing: cc.easing.sineInOut }).start();
+            setTimeout(() => {
+                cc.tween(curNode).to(0.2, { x: curToX, y: curToY }, { easing: cc.easing.sineInOut }).start();
+            });
 
             nextNode.x = anim === PageSwitchAnim.fromLeft ? -this.pageBed.width : this.pageBed.width;
             nextNode.y = 0;
-            cc.tween(nextNode)
-                .to(0.2, { x: 0, y: 0 }, { easing: cc.easing.sineInOut })
-                .call(() => {
-                    setTimeout(() => {
-                        callback();
-                    });
-                })
-                .start();
+            setTimeout(() => {
+                cc.tween(nextNode)
+                    .to(0.2, { x: 0, y: 0 }, { easing: cc.easing.sineInOut })
+                    .call(() => {
+                        setTimeout(() => {
+                            callback();
+                        });
+                    })
+                    .start();
+            });
         } else if (anim === PageSwitchAnim.fromTop) {
             curNode.x = 0;
             curNode.y = 0;
-            cc.tween(curNode).to(0.35, { x: 0, y: -900 }, { easing: cc.easing.sineIn }).start();
+            setTimeout(() => {
+                cc.tween(curNode).to(0.35, { x: 0, y: -900 }, { easing: cc.easing.sineIn }).start();
+            });
 
             nextNode.x = 0;
             nextNode.y = this.pageBed.height + this.navBed.height * 2;
-            cc.tween(nextNode)
-                .to(0.35, { x: 0, y: 0 }, { easing: cc.easing.sineOut })
-                .call(() => {
-                    setTimeout(() => {
-                        callback();
-                    });
-                })
-                .start();
+            setTimeout(() => {
+                cc.tween(nextNode)
+                    .to(0.35, { x: 0, y: 0 }, { easing: cc.easing.sineOut })
+                    .call(() => {
+                        setTimeout(() => {
+                            callback();
+                        });
+                    })
+                    .start();
+            });
         } else {
             curNode.x = 0;
             curNode.y = 0;
             const curToX = 0;
             const curToY = this.pageBed.height + this.navBed.height * 2;
-            cc.tween(curNode)
-                .to(0.35, { x: curToX, y: curToY }, { easing: cc.easing.sineIn })
-                .call(() => {
-                    setTimeout(() => {
-                        callback();
-                    });
-                })
-                .start();
+            setTimeout(() => {
+                cc.tween(curNode)
+                    .to(0.35, { x: curToX, y: curToY }, { easing: cc.easing.sineIn })
+                    .call(() => {
+                        setTimeout(() => {
+                            callback();
+                        });
+                    })
+                    .start();
+            });
 
             nextNode.x = 0;
             nextNode.y = -900;
-            cc.tween(nextNode).to(0.35, { x: 0, y: 0 }, { easing: cc.easing.sineOut }).start();
+            setTimeout(() => {
+                cc.tween(nextNode).to(0.35, { x: 0, y: 0 }, { easing: cc.easing.sineOut }).start();
+            });
         }
     }
 
