@@ -10,6 +10,7 @@ import { StoryModelDict } from '../../../configs/EvtModelDict';
 import { StoryModel } from '../../../scripts/DataModel';
 import { Evt, StoryGainType } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 import { GameDataTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
@@ -87,21 +88,24 @@ export class PageStory extends PageBase {
     runListview() {
         this.lvd.initData();
 
+        // 根据进度计算list显示位置
+        const lv = this.listView;
         const lPos = this.lvd.getListPosByProg(this.evt.sProg);
         let allCellH = 0;
-        let rowIdx = 0;
-        while (true) {
-            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(rowIdx);
+        for (let index = 0; ; index++) {
+            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
             if (psgeIdx > lPos) break;
-            const cellH = this.lvd.heightForRow(this.listView, rowIdx);
+            const cellH = this.lvd.heightForRow(lv, index);
             allCellH += cellH;
-            rowIdx++;
         }
 
-        allCellH -= 50;
-        const curY = Math.max(allCellH - this.listView.node.height, 0);
-        this.listView.clearContent();
-        this.listView.createContent(curY);
+        allCellH -= 50; // 最后一个cell少露出一些
+        const curY = Math.max(allCellH - lv.node.height, 0);
+        lv.clearContent();
+        lv.createContent(curY);
+
+        // 根据最终显示位置，更新进度，并显示动画
+        const btmCellData = lv.disCellDataDict[lv.disBtmRowIdx];
     }
 
     updateCurCells() {}
@@ -124,13 +128,16 @@ export class PageStory extends PageBase {
         }
     }
 
-    onCellShow(listView: ListView, key: string, idx: number) {
+    onCellShow(listView: ListView, key: string, idx: number, cellData: { cell: ListViewCell; id: string }) {
         if (idx === 0 && key === ListView.CellEventKey.top) {
             cc.log('PUT Story get top');
-        } else if (idx === this.lvd.numberOfRows(listView) - 1 && key === ListView.CellEventKey.btm) {
-            cc.log('PUT Story get bottom');
-            this.lvd.updateListStrData(this.lvd.to, true);
-            this.listView.resetContent(true);
+        } else if (idx === this.lvd.numberOfRows(listView) - 1) {
+            if (key === ListView.CellEventKey.btm) {
+                cc.log('PUT Story get bottom');
+                this.lvd.updateListStrData(this.lvd.to, true);
+                this.listView.resetContent(true);
+            } else {
+            }
         }
     }
 

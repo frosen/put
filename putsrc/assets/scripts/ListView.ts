@@ -93,7 +93,7 @@ export class ListView extends cc.Component {
     createContent(pos: number = 0) {
         this.rowCount = this.delegate.numberOfRows(this);
         this.content.height = this.getHeight(this.rowCount);
-        this.content.y = pos;
+        this.content.y = Math.min(Math.max(pos, 0), this.content.height);
 
         // 显示cell
         const { disTop, disBtm } = this.calcDisplayArea();
@@ -202,14 +202,14 @@ export class ListView extends cc.Component {
                 const cellData = this.getUnusedCellData(this.disTopRowIdx);
                 this.setCellPos(cellData.cell, this.disTopRowPos);
                 this.disCellDataDict[this.disTopRowIdx] = cellData;
-                this.node.emit(ListView.EventType.cellShow, this, ListView.CellEventKey.top, this.disTopRowIdx);
+                this.node.emit(ListView.EventType.cellShow, this, ListView.CellEventKey.top, this.disTopRowIdx, cellData);
 
                 return this.updateDisTopRowData(disTop);
             }
         } else if (this.disTopRowPos + this.disTopRowH <= disTop) {
             if (this.disTopRowIdx < this.rowCount - 1) {
-                this.node.emit(ListView.EventType.cellHide, this, ListView.CellEventKey.top, this.disTopRowIdx);
                 const cellData = this.disCellDataDict[this.disTopRowIdx];
+                this.node.emit(ListView.EventType.cellHide, this, ListView.CellEventKey.top, this.disTopRowIdx, cellData);
                 this.reclaimCell(cellData, this.disTopRowIdx);
                 delete this.disCellDataDict[this.disTopRowIdx];
 

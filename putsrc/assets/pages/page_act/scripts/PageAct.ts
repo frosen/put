@@ -192,7 +192,6 @@ export class PageAct extends PageBase {
 
     resetListview() {
         this.lvd.initData();
-        this.listView.resetContent(true);
 
         const y = PageAct.ListViewPosDict[this.curPosId] || 0;
         this.listView.clearContent();
