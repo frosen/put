@@ -225,8 +225,8 @@ export class ListView extends cc.Component {
     updateDisBtmRowData(disBtm: number): void {
         if (disBtm <= this.disBtmRowPos) {
             if (this.disBtmRowIdx > 0) {
-                this.node.emit(ListView.EventType.cellHide, this, ListView.CellEventKey.btm, this.disBtmRowIdx);
                 const cellData = this.disCellDataDict[this.disBtmRowIdx];
+                this.node.emit(ListView.EventType.cellHide, this, ListView.CellEventKey.btm, this.disBtmRowIdx, cellData);
                 this.reclaimCell(cellData, this.disBtmRowIdx);
                 delete this.disCellDataDict[this.disBtmRowIdx];
 
@@ -245,7 +245,7 @@ export class ListView extends cc.Component {
                 const cellData = this.getUnusedCellData(this.disBtmRowIdx);
                 this.setCellPos(cellData.cell, this.disBtmRowPos);
                 this.disCellDataDict[this.disBtmRowIdx] = cellData;
-                this.node.emit(ListView.EventType.cellShow, this, ListView.CellEventKey.btm, this.disBtmRowIdx);
+                this.node.emit(ListView.EventType.cellShow, this, ListView.CellEventKey.btm, this.disBtmRowIdx, cellData);
 
                 return this.updateDisBtmRowData(disBtm);
             }
