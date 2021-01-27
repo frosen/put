@@ -7,13 +7,14 @@
 const { ccclass, property } = cc._decorator;
 
 import { StoryModelDict } from '../../../configs/EvtModelDict';
-import { NormalPsge, PsgeType, StoryModel } from '../../../scripts/DataModel';
+import { NormalPsge, PsgeType, SelectionPsge, StoryModel } from '../../../scripts/DataModel';
 import { Evt, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
-import { GameDataTool } from '../../../scripts/Memory';
+import { EvtTool, GameDataTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
+import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
 import { CellPsgeBase } from './CellPsgeBase';
 import { PageStoryLVD } from './PageStoryLVD';
 
@@ -86,8 +87,6 @@ export class PageStory extends PageBase {
         if (!this.listRunning) {
             this.listRunning = true;
             this.runListview();
-        } else {
-            this.updateCurCells();
         }
     }
 
@@ -128,8 +127,6 @@ export class PageStory extends PageBase {
         this.evt.sProg = progMax;
         this.jit.startLProg = lPos;
     }
-
-    updateCurCells() {}
 
     onScrolling(listView: ListView) {
         let progSet = false;
@@ -209,4 +206,43 @@ export class PageStory extends PageBase {
             GameDataTool.leaveEvt(this.ctrlr.memory.gameData, this.evtId);
         }
     }
+
+    // 回调 -----------------------------------------------------------------
+
+    onClickOption(cell: CellPsgeSelection, index: number) {
+        const slcPsge = cell.psge as SelectionPsge;
+        const slcId = slcPsge.id;
+
+        EvtTool.pushOption(this.evt.rztDict, slcId, index);
+
+        this.lvd.updateListPsgeData();
+        this.lvd.updateListStrData(this.lvd.to, true);
+
+        const lv = this.listView;
+        lv.resetContent(true);
+
+        const curPsgeIdx = slcPsge.idx;
+        const disCellDataDict = lv.disCellDataDict;
+        let progMax = -1;
+        for (let index = lv.disBtmRowIdx; index >= lv.disTopRowIdx; index--) {
+            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
+            if (psgeIdx === -1) continue;
+            if (psgeIdx === curPsgeIdx) break;
+
+            const cell = disCellDataDict[index].cell as CellPsgeBase;
+
+            if (progMax === -1) progMax = psgeIdx;
+            cell.hide();
+            cell.showWithAction();
+        }
+        this.evt.sProg = progMax;
+    }
+
+    onClickQuest() {}
+
+    onClickEvt() {}
+
+    onClickEnd() {}
+
+    onInputName() {}
 }

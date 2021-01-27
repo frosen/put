@@ -20,6 +20,8 @@ export class CellPsgeSelection extends CellPsgeBase {
     @property(cc.Prefab)
     btnPrefab: cc.Prefab = null!;
 
+    clickOptionCallback?: (cell: CellPsgeSelection, index: number) => void;
+
     btns: PsgeSelctionBtn[] = [];
 
     activeBtnLen: number = 0;
@@ -64,5 +66,7 @@ export class CellPsgeSelection extends CellPsgeBase {
         return SideH + (BtnH + SideH) * btnLen;
     }
 
-    onClickBtn(index: number) {}
+    onClickBtn(index: number) {
+        if (this.clickOptionCallback) this.clickOptionCallback(this, index);
+    }
 }

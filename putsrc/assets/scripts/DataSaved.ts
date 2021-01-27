@@ -333,7 +333,7 @@ export class Evt {
      * 任务结果：1代表完成
      * 最终结果：-D-的值为1表示全部完成
      */
-    rztDict?: { [key: string]: number };
+    rztDict!: { [key: string]: number };
 }
 
 export enum StoryGainType {

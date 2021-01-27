@@ -86,7 +86,7 @@ export class PageStoryLVD extends ListViewDelegate {
 
     initData() {
         this.updateListPsgeData();
-        this.updateListStrData(this.getListPosByProg(this.page.evt.sProg));
+        this.updateListStrData(this.getListPosByProg(this.page.evt.sProg), true);
     }
 
     updateListPsgeData() {
@@ -145,7 +145,7 @@ export class PageStoryLVD extends ListViewDelegate {
     /**
      * btm代表是否是往下文更新
      */
-    updateListStrData(pos: number, btm: boolean = true) {
+    updateListStrData(pos: number, btm: boolean) {
         const psges = this.psgesInList;
 
         if (this.from === -1) {
@@ -273,6 +273,7 @@ export class PageStoryLVD extends ListViewDelegate {
             return cc.instantiate(this.normalPsgePrefab).getComponent(ListViewCell);
         } else if (cellId === SELECTION) {
             const cell = cc.instantiate(this.selectionPsgePrefab).getComponent(CellPsgeSelection);
+            cell.clickOptionCallback = this.page.onClickOption.bind(this.page);
             return cell;
         } else if (cellId === QUEST) {
             const cell = cc.instantiate(this.questPsgePrefab).getComponent(CellPsgeQuest);

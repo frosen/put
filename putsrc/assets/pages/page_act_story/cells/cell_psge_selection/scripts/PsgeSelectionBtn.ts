@@ -36,9 +36,18 @@ export class PsgeSelctionBtn extends cc.Component {
 
     setData(str: string, main: boolean, state: PSBState) {
         this.lbl.string = str;
-        if (state === PSBState.normal) this.node.resumeSystemEvents(false);
-        else this.node.pauseSystemEvents(false);
-        this.btn.interactable = state !== PSBState.pressed; // 用来改变显示状态
+        if (state === PSBState.normal) {
+            this.btn.interactable = true;
+            this.lbl.node.color = cc.color(43, 33, 4);
+        } else if (state === PSBState.pressed) {
+            this.btn.interactable = false;
+            this.btn.disabledSprite = this.btn.pressedSprite;
+            this.lbl.node.color = cc.color(120, 120, 120);
+        } else {
+            this.btn.interactable = false;
+            this.btn.disabledSprite = this.btn.normalSprite;
+            this.lbl.node.color = cc.color(120, 120, 120);
+        }
     }
 
     onClick() {

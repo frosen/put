@@ -17,7 +17,7 @@ export class CellUpdateDisplay extends ListViewCell {
     @property(cc.Button)
     refreshBtn: cc.Button = null;
 
-    onRefreshCallback: () => void = null;
+    refreshCallback: () => void = null;
 
     onLoad() {
         super.onLoad();
@@ -64,6 +64,6 @@ export class CellUpdateDisplay extends ListViewCell {
     }
 
     onRefresh() {
-        if (this.onRefreshCallback) this.onRefreshCallback();
+        if (this.refreshCallback) this.refreshCallback();
     }
 }
