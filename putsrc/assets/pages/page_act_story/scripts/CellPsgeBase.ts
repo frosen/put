@@ -23,16 +23,25 @@ export class CellPsgeBase extends ListViewCell {
     show() {
         this.hidden = false;
         this.root.stopAllActions();
+        this.root.y = 0;
+        this.root.opacity = 255;
     }
 
     showWithAction(delay: number = 0) {
         this.hidden = false;
         this.root.stopAllActions();
+        if (delay > 0) {
+            cc.tween(this.root).delay(delay).set({ opacity: 255 }).to(0.3, { y: 0 }, { easing: cc.easing.quadOut }).start();
+        } else {
+            cc.tween(this.root).set({ opacity: 255 }).to(0.3, { y: 0 }, { easing: cc.easing.quadOut }).start();
+        }
     }
 
     hide() {
         this.hidden = true;
         this.root.stopAllActions();
+        this.root.y = -500;
+        this.root.opacity = 0;
     }
 
     isHidden() {

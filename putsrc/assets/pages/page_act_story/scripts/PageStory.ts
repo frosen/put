@@ -7,8 +7,8 @@
 const { ccclass, property } = cc._decorator;
 
 import { StoryModelDict } from '../../../configs/EvtModelDict';
-import { StoryModel } from '../../../scripts/DataModel';
-import { Evt, StoryGainType } from '../../../scripts/DataSaved';
+import { NormalPsge, PsgeType, StoryModel } from '../../../scripts/DataModel';
+import { Evt, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { GameDataTool } from '../../../scripts/Memory';
@@ -26,6 +26,7 @@ export class PageStory extends PageBase {
     evtId!: string;
     storyModel!: StoryModel;
     evt!: Evt;
+    jit!: StoryJIT;
 
     listRunning: boolean = false;
 
@@ -52,6 +53,8 @@ export class PageStory extends PageBase {
         this.evt = gameData.evtDict[this.evtId];
 
         if (!gameData.curEvtId) GameDataTool.enterEvt(gameData, this.evtId);
+
+        this.jit = gameData.storyJIT;
     }
 
     onLoadNavBar(navBar: NavBar) {
@@ -65,12 +68,14 @@ export class PageStory extends PageBase {
     onClickBack(key: number) {
         if (key === 1) {
             const storyJIT = this.ctrlr.memory.gameData.storyJIT;
-            for (const gain of storyJIT.gains) {
-                const t = gain.gType;
-                if (t === StoryGainType.cnsum) {
-                } else if (t === StoryGainType.equip) {
-                } else if (t === StoryGainType.pet) {
-                } else {
+            for (const { gains } of storyJIT.gainDataList) {
+                for (const gain of gains) {
+                    const t = gain.gType;
+                    if (t === StoryGainType.cnsum) {
+                    } else if (t === StoryGainType.equip) {
+                    } else if (t === StoryGainType.pet) {
+                    } else {
+                    }
                 }
             }
             this.ctrlr.popPage();
@@ -107,12 +112,13 @@ export class PageStory extends PageBase {
 
         // 根据最终显示位置，更新进度，并显示动画
         let progMax = -1;
-        let delay = 0;
+        let delay = 0.1;
         const disCellDataDict = lv.disCellDataDict;
         for (let index = lv.disTopRowIdx; index <= lv.disBtmRowIdx; index++) {
-            const cell = disCellDataDict[index].cell;
-            if (!(cell instanceof CellPsgeBase)) continue;
             const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
+            if (psgeIdx === -1) continue;
+            const cell = disCellDataDict[index].cell as CellPsgeBase;
+
             progMax = psgeIdx;
             cell.hide();
             cell.showWithAction(delay);
@@ -120,6 +126,7 @@ export class PageStory extends PageBase {
         }
 
         this.evt.sProg = progMax;
+        this.jit.startLProg = lPos;
     }
 
     updateCurCells() {}
@@ -128,16 +135,24 @@ export class PageStory extends PageBase {
         let progSet = false;
         const disCellDataDict = listView.disCellDataDict;
         for (let index = listView.disBtmRowIdx; index >= listView.disTopRowIdx; index--) {
-            const cell = disCellDataDict[index].cell;
-            if (!(cell instanceof CellPsgeBase)) continue;
+            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
+            if (psgeIdx === -1) continue;
+            const cell = disCellDataDict[index].cell as CellPsgeBase;
             if (!cell.isHidden()) break;
             const y = cell.node.y + listView.content.y + listView.node.height - 200;
             if (y < 0) continue;
 
+            // 向上滑动到一定程度时，隐藏的cell会被激活，同时更新进度
             cell.showWithAction();
             if (!progSet) {
                 progSet = true;
                 this.evt.sProg = cell.psge.idx;
+            }
+
+            // 激活时，执行效果
+            const psge = this.lvd.psgesInList[psgeIdx];
+            if (psge.pType === PsgeType.normal) {
+                if ((psge as NormalPsge).gains) this.jit.gainDataList.push({ gains: (psge as NormalPsge).gains, lProg: psgeIdx });
             }
         }
     }

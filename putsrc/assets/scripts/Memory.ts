@@ -1053,7 +1053,8 @@ export class EvtTool {
     static createStoryJIT(startSProg: number): StoryJIT {
         const jit = newInsWithChecker(StoryJIT);
         jit.startSProg = startSProg;
-        jit.gains = [];
+        jit.startLProg = -1;
+        jit.gainDataList = [];
         return jit;
     }
 
