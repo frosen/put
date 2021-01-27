@@ -9,7 +9,8 @@ const { ccclass, property } = cc._decorator;
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 import { PSBState, PsgeSelctionBtn } from './PsgeSelectionBtn';
 
-const BtnH = 100;
+const SideH = 15;
+const BtnH = 150;
 
 @ccclass
 export class CellPsgeSelection extends CellPsgeBase {
@@ -32,7 +33,7 @@ export class CellPsgeSelection extends CellPsgeBase {
             } else {
                 const btnNode = cc.instantiate(this.btnPrefab);
                 btnNode.parent = this.baseNode;
-                btnNode.y = -BtnH - BtnH * index;
+                btnNode.y = -SideH - (BtnH + SideH) * index;
                 btn = btnNode.getComponent(PsgeSelctionBtn);
                 this.btns.push(btn);
             }
@@ -60,7 +61,7 @@ export class CellPsgeSelection extends CellPsgeBase {
     }
 
     static getHeight(btnLen: number) {
-        return BtnH * 2 + BtnH * btnLen;
+        return SideH + (BtnH + SideH) * btnLen;
     }
 
     onClickBtn(index: number) {}
