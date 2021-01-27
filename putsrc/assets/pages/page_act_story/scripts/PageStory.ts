@@ -118,9 +118,11 @@ export class PageStory extends PageBase {
             if (psgeIdx === -1) continue;
             const cell = disCellDataDict[index].cell as CellPsgeBase;
 
-            progMax = psgeIdx;
             cell.hide();
             cell.showWithAction(delay);
+            this.activePsge(psgeIdx);
+            progMax = psgeIdx;
+
             delay += 0.1;
         }
 
@@ -128,8 +130,15 @@ export class PageStory extends PageBase {
         this.jit.startLProg = lPos;
     }
 
+    activePsge(psgeIdx: number) {
+        const psge = this.lvd.psgesInList[psgeIdx];
+        if (psge.pType === PsgeType.normal) {
+            if ((psge as NormalPsge).gains) this.jit.gainDataList.push({ gains: (psge as NormalPsge).gains, lProg: psgeIdx });
+        }
+    }
+
     onScrolling(listView: ListView) {
-        let progSet = false;
+        let progMax = -1;
         const disCellDataDict = listView.disCellDataDict;
         for (let index = listView.disBtmRowIdx; index >= listView.disTopRowIdx; index--) {
             const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
@@ -141,17 +150,10 @@ export class PageStory extends PageBase {
 
             // 向上滑动到一定程度时，隐藏的cell会被激活，同时更新进度
             cell.showWithAction();
-            if (!progSet) {
-                progSet = true;
-                this.evt.sProg = cell.psge.idx;
-            }
-
-            // 激活时，执行效果
-            const psge = this.lvd.psgesInList[psgeIdx];
-            if (psge.pType === PsgeType.normal) {
-                if ((psge as NormalPsge).gains) this.jit.gainDataList.push({ gains: (psge as NormalPsge).gains, lProg: psgeIdx });
-            }
+            this.activePsge(psgeIdx);
+            if (progMax === -1) progMax = cell.psge.idx;
         }
+        this.evt.sProg = progMax;
     }
 
     onCellShow(listView: ListView, key: string, idx: number, cellData: { cell: ListViewCell; id: string }) {
@@ -231,9 +233,10 @@ export class PageStory extends PageBase {
 
             const cell = disCellDataDict[index].cell as CellPsgeBase;
 
-            if (progMax === -1) progMax = psgeIdx;
             cell.hide();
             cell.showWithAction();
+            this.activePsge(psgeIdx);
+            if (progMax === -1) progMax = psgeIdx;
         }
         this.evt.sProg = progMax;
     }
