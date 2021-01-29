@@ -42,7 +42,7 @@ export class PageStory extends PageBase {
         this.listView.node.on(ListView.EventType.cellShow, this.onCellShow.bind(this));
 
         this.listView.node.on(cc.Node.EventType.TOUCH_MOVE, this.onListMove.bind(this));
-        cc.director.on(cc.Director.EVENT_AFTER_DRAW, this.afterDraw.bind(this));
+        cc.director.on(cc.Director.EVENT_AFTER_DRAW, this.afterDraw, this);
     }
 
     setData(pageData: { evtId: string }) {
@@ -110,23 +110,26 @@ export class PageStory extends PageBase {
         lv.createContent(curY);
 
         // 根据最终显示位置，更新进度，并显示动画
-        let progMax = -1;
-        let delay = 0.1;
+        const needActiveDataList: { cell: CellPsgeBase; psgeIdx: number }[] = [];
         const disCellDataDict = lv.disCellDataDict;
-        for (let index = lv.disTopRowIdx; index <= lv.disBtmRowIdx; index++) {
+        for (let index = lv.disBtmRowIdx; index >= lv.disTopRowIdx; index--) {
             const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
             if (psgeIdx === -1) continue;
+            if (psgeIdx === this.evt.sProg) break;
             const cell = disCellDataDict[index].cell as CellPsgeBase;
+            needActiveDataList.push({ cell, psgeIdx });
+        }
 
+        let delay = 0.1;
+        for (let index = needActiveDataList.length - 1; index >= 0; index--) {
+            const { cell, psgeIdx } = needActiveDataList[index];
             cell.hide();
             cell.showWithAction(delay);
             this.activePsge(psgeIdx);
-            progMax = psgeIdx;
-
             delay += 0.1;
         }
 
-        this.evt.sProg = progMax;
+        if (needActiveDataList.length > 0) this.evt.sProg = needActiveDataList[0].psgeIdx;
         this.jit.startLProg = lPos;
     }
 
@@ -153,7 +156,7 @@ export class PageStory extends PageBase {
             this.activePsge(psgeIdx);
             if (progMax === -1) progMax = cell.psge.idx;
         }
-        this.evt.sProg = progMax;
+        if (progMax !== -1) this.evt.sProg = progMax;
     }
 
     onCellShow(listView: ListView, key: string, idx: number, cellData: { cell: ListViewCell; id: string }) {
@@ -205,6 +208,7 @@ export class PageStory extends PageBase {
 
     beforePageHideAnim(willDestroy: boolean) {
         if (willDestroy) {
+            cc.director.targetOff(this);
             GameDataTool.leaveEvt(this.ctrlr.memory.gameData, this.evtId);
         }
     }
@@ -238,7 +242,7 @@ export class PageStory extends PageBase {
             this.activePsge(psgeIdx);
             if (progMax === -1) progMax = psgeIdx;
         }
-        this.evt.sProg = progMax;
+        if (progMax !== -1) this.evt.sProg = progMax;
     }
 
     onClickQuest() {}
