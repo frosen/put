@@ -95,11 +95,11 @@ export class PageStory extends PageBase {
 
         // 根据进度计算list显示位置
         const lv = this.listView;
-        const lPos = this.lvd.getListPosByProg(this.evt.sProg);
+        const pLIdxInProg = this.lvd.getPsgeListIdxByProg(this.evt.sProg);
         let allCellH = 0;
         for (let index = 0; ; index++) {
-            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
-            if (psgeIdx > lPos) break;
+            const pLIdx = this.lvd.getPsgeListIdxByRowIdx(index);
+            if (pLIdx > pLIdxInProg) break;
             const cellH = this.lvd.heightForRow(lv, index);
             allCellH += cellH;
         }
@@ -110,27 +110,30 @@ export class PageStory extends PageBase {
         lv.createContent(curY);
 
         // 根据最终显示位置，更新进度，并显示动画
-        const needActiveDataList: { cell: CellPsgeBase; psgeIdx: number }[] = [];
+        const needActiveDataList: { cell: CellPsgeBase; pLIdx: number }[] = [];
         const disCellDataDict = lv.disCellDataDict;
         for (let index = lv.disBtmRowIdx; index >= lv.disTopRowIdx; index--) {
-            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
-            if (psgeIdx === -1) continue;
-            if (psgeIdx === this.evt.sProg) break;
+            const pLIdx = this.lvd.getPsgeListIdxByRowIdx(index);
+            if (pLIdx === -1) continue;
+            if (pLIdx === pLIdxInProg) break;
             const cell = disCellDataDict[index].cell as CellPsgeBase;
-            needActiveDataList.push({ cell, psgeIdx });
+            needActiveDataList.push({ cell, pLIdx });
         }
 
         let delay = 0.1;
         for (let index = needActiveDataList.length - 1; index >= 0; index--) {
-            const { cell, psgeIdx } = needActiveDataList[index];
+            const { cell, pLIdx } = needActiveDataList[index];
             cell.hide();
             cell.showWithAction(delay);
-            this.activePsge(psgeIdx);
+            this.activePsge(pLIdx);
             delay += 0.1;
         }
 
-        if (needActiveDataList.length > 0) this.evt.sProg = needActiveDataList[0].psgeIdx;
-        this.jit.startLProg = lPos;
+        if (needActiveDataList.length > 0) {
+            const pLIdx = needActiveDataList[0].pLIdx;
+            this.evt.sProg = this.lvd.psgesInList[pLIdx].idx;
+        }
+        this.jit.startLProg = pLIdxInProg;
     }
 
     activePsge(psgeIdx: number) {
@@ -144,8 +147,8 @@ export class PageStory extends PageBase {
         let progMax = -1;
         const disCellDataDict = listView.disCellDataDict;
         for (let index = listView.disBtmRowIdx; index >= listView.disTopRowIdx; index--) {
-            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
-            if (psgeIdx === -1) continue;
+            const pLIdx = this.lvd.getPsgeListIdxByRowIdx(index);
+            if (pLIdx === -1) continue;
             const cell = disCellDataDict[index].cell as CellPsgeBase;
             if (!cell.isHidden()) break;
             const y = cell.node.y + listView.content.y + listView.node.height - 200;
@@ -153,7 +156,7 @@ export class PageStory extends PageBase {
 
             // 向上滑动到一定程度时，隐藏的cell会被激活，同时更新进度
             cell.showWithAction();
-            this.activePsge(psgeIdx);
+            this.activePsge(pLIdx);
             if (progMax === -1) progMax = cell.psge.idx;
         }
         if (progMax !== -1) this.evt.sProg = progMax;
@@ -167,9 +170,9 @@ export class PageStory extends PageBase {
             }
         } else if (key === ListView.CellEventKey.btm) {
             if (idx < this.lvd.numberOfRows(listView) - 1) {
-                const lPos = this.lvd.getListPosByProg(this.evt.sProg);
-                const psgeIdx = this.lvd.getPsgeIdxByRowIdx(idx);
-                if (psgeIdx > lPos) (cellData.cell as CellPsgeBase).hide();
+                const pLIdxInProg = this.lvd.getPsgeListIdxByProg(this.evt.sProg);
+                const pLIdx = this.lvd.getPsgeListIdxByRowIdx(idx);
+                if (pLIdx > pLIdxInProg) (cellData.cell as CellPsgeBase).hide();
             } else {
                 cc.log('PUT Story get bottom');
                 const lastTo = this.lvd.to;
@@ -215,32 +218,34 @@ export class PageStory extends PageBase {
 
     // 回调 -----------------------------------------------------------------
 
-    onClickOption(cell: CellPsgeSelection, index: number) {
-        const slcPsge = cell.psge as SelectionPsge;
+    onClickOption(slcCell: CellPsgeSelection, index: number) {
+        const slcPsge = slcCell.psge as SelectionPsge;
         const slcId = slcPsge.id;
 
         EvtTool.pushOption(this.evt.rztDict, slcId, index);
 
-        this.lvd.updateListPsgeData();
-        this.lvd.updateListStrData(this.lvd.to, true);
+        const lvd = this.lvd;
+        lvd.updateListPsgeData();
+        lvd.updateListStrData(lvd.to, true, 3);
 
         const lv = this.listView;
         lv.resetContent(true);
 
-        const curPsgeIdx = slcPsge.idx;
+        const slcPsgeIdx = slcPsge.idx;
         const disCellDataDict = lv.disCellDataDict;
         let progMax = -1;
+
         for (let index = lv.disBtmRowIdx; index >= lv.disTopRowIdx; index--) {
-            const psgeIdx = this.lvd.getPsgeIdxByRowIdx(index);
-            if (psgeIdx === -1) continue;
-            if (psgeIdx === curPsgeIdx) break;
+            const pLIdx = lvd.getPsgeListIdxByRowIdx(index);
+            if (pLIdx === -1) continue;
+            const curPsgeIdx = lvd.psgesInList[pLIdx].idx;
+            if (curPsgeIdx === slcPsgeIdx) break;
 
             const cell = disCellDataDict[index].cell as CellPsgeBase;
-
             cell.hide();
             cell.showWithAction();
-            this.activePsge(psgeIdx);
-            if (progMax === -1) progMax = psgeIdx;
+            this.activePsge(pLIdx);
+            if (progMax === -1) progMax = curPsgeIdx;
         }
         if (progMax !== -1) this.evt.sProg = progMax;
     }

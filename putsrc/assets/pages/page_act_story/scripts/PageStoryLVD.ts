@@ -65,6 +65,7 @@ export class PageStoryLVD extends ListViewDelegate {
 
     psgesInList: Psge[] = [];
     optionUsingDict: { [key: string]: number } = {};
+    slcDictForIdx: { [key: number]: number } = {};
 
     heightsInList: number[] = [];
     strsInList: string[] = [];
@@ -86,7 +87,7 @@ export class PageStoryLVD extends ListViewDelegate {
 
     initData() {
         this.updateListPsgeData();
-        this.updateListStrData(this.getListPosByProg(this.page.evt.sProg), true);
+        this.updateListStrData(this.getPsgeListIdxByProg(this.page.evt.sProg), true);
     }
 
     updateListPsgeData() {
@@ -95,6 +96,7 @@ export class PageStoryLVD extends ListViewDelegate {
 
         const psges = this.psgesInList;
         const optDict = this.optionUsingDict;
+        const slcDict = this.slcDictForIdx;
 
         const handlePsge = (psge: Psge, index: number): number => {
             if (psge.pType === PsgeType.normal) {
@@ -106,8 +108,8 @@ export class PageStoryLVD extends ListViewDelegate {
                 const curOptUsing = (optDict[slcId] || 0) + 1;
                 const optionIdx = EvtTool.getOption(rztDict, slcId, curOptUsing);
                 if (optionIdx === -1) return -1;
-
                 optDict[slcId] = curOptUsing;
+                slcDict[index] = optionIdx;
                 return slcPsge.options[optionIdx].go;
             } else {
                 return index + 1;
@@ -135,7 +137,7 @@ export class PageStoryLVD extends ListViewDelegate {
         }
     }
 
-    getListPosByProg(prog: number): number {
+    getPsgeListIdxByProg(prog: number): number {
         for (let index = this.psgesInList.length - 1; index >= 0; index--) {
             if (this.psgesInList[index].idx === prog) return index;
         }
@@ -145,7 +147,7 @@ export class PageStoryLVD extends ListViewDelegate {
     /**
      * btm代表是否是往下文更新
      */
-    updateListStrData(pos: number, btm: boolean) {
+    updateListStrData(pos: number, btm: boolean, radius = 0) {
         const psges = this.psgesInList;
 
         if (this.from === -1) {
@@ -156,7 +158,7 @@ export class PageStoryLVD extends ListViewDelegate {
         if (this.to === -1) {
             this.to = Math.min(pos + this.radius, psges.length);
         } else if (btm) {
-            this.to = Math.min(this.to + this.radius, psges.length);
+            this.to = Math.min(this.to + (radius || this.radius), psges.length);
         }
 
         this.next = Math.min(this.to + this.radius, psges.length);
@@ -308,6 +310,8 @@ export class PageStoryLVD extends ListViewDelegate {
                 if (t === PsgeType.normal) {
                     cell.setData(this.strsInList[realIdx]);
                 } else if (t === PsgeType.selection) {
+                    const slc = this.slcDictForIdx[realIdx];
+                    cell.setData(psge as SelectionPsge, slc !== undefined ? slc : -1);
                 } else if (t === PsgeType.quest) {
                 } else if (t === PsgeType.evt) {
                 }
@@ -315,7 +319,7 @@ export class PageStoryLVD extends ListViewDelegate {
         }
     }
 
-    getPsgeIdxByRowIdx(idx: number): number {
+    getPsgeListIdxByRowIdx(idx: number): number {
         if (idx === 0) return -1;
         const realIdx = idx - 1 + this.from;
         if (realIdx >= this.to) return -1;
