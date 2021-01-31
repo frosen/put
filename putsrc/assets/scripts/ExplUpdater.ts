@@ -1392,7 +1392,7 @@ export class ExplUpdater {
 
     finishEvt(spcBtlId: string) {
         const evt = this.gameData.evtDict[spcBtlId];
-        evt.prog = 1;
+        evt.sProg = 1;
         GameDataTool.finishEvt(this.gameData, spcBtlId);
         GameDataTool.leaveEvt(this.gameData, spcBtlId);
     }

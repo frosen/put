@@ -288,9 +288,11 @@ export class PageStoryLVD extends ListViewDelegate {
             return cell;
         } else if (cellId === HEAD) {
             const cell = cc.instantiate(this.headPsgePrefab).getComponent(CellPsgeHead);
+            cell.setEvtName(this.page.storyModel.cnName);
             return cell;
         } else if (cellId === END) {
             const cell = cc.instantiate(this.endPsgePrefab).getComponent(CellPsgeEnd);
+            cell.setEvtName(this.page.storyModel.cnName);
             return cell;
         } else if (cellId === TOPCKR) {
             return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);

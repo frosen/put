@@ -140,6 +140,8 @@ export class PageStory extends PageBase {
         const psge = this.lvd.psgesInList[psgeIdx];
         if (psge.pType === PsgeType.normal) {
             if ((psge as NormalPsge).gains) this.jit.gainDataList.push({ gains: (psge as NormalPsge).gains, lProg: psgeIdx });
+        } else if (psge.pType === PsgeType.end) {
+            GameDataTool.finishEvt(this.ctrlr.memory.gameData, this.evtId);
         }
     }
 
