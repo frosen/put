@@ -39,8 +39,8 @@ export function getRandomOneInList<T>(list: Array<T>): T {
     return list[randomInt(list.length)];
 }
 
-export function getRandomOneInListWithRate<T>(list: Array<T>, rates: number[]): T {
-    if (list.length - 1 !== rates.length) cc.error('PUT getRandomOneInListWithRate 参数数量有误');
+export function getRandomOneInListByRate<T>(list: Array<T>, rates: number[]): T {
+    if (list.length - 1 !== rates.length) cc.error('PUT getRandomOneInListByRate 参数数量有误');
     const r = Math.random();
     for (let index = 0; index < list.length; index++) {
         const rInList = rates[index];

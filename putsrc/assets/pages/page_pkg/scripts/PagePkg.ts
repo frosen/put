@@ -347,7 +347,7 @@ export class PagePkg extends PagePkgBase {
                 if (key === 1) {
                     const cPetIdx = GameDataTool.getItemIdx(gameData, cPet);
                     if (cPetIdx === -1) return this.ctrlr.popToast('物品有误');
-                    const rzt = GameDataTool.addPet(gameData, cPet.petId, cPet.lv, cPet.exFeatureIds, cPet.features);
+                    const rzt = GameDataTool.addPetByCaughtPet(gameData, cPet);
                     if (rzt === GameDataTool.SUC) {
                         GameDataTool.removeItem(gameData, cPetIdx);
                         this.resetCurList();
