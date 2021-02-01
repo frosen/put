@@ -87,7 +87,7 @@ export class PageStoryLVD extends ListViewDelegate {
 
     initData() {
         this.updateListPsgeData();
-        this.updateListStrData(this.getPsgeListIdxByProg(this.page.evt.sProg), true);
+        this.initListStrData(this.getPsgeListIdxByProg(this.page.evt.sProg));
     }
 
     updateListPsgeData() {
@@ -144,33 +144,40 @@ export class PageStoryLVD extends ListViewDelegate {
         return 0;
     }
 
+    initListStrData(pos: number) {
+        const psges = this.psgesInList;
+        this.from = Math.max(pos - this.radius, 0);
+        this.to = Math.min(pos + this.radius, psges.length);
+        this.next = Math.min(this.to + this.radius, psges.length);
+        this.curNext = this.to;
+        this.handleListStrData(pos);
+    }
+
     /**
      * btm代表是否是往下文更新
      */
-    updateListStrData(pos: number, btm: boolean, radius = 0) {
+    updateListStrData(btm: boolean, radius = 0) {
         const psges = this.psgesInList;
 
-        if (this.from === -1) {
-            this.from = Math.max(pos - this.radius, 0);
-        } else if (!btm) {
-        }
-
-        if (this.to === -1) {
-            this.to = Math.min(pos + this.radius, psges.length);
-        } else if (btm) {
+        if (btm) {
             this.to = Math.min(this.to + (radius || this.radius), psges.length);
+            this.next = Math.min(this.to + this.radius, psges.length);
+            this.curNext = this.to;
+            this.handleListStrData(this.to);
+        } else {
+            this.from = Math.max(this.from - (radius || this.radius), 0);
+            this.handleListStrData(this.from);
         }
+    }
 
-        this.next = Math.min(this.to + this.radius, psges.length);
-        this.curNext = this.to;
-
+    handleListStrData(pos: number) {
         for (let index = this.from; index < this.to; index++) {
             this.calcStrData(index);
             if (PageStoryLVD.labelCharError) {
                 // 监测label发现char不能正确生成，大概率因为保存的char缓存已满，需清理缓存重新初始化
                 cc.Label.clearCharCache();
                 this.radius--; // 减少字符数量，避免进入无限循环
-                return this.updateListStrData(pos, btm);
+                return this.initListStrData(pos);
             }
         }
     }

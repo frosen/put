@@ -202,10 +202,16 @@ export class PageStory extends PageBase {
     }
 
     onCellShow(listView: ListView, key: string, idx: number, cellData: { cell: ListViewCell; id: string }) {
-        if (key === ListView.CellEventKey.top && idx === 0) {
+        if (key === ListView.CellEventKey.top) {
             if (idx > 0) {
+                // pass
             } else {
                 cc.log('PUT Story get top');
+                const lastFrom = this.lvd.from;
+                this.lvd.updateListStrData(false);
+                if (this.lvd.from < lastFrom) {
+                    // llytodo
+                }
             }
         } else if (key === ListView.CellEventKey.btm) {
             if (idx < this.lvd.numberOfRows(listView) - 1) {
@@ -215,7 +221,7 @@ export class PageStory extends PageBase {
             } else {
                 cc.log('PUT Story get bottom');
                 const lastTo = this.lvd.to;
-                this.lvd.updateListStrData(this.lvd.to, true);
+                this.lvd.updateListStrData(true);
                 if (this.lvd.to > lastTo) this.listView.resetContent(true);
             }
         }
@@ -265,7 +271,7 @@ export class PageStory extends PageBase {
 
         const lvd = this.lvd;
         lvd.updateListPsgeData();
-        lvd.updateListStrData(lvd.to, true, 3);
+        lvd.updateListStrData(true, 3);
 
         const lv = this.listView;
         lv.resetContent(true);
@@ -296,4 +302,8 @@ export class PageStory extends PageBase {
     onClickEnd() {}
 
     onInputName() {}
+
+    // 撤销 -----------------------------------------------------------------
+
+    onUndo() {}
 }
