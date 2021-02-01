@@ -551,7 +551,7 @@ export class ExplUpdater {
                 const petId = getRandomOneInList(catchSt.canCatchPetIds);
                 const lv = catchSt.lvMin + randomInt(catchSt.lvMax - catchSt.lvMin);
 
-                const pet = PetTool.createWithRandomFeature(petId, lv);
+                const pet = PetTool.createByRandomFeature(petId, lv);
                 const cPet = CaughtPetTool.createByPet(pet);
                 const rztStr = GameDataTool.addCaughtPet(gameData, cPet);
                 if (rztStr !== GameDataTool.SUC) break;
@@ -674,7 +674,7 @@ export class ExplUpdater {
             const curLv = curLvs[index];
             const eMmrs: EPetMmr[] = [];
             for (let index = 0; index < petCnt; index++) {
-                const ePet = PetTool.createWithRandomFeature(petList[index], curLv);
+                const ePet = PetTool.createByRandomFeature(petList[index], curLv);
                 eMmrs.push({
                     id: ePet.id,
                     lv: ePet.lv,

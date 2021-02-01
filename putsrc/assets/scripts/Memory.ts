@@ -62,7 +62,7 @@ import {
     AmplAttriType
 } from './DataModel';
 
-import { randomInt, randomRate, getRandomOneInListWithRate, getRandomOneInList } from './Random';
+import { randomInt, randomRate, getRandomOneInListByRate, getRandomOneInList } from './Random';
 
 import { PetModelDict } from '../configs/PetModelDict';
 import { EquipModelDict } from '../configs/EquipModelDict';
@@ -361,24 +361,21 @@ export class Memory {
             [PTN.YiLingZhe]: { gainTime: 1 }
         };
 
-        let pet = PetTool.createWithRandomFeature('FaTiaoWa', 30);
-        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
+        GameDataTool.addPetByPet(this.gameData, PetTool.createByRandomFeature('FaTiaoWa', 30), (pet: Pet) => {
             pet.state = PetState.ready;
             pet.nickname = '妙妙';
             pet.prvty = 400000;
             pet.equips[0] = EquipTool.createRandomByLv(15, 20);
         });
 
-        pet = PetTool.createWithRandomFeature('YaHuHanJuRen', 30);
-        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
+        GameDataTool.addPetByPet(this.gameData, PetTool.createByRandomFeature('YaHuHanJuRen', 30), (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
             pet.drinkId = 'LingGanYaoJi2';
             pet.drinkTime = Date.now();
         });
 
-        pet = PetTool.createWithRandomFeature('BaiLanYuYan', 30);
-        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
+        GameDataTool.addPetByPet(this.gameData, PetTool.createByRandomFeature('BaiLanYuYan', 30), (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
             const f = newInsWithChecker(Feature);
@@ -387,23 +384,18 @@ export class Memory {
             pet.lndFeatures.push(f);
         });
 
-        pet = PetTool.createWithRandomFeature('HeiFengWuRenJi', 28);
-        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
+        GameDataTool.addPetByPet(this.gameData, PetTool.createByRandomFeature('HeiFengWuRenJi', 28), (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
         });
 
-        pet = PetTool.createWithRandomFeature('CiHuaYouLing', 29);
-        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {
+        GameDataTool.addPetByPet(this.gameData, PetTool.createByRandomFeature('CiHuaYouLing', 29), (pet: Pet) => {
             pet.state = PetState.ready;
             pet.prvty = 400000;
         });
 
-        pet = PetTool.createWithRandomFeature('HuoHuoTu', 18);
-        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {});
-
-        pet = PetTool.createWithRandomFeature('DianZiShouWei', 8);
-        GameDataTool.addPet(this.gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, (pet: Pet) => {});
+        GameDataTool.addPetByPet(this.gameData, PetTool.createByRandomFeature('HuoHuoTu', 18), (pet: Pet) => {});
+        GameDataTool.addPetByPet(this.gameData, PetTool.createByRandomFeature('DianZiShouWei', 8), (pet: Pet) => {});
 
         // GameDataTool.handleMoney(this.gameData, money => (money.sum += 15643351790));
 
@@ -431,7 +423,7 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 33);
         GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += 1000));
 
-        const petForCPet = PetTool.createWithRandomFeature('BaiLanYuYan', 13);
+        const petForCPet = PetTool.createByRandomFeature('BaiLanYuYan', 13);
         const cPet = CaughtPetTool.createByPet(petForCPet);
         GameDataTool.addCaughtPet(this.gameData, cPet);
 
@@ -513,7 +505,11 @@ export class PetTool {
         return pet;
     }
 
-    static createWithRandomFeature(id: string, lv: number): Pet {
+    static createByFullId(id: string): Pet {}
+
+    static getFullId(pet: Pet): string {}
+
+    static createByRandomFeature(id: string, lv: number): Pet {
         const model = PetModelDict[id];
         const selfFeatureIds = model.selfFeatureIds;
 
@@ -833,7 +829,7 @@ export class EquipTool {
                 equipIds = equipIdsByRank[randomRate(0.7) ? 0 : 1];
                 break;
             case 3:
-                equipIds = equipIdsByRank[getRandomOneInListWithRate([0, 1, 2], [0.6, 0.9])];
+                equipIds = equipIdsByRank[getRandomOneInListByRate([0, 1, 2], [0.6, 0.9])];
                 break;
         }
         const equipId = getRandomOneInList(equipIds!);
@@ -1191,6 +1187,14 @@ export class GameDataTool {
         return this.SUC;
     }
 
+    static addPetByPet(gameData: GameData, pet: Pet, callback?: (pet: Pet) => void): string {
+        return this.addPet(gameData, pet.id, pet.lv, pet.exFeatureIds, pet.inbFeatures, callback);
+    }
+
+    static addPetByCaughtPet(gameData: GameData, cPet: CaughtPet, callback?: (pet: Pet) => void): string {
+        return this.addPet(gameData, cPet.id, cPet.lv, cPet.exFeatureIds, cPet.features, callback);
+    }
+
     static checkPetWithMaster(gameData: GameData, pet?: Pet): string {
         if (gameData.expl && gameData.expl.afb && (pet ? pet.state === PetState.ready : true)) {
             return '精灵未与训练师在一起';
@@ -1530,7 +1534,7 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static addAffixForEquip(gameData: GameData, eqpIdx: number): string {
+    static addAffixToEquip(gameData: GameData, eqpIdx: number): string {
         const equip = gameData.items[eqpIdx] as Equip;
         // llytodo
         gameData.totalEquipCount++;

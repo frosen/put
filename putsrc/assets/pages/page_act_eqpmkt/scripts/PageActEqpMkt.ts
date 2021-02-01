@@ -14,7 +14,7 @@ import { ListView } from '../../../scripts/ListView';
 import { Money, Equip, PADEqpMkt } from '../../../scripts/DataSaved';
 import { ActPosModel, EqpMktModel, ReputRank } from '../../../scripts/DataModel';
 import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
-import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from '../../../scripts/Random';
+import { randomInt, getRandomOneInListByRate, getRandomOneInList } from '../../../scripts/Random';
 import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
 import { PageActEqpMktLVD } from './PageActEqpMktLVD';
@@ -62,7 +62,7 @@ export class PageActEqpMkt extends PageBase {
         const eqps: Equip[] = pADEqpMkt.eqps;
         eqps.length = 0;
         for (let index = 0; index < eqpCount; index++) {
-            let eqpList = getRandomOneInListWithRate(eqpIdLists, [0.5, 0.75, 0.9]);
+            let eqpList = getRandomOneInListByRate(eqpIdLists, [0.5, 0.75, 0.9]);
             if (!eqpList) eqpList = eqpIdLists[0];
             const eqpId = getRandomOneInList(eqpList);
             const equip = EquipTool.createRandomById(eqpId);

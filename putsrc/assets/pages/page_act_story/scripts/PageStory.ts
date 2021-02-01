@@ -11,7 +11,7 @@ import { NormalPsge, PsgeType, SelectionPsge, StoryModel } from '../../../script
 import { Evt, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
-import { EvtTool, GameDataTool } from '../../../scripts/Memory';
+import { EquipTool, EvtTool, GameDataTool, PetTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
 import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
@@ -68,13 +68,16 @@ export class PageStory extends PageBase {
 
     onClickBack(key: number) {
         if (key === 1) {
-            const storyJIT = this.ctrlr.memory.gameData.storyJIT;
-            for (const { gains } of storyJIT.gainDataList) {
+            const gameData = this.ctrlr.memory.gameData;
+            for (const { gains } of this.jit.gainDataList) {
                 for (const gain of gains) {
-                    const t = gain.gType;
+                    const { gType: t, id } = gain;
                     if (t === StoryGainType.cnsum) {
+                        GameDataTool.addCnsum(gameData, id);
                     } else if (t === StoryGainType.equip) {
+                        GameDataTool.addEquip(gameData, EquipTool.createByFullId(id));
                     } else if (t === StoryGainType.pet) {
+                        GameDataTool.addPetByPet(gameData, PetTool.createByFullId(id));
                     } else {
                     }
                 }

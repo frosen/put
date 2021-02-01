@@ -49,7 +49,7 @@ function checkActPosModelDict() {
                     if (petIdList.length < 5) {
                         cc.error(
                             'ActPosModelDict expl中，petIdList的len不能<5',
-                            '否则在战斗恢复时，calcBtlDuraUpdCntAndWinRate的createWithRandomFeature会面临无效的pet',
+                            '否则在战斗恢复时，calcBtlDuraUpdCntAndWinRate的createByRandomFeature会面临无效的pet',
                             key
                         );
                     }

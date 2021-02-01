@@ -626,7 +626,7 @@ export class RealBtl {
             const ePetsDatas = RealBtl.createRandomEnemyPetData(expl);
             this.enemyTeam.reset(ePetsDatas.length, true, (bPet: BtlPet, petIdx: number) => {
                 const ePetData = ePetsDatas[petIdx];
-                const ePet = PetTool.createWithRandomFeature(ePetData.id, ePetData.lv);
+                const ePet = PetTool.createByRandomFeature(ePetData.id, ePetData.lv);
                 bPet.init(ePet, ampl, prvty);
             });
 

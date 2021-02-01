@@ -14,7 +14,7 @@ import { ListView } from '../../../scripts/ListView';
 import { Money, PADPetMkt, CaughtPet } from '../../../scripts/DataSaved';
 import { ActPosModel, PetMktModel, ReputRank } from '../../../scripts/DataModel';
 import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
-import { randomInt, getRandomOneInListWithRate, getRandomOneInList } from '../../../scripts/Random';
+import { randomInt, getRandomOneInListByRate, getRandomOneInList } from '../../../scripts/Random';
 import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
 import { PageActPetMktLVD } from './PageActPetMktLVD';
 import { RealBtl } from '../../../scripts/DataOther';
@@ -63,7 +63,7 @@ export class PageActPetMkt extends PageBase {
         const pets = pADPetMkt.pets;
         pets.length = 0;
         for (let index = 0; index < petCount; index++) {
-            let step = getRandomOneInListWithRate([0, 1, 2, 3], [0.5, 0.75, 0.9]);
+            let step = getRandomOneInListByRate([0, 1, 2, 3], [0.5, 0.75, 0.9]);
             let petList = petIdLists[step];
             if (!petList) {
                 petList = petIdLists[0];
@@ -75,7 +75,7 @@ export class PageActPetMkt extends PageBase {
             let lv = lvBase - lvRange + normalRandom(lvRange * 2);
             lv = Math.min(Math.max(1, lv), ExpModels.length);
 
-            const pet = PetTool.createWithRandomFeature(petId, lv);
+            const pet = PetTool.createByRandomFeature(petId, lv);
             const cPet = CaughtPetTool.createByPet(pet);
             pets.push(cPet);
         }
