@@ -11,7 +11,7 @@ export class UserData {
 
 export class ProTtl {
     gainTime!: number;
-    data?: any;
+    data?: number | string; // 不能是object，因此这个值没有withChecker化
 }
 
 /** 成就状态 */

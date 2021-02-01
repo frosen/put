@@ -48,7 +48,8 @@ import {
     Special,
     EleType,
     Evt,
-    StoryJIT
+    StoryJIT,
+    ProTtl
 } from './DataSaved';
 import {
     FeatureModel,
@@ -77,7 +78,7 @@ import { BookModelDict } from '../configs/BookModelDict';
 import { SpcModelDict } from '../configs/SpcModelDict';
 import { MaterialModelDict } from '../configs/MaterialModelDict';
 
-import { PTN } from '../configs/ProTtlModelDict';
+import { ProTtlModelDict, PTN } from '../configs/ProTtlModelDict';
 import { FeatureModelDict } from '../configs/FeatureModelDict';
 import { ActPosModelDict, PAKey, PosN } from '../configs/ActPosModelDict';
 
@@ -1124,6 +1125,14 @@ export class AcceQuestInfoTool {
     }
 }
 
+export class ProTtlTool {
+    static create(): ProTtl {
+        const proTtl = newInsWithChecker(ProTtl);
+        proTtl.gainTime = Date.now();
+        return proTtl;
+    }
+}
+
 export class GameDataTool {
     static SUC: string = 'K';
 
@@ -1724,6 +1733,22 @@ export class GameDataTool {
     }
 
     // -----------------------------------------------------------------
+
+    static addProTtl(gameData: GameData, id: string, data?: any) {
+        const model = ProTtlModelDict[id];
+        if (model.sbstId) delete gameData.proTtlDict[model.sbstId];
+
+        const ttl = gameData.proTtlDict[id];
+        if (ttl) {
+            if (model.addFunc) ttl.data = model.addFunc(ttl.data, data);
+            else cc.error('PUT 只有带有addFunc的ttl才能多次获得');
+        } else {
+            const newTtl = ProTtlTool.create();
+            if (model.addFunc) newTtl.data = model.addFunc(newTtl.data, data);
+            else newTtl.data = data;
+            gameData.proTtlDict[id] = newTtl;
+        }
+    }
 
     static hasProTtl(gameData: GameData, id: string): boolean {
         return gameData.proTtlDict.hasOwnProperty(id);

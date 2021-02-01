@@ -26,6 +26,7 @@ export class ProTtlModel {
     proTtlType!: ProTtlType;
     order?: number;
     sbstId?: string; // 替代另一个ProTtl
+    addFunc?: (oldData: any, newData?: any) => any; // 更新data，拥有这个方法的ttl才能被多次添加
 }
 
 // -----------------------------------------------------------------

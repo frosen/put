@@ -38,7 +38,8 @@ export const ProTtlModelDict: { [key: string]: ProTtlModel } = {
         id: PTN.DaShanRen,
         cnName: d => `大善人${d}`,
         proTtlType: ProTtlType.kind,
-        info: 'thx'
+        info: 'thx', //ad次数
+        addFunc: oldData => (oldData || 0) + 1
     },
     [PTN.XueBa]: {
         id: PTN.XueBa,
@@ -104,64 +105,73 @@ export const ProTtlModelDict: { [key: string]: ProTtlModel } = {
         cnName: d => `大学生L${d}`,
         proTtlType: ProTtlType.pet,
         order: 1,
-        info: d => `魔法精灵经验+${d * 5}%`
+        info: d => `魔法精灵经验+${d * 5}%`,
+        addFunc: oldData => (oldData || 0) + 1
     },
     [PTN.JiXieShi]: {
         id: PTN.JiXieShi,
         cnName: d => `机械师L${d}`,
         proTtlType: ProTtlType.pet,
         order: 2,
-        info: d => `机械精灵经验+${d * 5}%`
+        info: d => `机械精灵经验+${d * 5}%`,
+        addFunc: oldData => (oldData || 0) + 1
     },
     [PTN.SiYangYuan]: {
         id: PTN.SiYangYuan,
-        cnName: d => `饲养员L{d}`,
+        cnName: d => `饲养员L${d}`,
         proTtlType: ProTtlType.pet,
         order: 3,
-        info: d => `自然精灵经验+${d * 5}%`
+        info: d => `自然精灵经验+${d * 5}%`,
+        addFunc: oldData => (oldData || 0) + 1
     },
 
     [PTN.ZongHuoZhe]: {
         id: PTN.ZongHuoZhe,
-        cnName: d => `纵火者L{d}`,
+        cnName: d => `纵火者L${d}`,
         proTtlType: ProTtlType.pet,
         order: 11,
-        info: d => `火系精灵经验+${d * 5}%`
+        info: d => `火系精灵经验+${d * 5}%`,
+        addFunc: oldData => (oldData || 0) + 1
     },
     [PTN.YuShuiZhe]: {
         id: PTN.YuShuiZhe,
-        cnName: d => `御水者L{d}`,
+        cnName: d => `御水者L${d}`,
         proTtlType: ProTtlType.pet,
         order: 12,
-        info: d => `水系精灵经验+${d * 5}%`
+        info: d => `水系精灵经验+${d * 5}%`,
+        addFunc: oldData => (oldData || 0) + 1
     },
     [PTN.KongWuZhe]: {
         id: PTN.KongWuZhe,
-        cnName: d => `空舞者L{d}`,
+        cnName: d => `空舞者L${d}`,
         proTtlType: ProTtlType.pet,
         order: 13,
-        info: d => `空系精灵经验+${d * 5}%`
+        info: d => `空系精灵经验+${d * 5}%`,
+        addFunc: oldData => (oldData || 0) + 1
     },
     [PTN.DiFuZhe]: {
         id: PTN.DiFuZhe,
-        cnName: d => `地缚者L{d}`,
+        cnName: d => `地缚者L${d}`,
         proTtlType: ProTtlType.pet,
         order: 14,
-        info: d => `地系精灵经验+${d * 5}%`
+        info: d => `地系精灵经验+${d * 5}%`,
+        addFunc: oldData => (oldData || 0) + 1
     },
     [PTN.GuangShi]: {
         id: PTN.GuangShi,
-        cnName: d => `光使L{d}`,
+        cnName: d => `光使L${d}`,
         proTtlType: ProTtlType.pet,
         order: 15,
-        info: d => `光系精灵经验+${d * 5}%`
+        info: d => `光系精灵经验+${d * 5}%`,
+        addFunc: oldData => (oldData || 0) + 1
     },
     [PTN.AnShi]: {
         id: PTN.AnShi,
-        cnName: d => `暗使L{d}`,
+        cnName: d => `暗使L${d}`,
         proTtlType: ProTtlType.pet,
         order: 16,
-        info: d => `暗系精灵经验+${d * 5}%`
+        info: d => `暗系精灵经验+${d * 5}%`,
+        addFunc: oldData => (oldData || 0) + 1
     },
 
     // -----------------------------------------------------------------

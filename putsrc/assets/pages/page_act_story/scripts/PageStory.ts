@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { StoryModelDict } from '../../../configs/EvtModelDict';
 import { NormalPsge, PsgeType, SelectionPsge, StoryModel } from '../../../scripts/DataModel';
-import { Evt, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
+import { Evt, GameData, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { EquipTool, EvtTool, GameDataTool, PetTool } from '../../../scripts/Memory';
@@ -60,7 +60,17 @@ export class PageStory extends PageBase {
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
-            this.ctrlr.popAlert('确定退出？', this.onClickBack.bind(this));
+            const { itemOverflow, petOverflow } = this.checkStoryGain();
+            let str = '确定退出？';
+            if (itemOverflow || petOverflow) {
+                let name: string | undefined;
+                if (itemOverflow && petOverflow) name = '道具和精灵都';
+                else if (itemOverflow) name = '道具';
+                else if (petOverflow) name = '精灵';
+                str += `\n\n注：本次获得的${name!}会超出最大限度，多出部分将被移除！`;
+            }
+
+            this.ctrlr.popAlert(str, this.onClickBack.bind(this));
             return false;
         });
         navBar.setTitle(this.storyModel.cnName);
@@ -68,22 +78,46 @@ export class PageStory extends PageBase {
 
     onClickBack(key: number) {
         if (key === 1) {
-            const gameData = this.ctrlr.memory.gameData;
-            for (const { gains } of this.jit.gainDataList) {
-                for (const gain of gains) {
-                    const { gType: t, id } = gain;
-                    if (t === StoryGainType.cnsum) {
-                        GameDataTool.addCnsum(gameData, id);
-                    } else if (t === StoryGainType.equip) {
-                        GameDataTool.addEquip(gameData, EquipTool.createByFullId(id));
-                    } else if (t === StoryGainType.pet) {
-                        GameDataTool.addPetByPet(gameData, PetTool.createByFullId(id));
-                    } else {
-                    }
-                }
-            }
+            this.handleStoryGain();
             this.ctrlr.popPage();
         }
+    }
+
+    checkStoryGain(): { itemOverflow: boolean; petOverflow: boolean } {
+        let itemCnt = 0;
+        let petCnt = 0;
+        for (const { gains } of this.jit.gainDataList) {
+            for (const gain of gains) {
+                const { gType: t } = gain;
+                if (t === StoryGainType.cnsum || t === StoryGainType.equip) itemCnt++;
+                else if (t === StoryGainType.pet) petCnt++;
+            }
+        }
+
+        const gameData = this.ctrlr.memory.gameData;
+        return {
+            itemOverflow: itemCnt + gameData.weight > GameDataTool.getItemCountMax(gameData),
+            petOverflow: petCnt + gameData.pets.length > GameDataTool.getPetCountMax(gameData)
+        };
+    }
+
+    handleStoryGain() {
+        const gameData = this.ctrlr.memory.gameData;
+        for (const { gains } of this.jit.gainDataList) {
+            for (const gain of gains) {
+                const { gType: t, id } = gain;
+                if (t === StoryGainType.cnsum) {
+                    GameDataTool.addCnsum(gameData, id);
+                } else if (t === StoryGainType.equip) {
+                    GameDataTool.addEquip(gameData, EquipTool.createByFullId(id));
+                } else if (t === StoryGainType.pet) {
+                    GameDataTool.addPetByPet(gameData, PetTool.createByFullId(id));
+                } else {
+                    GameDataTool.addProTtl(gameData, id);
+                }
+            }
+        }
+        this.jit.gainDataList.length = 0;
     }
 
     onPageShow() {
