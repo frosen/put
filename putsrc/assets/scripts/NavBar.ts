@@ -9,7 +9,6 @@ import { BaseCtrlr } from './BaseCtrlr';
 const { ccclass, property } = cc._decorator;
 
 const FUNC_BTN_DISTANCE = 108;
-const FUNC_BTN_POS_BASE = 1080 - 63;
 
 @ccclass
 export class NavBar extends cc.Component {
@@ -21,6 +20,9 @@ export class NavBar extends cc.Component {
 
     @property(cc.Label)
     subTitle: cc.Label = null!;
+
+    @property(cc.Node)
+    btnBase: cc.Node = null!;
 
     ctrlr: BaseCtrlr = null!;
 
@@ -56,12 +58,12 @@ export class NavBar extends cc.Component {
     @property(cc.Prefab)
     funcBtnPrefab: cc.Prefab = null!;
 
-    btnX: number = FUNC_BTN_POS_BASE;
+    btnX: number = 0;
 
     addFuncBtn(name: string, frames: cc.SpriteFrame[], callback: (btn: cc.Button) => void): cc.Button {
         const node = cc.instantiate(this.funcBtnPrefab);
         node.name = 'fb_' + name;
-        node.parent = this.node;
+        node.parent = this.btnBase;
         node.x = this.btnX;
 
         const btn = node.getComponent(cc.Button);

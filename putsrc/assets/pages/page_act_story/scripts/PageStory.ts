@@ -70,16 +70,20 @@ export class PageStory extends PageBase {
                 str += `\n\n注：本次获得的${name!}会超出最大限度，多出部分将被移除！`;
             }
 
-            this.ctrlr.popAlert(str, this.onClickBack.bind(this));
+            this.ctrlr.popAlert(str, (key: number) => {
+                if (key === 1) {
+                    this.handleStoryGain();
+                    this.ctrlr.popPage();
+                }
+            });
             return false;
         });
-    }
 
-    onClickBack(key: number) {
-        if (key === 1) {
-            this.handleStoryGain();
-            this.ctrlr.popPage();
-        }
+        navBar.addFuncBtn('undo', [this.ctrlr.runningImgMgr.navUndo], () => {
+            this.ctrlr.popAlert('确定要将当前事件进度退回到上次选择之前吗？', (key: number) => {
+                if (key === 1) this.onUndo();
+            });
+        });
     }
 
     checkStoryGain(): { itemOverflow: boolean; petOverflow: boolean } {
@@ -304,11 +308,12 @@ export class PageStory extends PageBase {
 
     onClickEvt() {}
 
-    onClickEnd() {}
-
     onInputName() {}
 
     // 撤销 -----------------------------------------------------------------
 
-    onUndo() {}
+    onUndo() {
+        // 检测道具
+        // 检测上一次selection
+    }
 }

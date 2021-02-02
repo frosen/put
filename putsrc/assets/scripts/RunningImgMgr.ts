@@ -17,6 +17,10 @@ export class PosImgData {
 export class RunningImgMgr extends cc.Component {
     @property(cc.SpriteFrame) detail: cc.SpriteFrame = null!;
 
+    // nav -----------------------------------------------------------------
+
+    @property(cc.SpriteFrame) navUndo: cc.SpriteFrame = null!;
+
     // icon range -----------------------------------------------------------------
 
     @property(cc.SpriteFrame) iconBG0: cc.SpriteFrame = null!;
