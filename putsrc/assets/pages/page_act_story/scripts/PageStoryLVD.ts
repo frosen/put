@@ -273,6 +273,7 @@ export class PageStoryLVD extends ListViewDelegate {
                 else if (t === PsgeType.nameInput) return NAMEINPUT;
                 else if (t === PsgeType.head) return HEAD;
                 else if (t === PsgeType.end) return END;
+                else return undefined!;
             } else return BTMCKR;
         }
     }
@@ -305,7 +306,7 @@ export class PageStoryLVD extends ListViewDelegate {
             return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);
         } else if (cellId === BTMCKR) {
             return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);
-        }
+        } else return undefined!;
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPsge) {

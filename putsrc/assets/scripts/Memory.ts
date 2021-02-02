@@ -506,9 +506,14 @@ export class PetTool {
         return pet;
     }
 
-    static createByFullId(id: string): Pet {}
+    static createByFullId(fullId: string): Pet {
+        const infos = fullId.split('-');
+        return this.createByRandomFeature(infos[0], Number(infos[1]));
+    }
 
-    static getFullId(pet: Pet): string {}
+    static getFullId(pet: Pet): string {
+        return `${pet.id}-${pet.lv}`;
+    }
 
     static createByRandomFeature(id: string, lv: number): Pet {
         const model = PetModelDict[id];

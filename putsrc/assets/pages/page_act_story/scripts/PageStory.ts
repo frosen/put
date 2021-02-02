@@ -55,7 +55,7 @@ export class PageStory extends PageBase {
 
         if (!gameData.curEvtId) GameDataTool.enterEvt(gameData, this.evtId);
 
-        this.jit = gameData.storyJIT;
+        this.jit = gameData.storyJIT!;
     }
 
     onLoadNavBar(navBar: NavBar) {
@@ -73,7 +73,6 @@ export class PageStory extends PageBase {
             this.ctrlr.popAlert(str, this.onClickBack.bind(this));
             return false;
         });
-        navBar.setTitle(this.storyModel.cnName);
     }
 
     onClickBack(key: number) {
@@ -176,7 +175,7 @@ export class PageStory extends PageBase {
     activePsge(psgeIdx: number) {
         const psge = this.lvd.psgesInList[psgeIdx];
         if (psge.pType === PsgeType.normal) {
-            if ((psge as NormalPsge).gains) this.jit.gainDataList.push({ gains: (psge as NormalPsge).gains, lProg: psgeIdx });
+            if ((psge as NormalPsge).gains) this.jit.gainDataList.push({ gains: (psge as NormalPsge).gains!, lProg: psgeIdx });
         } else if (psge.pType === PsgeType.end) {
             GameDataTool.finishEvt(this.ctrlr.memory.gameData, this.evtId);
         }
@@ -208,9 +207,15 @@ export class PageStory extends PageBase {
             } else {
                 cc.log('PUT Story get top');
                 const lastFrom = this.lvd.from;
+                const curPos = this.listView.content.y;
                 this.lvd.updateListStrData(false);
                 if (this.lvd.from < lastFrom) {
-                    // llytodo
+                    let newPos = curPos;
+                    for (let index = this.lvd.from; index < lastFrom; index++) {
+                        newPos += this.lvd.heightsInList[index];
+                    }
+                    this.listView.clearContent();
+                    this.listView.createContent(newPos);
                 }
             }
         } else if (key === ListView.CellEventKey.btm) {

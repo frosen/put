@@ -24,7 +24,7 @@ import { NavBar } from '../../../scripts/NavBar';
 import { PkgSelectionBar } from './PkgSelectionBar';
 import { CatcherModelDict } from '../../../configs/CatcherModelDict';
 import { PetModelDict } from '../../../configs/PetModelDict';
-import { SpcModelDict } from '../../../configs/SpcModelDict';
+import { SpcModelDict, SpcN } from '../../../configs/SpcModelDict';
 
 const WIDTH = 1080;
 
@@ -33,25 +33,25 @@ export class PagePkg extends PagePkgBase {
     curListIdx: number = 0;
 
     @property(cc.Node)
-    listLayer: cc.Node = null;
+    listLayer: cc.Node = null!;
 
     @property(cc.Prefab)
-    listPrefab: cc.Prefab = null;
+    listPrefab: cc.Prefab = null!;
 
     listDatas: { dirtyToken: number; list: ListView; delegate: PagePkgLVD }[] = [];
 
     @property(cc.Node)
-    selectionNode: cc.Node = null;
+    selectionNode: cc.Node = null!;
 
     @property(cc.Prefab)
-    selectionBarPrefab: cc.Node = null;
+    selectionBarPrefab: cc.Node = null!;
 
-    selectionBar: PkgSelectionBar = null;
+    selectionBar: PkgSelectionBar = null!;
 
     @property(cc.Prefab)
-    funcBarPrefab: cc.Prefab = null;
+    funcBarPrefab: cc.Prefab = null!;
 
-    funcBar: FuncBar = null;
+    funcBar: FuncBar = null!;
 
     onLoad() {
         super.onLoad();
@@ -142,7 +142,7 @@ export class PagePkg extends PagePkgBase {
         return idxs;
     }
 
-    static getoutItemIdxsByType(items: Item[], idxsOut: number[], itemType: ItemType, cnsumType: CnsumType = null) {
+    static getoutItemIdxsByType(items: Item[], idxsOut: number[], itemType: ItemType, cnsumType?: CnsumType) {
         for (let index = 0; index < items.length; index++) {
             const item = items[index];
             if (item.itemType === itemType && (cnsumType ? (item as Cnsum).cnsumType === cnsumType : true)) {
@@ -265,7 +265,7 @@ export class PagePkg extends PagePkgBase {
                     }
                 });
             } else if (cnsum.cnsumType === CnsumType.eqpAmplr) {
-                let eqpIdxs = [];
+                let eqpIdxs: number[] = [];
                 PagePkg.getoutItemIdxsByType(gameData.items, eqpIdxs, ItemType.equip);
                 this.ctrlr.pushPage(PagePkgSelection, {
                     name: '选择要强化的装备',
@@ -310,7 +310,7 @@ export class PagePkg extends PagePkgBase {
             } else if (cnsum.cnsumType === CnsumType.book) {
             } else if (cnsum.cnsumType === CnsumType.special) {
                 const spcModel = SpcModelDict[cnsum.id];
-                if (cnsum.id === 'YiWangShuiJing') {
+                if (cnsum.id === SpcN.YiWangShuiJing) {
                     this.ctrlr.pushPage(PagePet, {
                         cellPetType: PagePetCellType.selection,
                         name: '选择精灵',
@@ -335,6 +335,8 @@ export class PagePkg extends PagePkgBase {
                             );
                         }
                     });
+                } else if (cnsum.id === SpcN.HouHuiYaoJi) {
+                    this.ctrlr.popToast('仅用于撤回事件中的错误决定\n，将进度返回上次选择之前！\n在事件页面点击右上按钮触发');
                 }
             } else if (cnsum.cnsumType === CnsumType.material) {
                 this.ctrlr.popToast('材料用于合成，无法直接使用');
@@ -388,12 +390,12 @@ export class PagePkg extends PagePkgBase {
 
         let name: string;
         if (item.itemType === ItemType.cnsum) {
-            name = CnsumTool.getModelById(item.id).cnName;
+            name = CnsumTool.getModelById(item.id)!.cnName;
         } else if (item.itemType === ItemType.equip) {
             name = EquipTool.getCnName(item as Equip);
         } else if (item.itemType === ItemType.caughtPet) {
             name = CaughtPetTool.getCnName(item as CaughtPet);
-        }
+        } else name = '?';
 
         const str = `确定将“${name}”丢弃吗？\n` + '注意：丢弃后将无法找回哦！';
 
