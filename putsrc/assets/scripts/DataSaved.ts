@@ -348,9 +348,9 @@ export class StoryGain {
 }
 
 export class StoryJIT {
-    startSProg: number;
-    startLProg: number;
-    gainDataList: { gains: StoryGain[]; lProg: number }[];
+    startSProg!: number;
+    startLProg!: number;
+    gainDataList!: { gains: StoryGain[]; lProg: number }[];
 }
 
 // -----------------------------------------------------------------

@@ -437,6 +437,9 @@ export class Memory {
         // for (const index = 0; index < 3; index++) ePets.push(MmrTool.createPetMmr('FaTiaoWa', 2, 1, []));
         // GameDataTool.createBtl(this.gameData, 100, (1000 * 60 * 100) / 750 - 10, 0, []);
         // this.gameData.expl.btl.enemys = ePets;
+
+        this.gameData.ongoingEvtIds.push('RuZhiBaoDao');
+        this.gameData.evtDict['RuZhiBaoDao'] = { id: 'RuZhiBaoDao', sProg: 8, rztDict: {} };
     }
 }
 
