@@ -1694,14 +1694,17 @@ export class GameDataTool {
     // -----------------------------------------------------------------
 
     static addAcceQuestForPos(gameData: GameData, questId: string, posId: string): string {
-        if (gameData.acceQuestInfos.length >= 10) return '任务数量已达到最大值\n请先完成已经接受了的任务';
+        if (gameData.acceQuestInfos.filter(q => q.posId !== undefined).length >= 10) {
+            return '任务数量已达到最大值\n非事件任务最多只能持有10个\n请先完成已经接受了的任务';
+        }
         const quest = AcceQuestInfoTool.create(questId, posId, undefined);
         gameData.acceQuestInfos.push(quest);
         return this.SUC;
     }
 
     static addAcceQuestForEvt(gameData: GameData, questId: string, evtId: string): string {
-        const quest = AcceQuestInfoTool.create(questId, undefined, evtId); // 无须检查拥有任务数量
+        // 无须检查拥有任务数量
+        const quest = AcceQuestInfoTool.create(questId, undefined, evtId);
         gameData.acceQuestInfos.push(quest);
         return this.SUC;
     }

@@ -161,7 +161,7 @@ export class PageActQuester extends PageBase {
 
     acceptQuest(questModel: QuestModel) {
         const gameData = this.ctrlr.memory.gameData;
-        const rzt = GameDataTool.addAcceQuest(gameData, questModel.id, gameData.curPosId);
+        const rzt = GameDataTool.addAcceQuestForPos(gameData, questModel.id, gameData.curPosId);
         if (rzt !== GameDataTool.SUC) {
             this.ctrlr.popToast(rzt);
             return;

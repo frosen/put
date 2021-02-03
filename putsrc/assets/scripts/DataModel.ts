@@ -375,7 +375,8 @@ export enum QuestType {
     support = 1,
     fight,
     gather,
-    search
+    search,
+    ownttl
 }
 
 export abstract class QuestNeed {
@@ -403,7 +404,11 @@ export class SearchQuestNeed extends QuestNeed {
     name!: string;
 }
 
-type AllQuestNeed = SupportQuestNeed | FightQuestNeed | GatherQuestNeed | SearchQuestNeed;
+export class OwnTtlQuestNeed extends QuestNeed {
+    ttlId!: string;
+}
+
+type AllQuestNeed = SupportQuestNeed | FightQuestNeed | GatherQuestNeed | SearchQuestNeed | OwnTtlQuestNeed;
 
 export class QuestModel {
     id!: string;

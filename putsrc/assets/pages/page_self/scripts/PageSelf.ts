@@ -16,11 +16,11 @@ export class PageSelf extends PageBase {
     navHidden: boolean = true;
 
     @property(ListView)
-    listView: ListView = null;
-    lvd: PageSelfLVD = null;
+    listView: ListView = null!;
+    lvd!: PageSelfLVD;
 
     @property(PanelSelfInfo)
-    selfInfo: PanelSelfInfo = null;
+    selfInfo: PanelSelfInfo = null!;
 
     dirtyToken: number = 0;
 
