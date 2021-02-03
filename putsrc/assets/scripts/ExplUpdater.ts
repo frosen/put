@@ -1270,25 +1270,25 @@ export class ExplUpdater {
 
         const model = PetModelDict[pet.id];
         if (model.bioType === BioType.magic) {
-            if (GameDataTool.hasProTtl(gd, PTN.DaXueSheng)) ampl += 0.05 * gd.proTtlDict[PTN.DaXueSheng].data;
+            if (GameDataTool.hasProTtl(gd, PTN.DaXueSheng)) ampl += 0.05 * (gd.proTtlDict[PTN.DaXueSheng].data as number);
         } else if (model.bioType === BioType.mech) {
-            if (GameDataTool.hasProTtl(gd, PTN.JiXieShi)) ampl += 0.05 * gd.proTtlDict[PTN.JiXieShi].data;
+            if (GameDataTool.hasProTtl(gd, PTN.JiXieShi)) ampl += 0.05 * (gd.proTtlDict[PTN.JiXieShi].data as number);
         } else if (model.bioType === BioType.nature) {
-            if (GameDataTool.hasProTtl(gd, PTN.SiYangYuan)) ampl += 0.05 * gd.proTtlDict[PTN.SiYangYuan].data;
+            if (GameDataTool.hasProTtl(gd, PTN.SiYangYuan)) ampl += 0.05 * (gd.proTtlDict[PTN.SiYangYuan].data as number);
         }
 
         if (model.eleType === EleType.fire) {
-            if (GameDataTool.hasProTtl(gd, PTN.ZongHuoZhe)) ampl += 0.05 * gd.proTtlDict[PTN.ZongHuoZhe].data;
+            if (GameDataTool.hasProTtl(gd, PTN.ZongHuoZhe)) ampl += 0.05 * (gd.proTtlDict[PTN.ZongHuoZhe].data as number);
         } else if (model.eleType === EleType.water) {
-            if (GameDataTool.hasProTtl(gd, PTN.YuShuiZhe)) ampl += 0.05 * gd.proTtlDict[PTN.YuShuiZhe].data;
+            if (GameDataTool.hasProTtl(gd, PTN.YuShuiZhe)) ampl += 0.05 * (gd.proTtlDict[PTN.YuShuiZhe].data as number);
         } else if (model.eleType === EleType.air) {
-            if (GameDataTool.hasProTtl(gd, PTN.KongWuZhe)) ampl += 0.05 * gd.proTtlDict[PTN.KongWuZhe].data;
+            if (GameDataTool.hasProTtl(gd, PTN.KongWuZhe)) ampl += 0.05 * (gd.proTtlDict[PTN.KongWuZhe].data as number);
         } else if (model.eleType === EleType.earth) {
-            if (GameDataTool.hasProTtl(gd, PTN.DiFuZhe)) ampl += 0.05 * gd.proTtlDict[PTN.DiFuZhe].data;
+            if (GameDataTool.hasProTtl(gd, PTN.DiFuZhe)) ampl += 0.05 * (gd.proTtlDict[PTN.DiFuZhe].data as number);
         } else if (model.eleType === EleType.light) {
-            if (GameDataTool.hasProTtl(gd, PTN.GuangShi)) ampl += 0.05 * gd.proTtlDict[PTN.GuangShi].data;
+            if (GameDataTool.hasProTtl(gd, PTN.GuangShi)) ampl += 0.05 * (gd.proTtlDict[PTN.GuangShi].data as number);
         } else if (model.eleType === EleType.dark) {
-            if (GameDataTool.hasProTtl(gd, PTN.AnShi)) ampl += 0.05 * gd.proTtlDict[PTN.AnShi].data;
+            if (GameDataTool.hasProTtl(gd, PTN.AnShi)) ampl += 0.05 * (gd.proTtlDict[PTN.AnShi].data as number);
         }
 
         const realExp = Math.ceil(exp * ampl);

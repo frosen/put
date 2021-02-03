@@ -468,9 +468,15 @@ export class SelectionPsge extends Psge {
     options!: PsgeOption[];
 }
 
-export class QuestPsge extends Psge {}
+export class QuestPsge extends Psge {
+    questId!: string;
+    tip!: string;
+}
 
-export class EvtPsge extends Psge {}
+export class EvtPsge extends Psge {
+    evtId!: string;
+    tip!: string;
+}
 
 export class NameInputPsge extends Psge {}
 

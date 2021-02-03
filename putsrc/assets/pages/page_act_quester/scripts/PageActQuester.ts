@@ -38,15 +38,15 @@ export const QuesterReuseInterval: number = 24 * 60 * 60 * 1000; // 重新可用
 @ccclass
 export class PageActQuester extends PageBase {
     @property(ListView)
-    list: ListView = null;
+    list: ListView = null!;
 
     @property(cc.Prefab)
-    funcBarPrefab: cc.Prefab = null;
+    funcBarPrefab: cc.Prefab = null!;
 
-    funcBar: FuncBar = null;
+    funcBar!: FuncBar;
 
-    acceQuestDict: { [key: string]: AcceQuestInfo };
-    pADQuester: PADQuester;
+    acceQuestDict!: { [key: string]: AcceQuestInfo };
+    pADQuester!: PADQuester;
 
     onLoad() {
         super.onLoad();
@@ -94,7 +94,7 @@ export class PageActQuester extends PageBase {
 
     resetCurQuestList(pADQuester: PADQuester, posModel: ActPosModel) {
         const savedQuests = [];
-        const savedQuestDict = {};
+        const savedQuestDict: { [key: string]: Quest } = {};
         for (let index = 0; index < pADQuester.quests.length; index++) {
             const quest = pADQuester.quests[index];
             if (this.acceQuestDict.hasOwnProperty(quest.id)) {
@@ -119,10 +119,10 @@ export class PageActQuester extends PageBase {
             const questId = questIdList.splice(randomInt(questIdList.length), 1)[0];
             let dLine: QuestDLineType;
             if (randomRate(0.3)) dLine = getRandomOneInList([QuestDLineType.in3h, QuestDLineType.in6h]);
-            else dLine = 0;
+            else dLine = QuestDLineType.none;
             let ampl: QuestAmplType;
             if (randomRate(0.3)) ampl = getRandomOneInList([QuestAmplType.ampl, QuestAmplType.double]);
-            else ampl = 0;
+            else ampl = QuestAmplType.none;
             pADQuester.quests.push(QuestTool.create(questId, dLine, ampl));
         }
     }
@@ -176,12 +176,12 @@ export class PageActQuester extends PageBase {
         const need = questModel.need as SupportQuestNeed;
         const gameData = this.ctrlr.memory.gameData;
 
-        const model = CnsumTool.getModelById(need.itemId);
+        const model = CnsumTool.getModelById(need.itemId)!;
         const count = QuestTool.getRealCount(quest);
         this.ctrlr.popAlert(`确定使用${count}个“${model.cnName}”\n完成任务 ${questModel.cnName}？`, (key: number) => {
             if (key !== 1) return;
-            let needItem: Cnsum;
-            let needItemIdx: number;
+            let needItem: Cnsum | undefined;
+            let needItemIdx!: number;
             for (let index = 0; index < gameData.items.length; index++) {
                 const item = gameData.items[index];
                 if (item.id !== need.itemId) continue;

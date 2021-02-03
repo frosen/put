@@ -28,33 +28,33 @@ const EVT = 'e';
 
 @ccclass
 export class PageSelfLVD extends ListViewDelegate {
-    page: PageSelf;
+    page!: PageSelf;
 
     @property(cc.Prefab)
-    infoPrefab: cc.Prefab = null;
+    infoPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    btnPrefab: cc.Prefab = null;
+    btnPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    titlePrefab: cc.Prefab = null;
+    titlePrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    ttlPrefab: cc.Prefab = null;
+    ttlPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    questPrefab: cc.Prefab = null;
+    questPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    evtPrefab: cc.Prefab = null;
+    evtPrefab: cc.Prefab = null!;
 
-    gameData: GameData;
+    gameData!: GameData;
 
-    ttlIds: string[];
+    ttlIds!: string[];
 
-    ttlCellLen: number;
-    questCellLen: number;
-    evtCellLen: number;
+    ttlCellLen!: number;
+    questCellLen!: number;
+    evtCellLen!: number;
 
     initData() {
         const gameData = this.ctrlr.memory.gameData;
@@ -132,6 +132,8 @@ export class PageSelfLVD extends ListViewDelegate {
                 const cell = cc.instantiate(this.evtPrefab).getComponent(ListViewCell);
                 return cell;
             }
+            default:
+                return undefined!;
         }
     }
 
@@ -152,10 +154,16 @@ export class PageSelfLVD extends ListViewDelegate {
             const idx = rowIdx - 3 - this.ttlCellLen - 1;
             const questInfo = this.gameData.acceQuestInfos[idx];
             const questModel = QuestModelDict[questInfo.questId];
-            const posData = this.gameData.posDataDict[questInfo.posId];
-            const quests = (posData.actDict[PAKey.quester] as PADQuester).quests;
-            const quest = quests.find((value: Quest) => value.id === questModel.id);
-            cell.setData(questModel, quest, questInfo);
+            let quest: Quest | undefined;
+            if (questInfo.posId) {
+                const posData = this.gameData.posDataDict[questInfo.posId];
+                const quests = (posData.actDict[PAKey.quester] as PADQuester).quests;
+                quest = quests.find((value: Quest) => value.id === questModel.id)!;
+            } else {
+                const evt = this.gameData.evtDict[questInfo.evtId!];
+                quest = evt.curQuest!;
+            }
+            cell.setData(questModel, quest!, questInfo);
         } else if (rowIdx === 4 + this.ttlCellLen + this.questCellLen) {
             cell.setData(`事件经历（${this.evtCellLen}）`);
         } else {

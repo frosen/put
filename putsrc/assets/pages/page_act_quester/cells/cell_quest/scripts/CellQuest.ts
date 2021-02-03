@@ -35,13 +35,13 @@ export enum QuestState {
 @ccclass
 export class CellQuest extends ListViewCell {
     @property(cc.Label)
-    nameLbl: cc.Label = null;
+    nameLbl: cc.Label = null!;
 
     @property(cc.Label)
-    stateLbl: cc.Label = null;
+    stateLbl: cc.Label = null!;
 
     @property(cc.Label)
-    tipLbl: cc.Label = null;
+    tipLbl: cc.Label = null!;
 
     @property([cc.Label])
     needLbls: cc.Label[] = [];
@@ -50,27 +50,27 @@ export class CellQuest extends ListViewCell {
     awardLbls: cc.Label[] = [];
 
     @property(cc.Label)
-    detailLbl: cc.Label = null;
+    detailLbl: cc.Label = null!;
 
     @property(cc.Sprite)
-    questSp: cc.Sprite = null;
+    questSp: cc.Sprite = null!;
 
     @property(cc.Button)
-    funcBtn: cc.Button = null;
+    funcBtn: cc.Button = null!;
 
     @property(cc.Layout)
     layouts: cc.Layout[] = [];
 
-    clickCallback: (cell: CellQuest) => void = null;
-    funcBtnCallback: (cell: CellQuest) => void = null;
+    clickCallback?: (cell: CellQuest) => void;
+    funcBtnCallback?: (cell: CellQuest) => void;
 
     atQuester: boolean = false;
 
-    questModel: QuestModel;
-    quest: Quest;
-    acceQuestInfo: AcceQuestInfo;
+    questModel!: QuestModel;
+    quest!: Quest;
+    acceQuestInfo!: AcceQuestInfo;
 
-    state: QuestState;
+    state!: QuestState;
 
     onLoad() {
         super.onLoad();
@@ -134,7 +134,7 @@ export class CellQuest extends ListViewCell {
         switch (questModel.type) {
             case QuestType.support: {
                 const need = questModel.need as SupportQuestNeed;
-                const itemModel = CnsumTool.getModelById(need.itemId);
+                const itemModel = CnsumTool.getModelById(need.itemId)!;
 
                 lbls[0].string = '提供';
                 CellQuest.lbl(lbls[1], itemModel.cnName, cc.Color.BLUE);

@@ -17,12 +17,12 @@ import { QuestModelDict } from '../../../configs/QuestModelDict';
 @ccclass
 export class PageActQuesterLVD extends ListViewDelegate {
     @property(cc.Prefab)
-    cellQuestPrefab: cc.Prefab = null;
+    cellQuestPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellUpdateDisplay: cc.Prefab = null;
+    cellUpdateDisplay: cc.Prefab = null!;
 
-    page: PageActQuester;
+    page!: PageActQuester;
 
     numberOfRows(listView: ListView): number {
         return 1 + this.page.pADQuester.quests.length;

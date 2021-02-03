@@ -274,16 +274,20 @@ export class PADPetMkt extends PADBase {
     pets!: CaughtPet[];
 }
 
+/** 时间限制 */
 export enum QuestDLineType {
-    in3h = 1,
+    none,
+    in3h,
     in6h
 }
 
 export const QuestDLines = [0, 3 * 60 * 60 * 1000, 6 * 60 * 60 * 1000];
 export const QuestDLineAwardRates = [1, 1.2, 1.5];
 
+/** 任务奖励倍率 */
 export enum QuestAmplType {
-    ampl = 1,
+    none,
+    ampl, // 小范围增幅
     double
 }
 
@@ -317,8 +321,9 @@ export class PosData {
 // -----------------------------------------------------------------
 
 export class AcceQuestInfo {
-    posId!: string;
     questId!: string;
+    posId?: string;
+    evtId?: string;
 }
 
 export class Evt {
@@ -333,6 +338,10 @@ export class Evt {
      * 任务结果：1代表完成
      */
     rztDict!: { [key: string]: number };
+    /** 当前依赖任务 */
+    curQuest?: Quest;
+    /** 当前依赖事件 */
+    curEvtId?: string;
 }
 
 export enum StoryGainType {
