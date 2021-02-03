@@ -38,8 +38,8 @@ export class PageStory extends PageBase {
         this.lvd = this.listView.delegate as PageStoryLVD;
         this.lvd.page = this;
 
-        this.listView.node.on(ListView.EventType.scrolling, this.onScrolling.bind(this));
         this.listView.node.on(ListView.EventType.cellShow, this.onCellShow.bind(this));
+        this.listView.node.on(ListView.EventType.scrolling, this.onScrolling.bind(this));
 
         this.listView.node.on(cc.Node.EventType.TOUCH_MOVE, this.onListMove.bind(this));
         cc.director.on(cc.Director.EVENT_AFTER_DRAW, this.afterDraw, this);
@@ -185,24 +185,8 @@ export class PageStory extends PageBase {
         }
     }
 
-    onScrolling(listView: ListView) {
-        let progMax = -1;
-        const disCellDataDict = listView.disCellDataDict;
-        for (let index = listView.disBtmRowIdx; index >= listView.disTopRowIdx; index--) {
-            const pLIdx = this.lvd.getPsgeListIdxByRowIdx(index);
-            if (pLIdx === -1) continue;
-            const cell = disCellDataDict[index].cell as CellPsgeBase;
-            if (!cell.isHidden()) break;
-            const y = cell.node.y + listView.content.y + listView.node.height - 200;
-            if (y < 0) continue;
-
-            // 向上滑动到一定程度时，隐藏的cell会被激活，同时更新进度
-            cell.showWithAction();
-            this.activePsge(pLIdx);
-            if (progMax === -1) progMax = cell.psge.idx;
-        }
-        if (progMax !== -1) this.evt.sProg = progMax;
-    }
+    toUpdateTop: boolean = false; // onCellShow中检测到需要update，然后在onScrolling中进行，否则会有重复调用的问题
+    toUpdateBtm: boolean = false;
 
     onCellShow(listView: ListView, key: string, idx: number, cellData: { cell: ListViewCell; id: string }) {
         if (key === ListView.CellEventKey.top) {
@@ -210,17 +194,7 @@ export class PageStory extends PageBase {
                 // pass
             } else {
                 cc.log('PUT Story get top');
-                const lastFrom = this.lvd.from;
-                const curPos = this.listView.content.y;
-                this.lvd.updateListStrData(false);
-                if (this.lvd.from < lastFrom) {
-                    let newPos = curPos;
-                    for (let index = this.lvd.from; index < lastFrom; index++) {
-                        newPos += this.lvd.heightsInList[index];
-                    }
-                    this.listView.clearContent();
-                    this.listView.createContent(newPos);
-                }
+                this.toUpdateTop = true;
             }
         } else if (key === ListView.CellEventKey.btm) {
             if (idx < this.lvd.numberOfRows(listView) - 1) {
@@ -229,10 +203,47 @@ export class PageStory extends PageBase {
                 if (pLIdx > pLIdxInProg) (cellData.cell as CellPsgeBase).hide();
             } else {
                 cc.log('PUT Story get bottom');
-                const lastTo = this.lvd.to;
-                this.lvd.updateListStrData(true);
-                if (this.lvd.to > lastTo) this.listView.resetContent(true);
+                this.toUpdateBtm = true;
             }
+        }
+    }
+
+    onScrolling(listView: ListView) {
+        if (this.toUpdateTop) {
+            this.toUpdateTop = false;
+            const lastFrom = this.lvd.from;
+            const curPos = this.listView.content.y;
+            this.lvd.updateListStrData(false);
+            if (this.lvd.from < lastFrom) {
+                let newPos = curPos;
+                for (let index = this.lvd.from; index < lastFrom; index++) {
+                    newPos += this.lvd.heightsInList[index];
+                }
+                this.listView.clearContent();
+                this.listView.createContent(newPos);
+            }
+        } else if (this.toUpdateBtm) {
+            this.toUpdateBtm = false;
+            const lastTo = this.lvd.to;
+            this.lvd.updateListStrData(true);
+            if (this.lvd.to > lastTo) this.listView.resetContent(true);
+        } else {
+            let progMax = -1;
+            const disCellDataDict = listView.disCellDataDict;
+            for (let index = listView.disBtmRowIdx; index >= listView.disTopRowIdx; index--) {
+                const pLIdx = this.lvd.getPsgeListIdxByRowIdx(index);
+                if (pLIdx === -1) continue;
+                const cell = disCellDataDict[index].cell as CellPsgeBase;
+                if (!cell.isHidden()) break;
+                const y = cell.node.y + listView.content.y + listView.node.height - 200;
+                if (y < 0) continue;
+
+                // 向上滑动到一定程度时，隐藏的cell会被激活，同时更新进度
+                cell.showWithAction();
+                this.activePsge(pLIdx);
+                if (progMax === -1) progMax = cell.psge.idx;
+            }
+            if (progMax !== -1) this.evt.sProg = progMax;
         }
     }
 
