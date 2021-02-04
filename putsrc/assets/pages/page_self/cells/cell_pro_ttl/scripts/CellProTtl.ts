@@ -13,10 +13,10 @@ import { ListViewCell } from '../../../../../scripts/ListViewCell';
 @ccclass
 export class CellProTtl extends ListViewCell {
     @property(cc.Label)
-    nameLbl: cc.Label = null;
+    nameLbl: cc.Label = null!;
 
     @property(cc.Label)
-    infoLbl: cc.Label = null;
+    infoLbl: cc.Label = null!;
 
     setData(proTtl: ProTtl, proTtlModel: ProTtlModel) {
         if (typeof proTtlModel.cnName === 'string') this.nameLbl.string = proTtlModel.cnName;

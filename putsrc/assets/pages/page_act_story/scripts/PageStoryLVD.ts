@@ -147,7 +147,7 @@ export class PageStoryLVD extends ListViewDelegate {
     initListStrData(pos: number) {
         const psges = this.psgesInList;
         this.from = Math.max(pos - this.radius, 0);
-        this.to = Math.min(pos + this.radius, psges.length);
+        this.to = this.getListStrTo(pos);
         this.next = Math.min(this.to + this.radius, psges.length);
         this.curNext = this.to;
         this.handleListStrData(pos);
@@ -160,7 +160,7 @@ export class PageStoryLVD extends ListViewDelegate {
         const psges = this.psgesInList;
 
         if (btm) {
-            this.to = Math.min(this.to + (radius || this.radius), psges.length);
+            this.to = this.getListStrTo(this.to);
             this.next = Math.min(this.to + this.radius, psges.length);
             this.curNext = this.to;
             this.handleListStrData(this.to);
@@ -168,6 +168,16 @@ export class PageStoryLVD extends ListViewDelegate {
             this.from = Math.max(this.from - (radius || this.radius), 0);
             this.handleListStrData(this.from);
         }
+    }
+
+    getListStrTo(pos: number): number {
+        const psges = this.psgesInList;
+        const max = Math.min(pos + this.radius, psges.length);
+        for (let index = pos + 1; index < max; index++) {
+            const pType = psges[index].pType;
+            if (pType === PsgeType.quest || pType === PsgeType.evt) return index;
+        }
+        return max;
     }
 
     handleListStrData(pos: number) {

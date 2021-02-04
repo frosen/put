@@ -16,6 +16,7 @@ import {
     ExplStepNames,
     FightQuestNeed,
     GatherQuestNeed,
+    OwnTtlQuestNeed,
     QuestModel,
     QuestType,
     SearchQuestNeed,
@@ -24,6 +25,7 @@ import {
 } from '../../../../../scripts/DataModel';
 import { ActPosModelDict, PAKey } from '../../../../../configs/ActPosModelDict';
 import { CellUpdateDisplay } from '../../../../page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
+import { ProTtlModelDict } from '../../../../../configs/ProTtlModelDict';
 
 export enum QuestState {
     toAccept = 1,
@@ -85,8 +87,8 @@ export class CellQuest extends ListViewCell {
         this.acceQuestInfo = acceQuestInfo;
 
         this.nameLbl.string = questModel.cnName;
-        CellQuest.getQuestNeedStr(quest, questModel, this.needLbls);
-        CellQuest.getQuestAwardStr(quest, questModel, this.awardLbls);
+        CellQuest.handleQuestNeedLbls(quest, questModel, this.needLbls);
+        CellQuest.handleQuestAwardLbls(quest, questModel, this.awardLbls);
         this.detailLbl.string = questModel.descs[0] + '\n' + questModel.descs[1];
 
         let stateStr: string;
@@ -130,19 +132,29 @@ export class CellQuest extends ListViewCell {
         for (const layout of this.layouts) layout.updateLayout();
     }
 
-    static getQuestNeedStr(quest: Quest, questModel: QuestModel, lbls: cc.Label[]) {
+    static handleQuestNeedLbls(quest: Quest, questModel: QuestModel, lbls: cc.Label[]) {
+        const strDatas = this.getQuestNeedStrDatas(quest, questModel);
+        for (let index = 0; index < lbls.length; index++) {
+            const lbl = lbls[index];
+            const data = strDatas[index];
+            if (data) {
+                lbl.string = data.s;
+                if (data.c) lbl.node.color = data.c;
+            } else lbl.string = '';
+        }
+    }
+
+    static getQuestNeedStrDatas(quest: Quest, questModel: QuestModel): { s: string; c?: cc.Color }[] {
         switch (questModel.type) {
             case QuestType.support: {
                 const need = questModel.need as SupportQuestNeed;
                 const itemModel = CnsumTool.getModelById(need.itemId)!;
 
-                lbls[0].string = '提供';
-                CellQuest.lbl(lbls[1], itemModel.cnName, cc.Color.BLUE);
-                CellQuest.lbl(lbls[2], 'x ' + String(QuestTool.getRealCount(quest)), cc.Color.ORANGE);
-                lbls[3].string = '';
-                lbls[4].string = '';
-                lbls[5].string = '';
-                break;
+                let list = [];
+                list[list.length] = { s: '提供' };
+                list[list.length] = { s: itemModel.cnName, c: cc.Color.BLUE };
+                list[list.length] = { s: 'x ' + String(QuestTool.getRealCount(quest)), c: cc.Color.ORANGE };
+                return list;
             }
             case QuestType.fight: {
                 const need = questModel.need as FightQuestNeed;
@@ -156,13 +168,13 @@ export class CellQuest extends ListViewCell {
                     petStr += ', ';
                 }
 
-                lbls[0].string = '击败';
-                CellQuest.lbl(lbls[1], petStr, cc.Color.BLUE);
-                CellQuest.lbl(lbls[2], '获取', cc.color(173, 173, 173));
-                CellQuest.lbl(lbls[3], need.name, cc.Color.BLUE);
-                CellQuest.lbl(lbls[4], 'x ' + String(QuestTool.getRealCount(quest)), cc.Color.ORANGE);
-                lbls[5].string = '';
-                break;
+                let list = [];
+                list[list.length] = { s: '击败' };
+                list[list.length] = { s: petStr, c: cc.Color.BLUE };
+                list[list.length] = { s: '获取', c: cc.color(173, 173, 173) };
+                list[list.length] = { s: need.name, c: cc.Color.BLUE };
+                list[list.length] = { s: 'x ' + String(QuestTool.getRealCount(quest)), c: cc.Color.ORANGE };
+                return list;
             }
             case QuestType.gather: {
                 const need = questModel.need as GatherQuestNeed;
@@ -172,13 +184,14 @@ export class CellQuest extends ListViewCell {
                 const stepType = StepTypesByMax[stepMax][need.step];
                 const stepName = ExplStepNames[stepType];
 
-                lbls[0].string = '前往';
-                CellQuest.lbl(lbls[1], posModel.cnName, cc.Color.BLUE);
-                CellQuest.lbl(lbls[2], stepName, cc.Color.RED);
-                CellQuest.lbl(lbls[3], '收集', cc.color(173, 173, 173));
-                CellQuest.lbl(lbls[4], need.name, cc.Color.BLUE);
-                CellQuest.lbl(lbls[5], 'x ' + String(QuestTool.getRealCount(quest)), cc.Color.ORANGE);
-                break;
+                let list = [];
+                list[list.length] = { s: '前往' };
+                list[list.length] = { s: posModel.cnName, c: cc.Color.BLUE };
+                list[list.length] = { s: stepName, c: cc.Color.RED };
+                list[list.length] = { s: '收集', c: cc.color(173, 173, 173) };
+                list[list.length] = { s: need.name, c: cc.Color.BLUE };
+                list[list.length] = { s: 'x ' + String(QuestTool.getRealCount(quest)), c: cc.Color.ORANGE };
+                return list;
             }
             case QuestType.search: {
                 const need = questModel.need as SearchQuestNeed;
@@ -188,23 +201,33 @@ export class CellQuest extends ListViewCell {
                 const stepType = StepTypesByMax[stepMax][need.step];
                 const stepName = ExplStepNames[stepType];
 
-                lbls[0].string = '前往';
-                CellQuest.lbl(lbls[1], posModel.cnName, cc.Color.BLUE);
-                CellQuest.lbl(lbls[2], stepName, cc.Color.RED);
-                CellQuest.lbl(lbls[3], '搜寻', cc.color(173, 173, 173));
-                CellQuest.lbl(lbls[4], need.name, cc.Color.BLUE);
-                lbls[5].string = '';
-                break;
+                let list = [];
+                list[list.length] = { s: '前往' };
+                list[list.length] = { s: posModel.cnName, c: cc.Color.BLUE };
+                list[list.length] = { s: stepName, c: cc.Color.RED };
+                list[list.length] = { s: '搜寻', c: cc.color(173, 173, 173) };
+                list[list.length] = { s: need.name, c: cc.Color.BLUE };
+                return list;
             }
+            case QuestType.ownttl: {
+                const need = questModel.need as OwnTtlQuestNeed;
+                const id = need.ttlId;
+                const proTtlModel = ProTtlModelDict[id];
+
+                const name = typeof proTtlModel.cnName === 'string' ? proTtlModel.cnName : proTtlModel.cnName(need.data);
+
+                let list = [];
+                list[list.length] = { s: '拥有' };
+                list[list.length] = { s: name, c: cc.Color.RED };
+                list[list.length] = { s: '称号', c: cc.color(173, 173, 173) };
+                return list;
+            }
+            default:
+                return [];
         }
     }
 
-    static lbl(lbl: cc.Label, str: string, c: cc.Color) {
-        lbl.string = str;
-        lbl.node.color = c;
-    }
-
-    static getQuestAwardStr(quest: Quest, questModel: QuestModel, lbls: cc.Label[]) {
+    static handleQuestAwardLbls(quest: Quest, questModel: QuestModel, lbls: cc.Label[]) {
         lbls[1].string = `声望${QuestTool.getRealReput(quest)}`;
         lbls[2].string = `通用币${MoneyTool.getSimpleStr(QuestTool.getRealMoney(quest))}`;
         let itemNames = '';

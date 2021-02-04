@@ -406,6 +406,7 @@ export class SearchQuestNeed extends QuestNeed {
 
 export class OwnTtlQuestNeed extends QuestNeed {
     ttlId!: string;
+    data?: number | string;
 }
 
 type AllQuestNeed = SupportQuestNeed | FightQuestNeed | GatherQuestNeed | SearchQuestNeed | OwnTtlQuestNeed;

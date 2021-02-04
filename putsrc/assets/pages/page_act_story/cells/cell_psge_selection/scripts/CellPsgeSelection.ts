@@ -10,8 +10,8 @@ import { SelectionPsge } from '../../../../../scripts/DataModel';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 import { PSBState, PsgeSelctionBtn } from './PsgeSelectionBtn';
 
-const SideH = 15;
-const BtnH = 150;
+const SideH = 40;
+const BtnH = 120;
 
 @ccclass
 export class CellPsgeSelection extends CellPsgeBase {
@@ -62,6 +62,7 @@ export class CellPsgeSelection extends CellPsgeBase {
         }
 
         this.node.height = CellPsgeSelection.getHeight(psge.options.length);
+        this.baseNode.height = this.node.height;
     }
 
     static getHeight(btnLen: number) {
