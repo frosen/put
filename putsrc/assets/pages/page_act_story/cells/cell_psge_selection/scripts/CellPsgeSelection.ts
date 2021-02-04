@@ -10,7 +10,9 @@ import { SelectionPsge } from '../../../../../scripts/DataModel';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 import { PSBState, PsgeSelctionBtn } from './PsgeSelectionBtn';
 
-const SideH = 40;
+const HeadH = 30;
+const EndH = 30;
+const SideH = 50;
 const BtnH = 120;
 
 @ccclass
@@ -38,7 +40,7 @@ export class CellPsgeSelection extends CellPsgeBase {
             } else {
                 const btnNode = cc.instantiate(this.btnPrefab);
                 btnNode.parent = this.baseNode;
-                btnNode.y = -SideH - (BtnH + SideH) * index;
+                btnNode.y = -HeadH - SideH - (BtnH + SideH) * index;
                 btn = btnNode.getComponent(PsgeSelctionBtn);
                 btn.init(this, index);
                 this.btns.push(btn);
@@ -66,7 +68,7 @@ export class CellPsgeSelection extends CellPsgeBase {
     }
 
     static getHeight(btnLen: number) {
-        return SideH + (BtnH + SideH) * btnLen;
+        return HeadH + SideH + (BtnH + SideH) * btnLen + EndH;
     }
 
     onClickBtn(index: number) {

@@ -214,7 +214,9 @@ export class PageStoryLVD extends ListViewDelegate {
         } else if (t === PsgeType.selection) {
             this.heightsInList[index] = CellPsgeSelection.getHeight((psge as SelectionPsge).options.length);
         } else if (t === PsgeType.quest) {
+            this.heightsInList[index] = 220;
         } else if (t === PsgeType.evt) {
+            this.heightsInList[index] = 220;
         } else if (t === PsgeType.nameInput) {
         } else if (t === PsgeType.head) {
             this.heightsInList[index] = 300;
