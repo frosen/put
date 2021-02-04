@@ -9,4 +9,23 @@ const { ccclass, property } = cc._decorator;
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 
 @ccclass
-export class CellPsgeEvt extends CellPsgeBase {}
+export class CellPsgeEvt extends CellPsgeBase {
+    @property(cc.Label)
+    lbl: cc.Label = null!;
+
+    @property(cc.Button)
+    btn: cc.Button = null!;
+
+    clickCallback?: (cell: CellPsgeEvt) => void;
+
+    onLoad() {
+        if (CC_EDITOR) return;
+        this.btn.node.on('click', this.onClick.bind(this));
+    }
+
+    setData() {}
+
+    onClick() {
+        if (this.clickCallback) this.clickCallback(this);
+    }
+}
