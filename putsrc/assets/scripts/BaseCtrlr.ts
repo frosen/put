@@ -69,6 +69,9 @@ export class BaseCtrlr extends cc.Component {
     @property(cc.Node)
     tabBed: cc.Node = null!;
 
+    @property(cc.Node)
+    tabBar: cc.Node = null!;
+
     @property({
         displayName: '[操作]刷新页面列表'
     })
@@ -706,6 +709,26 @@ export class BaseCtrlr extends cc.Component {
                 setTimeout(() => {
                     this.maskNode.scale = 0;
                 });
+            })
+            .start();
+    }
+
+    tabBarHiding: boolean = false;
+
+    hideTabBar(b: boolean) {
+        if (this.tabBarHiding === b) return;
+        this.tabBarHiding = b;
+        this.executeHideTabBar(b);
+    }
+
+    executeHideTabBar(b: boolean) {
+        if (this.tabBar.getNumberOfRunningActions() > 0) return;
+        const y = b ? -141 : 0;
+
+        cc.tween(this.tabBar)
+            .to(0.3, { y }, { easing: cc.easing.sineInOut })
+            .call(() => {
+                if (b !== this.tabBarHiding) setTimeout(() => this.executeHideTabBar(this.tabBarHiding));
             })
             .start();
     }

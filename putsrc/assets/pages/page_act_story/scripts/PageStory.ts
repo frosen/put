@@ -208,6 +208,9 @@ export class PageStory extends PageBase {
         }
     }
 
+    navTabHideRunning: boolean = false;
+    lastContentY: number = 0;
+
     onScrolling(listView: ListView) {
         if (this.toUpdateTop) {
             this.toUpdateTop = false;
@@ -245,6 +248,22 @@ export class PageStory extends PageBase {
             }
             if (progMax !== -1) this.evt.sProg = progMax;
         }
+
+        if (this.navTabHideRunning) {
+            if (this.listView.content.y < this.lastContentY) {
+                this.navBar.hide(true);
+                this.ctrlr.hideTabBar(true);
+            } else {
+                this.navBar.hide(false);
+                this.ctrlr.hideTabBar(false);
+            }
+            this.lastContentY = this.listView.content.y;
+        }
+    }
+
+    afterPageShowAnim() {
+        this.navTabHideRunning = true;
+        this.lastContentY = this.listView.content.y;
     }
 
     // 优化：如果当前帧无位置变化则更新 -----------------------------------------------------------------

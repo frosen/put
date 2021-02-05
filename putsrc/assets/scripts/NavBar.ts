@@ -13,6 +13,9 @@ const FUNC_BTN_DISTANCE = 108;
 @ccclass
 export class NavBar extends cc.Component {
     @property(cc.Node)
+    base: cc.Node = null!;
+
+    @property(cc.Node)
     backBtnNode: cc.Node = null!;
 
     @property(cc.Label)
@@ -78,5 +81,25 @@ export class NavBar extends cc.Component {
         this.btnX -= FUNC_BTN_DISTANCE;
 
         return btn;
+    }
+
+    hiding: boolean = false;
+
+    hide(b: boolean) {
+        if (this.hiding === b) return;
+        this.hiding = b;
+        this.executeHide(b);
+    }
+
+    executeHide(b: boolean) {
+        if (this.base.getNumberOfRunningActions() > 0) return;
+        const y = b ? 126 : 0;
+
+        cc.tween(this.base)
+            .to(0.3, { y }, { easing: cc.easing.sineInOut })
+            .call(() => {
+                if (b !== this.hiding) setTimeout(() => this.executeHide(this.hiding));
+            })
+            .start();
     }
 }

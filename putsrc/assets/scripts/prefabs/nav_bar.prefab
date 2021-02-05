@@ -716,6 +716,9 @@
       "__id__": 1
     },
     "_enabled": true,
+    "base": {
+      "__id__": 2
+    },
     "backBtnNode": {
       "__id__": 3
     },
