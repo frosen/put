@@ -22,6 +22,51 @@ function getSelection(line) {
     return { main: result.attribs.main === '1', str: result.attribs.str, id: result.attribs.id };
 }
 
+function getQuest(line) {
+    const result = htmlparser.parseDOM(line)[0];
+    const attris = result.attribs;
+    const content = result.children[0].data;
+
+    let need = {};
+    let type = Number(attris.t);
+    if (type === 1) {
+        need.itemId = attris.aimid;
+    } else if (type === 2) {
+        need.petIds = attris.aimid.split('/');
+        need.name = attris.aimname;
+    } else if (type === 3) {
+        const posData = attris.aimid.split('-');
+        need.posId = posData[0];
+        need.step = Number(posData[1]);
+        need.name = attris.aimname;
+    } else if (type === 4) {
+        const posData = attris.aimid.split('-');
+        need.posId = posData[0];
+        need.step = Number(posData[1]);
+        need.name = attris.aimname;
+    } else if (type === 5) {
+        need.ttlId = attris.aimid;
+        need.data = Number(attris.aimname) || attris.aimname;
+    } else {
+        throw 'error quest type: ' + JSON.stringify(attris);
+    }
+    need.count = Number(attris.cnt);
+
+    return {
+        quest: {
+            id: content,
+            type: attris.t,
+            cnName: attris.cnname,
+            descs: [],
+            need,
+            awardReput: 0,
+            awardMoney: 0,
+            awardItemIds: 0
+        },
+        psge: { questId: content, tip: attris.tip }
+    };
+}
+
 const PTYPE = {
     head: 1,
     normal: 2,
@@ -33,6 +78,7 @@ const PTYPE = {
 };
 
 const dataList = [];
+const questDatas = [];
 for (let index = 0; index < storySrcFileNames.length; index++) {
     const fileName = storySrcFileNames[index];
     if (Path.extname(fileName) !== '.html') continue;
@@ -74,6 +120,10 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 const lastData = datas[datas.length - 1];
                 if (lastData.pType !== PTYPE.normal) throw '选择里面没有文字：' + JSON.stringify(lastData);
                 lastOption.endNPsgeIdx = datas.length - 1;
+            } else if (line[1] === 'q') {
+                const { quest, psge } = getQuest(line);
+                questDatas.push(quest);
+                datas[datas.length] = { questId: psge.questId, tip: psge.tip, pType: PTYPE.quest };
             }
         } else {
             const curOptions = optionsList[optionsList.length - 1];
@@ -215,3 +265,23 @@ const lineStr = '    AAA: AAA\n';
 
     console.log('Done!');
 })();
+
+// 生成quest -----------------------------------------------------------------
+
+let convert = require('./xlsToJs');
+
+convert(
+    '../put.xls',
+    '../../putsrc/assets/configs/QuestModelDictForEvt.ts',
+    'quest',
+    'QuestModelDictForEvt',
+    'QuestModel',
+    'EQN',
+    () => {
+        const dict = {};
+        for (const data of questDatas) {
+            dict[data.id] = data;
+        }
+        return dict;
+    }
+);
