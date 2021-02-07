@@ -263,7 +263,7 @@ export class PageStoryLVD extends ListViewDelegate {
 
     heightForRow(listView: ListView, rowIdx: number): number {
         if (rowIdx === 0) {
-            return 200;
+            return 300;
         } else {
             const realIdx = rowIdx - 1 + this.from;
             if (realIdx < this.to) return this.heightsInList[realIdx];

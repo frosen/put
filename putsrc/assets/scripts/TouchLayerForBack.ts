@@ -41,6 +41,7 @@ export class TouchLayerForBack extends cc.Component {
 
     onGestureStarted(event: cc.Event.EventTouch) {
         const navBar = this.ctrlr.getCurPage().navBar;
+
         if (!navBar || !navBar.backBtnActive || this.mark.getNumberOfRunningActions() > 0) {
             this.touchId = undefined;
             return;
@@ -58,7 +59,7 @@ export class TouchLayerForBack extends cc.Component {
     }
 
     onGestureMoved(event: cc.Event.EventTouch) {
-        if (!this.touchId || event.getID() !== this.touchId) return;
+        if (event.getID() !== this.touchId) return;
 
         const curX = event.getLocationX();
         const curY = event.getLocationY();
@@ -71,14 +72,12 @@ export class TouchLayerForBack extends cc.Component {
     }
 
     onGestureEnd(event: cc.Event.EventTouch) {
-        if (!this.touchId || event.getID() !== this.touchId) return;
         this.touchId = undefined;
         if (this.mark.x >= this.readyX - 1) this.goBack();
         this.moveBack();
     }
 
     onGestureCancel(event: cc.Event.EventTouch) {
-        if (!this.touchId || event.getID() !== this.touchId) return;
         this.touchId = undefined;
         this.moveBack();
     }

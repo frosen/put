@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { StoryModelDict } from '../../../configs/EvtModelDict';
 import { NormalPsge, PsgeType, SelectionPsge, StoryModel } from '../../../scripts/DataModel';
-import { Evt, GameData, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
+import { Evt, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { EquipTool, EvtTool, GameDataTool, PetTool } from '../../../scripts/Memory';
@@ -23,6 +23,9 @@ export class PageStory extends PageBase {
     @property(ListView)
     listView: ListView = null!;
     lvd!: PageStoryLVD;
+
+    @property(cc.Node)
+    touchLayer: cc.Node = null!;
 
     evtId!: string;
     storyModel!: StoryModel;
@@ -43,6 +46,13 @@ export class PageStory extends PageBase {
 
         this.listView.node.on(cc.Node.EventType.TOUCH_MOVE, this.onListMove.bind(this));
         cc.director.on(cc.Director.EVENT_AFTER_DRAW, this.afterDraw, this);
+
+        this.touchLayer.on(cc.Node.EventType.TOUCH_START, this.onGestureStarted.bind(this));
+        this.touchLayer.on(cc.Node.EventType.TOUCH_MOVE, this.onGestureMoved.bind(this));
+        this.touchLayer.on(cc.Node.EventType.TOUCH_END, this.onGestureEnd.bind(this));
+        this.touchLayer.on(cc.Node.EventType.TOUCH_CANCEL, this.onGestureEnd.bind(this));
+        // @ts-ignore
+        this.touchLayer._touchListener.setSwallowTouches(false);
     }
 
     setData(pageData: { evtId: string }) {
@@ -208,9 +218,6 @@ export class PageStory extends PageBase {
         }
     }
 
-    navTabHideRunning: boolean = false;
-    lastContentY: number = 0;
-
     onScrolling(listView: ListView) {
         if (this.toUpdateTop) {
             this.toUpdateTop = false;
@@ -248,22 +255,40 @@ export class PageStory extends PageBase {
             }
             if (progMax !== -1) this.evt.sProg = progMax;
         }
-
-        if (this.navTabHideRunning) {
-            if (this.listView.content.y < this.lastContentY) {
-                this.navBar.hide(true);
-                this.ctrlr.hideTabBar(true);
-            } else {
-                this.navBar.hide(false);
-                this.ctrlr.hideTabBar(false);
-            }
-            this.lastContentY = this.listView.content.y;
-        }
     }
+
+    // -----------------------------------------------------------------
+
+    navTabHideRunning: boolean = false;
+    touchId?: number;
 
     afterPageShowAnim() {
         this.navTabHideRunning = true;
-        this.lastContentY = this.listView.content.y;
+    }
+
+    onGestureStarted(event: cc.Event.EventTouch) {
+        this.touchId = event.getID();
+    }
+
+    onGestureMoved(event: cc.Event.EventTouch) {
+        if (!this.navTabHideRunning) return;
+        if (this.touchId !== event.getID()) return;
+        const curY = event.getLocationY();
+        const oriY = event.getStartLocation().y;
+
+        if (curY > oriY + 50) {
+            cc.log('STORM cc ^_^ hide ', curY, oriY);
+            this.navBar.hide(true);
+            this.ctrlr.hideTabBar(true);
+        } else if (curY < oriY - 50) {
+            cc.log('STORM cc ^_^ show ', curY, oriY);
+            this.navBar.hide(false);
+            this.ctrlr.hideTabBar(false);
+        }
+    }
+
+    onGestureEnd(event: cc.Event.EventTouch) {
+        this.touchId = undefined;
     }
 
     // 优化：如果当前帧无位置变化则更新 -----------------------------------------------------------------
@@ -295,6 +320,7 @@ export class PageStory extends PageBase {
 
     beforePageHideAnim(willDestroy: boolean) {
         if (willDestroy) {
+            this.ctrlr.hideTabBar(false);
             cc.director.targetOff(this);
             GameDataTool.leaveEvt(this.ctrlr.memory.gameData, this.evtId);
         }
