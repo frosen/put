@@ -1149,7 +1149,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
     }
 };
 
-export const BossFeatureModelDict: { [key: string]: FeatureModel } = {
+export const SpcFeatureModelDict: { [key: string]: FeatureModel } = {
     [FtN.bossUlti]: {
         id: FtN.bossUlti,
         cnBrief: '绝杀',
@@ -1198,4 +1198,4 @@ export const BossFeatureModelDict: { [key: string]: FeatureModel } = {
     }
 };
 
-export const FeatureModelDict: { [key: string]: FeatureModel } = Object.assign({}, NormalFeatureModelDict, BossFeatureModelDict);
+export const FeatureModelDict: { [key: string]: FeatureModel } = Object.assign({}, NormalFeatureModelDict, SpcFeatureModelDict);

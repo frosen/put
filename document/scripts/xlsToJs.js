@@ -2,7 +2,7 @@
  * 转换xls到js文件
  */
 
-module.exports = function (xlsFile, jsFile, sheetName, dataName, className, call) {
+module.exports = function (xlsFile, jsFile, sheetName, dataName, className, nameClassNameOrCall, call) {
     let xlsx = require('node-xlsx');
 
     // 解析得到文档中的所有 sheet
@@ -21,7 +21,10 @@ module.exports = function (xlsFile, jsFile, sheetName, dataName, className, call
         return;
     }
 
-    let json = call(thisSheet.data);
+    const realCall = typeof nameClassNameOrCall === 'function' ? nameClassNameOrCall : call;
+    const realNameClassName = typeof nameClassNameOrCall === 'string' ? nameClassNameOrCall : undefined;
+
+    let json = realCall(thisSheet.data);
 
     if (!json) {
         console.error('No JSON');
@@ -38,7 +41,7 @@ module.exports = function (xlsFile, jsFile, sheetName, dataName, className, call
     let nameClass = '';
     if (!(json instanceof Array)) {
         let names = Object.keys(json);
-        let rawName = className.slice(0, className.indexOf('Model')) + 'N';
+        let rawName = realNameClassName || className.slice(0, className.indexOf('Model')) + 'N';
         nameClass = '\n\nexport class ' + rawName + ' {\n';
         for (const name of names) nameClass += `    static ${name} = '${name}';\n`;
         nameClass += '}';

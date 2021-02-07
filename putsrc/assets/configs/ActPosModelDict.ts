@@ -26,14 +26,14 @@ import { DrinkN } from './DrinkModelDict';
 import { EqpAmplrN } from './EqpAmplrModelDict';
 import { EquipN } from './EquipModelDict';
 import { PetN } from './PetModelDict';
-import { QuestN } from './QuestModelDict';
+import { QQN } from './QuestModelDictForQuester';
 import { SpcBtlN, StoryN } from './EvtModelDict';
 
 const p = PetN;
 const e = EquipN;
 const eI = EqpAmplrN;
 const dI = DrinkN;
-const q = QuestN;
+const q = QQN;
 
 export const ActPosModelDict: { [key: string]: ActPosModel } = {
     [PosN.YiShanJiDi]: {
