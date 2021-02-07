@@ -190,6 +190,9 @@ export class PageStory extends PageBase {
         const psge = this.lvd.psgesInList[psgeIdx];
         if (psge.pType === PsgeType.normal) {
             if ((psge as NormalPsge).gains) this.jit.gainDataList.push({ gains: (psge as NormalPsge).gains!, lProg: psgeIdx });
+        } else if (psge.pType === PsgeType.quest) {
+            const gameData = this.ctrlr.memory.gameData;
+            const rzt = GameDataTool.addAcceQuestForEvt(gameData, questModel.id, gameData.curPosId);
         } else if (psge.pType === PsgeType.end) {
             GameDataTool.finishEvt(this.ctrlr.memory.gameData, this.evtId);
         }
@@ -277,11 +280,9 @@ export class PageStory extends PageBase {
         const oriY = event.getStartLocation().y;
 
         if (curY > oriY + 50) {
-            cc.log('STORM cc ^_^ hide ', curY, oriY);
             this.navBar.hide(true);
             this.ctrlr.hideTabBar(true);
         } else if (curY < oriY - 50) {
-            cc.log('STORM cc ^_^ show ', curY, oriY);
             this.navBar.hide(false);
             this.ctrlr.hideTabBar(false);
         }
