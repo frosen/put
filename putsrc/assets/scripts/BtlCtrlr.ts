@@ -14,21 +14,7 @@ import { PetModelDict } from '../configs/PetModelDict';
 import { deepCopy } from '../scripts/Utils';
 import { SkillModel, SkillType, SkillAimtype, SkillDirType } from '../scripts/DataModel';
 import { Pet, EleType, BtlType, GameData, BtlMmr, BioType } from '../scripts/DataSaved';
-import {
-    RealBtl,
-    BtlTeam,
-    BtlPet,
-    BtlBuff,
-    RageMax,
-    BtlPetLenMax,
-    StartFeature,
-    AtkFeature,
-    HealFeature,
-    HurtFeature,
-    DeadFeature,
-    EDeadFeature,
-    TurnFeature
-} from '../scripts/DataOther';
+import { RealBtl, BtlTeam, BtlPet, BtlBuff, RageMax, BtlPetLenMax } from '../scripts/DataOther';
 import { BtlSequence } from '../configs/BtlSequence';
 import { ExplUpdater, ExplLogType } from './ExplUpdater';
 
@@ -61,7 +47,17 @@ function getCurSeed(): number {
 
 const ComboHitRate = [0, 1, 1.1, 1.2]; // combo从1开始
 const FormationHitRate = [1, 0.95, 0.9, 0.9, 0.85]; // 阵型顺序从0开始
-const EleReinforceRelation = [0, 3, 1, 4, 2, 6, 5]; // 元素相克表
+
+// 元素相克表 1fire, 2water, 3air, 4earth, 5light, 6dark
+const EleReinforceRelation = [
+    [],
+    [0, 1, 1, 1.15, 1, 1, 1],
+    [0, 1.15, 1, 1, 1, 1, 1],
+    [0, 1, 1, 1.05, 1.15, 1, 1],
+    [0, 1, 1.15, 1, 0.95, 1, 1],
+    [0, 1, 1, 1, 1, 1, 1.15],
+    [0, 1.1, 1.1, 1.1, 1.1, 1, 1]
+];
 
 export class BtlCtrlr {
     gameData!: GameData;
@@ -611,7 +607,7 @@ export class BtlCtrlr {
         else dmgGain = 1;
 
         const aimEleType = BtlCtrlr.getEleType(aim);
-        const dmgRestricts = EleReinforceRelation[skillEleType] === aimEleType ? 1.15 : 1;
+        const dmgRestricts = EleReinforceRelation[skillEleType][aimEleType];
         return dmgGain * dmgRestricts;
     }
 

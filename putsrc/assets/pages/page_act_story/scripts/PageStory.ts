@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { StoryModelDict } from '../../../configs/EvtModelDict';
-import { NormalPsge, PsgeType, SelectionPsge, StoryModel } from '../../../scripts/DataModel';
+import { NormalPsge, PsgeType, QuestPsge, SelectionPsge, StoryModel } from '../../../scripts/DataModel';
 import { Evt, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
@@ -189,10 +189,11 @@ export class PageStory extends PageBase {
     activePsge(psgeIdx: number) {
         const psge = this.lvd.psgesInList[psgeIdx];
         if (psge.pType === PsgeType.normal) {
-            if ((psge as NormalPsge).gains) this.jit.gainDataList.push({ gains: (psge as NormalPsge).gains!, lProg: psgeIdx });
+            const nPsge = psge as NormalPsge;
+            if (nPsge.gains) this.jit.gainDataList.push({ gains: nPsge.gains, lProg: psgeIdx });
         } else if (psge.pType === PsgeType.quest) {
             const gameData = this.ctrlr.memory.gameData;
-            const rzt = GameDataTool.addAcceQuestForEvt(gameData, questModel.id, gameData.curPosId);
+            GameDataTool.addAcceQuestForEvt(gameData, (psge as QuestPsge).questId, this.evtId);
         } else if (psge.pType === PsgeType.end) {
             GameDataTool.finishEvt(this.ctrlr.memory.gameData, this.evtId);
         }
