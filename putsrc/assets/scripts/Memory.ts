@@ -1693,18 +1693,9 @@ export class GameDataTool {
 
     // -----------------------------------------------------------------
 
-    static addAcceQuestForPos(gameData: GameData, questId: string, posId: string): string {
-        if (gameData.acceQuestInfos.filter(q => q.posId !== undefined).length >= 10) {
-            return '任务数量已达到最大值\n非事件任务最多只能持有10个\n请先完成已经接受了的任务';
-        }
-        const quest = AcceQuestInfoTool.create(questId, posId, undefined);
-        gameData.acceQuestInfos.push(quest);
-        return this.SUC;
-    }
-
-    static addAcceQuestForEvt(gameData: GameData, questId: string, evtId: string): string {
-        // 无须检查拥有任务数量
-        const quest = AcceQuestInfoTool.create(questId, undefined, evtId);
+    static addAcceQuest(gameData: GameData, questId: string, posId?: string, evtId?: string): string {
+        if (gameData.acceQuestInfos.length >= 10) return '任务数量已达到最大值（10个）\n请先完成已经接受了的任务';
+        const quest = AcceQuestInfoTool.create(questId, posId, evtId);
         gameData.acceQuestInfos.push(quest);
         return this.SUC;
     }
@@ -1719,6 +1710,18 @@ export class GameDataTool {
         }
     }
 
+    static getQuestByAcceQuestInfo(gameData: GameData, questInfo: AcceQuestInfo): Quest {
+        if (questInfo.posId) {
+            const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
+            for (const quest of quests) {
+                if (quest.id === questInfo.questId) return quest;
+            }
+            return undefined!;
+        } else {
+            return gameData.evtDict[questInfo.evtId!].curQuest!;
+        }
+    }
+
     static getNeedQuest(
         gameData: GameData,
         questType: QuestType,
@@ -1727,20 +1730,10 @@ export class GameDataTool {
         for (const questInfo of gameData.acceQuestInfos) {
             const model = QuestModelDict[questInfo.questId];
             if (model.type !== questType) continue;
-            if (questInfo.posId) {
-                const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
-                for (const quest of quests) {
-                    if (quest.id !== questInfo.questId) continue;
-                    if (quest.prog >= QuestTool.getRealCount(quest)) continue;
-                    if (!check(quest, model)) continue;
-                    return { quest, model };
-                }
-            } else {
-                const quest = gameData.evtDict[questInfo.evtId!].curQuest!;
-                if (quest.prog >= QuestTool.getRealCount(quest)) continue;
-                if (!check(quest, model)) continue;
-                return { quest, model };
-            }
+            const quest = this.getQuestByAcceQuestInfo(gameData, questInfo);
+            if (quest.prog >= QuestTool.getRealCount(quest)) continue;
+            if (!check(quest, model)) continue;
+            return { quest, model };
         }
         return undefined;
     }
@@ -1749,18 +1742,9 @@ export class GameDataTool {
         for (const questInfo of gameData.acceQuestInfos) {
             const model = QuestModelDict[questInfo.questId];
             if (model.type !== questType) continue;
-            if (questInfo.posId) {
-                const quests = (gameData.posDataDict[questInfo.posId].actDict[PAKey.quester] as PADQuester).quests;
-                for (const quest of quests) {
-                    if (quest.id !== questInfo.questId) continue;
-                    if (quest.prog >= QuestTool.getRealCount(quest)) continue;
-                    call(quest, model);
-                }
-            } else {
-                const quest = gameData.evtDict[questInfo.evtId!].curQuest!;
-                if (quest.prog >= QuestTool.getRealCount(quest)) continue;
-                call(quest, model);
-            }
+            const quest = this.getQuestByAcceQuestInfo(gameData, questInfo);
+            if (quest.prog >= QuestTool.getRealCount(quest)) continue;
+            call(quest, model);
         }
     }
 

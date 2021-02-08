@@ -8,12 +8,13 @@ const { ccclass, property } = cc._decorator;
 
 import { StoryModelDict } from '../../../configs/EvtModelDict';
 import { NormalPsge, PsgeType, QuestPsge, SelectionPsge, StoryModel } from '../../../scripts/DataModel';
-import { Evt, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
+import { Evt, QuestAmplType, QuestDLineType, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
-import { EquipTool, EvtTool, GameDataTool, PetTool } from '../../../scripts/Memory';
+import { EquipTool, EvtTool, GameDataTool, PetTool, QuestTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
+import { CellPsgeQuest } from '../cells/cell_psge_quest/scripts/CellPsgeQuest';
 import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
 import { CellPsgeBase } from './CellPsgeBase';
 import { PageStoryLVD } from './PageStoryLVD';
@@ -191,9 +192,6 @@ export class PageStory extends PageBase {
         if (psge.pType === PsgeType.normal) {
             const nPsge = psge as NormalPsge;
             if (nPsge.gains) this.jit.gainDataList.push({ gains: nPsge.gains, lProg: psgeIdx });
-        } else if (psge.pType === PsgeType.quest) {
-            const gameData = this.ctrlr.memory.gameData;
-            GameDataTool.addAcceQuestForEvt(gameData, (psge as QuestPsge).questId, this.evtId);
         } else if (psge.pType === PsgeType.end) {
             GameDataTool.finishEvt(this.ctrlr.memory.gameData, this.evtId);
         }
@@ -362,7 +360,20 @@ export class PageStory extends PageBase {
         if (progMax !== -1) this.evt.sProg = progMax;
     }
 
-    onClickQuest() {}
+    onClickQuest(cell: CellPsgeQuest) {
+        if (!this.evt.curQuest) {
+            const gameData = this.ctrlr.memory.gameData;
+            const questId = (cell.psge as QuestPsge).questId;
+            const rzt = GameDataTool.addAcceQuest(gameData, questId, undefined, this.evtId);
+            if (rzt !== GameDataTool.SUC) {
+                this.ctrlr.popToast(rzt);
+                return;
+            }
+            this.evt.curQuest = QuestTool.create(questId, QuestDLineType.none, QuestAmplType.none);
+            cell.setData(cell.psge as QuestPsge, this.evt.curQuest);
+            this.ctrlr.popToast('suc');
+        }
+    }
 
     onClickEvt() {}
 

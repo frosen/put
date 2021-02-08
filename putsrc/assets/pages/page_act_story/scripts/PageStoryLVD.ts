@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { NormalPsge, Psge, PsgeType, SelectionPsge } from '../../../scripts/DataModel';
+import { NormalPsge, Psge, PsgeType, QuestPsge, SelectionPsge } from '../../../scripts/DataModel';
 import { GameData } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
@@ -335,6 +335,7 @@ export class PageStoryLVD extends ListViewDelegate {
                     const slc = this.slcDictForIdx[realIdx];
                     cell.setData(psge as SelectionPsge, slc !== undefined ? slc : -1);
                 } else if (t === PsgeType.quest) {
+                    cell.setData(psge as QuestPsge, this.page.evt.curQuest);
                 } else if (t === PsgeType.evt) {
                 }
             }

@@ -13,6 +13,7 @@ import { GameData, PADQuester, Quest } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
+import { GameDataTool } from '../../../scripts/Memory';
 import { CellQuest } from '../../page_act_quester/cells/cell_quest/scripts/CellQuest';
 import { CellTitle } from '../../page_pet_detail/cells/cell_title/scripts/CellTitle';
 import { CellProTtl } from '../cells/cell_pro_ttl/scripts/CellProTtl';
@@ -154,15 +155,7 @@ export class PageSelfLVD extends ListViewDelegate {
             const idx = rowIdx - 3 - this.ttlCellLen - 1;
             const questInfo = this.gameData.acceQuestInfos[idx];
             const questModel = QuestModelDict[questInfo.questId];
-            let quest: Quest | undefined;
-            if (questInfo.posId) {
-                const posData = this.gameData.posDataDict[questInfo.posId];
-                const quests = (posData.actDict[PAKey.quester] as PADQuester).quests;
-                quest = quests.find((value: Quest) => value.id === questModel.id)!;
-            } else {
-                const evt = this.gameData.evtDict[questInfo.evtId!];
-                quest = evt.curQuest!;
-            }
+            const quest = GameDataTool.getQuestByAcceQuestInfo(this.gameData, questInfo);
             cell.setData(questModel, quest!, questInfo);
         } else if (rowIdx === 4 + this.ttlCellLen + this.questCellLen) {
             cell.setData(`事件经历（${this.evtCellLen}）`);
