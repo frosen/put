@@ -340,8 +340,6 @@ export class Evt {
     rztDict!: { [key: string]: number };
     /** 当前依赖任务 */
     curQuest?: Quest;
-    /** 当前依赖事件 */
-    curEvtId?: string;
 }
 
 export enum StoryGainType {

@@ -7,13 +7,14 @@
 const { ccclass, property } = cc._decorator;
 
 import { StoryModelDict } from '../../../configs/EvtModelDict';
-import { NormalPsge, PsgeType, QuestPsge, SelectionPsge, StoryModel } from '../../../scripts/DataModel';
+import { EvtPsge, NormalPsge, PsgeType, QuestPsge, SelectionPsge, StoryModel } from '../../../scripts/DataModel';
 import { Evt, QuestAmplType, QuestDLineType, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { EquipTool, EvtTool, GameDataTool, PetTool, QuestTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
+import { CellPsgeEvt } from '../cells/cell_psge_evt/scripts/CellPsgeEvt';
 import { CellPsgeQuest } from '../cells/cell_psge_quest/scripts/CellPsgeQuest';
 import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
 import { CellPsgeBase } from './CellPsgeBase';
@@ -330,10 +331,53 @@ export class PageStory extends PageBase {
 
     onClickOption(slcCell: CellPsgeSelection, index: number) {
         const slcPsge = slcCell.psge as SelectionPsge;
-        const slcId = slcPsge.id;
+        EvtTool.pushOption(this.evt.rztDict, slcPsge.slcId, index);
+        this.resetPsgeDataAndListView(slcPsge.idx);
+    }
 
-        EvtTool.pushOption(this.evt.rztDict, slcId, index);
+    onClickQuest(cell: CellPsgeQuest) {
+        const gameData = this.ctrlr.memory.gameData;
+        const questId = (cell.psge as QuestPsge).questId;
+        if (!this.evt.curQuest) {
+            const rzt = GameDataTool.addAcceQuest(gameData, questId, undefined, this.evtId);
+            if (rzt !== GameDataTool.SUC) {
+                this.ctrlr.popToast(rzt);
+                return;
+            }
+            this.evt.curQuest = QuestTool.create(questId, QuestDLineType.none, QuestAmplType.none);
+            cell.setData(cell.psge as QuestPsge, this.evt.curQuest);
+            this.ctrlr.popToast('suc');
+        } else {
+            if (this.evt.curQuest.prog < QuestTool.getRealCount(this.evt.curQuest)) {
+                this.ctrlr.popToast('suc....');
+            } else {
+                GameDataTool.removeAcceQuest(gameData, questId, undefined, this.evtId);
+                delete this.evt.curQuest;
+                this.evt.rztDict[questId] = 1;
+                this.resetPsgeDataAndListView(cell.psge.idx);
+                this.ctrlr.popToast('suc....');
+            }
+        }
+    }
 
+    onClickEvt(cell: CellPsgeEvt) {
+        const gameData = this.ctrlr.memory.gameData;
+        const evtId = (cell.psge as EvtPsge).evtId;
+
+        if (!gameData.evtDict[evtId]) {
+            this.ctrlr.popToast('suc....');
+        } else if (gameData.ongoingEvtIds.includes(evtId)) {
+            this.ctrlr.popToast('suc....');
+        } else {
+            this.evt.rztDict[evtId] = 1;
+            this.resetPsgeDataAndListView(cell.psge.idx);
+            this.ctrlr.popToast('suc....');
+        }
+    }
+
+    onInputName() {}
+
+    resetPsgeDataAndListView(lastPsgeIdx: number) {
         const lvd = this.lvd;
         lvd.updateListPsgeData();
         lvd.updateListStrData(true, 3);
@@ -341,7 +385,6 @@ export class PageStory extends PageBase {
         const lv = this.listView;
         lv.resetContent(true);
 
-        const slcPsgeIdx = slcPsge.idx;
         const disCellDataDict = lv.disCellDataDict;
         let progMax = -1;
 
@@ -349,7 +392,7 @@ export class PageStory extends PageBase {
             const pLIdx = lvd.getPsgeListIdxByRowIdx(index);
             if (pLIdx === -1) continue;
             const curPsgeIdx = lvd.psgesInList[pLIdx].idx;
-            if (curPsgeIdx === slcPsgeIdx) break;
+            if (curPsgeIdx === lastPsgeIdx) break;
 
             const cell = disCellDataDict[index].cell as CellPsgeBase;
             cell.hide();
@@ -359,25 +402,6 @@ export class PageStory extends PageBase {
         }
         if (progMax !== -1) this.evt.sProg = progMax;
     }
-
-    onClickQuest(cell: CellPsgeQuest) {
-        if (!this.evt.curQuest) {
-            const gameData = this.ctrlr.memory.gameData;
-            const questId = (cell.psge as QuestPsge).questId;
-            const rzt = GameDataTool.addAcceQuest(gameData, questId, undefined, this.evtId);
-            if (rzt !== GameDataTool.SUC) {
-                this.ctrlr.popToast(rzt);
-                return;
-            }
-            this.evt.curQuest = QuestTool.create(questId, QuestDLineType.none, QuestAmplType.none);
-            cell.setData(cell.psge as QuestPsge, this.evt.curQuest);
-            this.ctrlr.popToast('suc');
-        }
-    }
-
-    onClickEvt() {}
-
-    onInputName() {}
 
     // 撤销 -----------------------------------------------------------------
 

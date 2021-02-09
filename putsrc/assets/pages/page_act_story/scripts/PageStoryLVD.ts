@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { NormalPsge, Psge, PsgeType, QuestPsge, SelectionPsge } from '../../../scripts/DataModel';
+import { EvtPsge, NormalPsge, Psge, PsgeType, QuestPsge, SelectionPsge } from '../../../scripts/DataModel';
 import { GameData } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
@@ -103,7 +103,7 @@ export class PageStoryLVD extends ListViewDelegate {
                 return (psge as NormalPsge).go || index + 1;
             } else if (psge.pType === PsgeType.selection) {
                 const slcPsge = psge as SelectionPsge;
-                const slcId = slcPsge.id;
+                const slcId = slcPsge.slcId;
 
                 const curOptUsing = (optDict[slcId] || 0) + 1;
                 const optionIdx = EvtTool.getOption(rztDict, slcId, curOptUsing);
@@ -112,7 +112,15 @@ export class PageStoryLVD extends ListViewDelegate {
                 slcDict[index] = optionIdx;
                 return slcPsge.options[optionIdx].go;
             } else if (psge.pType === PsgeType.quest) {
-                return -1;
+                const questPsge = psge as QuestPsge;
+                const questId = questPsge.questId;
+                if (rztDict[questId]) return index + 1;
+                else return -1;
+            } else if (psge.pType === PsgeType.evt) {
+                const evtPsge = psge as EvtPsge;
+                const evtId = evtPsge.evtId;
+                if (rztDict[evtId]) return index + 1;
+                else return -1;
             } else {
                 return index + 1;
             }

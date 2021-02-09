@@ -263,7 +263,7 @@ export class PageActQuester extends PageBase {
         }
         tip = tip.slice(0, -1);
 
-        GameDataTool.removeAcceQuest(gameData, questModel.id, gameData.curPosId);
+        GameDataTool.removeAcceQuest(gameData, questModel.id, gameData.curPosId, undefined);
         for (let index = 0; index < this.pADQuester.quests.length; index++) {
             const quest = this.pADQuester.quests[index];
             if (quest.id === questModel.id) {
@@ -304,7 +304,7 @@ export class PageActQuester extends PageBase {
         const model = QuestModelDict[questId];
         this.ctrlr.popAlert(`确定删除任务 ${model.cnName} 吗`, (key: number) => {
             if (key === 1) {
-                GameDataTool.removeAcceQuest(gameData, questId, gameData.curPosId);
+                GameDataTool.removeAcceQuest(gameData, questId, gameData.curPosId, undefined);
                 // 根据id重新查找，以免出现冲突
                 for (let index = 0; index < this.pADQuester.quests.length; index++) {
                     const qInList = this.pADQuester.quests[index];

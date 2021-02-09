@@ -252,9 +252,8 @@ export class EquipModel {
 // -----------------------------------------------------------------
 
 export class UseCond {
-    needTtlIds?: string[];
-    startEvts!: { id: string; prog: number }[];
-    endEvts?: { id: string; prog: number }[];
+    startEvts!: { id: string; prog?: number }[];
+    endEvts?: { id: string; prog?: number }[];
 }
 
 // -----------------------------------------------------------------
@@ -469,7 +468,7 @@ export class PsgeOption {
 }
 
 export class SelectionPsge extends Psge {
-    id!: string;
+    slcId!: string;
     mainCnt!: number;
     options!: PsgeOption[];
 }

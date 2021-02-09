@@ -1700,10 +1700,10 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static removeAcceQuest(gameData: GameData, questId: string, posId: string) {
+    static removeAcceQuest(gameData: GameData, questId: string, posId?: string, evtId?: string) {
         for (let index = 0; index < gameData.acceQuestInfos.length; index++) {
             const quest = gameData.acceQuestInfos[index];
-            if (quest.posId === posId && quest.questId === questId) {
+            if (quest.questId === questId && ((posId && quest.posId === posId) || (evtId && quest.evtId === evtId))) {
                 gameData.acceQuestInfos.splice(index, 1);
                 break;
             }
