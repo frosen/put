@@ -13,7 +13,7 @@ import { QuestModel } from '../scripts/DataModel';
 export const QuestModelDictForEvt: { [key: string]: QuestModel } = {
     YiGeRenWu: {
         id: 'YiGeRenWu',
-        type: '2',
+        type: 2,
         cnName: '一个任务',
         descs: [],
         need: {
@@ -25,6 +25,6 @@ export const QuestModelDictForEvt: { [key: string]: QuestModel } = {
         },
         awardReput: 0,
         awardMoney: 0,
-        awardItemIds: 0
+        awardItemIds: []
     }
 };

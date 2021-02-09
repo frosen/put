@@ -55,13 +55,13 @@ function getQuest(line) {
     return {
         quest: {
             id: content,
-            type: attris.t,
+            type,
             cnName: attris.cnname,
             descs: [],
             need,
             awardReput: 0,
             awardMoney: 0,
-            awardItemIds: 0
+            awardItemIds: []
         },
         psge: { questId: content, tip: attris.tip }
     };
@@ -313,4 +313,21 @@ convert(
 
 // 生成cpk -----------------------------------------------------------------
 
-console.log(cpkDict);
+let cpkContent = '';
+for (const key in cpkDict) {
+    if (Object.hasOwnProperty.call(cpkDict, key)) {
+        const element = cpkDict[key];
+        cpkContent += `    static ${key}: number = ${element};\n`;
+    }
+}
+
+let cpkStr = `/*
+ * CPKDict.ts
+ * 数据列表，从convertStory.js中转义而来，用于文章的定位
+ * luleyan
+ */
+
+export class CPK {
+${cpkContent}}`;
+
+Fs.writeFileSync('../../putsrc/assets/configs/CPKDict.ts', cpkStr);
