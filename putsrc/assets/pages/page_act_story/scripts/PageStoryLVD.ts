@@ -111,6 +111,8 @@ export class PageStoryLVD extends ListViewDelegate {
                 optDict[slcId] = curOptUsing;
                 slcDict[index] = optionIdx;
                 return slcPsge.options[optionIdx].go;
+            } else if (psge.pType === PsgeType.quest) {
+                return -1;
             } else {
                 return index + 1;
             }
@@ -147,7 +149,7 @@ export class PageStoryLVD extends ListViewDelegate {
     initListStrData(pos: number) {
         const psges = this.psgesInList;
         this.from = Math.max(pos - this.radius, 0);
-        this.to = this.getListStrTo(pos);
+        this.to = Math.min(pos + this.radius, psges.length);
         this.next = Math.min(this.to + this.radius, psges.length);
         this.curNext = this.to;
         this.handleListStrData(pos);
@@ -160,7 +162,7 @@ export class PageStoryLVD extends ListViewDelegate {
         const psges = this.psgesInList;
 
         if (btm) {
-            this.to = this.getListStrTo(this.to);
+            this.to = Math.min(this.to + this.radius, psges.length);
             this.next = Math.min(this.to + this.radius, psges.length);
             this.curNext = this.to;
             this.handleListStrData(this.to);
@@ -168,16 +170,6 @@ export class PageStoryLVD extends ListViewDelegate {
             this.from = Math.max(this.from - (radius || this.radius), 0);
             this.handleListStrData(this.from);
         }
-    }
-
-    getListStrTo(pos: number): number {
-        const psges = this.psgesInList;
-        const max = Math.min(pos + this.radius, psges.length);
-        for (let index = pos + 1; index < max; index++) {
-            const pType = psges[index].pType;
-            if (pType === PsgeType.quest || pType === PsgeType.evt) return index;
-        }
-        return max;
     }
 
     handleListStrData(pos: number) {
@@ -299,6 +291,7 @@ export class PageStoryLVD extends ListViewDelegate {
             return cell;
         } else if (cellId === QUEST) {
             const cell = cc.instantiate(this.questPsgePrefab).getComponent(CellPsgeQuest);
+            cell.clickCallback = this.page.onClickQuest.bind(this.page);
             return cell;
         } else if (cellId === EVT) {
             const cell = cc.instantiate(this.evtPsgePrefab).getComponent(CellPsgeEvt);
