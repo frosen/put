@@ -67,6 +67,11 @@ function getQuest(line) {
     };
 }
 
+function getCPK(line) {
+    const result = htmlparser.parseDOM(line)[0];
+    return result.children[0].data;
+}
+
 const PTYPE = {
     head: 1,
     normal: 2,
@@ -79,6 +84,9 @@ const PTYPE = {
 
 const dataList = [];
 const questDatas = [];
+const cpkDict = {};
+const idList = []; // 用于检测是否有重复的id
+
 for (let index = 0; index < storySrcFileNames.length; index++) {
     const fileName = storySrcFileNames[index];
     if (Path.extname(fileName) !== '.html') continue;
@@ -108,7 +116,8 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 const slcParam = getSelection(line);
                 const curOptions = optionsList[optionsList.length - 1];
                 if (curOptions.length === 0) {
-                    datas[datas.length] = { id: slcParam.id, pType: PTYPE.selection };
+                    datas[datas.length] = { pType: PTYPE.selection, slcId: slcParam.id };
+                    idList.push(slcParam.id);
                 }
                 curOptions.push({ slcIdx: datas.length - 1, go: datas.length, data: slcParam });
                 optionsList.push([]);
@@ -123,7 +132,15 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
             } else if (line[1] === 'q') {
                 const { quest, psge } = getQuest(line);
                 questDatas.push(quest);
-                datas[datas.length] = { questId: psge.questId, tip: psge.tip, pType: PTYPE.quest };
+                datas[datas.length] = { pType: PTYPE.quest, questId: psge.questId, tip: psge.tip };
+                idList.push(psge.questId);
+            } else if (line[1] === 'e') {
+            } else if (line[1] === 'c') {
+                const cpk = getCPK(line);
+                if (cpkDict.hasOwnProperty(cpk)) throw 'cpk重复: ' + String(cpk);
+                cpkDict[cpk] = datas.length - 1;
+            } else {
+                throw 'Wrong html label';
             }
         } else {
             const curOptions = optionsList[optionsList.length - 1];
@@ -166,7 +183,7 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 curOptions.length = 0;
             }
 
-            datas[datas.length] = { str: '       ' + line, pType: PTYPE.normal };
+            datas[datas.length] = { pType: PTYPE.normal, str: '       ' + line };
         }
     }
 
@@ -180,7 +197,15 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
     dataList.push({ datas, name: fileName.slice(0, fileName.indexOf('.')) });
 }
 
-// -----------------------------------------------------------------
+// 检测id是否有重复
+idList.sort();
+for (let index = 0; index < idList.length - 1; index++) {
+    if (idList[index] === idList[index + 1]) {
+        throw '重复id（包括questId，evtId和slcId）：' + idList[index];
+    }
+}
+
+// 保存成文件 -----------------------------------------------------------------
 
 function runExec(command, needExit = true, options = { cwd: __dirname }) {
     return new Promise((resolve, reject) => {
@@ -285,3 +310,7 @@ convert(
         return dict;
     }
 );
+
+// 生成cpk -----------------------------------------------------------------
+
+console.log(cpkDict);
