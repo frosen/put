@@ -93,7 +93,7 @@ export class ListView extends cc.Component {
     createContent(pos: number = 0) {
         this.rowCount = this.delegate.numberOfRows(this);
         this.content.height = this.getHeight(this.rowCount);
-        this.content.y = Math.min(Math.max(pos, 0), this.content.height);
+        this.content.y = Math.max(Math.min(pos, this.content.height - this.node.height), 0);
 
         // 显示cell
         const { disTop, disBtm } = this.calcDisplayArea();
