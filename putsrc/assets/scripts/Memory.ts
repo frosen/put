@@ -1073,6 +1073,11 @@ export class EvtTool {
         const slcNum = slcDict[id] || 0;
         return getNumInDigit(slcNum, usingDigit) - 1;
     }
+
+    static getRzt(slcDict: { [key: string]: number }, id: string): number {
+        const slcNum = slcDict[id] || 0;
+        return getNumInDigit(slcNum, getDigit(slcNum));
+    }
 }
 
 export class MmrTool {

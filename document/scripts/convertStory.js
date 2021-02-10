@@ -67,7 +67,7 @@ function getQuest(line) {
     };
 }
 
-function getCPK(line) {
+function getMark(line) {
     const result = htmlparser.parseDOM(line)[0];
     return result.children[0].data;
 }
@@ -83,8 +83,11 @@ const PTYPE = {
 };
 
 const dataList = [];
+
+const slcIds = [];
 const questDatas = [];
-const cpkDict = {};
+const marks = [];
+
 const idList = []; // 用于检测是否有重复的id
 
 for (let index = 0; index < storySrcFileNames.length; index++) {
@@ -117,6 +120,7 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 const curOptions = optionsList[optionsList.length - 1];
                 if (curOptions.length === 0) {
                     datas[datas.length] = { pType: PTYPE.selection, slcId: slcParam.id };
+                    slcIds.push(slcParam.id);
                     idList.push(slcParam.id);
                 }
                 curOptions.push({ slcIdx: datas.length - 1, go: datas.length, data: slcParam });
@@ -135,10 +139,11 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 datas[datas.length] = { pType: PTYPE.quest, questId: psge.questId, tip: psge.tip };
                 idList.push(psge.questId);
             } else if (line[1] === 'e') {
-            } else if (line[1] === 'c') {
-                const cpk = getCPK(line);
-                if (cpkDict.hasOwnProperty(cpk)) throw 'cpk重复: ' + String(cpk);
-                cpkDict[cpk] = datas.length - 1;
+            } else if (line[1] === 'm') {
+                const mark = getMark(line);
+                datas[datas.length - 1].mark = mark;
+                marks.push(mark);
+                idList.push(mark);
             } else {
                 throw 'Wrong html label';
             }
@@ -237,6 +242,8 @@ const head = `/*
  * luleyan
  */
 
+SSS
+MMM
 export const AAA: any[] = `;
 
 const indexHead = `/*
@@ -254,6 +261,8 @@ BBB};
 const importStr = "import { AAA } from '../stories/AAA';\n";
 const lineStr = '    AAA: AAA\n';
 
+const staticStr = '    static AAA: BBB = CCC;\n';
+
 (async () => {
     if (Fs.existsSync(dstDir)) {
         await runExec(`rm -rf ${dstDir}*`);
@@ -261,7 +270,19 @@ const lineStr = '    AAA: AAA\n';
     await runExec(`mkdir -p ${dstDir}`);
 
     for (const { name, datas } of dataList) {
-        const curHead = head.replace(/AAA/g, name);
+        let slcStr = 'export class ' + name + 'SLCN {\n';
+        for (const slcId of slcIds) {
+            slcStr += `    static ${slcId} = '${slcId}';\n`;
+        }
+        slcStr += '};\n';
+
+        let markStr = 'export class ' + name + 'MKN {\n';
+        for (const mark of marks) {
+            markStr += `    static ${mark} = '${mark}';\n`;
+        }
+        markStr += '};\n';
+
+        const curHead = head.replace(/AAA/g, name).replace('SSS', slcStr).replace('MMM', markStr);
         const jsonStr = JSON.stringify(datas, null, 4)
             .replace(/\"([a-zA-Z0-9]*?)\":/g, '$1:')
             .replace(/\"/g, "'");
@@ -310,24 +331,3 @@ convert(
         return dict;
     }
 );
-
-// 生成cpk -----------------------------------------------------------------
-
-let cpkContent = '';
-for (const key in cpkDict) {
-    if (Object.hasOwnProperty.call(cpkDict, key)) {
-        const element = cpkDict[key];
-        cpkContent += `    static ${key}: number = ${element};\n`;
-    }
-}
-
-let cpkStr = `/*
- * CPKDict.ts
- * 数据列表，从convertStory.js中转义而来，用于文章的定位
- * luleyan
- */
-
-export class CPK {
-${cpkContent}}`;
-
-Fs.writeFileSync('../../putsrc/assets/configs/CPKDict.ts', cpkStr);

@@ -193,6 +193,16 @@ export class PageStory extends PageBase {
         if (psge.pType === PsgeType.normal) {
             const nPsge = psge as NormalPsge;
             if (nPsge.gains) this.jit.gainDataList.push({ gains: nPsge.gains, lProg: psgeIdx });
+            if (nPsge.mark) this.evt.rztDict[nPsge.mark] = 1;
+        } else if (psge.pType === PsgeType.selection) {
+            const sPsge = psge as SelectionPsge;
+            this.evt.rztDict[sPsge.slcId] = 0;
+        } else if (psge.pType === PsgeType.quest) {
+            const qPsge = psge as QuestPsge;
+            this.evt.rztDict[qPsge.questId] = 1;
+        } else if (psge.pType === PsgeType.evt) {
+            const ePsge = psge as EvtPsge;
+            this.evt.rztDict[ePsge.evtId] = 1;
         } else if (psge.pType === PsgeType.end) {
             GameDataTool.finishEvt(this.ctrlr.memory.gameData, this.evtId);
         }
@@ -353,7 +363,7 @@ export class PageStory extends PageBase {
             } else {
                 GameDataTool.removeAcceQuest(gameData, questId, undefined, this.evtId);
                 delete this.evt.curQuest;
-                this.evt.rztDict[questId] = 1;
+                this.evt.rztDict[questId] = 2;
                 this.resetPsgeDataAndListView(cell.psge.idx);
                 this.ctrlr.popToast('suc....');
             }
@@ -369,7 +379,7 @@ export class PageStory extends PageBase {
         } else if (gameData.ongoingEvtIds.includes(evtId)) {
             this.ctrlr.popToast('suc....');
         } else {
-            this.evt.rztDict[evtId] = 1;
+            this.evt.rztDict[evtId] = 2;
             this.resetPsgeDataAndListView(cell.psge.idx);
             this.ctrlr.popToast('suc....');
         }

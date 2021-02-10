@@ -251,9 +251,11 @@ export class EquipModel {
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
+// 如果rzt为空，则表示事件结束时
+// 多个evt有一个到达，则结束
 export class UseCond {
-    startEvts!: { id: string; prog?: number }[];
-    endEvts?: { id: string; prog?: number }[];
+    startEvts!: { id: string; rzt?: { id: string; num: number } }[];
+    endEvts?: { id: string; rzt?: { id: string; num: number } }[];
 }
 
 // -----------------------------------------------------------------
@@ -460,6 +462,7 @@ export class NormalPsge extends Psge {
     str!: string;
     gains?: StoryGain[];
     go?: number;
+    mark?: string;
 }
 
 export class PsgeOption {

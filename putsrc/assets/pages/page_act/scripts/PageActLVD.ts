@@ -12,10 +12,11 @@ import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { CellActInfo, CellActInfoDict, PageAct } from './PageAct';
-import { PosData } from '../../../scripts/DataSaved';
+import { Evt, PosData } from '../../../scripts/DataSaved';
 import { ActPosModel, MovModel, UseCond } from '../../../scripts/DataModel';
 import { EvtModelDict } from '../../../configs/EvtModelDict';
 import { CellEvt } from '../cells/cell_evt/scripts/CellEvt';
+import { EvtTool } from '../../../scripts/Memory';
 
 const INFO = 'i';
 const EVT = 'e';
@@ -91,21 +92,30 @@ export class PageActLVD extends ListViewDelegate {
 
     checkUseCond(useCond: UseCond): boolean {
         const gameData = this.ctrlr.memory.gameData;
-        if (useCond.needTtlIds) {
-            for (const ttlId of useCond.needTtlIds) {
-                if (!gameData.proTtlDict.hasOwnProperty(ttlId)) return false;
+
+        const isRztUsed = (evt?: Evt, rzt?: { id: string; num: number }): boolean => {
+            if (evt) {
+                if (rzt) {
+                    if (EvtTool.getRzt(evt.rztDict, rzt.id) === rzt.num) return true;
+                } else return true;
+            }
+            return false;
+        };
+
+        let start = false;
+        for (const { id, rzt } of useCond.startEvts) {
+            if (isRztUsed(gameData.evtDict[id], rzt)) {
+                start = true;
+                break;
             }
         }
-
-        for (const evtData of useCond.startEvts) {
-            const evt = gameData.evtDict[evtData.id];
-            if (!evt || evt.sProg < evtData.prog) return false;
-        }
+        if (!start) return false;
 
         if (useCond.endEvts) {
-            for (const evtData of useCond.endEvts) {
-                const evt = gameData.evtDict[evtData.id];
-                if (evt && evt.sProg >= evtData.prog) return false;
+            for (const { id, rzt } of useCond.endEvts) {
+                if (isRztUsed(gameData.evtDict[id], rzt)) {
+                    return false;
+                }
             }
         }
 

@@ -4,6 +4,14 @@
  * luleyan
  */
 
+export class RuZhiBaoDaoSLCN {
+    static kkk = 'kkk';
+};
+
+export class RuZhiBaoDaoMKN {
+    static EndHere = 'EndHere';
+};
+
 export const RuZhiBaoDao: any[] = [
     {
         pType: 1,
@@ -152,6 +160,7 @@ export const RuZhiBaoDao: any[] = [
     {
         pType: 2,
         str: '       ————————以下为原文————————',
+        mark: 'EndHere',
         idx: 25
     },
     {
