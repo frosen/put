@@ -337,7 +337,7 @@ export class PageStoryLVD extends ListViewDelegate {
                     const slc = this.slcDictForIdx[realIdx];
                     cell.setData(psge as SelectionPsge, slc !== undefined ? slc : -1);
                 } else if (t === PsgeType.quest) {
-                    cell.setData(psge as QuestPsge, this.page.evt.curQuest);
+                    cell.setData(psge as QuestPsge, this.page.evt);
                 } else if (t === PsgeType.evt) {
                 }
             }

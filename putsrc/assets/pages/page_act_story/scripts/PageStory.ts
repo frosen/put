@@ -7,13 +7,25 @@
 const { ccclass, property } = cc._decorator;
 
 import { StoryModelDict } from '../../../configs/EvtModelDict';
-import { EvtPsge, NormalPsge, PsgeType, QuestPsge, SelectionPsge, StoryModel } from '../../../scripts/DataModel';
-import { Evt, QuestAmplType, QuestDLineType, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
+import { QuestModelDict } from '../../../configs/QuestModelDict';
+import {
+    EvtPsge,
+    NormalPsge,
+    PsgeType,
+    QuestModel,
+    QuestPsge,
+    QuestType,
+    SelectionPsge,
+    StoryModel,
+    SupportQuestNeed
+} from '../../../scripts/DataModel';
+import { Cnsum, Evt, Quest, QuestAmplType, QuestDLineType, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
-import { EquipTool, EvtTool, GameDataTool, PetTool, QuestTool } from '../../../scripts/Memory';
+import { CnsumTool, EquipTool, EvtTool, GameDataTool, PetTool, QuestTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
+import { CellQuest } from '../../page_act_quester/cells/cell_quest/scripts/CellQuest';
 import { CellPsgeEvt } from '../cells/cell_psge_evt/scripts/CellPsgeEvt';
 import { CellPsgeQuest } from '../cells/cell_psge_quest/scripts/CellPsgeQuest';
 import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
@@ -348,27 +360,101 @@ export class PageStory extends PageBase {
 
     onClickQuest(cell: CellPsgeQuest) {
         const gameData = this.ctrlr.memory.gameData;
-        const questId = (cell.psge as QuestPsge).questId;
+        const qPage = cell.psge as QuestPsge;
+        const questId = qPage.questId;
         if (!this.evt.curQuest) {
             const rzt = GameDataTool.addAcceQuest(gameData, questId, undefined, this.evtId);
             if (rzt !== GameDataTool.SUC) {
                 this.ctrlr.popToast(rzt);
                 return;
             }
-            this.evt.curQuest = QuestTool.create(questId, QuestDLineType.none, QuestAmplType.none);
-            cell.setData(cell.psge as QuestPsge, this.evt.curQuest);
-            this.ctrlr.popToast('suc');
+            const curQuest = QuestTool.create(questId, QuestDLineType.none, QuestAmplType.none);
+            this.evt.curQuest = curQuest;
+            cell.setData(qPage, this.evt);
+
+            const questModel = QuestModelDict[curQuest.id];
+            let str = `获得任务 ${questModel.cnName}\n\n`;
+            str += '任务需求：\n' + this.getQuestStr(questModel, curQuest);
+            str += '\n\n' + qPage.tip.replace(/ /g, '\n');
+            this.ctrlr.popToast(str);
         } else {
-            if (this.evt.curQuest.prog < QuestTool.getRealCount(this.evt.curQuest)) {
-                this.ctrlr.popToast('suc....');
+            const quest = this.evt.curQuest;
+            const questModel = QuestModelDict[quest.id];
+            const needCnt = QuestTool.getRealNeedCnt(quest);
+            if (quest.prog < needCnt) {
+                if (questModel.type === QuestType.support) {
+                    this.refreshQuest(questModel, quest, cell);
+                } else {
+                    let str = `任务尚未完成\n当前完成度 ${quest.prog} / ${needCnt}}\n\n`;
+                    str += '任务需求：\n' + this.getQuestStr(questModel, quest);
+                    str += '\n\n' + qPage.tip.replace(/ /g, '\n');
+                    this.ctrlr.popToast(str);
+                }
             } else {
-                GameDataTool.removeAcceQuest(gameData, questId, undefined, this.evtId);
-                delete this.evt.curQuest;
-                this.evt.rztDict[questId] = 2;
-                this.resetPsgeDataAndListView(cell.psge.idx);
-                this.ctrlr.popToast('suc....');
+                this.finishQuest(questModel, cell);
             }
         }
+    }
+
+    getQuestStr(questModel: QuestModel, quest: Quest) {
+        const strDatas = CellQuest.getQuestNeedStrDatas(quest, questModel);
+        let str = '';
+        for (const strData of strDatas) str += strData.s + ' ';
+        return str;
+    }
+
+    refreshQuest(questModel: QuestModel, quest: Quest, cell: CellPsgeQuest) {
+        const need = questModel.need as SupportQuestNeed;
+        const gameData = this.ctrlr.memory.gameData;
+
+        const model = CnsumTool.getModelById(need.itemId)!;
+        const needCnt = QuestTool.getRealNeedCnt(quest);
+        const str = `确定使用${needCnt}个“${model.cnName}”\n完成任务 ${questModel.cnName}？`;
+        this.ctrlr.popAlert(str, (key: number) => {
+            if (key !== 1) return;
+            let needItem: Cnsum | undefined;
+            let needItemIdx!: number;
+            for (let index = 0; index < gameData.items.length; index++) {
+                const item = gameData.items[index];
+                if (item.id !== need.itemId) continue;
+                needItem = item as Cnsum;
+                needItemIdx = index;
+                break;
+            }
+            if (!needItem) {
+                this.ctrlr.popToast('未在背包中找到对应的物品');
+                return;
+            }
+
+            const cnsumCnt = Math.min(needCnt, needItem.count);
+            const rzt = GameDataTool.removeItem(gameData, needItemIdx, cnsumCnt);
+            if (rzt !== GameDataTool.SUC) {
+                this.ctrlr.popToast(rzt);
+                return;
+            }
+
+            quest.prog += cnsumCnt;
+            if (quest.prog >= needCnt) {
+                this.finishQuest(questModel, cell);
+            } else {
+                const qPage = cell.psge as QuestPsge;
+                let str = `任务尚未完成\n当前完成度 ${quest.prog} / ${needCnt}\n\n`;
+                str += '任务需求：\n' + this.getQuestStr(questModel, quest);
+                str += '\n\n' + qPage.tip.replace(/ /g, '\n');
+                this.ctrlr.popToast(str);
+            }
+        });
+    }
+
+    finishQuest(questModel: QuestModel, cell: CellPsgeQuest) {
+        const gameData = this.ctrlr.memory.gameData;
+        const questId = (cell.psge as QuestPsge).questId;
+
+        GameDataTool.removeAcceQuest(gameData, questId, undefined, this.evtId);
+        delete this.evt.curQuest;
+        this.evt.rztDict[questId] = 2;
+        this.resetPsgeDataAndListView(cell.psge.idx);
+        this.ctrlr.popToast('完成任务 ' + questModel.cnName);
     }
 
     onClickEvt(cell: CellPsgeEvt) {

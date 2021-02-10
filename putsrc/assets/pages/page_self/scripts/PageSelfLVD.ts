@@ -125,8 +125,9 @@ export class PageSelfLVD extends ListViewDelegate {
             case QUEST: {
                 const cell: CellQuest = cc.instantiate(this.questPrefab).getComponent(CellQuest);
                 cell.clickCallback = this.page.onClickQuest.bind(this.page);
-                cell.funcBtn.node.opacity = 0;
+                cell.funcBtnCallback = this.page.onClickQuestFuncBtn.bind(this.page);
                 cell.funcBtn.interactable = false;
+                cell.usingTip = false;
                 return cell;
             }
             case EVT: {

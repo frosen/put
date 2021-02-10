@@ -65,6 +65,7 @@ export class CellQuest extends ListViewCell {
 
     clickCallback?: (cell: CellQuest) => void;
     funcBtnCallback?: (cell: CellQuest) => void;
+    usingTip: boolean = true;
 
     atQuester: boolean = false;
 
@@ -89,7 +90,7 @@ export class CellQuest extends ListViewCell {
         this.nameLbl.string = questModel.cnName;
         CellQuest.handleQuestNeedLbls(quest, questModel, this.needLbls);
         CellQuest.handleQuestAwardLbls(quest, questModel, this.awardLbls);
-        this.detailLbl.string = questModel.descs[0] + '\n' + questModel.descs[1];
+        this.detailLbl.string = (questModel.descs[0] || '--') + '\n' + (questModel.descs[1] || '--');
 
         let stateStr: string;
         let tipStr: string;
@@ -97,13 +98,13 @@ export class CellQuest extends ListViewCell {
             this.state = QuestState.toAccept;
             stateStr = '';
             tipStr = '（点击接受）';
-        } else if (quest.prog >= QuestTool.getRealCount(quest)) {
+        } else if (quest.prog >= QuestTool.getRealNeedCnt(quest)) {
             this.state = QuestState.toSubmit;
             stateStr = '  完成';
             tipStr = this.atQuester ? '（点击提交）' : '';
         } else if (questModel.type === QuestType.support) {
             this.state = QuestState.toRefresh;
-            stateStr = `  ${quest.prog} / ${QuestTool.getRealCount(quest)}`;
+            stateStr = `  ${quest.prog} / ${QuestTool.getRealNeedCnt(quest)}`;
             tipStr = '（点击刷新）';
         } else if (questModel.type === QuestType.search) {
             this.state = QuestState.toFinish;
@@ -111,7 +112,7 @@ export class CellQuest extends ListViewCell {
             tipStr = '';
         } else {
             this.state = QuestState.toFinish;
-            stateStr = `  ${quest.prog} / ${QuestTool.getRealCount(quest)}`;
+            stateStr = `  ${quest.prog} / ${QuestTool.getRealNeedCnt(quest)}`;
             tipStr = '';
         }
 
@@ -121,7 +122,7 @@ export class CellQuest extends ListViewCell {
         }
 
         this.stateLbl.string = stateStr;
-        this.tipLbl.string = tipStr;
+        this.tipLbl.string = this.usingTip ? tipStr : '';
 
         ListViewCell.rerenderLbl(this.nameLbl);
         ListViewCell.rerenderLbl(this.stateLbl);
@@ -153,7 +154,7 @@ export class CellQuest extends ListViewCell {
                 let list = [];
                 list[list.length] = { s: '提供' };
                 list[list.length] = { s: itemModel.cnName, c: cc.Color.BLUE };
-                list[list.length] = { s: 'x ' + String(QuestTool.getRealCount(quest)), c: cc.Color.ORANGE };
+                list[list.length] = { s: 'x ' + String(QuestTool.getRealNeedCnt(quest)), c: cc.Color.ORANGE };
                 return list;
             }
             case QuestType.fight: {
@@ -173,7 +174,7 @@ export class CellQuest extends ListViewCell {
                 list[list.length] = { s: petStr, c: cc.Color.BLUE };
                 list[list.length] = { s: '获取', c: cc.color(173, 173, 173) };
                 list[list.length] = { s: need.name, c: cc.Color.BLUE };
-                list[list.length] = { s: 'x ' + String(QuestTool.getRealCount(quest)), c: cc.Color.ORANGE };
+                list[list.length] = { s: 'x ' + String(QuestTool.getRealNeedCnt(quest)), c: cc.Color.ORANGE };
                 return list;
             }
             case QuestType.gather: {
@@ -190,7 +191,7 @@ export class CellQuest extends ListViewCell {
                 list[list.length] = { s: stepName, c: cc.Color.RED };
                 list[list.length] = { s: '收集', c: cc.color(173, 173, 173) };
                 list[list.length] = { s: need.name, c: cc.Color.BLUE };
-                list[list.length] = { s: 'x ' + String(QuestTool.getRealCount(quest)), c: cc.Color.ORANGE };
+                list[list.length] = { s: 'x ' + String(QuestTool.getRealNeedCnt(quest)), c: cc.Color.ORANGE };
                 return list;
             }
             case QuestType.search: {

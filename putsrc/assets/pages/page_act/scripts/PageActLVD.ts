@@ -11,7 +11,7 @@ import { ActPosModelDict } from '../../../configs/ActPosModelDict';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
-import { CellActInfo, CellActInfoDict, PageAct } from './PageAct';
+import { CellActInfoDict, PageAct } from './PageAct';
 import { Evt, PosData } from '../../../scripts/DataSaved';
 import { ActPosModel, MovModel, UseCond } from '../../../scripts/DataModel';
 import { EvtModelDict } from '../../../configs/EvtModelDict';

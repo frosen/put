@@ -52,6 +52,12 @@ function getQuest(line) {
     }
     need.count = Number(attris.cnt);
 
+    // tip 一行不能超过22个字 空格算换行
+    const tips = attris.tip.split(' ');
+    for (const tip of tips) {
+        if (tip.length > 22) throw 'tip有误，tip一行不能超过22个字 空格算换行：' + attris.tip;
+    }
+
     return {
         quest: {
             id: content,
@@ -64,6 +70,29 @@ function getQuest(line) {
             awardItemIds: []
         },
         psge: { questId: content, tip: attris.tip }
+    };
+}
+
+function getEvt(line) {
+    const result = htmlparser.parseDOM(line)[0];
+    const attris = result.attribs;
+    const content = result.children[0].data;
+
+    // tip 一行不能超过22个字 空格算换行
+    const tips = attris.tip.split(' ');
+    for (const tip of tips) {
+        if (tip.length > 22) throw 'tip有误，tip一行不能超过22个字 空格算换行：' + attris.tip;
+    }
+
+    let rzt;
+    if (attris.rztid && attris.rztnum) {
+        rzt = { id: attris.rztid, num: attris.rztnum };
+    }
+
+    return {
+        evtId: content,
+        tip: attris.tip,
+        rzt
     };
 }
 
@@ -139,6 +168,9 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 datas[datas.length] = { pType: PTYPE.quest, questId: psge.questId, tip: psge.tip };
                 idList.push(psge.questId);
             } else if (line[1] === 'e') {
+                const { evtId, rzt, tip } = getEvt(line);
+                datas[datas.length] = { pType: PTYPE.evt, evtId, rzt, tip };
+                idList.push(evtId);
             } else if (line[1] === 'm') {
                 const mark = getMark(line);
                 datas[datas.length - 1].mark = mark;

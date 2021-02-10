@@ -59,5 +59,11 @@ export class PageSelf extends PageBase {
 
     // -----------------------------------------------------------------
 
-    onClickQuest() {}
+    onClickQuest() {
+        cc.log('llytodo');
+    }
+
+    onClickQuestFuncBtn() {
+        cc.log('llytodo');
+    }
 }

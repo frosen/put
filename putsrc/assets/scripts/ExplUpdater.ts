@@ -377,8 +377,8 @@ export class ExplUpdater {
             const meetRate = petHaveCnt / curStepPetLen;
             const meetCnt = Math.floor(rztSt.winCnt * meetRate);
             if (meetCnt === 0) return;
-            const count = QuestTool.getRealCount(quest);
-            let diff = Math.min(count - quest.prog, meetCnt);
+            const needCnt = QuestTool.getRealNeedCnt(quest);
+            let diff = Math.min(needCnt - quest.prog, meetCnt);
             if (fQCnt + diff >= rztSt.winCnt) diff = rztSt.winCnt - fQCnt;
             fQCnt += diff;
             quest.prog += diff;
@@ -387,9 +387,9 @@ export class ExplUpdater {
         // 调查类任务
         GameDataTool.eachNeedQuest(gameData, QuestType.search, (quest: Quest, model: QuestModel) => {
             const need = model.need as SearchQuestNeed;
-            const count = QuestTool.getRealCount(quest);
-            if (expl.curPosId === need.posId && curStep === need.step && this.updCnt >= count) {
-                quest.prog = count;
+            const needCnt = QuestTool.getRealNeedCnt(quest);
+            if (expl.curPosId === need.posId && curStep === need.step && this.updCnt >= needCnt) {
+                quest.prog = needCnt;
             }
         });
 
@@ -576,7 +576,7 @@ export class ExplUpdater {
             if (gQuestCnt === gQuestCntMax) return;
             const need = model.need as GatherQuestNeed;
             if (expl.curPosId === need.posId && curStep === need.step) {
-                let diff = QuestTool.getRealCount(quest) - quest.prog;
+                let diff = QuestTool.getRealNeedCnt(quest) - quest.prog;
                 if (gQuestCnt + diff >= gQuestCntMax) diff = gQuestCntMax - gQuestCnt;
 
                 gQuestCnt += diff;
@@ -1075,7 +1075,9 @@ export class ExplUpdater {
                     (quest: Quest, model: QuestModel): boolean => {
                         const need = model.need as SearchQuestNeed;
                         return (
-                            expl.curPosId === need.posId && curStep === need.step && this.updCnt >= QuestTool.getRealCount(quest)
+                            expl.curPosId === need.posId &&
+                            curStep === need.step &&
+                            this.updCnt >= QuestTool.getRealNeedCnt(quest)
                         );
                     }
                 );
@@ -1083,7 +1085,7 @@ export class ExplUpdater {
                 if (sQData && randomRate(0.1)) {
                     const { quest, model } = sQData;
                     const need = model.need as GatherQuestNeed;
-                    quest.prog = QuestTool.getRealCount(quest);
+                    quest.prog = QuestTool.getRealNeedCnt(quest);
                     this.log(ExplLogType.rich, `找到${need.name} 任务 ${model.cnName} 完成`);
                 } else {
                     this.log(ExplLogType.repeat, '探索中......');
@@ -1133,9 +1135,9 @@ export class ExplUpdater {
                 const { quest, model } = gQData;
                 quest.prog++;
                 const need = model.need as GatherQuestNeed;
-                const count = QuestTool.getRealCount(quest);
-                this.log(ExplLogType.rich, `采集到${need.name} 任务 ${model.cnName} ${quest.prog}/${count}`);
-                if (quest.prog >= count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
+                const needCnt = QuestTool.getRealNeedCnt(quest);
+                this.log(ExplLogType.rich, `采集到${need.name} 任务 ${model.cnName} ${quest.prog}/${needCnt}`);
+                if (quest.prog >= needCnt) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
             }
         } else if (this.trsrFinding) {
             const eqpIdLists = explModel.eqpIdLists; // start时验证过eqpIdLists必然存在且有值
@@ -1384,9 +1386,9 @@ export class ExplUpdater {
             const { quest, model } = fQData;
             const need = model.need as FightQuestNeed;
             quest.prog++;
-            const count = QuestTool.getRealCount(quest);
-            this.log(ExplLogType.rich, `获得${need.name} 任务 ${model.cnName} ${quest.prog}/${count}`);
-            if (quest.prog >= count) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
+            const needCnt = QuestTool.getRealNeedCnt(quest);
+            this.log(ExplLogType.rich, `获得${need.name} 任务 ${model.cnName} ${quest.prog}/${needCnt}`);
+            if (quest.prog >= needCnt) this.log(ExplLogType.rich, `任务 ${model.cnName} 完成`);
         }
     }
 

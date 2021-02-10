@@ -483,6 +483,7 @@ export class QuestPsge extends Psge {
 
 export class EvtPsge extends Psge {
     evtId!: string;
+    rzt?: { id: string; num: number };
     tip!: string;
 }
 

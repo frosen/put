@@ -1027,7 +1027,7 @@ export class QuestTool {
         return quest;
     }
 
-    static getRealCount(quest: Quest): number {
+    static getRealNeedCnt(quest: Quest): number {
         const model = QuestModelDict[quest.id];
         const count = model.need.count;
         return Math.floor(count * QuestAmplRates[quest.ampl]);
@@ -1736,7 +1736,7 @@ export class GameDataTool {
             const model = QuestModelDict[questInfo.questId];
             if (model.type !== questType) continue;
             const quest = this.getQuestByAcceQuestInfo(gameData, questInfo);
-            if (quest.prog >= QuestTool.getRealCount(quest)) continue;
+            if (quest.prog >= QuestTool.getRealNeedCnt(quest)) continue;
             if (!check(quest, model)) continue;
             return { quest, model };
         }
@@ -1748,7 +1748,7 @@ export class GameDataTool {
             const model = QuestModelDict[questInfo.questId];
             if (model.type !== questType) continue;
             const quest = this.getQuestByAcceQuestInfo(gameData, questInfo);
-            if (quest.prog >= QuestTool.getRealCount(quest)) continue;
+            if (quest.prog >= QuestTool.getRealNeedCnt(quest)) continue;
             call(quest, model);
         }
     }

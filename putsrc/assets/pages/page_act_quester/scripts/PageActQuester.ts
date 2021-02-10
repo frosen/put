@@ -177,8 +177,9 @@ export class PageActQuester extends PageBase {
         const gameData = this.ctrlr.memory.gameData;
 
         const model = CnsumTool.getModelById(need.itemId)!;
-        const count = QuestTool.getRealCount(quest);
-        this.ctrlr.popAlert(`确定使用${count}个“${model.cnName}”\n完成任务 ${questModel.cnName}？`, (key: number) => {
+        const needCnt = QuestTool.getRealNeedCnt(quest);
+        const str = `确定使用${needCnt}个“${model.cnName}”\n完成任务 ${questModel.cnName}？`;
+        this.ctrlr.popAlert(str, (key: number) => {
             if (key !== 1) return;
             let needItem: Cnsum | undefined;
             let needItemIdx!: number;
@@ -194,19 +195,19 @@ export class PageActQuester extends PageBase {
                 return;
             }
 
-            const realCount = Math.min(count, needItem.count);
-            const rzt = GameDataTool.removeItem(gameData, needItemIdx, realCount);
+            const cnsumCount = Math.min(needCnt, needItem.count);
+            const rzt = GameDataTool.removeItem(gameData, needItemIdx, cnsumCount);
             if (rzt !== GameDataTool.SUC) {
                 this.ctrlr.popToast(rzt);
                 return;
             }
 
-            quest.prog += realCount;
+            quest.prog += cnsumCount;
 
-            if (quest.prog >= count) {
+            if (quest.prog >= needCnt) {
                 this.ctrlr.popToast(`完成任务 ${questModel.cnName}`);
             } else {
-                this.ctrlr.popToast(`任务完成度 ${quest.prog} / ${count}`);
+                this.ctrlr.popToast(`任务完成度 ${quest.prog} / ${needCnt}`);
             }
 
             this.resetAcceptedQuestDict(gameData);

@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { QuestModelDict } from '../../../../../configs/QuestModelDict';
 import { QuestPsge } from '../../../../../scripts/DataModel';
-import { Quest } from '../../../../../scripts/DataSaved';
+import { Evt, Quest } from '../../../../../scripts/DataSaved';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 
 @ccclass
@@ -26,12 +26,22 @@ export class CellPsgeQuest extends CellPsgeBase {
         this.btn.node.on('click', this.onClick.bind(this));
     }
 
-    setData(questPsge: QuestPsge, curQuest?: Quest) {
-        const questModel = QuestModelDict[questPsge.questId];
-        if (!curQuest) {
-            this.lbl.string = '接受任务：' + questModel.cnName;
-        } else {
+    setData(questPsge: QuestPsge, evt: Evt) {
+        const questId = questPsge.questId;
+        const questModel = QuestModelDict[questId];
+
+        if (evt.rztDict[questId] === 2) {
             this.lbl.string = '完成任务：' + questModel.cnName;
+            this.btn.interactable = false;
+            this.lbl.node.color = cc.color(120, 120, 120);
+        } else if (evt.curQuest && evt.curQuest.id === questId) {
+            this.lbl.string = '完成任务：' + questModel.cnName;
+            this.btn.interactable = true;
+            this.lbl.node.color = cc.color(43, 33, 4);
+        } else {
+            this.lbl.string = '接受任务：' + questModel.cnName;
+            this.btn.interactable = true;
+            this.lbl.node.color = cc.color(43, 33, 4);
         }
     }
 
