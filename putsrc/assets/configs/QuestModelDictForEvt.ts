@@ -15,7 +15,10 @@ export const QuestModelDictForEvt: { [key: string]: QuestModel } = {
         id: 'YiGeRenWu',
         type: 2,
         cnName: '一个任务',
-        descs: [],
+        descs: [
+            '事件任务，完成后事件才能继续',
+            '这是一个任务啊，测试用的'
+        ],
         need: {
             petIds: [
                 'NeiRanJiShou'

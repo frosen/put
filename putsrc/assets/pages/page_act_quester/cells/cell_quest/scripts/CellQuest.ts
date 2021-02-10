@@ -228,8 +228,19 @@ export class CellQuest extends ListViewCell {
     }
 
     static handleQuestAwardLbls(quest: Quest, questModel: QuestModel, lbls: cc.Label[]) {
-        lbls[1].string = `声望${QuestTool.getRealReput(quest)}`;
-        lbls[2].string = `通用币${MoneyTool.getSimpleStr(QuestTool.getRealMoney(quest))}`;
+        const reput = QuestTool.getRealReput(quest);
+        const money = QuestTool.getRealMoney(quest);
+
+        if (reput === 0 && money === 0) {
+            lbls[1].string = ' ----';
+            lbls[2].string = ' ----';
+        } else {
+            if (reput === 0) lbls[1].string = '';
+            else lbls[1].string = `声望${reput}`;
+            if (money === 0) lbls[2].string = '';
+            else lbls[2].string = `通用币${MoneyTool.getSimpleStr(money)}`;
+        }
+
         let itemNames = '';
         const awardItemIds = questModel.awardItemIds;
         if (awardItemIds.length > 0) {

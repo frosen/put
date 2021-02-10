@@ -114,12 +114,12 @@ export class PageStoryLVD extends ListViewDelegate {
             } else if (psge.pType === PsgeType.quest) {
                 const questPsge = psge as QuestPsge;
                 const questId = questPsge.questId;
-                if (rztDict[questId]) return index + 1;
+                if (rztDict[questId] === 2) return index + 1;
                 else return -1;
             } else if (psge.pType === PsgeType.evt) {
                 const evtPsge = psge as EvtPsge;
                 const evtId = evtPsge.evtId;
-                if (rztDict[evtId]) return index + 1;
+                if (rztDict[evtId] === 2) return index + 1;
                 else return -1;
             } else {
                 return index + 1;
@@ -184,6 +184,7 @@ export class PageStoryLVD extends ListViewDelegate {
         for (let index = this.from; index < this.to; index++) {
             this.calcStrData(index);
             if (PageStoryLVD.labelCharError) {
+                cc.log('PUT char error');
                 // 监测label发现char不能正确生成，大概率因为保存的char缓存已满，需清理缓存重新初始化
                 cc.Label.clearCharCache();
                 this.radius--; // 减少字符数量，避免进入无限循环
@@ -346,7 +347,7 @@ export class PageStoryLVD extends ListViewDelegate {
     getPsgeListIdxByRowIdx(idx: number): number {
         if (idx === 0) return -1;
         const realIdx = idx - 1 + this.from;
-        if (realIdx >= this.to) return -1;
+        if (realIdx >= this.to) return -2;
         return realIdx;
     }
 }

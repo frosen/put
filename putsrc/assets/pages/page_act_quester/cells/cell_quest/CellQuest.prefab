@@ -917,7 +917,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 218.68,
+      "width": 243.68,
       "height": 40
     },
     "_anchorPoint": {
@@ -1101,7 +1101,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        83,
+        88,
         0,
         0,
         0,
@@ -1209,7 +1209,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        145.84,
+        155.84,
         0,
         0,
         0,
@@ -1317,7 +1317,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        208.68,
+        223.68,
         0,
         0,
         0,
@@ -1425,7 +1425,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        213.68,
+        233.68,
         0,
         0,
         0,
@@ -1533,7 +1533,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        218.68,
+        243.68,
         0,
         0,
         0,
@@ -1612,7 +1612,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 218.68,
+      "width": 243.68,
       "height": 40
     },
     "_resize": 1,
@@ -1627,7 +1627,7 @@
     "_N$paddingRight": 0,
     "_N$paddingTop": 0,
     "_N$paddingBottom": 0,
-    "_N$spacingX": 5,
+    "_N$spacingX": 10,
     "_N$spacingY": 0,
     "_N$verticalDirection": 1,
     "_N$horizontalDirection": 0,
@@ -1685,7 +1685,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 182.68,
+      "width": 197.68,
       "height": 40
     },
     "_anchorPoint": {
@@ -1869,7 +1869,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        57,
+        62,
         0,
         0,
         0,
@@ -1977,7 +1977,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        119.84,
+        129.84,
         0,
         0,
         0,
@@ -2085,7 +2085,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        182.68,
+        197.68,
         0,
         0,
         0,
@@ -2164,7 +2164,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 182.68,
+      "width": 197.68,
       "height": 40
     },
     "_resize": 1,
@@ -2179,7 +2179,7 @@
     "_N$paddingRight": 0,
     "_N$paddingTop": 0,
     "_N$paddingBottom": 0,
-    "_N$spacingX": 5,
+    "_N$spacingX": 10,
     "_N$spacingY": 0,
     "_N$verticalDirection": 1,
     "_N$horizontalDirection": 0,

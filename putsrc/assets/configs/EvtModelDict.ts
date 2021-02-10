@@ -50,7 +50,10 @@ export const SpcBtlModelDict: { [key: string]: SpcBtlModel } = {
                 name: '狂暴核心',
                 main: true
             }
-        ]
+        ],
+        useCond: {
+            startEvts: [{ id: StoryN.RuZhiBaoDao, rzt: { id: SpcBtlN.KuangBaoHeXin, num: 1 } }]
+        }
     }
 };
 

@@ -57,7 +57,7 @@ function getQuest(line) {
             id: content,
             type,
             cnName: attris.cnname,
-            descs: [],
+            descs: ['事件任务，完成后事件才能继续', attris.tip || '?'],
             need,
             awardReput: 0,
             awardMoney: 0,

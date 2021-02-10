@@ -154,6 +154,7 @@ export class PageStory extends PageBase {
             if (pLIdx > pLIdxInProg) break;
             const cellH = this.lvd.heightForRow(lv, index);
             allCellH += cellH;
+            if (pLIdx === -2) break; // end之前一般都是特殊psge，height比较低，不容易露出来，所以多加一个height
         }
 
         allCellH -= 50; // 最后一个cell少露出一些
@@ -166,7 +167,7 @@ export class PageStory extends PageBase {
         const disCellDataDict = lv.disCellDataDict;
         for (let index = lv.disBtmRowIdx; index >= lv.disTopRowIdx; index--) {
             const pLIdx = this.lvd.getPsgeListIdxByRowIdx(index);
-            if (pLIdx === -1) continue;
+            if (pLIdx < 0) continue;
             if (pLIdx === pLIdxInProg) break;
             const cell = disCellDataDict[index].cell as CellPsgeBase;
             needActiveDataList.push({ cell, pLIdx });
@@ -255,7 +256,7 @@ export class PageStory extends PageBase {
             const disCellDataDict = listView.disCellDataDict;
             for (let index = listView.disBtmRowIdx; index >= listView.disTopRowIdx; index--) {
                 const pLIdx = this.lvd.getPsgeListIdxByRowIdx(index);
-                if (pLIdx === -1) continue;
+                if (pLIdx < 0) continue;
                 const cell = disCellDataDict[index].cell as CellPsgeBase;
                 if (!cell.isHidden()) break;
                 const y = cell.node.y + listView.content.y + listView.node.height - 200;
@@ -400,7 +401,7 @@ export class PageStory extends PageBase {
 
         for (let index = lv.disBtmRowIdx; index >= lv.disTopRowIdx; index--) {
             const pLIdx = lvd.getPsgeListIdxByRowIdx(index);
-            if (pLIdx === -1) continue;
+            if (pLIdx < 0) continue;
             const curPsgeIdx = lvd.psgesInList[pLIdx].idx;
             if (curPsgeIdx === lastPsgeIdx) break;
 
