@@ -459,17 +459,29 @@ export class PageStory extends PageBase {
 
     onClickEvt(cell: CellPsgeEvt) {
         const gameData = this.ctrlr.memory.gameData;
-        const evtId = (cell.psge as EvtPsge).evtId;
+        const ePsge = cell.psge as EvtPsge;
+        const needEvtId = ePsge.evtId;
 
-        if (!gameData.evtDict[evtId]) {
+        if (!gameData.evtDict[needEvtId]) {
             this.ctrlr.popToast('suc....');
-        } else if (gameData.ongoingEvtIds.includes(evtId)) {
-            this.ctrlr.popToast('suc....');
-        } else {
-            this.evt.rztDict[evtId] = 2;
-            this.resetPsgeDataAndListView(cell.psge.idx);
-            this.ctrlr.popToast('suc....');
+            return;
         }
+        const needRzt = ePsge.rzt;
+        if (needRzt) {
+            if (EvtTool.getRzt(gameData.evtDict[needEvtId].rztDict, needRzt.id) !== needRzt.num) {
+                this.ctrlr.popToast('suc....');
+                return;
+            }
+        } else {
+            if (gameData.ongoingEvtIds.includes(needEvtId)) {
+                this.ctrlr.popToast('suc....');
+                return;
+            }
+        }
+
+        this.evt.rztDict[needEvtId] = 2;
+        this.resetPsgeDataAndListView(cell.psge.idx);
+        this.ctrlr.popToast('suc....');
     }
 
     onInputName() {}

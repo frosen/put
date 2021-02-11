@@ -339,6 +339,7 @@ export class PageStoryLVD extends ListViewDelegate {
                 } else if (t === PsgeType.quest) {
                     cell.setData(psge as QuestPsge, this.page.evt);
                 } else if (t === PsgeType.evt) {
+                    cell.setData(psge as EvtPsge, this.page.evt);
                 }
             }
         }
