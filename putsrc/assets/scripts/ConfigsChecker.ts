@@ -15,6 +15,8 @@ import { CatcherModelDict } from '../configs/CatcherModelDict';
 import { EqpAmplrModelDict } from '../configs/EqpAmplrModelDict';
 import { ACntrModel, EqpMktModel, ExplModel, PetMktModel, QuesterModel, ShopModel } from './DataModel';
 import { CnsumTool } from './Memory';
+import { EvtModelDict } from '../configs/EvtModelDict';
+import { CnNameDictForCheck } from '../configs/PsgesDict';
 
 function need(ins: any, attris: string[], name: string) {
     for (const attri of attris) {
@@ -208,6 +210,17 @@ function checkItems() {
     checkAllKeys(EqpAmplrModelDict, 'EqpAmplrModelDict');
 }
 
+function checkEvts() {
+    for (const key in CnNameDictForCheck) {
+        if (Object.prototype.hasOwnProperty.call(CnNameDictForCheck, key)) {
+            const cnName = CnNameDictForCheck[key];
+            if (cnName !== EvtModelDict[key].cnName) {
+                cc.error(`${key}的psge的cnName与story不符`);
+            }
+        }
+    }
+}
+
 export function checkConfigs() {
     try {
         checkActPosModelDict();
@@ -217,6 +230,7 @@ export function checkConfigs() {
         checkFeatureModelDict();
         checkEquipModelDict();
         checkItems();
+        checkEvts();
     } catch (error) {
         cc.log('CHECK ERROR: ', error);
     }

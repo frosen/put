@@ -10,7 +10,12 @@ const srcDir = __dirname + '/../story/';
 const dstDir = __dirname + '/../../putsrc/assets/stories/';
 const indexPath = __dirname + '/../../putsrc/assets/configs/PsgesDict.ts';
 
-const storySrcFileNames = Fs.readdirSync(srcDir);
+// 解析-----------------------------------------------------------------
+
+function getCnName(line) {
+    const result = htmlparser.parseDOM(line)[0];
+    return result.children[0].data;
+}
 
 function getGain(line) {
     const result = htmlparser.parseDOM(line)[0];
@@ -22,10 +27,11 @@ function getSelection(line) {
     return { main: result.attribs.main === '1', str: result.attribs.str, id: result.attribs.id };
 }
 
-function getQuest(line) {
+function getQuest(line, evtCNName) {
+    if (!evtCNName) throw 'no evtCNName before: ' + line;
     const result = htmlparser.parseDOM(line)[0];
     const attris = result.attribs;
-    const content = result.children[0].data;
+    const content = result.children[0].data.trim();
 
     let need = {};
     let type = Number(attris.t);
@@ -63,7 +69,7 @@ function getQuest(line) {
             id: content,
             type,
             cnName: attris.cnname,
-            descs: ['事件任务，完成后事件才能继续', attris.tip || '?'],
+            descs: ['“' + evtCNName + '”事件展开的任务，完成后事件才能继续', attris.tip || '?'],
             need,
             awardReput: 0,
             awardMoney: 0,
@@ -76,7 +82,7 @@ function getQuest(line) {
 function getEvt(line) {
     const result = htmlparser.parseDOM(line)[0];
     const attris = result.attribs;
-    const content = result.children[0].data;
+    const content = result.children[0].data.trim();
 
     // tip 一行不能超过22个字 空格算换行
     const tips = attris.tip.split(' ');
@@ -84,15 +90,9 @@ function getEvt(line) {
         if (tip.length > 22) throw 'tip有误，tip一行不能超过22个字 空格算换行：' + attris.tip;
     }
 
-    let rzt;
-    if (attris.rztid && attris.rztnum) {
-        rzt = { id: attris.rztid, num: attris.rztnum };
-    }
-
     return {
         evtId: content,
-        tip: attris.tip,
-        rzt
+        tip: attris.tip
     };
 }
 
@@ -100,6 +100,10 @@ function getMark(line) {
     const result = htmlparser.parseDOM(line)[0];
     return result.children[0].data;
 }
+
+// -----------------------------------------------------------------
+
+const storySrcFileNames = Fs.readdirSync(srcDir);
 
 const PTYPE = {
     head: 1,
@@ -124,22 +128,32 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
     if (Path.extname(fileName) !== '.html') continue;
 
     const fileStr = Fs.readFileSync(Path.join(srcDir, fileName), 'utf-8');
-    const lines = fileStr.split('\n');
+    const oriLines = fileStr.split('\n');
+
+    // 去掉空行，<s />视为空格
+    let lines = [];
+    for (let index = 0; index < oriLines.length; index++) {
+        let line = oriLines[index];
+        if (line.length === 0) continue;
+        line = line.trim();
+        line = line.replace(/<s \/>/g, ' ');
+        lines.push(line);
+    }
 
     const datas = [];
     const optionsList = [[]];
 
+    let evtCNName;
+    let endEvt;
+
     datas[datas.length] = { pType: PTYPE.head };
 
     for (let index = 0; index < lines.length; index++) {
-        let line = lines[index];
-        line = line.trimStart();
-        if (line.length === 0) continue;
-
-        line = line.replace(/<s \/>/g, ' ');
-
+        const line = lines[index];
         if (line[0] === '<') {
-            if (line[1] === 'g') {
+            if (line[1] === 'n') {
+                evtCNName = getCnName(line);
+            } else if (line[1] === 'g') {
                 // gain
                 if (!datas[datas.length - 1].gains) datas[datas.length - 1].gains = [];
                 datas[datas.length - 1].gains.push(getGain(line));
@@ -163,13 +177,30 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 if (lastData.pType !== PTYPE.normal) throw '选择里面没有文字：' + JSON.stringify(lastData);
                 lastOption.endNPsgeIdx = datas.length - 1;
             } else if (line[1] === 'q') {
-                const { quest, psge } = getQuest(line);
+                let realLine = line;
+                while (true) {
+                    if (realLine.includes('</quest>')) break;
+                    index++;
+                    realLine += ' ' + lines[index];
+                }
+                const { quest, psge } = getQuest(realLine, evtCNName);
                 questDatas.push(quest);
                 datas[datas.length] = { pType: PTYPE.quest, questId: psge.questId, tip: psge.tip };
                 idList.push(psge.questId);
             } else if (line[1] === 'e') {
-                const { evtId, rzt, tip } = getEvt(line);
-                datas[datas.length] = { pType: PTYPE.evt, evtId, rzt, tip };
+                let realLine = line;
+                while (true) {
+                    if (realLine.includes('</evt>')) break;
+                    index++;
+                    realLine += lines[index];
+                }
+                const { evtId, tip } = getEvt(realLine);
+                if (index === lines.length - 1) {
+                    endEvt = { evtId, tip }; // 如果是最后一个evt，则和end结合
+                } else {
+                    datas[datas.length] = { pType: PTYPE.evt, evtId, tip };
+                }
+
                 idList.push(evtId);
             } else if (line[1] === 'm') {
                 const mark = getMark(line);
@@ -224,14 +255,21 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
         }
     }
 
-    datas[datas.length] = { pType: PTYPE.end };
+    const endPsge = { pType: PTYPE.end };
+    if (endEvt) {
+        endPsge.evtId = endEvt.evtId;
+        endPsge.tip = endEvt.tip;
+    }
+    datas[datas.length] = endPsge;
 
     for (let index = 0; index < datas.length; index++) {
         const data = datas[index];
         data.idx = index;
     }
 
-    dataList.push({ datas, name: fileName.slice(0, fileName.indexOf('.')) });
+    if (!evtCNName) throw '必有evtName 且这个名字需要与对应事件名相同: ' + fileName;
+
+    dataList.push({ datas, name: fileName.slice(0, fileName.indexOf('.')), evtCNName });
 }
 
 // 检测id是否有重复
@@ -289,11 +327,13 @@ import { Psge } from '../scripts/DataModel';
 AAA
 export const PsgesDict: { [key: string]: Psge[] } = {
 BBB};
+
+export const CnNameDictForCheck: { [key: string]: string } = {
+CCC};
 `;
 const importStr = "import { AAA } from '../stories/AAA';\n";
-const lineStr = '    AAA: AAA\n';
-
-const staticStr = '    static AAA: BBB = CCC;\n';
+const lineStr = '    AAA: AAA';
+const checkLineStr = "    AAA: 'BBB'";
 
 (async () => {
     if (Fs.existsSync(dstDir)) {
@@ -301,7 +341,9 @@ const staticStr = '    static AAA: BBB = CCC;\n';
     }
     await runExec(`mkdir -p ${dstDir}`);
 
-    for (const { name, datas } of dataList) {
+    for (let index = 0; index < dataList.length; index++) {
+        const { name, datas } = dataList[index];
+
         let slcStr = 'export class ' + name + 'SLCN {\n';
         for (const slcId of slcIds) {
             slcStr += `    static ${slcId} = '${slcId}';\n`;
@@ -331,12 +373,22 @@ const staticStr = '    static AAA: BBB = CCC;\n';
 
     let importStrs = '';
     let lineStrs = '';
-    for (const { name } of dataList) {
+    let checkLineStrs = '';
+    for (let index = 0; index < dataList.length; index++) {
+        const { name, evtCNName } = dataList[index];
+
         importStrs += importStr.replace(/AAA/g, name);
+
         lineStrs += lineStr.replace(/AAA/g, name);
+        if (index < dataList.length - 1) lineStrs += ',\n';
+        else lineStrs += '\n';
+
+        checkLineStrs += checkLineStr.replace(/AAA/g, name).replace(/BBB/g, evtCNName);
+        if (index < dataList.length - 1) checkLineStrs += ',\n';
+        else checkLineStrs += '\n';
     }
 
-    const finalIndexStr = indexHead.replace('AAA', importStrs).replace('BBB', lineStrs);
+    const finalIndexStr = indexHead.replace('AAA', importStrs).replace('BBB', lineStrs).replace('CCC', checkLineStrs);
     Fs.writeFileSync(indexPath, finalIndexStr);
 
     console.log('生成索引 ' + indexPath);

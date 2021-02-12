@@ -69,9 +69,9 @@ export const RuZhiBaoDao: any[] = [
         idx: 9
     },
     {
-        pType: 4,
-        questId: 'YiGeRenWu',
-        tip: '这是一个任务啊，测试用的 我就是想看多行什么样以及一行到底能显示多少字',
+        pType: 5,
+        evtId: 'KuangBaoHeXin',
+        tip: '前往小镇，击败狂暴核心',
         idx: 10
     },
     {
@@ -85,9 +85,9 @@ export const RuZhiBaoDao: any[] = [
         idx: 12
     },
     {
-        pType: 5,
-        evtId: 'KuangBaoHeXin',
-        tip: '前往小镇，击败狂暴核心',
+        pType: 4,
+        questId: 'YiGeRenWu',
+        tip: '这是一个任务啊，测试用的 我就是想看多行什么样以及一行到底能显示多少字',
         idx: 13
     },
     {
@@ -246,6 +246,8 @@ export const RuZhiBaoDao: any[] = [
     },
     {
         pType: 7,
+        evtId: 'RuZhiBaoDao2',
+        tip: '前往后续事件',
         idx: 42
     }
 ]

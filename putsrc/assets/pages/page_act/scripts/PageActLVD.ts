@@ -13,8 +13,8 @@ import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { CellActInfoDict, PageAct } from './PageAct';
 import { Evt, PosData } from '../../../scripts/DataSaved';
-import { ActPosModel, MovModel, UseCond } from '../../../scripts/DataModel';
-import { EvtModelDict } from '../../../configs/EvtModelDict';
+import { ActPosModel, MovModel, SpcBtlModel, SpcBtlType, UseCond } from '../../../scripts/DataModel';
+import { EvtModelDict, SpcBtlModelDict } from '../../../configs/EvtModelDict';
 import { CellEvt } from '../cells/cell_evt/scripts/CellEvt';
 import { EvtTool } from '../../../scripts/Memory';
 
@@ -73,9 +73,24 @@ export class PageActLVD extends ListViewDelegate {
             const evtId = this.curActPosModel.evtIds[index];
             if (!gameData.ongoingEvtIds.includes(evtId)) continue;
             const evtModel = EvtModelDict[evtId];
-            if (evtModel.useCond) {
-                if (this.checkUseCond(evtModel.useCond)) this.curEvtIds.push(evtId);
-            } else this.curEvtIds.push(evtId);
+            let use = true;
+            if (evtModel.useCond && !this.checkUseCond(evtModel.useCond)) use = false;
+
+            if (evtModel.startEvtId) {
+                const startEvtModel = EvtModelDict[evtModel.startEvtId];
+                if (startEvtModel.useCond && !this.checkUseCond(startEvtModel.useCond)) use = false;
+            }
+
+            const sbEvtModel = SpcBtlModelDict[evtId];
+            if (sbEvtModel) {
+                if (sbEvtModel.sbType === SpcBtlType.random1) {
+                    // llytodo
+                } else if (sbEvtModel.sbType === SpcBtlType.randomEver) {
+                    // llytodo
+                }
+            }
+
+            if (use) this.curEvtIds.push(evtId);
         }
 
         for (let index = 0; index < this.curActPosModel.movs.length; index++) {

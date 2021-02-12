@@ -426,20 +426,21 @@ export class QuestModel {
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
 
+export enum EvtType {
+    main = 1,
+    sub
+}
+
 export class EvtModel {
     id!: string;
     cnName!: string;
+    eType!: EvtType;
     lv!: number;
+    startEvtId?: string;
     useCond?: UseCond;
 }
 
 // -----------------------------------------------------------------
-
-export enum StoryType {
-    main = 1,
-    sub,
-    new
-}
 
 export enum PsgeType {
     head = 1,
@@ -483,24 +484,26 @@ export class QuestPsge extends Psge {
 
 export class EvtPsge extends Psge {
     evtId!: string;
-    rzt?: { id: string; num: number };
     tip!: string;
 }
 
 export class NameInputPsge extends Psge {}
 
-export class EndPsge extends Psge {}
+export class EndPsge extends Psge {
+    evtId?: string;
+    tip?: string;
+}
 
 export class StoryModel extends EvtModel {
-    type!: StoryType;
     psges!: Psge[];
 }
 
 // -----------------------------------------------------------------
 
 export enum SpcBtlType {
-    story = 1,
-    random
+    normal = 1,
+    random1, // 随机出现，消灭后不会再出现
+    randomEver // 随机出现，但消灭后也会出现
 }
 
 export class SpcBtlPet {
@@ -513,6 +516,6 @@ export class SpcBtlPet {
 }
 
 export class SpcBtlModel extends EvtModel {
-    type!: SpcBtlType;
+    sbType!: SpcBtlType;
     pets!: SpcBtlPet[];
 }

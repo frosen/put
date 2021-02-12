@@ -6,13 +6,14 @@
 
 export class StoryN {
     static RuZhiBaoDao = 'RuZhiBaoDao';
+    static RuZhiBaoDao2 = 'RuZhiBaoDao2';
 }
 
 export class SpcBtlN {
     static KuangBaoHeXin = 'KuangBaoHeXin';
 }
 
-import { SpcBtlModel, EvtModel, StoryModel, SpcBtlType, StoryType } from '../scripts/DataModel';
+import { SpcBtlModel, EvtModel, StoryModel, SpcBtlType, EvtType } from '../scripts/DataModel';
 import { FtN } from './FeatureModelDict';
 import { PetN } from './PetModelDict';
 import { PsgesDict } from './PsgesDict';
@@ -22,8 +23,19 @@ export const StoryModelDict: { [key: string]: StoryModel } = {
         id: StoryN.RuZhiBaoDao,
         cnName: '入职报到',
         lv: 1,
-        type: StoryType.new,
+        eType: EvtType.main,
         psges: PsgesDict[StoryN.RuZhiBaoDao]
+    },
+    [StoryN.RuZhiBaoDao2]: {
+        id: StoryN.RuZhiBaoDao2,
+        cnName: '入职报到2',
+        lv: 1,
+        eType: EvtType.main,
+        startEvtId: StoryN.RuZhiBaoDao,
+        psges: PsgesDict[StoryN.RuZhiBaoDao2],
+        useCond: {
+            startEvts: [{ id: StoryN.RuZhiBaoDao }]
+        }
     }
 };
 
@@ -32,7 +44,9 @@ export const SpcBtlModelDict: { [key: string]: SpcBtlModel } = {
         id: SpcBtlN.KuangBaoHeXin,
         cnName: '破坏狂暴核心',
         lv: 30,
-        type: SpcBtlType.story,
+        eType: EvtType.main,
+        startEvtId: StoryN.RuZhiBaoDao,
+        sbType: SpcBtlType.normal,
         pets: [
             { id: PetN.DianZiShouWei, lv: 10, ampl: 3 },
             { id: PetN.DianZiShouWei, lv: 10, ampl: 3 },

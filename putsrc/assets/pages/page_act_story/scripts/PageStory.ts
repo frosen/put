@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { StoryModelDict } from '../../../configs/EvtModelDict';
+import { EvtModelDict, StoryModelDict } from '../../../configs/EvtModelDict';
 import { QuestModelDict } from '../../../configs/QuestModelDict';
 import {
     EvtPsge,
@@ -461,22 +461,12 @@ export class PageStory extends PageBase {
         const gameData = this.ctrlr.memory.gameData;
         const ePsge = cell.psge as EvtPsge;
         const needEvtId = ePsge.evtId;
+        const needEvtModel = EvtModelDict[needEvtId];
+        const needEvt = gameData.evtDict[needEvtId];
 
-        if (!gameData.evtDict[needEvtId]) {
+        if (!needEvt || gameData.ongoingEvtIds.includes(needEvtId)) {
             this.ctrlr.popToast('suc....');
             return;
-        }
-        const needRzt = ePsge.rzt;
-        if (needRzt) {
-            if (EvtTool.getRzt(gameData.evtDict[needEvtId].rztDict, needRzt.id) !== needRzt.num) {
-                this.ctrlr.popToast('suc....');
-                return;
-            }
-        } else {
-            if (gameData.ongoingEvtIds.includes(needEvtId)) {
-                this.ctrlr.popToast('suc....');
-                return;
-            }
         }
 
         this.evt.rztDict[needEvtId] = 2;

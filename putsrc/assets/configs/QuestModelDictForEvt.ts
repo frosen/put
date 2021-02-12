@@ -16,7 +16,7 @@ export const QuestModelDictForEvt: { [key: string]: QuestModel } = {
         type: 1,
         cnName: '一个任务',
         descs: [
-            '事件任务，完成后事件才能继续',
+            '“入职报到”事件展开的任务，完成后事件才能继续',
             '这是一个任务啊，测试用的 我就是想看多行什么样以及一行到底能显示多少字'
         ],
         need: {

@@ -10,22 +10,22 @@ import { GameData } from '../../../scripts/DataSaved';
 
 @ccclass
 export class PanelSelfInfo extends cc.Component {
-    ctrlr: BaseCtrlr = null;
+    ctrlr: BaseCtrlr = null!;
 
     @property(cc.Node)
-    uiMoveNode: cc.Node = null;
+    uiMoveNode: cc.Node = null!;
 
     @property(cc.Node)
-    uiScaleNode: cc.Node = null;
+    uiScaleNode: cc.Node = null!;
 
     @property(cc.Sprite)
-    icon: cc.Sprite = null;
+    icon: cc.Sprite = null!;
 
     @property(cc.Label)
-    roleName: cc.Label = null;
+    roleName: cc.Label = null!;
 
     @property(cc.Label)
-    userInfo: cc.Label = null;
+    userInfo: cc.Label = null!;
 
     setData(gameData: GameData) {
         this.roleName.string = gameData.roleName;
