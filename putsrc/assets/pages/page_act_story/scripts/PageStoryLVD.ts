@@ -15,7 +15,6 @@ import { EvtTool } from '../../../scripts/Memory';
 import { CellPsgeEnd } from '../cells/cell_psge_end/scripts/CellPsgeEnd';
 import { CellPsgeEvt } from '../cells/cell_psge_evt/scripts/CellPsgeEvt';
 import { CellPsgeHead } from '../cells/cell_psge_head/scripts/CellPsgeHead';
-import { CellPsgeNameInput } from '../cells/cell_psge_name_input/scripts/CellPsgeNameInput';
 import { CellPsgeNormal } from '../cells/cell_psge_normal/scripts/CellPsgeNormal';
 import { CellPsgeQuest } from '../cells/cell_psge_quest/scripts/CellPsgeQuest';
 import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
@@ -25,8 +24,7 @@ const HEAD = 'h';
 const NORMAL = 'n';
 const SELECTION = 's';
 const QUEST = 'q';
-const EVT = 'e';
-const NAMEINPUT = 'ni';
+const EVT = 'evt';
 const END = 'end';
 const TOPCKR = 'tckr';
 const BTMCKR = 'bckr';
@@ -48,9 +46,6 @@ export class PageStoryLVD extends ListViewDelegate {
 
     @property(cc.Prefab)
     evtPsgePrefab: cc.Prefab = null!;
-
-    @property(cc.Prefab)
-    nameInputPsgePrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
     headPsgePrefab: cc.Prefab = null!;
@@ -220,7 +215,6 @@ export class PageStoryLVD extends ListViewDelegate {
             this.heightsInList[index] = 220;
         } else if (t === PsgeType.evt) {
             this.heightsInList[index] = 220;
-        } else if (t === PsgeType.nameInput) {
         } else if (t === PsgeType.head) {
             this.heightsInList[index] = 300;
         } else if (t === PsgeType.end) {
@@ -285,7 +279,6 @@ export class PageStoryLVD extends ListViewDelegate {
                 else if (t === PsgeType.selection) return SELECTION;
                 else if (t === PsgeType.quest) return QUEST;
                 else if (t === PsgeType.evt) return EVT;
-                else if (t === PsgeType.nameInput) return NAMEINPUT;
                 else if (t === PsgeType.head) return HEAD;
                 else if (t === PsgeType.end) return END;
                 else return undefined!;
@@ -306,9 +299,6 @@ export class PageStoryLVD extends ListViewDelegate {
             return cell;
         } else if (cellId === EVT) {
             const cell = cc.instantiate(this.evtPsgePrefab).getComponent(CellPsgeEvt);
-            return cell;
-        } else if (cellId === NAMEINPUT) {
-            const cell = cc.instantiate(this.nameInputPsgePrefab).getComponent(CellPsgeNameInput);
             return cell;
         } else if (cellId === HEAD) {
             const cell = cc.instantiate(this.headPsgePrefab).getComponent(CellPsgeHead);

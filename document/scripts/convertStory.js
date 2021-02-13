@@ -111,8 +111,7 @@ const PTYPE = {
     selection: 3,
     quest: 4,
     evt: 5,
-    nameInput: 6,
-    end: 7
+    end: 6
 };
 
 const dataList = [];
