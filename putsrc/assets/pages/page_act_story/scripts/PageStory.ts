@@ -26,6 +26,7 @@ import { CnsumTool, EquipTool, EvtTool, GameDataTool, PetTool, QuestTool } from 
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
 import { CellQuest } from '../../page_act_quester/cells/cell_quest/scripts/CellQuest';
+import { CellPsgeEnd } from '../cells/cell_psge_end/scripts/CellPsgeEnd';
 import { CellPsgeEvt } from '../cells/cell_psge_evt/scripts/CellPsgeEvt';
 import { CellPsgeQuest } from '../cells/cell_psge_quest/scripts/CellPsgeQuest';
 import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
@@ -47,6 +48,8 @@ export class PageStory extends PageBase {
     jit!: StoryJIT;
 
     listRunning: boolean = false;
+
+    curEvtFinished: boolean = false;
 
     onLoad() {
         super.onLoad();
@@ -97,6 +100,9 @@ export class PageStory extends PageBase {
             this.ctrlr.popAlert(str, (key: number) => {
                 if (key === 1) {
                     this.handleStoryGain();
+                    if (this.curEvtFinished) {
+                        GameDataTool.finishEvt(this.ctrlr.memory.gameData, this.evtId);
+                    }
                     this.ctrlr.popPage();
                 }
             });
@@ -217,7 +223,7 @@ export class PageStory extends PageBase {
             const ePsge = psge as EvtPsge;
             this.evt.rztDict[ePsge.evtId] = 1;
         } else if (psge.pType === PsgeType.end) {
-            GameDataTool.finishEvt(this.ctrlr.memory.gameData, this.evtId);
+            this.curEvtFinished = true;
         }
     }
 
@@ -474,7 +480,9 @@ export class PageStory extends PageBase {
         this.ctrlr.popToast('suc....');
     }
 
-    onInputName() {}
+    onClickEnd(cell: CellPsgeEnd) {
+        if (cell.tip) this.ctrlr.popToast(cell.tip);
+    }
 
     resetPsgeDataAndListView(lastPsgeIdx: number) {
         const lvd = this.lvd;

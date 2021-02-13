@@ -121,8 +121,6 @@ const slcIds = [];
 const questDatas = [];
 const marks = [];
 
-const idList = []; // 用于检测是否有重复的id
-
 for (let index = 0; index < storySrcFileNames.length; index++) {
     const fileName = storySrcFileNames[index];
     if (Path.extname(fileName) !== '.html') continue;
@@ -145,6 +143,9 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
 
     let evtCNName;
     let endEvt;
+
+    const idList = []; // 用于检测是否有重复的id
+    const endEvtIdList = [];
 
     datas[datas.length] = { pType: PTYPE.head };
 
@@ -174,9 +175,13 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 const curOptions = optionsList[optionsList.length - 1];
                 const lastOption = curOptions[curOptions.length - 1];
                 const lastData = datas[datas.length - 1];
-                if (lastData.pType !== PTYPE.normal) throw '选择里面没有文字：' + JSON.stringify(lastData);
-                lastOption.endNPsgeIdx = datas.length - 1;
+                if (lastData.pType === PTYPE.normal) {
+                    lastOption.endNPsgeIdx = datas.length - 1;
+                } else if (lastData.pType === PTYPE.end) {
+                    lastOption.endNPsgeIdx = -1;
+                } else throw '选择里面最后一个psge只能是normal或者end，但现在是：' + JSON.stringify(lastData);
             } else if (line[1] === 'q') {
+                // <quest>
                 let realLine = line;
                 while (true) {
                     if (realLine.includes('</quest>')) break;
@@ -188,21 +193,34 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 datas[datas.length] = { pType: PTYPE.quest, questId: psge.questId, tip: psge.tip };
                 idList.push(psge.questId);
             } else if (line[1] === 'e') {
-                let realLine = line;
-                while (true) {
-                    if (realLine.includes('</evt>')) break;
-                    index++;
-                    realLine += lines[index];
+                if (line[2] === 'v') {
+                    // <evt>
+                    let realLine = line;
+                    while (true) {
+                        if (realLine.includes('</evt>')) break;
+                        index++;
+                        realLine += lines[index];
+                    }
+                    const { evtId, tip } = getEvt(realLine);
+                    if (index === lines.length - 1 || lines[index + 1].slice(0, 4) === '<end') {
+                        endEvt = { evtId, tip }; // 如果是最后一个evt，则和end结合
+                        endEvtIdList.push(evtId);
+                    } else {
+                        datas[datas.length] = { pType: PTYPE.evt, evtId, tip };
+                    }
+                    idList.push(evtId);
+                } else if (line[2] === 'n') {
+                    // <end>
+                    const endPsge = { pType: PTYPE.end };
+                    if (endEvt) {
+                        endPsge.evtId = endEvt.evtId;
+                        endPsge.tip = endEvt.tip;
+                        endEvt = undefined;
+                    }
+                    datas[datas.length] = endPsge;
                 }
-                const { evtId, tip } = getEvt(realLine);
-                if (index === lines.length - 1) {
-                    endEvt = { evtId, tip }; // 如果是最后一个evt，则和end结合
-                } else {
-                    datas[datas.length] = { pType: PTYPE.evt, evtId, tip };
-                }
-
-                idList.push(evtId);
             } else if (line[1] === 'm') {
+                // <mark>
                 const mark = getMark(line);
                 datas[datas.length - 1].mark = mark;
                 marks.push(mark);
@@ -213,7 +231,7 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
         } else {
             const curOptions = optionsList[optionsList.length - 1];
             if (curOptions.length === 1) throw '只有一个选项: ' + line;
-            else if (curOptions.length > 8) throw '选项太多了吧' + line;
+            else if (curOptions.length > 8) throw '选项太多了吧: ' + line;
             else if (curOptions.length > 1) {
                 let id = '/';
                 let main = true;
@@ -241,11 +259,14 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                 slcData.options = finalOptions;
 
                 for (const option of curOptions) {
-                    const endNPsgeData = datas[option.endNPsgeIdx];
-                    // 所有option结束后的第一个psge
-                    if (option.data.main) endNPsgeData.go = datas.length;
-                    // selectionPsge的索引
-                    else endNPsgeData.go = curOptions[0].slcIdx;
+                    // 大于0是normal psge，小于0是end psge
+                    if (option.endNPsgeIdx >= 0) {
+                        const endNPsgeData = datas[option.endNPsgeIdx];
+                        // 所有option结束后的第一个psge
+                        if (option.data.main) endNPsgeData.go = datas.length;
+                        // selectionPsge的索引
+                        else endNPsgeData.go = curOptions[0].slcIdx;
+                    }
                 }
 
                 curOptions.length = 0;
@@ -262,22 +283,29 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
     }
     datas[datas.length] = endPsge;
 
+    // 赋值idx
     for (let index = 0; index < datas.length; index++) {
         const data = datas[index];
         data.idx = index;
     }
 
+    // 检测
     if (!evtCNName) throw '必有evtName 且这个名字需要与对应事件名相同: ' + fileName;
 
-    dataList.push({ datas, name: fileName.slice(0, fileName.indexOf('.')), evtCNName });
-}
-
-// 检测id是否有重复
-idList.sort();
-for (let index = 0; index < idList.length - 1; index++) {
-    if (idList[index] === idList[index + 1]) {
-        throw '重复id（包括questId，evtId和slcId）：' + idList[index];
+    // 检测id是否有重复，但不同分支的尾事件有可能是同一个
+    idList.sort();
+    for (let index = 0; index < idList.length - 1; index++) {
+        if (idList[index] === idList[index + 1]) {
+            const id = idList[index];
+            if (endEvtIdList.includes(id)) {
+                console.warn('重复id，但不同分支的尾事件有可能是同一个，请确认：' + id);
+            } else {
+                throw '重复id（包括questId，evtId，slcId，mark）：' + id;
+            }
+        }
     }
+
+    dataList.push({ datas, name: fileName.slice(0, fileName.indexOf('.')), evtCNName });
 }
 
 // 保存成文件 -----------------------------------------------------------------

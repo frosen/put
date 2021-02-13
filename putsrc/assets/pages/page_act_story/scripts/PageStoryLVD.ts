@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { EvtPsge, NormalPsge, Psge, PsgeType, QuestPsge, SelectionPsge } from '../../../scripts/DataModel';
+import { EndPsge, EvtPsge, NormalPsge, Psge, PsgeType, QuestPsge, SelectionPsge } from '../../../scripts/DataModel';
 import { GameData } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
@@ -31,7 +31,7 @@ const END = 'end';
 const TOPCKR = 'tckr';
 const BTMCKR = 'bckr';
 
-type CellPsge = CellPsgeNormal & CellPsgeSelection & CellPsgeQuest & CellPsgeEvt;
+type CellPsge = CellPsgeNormal & CellPsgeSelection & CellPsgeQuest & CellPsgeEvt & CellPsgeEnd;
 
 @ccclass
 export class PageStoryLVD extends ListViewDelegate {
@@ -121,6 +121,8 @@ export class PageStoryLVD extends ListViewDelegate {
                 const evtId = evtPsge.evtId;
                 if (rztDict[evtId] === 2) return index + 1;
                 else return -1;
+            } else if (psge.pType === PsgeType.end) {
+                return -1;
             } else {
                 return index + 1;
             }
@@ -130,9 +132,9 @@ export class PageStoryLVD extends ListViewDelegate {
         if (psges.length > 0) {
             const lastIndex = psges[psges.length - 1].idx;
             const lastPsge = psgesInModel[lastIndex];
-            const rzt = handlePsge(lastPsge, lastIndex);
-            if (rzt === -1) return;
-            startIdx = lastIndex + 1;
+            const nextIdx = handlePsge(lastPsge, lastIndex);
+            if (nextIdx === -1) return;
+            startIdx = nextIdx;
         } else startIdx = 0;
 
         // 按顺序价值psge到list中，直到最后或者被卡住的选择和索要
@@ -315,6 +317,7 @@ export class PageStoryLVD extends ListViewDelegate {
         } else if (cellId === END) {
             const cell = cc.instantiate(this.endPsgePrefab).getComponent(CellPsgeEnd);
             cell.setEvtName(this.page.storyModel.cnName);
+            cell.clickCallback = this.page.onClickEnd.bind(this.page);
             return cell;
         } else if (cellId === TOPCKR) {
             return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);
@@ -340,6 +343,8 @@ export class PageStoryLVD extends ListViewDelegate {
                     cell.setData(psge as QuestPsge, this.page.evt);
                 } else if (t === PsgeType.evt) {
                     cell.setData(psge as EvtPsge, this.page.evt);
+                } else if (t === PsgeType.end) {
+                    cell.setData(psge as EndPsge);
                 }
             }
         }
