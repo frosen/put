@@ -31,15 +31,15 @@ export class CellPsgeQuest extends CellPsgeBase {
         const questModel = QuestModelDict[questId];
 
         if (evt.rztDict[questId] === 2) {
-            this.lbl.string = '完成任务：' + questModel.cnName;
+            this.lbl.string = '需要完成任务：' + questModel.cnName;
             this.btn.interactable = false;
             this.lbl.node.color = cc.color(120, 120, 120);
         } else if (evt.curQuest && evt.curQuest.id === questId) {
-            this.lbl.string = '完成任务：' + questModel.cnName;
+            this.lbl.string = '需要完成任务：' + questModel.cnName;
             this.btn.interactable = true;
             this.lbl.node.color = cc.color(43, 33, 4);
         } else {
-            this.lbl.string = '接受任务：' + questModel.cnName;
+            this.lbl.string = '请先接受任务：' + questModel.cnName;
             this.btn.interactable = true;
             this.lbl.node.color = cc.color(43, 33, 4);
         }

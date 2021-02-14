@@ -376,8 +376,7 @@ export enum QuestType {
     support = 1,
     fight,
     gather,
-    search,
-    ownttl
+    search
 }
 
 export abstract class QuestNeed {
@@ -405,12 +404,7 @@ export class SearchQuestNeed extends QuestNeed {
     name!: string;
 }
 
-export class OwnTtlQuestNeed extends QuestNeed {
-    ttlId!: string;
-    data?: number | string;
-}
-
-type AllQuestNeed = SupportQuestNeed | FightQuestNeed | GatherQuestNeed | SearchQuestNeed | OwnTtlQuestNeed;
+type AllQuestNeed = SupportQuestNeed | FightQuestNeed | GatherQuestNeed | SearchQuestNeed;
 
 export class QuestModel {
     id!: string;
@@ -448,8 +442,8 @@ export enum PsgeType {
     selection,
     quest,
     evt,
-    nameInput,
-    end
+    own,
+    end = 99
 }
 
 export class Psge {
@@ -487,7 +481,10 @@ export class EvtPsge extends Psge {
     tip!: string;
 }
 
-export class NameInputPsge extends Psge {}
+export class OwnPsge extends Psge {
+    ttlId!: string;
+    tip!: string;
+}
 
 export class EndPsge extends Psge {
     evtId?: string;

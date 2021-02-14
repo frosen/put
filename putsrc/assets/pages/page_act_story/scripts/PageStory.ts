@@ -7,10 +7,12 @@
 const { ccclass, property } = cc._decorator;
 
 import { EvtModelDict, StoryModelDict } from '../../../configs/EvtModelDict';
+import { ProTtlModelDict } from '../../../configs/ProTtlModelDict';
 import { QuestModelDict } from '../../../configs/QuestModelDict';
 import {
     EvtPsge,
     NormalPsge,
+    OwnPsge,
     PsgeType,
     QuestModel,
     QuestPsge,
@@ -28,6 +30,7 @@ import { PageBase } from '../../../scripts/PageBase';
 import { CellQuest } from '../../page_act_quester/cells/cell_quest/scripts/CellQuest';
 import { CellPsgeEnd } from '../cells/cell_psge_end/scripts/CellPsgeEnd';
 import { CellPsgeEvt } from '../cells/cell_psge_evt/scripts/CellPsgeEvt';
+import { CellPsgeOwn } from '../cells/cell_psge_own/scripts/CellPsgeOwn';
 import { CellPsgeQuest } from '../cells/cell_psge_quest/scripts/CellPsgeQuest';
 import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
 import { CellPsgeBase } from './CellPsgeBase';
@@ -121,9 +124,9 @@ export class PageStory extends PageBase {
         let petCnt = 0;
         for (const { gains } of this.jit.gainDataList) {
             for (const gain of gains) {
-                const { gType: t } = gain;
-                if (t === StoryGainType.cnsum || t === StoryGainType.equip) itemCnt++;
-                else if (t === StoryGainType.pet) petCnt++;
+                const { gType, cnt } = gain;
+                if (gType === StoryGainType.cnsum || gType === StoryGainType.equip) itemCnt += cnt || 1;
+                else if (gType === StoryGainType.pet) petCnt++;
             }
         }
 
@@ -138,12 +141,12 @@ export class PageStory extends PageBase {
         const gameData = this.ctrlr.memory.gameData;
         for (const { gains } of this.jit.gainDataList) {
             for (const gain of gains) {
-                const { gType: t, id } = gain;
-                if (t === StoryGainType.cnsum) {
-                    GameDataTool.addCnsum(gameData, id);
-                } else if (t === StoryGainType.equip) {
+                const { gType, id, cnt } = gain;
+                if (gType === StoryGainType.cnsum) {
+                    GameDataTool.addCnsum(gameData, id, cnt);
+                } else if (gType === StoryGainType.equip) {
                     GameDataTool.addEquip(gameData, EquipTool.createByFullId(id));
-                } else if (t === StoryGainType.pet) {
+                } else if (gType === StoryGainType.pet) {
                     GameDataTool.addPetByPet(gameData, PetTool.createByFullId(id));
                 } else {
                     GameDataTool.addProTtl(gameData, id);
@@ -222,6 +225,9 @@ export class PageStory extends PageBase {
         } else if (psge.pType === PsgeType.evt) {
             const ePsge = psge as EvtPsge;
             this.evt.rztDict[ePsge.evtId] = 1;
+        } else if (psge.pType === PsgeType.own) {
+            const oPsge = psge as OwnPsge;
+            this.evt.rztDict[oPsge.ttlId] = 1;
         } else if (psge.pType === PsgeType.end) {
             this.curEvtFinished = true;
         }
@@ -427,15 +433,19 @@ export class PageStory extends PageBase {
                 needItemIdx = index;
                 break;
             }
+
+            const qPage = cell.psge as QuestPsge;
+            const questStr = `\n\n任务需求：\n${this.getQuestStr(questModel, quest)}\n\n${qPage.tip.replace(/ /g, '\n')}`;
+
             if (!needItem) {
-                this.ctrlr.popToast('未在背包中找到对应的物品');
+                this.ctrlr.popToast('未在背包中找到对应的物品' + questStr);
                 return;
             }
 
             const cnsumCnt = Math.min(needCnt, needItem.count);
             const rzt = GameDataTool.removeItem(gameData, needItemIdx, cnsumCnt);
             if (rzt !== GameDataTool.SUC) {
-                this.ctrlr.popToast(rzt);
+                this.ctrlr.popToast(rzt + questStr);
                 return;
             }
 
@@ -443,11 +453,7 @@ export class PageStory extends PageBase {
             if (quest.prog >= needCnt) {
                 this.finishQuest(questModel, cell);
             } else {
-                const qPage = cell.psge as QuestPsge;
-                let str = `任务尚未完成\n当前完成度 ${quest.prog} / ${needCnt}\n\n`;
-                str += '任务需求：\n' + this.getQuestStr(questModel, quest);
-                str += '\n\n' + qPage.tip.replace(/ /g, '\n');
-                this.ctrlr.popToast(str);
+                this.ctrlr.popToast(`尚未完成任务 ${questModel.cnName}\n当前完成度 ${quest.prog} / ${needCnt}` + questStr);
             }
         });
     }
@@ -460,7 +466,6 @@ export class PageStory extends PageBase {
         delete this.evt.curQuest;
         this.evt.rztDict[questId] = 2;
         this.resetPsgeDataAndListView(cell.psge.idx);
-        this.ctrlr.popToast('完成任务 ' + questModel.cnName);
     }
 
     onClickEvt(cell: CellPsgeEvt) {
@@ -471,13 +476,27 @@ export class PageStory extends PageBase {
         const needEvt = gameData.evtDict[needEvtId];
 
         if (!needEvt || gameData.ongoingEvtIds.includes(needEvtId)) {
-            this.ctrlr.popToast('suc....');
+            this.ctrlr.popToast(`尚未完成事件 ${needEvtModel.cnName}\n\n${ePsge.tip}`);
             return;
         }
 
         this.evt.rztDict[needEvtId] = 2;
         this.resetPsgeDataAndListView(cell.psge.idx);
-        this.ctrlr.popToast('suc....');
+    }
+
+    onClickOwn(cell: CellPsgeOwn) {
+        const gameData = this.ctrlr.memory.gameData;
+        const oPsge = cell.psge as OwnPsge;
+        const needTtlId = oPsge.ttlId;
+        const model = ProTtlModelDict[needTtlId];
+
+        if (!gameData.proTtlDict[needTtlId]) {
+            this.ctrlr.popToast(`尚未拥有称号 ${model.cnName}\n\n${oPsge.tip}`);
+            return;
+        }
+
+        this.evt.rztDict[needTtlId] = 2;
+        this.resetPsgeDataAndListView(cell.psge.idx);
     }
 
     onClickEnd(cell: CellPsgeEnd) {

@@ -93,7 +93,7 @@ export const RuZhiBaoDao2: any[] = [
         idx: 15
     },
     {
-        pType: 6,
+        pType: 99,
         idx: 16
     }
 ]

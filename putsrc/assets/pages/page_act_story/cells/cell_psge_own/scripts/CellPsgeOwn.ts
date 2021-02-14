@@ -1,37 +1,38 @@
 /*
- * CellPsgeEvt.ts
- * 需要某个事件到达一定程度才能继续的段落
+ * CellPsgeOwn.ts
+ * 需要拥有某个事物才能继续
  * luleyan
  */
 
 const { ccclass, property } = cc._decorator;
 
 import { EvtModelDict } from '../../../../../configs/EvtModelDict';
-import { EvtPsge } from '../../../../../scripts/DataModel';
+import { ProTtlModelDict } from '../../../../../configs/ProTtlModelDict';
+import { OwnPsge } from '../../../../../scripts/DataModel';
 import { Evt } from '../../../../../scripts/DataSaved';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 
 @ccclass
-export class CellPsgeEvt extends CellPsgeBase {
+export class CellPsgeOwn extends CellPsgeBase {
     @property(cc.Label)
     lbl: cc.Label = null!;
 
     @property(cc.Button)
     btn: cc.Button = null!;
 
-    clickCallback?: (cell: CellPsgeEvt) => void;
+    clickCallback?: (cell: CellPsgeOwn) => void;
 
     onLoad() {
         if (CC_EDITOR) return;
         this.btn.node.on('click', this.onClick.bind(this));
     }
 
-    setData(evtPsge: EvtPsge, curEvt: Evt) {
-        const needEvtId = evtPsge.evtId;
-        const model = EvtModelDict[needEvtId];
-        this.lbl.string = '需要完成事件：' + model.cnName;
+    setData(oPsge: OwnPsge, curEvt: Evt) {
+        const needTtlId = oPsge.ttlId;
+        const model = ProTtlModelDict[needTtlId];
+        this.lbl.string = '需要拥有称号：' + model.cnName;
 
-        if (curEvt.rztDict[needEvtId] === 2) {
+        if (curEvt.rztDict[needTtlId] === 2) {
             this.btn.interactable = false;
             this.lbl.node.color = cc.color(120, 120, 120);
         } else {

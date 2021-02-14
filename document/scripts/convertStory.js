@@ -19,12 +19,24 @@ function getCnName(line) {
 
 function getGain(line) {
     const result = htmlparser.parseDOM(line)[0];
-    return { gType: result.attribs.t, id: result.children[0].data };
+    const rzt = { tType: result.attribs.t, id: result.children[0].data };
+    if (result.attribs.cnt) {
+        rzt.cnt = Number(result.attribs.cnt);
+    }
+    return rzt;
 }
 
 function getSelection(line) {
     const result = htmlparser.parseDOM(line)[0];
     return { main: result.attribs.main === '1', str: result.attribs.str, id: result.attribs.id };
+}
+
+// tip 一行不能超过22个字 空格算换行
+function checkTip(tip) {
+    const tips = tip.split(' ');
+    for (const tip of tips) {
+        if (tip.length > 22) throw 'tip有误，tip一行不能超过22个字 空格算换行：' + tip;
+    }
 }
 
 function getQuest(line, evtCNName) {
@@ -50,19 +62,12 @@ function getQuest(line, evtCNName) {
         need.posId = posData[0];
         need.step = Number(posData[1]);
         need.name = attris.aimname;
-    } else if (type === 5) {
-        need.ttlId = attris.aimid;
-        need.data = Number(attris.aimname) || attris.aimname;
     } else {
         throw 'error quest type: ' + JSON.stringify(attris);
     }
     need.count = Number(attris.cnt);
 
-    // tip 一行不能超过22个字 空格算换行
-    const tips = attris.tip.split(' ');
-    for (const tip of tips) {
-        if (tip.length > 22) throw 'tip有误，tip一行不能超过22个字 空格算换行：' + attris.tip;
-    }
+    checkTip(attris.tip);
 
     return {
         quest: {
@@ -84,14 +89,23 @@ function getEvt(line) {
     const attris = result.attribs;
     const content = result.children[0].data.trim();
 
-    // tip 一行不能超过22个字 空格算换行
-    const tips = attris.tip.split(' ');
-    for (const tip of tips) {
-        if (tip.length > 22) throw 'tip有误，tip一行不能超过22个字 空格算换行：' + attris.tip;
-    }
+    checkTip(attris.tip);
 
     return {
         evtId: content,
+        tip: attris.tip
+    };
+}
+
+function getOwn(line) {
+    const result = htmlparser.parseDOM(line)[0];
+    const attris = result.attribs;
+    const content = result.children[0].data.trim();
+
+    checkTip(attris.tip);
+
+    return {
+        ttlId: content,
         tip: attris.tip
     };
 }
@@ -111,7 +125,8 @@ const PTYPE = {
     selection: 3,
     quest: 4,
     evt: 5,
-    end: 6
+    own: 6,
+    end: 99
 };
 
 const dataList = [];
@@ -218,6 +233,17 @@ for (let index = 0; index < storySrcFileNames.length; index++) {
                     }
                     datas[datas.length] = endPsge;
                 }
+            } else if (line[1] === 't') {
+                // <ttlown>
+                let realLine = line;
+                while (true) {
+                    if (realLine.includes('</ttlown>')) break;
+                    index++;
+                    realLine += ' ' + lines[index];
+                }
+                const { ttlId, tip } = getOwn(realLine);
+                datas[datas.length] = { pType: PTYPE.own, ttlId, tip };
+                idList.push(ttlId);
             } else if (line[1] === 'm') {
                 // <mark>
                 const mark = getMark(line);

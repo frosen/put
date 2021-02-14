@@ -16,7 +16,6 @@ import {
     ExplStepNames,
     FightQuestNeed,
     GatherQuestNeed,
-    OwnTtlQuestNeed,
     QuestModel,
     QuestType,
     SearchQuestNeed,
@@ -208,19 +207,6 @@ export class CellQuest extends ListViewCell {
                 list[list.length] = { s: stepName, c: cc.Color.RED };
                 list[list.length] = { s: '搜寻', c: cc.color(173, 173, 173) };
                 list[list.length] = { s: need.name, c: cc.Color.BLUE };
-                return list;
-            }
-            case QuestType.ownttl: {
-                const need = questModel.need as OwnTtlQuestNeed;
-                const id = need.ttlId;
-                const proTtlModel = ProTtlModelDict[id];
-
-                const name = typeof proTtlModel.cnName === 'string' ? proTtlModel.cnName : proTtlModel.cnName(need.data);
-
-                let list = [];
-                list[list.length] = { s: '拥有' };
-                list[list.length] = { s: name, c: cc.Color.RED };
-                list[list.length] = { s: '称号', c: cc.color(173, 173, 173) };
                 return list;
             }
             default:

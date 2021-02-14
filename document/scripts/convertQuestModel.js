@@ -38,7 +38,7 @@ convert(
                 need.step = Number(posData[1]);
                 need.name = rowData[4];
             } else {
-                throw 'error type, ownttl only use in evt';
+                throw 'error type';
             }
             need.count = Number(rowData[5]);
 

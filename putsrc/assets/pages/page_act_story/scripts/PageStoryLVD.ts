@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { EndPsge, EvtPsge, NormalPsge, Psge, PsgeType, QuestPsge, SelectionPsge } from '../../../scripts/DataModel';
+import { EndPsge, EvtPsge, NormalPsge, Psge, PsgeType, QuestPsge, SelectionPsge, OwnPsge } from '../../../scripts/DataModel';
 import { GameData } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
@@ -16,6 +16,7 @@ import { CellPsgeEnd } from '../cells/cell_psge_end/scripts/CellPsgeEnd';
 import { CellPsgeEvt } from '../cells/cell_psge_evt/scripts/CellPsgeEvt';
 import { CellPsgeHead } from '../cells/cell_psge_head/scripts/CellPsgeHead';
 import { CellPsgeNormal } from '../cells/cell_psge_normal/scripts/CellPsgeNormal';
+import { CellPsgeOwn } from '../cells/cell_psge_own/scripts/CellPsgeOwn';
 import { CellPsgeQuest } from '../cells/cell_psge_quest/scripts/CellPsgeQuest';
 import { CellPsgeSelection } from '../cells/cell_psge_selection/scripts/CellPsgeSelection';
 import { PageStory } from './PageStory';
@@ -25,11 +26,12 @@ const NORMAL = 'n';
 const SELECTION = 's';
 const QUEST = 'q';
 const EVT = 'evt';
+const OWN = 'o';
 const END = 'end';
 const TOPCKR = 'tckr';
 const BTMCKR = 'bckr';
 
-type CellPsge = CellPsgeNormal & CellPsgeSelection & CellPsgeQuest & CellPsgeEvt & CellPsgeEnd;
+type CellPsge = CellPsgeNormal & CellPsgeSelection & CellPsgeQuest & CellPsgeEvt & CellPsgeOwn & CellPsgeEnd;
 
 @ccclass
 export class PageStoryLVD extends ListViewDelegate {
@@ -46,6 +48,9 @@ export class PageStoryLVD extends ListViewDelegate {
 
     @property(cc.Prefab)
     evtPsgePrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    ownPsgePrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
     headPsgePrefab: cc.Prefab = null!;
@@ -108,13 +113,15 @@ export class PageStoryLVD extends ListViewDelegate {
                 return slcPsge.options[optionIdx].go;
             } else if (psge.pType === PsgeType.quest) {
                 const questPsge = psge as QuestPsge;
-                const questId = questPsge.questId;
-                if (rztDict[questId] === 2) return index + 1;
+                if (rztDict[questPsge.questId] === 2) return index + 1;
                 else return -1;
             } else if (psge.pType === PsgeType.evt) {
                 const evtPsge = psge as EvtPsge;
-                const evtId = evtPsge.evtId;
-                if (rztDict[evtId] === 2) return index + 1;
+                if (rztDict[evtPsge.evtId] === 2) return index + 1;
+                else return -1;
+            } else if (psge.pType === PsgeType.own) {
+                const ownPsge = psge as OwnPsge;
+                if (rztDict[ownPsge.ttlId] === 2) return index + 1;
                 else return -1;
             } else if (psge.pType === PsgeType.end) {
                 return -1;
@@ -215,6 +222,8 @@ export class PageStoryLVD extends ListViewDelegate {
             this.heightsInList[index] = 220;
         } else if (t === PsgeType.evt) {
             this.heightsInList[index] = 220;
+        } else if (t === PsgeType.own) {
+            this.heightsInList[index] = 220;
         } else if (t === PsgeType.head) {
             this.heightsInList[index] = 300;
         } else if (t === PsgeType.end) {
@@ -279,6 +288,7 @@ export class PageStoryLVD extends ListViewDelegate {
                 else if (t === PsgeType.selection) return SELECTION;
                 else if (t === PsgeType.quest) return QUEST;
                 else if (t === PsgeType.evt) return EVT;
+                else if (t === PsgeType.own) return OWN;
                 else if (t === PsgeType.head) return HEAD;
                 else if (t === PsgeType.end) return END;
                 else return undefined!;
@@ -299,6 +309,11 @@ export class PageStoryLVD extends ListViewDelegate {
             return cell;
         } else if (cellId === EVT) {
             const cell = cc.instantiate(this.evtPsgePrefab).getComponent(CellPsgeEvt);
+            cell.clickCallback = this.page.onClickEvt.bind(this.page);
+            return cell;
+        } else if (cellId === OWN) {
+            const cell = cc.instantiate(this.ownPsgePrefab).getComponent(CellPsgeOwn);
+            cell.clickCallback = this.page.onClickOwn.bind(this.page);
             return cell;
         } else if (cellId === HEAD) {
             const cell = cc.instantiate(this.headPsgePrefab).getComponent(CellPsgeHead);
@@ -333,6 +348,8 @@ export class PageStoryLVD extends ListViewDelegate {
                     cell.setData(psge as QuestPsge, this.page.evt);
                 } else if (t === PsgeType.evt) {
                     cell.setData(psge as EvtPsge, this.page.evt);
+                } else if (t === PsgeType.own) {
+                    cell.setData(psge as OwnPsge, this.page.evt);
                 } else if (t === PsgeType.end) {
                     cell.setData(psge as EndPsge);
                 }

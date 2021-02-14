@@ -352,6 +352,7 @@ export enum StoryGainType {
 export class StoryGain {
     gType!: StoryGainType;
     id!: string;
+    cnt?: number;
 }
 
 export class StoryJIT {

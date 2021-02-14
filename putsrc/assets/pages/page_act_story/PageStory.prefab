@@ -629,6 +629,9 @@
     "evtPsgePrefab": {
       "__uuid__": "40a74a48-3f37-403e-ac1a-5f661d613c5a"
     },
+    "ownPsgePrefab": {
+      "__uuid__": "6f93c303-33af-4aa7-9679-3b21f7873513"
+    },
     "headPsgePrefab": {
       "__uuid__": "30ec0b8b-a8bd-4558-8b8f-bf6e621d3780"
     },
