@@ -6,7 +6,6 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { PAKey } from '../../../configs/ActPosModelDict';
 import { ProTtlModelDict } from '../../../configs/ProTtlModelDict';
 import { QuestModelDict } from '../../../configs/QuestModelDict';
 import { GameData, PADQuester, Quest } from '../../../scripts/DataSaved';
@@ -14,6 +13,7 @@ import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
 import { GameDataTool } from '../../../scripts/Memory';
+import { CellEvt } from '../../page_act/cells/cell_evt/scripts/CellEvt';
 import { CellQuest } from '../../page_act_quester/cells/cell_quest/scripts/CellQuest';
 import { CellTitle } from '../../page_pet_detail/cells/cell_title/scripts/CellTitle';
 import { CellProTtl } from '../cells/cell_pro_ttl/scripts/CellProTtl';
@@ -55,6 +55,7 @@ export class PageSelfLVD extends ListViewDelegate {
 
     ttlCellLen!: number;
     questCellLen!: number;
+    evtLen!: number;
     evtCellLen!: number;
 
     initData() {
@@ -78,7 +79,8 @@ export class PageSelfLVD extends ListViewDelegate {
 
         this.ttlCellLen = this.ttlIds.length;
         this.questCellLen = gameData.acceQuestInfos.length;
-        this.evtCellLen = Math.ceil((gameData.ongoingEvtIds.length + gameData.finishedEvtIds.length) * 0.5);
+        this.evtLen = gameData.ongoingEvtIds.length + gameData.finishedEvtIds.length;
+        this.evtCellLen = Math.ceil(this.evtLen * 0.5);
         this.gameData = gameData;
     }
 
@@ -126,12 +128,12 @@ export class PageSelfLVD extends ListViewDelegate {
                 const cell: CellQuest = cc.instantiate(this.questPrefab).getComponent(CellQuest);
                 cell.clickCallback = this.page.onClickQuest.bind(this.page);
                 cell.funcBtnCallback = this.page.onClickQuestFuncBtn.bind(this.page);
-                cell.funcBtn.interactable = false;
                 cell.usingTip = false;
                 return cell;
             }
             case EVT: {
-                const cell = cc.instantiate(this.evtPrefab).getComponent(ListViewCell);
+                const cell = cc.instantiate(this.evtPrefab).getComponent(CellEvt);
+                cell.clickCallback = this.page.onClickEvt.bind(this.page);
                 return cell;
             }
             default:
@@ -139,7 +141,7 @@ export class PageSelfLVD extends ListViewDelegate {
         }
     }
 
-    setCellForRow(listView: ListView, rowIdx: number, cell: CellProTtl & CellQuest & CellTitle) {
+    setCellForRow(listView: ListView, rowIdx: number, cell: CellProTtl & CellQuest & CellEvt & CellTitle) {
         if (rowIdx === 0) {
         } else if (rowIdx === 1) {
         } else if (rowIdx === 2) {
@@ -151,16 +153,37 @@ export class PageSelfLVD extends ListViewDelegate {
             const model = ProTtlModelDict[ttlId];
             cell.setData(proTtl, model);
         } else if (rowIdx === 3 + this.ttlCellLen) {
-            cell.setData(`当前任务（${this.questCellLen}）`);
+            cell.setData(`当前任务（${this.questCellLen}/10）`);
         } else if (rowIdx <= 3 + this.ttlCellLen + this.questCellLen) {
-            const idx = rowIdx - 3 - this.ttlCellLen - 1;
+            const idx = this.getQuestIdxByCellIdx(rowIdx);
             const questInfo = this.gameData.acceQuestInfos[idx];
             const questModel = QuestModelDict[questInfo.questId];
             const quest = GameDataTool.getQuestByAcceQuestInfo(this.gameData, questInfo);
             cell.setData(questModel, quest!, questInfo);
         } else if (rowIdx === 4 + this.ttlCellLen + this.questCellLen) {
-            cell.setData(`事件经历（${this.evtCellLen}）`);
+            cell.setData(`事件经历（${this.evtLen}）`);
         } else {
+            const evtIdx = (rowIdx - 5 - this.ttlCellLen - this.questCellLen) * 2;
+            const evtId1 = this.getEvtIdByIdx(evtIdx);
+            cell.setEvt1(evtId1);
+
+            if (evtIdx + 1 < this.evtLen) {
+                const evtId2 = this.getEvtIdByIdx(evtIdx + 1);
+                cell.setEvt2(evtId2);
+            } else cell.setEvt2(undefined);
+        }
+    }
+
+    getQuestIdxByCellIdx(cellIdx: number) {
+        return cellIdx - 4 - this.ttlCellLen;
+    }
+
+    getEvtIdByIdx(evtIdx: number) {
+        const ongoingEvtIds = this.gameData.ongoingEvtIds;
+        if (evtIdx < ongoingEvtIds.length) {
+            return ongoingEvtIds[evtIdx];
+        } else {
+            return this.gameData.finishedEvtIds[evtIdx - ongoingEvtIds.length];
         }
     }
 }

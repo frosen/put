@@ -328,6 +328,7 @@ export class AcceQuestInfo {
 
 export class Evt {
     id!: string;
+    posId!: string;
     /**
      * 代表事件已经到达的文章段落，这个值对应psge的idx
      */

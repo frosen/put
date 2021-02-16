@@ -439,7 +439,7 @@ export class Memory {
         // this.gameData.expl.btl.enemys = ePets;
 
         this.gameData.ongoingEvtIds.push('RuZhiBaoDao');
-        this.gameData.evtDict['RuZhiBaoDao'] = { id: 'RuZhiBaoDao', sProg: 8, rztDict: {} };
+        this.gameData.evtDict['RuZhiBaoDao'] = { id: 'RuZhiBaoDao', posId: PosN.KeChuangXiaoJing, sProg: 8, rztDict: {} };
     }
 }
 
@@ -1047,9 +1047,10 @@ export class QuestTool {
 }
 
 export class EvtTool {
-    static create(id: string): Evt {
+    static create(id: string, posId: string): Evt {
         const evt = newInsWithChecker(Evt);
         evt.id = id;
+        evt.posId = posId;
         evt.sProg = -1;
         evt.rztDict = newDict();
         return evt;
@@ -1631,7 +1632,7 @@ export class GameDataTool {
         const actPosModel = ActPosModelDict[posId];
         for (const evtId of actPosModel.evtIds) {
             if (!(evtId in gameData.evtDict)) {
-                gameData.evtDict[evtId] = EvtTool.create(evtId);
+                gameData.evtDict[evtId] = EvtTool.create(evtId, posId);
                 gameData.ongoingEvtIds.push(evtId);
             }
         }
@@ -1705,14 +1706,16 @@ export class GameDataTool {
         return this.SUC;
     }
 
-    static removeAcceQuest(gameData: GameData, questId: string, posId?: string, evtId?: string) {
+    static removeAcceQuest(gameData: GameData, questId: string, posId?: string, evtId?: string): string {
         for (let index = 0; index < gameData.acceQuestInfos.length; index++) {
             const quest = gameData.acceQuestInfos[index];
             if (quest.questId === questId && ((posId && quest.posId === posId) || (evtId && quest.evtId === evtId))) {
                 gameData.acceQuestInfos.splice(index, 1);
-                break;
+                return this.SUC;
             }
         }
+
+        return '未找到任务';
     }
 
     static getQuestByAcceQuestInfo(gameData: GameData, questInfo: AcceQuestInfo): Quest {

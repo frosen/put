@@ -303,7 +303,7 @@ export class PageActQuester extends PageBase {
         const quest = this.pADQuester.quests[cellIdx - 1];
         const questId = quest.id;
         const model = QuestModelDict[questId];
-        this.ctrlr.popAlert(`确定删除任务 ${model.cnName} 吗`, (key: number) => {
+        this.ctrlr.popAlert(`确定删除任务 ${model.cnName} 吗？`, (key: number) => {
             if (key === 1) {
                 GameDataTool.removeAcceQuest(gameData, questId, gameData.curPosId, undefined);
                 // 根据id重新查找，以免出现冲突
