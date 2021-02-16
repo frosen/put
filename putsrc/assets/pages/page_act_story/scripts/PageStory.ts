@@ -21,7 +21,19 @@ import {
     StoryModel,
     SupportQuestNeed
 } from '../../../scripts/DataModel';
-import { Cnsum, Evt, Quest, QuestAmplType, QuestDLineType, StoryGainType, StoryJIT } from '../../../scripts/DataSaved';
+import {
+    Cnsum,
+    Equip,
+    Evt,
+    EvtRztKey,
+    EvtRztV,
+    Pet,
+    Quest,
+    QuestAmplType,
+    QuestDLineType,
+    StoryGainType,
+    StoryJIT
+} from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CnsumTool, EquipTool, EvtTool, GameDataTool, PetTool, QuestTool } from '../../../scripts/Memory';
@@ -83,7 +95,7 @@ export class PageStory extends PageBase {
         this.storyModel = StoryModelDict[this.evtId];
         this.evt = gameData.evtDict[this.evtId];
 
-        if (!gameData.curEvtId) GameDataTool.enterEvt(gameData, this.evtId);
+        GameDataTool.enterEvt(gameData, this.evtId);
 
         this.jit = gameData.storyJIT!;
     }
@@ -139,21 +151,36 @@ export class PageStory extends PageBase {
 
     handleStoryGain() {
         const gameData = this.ctrlr.memory.gameData;
+        let gainStr: string = '';
         for (const { gains } of this.jit.gainDataList) {
             for (const gain of gains) {
                 const { gType, id, cnt } = gain;
                 if (gType === StoryGainType.cnsum) {
-                    GameDataTool.addCnsum(gameData, id, cnt);
+                    const rzt = GameDataTool.addCnsum(gameData, id, cnt);
+                    if (rzt === GameDataTool.SUC) {
+                        gainStr += '\n' + CnsumTool.getModelById(id)!.cnName + (cnt ? ' x' + String(cnt) : '');
+                    }
                 } else if (gType === StoryGainType.equip) {
-                    GameDataTool.addEquip(gameData, EquipTool.createByFullId(id));
+                    let curEquip: Equip | undefined;
+                    GameDataTool.addEquip(gameData, EquipTool.createByFullId(id), equip => (curEquip = equip));
+                    if (curEquip) {
+                        gainStr += '\n装备 ' + EquipTool.getCnName(curEquip);
+                    }
                 } else if (gType === StoryGainType.pet) {
-                    GameDataTool.addPetByPet(gameData, PetTool.createByFullId(id));
+                    let curPet: Pet | undefined;
+                    GameDataTool.addPetByPet(gameData, PetTool.createByFullId(id), pet => (curPet = pet));
+                    if (curPet) {
+                        gainStr += '\n精灵 ' + PetTool.getCnName(curPet);
+                    }
                 } else {
                     GameDataTool.addProTtl(gameData, id);
+                    gainStr += '\n称号 ' + ProTtlModelDict[id].cnName;
                 }
             }
         }
         this.jit.gainDataList.length = 0;
+
+        if (gainStr) this.ctrlr.popToast('获得\n' + gainStr);
     }
 
     onPageShow() {
@@ -215,19 +242,16 @@ export class PageStory extends PageBase {
         if (psge.pType === PsgeType.normal) {
             const nPsge = psge as NormalPsge;
             if (nPsge.gains) this.jit.gainDataList.push({ gains: nPsge.gains, lProg: psgeIdx });
-            if (nPsge.mark) this.evt.rztDict[nPsge.mark] = 1;
-        } else if (psge.pType === PsgeType.selection) {
-            const sPsge = psge as SelectionPsge;
-            this.evt.rztDict[sPsge.slcId] = 0;
+            if (nPsge.mark) this.evt.rztDict[nPsge.mark] = EvtRztV.had;
         } else if (psge.pType === PsgeType.quest) {
             const qPsge = psge as QuestPsge;
-            this.evt.rztDict[qPsge.questId] = 1;
+            this.evt.rztDict[qPsge.questId] = EvtRztV.had;
         } else if (psge.pType === PsgeType.evt) {
             const ePsge = psge as EvtPsge;
-            this.evt.rztDict[ePsge.evtId] = 1;
+            this.evt.rztDict[ePsge.evtId] = EvtRztV.had;
         } else if (psge.pType === PsgeType.own) {
             const oPsge = psge as OwnPsge;
-            this.evt.rztDict[oPsge.ttlId] = 1;
+            this.evt.rztDict[oPsge.ttlId] = EvtRztV.had;
         } else if (psge.pType === PsgeType.end) {
             this.curEvtFinished = true;
         }
@@ -464,7 +488,7 @@ export class PageStory extends PageBase {
 
         GameDataTool.removeAcceQuest(gameData, questId, undefined, this.evtId);
         delete this.evt.curQuest;
-        this.evt.rztDict[questId] = 2;
+        this.evt.rztDict[questId] = EvtRztV.done;
         this.resetPsgeDataAndListView(cell.psge.idx);
     }
 
@@ -475,12 +499,12 @@ export class PageStory extends PageBase {
         const needEvtModel = EvtModelDict[needEvtId];
         const needEvt = gameData.evtDict[needEvtId];
 
-        if (!needEvt || gameData.ongoingEvtIds.includes(needEvtId)) {
+        if (!needEvt || needEvt.rztDict[EvtRztKey.done] !== EvtRztV.had) {
             this.ctrlr.popToast(`尚未完成事件 ${needEvtModel.cnName}\n\n${ePsge.tip}`);
             return;
         }
 
-        this.evt.rztDict[needEvtId] = 2;
+        this.evt.rztDict[needEvtId] = EvtRztV.done;
         this.resetPsgeDataAndListView(cell.psge.idx);
     }
 
@@ -495,7 +519,7 @@ export class PageStory extends PageBase {
             return;
         }
 
-        this.evt.rztDict[needTtlId] = 2;
+        this.evt.rztDict[needTtlId] = EvtRztV.done;
         this.resetPsgeDataAndListView(cell.psge.idx);
     }
 

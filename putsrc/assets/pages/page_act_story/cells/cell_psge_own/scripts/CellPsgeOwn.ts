@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { EvtModelDict } from '../../../../../configs/EvtModelDict';
 import { ProTtlModelDict } from '../../../../../configs/ProTtlModelDict';
 import { OwnPsge } from '../../../../../scripts/DataModel';
-import { Evt } from '../../../../../scripts/DataSaved';
+import { Evt, EvtRztV } from '../../../../../scripts/DataSaved';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 
 @ccclass
@@ -32,7 +32,7 @@ export class CellPsgeOwn extends CellPsgeBase {
         const model = ProTtlModelDict[needTtlId];
         this.lbl.string = '需要拥有称号：' + model.cnName;
 
-        if (curEvt.rztDict[needTtlId] === 2) {
+        if (curEvt.rztDict[needTtlId] === EvtRztV.done) {
             this.btn.interactable = false;
             this.lbl.node.color = cc.color(120, 120, 120);
         } else {

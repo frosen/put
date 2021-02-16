@@ -7,7 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { EndPsge, EvtPsge, NormalPsge, Psge, PsgeType, QuestPsge, SelectionPsge, OwnPsge } from '../../../scripts/DataModel';
-import { GameData } from '../../../scripts/DataSaved';
+import { EvtRztV, GameData } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
@@ -113,15 +113,15 @@ export class PageStoryLVD extends ListViewDelegate {
                 return slcPsge.options[optionIdx].go;
             } else if (psge.pType === PsgeType.quest) {
                 const questPsge = psge as QuestPsge;
-                if (rztDict[questPsge.questId] === 2) return index + 1;
+                if (rztDict[questPsge.questId] === EvtRztV.done) return index + 1;
                 else return -1;
             } else if (psge.pType === PsgeType.evt) {
                 const evtPsge = psge as EvtPsge;
-                if (rztDict[evtPsge.evtId] === 2) return index + 1;
+                if (rztDict[evtPsge.evtId] === EvtRztV.done) return index + 1;
                 else return -1;
             } else if (psge.pType === PsgeType.own) {
                 const ownPsge = psge as OwnPsge;
-                if (rztDict[ownPsge.ttlId] === 2) return index + 1;
+                if (rztDict[ownPsge.ttlId] === EvtRztV.done) return index + 1;
                 else return -1;
             } else if (psge.pType === PsgeType.end) {
                 return -1;

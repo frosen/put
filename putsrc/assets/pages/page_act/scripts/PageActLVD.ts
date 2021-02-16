@@ -12,7 +12,7 @@ import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { CellActInfoDict, PageAct } from './PageAct';
-import { Evt, PosData } from '../../../scripts/DataSaved';
+import { Evt, EvtRztKey, EvtRztV, PosData } from '../../../scripts/DataSaved';
 import { ActPosModel, MovModel, SpcBtlModel, SpcBtlType, UseCond } from '../../../scripts/DataModel';
 import { EvtModelDict, SpcBtlModelDict } from '../../../configs/EvtModelDict';
 import { CellEvt } from '../cells/cell_evt/scripts/CellEvt';
@@ -71,7 +71,7 @@ export class PageActLVD extends ListViewDelegate {
 
         for (let index = 0; index < this.curActPosModel.evtIds.length; index++) {
             const evtId = this.curActPosModel.evtIds[index];
-            if (!gameData.ongoingEvtIds.includes(evtId)) continue;
+            if (gameData.evtDict[evtId].rztDict[EvtRztKey.done] === EvtRztV.had) continue;
             const evtModel = EvtModelDict[evtId];
             let use = true;
             if (evtModel.useCond && !this.checkUseCond(evtModel.useCond)) use = false;
@@ -79,15 +79,6 @@ export class PageActLVD extends ListViewDelegate {
             if (evtModel.startEvtId) {
                 const startEvtModel = EvtModelDict[evtModel.startEvtId];
                 if (startEvtModel.useCond && !this.checkUseCond(startEvtModel.useCond)) use = false;
-            }
-
-            const sbEvtModel = SpcBtlModelDict[evtId];
-            if (sbEvtModel) {
-                if (sbEvtModel.sbType === SpcBtlType.random1) {
-                    // llytodo
-                } else if (sbEvtModel.sbType === SpcBtlType.randomEver) {
-                    // llytodo
-                }
             }
 
             if (use) this.curEvtIds.push(evtId);

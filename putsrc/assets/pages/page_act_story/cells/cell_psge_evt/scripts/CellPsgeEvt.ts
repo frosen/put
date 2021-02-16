@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { EvtModelDict } from '../../../../../configs/EvtModelDict';
 import { EvtPsge } from '../../../../../scripts/DataModel';
-import { Evt } from '../../../../../scripts/DataSaved';
+import { Evt, EvtRztV } from '../../../../../scripts/DataSaved';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 
 @ccclass
@@ -31,7 +31,7 @@ export class CellPsgeEvt extends CellPsgeBase {
         const model = EvtModelDict[needEvtId];
         this.lbl.string = '需要完成事件：' + model.cnName;
 
-        if (curEvt.rztDict[needEvtId] === 2) {
+        if (curEvt.rztDict[needEvtId] === EvtRztV.done) {
             this.btn.interactable = false;
             this.lbl.node.color = cc.color(120, 120, 120);
         } else {

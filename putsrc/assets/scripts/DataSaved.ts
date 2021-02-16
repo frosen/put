@@ -326,6 +326,16 @@ export class AcceQuestInfo {
     evtId?: string;
 }
 
+export class EvtRztKey {
+    static start = 'start';
+    static done = 'done';
+}
+
+export class EvtRztV {
+    static had = 1;
+    static done = 2;
+}
+
 export class Evt {
     id!: string;
     posId!: string;
@@ -337,6 +347,8 @@ export class Evt {
      * 选择结果：number从个位开始表示每一次选择的选项索引值，索引值从1开始对应option的0号，如果值为0表示到选择位置但未选择
      * 任务/事件结果：1代表到达，2代表完成
      * 标记结果：1为到达
+     * start：1为开始
+     * done：1为完成
      */
     rztDict!: { [key: string]: number };
     /** 当前依赖任务 */

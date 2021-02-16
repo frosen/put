@@ -46,7 +46,6 @@ export const SpcBtlModelDict: { [key: string]: SpcBtlModel } = {
         lv: 30,
         eType: EvtType.main,
         startEvtId: StoryN.RuZhiBaoDao,
-        sbType: SpcBtlType.normal,
         pets: [
             { id: PetN.DianZiShouWei, lv: 10, ampl: 3 },
             { id: PetN.DianZiShouWei, lv: 10, ampl: 3 },

@@ -497,12 +497,6 @@ export class StoryModel extends EvtModel {
 
 // -----------------------------------------------------------------
 
-export enum SpcBtlType {
-    normal = 1,
-    random1, // 随机出现，消灭后不会再出现
-    randomEver // 随机出现，但消灭后也会出现
-}
-
 export class SpcBtlPet {
     id!: string;
     name?: string;
@@ -513,6 +507,5 @@ export class SpcBtlPet {
 }
 
 export class SpcBtlModel extends EvtModel {
-    sbType!: SpcBtlType;
     pets!: SpcBtlPet[];
 }

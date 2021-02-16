@@ -49,7 +49,9 @@ import {
     EleType,
     Evt,
     StoryJIT,
-    ProTtl
+    ProTtl,
+    EvtRztKey,
+    EvtRztV
 } from './DataSaved';
 import {
     FeatureModel,
@@ -438,8 +440,13 @@ export class Memory {
         // GameDataTool.createBtl(this.gameData, 100, (1000 * 60 * 100) / 750 - 10, 0, []);
         // this.gameData.expl.btl.enemys = ePets;
 
+        this.gameData.evtDict['RuZhiBaoDao'] = {
+            id: 'RuZhiBaoDao',
+            posId: PosN.KeChuangXiaoJing,
+            sProg: 8,
+            rztDict: { start: 1 }
+        };
         this.gameData.ongoingEvtIds.push('RuZhiBaoDao');
-        this.gameData.evtDict['RuZhiBaoDao'] = { id: 'RuZhiBaoDao', posId: PosN.KeChuangXiaoJing, sProg: 8, rztDict: {} };
     }
 }
 
@@ -1633,15 +1640,19 @@ export class GameDataTool {
         for (const evtId of actPosModel.evtIds) {
             if (!(evtId in gameData.evtDict)) {
                 gameData.evtDict[evtId] = EvtTool.create(evtId, posId);
-                gameData.ongoingEvtIds.push(evtId);
             }
         }
     }
 
     static enterEvt(gameData: GameData, evtId: string) {
         gameData.curEvtId = evtId;
+        const evt = gameData.evtDict[evtId];
+        if (!evt.rztDict[EvtRztKey.start]) {
+            evt.rztDict[EvtRztKey.start] = EvtRztV.had;
+            gameData.ongoingEvtIds.push(evtId);
+        }
+
         if (StoryModelDict[evtId]) {
-            const evt = gameData.evtDict[evtId];
             gameData.storyJIT = EvtTool.createStoryJIT(evt.sProg);
         }
     }
@@ -1655,6 +1666,7 @@ export class GameDataTool {
         const idx = gameData.ongoingEvtIds.indexOf(evtId);
         if (idx !== -1) gameData.ongoingEvtIds.splice(idx, 1);
         gameData.finishedEvtIds.push(evtId);
+        gameData.evtDict[evtId].rztDict[EvtRztKey.done] = EvtRztV.had;
     }
 
     // -----------------------------------------------------------------

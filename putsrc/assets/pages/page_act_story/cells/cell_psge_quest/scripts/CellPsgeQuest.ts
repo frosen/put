@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { QuestModelDict } from '../../../../../configs/QuestModelDict';
 import { QuestPsge } from '../../../../../scripts/DataModel';
-import { Evt, Quest } from '../../../../../scripts/DataSaved';
+import { Evt, EvtRztV, Quest } from '../../../../../scripts/DataSaved';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 
 @ccclass
@@ -30,7 +30,7 @@ export class CellPsgeQuest extends CellPsgeBase {
         const questId = questPsge.questId;
         const questModel = QuestModelDict[questId];
 
-        if (evt.rztDict[questId] === 2) {
+        if (evt.rztDict[questId] === EvtRztV.done) {
             this.lbl.string = '需要完成任务：' + questModel.cnName;
             this.btn.interactable = false;
             this.lbl.node.color = cc.color(120, 120, 120);

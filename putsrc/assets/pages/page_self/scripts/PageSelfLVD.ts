@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { ProTtlModelDict } from '../../../configs/ProTtlModelDict';
 import { QuestModelDict } from '../../../configs/QuestModelDict';
-import { GameData, PADQuester, Quest } from '../../../scripts/DataSaved';
+import { EvtRztKey, EvtRztV, GameData, PADQuester, Quest } from '../../../scripts/DataSaved';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
@@ -153,7 +153,7 @@ export class PageSelfLVD extends ListViewDelegate {
             const model = ProTtlModelDict[ttlId];
             cell.setData(proTtl, model);
         } else if (rowIdx === 3 + this.ttlCellLen) {
-            cell.setData(`当前任务（${this.questCellLen}/10）`);
+            cell.setData(`当前任务（${this.questCellLen} / 10）`);
         } else if (rowIdx <= 3 + this.ttlCellLen + this.questCellLen) {
             const idx = this.getQuestIdxByCellIdx(rowIdx);
             const questInfo = this.gameData.acceQuestInfos[idx];
@@ -179,7 +179,7 @@ export class PageSelfLVD extends ListViewDelegate {
     }
 
     getEvtIdByIdx(evtIdx: number) {
-        const ongoingEvtIds = this.gameData.ongoingEvtIds;
+        const ongoingEvtIds = this.ctrlr.memory.gameData.ongoingEvtIds;
         if (evtIdx < ongoingEvtIds.length) {
             return ongoingEvtIds[evtIdx];
         } else {

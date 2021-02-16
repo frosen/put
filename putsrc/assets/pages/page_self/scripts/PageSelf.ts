@@ -15,9 +15,9 @@ import { CellQuest } from '../../page_act_quester/cells/cell_quest/scripts/CellQ
 import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 import { PageStory } from '../../page_act_story/scripts/PageStory';
 import { GameDataTool } from '../../../scripts/Memory';
-import { PADQuester, Quest } from '../../../scripts/DataSaved';
+import { EvtRztKey, EvtRztV, PADQuester, Quest } from '../../../scripts/DataSaved';
 import { QuestModelDict } from '../../../configs/QuestModelDict';
-import { EvtModelDict } from '../../../configs/EvtModelDict';
+import { EvtModelDict, SpcBtlModelDict } from '../../../configs/EvtModelDict';
 
 @ccclass
 export class PageSelf extends PageBase {
@@ -97,10 +97,12 @@ export class PageSelf extends PageBase {
     }
 
     onClickEvt(evtId: string) {
-        const gameData = this.ctrlr.memory.gameData;
-        if (!gameData.evtDict[evtId] || gameData.ongoingEvtIds.includes(evtId)) {
-            const posName = ActPosModelDict[gameData.evtDict[evtId].posId].cnName;
+        const evt = this.ctrlr.memory.gameData.evtDict[evtId];
+        if (!evt || evt.rztDict[EvtRztKey.done] !== EvtRztV.had) {
+            const posName = ActPosModelDict[evt.posId].cnName;
             this.ctrlr.popToast(`事件尚未结束\n只能从对应地点“${posName}”进入`);
+        } else if (SpcBtlModelDict[evtId]) {
+            this.ctrlr.popToast(`已经结束的战斗事件`);
         } else {
             this.ctrlr.pushPage(PageStory, { evtId });
         }

@@ -19,7 +19,7 @@ function getCnName(line) {
 
 function getGain(line) {
     const result = htmlparser.parseDOM(line)[0];
-    const rzt = { tType: result.attribs.t, id: result.children[0].data };
+    const rzt = { gType: Number(result.attribs.t), id: result.children[0].data };
     if (result.attribs.cnt) {
         rzt.cnt = Number(result.attribs.cnt);
     }
