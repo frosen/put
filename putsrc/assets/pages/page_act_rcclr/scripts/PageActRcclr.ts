@@ -27,20 +27,20 @@ export class PageActRcclr extends PageBase {
     curListIdx: number = 0;
 
     @property(cc.Node)
-    listLayer: cc.Node = null;
+    listLayer: cc.Node = null!;
 
     @property(cc.Prefab)
-    listPrefab: cc.Prefab = null;
+    listPrefab: cc.Prefab = null!;
 
     listDatas: { dirtyToken: number; list: ListView; delegate: PageActRcclrLVD }[] = [];
 
     @property(cc.Node)
-    selectionNode: cc.Node = null;
+    selectionNode: cc.Node = null!;
 
     @property(cc.Prefab)
-    selectionBarPrefab: cc.Node = null;
+    selectionBarPrefab: cc.Node = null!;
 
-    selectionBar: PkgSelectionBar = null;
+    selectionBar!: PkgSelectionBar;
 
     priceDict: { [key: string]: number } = {};
     countDict: { [key: string]: number } = {};
@@ -257,12 +257,13 @@ export class PageActRcclr extends PageBase {
     static getItemPrice(item: Item): number {
         switch (item.itemType) {
             case ItemType.cnsum:
-                return CnsumTool.getModelById(item.id).price;
+                return CnsumTool.getModelById(item.id)!.price;
             case ItemType.equip:
                 return EquipTool.getPrice(item as Equip);
             case ItemType.caughtPet:
                 return CaughtPetTool.getPrice(item as CaughtPet);
         }
+        return undefined!;
     }
 
     static getItemRcclPrice(item: Item): number {

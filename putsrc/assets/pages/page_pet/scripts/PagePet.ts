@@ -21,12 +21,12 @@ export class PagePet extends PageBase {
     dirtyToken: number = 0;
 
     @property(ListView)
-    list: ListView = null;
+    list: ListView = null!;
 
     @property(cc.Prefab)
-    funcBarPrefab: cc.Prefab = null;
+    funcBarPrefab: cc.Prefab = null!;
 
-    funcBar: FuncBar = null;
+    funcBar!: FuncBar;
 
     onLoad() {
         super.onLoad();
@@ -45,9 +45,9 @@ export class PagePet extends PageBase {
         ]);
     }
 
-    specialPageName: string = null;
+    specialPageName!: string;
     needBackBtn: boolean = false;
-    clickCallback: (index: number, pet: Pet) => void = null;
+    clickCallback!: (index: number, pet: Pet) => void;
 
     /**
      * cellPetType

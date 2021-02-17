@@ -17,32 +17,32 @@ import { PTN } from '../../../../../configs/ProTtlModelDict';
 @ccclass
 export class CellPetName extends ListViewCell {
     @property(cc.Label)
-    petName: cc.Label = null;
+    petName: cc.Label = null!;
 
     @property(cc.Label)
-    subName: cc.Label = null;
+    subName: cc.Label = null!;
 
     @property(cc.Node)
-    editBtn: cc.Node = null;
+    editBtn: cc.Node = null!;
 
     @property(cc.Label)
-    state: cc.Label = null;
+    state: cc.Label = null!;
 
     @property(cc.Layout)
-    layout: cc.Layout = null;
+    layout: cc.Layout = null!;
 
     @property(cc.EditBox)
-    editBox: cc.EditBox = null;
+    editBox: cc.EditBox = null!;
 
     @property(cc.Sprite)
-    petIconBG: cc.Sprite = null;
+    petIconBG: cc.Sprite = null!;
 
     @property(cc.Sprite)
-    petIcon: cc.Sprite = null;
+    petIcon: cc.Sprite = null!;
 
-    page: PageBase = null;
+    page!: PageBase;
 
-    curPet: Pet = null;
+    curPet!: Pet;
     tip: string = '';
 
     onLoad() {

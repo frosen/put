@@ -27,7 +27,7 @@ export const PetMktUpdataInterval: number = 24 * 60 * 60 * 1000; // 更新间隔
 @ccclass
 export class PageActPetMkt extends PageBase {
     @property(ListView)
-    list: ListView = null;
+    list: ListView = null!;
 
     totalPrice: number = 0;
 
@@ -35,7 +35,7 @@ export class PageActPetMkt extends PageBase {
     priceList: number[] = [];
     countList: number[] = [];
 
-    pADPetMkt: PADPetMkt;
+    pADPetMkt!: PADPetMkt;
 
     onLoad() {
         super.onLoad();
@@ -134,7 +134,7 @@ export class PageActPetMkt extends PageBase {
             if (!count) continue;
             const goods = this.goodsList[index];
             GameDataTool.addCaughtPet(gameData, goods);
-            this.pADPetMkt.pets[index] = undefined;
+            this.pADPetMkt.pets[index] = undefined!; // 临时变成空
         }
         GameDataTool.handleMoney(gameData, (m: Money) => (m.sum -= this.totalPrice));
 

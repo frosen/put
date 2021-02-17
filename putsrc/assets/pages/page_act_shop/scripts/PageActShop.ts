@@ -23,12 +23,12 @@ const ShopReputDiscount: number[] = [1, 1, 0.95, 0.9, 0.85, 0.8];
 @ccclass
 export class PageActShop extends PageBase {
     @property(ListView)
-    list: ListView = null;
+    list: ListView = null!;
 
     totalPrice: number = 0;
     totalCount: number = 0;
 
-    goodsIds: string[];
+    goodsIds!: string[];
     countList: number[] = [];
 
     onLoad() {
@@ -96,7 +96,7 @@ export class PageActShop extends PageBase {
             const goodsId = this.goodsIds[index];
             const count = this.countList[index] || 0;
             if (count <= 0) continue;
-            const price = this.getCnsumReputPrice(CnsumTool.getModelById(goodsId));
+            const price = this.getCnsumReputPrice(CnsumTool.getModelById(goodsId)!);
             tp += count * price;
             tc += count;
         }
@@ -111,7 +111,7 @@ export class PageActShop extends PageBase {
     onCellAddCount(cell: CellTransaction, count: number) {
         const gameData = this.ctrlr.memory.gameData;
         const goodsId = this.goodsIds[cell.curCellIdx];
-        const price = this.getCnsumReputPrice(CnsumTool.getModelById(goodsId));
+        const price = this.getCnsumReputPrice(CnsumTool.getModelById(goodsId)!);
         const curMoney = GameDataTool.getMoney(gameData);
         let realCount: number;
         if (this.totalPrice + price * count > curMoney) {
