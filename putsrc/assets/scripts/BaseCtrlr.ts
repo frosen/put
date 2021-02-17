@@ -617,7 +617,7 @@ export class BaseCtrlr extends cc.Component {
         this.toastEndFlag = 0;
         cc.tween(this.toastNode)
             .to(0.3, { opacity: 255 })
-            .delay(3)
+            .delay(1)
             .call(() => {
                 this.toastEndFlag |= 0b1;
                 this.closeToast();
