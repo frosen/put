@@ -63,7 +63,7 @@ export class PageActRcclr extends PageBase {
             const totalPrice = this.getTotalPrice();
             if (totalPrice <= 0) return true;
             this.ctrlr.popAlert(
-                `确定回收资源并获得${MoneyTool.getStr(totalPrice)} ？`,
+                `确定回收资源并获得${MoneyTool.getStr(totalPrice)}吗？`,
                 (key: number) => {
                     if (key === 1) {
                         if (this.recycle()) this.ctrlr.popPage();

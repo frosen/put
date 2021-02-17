@@ -156,7 +156,7 @@ export class PagePet extends PageBase {
         const pet = gameData.pets[cellIdx];
 
         const name = PetTool.getCnName(pet);
-        const str = `确定放生精灵“${name}”？\n` + '注意：放生后将无法找回！';
+        const str = `确定放生精灵“${name}”吗？\n` + '注意：放生后将无法找回！';
         this.ctrlr.popAlert(str, (key: number) => {
             if (key === 1) {
                 const rzt = GameDataTool.removePet(gameData, cellIdx);

@@ -258,7 +258,7 @@ export class PageActMerger extends PageBase {
         const petName = PetTool.getCnName(this.curPet);
         const cPetName = CaughtPetTool.getCnName(this.curCaughtPet);
         const featureName = FeatureModelDict[this.curFeature.id].cnBrief;
-        const str = `确定把${cPetName}的特性“${featureName}”\n融合到${petName}身上吗？\n注意：你将失去${cPetName}`;
+        const str = `确定把“${cPetName}”的特性“${featureName}”\n融合到${petName}身上吗？\n注意：你将失去${cPetName}`;
         this.ctrlr.popAlert(str, (key: number) => {
             if (key === 1) this.merge();
         });

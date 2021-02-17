@@ -397,7 +397,7 @@ export class PagePkg extends PagePkgBase {
             name = CaughtPetTool.getCnName(item as CaughtPet);
         } else name = '?';
 
-        const str = `确定将“${name}”丢弃吗？\n` + '注意：丢弃后将无法找回哦！';
+        const str = `确定丢弃“${name}”吗？\n` + '注意：丢弃后将无法找回哦！';
 
         if (item.itemType === ItemType.cnsum) {
             this.ctrlr.popAlert(

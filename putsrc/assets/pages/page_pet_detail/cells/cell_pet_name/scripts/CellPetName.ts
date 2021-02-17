@@ -124,7 +124,7 @@ export class CellPetName extends ListViewCell {
     handleEditBoxInput(str: string) {
         cc.log('PUT change pet name to', str);
         if (str.length > 0) {
-            this.ctrlr.popAlert(`确定要把${PetTool.getBaseCnName(this.curPet)}的名字\n改成“${str}”？`, (key: number) => {
+            this.ctrlr.popAlert(`确定要把“${PetTool.getBaseCnName(this.curPet)}”的名字\n改成“${str}”吗？`, (key: number) => {
                 if (key === 1) {
                     if (this.ctrlr.getCurPage() === this.page) {
                         this.curPet.nickname = str;

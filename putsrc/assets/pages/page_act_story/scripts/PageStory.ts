@@ -104,7 +104,7 @@ export class PageStory extends PageBase {
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
             const { itemOverflow, petOverflow } = this.checkStoryGain();
-            let str = '确定退出？';
+            let str = '确定退出吗？';
             if (itemOverflow || petOverflow) {
                 let name: string | undefined;
                 if (itemOverflow && petOverflow) name = '道具和精灵都';
@@ -466,7 +466,7 @@ export class PageStory extends PageBase {
 
         const model = CnsumTool.getModelById(need.itemId)!;
         const needCnt = QuestTool.getRealNeedCnt(quest);
-        const str = `确定使用${needCnt}个“${model.cnName}”\n完成任务“${questModel.cnName}”？`;
+        const str = `确定使用${needCnt}个“${model.cnName}”\n完成任务“${questModel.cnName}”吗？`;
         this.ctrlr.popAlert(str, (key: number) => {
             if (key !== 1) return;
             let needItem: Cnsum | undefined;

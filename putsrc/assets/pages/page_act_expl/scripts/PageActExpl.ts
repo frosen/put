@@ -232,7 +232,7 @@ export class PageActExpl extends BtlPageBase {
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true, (): boolean => {
-            this.ctrlr.popAlert('确定退出探索？', this.onClickBack.bind(this), '确定', '仅训练师自己离开，留精灵继续战斗');
+            this.ctrlr.popAlert('确定退出探索吗？', this.onClickBack.bind(this), '确定', '仅训练师自己离开，留精灵继续战斗');
             return false;
         });
 

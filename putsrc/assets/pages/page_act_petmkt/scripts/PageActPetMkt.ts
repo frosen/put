@@ -100,7 +100,7 @@ export class PageActPetMkt extends PageBase {
         navBar.setBackBtnEnabled(true, (): boolean => {
             if (this.totalPrice <= 0) return true;
             this.ctrlr.popAlert(
-                `确定消费${MoneyTool.getStr(this.totalPrice)} 购买精灵？`,
+                `确定消费${MoneyTool.getStr(this.totalPrice)}购买精灵吗？`,
                 (key: number) => {
                     if (key === 1) {
                         if (this.buy()) this.ctrlr.popPage();
@@ -207,7 +207,7 @@ export class PageActPetMkt extends PageBase {
             const gameData = this.ctrlr.memory.gameData;
             const pADPetMkt = GameDataTool.addPA(gameData, gameData.curPosId, PAKey.petMkt) as PADPetMkt;
             const refreshPrice = Math.pow(2, pADPetMkt.refreshCnt) * 100;
-            this.ctrlr.popAlert(`确定消费${MoneyTool.getStr(refreshPrice)} 刷新列表？`, (key: number) => {
+            this.ctrlr.popAlert(`确定花费${MoneyTool.getStr(refreshPrice)}刷新列表吗？`, (key: number) => {
                 if (key === 1) {
                     const curMoney = GameDataTool.getMoney(gameData);
                     if (refreshPrice > curMoney) {

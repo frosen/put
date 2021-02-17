@@ -178,7 +178,7 @@ export class PageActQuester extends PageBase {
 
         const model = CnsumTool.getModelById(need.itemId)!;
         const needCnt = QuestTool.getRealNeedCnt(quest);
-        const str = `确定使用${needCnt}个“${model.cnName}”\n完成任务“${questModel.cnName}”？`;
+        const str = `确定使用${needCnt}个“${model.cnName}”\n完成任务“${questModel.cnName}”吗？`;
         this.ctrlr.popAlert(str, (key: number) => {
             if (key !== 1) return;
             let needItem: Cnsum | undefined;
@@ -303,7 +303,7 @@ export class PageActQuester extends PageBase {
         const quest = this.pADQuester.quests[cellIdx - 1];
         const questId = quest.id;
         const model = QuestModelDict[questId];
-        this.ctrlr.popAlert(`确定删除任务 ${model.cnName} 吗？`, (key: number) => {
+        this.ctrlr.popAlert(`确定删除任务“${model.cnName}”吗？`, (key: number) => {
             if (key === 1) {
                 GameDataTool.removeAcceQuest(gameData, questId, gameData.curPosId, undefined);
                 // 根据id重新查找，以免出现冲突

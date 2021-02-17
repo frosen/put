@@ -116,7 +116,7 @@ export class PageSelf extends PageBase {
         const qInfo = gameData.acceQuestInfos[questIdx];
         const questId = qInfo.questId;
         const model = QuestModelDict[questId];
-        this.ctrlr.popAlert(`确定删除任务 ${model.cnName} 吗？`, (key: number) => {
+        this.ctrlr.popAlert(`确定删除任务“${model.cnName}”吗？`, (key: number) => {
             if (key === 1) {
                 GameDataTool.removeAcceQuest(gameData, questId, qInfo.posId, qInfo.evtId);
 

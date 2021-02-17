@@ -67,7 +67,7 @@ export class PageActACntr extends PageBase {
         navBar.setBackBtnEnabled(true, (): boolean => {
             if (this.totalPrice <= 0) return true;
             this.ctrlr.popAlert(
-                `确定花费${MoneyTool.getStr(this.totalPrice)} 获取奖励？`,
+                `确定花费${MoneyTool.getStr(this.totalPrice)}获取奖励吗？`,
                 (key: number) => {
                     if (key === 1) {
                         if (this.buy()) this.ctrlr.popPage();
