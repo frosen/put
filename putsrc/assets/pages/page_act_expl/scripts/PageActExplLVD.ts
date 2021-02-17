@@ -12,9 +12,9 @@ import { PageActExpl } from './PageActExpl';
 import { CellLogBase } from './CellLogBase';
 
 export class LblFrameData {
-    lbl: cc.Label;
-    frame: cc.SpriteFrame;
-    width: number;
+    lbl!: cc.Label;
+    frame!: cc.SpriteFrame;
+    width!: number;
 }
 
 const RepeatLog = 'Repeat';
@@ -35,18 +35,18 @@ cc.dynamicAtlasManager.enabled = true;
 @ccclass
 export class PageActExplLVD extends ListViewDelegate {
     @property(cc.Node)
-    lblFrameBaseNode: cc.Node = null;
+    lblFrameBaseNode: cc.Node = null!;
 
     lblFrameDict: { [key: string]: LblFrameData } = {};
 
-    setSpByString(sp: cc.Sprite, str: string, color: cc.Color = null) {
+    setSpByString(sp: cc.Sprite, str?: string, color?: cc.Color) {
         if (str) {
             const data = this.getFrameDataByString(str);
             sp.spriteFrame = data.frame;
             sp.node.width = data.width;
             if (color) sp.node.color = color;
         } else {
-            sp.spriteFrame = null;
+            sp.spriteFrame = undefined!;
             sp.node.width = 0;
         }
     }
@@ -89,37 +89,37 @@ export class PageActExplLVD extends ListViewDelegate {
 
     // -----------------------------------------------------------------
 
-    page: PageActExpl = null;
+    page!: PageActExpl;
 
     @property(cc.Prefab)
-    repeatLogCellPrefab: cc.Prefab = null;
+    repeatLogCellPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    richLogCellPrefab: cc.Prefab = null;
+    richLogCellPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    atkLogCellPrefab: cc.Prefab = null;
+    atkLogCellPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    missLogCellPrefab: cc.Prefab = null;
+    missLogCellPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    buffLogCellPrefab: cc.Prefab = null;
+    buffLogCellPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    buffHurtLogCellPrefab: cc.Prefab = null;
+    buffHurtLogCellPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    stopLogCellPrefab: cc.Prefab = null;
+    stopLogCellPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    deadLogCellPrefab: cc.Prefab = null;
+    deadLogCellPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    roundLogCellPrefab: cc.Prefab = null;
+    roundLogCellPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    blankLogCellPrefab: cc.Prefab = null;
+    blankLogCellPrefab: cc.Prefab = null!;
 
     numberOfRows(listView: ListView): number {
         return Math.min(this.page.getLogs().length, 99) + 8; // 多个blank占一个屏幕
@@ -160,6 +160,7 @@ export class PageActExplLVD extends ListViewDelegate {
             case BLANK:
                 return cc.instantiate(this.blankLogCellPrefab).getComponent(CellLogBase);
         }
+        return undefined!;
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellLogBase) {

@@ -14,7 +14,7 @@ import { PageActExplLVD } from './PageActExplLVD';
 export class CellLogBase extends ListViewCell {
     checkBake() {}
 
-    lvd: PageActExplLVD = null;
+    lvd!: PageActExplLVD;
 
     init(lvd: PageActExplLVD) {
         this.lvd = lvd;

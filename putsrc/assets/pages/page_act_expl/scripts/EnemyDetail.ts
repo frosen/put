@@ -20,46 +20,46 @@ import { SkillType } from '../../../scripts/DataModel';
 @ccclass
 export class EnemyDetail extends cc.Component {
     @property(cc.Label)
-    petName: cc.Label = null;
+    petName: cc.Label = null!;
 
     @property(cc.Label)
-    petType: cc.Label = null;
+    petType: cc.Label = null!;
 
     @property(cc.Label)
-    str: cc.Label = null;
+    str: cc.Label = null!;
 
     @property(cc.Label)
-    conc: cc.Label = null;
+    conc: cc.Label = null!;
 
     @property(cc.Label)
-    dura: cc.Label = null;
+    dura: cc.Label = null!;
 
     @property(cc.Label)
-    agi: cc.Label = null;
+    agi: cc.Label = null!;
 
     @property(cc.Label)
-    sens: cc.Label = null;
+    sens: cc.Label = null!;
 
     @property(cc.Label)
-    eleg: cc.Label = null;
+    eleg: cc.Label = null!;
 
     @property(cc.Label)
-    sklTtl: cc.Label = null;
+    sklTtl: cc.Label = null!;
 
     @property(cc.Label)
-    featureTtl: cc.Label = null;
+    featureTtl: cc.Label = null!;
 
     @property(cc.Layout)
-    sklLayout: cc.Label = null;
+    sklLayout: cc.Label = null!;
 
     @property(cc.Layout)
-    featureLayout1: cc.Label = null;
+    featureLayout1: cc.Label = null!;
 
     @property(cc.Layout)
-    featureLayout2: cc.Label = null;
+    featureLayout2: cc.Label = null!;
 
     @property(cc.Prefab)
-    infoNodePrefab: cc.Prefab = null;
+    infoNodePrefab: cc.Prefab = null!;
 
     show() {
         this.node.stopAllActions();
@@ -148,7 +148,7 @@ export class EnemyDetail extends cc.Component {
             }
         }
 
-        if (feature) {
+        if (feature && pet) {
             infoNode.opacity = 255;
             const name = FeatureModelDict[feature.id].cnBrief + String(feature.lv);
             const color = pet.exFeatureIds.includes(feature.id) ? cc.Color.RED : cc.Color.BLUE;

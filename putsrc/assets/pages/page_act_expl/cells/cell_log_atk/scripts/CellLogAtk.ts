@@ -16,26 +16,26 @@ import { LogNumSprite } from '../../../scripts/LogNumSprite';
 @ccclass
 export class CellLogAtk extends CellLogBase {
     @property(cc.Sprite)
-    petNameSp: cc.Sprite = null;
+    petNameSp: cc.Sprite = null!;
     @property(cc.Sprite)
-    duiSp: cc.Sprite = null;
+    duiSp: cc.Sprite = null!;
     @property(cc.Sprite)
-    aimNameSp: cc.Sprite = null;
+    aimNameSp: cc.Sprite = null!;
     @property(cc.Sprite)
-    useSp: cc.Sprite = null;
+    useSp: cc.Sprite = null!;
     @property(cc.Sprite)
-    sklNameSp: cc.Sprite = null;
+    sklNameSp: cc.Sprite = null!;
     @property(cc.Sprite)
-    handleSp: cc.Sprite = null;
+    handleSp: cc.Sprite = null!;
     @property(LogNumSprite)
-    dmgSp: LogNumSprite = null;
+    dmgSp: LogNumSprite = null!;
     @property(cc.Sprite)
-    pointSp: cc.Sprite = null;
+    pointSp: cc.Sprite = null!;
     @property(cc.Sprite)
-    eleTypeSp: cc.Sprite = null;
+    eleTypeSp: cc.Sprite = null!;
 
     @property(cc.Node)
-    baseNode: cc.Node = null;
+    baseNode: cc.Node = null!;
 
     init(lvd: PageActExplLVD) {
         super.init(lvd);
@@ -65,7 +65,7 @@ export class CellLogAtk extends CellLogBase {
         } else {
             this.lvd.setSpByString(this.handleSp, '恢复血量');
             this.dmgSp.setNum(-dmg, cc.color(50, 200, 50));
-            this.lvd.setSpByString(this.eleTypeSp, null);
+            this.lvd.setSpByString(this.eleTypeSp, undefined);
         }
 
         let curX = 0;

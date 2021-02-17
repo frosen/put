@@ -9,30 +9,30 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export class PetUI extends cc.Component {
     @property(cc.Label)
-    petName: cc.Label = null;
+    petName: cc.Label = null!;
 
     @property(cc.Label)
-    subName: cc.Label = null;
+    subName: cc.Label = null!;
 
     @property(cc.Label)
-    petLv: cc.Label = null;
+    petLv: cc.Label = null!;
 
     @property(cc.ProgressBar)
-    bar: cc.ProgressBar = null;
+    bar: cc.ProgressBar = null!;
 
     @property(cc.Label)
-    petHP: cc.Label = null;
+    petHP: cc.Label = null!;
 
     @property(cc.Node)
-    buffNode: cc.Node = null;
+    buffNode: cc.Node = null!;
 
     @property(cc.Layout)
-    layout: cc.Layout = null;
+    layout: cc.Layout = null!;
 
     @property([cc.Node])
     forbidMarks: cc.Node[] = [];
 
-    setForbidMark(idx: number, str: string) {
+    setForbidMark(idx: number, str?: string) {
         if (str) {
             this.forbidMarks[idx].opacity = 255;
             this.forbidMarks[idx].getComponentInChildren(cc.Label).string = str;

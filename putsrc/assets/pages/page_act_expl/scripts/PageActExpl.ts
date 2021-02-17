@@ -48,87 +48,79 @@ const DmgLblActParams: number[][] = [
     [10, 60]
 ];
 
-const ForbidBtnPosss: cc.Vec2[][] = [
-    null,
-    [cc.v2(-100, 0)],
-    [cc.v2(-80, 25), cc.v2(-80, -25)],
-    [cc.v2(30, 80), cc.v2(0, -100), cc.v2(-30, 80)],
-    [cc.v2(0, 0), cc.v2(0, 0), cc.v2(0, 0), cc.v2(0, 0)]
-];
-
 @ccclass
 @executionOrder(1) // 为了start在scrollview的start之后进行，保证对scrollview的content.y设置正确
 export class PageActExpl extends BtlPageBase {
-    updater: ExplUpdater = null;
+    updater: ExplUpdater = null!;
 
     @property(cc.Node)
-    selfPetsLayer: cc.Node = null;
+    selfPetsLayer: cc.Node = null!;
 
     @property(cc.Node)
-    enemyPetsLayer: cc.Node = null;
+    enemyPetsLayer: cc.Node = null!;
 
     @property(cc.Node)
-    dmgLayer: cc.Node = null;
+    dmgLayer: cc.Node = null!;
 
     @property(cc.Node)
-    btlTouchLayer: cc.Node = null;
+    btlTouchLayer: cc.Node = null!;
 
     @property(cc.Prefab)
-    selfPetPrefab: cc.Prefab = null;
+    selfPetPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    enemyPetPrefab: cc.Prefab = null;
+    enemyPetPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    buffPrefab: cc.Prefab = null;
+    buffPrefab: cc.Prefab = null!;
 
     selfPetUIs: PetUI[] = [];
     enemyPetUIs: PetUI[] = [];
 
     @property(cc.Prefab)
-    dmgPrefab: cc.Prefab = null;
+    dmgPrefab: cc.Prefab = null!;
 
     dmgLbls: cc.Label[] = [];
     dmgIdx: number = 0;
 
     @property(cc.Prefab)
-    aimLinePrefab: cc.Prefab = null;
+    aimLinePrefab: cc.Prefab = null!;
 
     aimLiness: AimLine[][] = [];
 
     @property(cc.Prefab)
-    sklForbidBtnLayerPrefab: cc.Prefab = null;
+    sklForbidBtnLayerPrefab: cc.Prefab = null!;
 
-    sklForbidBtnLayer: SklForbidBtnLayer = null;
+    sklForbidBtnLayer!: SklForbidBtnLayer;
 
     @property(cc.Prefab)
-    enemyDetailPrefab: cc.Prefab = null;
+    enemyDetailPrefab: cc.Prefab = null!;
 
-    enemyDetail: EnemyDetail = null;
+    enemyDetail!: EnemyDetail;
 
-    @property(cc.ProgressBar) mpProgress: cc.ProgressBar = null;
-    @property(cc.Label) mpLbl: cc.Label = null;
+    @property(cc.ProgressBar) mpProgress: cc.ProgressBar = null!;
+    @property(cc.Label) mpLbl: cc.Label = null!;
 
-    @property(cc.ProgressBar) rageProgress: cc.ProgressBar = null;
-    @property(cc.Label) rageLbl: cc.Label = null;
+    @property(cc.ProgressBar) rageProgress: cc.ProgressBar = null!;
+    @property(cc.Label) rageLbl: cc.Label = null!;
 
-    @property(cc.Button) btnCatch: cc.Button = null;
-    @property(cc.Button) btnHide: cc.Button = null;
-    @property(cc.Button) btnEnter: cc.Button = null;
+    @property(cc.Button) btnCatch: cc.Button = null!;
+    @property(cc.Button) btnHide: cc.Button = null!;
+    @property(cc.Button) btnEnter: cc.Button = null!;
 
-    @property(cc.Node) enterTipNode: cc.Node = null;
-    @property(cc.Label) enterTipLbl1: cc.Label = null;
-    @property(cc.Label) enterTipLbl2: cc.Label = null;
+    @property(cc.Node) enterTipNode: cc.Node = null!;
+    @property(cc.Label) enterTipLbl1: cc.Label = null!;
+    @property(cc.Label) enterTipLbl2: cc.Label = null!;
 
     @property(cc.Label)
-    newLogTipLbl: cc.Label = null;
+    newLogTipLbl: cc.Label = null!;
 
-    lblBtnCatch: cc.Label;
-    lblBtnHide: cc.Label;
-    lblBtnEnter: cc.Label;
+    lblBtnCatch!: cc.Label;
+    lblBtnHide!: cc.Label;
+    lblBtnEnter!: cc.Label;
 
-    listView: ListView;
-    lvd: PageActExplLVD;
+    listView!: ListView;
+    lvd!: PageActExplLVD;
 
     updaterRetaining: boolean = false; // 虽然退出但保留updater
 
@@ -266,7 +258,7 @@ export class PageActExpl extends BtlPageBase {
                 }
             }
             this.updaterRetaining = true;
-            gameData.expl.afb = true;
+            gameData.expl!.afb = true;
 
             this.ctrlr.popPage();
         }
@@ -277,7 +269,7 @@ export class PageActExpl extends BtlPageBase {
 
         const gameData = this.ctrlr.memory.gameData;
         if (gameData.expl && gameData.expl.afb && ExplUpdater.haveUpdaterInBG()) {
-            this.updater = ExplUpdater.popUpdaterInBG();
+            this.updater = ExplUpdater.popUpdaterInBG()!;
             this.updater.runAt(this);
             this.updater.resetAllUI();
 
@@ -832,7 +824,7 @@ export class PageActExpl extends BtlPageBase {
         if (fbd2) petUI.setForbidMark(markIdx++, '2');
         if (fbd3) petUI.setForbidMark(markIdx++, '3');
         if (fbd4) petUI.setForbidMark(markIdx++, '4');
-        for (let index = markIdx; index < 4; index++) petUI.setForbidMark(index, null);
+        for (let index = markIdx; index < 4; index++) petUI.setForbidMark(index, undefined);
 
         petUI.buffNode.x = 25 + 30 * markIdx;
 
@@ -891,20 +883,20 @@ export class PageActExpl extends BtlPageBase {
     // button -----------------------------------------------------------------
 
     onClickCatch() {
-        if (!this.ctrlr.memory.gameData.expl.catcherId) {
-            const idxs = [];
+        if (!this.ctrlr.memory.gameData.expl!.catcherId) {
+            const idxs: number[] = [];
             PagePkg.getoutItemIdxsByType(this.ctrlr.memory.gameData.items, idxs, ItemType.cnsum, CnsumType.catcher);
             this.ctrlr.pushPage(PagePkgSelection, {
                 name: '选择捕捉器',
                 curItemIdxs: idxs,
                 callback: (index: number, itemIdx: number, catcher: Catcher) => {
-                    this.ctrlr.memory.gameData.expl.catcherId = catcher.id;
+                    this.ctrlr.memory.gameData.expl!.catcherId = catcher.id;
                     this.setCatchActive(true);
                     this.ctrlr.popPage();
                 }
             });
         } else {
-            this.ctrlr.memory.gameData.expl.catcherId = null;
+            this.ctrlr.memory.gameData.expl!.catcherId = undefined;
             this.setCatchActive(false);
         }
     }
@@ -932,7 +924,7 @@ export class PageActExpl extends BtlPageBase {
             this.lblBtnEnter.node.color = cc.Color.BLACK;
             cc.tween(this.enterTipNode).to(0.3, { opacity: 255 }).start();
 
-            const expl = this.ctrlr.memory.gameData.expl;
+            const expl = this.ctrlr.memory.gameData.expl!;
             const explModel = ActPosModelDict[expl.curPosId].actMDict[PAKey.expl] as ExplModel;
             const stepType = StepTypesByMax[explModel.stepMax][expl.curStep + 1] || 0;
             this.enterTipLbl1.string = ActPosModelDict[expl.curPosId].cnName;

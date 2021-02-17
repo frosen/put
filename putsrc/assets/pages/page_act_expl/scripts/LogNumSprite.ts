@@ -10,13 +10,13 @@ import { PageActExplLVD } from './PageActExplLVD';
 
 @ccclass
 export class LogNumSprite extends cc.Component {
-    lvd: PageActExplLVD = null;
+    lvd!: PageActExplLVD;
 
     init(lvd: PageActExplLVD) {
         this.lvd = lvd;
     }
 
-    setNum(num: number, color: cc.Color = null) {
+    setNum(num: number, color?: cc.Color) {
         let numStr: string; // 超过万需要做特殊处理，保留最多6位长度才能不出格
         if (num < 10000) numStr = String(num);
         else if (num < 100000) numStr = (num / 10000).toFixed(2) + '万';
@@ -43,7 +43,7 @@ export class LogNumSprite extends cc.Component {
 
         for (let index = numStr.length; index < childrenCount; index++) {
             const sp = children[index].getComponent(cc.Sprite);
-            this.lvd.setSpByString(sp, null, null);
+            this.lvd.setSpByString(sp, undefined);
         }
 
         let curX = 0;

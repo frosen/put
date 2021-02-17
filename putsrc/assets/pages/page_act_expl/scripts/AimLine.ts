@@ -14,7 +14,7 @@ export enum LineType {
 
 @ccclass
 export class AimLine extends cc.Component {
-    lineType: LineType;
+    lineType!: LineType;
 
     setPos(fromX: number, fromY: number, toX: number, toY: number) {
         this.node.setPosition(fromX, fromY);
