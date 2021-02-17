@@ -13,7 +13,7 @@ export class SpcBtlN {
     static KuangBaoHeXin = 'KuangBaoHeXin';
 }
 
-import { SpcBtlModel, EvtModel, StoryModel, SpcBtlType, EvtType } from '../scripts/DataModel';
+import { SpcBtlModel, EvtModel, StoryModel, EvtType } from '../scripts/DataModel';
 import { FtN } from './FeatureModelDict';
 import { PetN } from './PetModelDict';
 import { PsgesDict } from './PsgesDict';

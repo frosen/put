@@ -9,6 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { EvtModelDict, StoryModelDict } from '../../../configs/EvtModelDict';
 import { ProTtlModelDict } from '../../../configs/ProTtlModelDict';
 import { QuestModelDict } from '../../../configs/QuestModelDict';
+import { SpcN } from '../../../configs/SpcModelDict';
 import {
     EvtPsge,
     NormalPsge,
@@ -181,6 +182,26 @@ export class PageStory extends PageBase {
         this.jit.gainDataList.length = 0;
 
         if (gainStr) this.ctrlr.popToast('获得\n' + gainStr);
+    }
+
+    onUndo() {
+        const gameData = this.ctrlr.memory.gameData;
+
+        // 检测道具
+        const items = gameData.items;
+        let itemIdx = 0;
+        for (; itemIdx < items.length; itemIdx++) {
+            const item = items[itemIdx];
+            if (item.id === SpcN.HouHuiYaoJi) break;
+        }
+        if (itemIdx === items.length) return this.ctrlr.popToast('No item');
+
+        // 检测上一次selection
+        const psgesInList = this.lvd.psgesInList;
+        for (let index = psgesInList.length - 1; index >= 0; index--) {
+            const psgeInList = psgesInList[index];
+            if (psgeInList.pType !== PsgeType.selection) continue;
+        }
     }
 
     onPageShow() {
@@ -551,12 +572,5 @@ export class PageStory extends PageBase {
             if (progMax === -1) progMax = curPsgeIdx;
         }
         if (progMax !== -1) this.evt.sProg = progMax;
-    }
-
-    // 撤销 -----------------------------------------------------------------
-
-    onUndo() {
-        // 检测道具
-        // 检测上一次selection
     }
 }

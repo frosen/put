@@ -13,8 +13,8 @@ import { CellPosBtn } from '../cells/cell_pos_btn/scripts/CellPosBtn';
 import { CellPosMov } from '../cells/cell_pos_mov/scripts/CellPosMov';
 import { CellActInfoDict, PageAct } from './PageAct';
 import { Evt, EvtRztKey, EvtRztV, PosData } from '../../../scripts/DataSaved';
-import { ActPosModel, MovModel, SpcBtlModel, SpcBtlType, UseCond } from '../../../scripts/DataModel';
-import { EvtModelDict, SpcBtlModelDict } from '../../../configs/EvtModelDict';
+import { ActPosModel, MovModel, UseCond } from '../../../scripts/DataModel';
+import { EvtModelDict } from '../../../configs/EvtModelDict';
 import { CellEvt } from '../cells/cell_evt/scripts/CellEvt';
 import { EvtTool } from '../../../scripts/Memory';
 
