@@ -169,7 +169,7 @@ export class PageActQuester extends PageBase {
         this.resetAcceptedQuestDict(gameData);
         this.list.resetContent(true);
 
-        this.ctrlr.popToast(`接收任务 ${questModel.cnName}`);
+        this.ctrlr.popToast(`接收任务“${questModel.cnName}”`);
     }
 
     refreshQuest(questModel: QuestModel, quest: Quest) {
@@ -178,7 +178,7 @@ export class PageActQuester extends PageBase {
 
         const model = CnsumTool.getModelById(need.itemId)!;
         const needCnt = QuestTool.getRealNeedCnt(quest);
-        const str = `确定使用${needCnt}个“${model.cnName}”\n完成任务 ${questModel.cnName}？`;
+        const str = `确定使用${needCnt}个“${model.cnName}”\n完成任务“${questModel.cnName}”？`;
         this.ctrlr.popAlert(str, (key: number) => {
             if (key !== 1) return;
             let needItem: Cnsum | undefined;
@@ -205,7 +205,7 @@ export class PageActQuester extends PageBase {
             quest.prog += cnsumCount;
 
             if (quest.prog >= needCnt) {
-                this.ctrlr.popToast(`完成任务 ${questModel.cnName}`);
+                this.ctrlr.popToast(`完成任务“${questModel.cnName}”`);
             } else {
                 this.ctrlr.popToast(`任务完成度 ${quest.prog} / ${needCnt}`);
             }
@@ -277,7 +277,7 @@ export class PageActQuester extends PageBase {
         this.resetAcceptedQuestDict(gameData);
         this.list.resetContent(true);
 
-        this.ctrlr.popToast(`${timeOut ? '超时！！\n' : ''}完成任务 ${questModel.cnName}\n获得\n` + tip);
+        this.ctrlr.popToast(`${timeOut ? '超时！！\n' : ''}完成任务“${questModel.cnName}”\n获得\n` + tip);
     }
 
     static calcReputEleAmpl(gameData: GameData): number {

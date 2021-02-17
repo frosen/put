@@ -8,6 +8,9 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export class PetUI extends cc.Component {
+    @property(cc.Node)
+    root: cc.Node = null!;
+
     @property(cc.Label)
     petName: cc.Label = null!;
 

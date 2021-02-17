@@ -430,7 +430,7 @@ export class PageStory extends PageBase {
             cell.setData(qPage, this.evt);
 
             const questModel = QuestModelDict[curQuest.id];
-            let str = `获得任务 ${questModel.cnName}\n\n`;
+            let str = `获得任务“${questModel.cnName}”\n\n`;
             str += '任务需求：\n' + this.getQuestStr(questModel, curQuest);
             str += '\n\n' + qPage.tip.replace(/ /g, '\n');
             this.ctrlr.popToast(str);
@@ -466,7 +466,7 @@ export class PageStory extends PageBase {
 
         const model = CnsumTool.getModelById(need.itemId)!;
         const needCnt = QuestTool.getRealNeedCnt(quest);
-        const str = `确定使用${needCnt}个“${model.cnName}”\n完成任务 ${questModel.cnName}？`;
+        const str = `确定使用${needCnt}个“${model.cnName}”\n完成任务“${questModel.cnName}”？`;
         this.ctrlr.popAlert(str, (key: number) => {
             if (key !== 1) return;
             let needItem: Cnsum | undefined;
@@ -498,7 +498,7 @@ export class PageStory extends PageBase {
             if (quest.prog >= needCnt) {
                 this.finishQuest(questModel, cell);
             } else {
-                this.ctrlr.popToast(`尚未完成任务 ${questModel.cnName}\n当前完成度 ${quest.prog} / ${needCnt}` + questStr);
+                this.ctrlr.popToast(`尚未完成任务“${questModel.cnName}”\n当前完成度 ${quest.prog} / ${needCnt}` + questStr);
             }
         });
     }
@@ -521,7 +521,7 @@ export class PageStory extends PageBase {
         const needEvt = gameData.evtDict[needEvtId];
 
         if (!needEvt || needEvt.rztDict[EvtRztKey.done] !== EvtRztV.had) {
-            this.ctrlr.popToast(`尚未完成事件 ${needEvtModel.cnName}\n\n${ePsge.tip}`);
+            this.ctrlr.popToast(`尚未完成事件“${needEvtModel.cnName}”\n\n${ePsge.tip}`);
             return;
         }
 
@@ -536,7 +536,7 @@ export class PageStory extends PageBase {
         const model = ProTtlModelDict[needTtlId];
 
         if (!gameData.proTtlDict[needTtlId]) {
-            this.ctrlr.popToast(`尚未拥有称号 ${model.cnName}\n\n${oPsge.tip}`);
+            this.ctrlr.popToast(`尚未拥有称号“${model.cnName}”\n\n${oPsge.tip}`);
             return;
         }
 

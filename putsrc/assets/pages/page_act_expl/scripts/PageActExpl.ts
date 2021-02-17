@@ -253,7 +253,7 @@ export class PageActExpl extends BtlPageBase {
             for (const pet of pets) {
                 const prvty = PetTool.getRealPrvty(pet);
                 if (prvty < 35) {
-                    this.ctrlr.popToast(`精灵独立战斗要求所有精灵默契值至少35，\n但目前${PetTool.getCnName(pet)}未达到！`);
+                    this.ctrlr.popToast(`精灵独立战斗要求所有精灵默契值至少35，\n但目前“${PetTool.getCnName(pet)}”未达到！`);
                     return;
                 }
             }
@@ -630,8 +630,8 @@ export class PageActExpl extends BtlPageBase {
 
                 const selfBPet = selfBPets[index];
                 if (selfBPet.hp === 0 || !aimRangeIdxs.includes(index)) {
-                    selfUI.node.stopAllActions();
-                    cc.tween(selfUI.node).to(0.2, { opacity: 100 }).start();
+                    selfUI.root.stopAllActions();
+                    cc.tween(selfUI.root).to(0.2, { opacity: 100 }).start();
                 } else {
                     this.selfAimIdxs.push(index);
                 }
@@ -643,8 +643,8 @@ export class PageActExpl extends BtlPageBase {
 
                 const enemyBPet = enemyBPets[index];
                 if (enemyBPet.hp === 0 || !aimRangeIdxs.includes(index)) {
-                    enemyUI.node.stopAllActions();
-                    cc.tween(enemyUI.node).to(0.2, { opacity: 100 }).start();
+                    enemyUI.root.stopAllActions();
+                    cc.tween(enemyUI.root).to(0.2, { opacity: 100 }).start();
                 } else {
                     this.enmeyAimIdxs.push(index);
                 }
@@ -671,7 +671,7 @@ export class PageActExpl extends BtlPageBase {
                 if (!this.checkBtlTypeWhenSetAim(selfBPet)) return;
                 btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, false, curIdx);
                 const actStr = selfBPet.ctrlEnemyAimIdx !== -1 ? '设定对敌目标' : '取消对敌目标';
-                this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + actStr);
+                this.ctrlr.popToast(`“${PetTool.getCnName(selfBPet.pet)}”${actStr}`);
             }
         } else {
             if (this.selfAimIdxs.includes(curIdx)) {
@@ -679,7 +679,7 @@ export class PageActExpl extends BtlPageBase {
                 if (!this.checkBtlTypeWhenSetAim(selfBPet)) return;
                 btlCtrlr.setSelfPetCtrlAimIdx(selfBPet, true, curIdx);
                 const actStr = selfBPet.ctrlSelfAimIdx !== -1 ? '设定对己方的目标' : '取消对己方的目标';
-                this.ctrlr.popToast(PetTool.getCnName(selfBPet.pet) + actStr);
+                this.ctrlr.popToast(`“${PetTool.getCnName(selfBPet.pet)}”${actStr}`);
             }
         }
     }
@@ -687,7 +687,7 @@ export class PageActExpl extends BtlPageBase {
     checkBtlTypeWhenSetAim(selfBPet: BtlPet): boolean {
         const btlType = PetModelDict[selfBPet.pet.id].btlType;
         if (btlType === BtlType.stay || btlType === BtlType.chaos) {
-            const str = `${PetTool.getCnName(selfBPet.pet)}的战斗类型为${BtlTypeNames[btlType]}\n不能设置目标`;
+            const str = `“${PetTool.getCnName(selfBPet.pet)}”的战斗类型为“${BtlTypeNames[btlType]}”\n不能设置目标`;
             this.ctrlr.popToast(str);
             return false;
         }
@@ -706,11 +706,11 @@ export class PageActExpl extends BtlPageBase {
 
     hideAimRange() {
         for (let index = 0; index < BtlPetLenMax; index++) {
-            const selfUINode = this.selfPetUIs[index].node;
+            const selfUINode = this.selfPetUIs[index].root;
             selfUINode.stopAllActions();
             cc.tween(selfUINode).to(0.2, { opacity: 255 }).start();
 
-            const enemyUINode = this.enemyPetUIs[index].node;
+            const enemyUINode = this.enemyPetUIs[index].root;
             enemyUINode.stopAllActions();
             cc.tween(enemyUINode).to(0.2, { opacity: 255 }).start();
         }
@@ -771,7 +771,7 @@ export class PageActExpl extends BtlPageBase {
                 const petName = PetTool.getCnName(selfBPet.pet);
                 const actName = forbid ? '封印招式' : '解封招式';
                 const sklName = SkillModelDict[selfBPet.pet2.skillIds[index]].cnName;
-                this.ctrlr.popToast(petName + actName + sklName);
+                this.ctrlr.popToast(`“${petName}”${actName}“${sklName}”`);
                 return true;
             }
         }

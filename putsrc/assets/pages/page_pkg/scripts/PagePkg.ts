@@ -215,7 +215,7 @@ export class PagePkg extends PagePkgBase {
                                         this.ctrlr.popPage();
                                         const petName = PetTool.getCnName(curPet);
                                         const drinkModel = DrinkModelDict[cnsum.id];
-                                        this.ctrlr.popToast(`${petName}获得${drinkModel.cnName}效果`);
+                                        this.ctrlr.popToast(`“${petName}”获得“${drinkModel.cnName}”效果`);
                                     } else this.ctrlr.popToast(rzt);
                                 }
                             }
@@ -257,7 +257,7 @@ export class PagePkg extends PagePkgBase {
                                         GameDataTool.addCaughtPet(gameData, cPet);
                                         GameDataTool.removeItem(gameData, catcherIdx);
                                         this.ctrlr.popPage();
-                                        this.ctrlr.popToast('成功使用' + catcherModel.cnName);
+                                        this.ctrlr.popToast('成功使用“' + catcherModel.cnName + '”');
                                     } else this.ctrlr.popToast(rzt);
                                 }
                             }
@@ -316,7 +316,7 @@ export class PagePkg extends PagePkgBase {
                         name: '选择精灵',
                         callback: (cellIdx: number, curPet: Pet) => {
                             const petModel = PetModelDict[curPet.id];
-                            if (!curPet.nickname) this.ctrlr.popToast(petModel.cnName + '并未起名');
+                            if (!curPet.nickname) this.ctrlr.popToast('“' + petModel.cnName + '”并未起名');
                             if (!this.checkPetWithMaster(curPet)) return;
                             this.ctrlr.popAlert(
                                 `确定对“${PetTool.getCnName(curPet)}”使用“${spcModel.cnName}”吗？`,
@@ -329,7 +329,7 @@ export class PagePkg extends PagePkgBase {
                                         curPet.nickname = '';
                                         GameDataTool.removeItem(gameData, specialIdx);
                                         this.ctrlr.popPage();
-                                        this.ctrlr.popToast(petModel.cnName + '已经遗忘了名字');
+                                        this.ctrlr.popToast('“' + petModel.cnName + '”已经遗忘了名字');
                                     }
                                 }
                             );
@@ -345,7 +345,7 @@ export class PagePkg extends PagePkgBase {
             this.ctrlr.pushPage(PagePkgEquip, { idx: itemIdx });
         } else if (item.itemType === ItemType.caughtPet) {
             const cPet = item as CaughtPet;
-            this.ctrlr.popAlert(`确定使用${CaughtPetTool.getCnName(cPet)}吗？`, (key: number) => {
+            this.ctrlr.popAlert(`确定使用“${CaughtPetTool.getCnName(cPet)}”吗？`, (key: number) => {
                 if (key === 1) {
                     const cPetIdx = GameDataTool.getItemIdx(gameData, cPet);
                     if (cPetIdx === -1) return this.ctrlr.popToast('物品有误');

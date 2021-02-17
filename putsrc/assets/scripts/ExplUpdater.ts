@@ -1106,7 +1106,7 @@ export class ExplUpdater {
         const explModel = ActPosModelDict[expl.curPosId].actMDict[PAKey.expl] as ExplModel;
         const stepType = StepTypesByMax[explModel.stepMax][expl.curStep];
         if (this.page) {
-            const str = `进入 ${ActPosModelDict[expl.curPosId].cnName} ${ExplStepNames[stepType]}`;
+            const str = `进入“${ActPosModelDict[expl.curPosId].cnName}${ExplStepNames[stepType]}”`;
             this.page.ctrlr.popToast(str);
         }
     }
@@ -1480,7 +1480,7 @@ export class ExplUpdater {
                     const expl = this.gameData.expl!;
                     const explModel = ActPosModelDict[expl.curPosId].actMDict[PAKey.expl] as ExplModel;
                     const stepType = StepTypesByMax[explModel.stepMax][expl.curStep + 1] || 0;
-                    const str = `准备进入 ${ActPosModelDict[expl.curPosId].cnName} ${ExplStepNames[stepType]}`;
+                    const str = `准备进入“${ActPosModelDict[expl.curPosId].cnName}${ExplStepNames[stepType]}”`;
                     this.page.ctrlr.popToast(str);
                 }
             }

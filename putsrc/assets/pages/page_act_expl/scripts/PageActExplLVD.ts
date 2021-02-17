@@ -46,7 +46,7 @@ export class PageActExplLVD extends ListViewDelegate {
             sp.node.width = data.width;
             if (color) sp.node.color = color;
         } else {
-            sp.spriteFrame = undefined!;
+            sp.spriteFrame = null!;
             sp.node.width = 0;
         }
     }

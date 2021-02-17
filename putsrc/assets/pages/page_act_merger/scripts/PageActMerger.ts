@@ -28,53 +28,53 @@ const MergeReputDiscount = [1, 1, 0.9, 0.8, 0.7, 0.6];
 @ccclass
 export class PageActMerger extends PageBase {
     @property(cc.Button)
-    petBtn: cc.Button = null;
+    petBtn: cc.Button = null!;
 
     @property(cc.Node)
-    petNode: cc.Node = null;
+    petNode: cc.Node = null!;
 
     @property(cc.Prefab)
-    petPrefab: cc.Prefab = null;
+    petPrefab: cc.Prefab = null!;
 
     @property(cc.Label)
-    petLbl: cc.Label = null;
+    petLbl: cc.Label = null!;
 
     @property(cc.Button)
-    cPetBtn: cc.Button = null;
+    cPetBtn: cc.Button = null!;
 
     @property(cc.Node)
-    cPetNode: cc.Node = null;
+    cPetNode: cc.Node = null!;
 
     @property(cc.Prefab)
-    cPetPrefab: cc.Prefab = null;
+    cPetPrefab: cc.Prefab = null!;
 
     @property(cc.Label)
-    cPetLbl: cc.Label = null;
+    cPetLbl: cc.Label = null!;
 
     @property(cc.Button)
-    featureBtn: cc.Button = null;
+    featureBtn: cc.Button = null!;
 
     @property(cc.Node)
-    featureNode: cc.Node = null;
+    featureNode: cc.Node = null!;
 
     @property(cc.Prefab)
-    featurePrefab: cc.Prefab = null;
+    featurePrefab: cc.Prefab = null!;
 
     @property(cc.Label)
-    featureLbl: cc.Label = null;
+    featureLbl: cc.Label = null!;
 
     @property(cc.Label)
-    priceLbl: cc.Label = null;
+    priceLbl: cc.Label = null!;
 
     @property(cc.Label)
-    noMoneyLbl: cc.Label = null;
+    noMoneyLbl: cc.Label = null!;
 
     @property(cc.Button)
-    mergeBtn: cc.Button = null;
+    mergeBtn: cc.Button = null!;
 
-    curPet: Pet = null;
-    curCaughtPet: CaughtPet = null;
-    curFeature: Feature = null;
+    curPet?: Pet;
+    curCaughtPet?: CaughtPet;
+    curFeature?: Feature;
     needMoney: number = -1;
 
     onLoad() {
@@ -163,13 +163,13 @@ export class PageActMerger extends PageBase {
         if (!this.curPet) return this.ctrlr.popToast(this.cPetLbl.string);
 
         const gameData = this.ctrlr.memory.gameData;
-        let cPetIdxs = [];
+        let cPetIdxs: number[] = [];
         PagePkg.getoutItemIdxsByType(gameData.items, cPetIdxs, ItemType.caughtPet);
         this.ctrlr.pushPage(PagePkgSelection, {
             name: '选择捕获状态精灵',
             curItemIdxs: cPetIdxs,
             callback: (cellIdx: number, itemIdx: number, item: CaughtPet) => {
-                const rzt = GameDataTool.checkMergeCaughtPet(gameData, this.curPet, item);
+                const rzt = GameDataTool.checkMergeCaughtPet(gameData, this.curPet!, item);
                 if (rzt === GameDataTool.SUC) {
                     this.onSelectCaughtPet(item);
                     this.ctrlr.popPage();
@@ -266,28 +266,28 @@ export class PageActMerger extends PageBase {
 
     merge() {
         const gameData = this.ctrlr.memory.gameData;
-        const petIdx = GameDataTool.getPetIdx(gameData, this.curPet);
+        const petIdx = GameDataTool.getPetIdx(gameData, this.curPet!);
         if (petIdx === -1) return this.ctrlr.popToast('精灵有误');
 
-        let cPetIdx = GameDataTool.getItemIdx(gameData, this.curCaughtPet);
+        let cPetIdx = GameDataTool.getItemIdx(gameData, this.curCaughtPet!);
         if (cPetIdx === -1) return this.ctrlr.popToast('捕获状态精灵有误');
 
         const money = GameDataTool.getMoney(gameData);
         if (money < this.needMoney) return this.ctrlr.popToast('通用币不足');
 
-        const rzt = GameDataTool.mergePet(gameData, petIdx, cPetIdx, this.curFeature.id);
+        const rzt = GameDataTool.mergePet(gameData, petIdx, cPetIdx, this.curFeature!.id);
         if (rzt !== GameDataTool.SUC) return this.ctrlr.popToast(rzt);
 
-        const petName = PetTool.getCnName(this.curPet);
-        const featureName = FeatureModelDict[this.curFeature.id].cnBrief;
-        this.ctrlr.popToast(`融合成功\n${petName} 特性：${featureName} +${this.curFeature.lv}`);
+        const petName = PetTool.getCnName(this.curPet!);
+        const featureName = FeatureModelDict[this.curFeature!.id].cnBrief;
+        this.ctrlr.popToast(`融合成功“${petName}”\n 特性“${featureName}”+${this.curFeature!.lv}`);
 
         this.clearPet();
         this.clearCaughtPet();
         this.clearFeature();
-        this.curPet = null;
-        this.curCaughtPet = null;
-        this.curFeature = null;
+        this.curPet = undefined;
+        this.curCaughtPet = undefined;
+        this.curFeature = undefined;
         this.needMoney = -1;
         this.petLbl.string = '选择精灵';
         this.cPetLbl.string = '先选择准备强化的精灵';

@@ -58,7 +58,7 @@ export const CellActInfoDict: { [key: string]: CellActInfo } = {
                 const expl = gameData.expl;
                 if (gameData.curPosId !== expl.curPosId) {
                     const name = ActPosModelDict[expl.curPosId].cnName;
-                    return `无法进入，精灵仍在${name}战斗`;
+                    return `无法进入，精灵仍在“${name}”战斗`;
                 }
                 if (expl.btl && expl.btl.spcBtlId) {
                     const cnName = SpcBtlModelDict[expl.btl.spcBtlId].cnName;
@@ -243,7 +243,7 @@ export class PageAct extends PageBase {
                 const expl = gameData.expl;
                 if (gameData.curPosId !== expl.curPosId) {
                     const name = ActPosModelDict[expl.curPosId].cnName;
-                    return `无法进入，精灵仍在${name}战斗`;
+                    return `无法进入，精灵仍在“${name}”战斗`;
                 }
                 if (!expl.btl || !expl.btl.spcBtlId) return '无法进入，没有这个战斗';
                 if (expl.btl.spcBtlId !== evtId) {
