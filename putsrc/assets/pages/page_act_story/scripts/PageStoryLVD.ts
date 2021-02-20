@@ -253,12 +253,15 @@ export class PageStoryLVD extends ListViewDelegate {
         }
     }
 
-    clearStrData() {
+    resetPsgeData() {
+        this.psgesInList.length = 0;
+        this.optionUsingDict = {};
+        this.slcDictForIdx = {};
+
         this.from = -1;
         this.to = -1;
         this.heightsInList.length = 0;
         this.strsInList.length = 0;
-        cc.Label.clearCharCache();
     }
 
     // -----------------------------------------------------------------

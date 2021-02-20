@@ -1068,6 +1068,7 @@ export class EvtTool {
         jit.startSProg = startSProg;
         jit.startLProg = -1;
         jit.gainDataList = [];
+        jit.finished = false;
         return jit;
     }
 

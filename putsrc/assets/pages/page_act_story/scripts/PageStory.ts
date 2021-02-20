@@ -9,7 +9,7 @@ const { ccclass, property } = cc._decorator;
 import { EvtModelDict, StoryModelDict } from '../../../configs/EvtModelDict';
 import { ProTtlModelDict } from '../../../configs/ProTtlModelDict';
 import { QuestModelDict } from '../../../configs/QuestModelDict';
-import { SpcN } from '../../../configs/SpcModelDict';
+import { SpcModelDict, SpcN } from '../../../configs/SpcModelDict';
 import {
     EvtPsge,
     NormalPsge,
@@ -40,6 +40,7 @@ import { ListViewCell } from '../../../scripts/ListViewCell';
 import { CnsumTool, EquipTool, EvtTool, GameDataTool, PetTool, QuestTool } from '../../../scripts/Memory';
 import { NavBar } from '../../../scripts/NavBar';
 import { PageBase } from '../../../scripts/PageBase';
+import { getDigit, getNumInDigit } from '../../../scripts/Utils';
 import { CellQuest } from '../../page_act_quester/cells/cell_quest/scripts/CellQuest';
 import { CellPsgeEnd } from '../cells/cell_psge_end/scripts/CellPsgeEnd';
 import { CellPsgeEvt } from '../cells/cell_psge_evt/scripts/CellPsgeEvt';
@@ -64,8 +65,6 @@ export class PageStory extends PageBase {
     jit!: StoryJIT;
 
     listRunning: boolean = false;
-
-    curEvtFinished: boolean = false;
 
     onLoad() {
         super.onLoad();
@@ -116,20 +115,21 @@ export class PageStory extends PageBase {
             this.ctrlr.popAlert(str, (key: number) => {
                 if (key === 1) {
                     this.handleStoryGain();
-                    if (this.curEvtFinished) {
-                        GameDataTool.finishEvt(this.ctrlr.memory.gameData, this.evtId);
-                    }
+                    this.handleStroyFinished();
+
                     this.ctrlr.popPage();
                 }
             });
             return false;
         });
 
-        navBar.addFuncBtn('undo', [this.ctrlr.runningImgMgr.navUndo], () => {
-            this.ctrlr.popAlert('确定要将当前事件进度退回到上次选择之前吗？', (key: number) => {
-                if (key === 1) this.onUndo();
+        if (this.evt.rztDict[EvtRztKey.done] !== EvtRztV.had) {
+            navBar.addFuncBtn('undo', [this.ctrlr.runningImgMgr.navUndo], () => {
+                this.ctrlr.popAlert('确定要将当前事件进度退回到上次选择之前吗？', (key: number) => {
+                    if (key === 1) this.onUndo();
+                });
             });
-        });
+        }
     }
 
     checkStoryGain(): { itemOverflow: boolean; petOverflow: boolean } {
@@ -184,24 +184,84 @@ export class PageStory extends PageBase {
         if (gainStr) this.ctrlr.popToast('获得\n' + gainStr);
     }
 
+    handleStroyFinished() {
+        if (this.jit.finished) GameDataTool.finishEvt(this.ctrlr.memory.gameData, this.evtId);
+    }
+
     onUndo() {
-        const gameData = this.ctrlr.memory.gameData;
+        // 检测上一次selection
+        const psgesInList = this.lvd.psgesInList;
+        let lastSlcListIdx = -1;
+        for (let index = psgesInList.length - 1; index >= 0; index--) {
+            const psgeInList = psgesInList[index];
+            if (psgeInList.pType === PsgeType.normal) {
+                // pass
+            } else if (psgeInList.pType === PsgeType.selection) {
+                const slcId = (psgeInList as SelectionPsge).slcId;
+                if (this.lvd.optionUsingDict[slcId]) {
+                    lastSlcListIdx = index; // 拥有已经选择了的选项
+                    break;
+                }
+            } else if (psgeInList.pType === PsgeType.quest) {
+                if (this.evt.rztDict[(psgeInList as QuestPsge).questId]) break;
+            } else if (psgeInList.pType === PsgeType.evt) {
+                if (this.evt.rztDict[(psgeInList as EvtPsge).evtId]) break;
+            } else if (psgeInList.pType === PsgeType.own) {
+                if (this.evt.rztDict[(psgeInList as OwnPsge).ttlId]) break;
+            }
+        }
+
+        if (lastSlcListIdx === -1) return this.ctrlr.popToast('未找到上一次选择\n无法撤回到完成的任务/事件前');
 
         // 检测道具
+        const gameData = this.ctrlr.memory.gameData;
         const items = gameData.items;
-        let itemIdx = 0;
-        for (; itemIdx < items.length; itemIdx++) {
+        let itemIdx = items.length - 1;
+        for (; itemIdx >= 0; itemIdx--) {
             const item = items[itemIdx];
             if (item.id === SpcN.HouHuiYaoJi) break;
         }
-        if (itemIdx === items.length) return this.ctrlr.popToast('No item');
+        if (itemIdx === -1) return this.ctrlr.popToast('无法撤回\n未找到“' + SpcModelDict[SpcN.HouHuiYaoJi].cnName + '”');
 
-        // 检测上一次selection
-        const psgesInList = this.lvd.psgesInList;
-        for (let index = psgesInList.length - 1; index >= 0; index--) {
+        GameDataTool.removeItem(gameData, itemIdx);
+
+        // 清理
+        let using = false;
+        for (let index = psgesInList.length - 1; index > lastSlcListIdx; index--) {
             const psgeInList = psgesInList[index];
-            if (psgeInList.pType !== PsgeType.selection) continue;
+
+            if (!using) {
+                if (psgeInList.idx !== this.evt.sProg) continue;
+                else using = true;
+            }
+
+            if (psgeInList.pType === PsgeType.normal) {
+                const nPsge = psgeInList as NormalPsge;
+                if (nPsge.gains) this.jit.gainDataList.pop();
+                if (nPsge.mark) this.evt.rztDict[nPsge.mark];
+            } else if (psgeInList.pType === PsgeType.quest) {
+                delete this.evt.rztDict[(psgeInList as QuestPsge).questId];
+            } else if (psgeInList.pType === PsgeType.evt) {
+                delete this.evt.rztDict[(psgeInList as EvtPsge).evtId];
+            } else if (psgeInList.pType === PsgeType.own) {
+                delete this.evt.rztDict[(psgeInList as OwnPsge).ttlId];
+            } else if (psgeInList.pType === PsgeType.end) {
+                this.jit.finished = false;
+            }
         }
+
+        const lastSlcPsge = psgesInList[lastSlcListIdx] as SelectionPsge;
+        const slcId = lastSlcPsge.slcId;
+        const rztDict = this.evt.rztDict;
+        const slcNum = rztDict[slcId];
+        rztDict[slcId] = slcNum - getNumInDigit(slcNum, getDigit(slcNum)); // 清理selection
+        this.evt.sProg = lastSlcPsge.idx; // 清理evt
+        this.lvd.resetPsgeData(); // 清理lvd
+
+        // 重新加载
+        this.runListview();
+
+        this.ctrlr.popToast('成功撤回到上一次选择前');
     }
 
     onPageShow() {
@@ -274,7 +334,7 @@ export class PageStory extends PageBase {
             const oPsge = psge as OwnPsge;
             this.evt.rztDict[oPsge.ttlId] = EvtRztV.had;
         } else if (psge.pType === PsgeType.end) {
-            this.curEvtFinished = true;
+            this.jit.finished = true;
         }
     }
 
