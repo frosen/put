@@ -612,7 +612,7 @@ export class BaseCtrlr extends cc.Component {
     toastEndFlag: number = 0;
 
     popToast(str: string) {
-        this.toastNode.getComponentInChildren(cc.Label).string = str;
+        this.toastNode.getComponentInChildren(cc.RichText).string = str;
         this.toastNode.stopAllActions();
         this.toastEndFlag = 0;
         cc.tween(this.toastNode)

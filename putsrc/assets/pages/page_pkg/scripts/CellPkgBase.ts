@@ -11,21 +11,21 @@ import { ListViewCell } from '../../../scripts/ListViewCell';
 @ccclass
 export class CellPkgBase extends ListViewCell {
     @property(cc.Label)
-    nameLbl: cc.Label = null;
+    nameLbl: cc.Label = null!;
 
     @property(cc.Sprite)
-    iconBG: cc.Sprite = null;
+    iconBG: cc.Sprite = null!;
 
     @property(cc.Sprite)
-    icon: cc.Sprite = null;
+    icon: cc.Sprite = null!;
 
     @property(cc.Button)
-    funcBtn: cc.Button = null;
+    funcBtn: cc.Button = null!;
 
     curItemIdx: number = -1;
 
-    clickCallback: (cell: ListViewCell) => void = null;
-    funcBtnCallback: (cell: ListViewCell) => void = null;
+    clickCallback?: (cell: ListViewCell) => void;
+    funcBtnCallback?: (cell: ListViewCell) => void;
 
     onLoad() {
         super.onLoad();

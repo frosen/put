@@ -57,8 +57,8 @@ const DRINK_TIP = `使用道具中的“饮品”获得
 
 const BIO_TIP = '分为：\n人形生物 魔法生物\n机械生物 自然生物\n未知生物';
 const ELE_TIP = `分为：
-火 克空   水 克火   空 克地
-地 克水   光 克暗   暗 克光
+<color=#ff0000>火</c> 克空   水 克火   空 克地
+<color=#00ff00>地</c> 克水   光 克暗   暗 克光
 对属性克制精灵造成15%的额外伤害
 使用同属性招式时，灵能消耗减少10%，伤害增加5%`;
 
@@ -117,37 +117,37 @@ function attriTip(attri: number, attriOri: number, tip: string): string {
 @ccclass
 export class PagePetDetailLVD extends ListViewDelegate {
     @property(cc.Prefab)
-    attriPrefab: cc.Prefab = null;
+    attriPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    attri2Prefab: cc.Prefab = null;
+    attri2Prefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    petNamePrefab: cc.Prefab = null;
+    petNamePrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    titlePrefab: cc.Prefab = null;
+    titlePrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    equipPrefab: cc.Prefab = null;
+    equipPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    equipBlankPrefab: cc.Prefab = null;
+    equipBlankPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    skillPrefab: cc.Prefab = null;
+    skillPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    featurePrefab: cc.Prefab = null;
+    featurePrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    mergePrefab: cc.Prefab = null;
+    mergePrefab: cc.Prefab = null!;
 
-    curPet: Pet = null;
-    curPet2: Pet2 = null;
+    curPet!: Pet;
+    curPet2!: Pet2;
     featureDatas: { feature: Feature; type: FeatureGainType }[] = [];
 
-    page: PagePetDetail = null;
+    page!: PagePetDetail;
 
     skillLen: number = 0;
     featureLen: number = 0;
@@ -196,6 +196,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
         // 第九组
         else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) return 64;
         else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) return 104;
+
+        return 0;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
@@ -227,6 +229,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
         // 第九组
         else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) return TITLE;
         else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) return MERGE;
+
+        return undefined!;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
@@ -253,6 +257,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
             case MERGE:
                 return cc.instantiate(this.mergePrefab).getComponent(CellMerge);
         }
+
+        return undefined!;
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: DetailCell) {
@@ -356,12 +362,12 @@ export class PagePetDetailLVD extends ListViewDelegate {
             const eqpCell = cell as CellPkgEquip;
             if (equip) {
                 eqpCell.setData(-1, equip);
-                eqpCell.clickCallback = (cell: CellPkgEquip) => {
+                eqpCell.clickCallback = (cell: ListViewCell) => {
                     this.page.onEquipCellClick(equipIndex, cell);
                 };
                 if (!this.page.immutable) {
                     eqpCell.funcBtn.node.active = true;
-                    eqpCell.funcBtnCallback = (cell: CellPkgEquip) => {
+                    eqpCell.funcBtnCallback = (cell: ListViewCell) => {
                         this.page.onEquipCellClickFuncBtn(equipIndex, cell);
                     };
                 } else {
@@ -369,11 +375,11 @@ export class PagePetDetailLVD extends ListViewDelegate {
                 }
             } else {
                 if (!this.page.immutable) {
-                    eqpCell.clickCallback = (cell: CellPkgEquipBlank) => {
+                    eqpCell.clickCallback = (cell: ListViewCell) => {
                         this.page.onEquipBlankCellClick(equipIndex, cell);
                     };
                 } else {
-                    eqpCell.clickCallback = (cell: CellPkgEquipBlank) => {};
+                    eqpCell.clickCallback = (cell: ListViewCell) => {};
                 }
             }
         }

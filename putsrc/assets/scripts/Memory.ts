@@ -607,8 +607,8 @@ export class PetTool {
         }
     }
 
-    static getRealPrvty(pet: Pet, exPrvty: number = -1) {
-        const r = exPrvty === -1 ? pet.prvty : exPrvty;
+    static getRealPrvty(pet: Pet, exPrvty?: number) {
+        const r = exPrvty || pet.prvty;
         return Math.floor(Math.sqrt(r * 0.01));
     }
 

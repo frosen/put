@@ -23,14 +23,14 @@ import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 export class PagePetDetail extends PageBase {
     dirtyToken: number = 0;
 
-    curPet: Pet = null;
+    curPet!: Pet;
 
     immutable: boolean = false; // 是否允许更改
 
     @property(cc.Prefab)
-    funcBarPrefab: cc.Prefab = null;
+    funcBarPrefab: cc.Prefab = null!;
 
-    funcBar: FuncBar = null;
+    funcBar!: FuncBar;
 
     onLoad() {
         super.onLoad();
@@ -66,7 +66,7 @@ export class PagePetDetail extends PageBase {
         lvd.curPet = this.curPet;
 
         const pet2 = new Pet2();
-        pet2.setData(this.curPet, 1, null, null, null);
+        pet2.setData(this.curPet, 1);
         lvd.curPet2 = pet2;
 
         const curDirtyToken = this.ctrlr.memory.dirtyToken;

@@ -344,6 +344,7 @@ export class PageStory extends PageBase {
 
     navTabHideRunning: boolean = false;
     touchId?: number;
+    touchStartY!: number;
 
     afterPageShowAnim() {
         this.navTabHideRunning = true;
@@ -351,20 +352,22 @@ export class PageStory extends PageBase {
 
     onGestureStarted(event: cc.Event.EventTouch) {
         this.touchId = event.getID();
+        this.touchStartY = event.getLocationY();
     }
 
     onGestureMoved(event: cc.Event.EventTouch) {
         if (!this.navTabHideRunning) return;
         if (this.touchId !== event.getID()) return;
         const curY = event.getLocationY();
-        const oriY = event.getStartLocation().y;
 
-        if (curY > oriY + 50) {
+        if (curY > this.touchStartY + 50) {
             this.navBar.hide(true);
             this.ctrlr.hideTabBar(true);
-        } else if (curY < oriY - 50) {
+            this.touchStartY = curY;
+        } else if (curY < this.touchStartY - 50) {
             this.navBar.hide(false);
             this.ctrlr.hideTabBar(false);
+            this.touchStartY = curY;
         }
     }
 

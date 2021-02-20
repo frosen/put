@@ -102,7 +102,7 @@ export class Pet2 {
 
     skillIds!: string[];
 
-    setData(pet: Pet, ampl: number, exPrvty: number, exDrinkId?: string, exEquips?: (Equip | undefined)[]) {
+    setData(pet: Pet, ampl: number, exPrvty?: number, exDrinkId?: string, exEquips?: (Equip | undefined)[]) {
         const petModel: PetModel = PetModelDict[pet.id];
 
         const lv = pet.lv;
