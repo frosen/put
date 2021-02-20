@@ -39,7 +39,7 @@ export enum BioType {
 
 export const BioTypeNames = ['', '人形生物', '魔法精灵', '机械精灵', '自然精灵', '未知精灵'];
 export const BioColors = [
-    null,
+    undefined!,
     cc.color(240, 180, 60),
     cc.color(50, 50, 200),
     cc.color(120, 90, 70),
@@ -91,7 +91,7 @@ export enum BtlType {
 
 export const BtlTypeNames = ['', '近战', '射击', '冲锋', '刺杀', '连段', '停止', '混乱'];
 export const BtlTypeColors = [
-    null,
+    undefined!,
     cc.color(200, 50, 50),
     cc.color(50, 50, 200),
     cc.color(240, 180, 60),
@@ -372,6 +372,7 @@ export class StoryJIT {
     startSProg!: number;
     startLProg!: number;
     gainDataList!: { gains: StoryGain[]; lProg: number }[];
+    finished!: boolean;
 }
 
 // -----------------------------------------------------------------

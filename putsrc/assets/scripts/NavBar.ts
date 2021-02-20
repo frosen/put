@@ -5,6 +5,7 @@
  */
 
 import { BaseCtrlr } from './BaseCtrlr';
+import { rerenderLbl } from './Utils';
 
 const { ccclass, property } = cc._decorator;
 
@@ -31,8 +32,7 @@ export class NavBar extends cc.Component {
 
     setTitle(title: string) {
         this.title.string = title;
-        // @ts-ignore
-        this.title._assembler.updateRenderData(this.title);
+        rerenderLbl(this.title);
     }
 
     setSubTitle(title: string) {

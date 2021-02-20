@@ -10,18 +10,18 @@ import { CellPkgBase } from '../../../scripts/CellPkgBase';
 import { CaughtPet } from '../../../../../scripts/DataSaved';
 import { FeatureModelDict } from '../../../../../configs/FeatureModelDict';
 import { CaughtPetTool } from '../../../../../scripts/Memory';
-import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 @ccclass
 export class CellPkgCaughtPet extends CellPkgBase {
     @property(cc.Label)
-    lvLbl: cc.Label = null;
+    lvLbl: cc.Label = null!;
 
     @property(cc.Node)
-    infoLayer: cc.Node = null;
+    infoLayer: cc.Node = null!;
 
     @property(cc.Prefab)
-    infoNodePrefab: cc.Prefab = null;
+    infoNodePrefab: cc.Prefab = null!;
 
     infoNodePool: cc.Node[] = [];
 
@@ -63,7 +63,7 @@ export class CellPkgCaughtPet extends CellPkgBase {
         infoNode.color = color;
         const lbl = infoNode.children[0].getComponent(cc.Label);
         lbl.string = str;
-        ListViewCell.rerenderLbl(lbl);
+        rerenderLbl(lbl);
         infoNode.getComponent(cc.Layout).updateLayout();
     }
 }

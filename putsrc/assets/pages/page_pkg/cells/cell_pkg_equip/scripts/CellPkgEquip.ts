@@ -13,11 +13,11 @@ import { SkillModelDict } from '../../../../../configs/SkillModelDict';
 import { EquipModelDict } from '../../../../../configs/EquipModelDict';
 import { FeatureModelDict } from '../../../../../configs/FeatureModelDict';
 import { SkillType } from '../../../../../scripts/DataModel';
-import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
-const RankColor = [null, cc.Color.BLACK, cc.Color.BLUE, cc.color(153, 50, 205)];
+const RankColor = [undefined!, cc.Color.BLACK, cc.Color.BLUE, cc.color(153, 50, 205)];
 
-const AttriStrings = {
+const AttriStrings: { [key: string]: string } = {
     strength: '力',
     concentration: '专',
     durability: '耐',
@@ -27,7 +27,7 @@ const AttriStrings = {
     armor: '甲'
 };
 
-const AttriColors = {
+const AttriColors: { [key: string]: cc.Color } = {
     strength: cc.Color.RED,
     concentration: cc.Color.BLUE,
     durability: cc.Color.BLUE,
@@ -44,19 +44,19 @@ function getNumStr(n: number): string {
 @ccclass
 export class CellPkgEquip extends CellPkgBase {
     @property(cc.Label)
-    lvLbl: cc.Label = null;
+    lvLbl: cc.Label = null!;
 
     @property(cc.Label)
-    skillLbl: cc.Label = null;
+    skillLbl: cc.Label = null!;
 
     @property(cc.Node)
-    infoLayer: cc.Node = null;
+    infoLayer: cc.Node = null!;
 
     @property([cc.Layout])
     layouts: cc.Layout[] = [];
 
     @property(cc.Prefab)
-    infoNodePrefab: cc.Prefab = null;
+    infoNodePrefab: cc.Prefab = null!;
 
     infoNodeDataPool: { infoNode: cc.Node; lbl: cc.Label; layout: cc.Layout }[] = [];
 
@@ -78,13 +78,13 @@ export class CellPkgEquip extends CellPkgBase {
             this.skillLbl.node.parent.opacity = 0;
         }
 
-        ListViewCell.rerenderLbl(this.nameLbl);
-        ListViewCell.rerenderLbl(this.lvLbl);
-        ListViewCell.rerenderLbl(this.skillLbl);
+        rerenderLbl(this.nameLbl);
+        rerenderLbl(this.lvLbl);
+        rerenderLbl(this.skillLbl);
         for (const layout of this.layouts) layout.updateLayout();
 
         const attriInfos = [];
-        const attris = EquipTool.getFinalAttris(equip);
+        const attris = EquipTool.getFinalAttris(equip) as any;
         for (const key in attris) {
             const value = attris[key];
             if (value > 0) attriInfos.push({ str: AttriStrings[key] + getNumStr(value), c: AttriColors[key] });
@@ -121,7 +121,7 @@ export class CellPkgEquip extends CellPkgBase {
             infoNode.opacity = 255;
             infoNode.color = c;
             lbl.string = str;
-            ListViewCell.rerenderLbl(lbl);
+            rerenderLbl(lbl);
             layout.updateLayout();
         }
 

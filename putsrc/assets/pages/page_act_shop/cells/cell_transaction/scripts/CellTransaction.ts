@@ -8,39 +8,40 @@ const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 import { MoneyTool } from '../../../../../scripts/Memory';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 @ccclass
 export class CellTransaction extends ListViewCell {
     @property(cc.Node)
-    itemBaseNode: cc.Node = null;
+    itemBaseNode: cc.Node = null!;
 
     @property(cc.Label)
-    priceLbl: cc.Label = null;
+    priceLbl: cc.Label = null!;
 
     @property(cc.Label)
-    subDataLbl: cc.Label = null;
+    subDataLbl: cc.Label = null!;
 
     @property(cc.Layout)
-    layout: cc.Layout = null;
+    layout: cc.Layout = null!;
 
     @property(cc.Label)
-    numLbl: cc.Label = null;
+    numLbl: cc.Label = null!;
 
     @property(cc.Button)
-    addBtn: cc.Button = null;
+    addBtn: cc.Button = null!;
 
     @property(cc.Button)
-    rdcBtn: cc.Button = null;
+    rdcBtn: cc.Button = null!;
 
     priceBaseStr: string = '单价：';
 
-    subCell: ListViewCell;
+    subCell!: ListViewCell;
 
-    itemId: string;
-    itemCount: number;
+    itemId!: string;
+    itemCount!: number;
 
-    addCallback: (cell: CellTransaction, count: number) => void;
-    rdcCallback: (cell: CellTransaction, count: number) => void;
+    addCallback!: (cell: CellTransaction, count: number) => void;
+    rdcCallback!: (cell: CellTransaction, count: number) => void;
 
     onLoad() {
         this.addBtn.node.on(cc.Node.EventType.TOUCH_START, this.onAddStart.bind(this));
@@ -58,11 +59,11 @@ export class CellTransaction extends ListViewCell {
         this.priceLbl.string = this.priceBaseStr + MoneyTool.getSimpleStr(price);
     }
 
-    setSubData(subData: string, subLblColor: cc.Color = null) {
+    setSubData(subData: string, subLblColor?: cc.Color) {
         this.subDataLbl.string = subData || '';
         this.subDataLbl.node.color = subLblColor || cc.color(150, 150, 150);
         if (subData) {
-            ListViewCell.rerenderLbl(this.priceLbl);
+            rerenderLbl(this.priceLbl);
             this.layout.updateLayout();
         }
     }

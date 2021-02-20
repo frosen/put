@@ -10,18 +10,18 @@ import { Drink } from '../../../../../scripts/DataSaved';
 import { AmplAttriNames, DrinkModel } from '../../../../../scripts/DataModel';
 import { DrinkModelDict } from '../../../../../configs/DrinkModelDict';
 import { CellPkgCnsum } from '../../../scripts/CellPkgCnsum';
-import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 @ccclass
 export class CellPkgDrink extends CellPkgCnsum {
     @property(cc.Label)
-    lvLbl: cc.Label = null;
+    lvLbl: cc.Label = null!;
 
     @property(cc.Label)
-    mainAttri: cc.Label = null;
+    mainAttri: cc.Label = null!;
 
     @property(cc.Label)
-    subAttri: cc.Label = null;
+    subAttri: cc.Label = null!;
 
     @property([cc.Layout])
     layouts: cc.Layout[] = [];
@@ -44,8 +44,8 @@ export class CellPkgDrink extends CellPkgCnsum {
         this.nameLbl.string = drinkModel.cnName;
         this.lvLbl.string = `[MaxL${drinkModel.lvMax}]`;
 
-        ListViewCell.rerenderLbl(this.nameLbl);
-        ListViewCell.rerenderLbl(this.lvLbl);
+        rerenderLbl(this.nameLbl);
+        rerenderLbl(this.lvLbl);
 
         this.mainAttri.string = `${AmplAttriNames[drinkModel.mainAttri]}+${drinkModel.mainPercent}%`;
         if (drinkModel.subAttri) {
@@ -55,8 +55,8 @@ export class CellPkgDrink extends CellPkgCnsum {
             this.subAttri.node.parent.scaleX = 0;
         }
 
-        ListViewCell.rerenderLbl(this.mainAttri);
-        ListViewCell.rerenderLbl(this.subAttri);
+        rerenderLbl(this.mainAttri);
+        rerenderLbl(this.subAttri);
 
         for (const layout of this.layouts) layout.updateLayout();
     }

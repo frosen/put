@@ -6,7 +6,7 @@
 
 const { ccclass, property } = cc._decorator;
 
-import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
 
 @ccclass
@@ -16,7 +16,7 @@ export class CellPsgeNormal extends CellPsgeBase {
 
     setData(str: string) {
         this.lbl.string = str;
-        ListViewCell.rerenderLbl(this.lbl);
+        rerenderLbl(this.lbl);
         this.node.height = this.lbl.node.height + 40; // label上下边各留出20像素
     }
 }

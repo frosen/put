@@ -13,9 +13,9 @@ import { BtlPet } from '../../../scripts/DataOther';
 import { BtlTypeNames, BioTypeNames, EleColors, EleTypeNames, Feature, Pet } from '../../../scripts/DataSaved';
 import { PetTool } from '../../../scripts/Memory';
 import { petAttrNumStr } from '../../page_pet_detail/scripts/PagePetDetailLVD';
-import { ListViewCell } from '../../../scripts/ListViewCell';
 import { SkillModelDict } from '../../../configs/SkillModelDict';
 import { SkillType } from '../../../scripts/DataModel';
+import { rerenderLbl } from '../../../scripts/Utils';
 
 @ccclass
 export class EnemyDetail extends cc.Component {
@@ -125,7 +125,7 @@ export class EnemyDetail extends cc.Component {
             const lbl = infoNode.children[0].getComponent(cc.Label);
             const typeStr = skillModel.skillType === SkillType.ultimate ? '绝・' : '招・';
             lbl.string = typeStr + skillModel.cnName;
-            ListViewCell.rerenderLbl(lbl);
+            rerenderLbl(lbl);
             infoNode.getComponent(cc.Layout).updateLayout();
         } else {
             this.sklLayout.node.children[idx]!.opacity = 0;
@@ -155,7 +155,7 @@ export class EnemyDetail extends cc.Component {
             infoNode!.color = color;
             const lbl = infoNode!.children[0].getComponent(cc.Label);
             lbl.string = name;
-            ListViewCell.rerenderLbl(lbl);
+            rerenderLbl(lbl);
             infoNode!.getComponent(cc.Layout).updateLayout();
         } else {
             infoNode.opacity = 0;

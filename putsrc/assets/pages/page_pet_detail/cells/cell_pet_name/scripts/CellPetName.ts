@@ -13,6 +13,7 @@ import { PageBase } from '../../../../../scripts/PageBase';
 import { SensitiveWords } from '../../../../../configs/SensitiveWords';
 import { CellPet } from '../../../../page_pet/cells/cell_pet/scripts/CellPet';
 import { PTN } from '../../../../../configs/ProTtlModelDict';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 @ccclass
 export class CellPetName extends ListViewCell {
@@ -156,8 +157,8 @@ export class CellPetName extends ListViewCell {
         const subName = pet.nickname ? '(' + PetTool.getBaseCnName(pet) + ')' : '';
         this.petName.string = petName;
         this.subName.string = subName;
-        ListViewCell.rerenderLbl(this.petName);
-        ListViewCell.rerenderLbl(this.subName);
+        rerenderLbl(this.petName);
+        rerenderLbl(this.subName);
         this.layout.updateLayout();
 
         const { img, color } = CellPet.getPetIcon(pet, this.ctrlr.runningImgMgr);

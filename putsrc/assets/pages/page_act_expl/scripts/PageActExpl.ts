@@ -25,12 +25,12 @@ import { PageActExplLVD } from './PageActExplLVD';
 
 import { PagePkgSelection } from '../../page_pkg_selection/scripts/PagePkgSelection';
 import { PagePkg } from '../../page_pkg/scripts/PagePkg';
-import { ListViewCell } from '../../../scripts/ListViewCell';
 import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
 import { PTN } from '../../../configs/ProTtlModelDict';
 import { BtlCtrlr } from '../../../scripts/BtlCtrlr';
 import { SkillModelDict } from '../../../configs/SkillModelDict';
 import { PetModelDict } from '../../../configs/PetModelDict';
+import { rerenderLbl } from '../../../scripts/Utils';
 
 const btlUnitH = -172;
 const BtlUnitYs = [0, btlUnitH, btlUnitH * 2, btlUnitH * 3, btlUnitH * 4];
@@ -384,8 +384,8 @@ export class PageActExpl extends BtlPageBase {
         ui.node.stopAllActions();
         ui.node.x = 0;
 
-        ListViewCell.rerenderLbl(ui.petName);
-        ListViewCell.rerenderLbl(ui.subName);
+        rerenderLbl(ui.petName);
+        rerenderLbl(ui.subName);
         ui.layout.updateLayout();
     }
 
@@ -930,10 +930,8 @@ export class PageActExpl extends BtlPageBase {
             this.enterTipLbl1.string = ActPosModelDict[expl.curPosId].cnName;
             this.enterTipLbl2.string = ExplStepNames[stepType];
 
-            // @ts-ignore
-            this.enterTipLbl1._assembler.updateRenderData(this.enterTipLbl1);
-            // @ts-ignore
-            this.enterTipLbl2._assembler.updateRenderData(this.enterTipLbl2);
+            rerenderLbl(this.enterTipLbl1);
+            rerenderLbl(this.enterTipLbl2);
             this.enterTipNode.getComponent(cc.Layout).updateLayout();
         } else {
             this.lblBtnEnter.node.color = cc.color(175, 175, 175);

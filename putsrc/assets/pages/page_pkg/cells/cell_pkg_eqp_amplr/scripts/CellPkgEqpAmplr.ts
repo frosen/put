@@ -10,12 +10,12 @@ import { EqpAmplr } from '../../../../../scripts/DataSaved';
 import { EqpAmplrModelDict } from '../../../../../configs/EqpAmplrModelDict';
 import { CellPkgCnsum } from '../../../scripts/CellPkgCnsum';
 import { EqpAmplrModel } from '../../../../../scripts/DataModel';
-import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 @ccclass
 export class CellPkgEqpAmplr extends CellPkgCnsum {
     @property(cc.Label)
-    lvLbl: cc.Label = null;
+    lvLbl: cc.Label = null!;
 
     @property([cc.Layout])
     layouts: cc.Layout[] = [];
@@ -38,8 +38,8 @@ export class CellPkgEqpAmplr extends CellPkgCnsum {
         this.nameLbl.string = eqpAmplrModel.cnName;
         this.lvLbl.string = `[MaxL${eqpAmplrModel.lvMax}]`;
 
-        ListViewCell.rerenderLbl(this.nameLbl);
-        ListViewCell.rerenderLbl(this.lvLbl);
+        rerenderLbl(this.nameLbl);
+        rerenderLbl(this.lvLbl);
 
         for (const layout of this.layouts) layout.updateLayout();
     }

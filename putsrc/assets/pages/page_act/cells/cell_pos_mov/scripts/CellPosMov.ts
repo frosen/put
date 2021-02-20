@@ -8,6 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { ActPosModel } from '../../../../../scripts/DataModel';
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 @ccclass
 export class CellPosMov extends ListViewCell {
@@ -45,8 +46,8 @@ export class CellPosMov extends ListViewCell {
         this.posNameLbl.string = '前往：' + movPosModel.cnName;
         this.priceLbl.string = '花费：' + String(price);
 
-        ListViewCell.rerenderLbl(this.posNameLbl);
-        ListViewCell.rerenderLbl(this.priceLbl);
+        rerenderLbl(this.posNameLbl);
+        rerenderLbl(this.priceLbl);
         this.layout.updateLayout();
     }
 

@@ -9,8 +9,8 @@ import { PAKey } from '../../../configs/ActPosModelDict';
 import { BaseCtrlr } from '../../../scripts/BaseCtrlr';
 import { ActPosModel, ActPosType, ExplModel, ReputNames } from '../../../scripts/DataModel';
 import { GameData, PADExpl } from '../../../scripts/DataSaved';
-import { ListViewCell } from '../../../scripts/ListViewCell';
 import { GameDataTool } from '../../../scripts/Memory';
+import { rerenderLbl } from '../../../scripts/Utils';
 
 const NavBarHeight = 141;
 
@@ -61,7 +61,7 @@ export class PanelPosInfo extends cc.Component {
         this.icon.spriteFrame = this.ctrlr.runningImgMgr.get(posId).icon;
 
         this.posName.string = actPosModel.cnName;
-        ListViewCell.rerenderLbl(this.posName);
+        rerenderLbl(this.posName);
         this.layout.updateLayout();
 
         if (actPosModel.type === ActPosType.town) {

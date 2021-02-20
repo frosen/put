@@ -7,6 +7,7 @@
 const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 @ccclass
 export class CellPosBtn extends ListViewCell {
@@ -45,8 +46,8 @@ export class CellPosBtn extends ListViewCell {
         this.lblMain1.string = data.name;
         this.lblSub1.string = data.info;
         this.lblSub1.node.color = data.infoColor;
-        ListViewCell.rerenderLbl(this.lblMain1);
-        ListViewCell.rerenderLbl(this.lblSub1);
+        rerenderLbl(this.lblMain1);
+        rerenderLbl(this.lblSub1);
     }
 
     setBtn2(pAKey?: string, data?: { name: string; info: string; infoColor: cc.Color }) {
@@ -55,8 +56,8 @@ export class CellPosBtn extends ListViewCell {
             this.lblMain2.string = data!.name;
             this.lblSub2.string = data!.info;
             this.lblSub2.node.color = data!.infoColor;
-            ListViewCell.rerenderLbl(this.lblMain2);
-            ListViewCell.rerenderLbl(this.lblSub2);
+            rerenderLbl(this.lblMain2);
+            rerenderLbl(this.lblSub2);
         } else {
             this.pAKey2 = undefined;
             this.lblMain2.string = '';

@@ -13,6 +13,7 @@ import { TouchLayerForToast } from './TouchLayerForToast';
 import { checkConfigs } from './ConfigsChecker';
 import { NavBar } from './NavBar';
 import { RunningImgMgr } from './RunningImgMgr';
+import { rerenderLbl } from './Utils';
 
 const TabBtnData = cc.Class({
     name: 'TabBtnData',
@@ -672,8 +673,7 @@ export class BaseCtrlr extends cc.Component {
 
         this.alertBtnCancelNode.getComponentInChildren(cc.Label).string = btnCancel;
 
-        // @ts-ignore
-        this.alertLbl._assembler.updateRenderData(this.alertLbl);
+        rerenderLbl(this.alertLbl);
         this.alertLbl.node.parent.getComponent(cc.Layout).updateLayout();
         this.alertNode.getComponent(cc.Layout).updateLayout();
 

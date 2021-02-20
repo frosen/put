@@ -84,9 +84,4 @@ export class ListViewCell extends cc.Component {
     }
 
     onClick() {}
-
-    static rerenderLbl(lbl: cc.Label) {
-        // @ts-ignore
-        lbl._assembler.updateRenderData(lbl);
-    }
 }

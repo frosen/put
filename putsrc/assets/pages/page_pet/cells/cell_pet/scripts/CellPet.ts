@@ -13,50 +13,50 @@ import { Pet, PetStateNames, EleColors, BioType } from '../../../../../scripts/D
 import { FeatureModelDict } from '../../../../../configs/FeatureModelDict';
 import { PetTool } from '../../../../../scripts/Memory';
 import { RunningImgMgr } from '../../../../../scripts/RunningImgMgr';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 @ccclass
 export class CellPet extends ListViewCell {
     @property(cc.Label)
-    petNameLbl: cc.Label = null;
+    petNameLbl: cc.Label = null!;
 
     @property(cc.Label)
-    subNameLbl: cc.Label = null;
+    subNameLbl: cc.Label = null!;
 
     @property(cc.Label)
-    lvLbl: cc.Label = null;
+    lvLbl: cc.Label = null!;
 
     @property(cc.Node)
-    infoLayer: cc.Node = null;
+    infoLayer: cc.Node = null!;
 
     @property(cc.Node)
-    infoLayer2: cc.Node = null;
+    infoLayer2: cc.Node = null!;
 
     @property(cc.Sprite)
-    petIconBG: cc.Sprite = null;
+    petIconBG: cc.Sprite = null!;
 
     @property(cc.Sprite)
-    petIcon: cc.Sprite = null;
+    petIcon: cc.Sprite = null!;
 
     @property(cc.Label)
-    stateLbl: cc.Label = null;
+    stateLbl: cc.Label = null!;
 
     @property(cc.Button)
-    stateBtn: cc.Button = null;
+    stateBtn: cc.Button = null!;
 
     @property(cc.Button)
-    funcBtn: cc.Button = null;
+    funcBtn: cc.Button = null!;
 
     @property(cc.Prefab)
-    infoNodePrefab: cc.Prefab = null;
+    infoNodePrefab: cc.Prefab = null!;
 
     infoNodePool: cc.Node[] = [];
 
-    curPet: Pet = null;
+    curPet!: Pet;
 
-    clickCallback: (cell: CellPet) => void = null;
-    stateBtnCallback: (cell: CellPet) => void = null;
-    funcBtnCallback: (cell: CellPet) => void = null;
-
+    clickCallback?: (cell: CellPet) => void;
+    stateBtnCallback?: (cell: CellPet) => void;
+    funcBtnCallback?: (cell: CellPet) => void;
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
@@ -74,9 +74,9 @@ export class CellPet extends ListViewCell {
         this.petNameLbl.string = PetTool.getCnName(pet, true);
         this.subNameLbl.string = pet.nickname ? '(' + PetTool.getBaseCnName(pet) + ')' : '';
         this.lvLbl.string = `[L${pet.lv}R${pet.merges.length}]`;
-        ListViewCell.rerenderLbl(this.petNameLbl);
-        ListViewCell.rerenderLbl(this.subNameLbl);
-        ListViewCell.rerenderLbl(this.lvLbl);
+        rerenderLbl(this.petNameLbl);
+        rerenderLbl(this.subNameLbl);
+        rerenderLbl(this.lvLbl);
         this.petNameLbl.node.parent.getComponent(cc.Layout).updateLayout();
 
         const { img, color } = CellPet.getPetIcon(pet, this.ctrlr.runningImgMgr);
@@ -125,6 +125,8 @@ export class CellPet extends ListViewCell {
             case BioType.unknown:
                 return { img: rImgMgr.unknownPet, color };
         }
+
+        return undefined!;
     }
 
     hideAllInfoNode() {
@@ -146,7 +148,7 @@ export class CellPet extends ListViewCell {
         infoNode.color = color;
         const lbl = infoNode.children[0].getComponent(cc.Label);
         lbl.string = str;
-        ListViewCell.rerenderLbl(lbl);
+        rerenderLbl(lbl);
         infoNode.getComponent(cc.Layout).updateLayout();
 
         this.infoIdx++;

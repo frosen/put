@@ -24,7 +24,7 @@ import {
 } from '../../../../../scripts/DataModel';
 import { ActPosModelDict, PAKey } from '../../../../../configs/ActPosModelDict';
 import { CellUpdateDisplay } from '../../../../page_act_eqpmkt/cells/cell_update_display/scripts/CellUpdateDisplay';
-import { ProTtlModelDict } from '../../../../../configs/ProTtlModelDict';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 export enum QuestState {
     toAccept = 1,
@@ -123,11 +123,11 @@ export class CellQuest extends ListViewCell {
         this.stateLbl.string = stateStr;
         this.tipLbl.string = this.usingTip ? tipStr : '';
 
-        ListViewCell.rerenderLbl(this.nameLbl);
-        ListViewCell.rerenderLbl(this.stateLbl);
-        ListViewCell.rerenderLbl(this.tipLbl);
-        for (const lbl of this.needLbls) ListViewCell.rerenderLbl(lbl);
-        for (const lbl of this.awardLbls) ListViewCell.rerenderLbl(lbl);
+        rerenderLbl(this.nameLbl);
+        rerenderLbl(this.stateLbl);
+        rerenderLbl(this.tipLbl);
+        for (const lbl of this.needLbls) rerenderLbl(lbl);
+        for (const lbl of this.awardLbls) rerenderLbl(lbl);
 
         for (const layout of this.layouts) layout.updateLayout();
     }

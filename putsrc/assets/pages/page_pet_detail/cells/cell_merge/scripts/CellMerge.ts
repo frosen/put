@@ -11,32 +11,33 @@ import { PetModelDict } from '../../../../../configs/PetModelDict';
 
 import { Merge } from '../../../../../scripts/DataSaved';
 import { FeatureModelDict } from '../../../../../configs/FeatureModelDict';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 @ccclass
 export class CellMerge extends ListViewCell {
     @property(cc.Label)
-    lvLbl: cc.Label = null;
+    lvLbl: cc.Label = null!;
 
     @property(cc.Label)
-    nameLbl: cc.Label = null;
+    nameLbl: cc.Label = null!;
 
     @property(cc.Label)
-    featureLbl: cc.Label = null;
+    featureLbl: cc.Label = null!;
 
     @property(cc.Layout)
-    layout: cc.Layout = null;
+    layout: cc.Layout = null!;
 
     @property(cc.Sprite)
-    petSp: cc.Sprite = null;
+    petSp: cc.Sprite = null!;
 
     setData(mergeData: Merge) {
         this.lvLbl.string = `${mergeData.oPetLv}级时`;
         this.nameLbl.string = PetModelDict[mergeData.petId].cnName;
         this.featureLbl.string = `[${FeatureModelDict[mergeData.featureId].cnBrief} +${mergeData.featureLv}]`;
 
-        ListViewCell.rerenderLbl(this.lvLbl);
-        ListViewCell.rerenderLbl(this.nameLbl);
-        ListViewCell.rerenderLbl(this.featureLbl);
+        rerenderLbl(this.lvLbl);
+        rerenderLbl(this.nameLbl);
+        rerenderLbl(this.featureLbl);
         this.layout.updateLayout();
     }
 }

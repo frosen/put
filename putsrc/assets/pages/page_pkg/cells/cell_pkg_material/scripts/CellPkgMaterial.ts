@@ -10,12 +10,12 @@ import { Material } from '../../../../../scripts/DataSaved';
 import { MaterialModelDict } from '../../../../../configs/MaterialModelDict';
 import { CellPkgCnsum } from '../../../scripts/CellPkgCnsum';
 import { MaterialModel } from '../../../../../scripts/DataModel';
-import { ListViewCell } from '../../../../../scripts/ListViewCell';
+import { rerenderLbl } from '../../../../../scripts/Utils';
 
 @ccclass
 export class CellPkgMaterial extends CellPkgCnsum {
     @property(cc.Label)
-    lvLbl: cc.Label = null;
+    lvLbl: cc.Label = null!;
 
     @property([cc.Layout])
     layouts: cc.Layout[] = [];
@@ -37,8 +37,8 @@ export class CellPkgMaterial extends CellPkgCnsum {
         this.nameLbl.string = materialModel.cnName;
         this.lvLbl.string = `[MaxL${materialModel.lvMax}]`;
 
-        ListViewCell.rerenderLbl(this.nameLbl);
-        ListViewCell.rerenderLbl(this.lvLbl);
+        rerenderLbl(this.nameLbl);
+        rerenderLbl(this.lvLbl);
 
         for (const layout of this.layouts) layout.updateLayout();
     }

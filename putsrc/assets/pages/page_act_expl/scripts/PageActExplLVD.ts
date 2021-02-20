@@ -10,6 +10,7 @@ import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { PageActExpl } from './PageActExpl';
 import { CellLogBase } from './CellLogBase';
+import { rerenderLbl } from '../../../scripts/Utils';
 
 export class LblFrameData {
     lbl!: cc.Label;
@@ -71,8 +72,7 @@ export class PageActExplLVD extends ListViewDelegate {
     }
 
     getLblFrame(lbl: cc.Label): cc.SpriteFrame {
-        // @ts-ignore
-        lbl._assembler.updateRenderData(lbl);
+        rerenderLbl(lbl);
         // @ts-ignore
         const frame = lbl._frame;
         const texture = frame._texture;

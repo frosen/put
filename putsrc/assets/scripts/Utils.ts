@@ -93,3 +93,10 @@ Array.prototype.equals = function <T>(anotherList: T[], call: (a: T, b: T) => bo
         return true;
     } else return false;
 };
+
+// -----------------------------------------------------------------
+
+export function rerenderLbl(lbl: cc.Label) {
+    // @ts-ignore
+    lbl._assembler.updateRenderData(lbl);
+}
