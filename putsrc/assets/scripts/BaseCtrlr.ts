@@ -210,6 +210,8 @@ export class BaseCtrlr extends cc.Component {
     start() {
         if (CC_EDITOR) return;
         this.actTBData.btn.node.emit('click', this.actTBData.btn);
+
+        this.startLabelCharAtlasMonitor();
     }
 
     update(dt: number) {
@@ -548,6 +550,31 @@ export class BaseCtrlr extends cc.Component {
         return this.getTreeLeaf(this.pageTree).page;
     }
 
+    // char -----------------------------------------------------------------
+
+    monitored: boolean = false;
+    labelCharCacheFull: boolean = false;
+
+    startLabelCharAtlasMonitor() {
+        if (this.monitored) return;
+        // @ts-ignore
+        const shareAtlas = cc.Label._shareAtlas;
+        if (shareAtlas) {
+            this.monitored = true;
+            const oldFunc = shareAtlas.getLetterDefinitionForChar;
+            shareAtlas.getLetterDefinitionForChar = function (char: any, labelInfo: any) {
+                const letter = oldFunc.call(this, char, labelInfo);
+                if (!letter) this.labelCharError = true;
+                return letter;
+            };
+        }
+    }
+
+    clearLabelCharCache() {
+        cc.Label.clearCharCache();
+        this.labelCharCacheFull = false;
+    }
+
     // pop -----------------------------------------------------------------
 
     @property(cc.Node)
@@ -614,6 +641,11 @@ export class BaseCtrlr extends cc.Component {
 
     popToast(str: string) {
         this.toastNode.getComponentInChildren(cc.RichText).string = str;
+        if (this.labelCharCacheFull) {
+            this.clearLabelCharCache();
+            this.toastNode.getComponentInChildren(cc.RichText).string = str;
+        }
+
         this.toastNode.stopAllActions();
         this.toastEndFlag = 0;
         cc.tween(this.toastNode)

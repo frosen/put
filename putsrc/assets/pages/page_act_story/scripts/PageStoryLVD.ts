@@ -187,10 +187,9 @@ export class PageStoryLVD extends ListViewDelegate {
     handleListStrData(pos: number) {
         for (let index = this.from; index < this.to; index++) {
             this.calcStrData(index);
-            if (PageStoryLVD.labelCharError) {
+            if (this.ctrlr.labelCharCacheFull) {
                 cc.log('PUT char error');
-                // 监测label发现char不能正确生成，大概率因为保存的char缓存已满，需清理缓存重新初始化
-                cc.Label.clearCharCache();
+                this.ctrlr.clearLabelCharCache(); // 监测label发现char不能正确生成，大概率因为保存的char缓存已满，需清理缓存重新初始化
                 this.radius--; // 减少字符数量，避免进入无限循环
                 return this.initListStrData(pos);
             }
@@ -199,9 +198,9 @@ export class PageStoryLVD extends ListViewDelegate {
 
     loadNextStrData() {
         if (this.curNext === this.next) return;
-        if (PageStoryLVD.labelCharError) return;
+        if (this.ctrlr.labelCharCacheFull) return;
         this.calcStrData(this.curNext);
-        if (PageStoryLVD.labelCharError) return;
+        if (this.ctrlr.labelCharCacheFull) return;
         this.curNext++;
     }
 
@@ -211,7 +210,6 @@ export class PageStoryLVD extends ListViewDelegate {
         const t = psge.pType;
         if (t === PsgeType.normal) {
             const gameData = this.ctrlr.memory.gameData;
-            PageStoryLVD.startLabelCharAtlasMonitor();
             const str = PageStoryLVD.getRealPsgeStr(gameData, psge as NormalPsge);
             this.cellForCalcHeight.setData(str);
             this.heightsInList[index] = this.cellForCalcHeight.node.height;
@@ -233,24 +231,6 @@ export class PageStoryLVD extends ListViewDelegate {
 
     static getRealPsgeStr(gameData: GameData, psge: NormalPsge): string {
         return psge.str.replace(/RRR/g, gameData.roleName);
-    }
-
-    static monitored: boolean = false;
-    static labelCharError: boolean = false;
-
-    static startLabelCharAtlasMonitor() {
-        if (this.monitored) return;
-        // @ts-ignore
-        const shareAtlas = cc.Label._shareAtlas;
-        if (shareAtlas) {
-            this.monitored = true;
-            const oldFunc = shareAtlas.getLetterDefinitionForChar;
-            shareAtlas.getLetterDefinitionForChar = function (char: any, labelInfo: any) {
-                const letter = oldFunc.call(this, char, labelInfo);
-                if (!letter) this.labelCharError = true;
-                return letter;
-            };
-        }
     }
 
     resetPsgeData() {
