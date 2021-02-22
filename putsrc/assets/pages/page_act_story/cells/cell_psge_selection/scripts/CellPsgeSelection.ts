@@ -29,7 +29,7 @@ export class CellPsgeSelection extends CellPsgeBase {
 
     activeBtnLen: number = 0;
 
-    setData(psge: SelectionPsge, slc: number) {
+    setData(psge: SelectionPsge, slc: number | undefined) {
         let index = 0;
         for (; index < psge.options.length; index++) {
             const option = psge.options[index];
@@ -47,7 +47,7 @@ export class CellPsgeSelection extends CellPsgeBase {
             }
 
             let state: PSBState;
-            if (slc === -1) state = PSBState.normal;
+            if (slc === undefined) state = PSBState.normal;
             else if (slc === index) state = PSBState.pressed;
             else state = PSBState.noPressed;
             btn.setData(option.str, index < psge.mainCnt, state);

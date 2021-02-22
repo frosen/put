@@ -424,6 +424,7 @@ export class Memory {
         GameDataTool.addCnsum(this.gameData, 'CiLiPan1', 2);
         GameDataTool.addCnsum(this.gameData, 'DaMoShi', 2);
         GameDataTool.addCnsum(this.gameData, 'YingZhiChiLun', 33);
+        GameDataTool.addCnsum(this.gameData, 'HouHuiYaoJi', 2);
         GameDataTool.handleMoney(this.gameData, (money: Money) => (money.sum += 1000));
 
         const petForCPet = PetTool.createByRandomFeature('BaiLanYuYan', 13);
@@ -440,13 +441,13 @@ export class Memory {
         // GameDataTool.createBtl(this.gameData, 100, (1000 * 60 * 100) / 750 - 10, 0, []);
         // this.gameData.expl.btl.enemys = ePets;
 
-        this.gameData.evtDict['RuZhiBaoDao'] = {
-            id: 'RuZhiBaoDao',
-            posId: PosN.KeChuangXiaoJing,
-            sProg: 8,
-            rztDict: { start: 1 }
-        };
-        this.gameData.ongoingEvtIds.push('RuZhiBaoDao');
+        // this.gameData.evtDict['RuZhiBaoDao'] = {
+        //     id: 'RuZhiBaoDao',
+        //     posId: PosN.KeChuangXiaoJing,
+        //     sProg: 8,
+        //     rztDict: { start: 1 }
+        // };
+        // this.gameData.ongoingEvtIds.push('RuZhiBaoDao');
     }
 }
 

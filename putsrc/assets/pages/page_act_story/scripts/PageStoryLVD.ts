@@ -65,7 +65,7 @@ export class PageStoryLVD extends ListViewDelegate {
 
     psgesInList: Psge[] = [];
     optionUsingDict: { [key: string]: number } = {};
-    slcDictForIdx: { [key: number]: number } = {};
+    slcDictForListIdx: { [key: number]: number } = {};
 
     heightsInList: number[] = [];
     strsInList: string[] = [];
@@ -96,11 +96,11 @@ export class PageStoryLVD extends ListViewDelegate {
 
         const psges = this.psgesInList;
         const optDict = this.optionUsingDict;
-        const slcDict = this.slcDictForIdx;
+        const slcDict = this.slcDictForListIdx;
 
-        const handlePsge = (psge: Psge, index: number): number => {
+        const handlePsge = (psge: Psge, pIdx: number, lIdx: number): number => {
             if (psge.pType === PsgeType.normal) {
-                return (psge as NormalPsge).go || index + 1;
+                return (psge as NormalPsge).go || pIdx + 1;
             } else if (psge.pType === PsgeType.selection) {
                 const slcPsge = psge as SelectionPsge;
                 const slcId = slcPsge.slcId;
@@ -109,45 +109,45 @@ export class PageStoryLVD extends ListViewDelegate {
                 const optionIdx = EvtTool.getOption(rztDict, slcId, curOptUsing);
                 if (optionIdx === -1) return -1;
                 optDict[slcId] = curOptUsing;
-                slcDict[index] = optionIdx;
+                slcDict[lIdx] = optionIdx;
                 return slcPsge.options[optionIdx].go;
             } else if (psge.pType === PsgeType.quest) {
                 const questPsge = psge as QuestPsge;
-                if (rztDict[questPsge.questId] === EvtRztV.done) return index + 1;
+                if (rztDict[questPsge.questId] === EvtRztV.done) return pIdx + 1;
                 else return -1;
             } else if (psge.pType === PsgeType.evt) {
                 const evtPsge = psge as EvtPsge;
-                if (rztDict[evtPsge.evtId] === EvtRztV.done) return index + 1;
+                if (rztDict[evtPsge.evtId] === EvtRztV.done) return pIdx + 1;
                 else return -1;
             } else if (psge.pType === PsgeType.own) {
                 const ownPsge = psge as OwnPsge;
-                if (rztDict[ownPsge.ttlId] === EvtRztV.done) return index + 1;
+                if (rztDict[ownPsge.ttlId] === EvtRztV.done) return pIdx + 1;
                 else return -1;
             } else if (psge.pType === PsgeType.end) {
                 return -1;
             } else {
-                return index + 1;
+                return pIdx + 1;
             }
         };
 
-        let startIdx: number;
+        let startPsgeIdx: number;
         if (psges.length > 0) {
-            const lastIndex = psges[psges.length - 1].idx;
-            const lastPsge = psgesInModel[lastIndex];
-            const nextIdx = handlePsge(lastPsge, lastIndex);
-            if (nextIdx === -1) return;
-            startIdx = nextIdx;
-        } else startIdx = 0;
+            const lastPsgeIdx = psges[psges.length - 1].idx;
+            const lastPsge = psgesInModel[lastPsgeIdx];
+            const nextPsgeIdx = handlePsge(lastPsge, lastPsgeIdx, psges.length - 1);
+            if (nextPsgeIdx === -1) return;
+            startPsgeIdx = nextPsgeIdx;
+        } else startPsgeIdx = 0;
 
         // 按顺序价值psge到list中，直到最后或者被卡住的选择和索要
-        let curIdx = startIdx;
+        let curPsgeIdx = startPsgeIdx;
         while (true) {
-            if (curIdx >= psgesInModel.length) break;
-            const psge = psgesInModel[curIdx];
+            if (curPsgeIdx >= psgesInModel.length) break;
+            const psge = psgesInModel[curPsgeIdx];
             psges[psges.length] = psge;
-            const nextIdx = handlePsge(psge, curIdx);
-            if (nextIdx === -1) break;
-            curIdx = nextIdx;
+            const nextPsgeIdx = handlePsge(psge, curPsgeIdx, psges.length - 1);
+            if (nextPsgeIdx === -1) break;
+            curPsgeIdx = nextPsgeIdx;
         }
     }
 
@@ -236,7 +236,7 @@ export class PageStoryLVD extends ListViewDelegate {
     resetPsgeData() {
         this.psgesInList.length = 0;
         this.optionUsingDict = {};
-        this.slcDictForIdx = {};
+        this.slcDictForListIdx = {};
 
         this.from = -1;
         this.to = -1;
@@ -325,8 +325,8 @@ export class PageStoryLVD extends ListViewDelegate {
                 if (t === PsgeType.normal) {
                     cell.setData(this.strsInList[realIdx]);
                 } else if (t === PsgeType.selection) {
-                    const slc = this.slcDictForIdx[realIdx];
-                    cell.setData(psge as SelectionPsge, slc !== undefined ? slc : -1);
+                    const slc = this.slcDictForListIdx[realIdx];
+                    cell.setData(psge as SelectionPsge, slc);
                 } else if (t === PsgeType.quest) {
                     cell.setData(psge as QuestPsge, this.page.evt);
                 } else if (t === PsgeType.evt) {

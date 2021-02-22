@@ -41,29 +41,29 @@ export enum PagePkgCellType {
 @ccclass
 export class PagePkgLVD extends ListViewDelegate {
     @property(cc.Prefab)
-    cellPkgMoneyPrefab: cc.Prefab = null;
+    cellPkgMoneyPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgDrinkPrefab: cc.Prefab = null;
+    cellPkgDrinkPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgCatcherPrefab: cc.Prefab = null;
+    cellPkgCatcherPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgEqpAmplrPrefab: cc.Prefab = null;
+    cellPkgEqpAmplrPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgMaterialPrefab: cc.Prefab = null;
+    cellPkgMaterialPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgEquipPrefab: cc.Prefab = null;
+    cellPkgEquipPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgCaughtPetPrefab: cc.Prefab = null;
+    cellPkgCaughtPetPrefab: cc.Prefab = null!;
 
-    curItems: Item[];
-    curItemIdxs: number[];
-    page: PagePkgBase;
+    curItems!: Item[];
+    curItemIdxs!: number[];
+    page!: PagePkgBase;
     cellType: PagePkgCellType = PagePkgCellType.normal;
 
     initListData(items: Item[], itemIdxs: number[]) {
@@ -88,7 +88,7 @@ export class PagePkgLVD extends ListViewDelegate {
                 else if (cnsumType === CnsumType.book) return BOOK;
                 else if (cnsumType === CnsumType.special) return SPECIAL;
                 else if (cnsumType === CnsumType.material) return MATERIAL;
-                else return null;
+                else return undefined!;
             }
             case ItemType.equip:
                 return EQUIP;
@@ -102,7 +102,7 @@ export class PagePkgLVD extends ListViewDelegate {
             return cc.instantiate(this.cellPkgMoneyPrefab).getComponent(CellPkgMoney);
         }
 
-        let cell: CellPkgBase;
+        let cell: CellPkgBase | undefined;
         switch (cellId) {
             case DRINK:
                 cell = cc.instantiate(this.cellPkgDrinkPrefab).getComponent(CellPkgDrink);
@@ -111,6 +111,12 @@ export class PagePkgLVD extends ListViewDelegate {
                 cell = cc.instantiate(this.cellPkgCatcherPrefab).getComponent(CellPkgCatcher);
                 break;
             case EQPAMPLR:
+                cell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
+                break;
+            case BOOK:
+                cell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
+                break;
+            case SPECIAL:
                 cell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
                 break;
             case MATERIAL:
@@ -125,14 +131,14 @@ export class PagePkgLVD extends ListViewDelegate {
         }
 
         if (this.cellType === PagePkgCellType.normal) {
-            cell.clickCallback = this.page.onCellClickDetailBtn.bind(this.page);
-            cell.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
+            cell!.clickCallback = this.page.onCellClickDetailBtn.bind(this.page);
+            cell!.funcBtnCallback = this.page.onCellClickFuncBtn.bind(this.page);
         } else {
-            cell.changeFuncBtnImgToDetail();
-            cell.clickCallback = this.page.onCellClick.bind(this.page);
-            cell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
+            cell!.changeFuncBtnImgToDetail();
+            cell!.clickCallback = this.page.onCellClick.bind(this.page);
+            cell!.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
         }
-        return cell;
+        return cell!;
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkg) {

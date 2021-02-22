@@ -211,7 +211,7 @@ export class PageStory extends PageBase {
             }
         }
 
-        if (lastSlcListIdx === -1) return this.ctrlr.popToast('未找到上一次选择\n无法撤回到完成的任务/事件前');
+        if (lastSlcListIdx === -1) return this.ctrlr.popToast('未找到上一次选择\n无法撤回到接受的任务/完成的事件前');
 
         // 检测道具
         const gameData = this.ctrlr.memory.gameData;
@@ -254,7 +254,8 @@ export class PageStory extends PageBase {
         const slcId = lastSlcPsge.slcId;
         const rztDict = this.evt.rztDict;
         const slcNum = rztDict[slcId];
-        rztDict[slcId] = slcNum - getNumInDigit(slcNum, getDigit(slcNum)); // 清理selection
+        const digit = getDigit(slcNum);
+        rztDict[slcId] = slcNum - Math.pow(10, digit - 1) * getNumInDigit(slcNum, digit); // 清理selection
         this.evt.sProg = lastSlcPsge.idx; // 清理evt
         this.lvd.resetPsgeData(); // 清理lvd
 
