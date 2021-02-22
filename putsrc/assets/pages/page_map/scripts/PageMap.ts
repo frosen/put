@@ -26,6 +26,6 @@ export class PageMap extends PageBase {
     }
 
     afterPageShowAnim() {
-        this.ctrlr.pushPage(PageAct, null, false);
+        this.ctrlr.pushPage(PageAct, { posId: this.ctrlr.memory.gameData.curPosId }, false);
     }
 }

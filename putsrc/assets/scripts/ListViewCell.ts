@@ -42,10 +42,10 @@ export class ListViewCell extends cc.Component {
         this.node.x = 0;
         this.node.y = 0;
 
-        this.checkBake();
+        this.checkRoot();
     }
 
-    checkBake() {
+    checkRoot() {
         let root = this.node.getChildByName('root');
         if (!root) {
             root = new cc.Node('root');
@@ -61,25 +61,8 @@ export class ListViewCell extends cc.Component {
             widegt.right = 0;
         }
 
-        let bake = this.node.getChildByName('bake');
-        if (!bake) {
-            bake = new cc.Node('bake');
-            bake.parent = this.node;
-            const widegt = bake.addComponent(cc.Widget);
-            widegt.isAlignTop = true;
-            widegt.isAlignBottom = true;
-            widegt.isAlignLeft = true;
-            widegt.isAlignRight = true;
-            widegt.top = 0;
-            widegt.bottom = 0;
-            widegt.left = 0;
-            widegt.right = 0;
-        }
-
         for (const child of this.node.children) {
-            if (child !== root && child !== bake) {
-                cc.error('cell根节点下只能有root和bake');
-            }
+            if (child !== root) cc.error('cell根节点下只能有root');
         }
     }
 

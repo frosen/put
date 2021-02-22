@@ -12,7 +12,7 @@ import { PageActExplLVD } from './PageActExplLVD';
 
 @ccclass
 export class CellLogBase extends ListViewCell {
-    checkBake() {}
+    checkRoot() {}
 
     lvd!: PageActExplLVD;
 

@@ -83,6 +83,15 @@ export class NavBar extends cc.Component {
         return btn;
     }
 
+    clearAllFuncBtn() {
+        this.btnX = 0;
+        for (let index = this.btnBase.children.length - 1; index >= 0; index--) {
+            const btnNode = this.btnBase.children[index];
+            btnNode.removeFromParent();
+            btnNode.destroy();
+        }
+    }
+
     hiding: boolean = false;
 
     hide(b: boolean) {

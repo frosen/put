@@ -168,7 +168,10 @@ export class PageAct extends PageBase {
         this.posInfo.ctrlr = this.ctrlr;
     }
 
-    // PageAct不用setData，是因为多个PageAct使用switch切换时，不进入setData
+    setData(pageData: { posId: string }) {
+        cc.assert(pageData && pageData.posId, 'PUT Act必有posId');
+        this.ctrlr.memory.gameData.curPosId = pageData.posId;
+    }
 
     onPageShow() {
         const gameData = this.ctrlr.memory.gameData;
@@ -282,7 +285,6 @@ export class PageAct extends PageBase {
             switchAnim = disY > 0 ? PageSwitchAnim.fromTop : PageSwitchAnim.fromBottom;
         }
 
-        this.ctrlr.memory.gameData.curPosId = nextPosModel.id;
-        this.ctrlr.switchCurPage(PageAct, null, switchAnim);
+        this.ctrlr.switchCurPage(PageAct, { posId: nextPosModel.id }, switchAnim);
     }
 }

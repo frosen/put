@@ -32,10 +32,11 @@ const ATTRI2 = '2';
 const ATTRI1 = '1';
 const TITLE = 't';
 const EQUIP = 'e';
-const BLANK = 'b';
+const EQPBLANK = 'eb';
 const SKILL = 's';
 const FEATURE = 'f';
 const MERGE = 'm';
+const BLANK = 'b';
 
 const STATE_TIP = `分为：
 备战中 准备参与战斗
@@ -143,6 +144,9 @@ export class PagePetDetailLVD extends ListViewDelegate {
     @property(cc.Prefab)
     mergePrefab: cc.Prefab = null!;
 
+    @property(cc.Prefab)
+    blankPrefab: cc.Prefab = null!;
+
     curPet!: Pet;
     curPet2!: Pet2;
     featureDatas: { feature: Feature; type: FeatureGainType }[] = [];
@@ -157,7 +161,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         this.skillLen = this.curPet2.skillIds.length;
         this.featureLen = this.featureDatas.length;
         this.mergeLen = this.curPet.merges.length;
-        return 21 + 1 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen;
+        return 21 + 1 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen + 1;
     }
 
     heightForRow(listView: ListView, rowIdx: number): number {
@@ -196,8 +200,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         // 第九组
         else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) return 64;
         else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) return 104;
-
-        return 0;
+        else return 200;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
@@ -219,7 +222,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx === 15 || rowIdx === 16) return ATTRI2;
         // 第六组
         else if (rowIdx === 17) return TITLE;
-        else if (rowIdx === 18 || rowIdx === 19 || rowIdx === 20) return this.curPet.equips[rowIdx - 18] ? EQUIP : BLANK;
+        else if (rowIdx === 18 || rowIdx === 19 || rowIdx === 20) return this.curPet.equips[rowIdx - 18] ? EQUIP : EQPBLANK;
         // 第七组
         else if (rowIdx === 21) return TITLE;
         else if (rowIdx <= 21 + this.skillLen) return SKILL;
@@ -229,8 +232,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         // 第九组
         else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) return TITLE;
         else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) return MERGE;
-
-        return undefined!;
+        else return BLANK;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
@@ -248,7 +250,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
                 return cc.instantiate(this.titlePrefab).getComponent(ListViewCell);
             case EQUIP:
                 return cc.instantiate(this.equipPrefab).getComponent(CellPkgEquip);
-            case BLANK:
+            case EQPBLANK:
                 return cc.instantiate(this.equipBlankPrefab).getComponent(CellPkgEquipBlank);
             case SKILL:
                 return cc.instantiate(this.skillPrefab).getComponent(CellSkill);
@@ -256,6 +258,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
                 return cc.instantiate(this.featurePrefab).getComponent(CellFeature);
             case MERGE:
                 return cc.instantiate(this.mergePrefab).getComponent(CellMerge);
+            case BLANK:
+                return cc.instantiate(this.blankPrefab).getComponent(ListViewCell);
         }
 
         return undefined!;

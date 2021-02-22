@@ -30,6 +30,12 @@ export class PagePetDetail extends PageBase {
     @property(cc.Prefab)
     funcBarPrefab: cc.Prefab = null!;
 
+    @property(cc.Node)
+    leftBtnNode: cc.Node = null!;
+
+    @property(cc.Node)
+    rightBtnNode: cc.Node = null!;
+
     funcBar!: FuncBar;
 
     onLoad() {
@@ -48,6 +54,9 @@ export class PagePetDetail extends PageBase {
             { str: '上移', callback: this.onMoveUpCell.bind(this) },
             { str: '下移', callback: this.onMoveDownCell.bind(this) }
         ]);
+
+        this.leftBtnNode.on(cc.Node.EventType.TOUCH_END, this.onClickLeft.bind(this));
+        this.rightBtnNode.on(cc.Node.EventType.TOUCH_END, this.onClickRight.bind(this));
     }
 
     setData(pageData: { pet: Pet; immutable: boolean }) {
@@ -140,4 +149,14 @@ export class PagePetDetail extends PageBase {
         }
         return true;
     }
+
+    // -----------------------------------------------------------------
+
+    onClickLeft() {
+        const pets = this.ctrlr.memory.gameData.pets;
+        const petIdx = pets.indexOf(this.curPet);
+        if (petIdx <= 0 || pets.length - 1 <= petIdx) return;
+    }
+
+    onClickRight() {}
 }
