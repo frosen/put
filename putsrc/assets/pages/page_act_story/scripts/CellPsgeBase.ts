@@ -11,8 +11,6 @@ import { ListViewCell } from '../../../scripts/ListViewCell';
 
 @ccclass
 export class CellPsgeBase extends ListViewCell {
-    checkRoot() {}
-
     @property(cc.Node)
     root: cc.Node = null!;
 
