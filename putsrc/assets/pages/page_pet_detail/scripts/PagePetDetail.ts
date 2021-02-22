@@ -24,6 +24,7 @@ export class PagePetDetail extends PageBase {
     dirtyToken: number = 0;
 
     curPet!: Pet;
+    curPetForCheck?: Pet;
 
     immutable: boolean = false; // 是否允许更改
 
@@ -37,6 +38,8 @@ export class PagePetDetail extends PageBase {
     rightBtnNode: cc.Node = null!;
 
     funcBar!: FuncBar;
+
+    static listPos: number | undefined = undefined;
 
     onLoad() {
         super.onLoad();
@@ -79,8 +82,9 @@ export class PagePetDetail extends PageBase {
         lvd.curPet2 = pet2;
 
         const curDirtyToken = this.ctrlr.memory.dirtyToken;
-        if (this.dirtyToken !== curDirtyToken) {
+        if (this.dirtyToken !== curDirtyToken || this.curPetForCheck !== this.curPet) {
             this.dirtyToken = curDirtyToken;
+            this.curPetForCheck = this.curPet;
 
             const exFeatureIds = this.curPet.exFeatureIds;
             const featureDatas: { feature: Feature; type: FeatureGainType }[] = [];
@@ -91,7 +95,12 @@ export class PagePetDetail extends PageBase {
             for (const feature of this.curPet.lndFeatures) featureDatas.push({ feature, type: FeatureGainType.learned });
             lvd.featureDatas = featureDatas;
 
-            this.getComponentInChildren(ListView).resetContent(true);
+            const lv = this.getComponentInChildren(ListView);
+            if (PagePetDetail.listPos !== undefined) {
+                lv.clearContent();
+                lv.createContent(PagePetDetail.listPos);
+                PagePetDetail.listPos = undefined;
+            } else lv.resetContent(true);
         }
     }
 
@@ -155,8 +164,21 @@ export class PagePetDetail extends PageBase {
     onClickLeft() {
         const pets = this.ctrlr.memory.gameData.pets;
         const petIdx = pets.indexOf(this.curPet);
-        if (petIdx <= 0 || pets.length - 1 <= petIdx) return;
+        if (petIdx <= 0 || pets.length <= petIdx) return;
+
+        this.gotoOtherPet(pets[petIdx - 1]);
     }
 
-    onClickRight() {}
+    onClickRight() {
+        const pets = this.ctrlr.memory.gameData.pets;
+        const petIdx = pets.indexOf(this.curPet);
+        if (petIdx < 0 || pets.length - 1 <= petIdx) return;
+
+        this.gotoOtherPet(pets[petIdx + 1]);
+    }
+
+    gotoOtherPet(pet: Pet) {
+        PagePetDetail.listPos = this.getComponentInChildren(ListView).content.y;
+        this.ctrlr.pushPage(PagePetDetail, { pet });
+    }
 }

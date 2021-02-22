@@ -196,7 +196,7 @@ export class PageAct extends PageBase {
     resetListview() {
         this.lvd.initData();
 
-        const y = PageAct.ListViewPosDict[this.curPosId] || 0;
+        const y = PageAct.listPosDict[this.curPosId] || 0;
         this.listView.clearContent();
         this.listView.createContent(y);
         this.posInfo.onScrolling(y);
@@ -208,11 +208,11 @@ export class PageAct extends PageBase {
         else if (gameData.curEvtId) this.ctrlr.pushPage(PageStory, { evtId: gameData.curEvtId }, false);
     }
 
-    static ListViewPosDict: { [key: string]: number } = {};
+    static listPosDict: { [key: string]: number } = {};
 
     onScrolling() {
         const y = this.listView.content.y;
-        if (this.curPosId) PageAct.ListViewPosDict[this.curPosId] = y;
+        if (this.curPosId) PageAct.listPosDict[this.curPosId] = y;
         this.posInfo.onScrolling(y);
     }
 
