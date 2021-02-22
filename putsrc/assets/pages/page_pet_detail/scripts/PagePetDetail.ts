@@ -12,19 +12,21 @@ import { PagePetDetailLVD } from './PagePetDetailLVD';
 import { Pet, Feature, PetState } from '../../../scripts/DataSaved';
 import { Pet2 } from '../../../scripts/DataOther';
 import { ListViewCell } from '../../../scripts/ListViewCell';
-import { GameDataTool } from '../../../scripts/Memory';
+import { GameDataTool, PetTool } from '../../../scripts/Memory';
 import { CellFeature, FeatureGainType } from '../cells/cell_feature/scripts/CellFeature';
 import { PagePkgEquip } from '../../page_pkg_equip/scripts/PagePkgEquip';
 import { FuncBar } from '../../page_pet/scripts/FuncBar';
 import { NavBar } from '../../../scripts/NavBar';
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
+import { PageSwitchAnim } from '../../../scripts/BaseCtrlr';
+import { PetModelDict } from '../../../configs/PetModelDict';
 
 @ccclass
 export class PagePetDetail extends PageBase {
     dirtyToken: number = 0;
 
     curPet!: Pet;
-    curPetForCheck?: Pet;
+    newPet: boolean = false;
 
     immutable: boolean = false; // 是否允许更改
 
@@ -36,6 +38,8 @@ export class PagePetDetail extends PageBase {
 
     @property(cc.Node)
     rightBtnNode: cc.Node = null!;
+
+    listView!: ListView;
 
     funcBar!: FuncBar;
 
@@ -60,17 +64,20 @@ export class PagePetDetail extends PageBase {
 
         this.leftBtnNode.on(cc.Node.EventType.TOUCH_END, this.onClickLeft.bind(this));
         this.rightBtnNode.on(cc.Node.EventType.TOUCH_END, this.onClickRight.bind(this));
+
+        this.listView = this.getComponentInChildren(ListView);
+        this.listView.node.on('scrolling', this.onScrolling.bind(this));
     }
 
     setData(pageData: { pet: Pet; immutable: boolean }) {
         cc.assert(pageData && pageData.pet, 'PUT 精灵详情必有精灵属性');
         this.curPet = pageData.pet;
+        this.newPet = true;
         this.immutable = pageData.immutable || false;
     }
 
     onLoadNavBar(navBar: NavBar) {
         navBar.setBackBtnEnabled(true);
-        navBar.setTitle('精灵详情');
     }
 
     onPageShow() {
@@ -82,9 +89,10 @@ export class PagePetDetail extends PageBase {
         lvd.curPet2 = pet2;
 
         const curDirtyToken = this.ctrlr.memory.dirtyToken;
-        if (this.dirtyToken !== curDirtyToken || this.curPetForCheck !== this.curPet) {
+
+        if (this.newPet || this.dirtyToken !== curDirtyToken) {
             this.dirtyToken = curDirtyToken;
-            this.curPetForCheck = this.curPet;
+            this.newPet = false;
 
             const exFeatureIds = this.curPet.exFeatureIds;
             const featureDatas: { feature: Feature; type: FeatureGainType }[] = [];
@@ -95,12 +103,13 @@ export class PagePetDetail extends PageBase {
             for (const feature of this.curPet.lndFeatures) featureDatas.push({ feature, type: FeatureGainType.learned });
             lvd.featureDatas = featureDatas;
 
-            const lv = this.getComponentInChildren(ListView);
             if (PagePetDetail.listPos !== undefined) {
-                lv.clearContent();
-                lv.createContent(PagePetDetail.listPos);
+                this.listView.clearContent();
+                this.listView.createContent(PagePetDetail.listPos);
                 PagePetDetail.listPos = undefined;
-            } else lv.resetContent(true);
+            } else this.listView.resetContent(true);
+
+            this.changeTitle(true);
         }
     }
 
@@ -166,7 +175,7 @@ export class PagePetDetail extends PageBase {
         const petIdx = pets.indexOf(this.curPet);
         if (petIdx <= 0 || pets.length <= petIdx) return;
 
-        this.gotoOtherPet(pets[petIdx - 1]);
+        this.gotoOtherPet(pets[petIdx - 1], PageSwitchAnim.fromLeft);
     }
 
     onClickRight() {
@@ -174,11 +183,51 @@ export class PagePetDetail extends PageBase {
         const petIdx = pets.indexOf(this.curPet);
         if (petIdx < 0 || pets.length - 1 <= petIdx) return;
 
-        this.gotoOtherPet(pets[petIdx + 1]);
+        this.gotoOtherPet(pets[petIdx + 1], PageSwitchAnim.fromRight);
     }
 
-    gotoOtherPet(pet: Pet) {
+    gotoOtherPet(pet: Pet, anim: PageSwitchAnim) {
         PagePetDetail.listPos = this.getComponentInChildren(ListView).content.y;
-        this.ctrlr.pushPage(PagePetDetail, { pet });
+        this.ctrlr.switchCurPage(PagePetDetail, { pet }, anim);
+    }
+
+    onScrolling() {
+        this.changeTitle(false);
+    }
+
+    titleKey: number = 0;
+
+    changeTitle(atOnce: boolean) {
+        if (atOnce) {
+            if (this.listView.content.y > 290) {
+                this.navBar.setTitle(PetTool.getCnName(this.curPet));
+                this.titleKey = 1;
+            } else {
+                this.navBar.setTitle('精灵详情');
+                this.titleKey = -1;
+            }
+        } else {
+            if (this.listView.content.y > 290) {
+                if (this.titleKey !== 1) {
+                    this.titleKey = 1;
+                    this.navBar.title.node.stopAllActions();
+                    cc.tween(this.navBar.title.node)
+                        .to(0.1, { opacity: 0 })
+                        .call(() => this.navBar.setTitle(PetTool.getCnName(this.curPet)))
+                        .to(0.1, { opacity: 255 })
+                        .start();
+                }
+            } else {
+                if (this.titleKey !== -1) {
+                    this.titleKey = -1;
+                    this.navBar.title.node.stopAllActions();
+                    cc.tween(this.navBar.title.node)
+                        .to(0.1, { opacity: 0 })
+                        .call(() => this.navBar.setTitle('精灵详情'))
+                        .to(0.1, { opacity: 255 })
+                        .start();
+                }
+            }
+        }
     }
 }

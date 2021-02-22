@@ -10,6 +10,7 @@ import { EvtModelDict } from '../../../../../configs/EvtModelDict';
 import { EvtPsge } from '../../../../../scripts/DataModel';
 import { Evt, EvtRztV } from '../../../../../scripts/DataSaved';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
+import { PSBColor, PSBGray } from '../../cell_psge_selection/scripts/PsgeSelectionBtn';
 
 @ccclass
 export class CellPsgeEvt extends CellPsgeBase {
@@ -33,10 +34,10 @@ export class CellPsgeEvt extends CellPsgeBase {
 
         if (curEvt.rztDict[needEvtId] === EvtRztV.done) {
             this.btn.interactable = false;
-            this.lbl.node.color = cc.color(120, 120, 120);
+            this.lbl.node.color = PSBGray;
         } else {
             this.btn.interactable = true;
-            this.lbl.node.color = cc.color(43, 33, 4);
+            this.lbl.node.color = PSBColor;
         }
     }
 

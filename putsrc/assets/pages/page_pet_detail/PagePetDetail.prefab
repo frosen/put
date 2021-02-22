@@ -1024,7 +1024,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "btn_arrow",
+    "_name": "btn_arrow_left",
     "_objFlags": 0,
     "_parent": {
       "__id__": 27
@@ -1039,7 +1039,7 @@
     "_prefab": {
       "__id__": 30
     },
-    "_opacity": 255,
+    "_opacity": 200,
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
@@ -1061,14 +1061,14 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        0,
-        0,
+        100,
+        100,
         0,
         0,
         0,
         0,
         1,
-        1,
+        -1,
         1,
         1
       ]
@@ -1131,7 +1131,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "btn_arrow",
+    "_name": "btn_arrow_right",
     "_objFlags": 0,
     "_parent": {
       "__id__": 27
@@ -1146,7 +1146,7 @@
     "_prefab": {
       "__id__": 33
     },
-    "_opacity": 255,
+    "_opacity": 200,
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
@@ -1168,8 +1168,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        0,
-        0,
+        980,
+        100,
         0,
         0,
         0,
@@ -1322,6 +1322,12 @@
     "_enabled": true,
     "funcBarPrefab": {
       "__uuid__": "0758fdff-1291-4b65-a985-3a224835bb4e"
+    },
+    "leftBtnNode": {
+      "__id__": 28
+    },
+    "rightBtnNode": {
+      "__id__": 31
     },
     "_id": ""
   },

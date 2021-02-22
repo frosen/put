@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { SelectionPsge } from '../../../../../scripts/DataModel';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
-import { PsgeSelctionBtn } from './PsgeSelectionBtn';
+import { PsgeSelctionBtn, PSBState } from './PsgeSelectionBtn';
 
 const HeadH = 30;
 const EndH = 30;
@@ -29,7 +29,7 @@ export class CellPsgeSelection extends CellPsgeBase {
 
     activeBtnLen: number = 0;
 
-    setData(psge: SelectionPsge, used: boolean, slcNum: number) {
+    setData(psge: SelectionPsge, used: number | undefined, slcNum: number) {
         const optNums = CellPsgeSelection.getOptNums(slcNum);
         let index = 0;
         for (; index < psge.options.length; index++) {
@@ -47,7 +47,11 @@ export class CellPsgeSelection extends CellPsgeBase {
                 this.btns.push(btn);
             }
 
-            btn.setData(option.str, !used, optNums.includes(index));
+            let state: PSBState;
+            if (used === undefined) state = PSBState.normal;
+            else if (used === index) state = PSBState.pressed;
+            else state = PSBState.noPressed;
+            btn.setData(option.str, state, optNums.includes(index));
 
             const node = btn.node;
             node.opacity = 255;
@@ -69,7 +73,7 @@ export class CellPsgeSelection extends CellPsgeBase {
         let curNum = slcNum;
         while (true) {
             if (curNum <= 0) break;
-            const n = slcNum % 10;
+            const n = curNum % 10;
             list.push(n - 1);
             curNum = Math.floor((curNum - n) / 10);
         }
