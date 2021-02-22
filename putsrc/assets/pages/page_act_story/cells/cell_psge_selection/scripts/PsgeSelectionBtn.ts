@@ -8,12 +8,6 @@ import { CellPsgeSelection } from './CellPsgeSelection';
 
 const { ccclass, property } = cc._decorator;
 
-export enum PSBState {
-    normal = 1, // 可点击
-    pressed, // 被点击过
-    noPressed // 其他的被点击过
-}
-
 @ccclass
 export class PsgeSelctionBtn extends cc.Component {
     @property(cc.Label)
@@ -34,20 +28,11 @@ export class PsgeSelctionBtn extends cc.Component {
         this.index = index;
     }
 
-    setData(str: string, main: boolean, state: PSBState) {
+    setData(str: string, interactable: boolean, selected: boolean) {
         this.lbl.string = str;
-        if (state === PSBState.normal) {
-            this.btn.interactable = true;
-            this.lbl.node.color = cc.color(43, 33, 4);
-        } else if (state === PSBState.pressed) {
-            this.btn.interactable = false;
-            this.btn.disabledSprite = this.btn.pressedSprite;
-            this.lbl.node.color = cc.color(120, 120, 120);
-        } else {
-            this.btn.interactable = false;
-            this.btn.disabledSprite = this.btn.normalSprite;
-            this.lbl.node.color = cc.color(120, 120, 120);
-        }
+        this.btn.interactable = interactable && !selected;
+        this.lbl.node.color = interactable ? cc.color(43, 33, 4) : cc.color(120, 120, 120);
+        this.btn.disabledSprite = selected ? this.btn.pressedSprite : this.btn.normalSprite;
     }
 
     onClick() {

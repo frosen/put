@@ -65,7 +65,7 @@ export class PageStoryLVD extends ListViewDelegate {
 
     psgesInList: Psge[] = [];
     optionUsingDict: { [key: string]: number } = {};
-    slcDictForListIdx: { [key: number]: number } = {};
+    slcDictForListIdx: { [key: number]: boolean } = {};
 
     heightsInList: number[] = [];
     strsInList: string[] = [];
@@ -109,7 +109,7 @@ export class PageStoryLVD extends ListViewDelegate {
                 const optionIdx = EvtTool.getOption(rztDict, slcId, curOptUsing);
                 if (optionIdx === -1) return -1;
                 optDict[slcId] = curOptUsing;
-                slcDict[lIdx] = optionIdx;
+                slcDict[lIdx] = true;
                 return slcPsge.options[optionIdx].go;
             } else if (psge.pType === PsgeType.quest) {
                 const questPsge = psge as QuestPsge;
@@ -325,8 +325,10 @@ export class PageStoryLVD extends ListViewDelegate {
                 if (t === PsgeType.normal) {
                     cell.setData(this.strsInList[realIdx]);
                 } else if (t === PsgeType.selection) {
-                    const slc = this.slcDictForListIdx[realIdx];
-                    cell.setData(psge as SelectionPsge, slc);
+                    const slcId = (psge as SelectionPsge).slcId;
+                    const rzt = this.page.evt.rztDict[slcId] || 0;
+                    const used = this.slcDictForListIdx[realIdx] || false;
+                    cell.setData(psge as SelectionPsge, used, rzt);
                 } else if (t === PsgeType.quest) {
                     cell.setData(psge as QuestPsge, this.page.evt);
                 } else if (t === PsgeType.evt) {

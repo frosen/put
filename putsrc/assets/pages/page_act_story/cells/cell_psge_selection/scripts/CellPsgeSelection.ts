@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { SelectionPsge } from '../../../../../scripts/DataModel';
 import { CellPsgeBase } from '../../../scripts/CellPsgeBase';
-import { PSBState, PsgeSelctionBtn } from './PsgeSelectionBtn';
+import { PsgeSelctionBtn } from './PsgeSelectionBtn';
 
 const HeadH = 30;
 const EndH = 30;
@@ -29,7 +29,8 @@ export class CellPsgeSelection extends CellPsgeBase {
 
     activeBtnLen: number = 0;
 
-    setData(psge: SelectionPsge, slc: number | undefined) {
+    setData(psge: SelectionPsge, used: boolean, slcNum: number) {
+        const optNums = CellPsgeSelection.getOptNums(slcNum);
         let index = 0;
         for (; index < psge.options.length; index++) {
             const option = psge.options[index];
@@ -46,11 +47,7 @@ export class CellPsgeSelection extends CellPsgeBase {
                 this.btns.push(btn);
             }
 
-            let state: PSBState;
-            if (slc === undefined) state = PSBState.normal;
-            else if (slc === index) state = PSBState.pressed;
-            else state = PSBState.noPressed;
-            btn.setData(option.str, index < psge.mainCnt, state);
+            btn.setData(option.str, !used, optNums.includes(index));
 
             const node = btn.node;
             node.opacity = 255;
@@ -65,6 +62,18 @@ export class CellPsgeSelection extends CellPsgeBase {
 
         this.node.height = CellPsgeSelection.getHeight(psge.options.length);
         this.baseNode.height = this.node.height;
+    }
+
+    static getOptNums(slcNum: number): number[] {
+        const list = [];
+        let curNum = slcNum;
+        while (true) {
+            if (curNum <= 0) break;
+            const n = slcNum % 10;
+            list.push(n - 1);
+            curNum = Math.floor((curNum - n) / 10);
+        }
+        return list;
     }
 
     static getHeight(btnLen: number) {
