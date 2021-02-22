@@ -183,7 +183,7 @@
       "array": [
         0,
         0,
-        534.3376741349987,
+        529.141521712292,
         0,
         0,
         0,
@@ -281,7 +281,7 @@
       "array": [
         0,
         0,
-        534.3376741349987,
+        529.141521712292,
         0,
         0,
         0,
@@ -379,7 +379,7 @@
       "array": [
         0,
         0,
-        534.3376741349987,
+        529.141521712292,
         0,
         0,
         0,
@@ -477,7 +477,7 @@
       "array": [
         0,
         0,
-        534.3376741349987,
+        529.141521712292,
         0,
         0,
         0,
@@ -575,7 +575,7 @@
       "array": [
         0,
         0,
-        534.3376741349987,
+        529.141521712292,
         0,
         0,
         0,
@@ -6328,7 +6328,7 @@
     "_groupIndex": 0,
     "groupIndex": 0,
     "showInEditor": false,
-    "_id": "21CQh/cLpPdLYKcxxylujB"
+    "_id": "64iSSFcSFFOa4Y7nxEZZ+6"
   },
   {
     "__type__": "cc.Label",
@@ -6361,7 +6361,7 @@
     "_N$fontFamily": "Arial",
     "_N$overflow": 0,
     "_N$cacheMode": 2,
-    "_id": "6fMzLBKg9Dl77pGz0mfYlh"
+    "_id": "99oN615spGsrxQmJapt9qn"
   },
   {
     "__type__": "cc.PrivateNode",
@@ -6424,7 +6424,7 @@
     "_groupIndex": 0,
     "groupIndex": 0,
     "showInEditor": false,
-    "_id": "5a12J49oNGepk3nWgLkj1/"
+    "_id": "1ahzy8LPBG2YM7OvxBMw0F"
   },
   {
     "__type__": "cc.Label",
@@ -6457,7 +6457,7 @@
     "_N$fontFamily": "Arial",
     "_N$overflow": 0,
     "_N$cacheMode": 2,
-    "_id": "c23znHbqNKnY6v78QTm0oZ"
+    "_id": "f9Sps2Zr5OZZmsqAjwGVjj"
   },
   {
     "__type__": "cc.PrivateNode",
@@ -6520,7 +6520,7 @@
     "_groupIndex": 0,
     "groupIndex": 0,
     "showInEditor": false,
-    "_id": "3bp0eUdGFH569wEh7qTGzT"
+    "_id": "50cqzFN5BHc7phxleQ1dvS"
   },
   {
     "__type__": "cc.Label",
@@ -6553,7 +6553,7 @@
     "_N$fontFamily": "Arial",
     "_N$overflow": 0,
     "_N$cacheMode": 2,
-    "_id": "98VTaEPgJIM4YxreNSL8Yr"
+    "_id": "feCzDoWD9DQaR6WODUO/d/"
   },
   {
     "__type__": "cc.PrivateNode",
@@ -6616,7 +6616,7 @@
     "_groupIndex": 0,
     "groupIndex": 0,
     "showInEditor": false,
-    "_id": "a9SZxPU1FI5pu5XPv/o+hD"
+    "_id": "1bxaqOZchJL6Pz/DvGk+WC"
   },
   {
     "__type__": "cc.Label",
@@ -6649,7 +6649,7 @@
     "_N$fontFamily": "Arial",
     "_N$overflow": 0,
     "_N$cacheMode": 2,
-    "_id": "5cmTF8zgtO86gLMr46J1cg"
+    "_id": "00Yuhv80NEW6HQ1phtyZOb"
   },
   {
     "__type__": "cc.RichText",
