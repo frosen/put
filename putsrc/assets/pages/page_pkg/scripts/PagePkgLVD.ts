@@ -19,6 +19,8 @@ import { CellPkgCaughtPet } from '../cells/cell_pkg_caught_pet/scripts/CellPkgCa
 import { CellPkgEqpAmplr } from '../cells/cell_pkg_eqp_amplr/scripts/CellPkgEqpAmplr';
 import { CellPkgBase } from './CellPkgBase';
 import { CellPkgMaterial } from '../cells/cell_pkg_material/scripts/CellPkgMaterial';
+import { CellPkgBook } from '../cells/cell_pkg_book/scripts/CellPkgBook';
+import { CellPkgSpecial } from '../cells/cell_pkg_special/scripts/CellPkgSpecial';
 
 type CellPkg = CellPkgMoney & CellPkgDrink & CellPkgCatcher & CellPkgEqpAmplr & CellPkgEquip & CellPkgCaughtPet;
 type DataPkg = Money & Drink & Catcher & EqpAmplr & Equip & CaughtPet;
@@ -32,6 +34,7 @@ const SPECIAL = 'sp';
 const MATERIAL = 'ml';
 const EQUIP = 'E';
 const CPET = 'p';
+const BLANK = 'blank';
 
 export enum PagePkgCellType {
     normal = 1,
@@ -53,6 +56,12 @@ export class PagePkgLVD extends ListViewDelegate {
     cellPkgEqpAmplrPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
+    cellPkgBookPrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    cellPkgSpecialPrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
     cellPkgMaterialPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
@@ -60,6 +69,9 @@ export class PagePkgLVD extends ListViewDelegate {
 
     @property(cc.Prefab)
     cellPkgCaughtPetPrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    cellPkgBlankPrefab: cc.Prefab = null!;
 
     curItems!: Item[];
     curItemIdxs!: number[];
@@ -72,10 +84,11 @@ export class PagePkgLVD extends ListViewDelegate {
     }
 
     numberOfRows(listView: ListView): number {
-        return this.curItemIdxs.length;
+        return this.curItemIdxs.length + 2;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
+        if (rowIdx <= this.curItemIdxs.length) return BLANK;
         const item = this.curItems[this.curItemIdxs[rowIdx]];
         switch (item.itemType) {
             case ItemType.money:
@@ -100,6 +113,8 @@ export class PagePkgLVD extends ListViewDelegate {
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
         if (cellId === MONEY) {
             return cc.instantiate(this.cellPkgMoneyPrefab).getComponent(CellPkgMoney);
+        } else if (cellId === BLANK) {
+            return cc.instantiate(this.cellPkgBlankPrefab).getComponent(ListViewCell);
         }
 
         let cell: CellPkgBase | undefined;
@@ -114,10 +129,10 @@ export class PagePkgLVD extends ListViewDelegate {
                 cell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
                 break;
             case BOOK:
-                cell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
+                cell = cc.instantiate(this.cellPkgBookPrefab).getComponent(CellPkgBook);
                 break;
             case SPECIAL:
-                cell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
+                cell = cc.instantiate(this.cellPkgSpecialPrefab).getComponent(CellPkgSpecial);
                 break;
             case MATERIAL:
                 cell = cc.instantiate(this.cellPkgMaterialPrefab).getComponent(CellPkgMaterial);
@@ -142,7 +157,9 @@ export class PagePkgLVD extends ListViewDelegate {
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellPkg) {
-        const itemIdx = this.curItemIdxs[rowIdx];
-        cell.setData(itemIdx, this.curItems[itemIdx] as DataPkg);
+        if (rowIdx < this.curItemIdxs.length) {
+            const itemIdx = this.curItemIdxs[rowIdx];
+            cell.setData(itemIdx, this.curItems[itemIdx] as DataPkg);
+        }
     }
 }

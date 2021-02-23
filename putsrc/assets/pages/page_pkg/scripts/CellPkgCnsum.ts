@@ -12,7 +12,7 @@ import { CnsumModel } from '../../../scripts/DataModel';
 @ccclass
 export class CellPkgCnsum extends CellPkgBase {
     @property(cc.Label)
-    countLbl: cc.Label = null;
+    countLbl: cc.Label = null!;
 
     setDataByModel(itemIdx: number, model: CnsumModel, count: number) {}
 
