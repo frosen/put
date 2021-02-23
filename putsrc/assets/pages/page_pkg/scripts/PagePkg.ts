@@ -53,6 +53,12 @@ export class PagePkg extends PagePkgBase {
 
     funcBar: FuncBar = null!;
 
+    @property(cc.Node)
+    leftBtnNode: cc.Node = null!;
+
+    @property(cc.Node)
+    rightBtnNode: cc.Node = null!;
+
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
@@ -75,6 +81,9 @@ export class PagePkg extends PagePkgBase {
             { str: '下移', callback: this.onMoveDownCell.bind(this) },
             { str: '丢弃', callback: this.onRemoveCell.bind(this) }
         ]);
+
+        this.leftBtnNode.on(cc.Node.EventType.TOUCH_END, this.onClickLeft.bind(this));
+        this.rightBtnNode.on(cc.Node.EventType.TOUCH_END, this.onClickRight.bind(this));
     }
 
     onLoadNavBar(navBar: NavBar) {
@@ -301,6 +310,7 @@ export class PagePkg extends PagePkgBase {
                                 if (rzt === GameDataTool.SUC) {
                                     GameDataTool.removeItem(gameData, eqpAmplrIdx);
                                     this.ctrlr.popPage();
+
                                     this.ctrlr.popToast(`“${EquipTool.getCnName(equip)}”的成长等级升至${equip.growth}级`);
                                 } else this.ctrlr.popToast(rzt);
                             }
@@ -421,5 +431,23 @@ export class PagePkg extends PagePkgBase {
                 }
             });
         }
+    }
+
+    onClickLeft() {
+        this.moveList(-1);
+    }
+
+    onClickRight() {
+        this.moveList(1);
+    }
+
+    moveList(moveDis: number) {
+        let nextIdx = this.curListIdx + moveDis;
+        if (nextIdx < 0 || this.listDatas.length <= nextIdx) {
+            cc.log('PUT can not move list to ', nextIdx);
+            // return;
+        }
+
+        this.turnList(nextIdx);
     }
 }
