@@ -346,7 +346,7 @@ export class PagePkg extends PagePkgBase {
                         }
                     });
                 } else if (cnsum.id === SpcN.HouHuiYaoJi) {
-                    this.ctrlr.popToast('仅用于撤回事件中的错误决定\n，将进度返回上次选择之前！\n在事件页面点击右上按钮触发');
+                    this.ctrlr.popToast('请在事件页面点击右上“撤回按钮”触发');
                 }
             } else if (cnsum.cnsumType === CnsumType.material) {
                 this.ctrlr.popToast('材料用于合成，无法直接使用');

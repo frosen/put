@@ -209,7 +209,9 @@ export class EqpAmplrModel extends CnsumModel {
 
 export class BookModel extends CnsumModel {}
 
-export class SpcModel extends CnsumModel {}
+export class SpcModel extends CnsumModel {
+    tip!: string;
+}
 
 export class MaterialModel extends CnsumModel {
     lvMax!: number;
