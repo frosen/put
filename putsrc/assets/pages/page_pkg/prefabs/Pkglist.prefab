@@ -627,6 +627,12 @@
     "cellPkgEqpAmplrPrefab": {
       "__uuid__": "69b80add-31e8-4a6c-9521-31b471236021"
     },
+    "cellPkgBookPrefab": {
+      "__uuid__": "2f2b0a72-52e4-4676-9387-a97f03815009"
+    },
+    "cellPkgSpecialPrefab": {
+      "__uuid__": "632a4e2f-432e-49c9-8b6e-152010b4cf0a"
+    },
     "cellPkgMaterialPrefab": {
       "__uuid__": "922e4ea5-aa44-45d3-89ae-1dcfb7624677"
     },
@@ -635,6 +641,9 @@
     },
     "cellPkgCaughtPetPrefab": {
       "__uuid__": "6edcfe6d-5318-4f6e-b09f-bcea5a0b8cf5"
+    },
+    "cellPkgBlankPrefab": {
+      "__uuid__": "35a54c51-7354-4492-bb7b-26f77e2ecd59"
     },
     "_id": ""
   },

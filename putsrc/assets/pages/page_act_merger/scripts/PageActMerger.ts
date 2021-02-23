@@ -21,7 +21,7 @@ import { PagePet } from '../../page_pet/scripts/PagePet';
 import { PagePetCellType } from '../../page_pet/scripts/PagePetLVD';
 import { CellPkgCaughtPet } from '../../page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
 import { CellFeature, FeatureGainType } from '../../page_pet_detail/cells/cell_feature/scripts/CellFeature';
-import { PagePetFeature } from '../../page_pet_feature/scripts/PagePetFeature';
+import { PagePetFeatureSelection } from '../../page_pet_feature_selection/scripts/PagePetFeatureSelection';
 
 const MergeReputDiscount = [1, 1, 0.9, 0.8, 0.7, 0.6];
 
@@ -217,7 +217,7 @@ export class PageActMerger extends PageBase {
             else gainTypes.push(FeatureGainType.inborn);
         }
 
-        this.ctrlr.pushPage(PagePetFeature, {
+        this.ctrlr.pushPage(PagePetFeatureSelection, {
             name: '选择特性',
             features,
             gainTypes,

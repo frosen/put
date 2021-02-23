@@ -23,21 +23,21 @@ const FeatureGainNames = ['', '天赋', '专精', '习得'];
 @ccclass
 export class CellFeature extends ListViewCell {
     @property(cc.Label)
-    nameLbl: cc.Label = null;
+    nameLbl: cc.Label = null!;
 
     @property(cc.Label)
-    lvLbl: cc.Label = null;
+    lvLbl: cc.Label = null!;
 
     @property(cc.Label)
-    infoLbl: cc.Label = null;
+    infoLbl: cc.Label = null!;
 
     @property(cc.Sprite)
-    featureSp: cc.Sprite = null;
+    featureSp: cc.Sprite = null!;
 
-    feature: Feature = null;
-    gainType: FeatureGainType = null;
+    feature!: Feature;
+    gainType!: FeatureGainType;
 
-    clickCallback: (cell: CellFeature) => void = null;
+    clickCallback?: (cell: CellFeature) => void;
 
     setData(feature: Feature, type: FeatureGainType) {
         this.feature = feature;

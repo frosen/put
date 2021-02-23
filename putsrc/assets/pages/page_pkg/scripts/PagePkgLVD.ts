@@ -9,7 +9,21 @@ const { ccclass, property } = cc._decorator;
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
-import { Item, ItemType, Money, Equip, Cnsum, CnsumType, Drink, Catcher, EqpAmplr, CaughtPet } from '../../../scripts/DataSaved';
+import {
+    Item,
+    ItemType,
+    Money,
+    Equip,
+    Cnsum,
+    CnsumType,
+    Drink,
+    Catcher,
+    EqpAmplr,
+    CaughtPet,
+    Book,
+    Special,
+    Material
+} from '../../../scripts/DataSaved';
 import { PagePkgBase } from './PagePkgBase';
 import { CellPkgMoney } from '../cells/cell_pkg_money/scripts/CellPkgMoney';
 import { CellPkgEquip } from '../cells/cell_pkg_equip/scripts/CellPkgEquip';
@@ -22,8 +36,16 @@ import { CellPkgMaterial } from '../cells/cell_pkg_material/scripts/CellPkgMater
 import { CellPkgBook } from '../cells/cell_pkg_book/scripts/CellPkgBook';
 import { CellPkgSpecial } from '../cells/cell_pkg_special/scripts/CellPkgSpecial';
 
-type CellPkg = CellPkgMoney & CellPkgDrink & CellPkgCatcher & CellPkgEqpAmplr & CellPkgEquip & CellPkgCaughtPet;
-type DataPkg = Money & Drink & Catcher & EqpAmplr & Equip & CaughtPet;
+type CellPkg = CellPkgMoney &
+    CellPkgDrink &
+    CellPkgCatcher &
+    CellPkgEqpAmplr &
+    CellPkgBook &
+    CellPkgSpecial &
+    CellPkgMaterial &
+    CellPkgEquip &
+    CellPkgCaughtPet;
+type DataPkg = Money & Drink & Catcher & EqpAmplr & Book & Special & Material & Equip & CaughtPet;
 
 const MONEY = 'M';
 const DRINK = 'D';
@@ -84,11 +106,11 @@ export class PagePkgLVD extends ListViewDelegate {
     }
 
     numberOfRows(listView: ListView): number {
-        return this.curItemIdxs.length + 2;
+        return this.curItemIdxs.length + 1;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
-        if (rowIdx <= this.curItemIdxs.length) return BLANK;
+        if (rowIdx >= this.curItemIdxs.length) return BLANK;
         const item = this.curItems[this.curItemIdxs[rowIdx]];
         switch (item.itemType) {
             case ItemType.money:

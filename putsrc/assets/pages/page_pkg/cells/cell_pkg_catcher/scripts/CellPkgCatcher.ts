@@ -42,8 +42,8 @@ export class CellPkgCatcher extends CellPkgCnsum {
 
     setData(itemIdx: number, catcher: Catcher) {
         super.setData(itemIdx, catcher);
-        const catcherModel = CatcherModelDict[catcher.id];
 
+        const catcherModel = CatcherModelDict[catcher.id];
         this.setModelData(catcherModel);
 
         this.setCount(catcher.count);

@@ -1,5 +1,5 @@
 /*
- * PagePetFeatureLVD.ts
+ * PagePetFeatureSelectionLVD.ts
  * 特性列表页面列表的代理
  * luleyan
  */
@@ -9,15 +9,15 @@ const { ccclass, property } = cc._decorator;
 import { ListViewDelegate } from '../../../scripts/ListViewDelegate';
 import { ListView } from '../../../scripts/ListView';
 import { ListViewCell } from '../../../scripts/ListViewCell';
-import { PagePetFeature } from './PagePetFeature';
+import { PagePetFeatureSelection } from './PagePetFeatureSelection';
 import { CellFeature } from '../../page_pet_detail/cells/cell_feature/scripts/CellFeature';
 
 @ccclass
-export class PagePetFeatureLVD extends ListViewDelegate {
+export class PagePetFeatureSelectionLVD extends ListViewDelegate {
     @property(cc.Prefab)
     featurePrefab: cc.Prefab = null;
 
-    page: PagePetFeature;
+    page: PagePetFeatureSelection;
 
     numberOfRows(listView: ListView): number {
         return this.page.features.length;

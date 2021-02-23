@@ -13,7 +13,7 @@ import { MoneyTool } from '../../../../../scripts/Memory';
 @ccclass
 export class CellPkgMoney extends ListViewCell {
     @property(cc.Label)
-    countLbl: cc.Label = null;
+    countLbl: cc.Label = null!;
 
     setData(idx: number, money: Money) {
         this.countLbl.string = MoneyTool.getStr(money.sum);

@@ -1,5 +1,5 @@
 /*
- * PagePetFeature.ts
+ * PagePetFeatureSelection.ts
  * 精灵特性选择页面
  * luleyan
  */
@@ -12,20 +12,20 @@ import { Feature } from '../../../scripts/DataSaved';
 import { ListViewCell } from '../../../scripts/ListViewCell';
 import { NavBar } from '../../../scripts/NavBar';
 import { FeatureGainType } from '../../page_pet_detail/cells/cell_feature/scripts/CellFeature';
-import { PagePetFeatureLVD } from './PagePetFeatureLVD';
+import { PagePetFeatureSelectionLVD } from './PagePetFeatureSelectionLVD';
 
 @ccclass
-export class PagePetFeature extends PageBase {
+export class PagePetFeatureSelection extends PageBase {
     @property(ListView)
     list: ListView = null;
 
-    lvd: PagePetFeatureLVD = null;
+    lvd: PagePetFeatureSelectionLVD = null;
 
     onLoad() {
         super.onLoad();
         if (CC_EDITOR) return;
 
-        this.lvd = this.list.delegate as PagePetFeatureLVD;
+        this.lvd = this.list.delegate as PagePetFeatureSelectionLVD;
         this.lvd.page = this;
     }
 
