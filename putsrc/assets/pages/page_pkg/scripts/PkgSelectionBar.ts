@@ -9,19 +9,19 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export class PkgSelectionBar extends cc.Component {
     @property(cc.ScrollView)
-    scroll: cc.ScrollView = null;
+    scroll: cc.ScrollView = null!;
 
     @property(cc.Node)
-    btnLayer: cc.Node = null;
+    btnLayer: cc.Node = null!;
 
     @property(cc.Node)
-    indicator: cc.Node = null;
+    indicator: cc.Node = null!;
 
     lblNodes: cc.Node[] = [];
 
     curSelection: number = 0;
 
-    onSelection: (curSelection: number) => void = null;
+    onSelection!: (curSelection: number) => void;
 
     onLoad() {
         const btnNodes = this.btnLayer.children;
@@ -77,5 +77,13 @@ export class PkgSelectionBar extends cc.Component {
         }
 
         this.onSelection(idx);
+    }
+
+    move(dir: number) {
+        const newIdx = this.curSelection + dir;
+        if (newIdx < 0 || this.lblNodes.length <= newIdx) return;
+
+        this.onClickStart();
+        this.onClickBtn(newIdx);
     }
 }

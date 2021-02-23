@@ -434,20 +434,10 @@ export class PagePkg extends PagePkgBase {
     }
 
     onClickLeft() {
-        this.moveList(-1);
+        this.selectionBar.move(-1);
     }
 
     onClickRight() {
-        this.moveList(1);
-    }
-
-    moveList(moveDis: number) {
-        let nextIdx = this.curListIdx + moveDis;
-        if (nextIdx < 0 || this.listDatas.length <= nextIdx) {
-            cc.log('PUT can not move list to ', nextIdx);
-            // return;
-        }
-
-        this.turnList(nextIdx);
+        this.selectionBar.move(1);
     }
 }
