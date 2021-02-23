@@ -200,7 +200,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         // 第九组
         else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) return 64;
         else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) return 104;
-        else return 200;
+        else return 160;
     }
 
     cellIdForRow(listView: ListView, rowIdx: number): string {
