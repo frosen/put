@@ -586,6 +586,8 @@ export class BaseCtrlr extends cc.Component {
 
     @property(cc.Node)
     toastNode: cc.Node = null!;
+    toastLblNode!: cc.Node;
+    toastLbl!: cc.RichText;
 
     @property(cc.Node)
     alertNode: cc.Node = null!;
@@ -603,6 +605,8 @@ export class BaseCtrlr extends cc.Component {
 
     initPops() {
         this.toastNode.opacity = 0;
+        this.toastLblNode = this.toastNode.getChildByName('lbl_node');
+        this.toastLbl = this.toastLblNode.getComponentInChildren(cc.RichText);
 
         this.alertNode.opacity = 0;
         this.alertLbl = this.alertNode.getChildByName('text_bg').getChildByName('text').getComponent(cc.Label);
@@ -652,6 +656,24 @@ export class BaseCtrlr extends cc.Component {
             this.clearLabelCharCache();
             this.toastNode.getComponentInChildren(cc.RichText).string = str;
         }
+
+        // @ts-ignore
+        const context = cc.Label._canvasPool.get().context;
+        const fontDesc = this.toastLbl.fontSize.toString() + 'px ' + this.toastLbl.fontFamily;
+        let strWidth = 0;
+        let strWidthMax = 0;
+        for (let index = 0; index < str.length; index++) {
+            if (str !== '\n') {
+                // @ts-ignore
+                strWidth += cc.textUtils.safeMeasureText(context, str[index], fontDesc);
+            } else {
+                if (strWidth > strWidthMax) strWidthMax = strWidth;
+                strWidth = 0;
+            }
+        }
+
+        this.toastLblNode.width = Math.min(strWidthMax, this.toastLbl.maxWidth);
+        this.toastLblNode.height = this.toastLbl.node.height;
 
         this.toastNode.stopAllActions();
         this.toastEndFlag = 0;
