@@ -16,6 +16,7 @@ import { ListView } from '../../../scripts/ListView';
 import { CellTransaction } from '../cells/cell_transaction/scripts/CellTransaction';
 import { Money } from '../../../scripts/DataSaved';
 import { CnsumModel, ShopModel } from '../../../scripts/DataModel';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 
 export const ShopCountMax: number = 9999;
 const ShopReputDiscount: number[] = [1, 1, 0.95, 0.9, 0.85, 0.8];
@@ -143,7 +144,7 @@ export class PageActShop extends PageBase {
         this.changeTotal();
     }
 
-    onCellClickDetailBtn(cell: CellPkgCnsum) {}
+    onCellClickDetailBtn(cell: ListViewCell) {}
 
     getCnsumReputPrice(model: CnsumModel): number {
         const gameData = this.ctrlr.memory.gameData;

@@ -18,6 +18,7 @@ import { PageBase } from '../../../scripts/PageBase';
 import { CellPkgBase } from '../../page_pkg/scripts/CellPkgBase';
 import { PkgSelectionBar } from '../../page_pkg/scripts/PkgSelectionBar';
 import { TouchLayerForBack } from '../../../scripts/TouchLayerForBack';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 
 const WIDTH = 1080;
 const RcclPriceRate = 0.4;
@@ -252,7 +253,7 @@ export class PageActRcclr extends PageBase {
         for (const listData of this.listDatas) if (listData) listData.dirtyToken = 0; // 所有页面预备刷新
     }
 
-    onCellClickDetailBtn(cell: CellPkgCnsum) {}
+    onCellClickDetailBtn(cell: ListViewCell) {}
 
     static getItemPrice(item: Item): number {
         switch (item.itemType) {

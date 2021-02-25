@@ -17,6 +17,7 @@ import { ActPosModelDict, PAKey } from '../../../configs/ActPosModelDict';
 
 import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
 import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scripts/CellTransaction';
+import { ListViewCell } from '../../../scripts/ListViewCell';
 
 export const ACntrCountMax = 1;
 
@@ -166,5 +167,5 @@ export class PageActACntr extends PageBase {
         this.changeTotal();
     }
 
-    onCellClickDetailBtn(cell: CellPkgCnsum) {}
+    onCellClickDetailBtn(cell: ListViewCell) {}
 }

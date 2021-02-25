@@ -18,30 +18,40 @@ import { CellPkgEqpAmplr } from '../../page_pkg/cells/cell_pkg_eqp_amplr/scripts
 import { CellPkgMaterial } from '../../page_pkg/cells/cell_pkg_material/scripts/CellPkgMaterial';
 import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
 import { PageActShop, ShopCountMax } from './PageActShop';
+import { CellPkgBook } from '../../page_pkg/cells/cell_pkg_book/scripts/CellPkgBook';
+import { CellPkgSpecial } from '../../page_pkg/cells/cell_pkg_special/scripts/CellPkgSpecial';
 
 const DRINK = 'D';
 const CATCHER = 'C';
 const EQPAMPLR = 'ea';
+const BOOK = 'bk';
+const SPECIAL = 'sp';
 const MATERIAL = 'ml';
 
 @ccclass
 export class PageActShopLVD extends ListViewDelegate {
     @property(cc.Prefab)
-    cellTransPrefab: cc.Prefab = null;
+    cellTransPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgDrinkPrefab: cc.Prefab = null;
+    cellPkgDrinkPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgCatcherPrefab: cc.Prefab = null;
+    cellPkgCatcherPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgEqpAmplrPrefab: cc.Prefab = null;
+    cellPkgEqpAmplrPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgMaterialPrefab: cc.Prefab = null;
+    cellPkgBookPrefab: cc.Prefab = null!;
 
-    page: PageActShop;
+    @property(cc.Prefab)
+    cellPkgSpecialPrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    cellPkgMaterialPrefab: cc.Prefab = null!;
+
+    page!: PageActShop;
 
     numberOfRows(listView: ListView): number {
         return this.page.goodsIds.length;
@@ -53,7 +63,11 @@ export class PageActShopLVD extends ListViewDelegate {
         if (cnsumType === CnsumType.drink) return DRINK;
         else if (cnsumType === CnsumType.catcher) return CATCHER;
         else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
+        else if (cnsumType === CnsumType.book) return BOOK;
+        else if (cnsumType === CnsumType.special) return SPECIAL;
         else if (cnsumType === CnsumType.material) return MATERIAL;
+
+        return undefined!;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
@@ -72,22 +86,28 @@ export class PageActShopLVD extends ListViewDelegate {
             case EQPAMPLR:
                 subCell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
                 break;
+            case BOOK:
+                subCell = cc.instantiate(this.cellPkgBookPrefab).getComponent(CellPkgBook);
+                break;
+            case SPECIAL:
+                subCell = cc.instantiate(this.cellPkgSpecialPrefab).getComponent(CellPkgSpecial);
+                break;
             case MATERIAL:
                 subCell = cc.instantiate(this.cellPkgMaterialPrefab).getComponent(CellPkgMaterial);
                 break;
         }
-        subCell.changeFuncBtnImgToDetail();
-        subCell.getComponent(cc.Button).interactable = false;
-        subCell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
+        subCell!.changeFuncBtnImgToDetail();
+        subCell!.getComponent(cc.Button).interactable = false;
+        subCell!.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
 
-        cell.init(subCell);
+        cell.init(subCell!);
 
         return cell;
     }
 
     setCellForRow(listView: ListView, rowIdx: number, cell: CellTransaction) {
         const goodsId = this.page.goodsIds[rowIdx];
-        const model = CnsumTool.getModelById(goodsId);
+        const model = CnsumTool.getModelById(goodsId)!;
         (cell.subCell as CellPkgCnsum).setDataByModel(rowIdx, model, -1);
 
         const price = this.page.getCnsumReputPrice(model);

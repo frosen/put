@@ -20,10 +20,14 @@ import { PagePkgCellType } from '../../page_pkg/scripts/PagePkgLVD';
 import { CellPkgBase } from '../../page_pkg/scripts/CellPkgBase';
 import { CellPkgEquip } from '../../page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { CellPkgCaughtPet } from '../../page_pkg/cells/cell_pkg_caught_pet/scripts/CellPkgCaughtPet';
+import { CellPkgBook } from '../../page_pkg/cells/cell_pkg_book/scripts/CellPkgBook';
+import { CellPkgSpecial } from '../../page_pkg/cells/cell_pkg_special/scripts/CellPkgSpecial';
 
 const DRINK = 'D';
 const CATCHER = 'C';
 const EQPAMPLR = 'ea';
+const BOOK = 'bk';
+const SPECIAL = 'sp';
 const MATERIAL = 'ml';
 const EQUIP = 'E';
 const CPET = 'p';
@@ -31,29 +35,35 @@ const CPET = 'p';
 @ccclass
 export class PageActRcclrLVD extends ListViewDelegate {
     @property(cc.Prefab)
-    cellTransPrefab: cc.Prefab = null;
+    cellTransPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgDrinkPrefab: cc.Prefab = null;
+    cellPkgDrinkPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgCatcherPrefab: cc.Prefab = null;
+    cellPkgCatcherPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgEqpAmplrPrefab: cc.Prefab = null;
+    cellPkgEqpAmplrPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgMaterialPrefab: cc.Prefab = null;
+    cellPkgBookPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgEquipPrefab: cc.Prefab = null;
+    cellPkgSpecialPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgCaughtPetPrefab: cc.Prefab = null;
+    cellPkgMaterialPrefab: cc.Prefab = null!;
 
-    curItems: Item[];
-    curItemIdxs: number[];
-    page: PageActRcclr;
+    @property(cc.Prefab)
+    cellPkgEquipPrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    cellPkgCaughtPetPrefab: cc.Prefab = null!;
+
+    curItems!: Item[];
+    curItemIdxs!: number[];
+    page!: PageActRcclr;
     cellType: PagePkgCellType = PagePkgCellType.normal;
 
     initListData(items: Item[], itemIdxs: number[]) {
@@ -73,14 +83,17 @@ export class PageActRcclrLVD extends ListViewDelegate {
                 if (cnsumType === CnsumType.drink) return DRINK;
                 else if (cnsumType === CnsumType.catcher) return CATCHER;
                 else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
+                else if (cnsumType === CnsumType.book) return BOOK;
+                else if (cnsumType === CnsumType.special) return SPECIAL;
                 else if (cnsumType === CnsumType.material) return MATERIAL;
-                else return null;
             }
             case ItemType.equip:
                 return EQUIP;
             case ItemType.caughtPet:
                 return CPET;
         }
+
+        return undefined!;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
@@ -99,6 +112,12 @@ export class PageActRcclrLVD extends ListViewDelegate {
             case EQPAMPLR:
                 subCell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
                 break;
+            case BOOK:
+                subCell = cc.instantiate(this.cellPkgBookPrefab).getComponent(CellPkgBook);
+                break;
+            case SPECIAL:
+                subCell = cc.instantiate(this.cellPkgSpecialPrefab).getComponent(CellPkgSpecial);
+                break;
             case MATERIAL:
                 subCell = cc.instantiate(this.cellPkgMaterialPrefab).getComponent(CellPkgMaterial);
                 break;
@@ -109,11 +128,11 @@ export class PageActRcclrLVD extends ListViewDelegate {
                 subCell = cc.instantiate(this.cellPkgCaughtPetPrefab).getComponent(CellPkgCaughtPet);
                 break;
         }
-        subCell.changeFuncBtnImgToDetail();
-        subCell.getComponent(cc.Button).interactable = false;
-        subCell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
+        subCell!.changeFuncBtnImgToDetail();
+        subCell!.getComponent(cc.Button).interactable = false;
+        subCell!.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
 
-        cell.init(subCell);
+        cell.init(subCell!);
 
         return cell;
     }

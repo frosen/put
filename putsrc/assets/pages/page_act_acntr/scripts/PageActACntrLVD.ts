@@ -23,34 +23,44 @@ import { CellTransaction } from '../../page_act_shop/cells/cell_transaction/scri
 import { CellPkgBase } from '../../page_pkg/scripts/CellPkgBase';
 import { CellPkgEquip } from '../../page_pkg/cells/cell_pkg_equip/scripts/CellPkgEquip';
 import { CellPkgCnsum } from '../../page_pkg/scripts/CellPkgCnsum';
+import { CellPkgBook } from '../../page_pkg/cells/cell_pkg_book/scripts/CellPkgBook';
+import { CellPkgSpecial } from '../../page_pkg/cells/cell_pkg_special/scripts/CellPkgSpecial';
 
 const DRINK = 'D';
 const CATCHER = 'C';
 const EQPAMPLR = 'ea';
+const BOOK = 'bk';
+const SPECIAL = 'sp';
 const MATERIAL = 'ml';
 const EQUIP = 'E';
 
 @ccclass
 export class PageActACntrLVD extends ListViewDelegate {
     @property(cc.Prefab)
-    cellTransPrefab: cc.Prefab = null;
+    cellTransPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgDrinkPrefab: cc.Prefab = null;
+    cellPkgDrinkPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgCatcherPrefab: cc.Prefab = null;
+    cellPkgCatcherPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgEqpAmplrPrefab: cc.Prefab = null;
+    cellPkgEqpAmplrPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgMaterialPrefab: cc.Prefab = null;
+    cellPkgBookPrefab: cc.Prefab = null!;
 
     @property(cc.Prefab)
-    cellPkgEquipPrefab: cc.Prefab = null;
+    cellPkgSpecialPrefab: cc.Prefab = null!;
 
-    page: PageActACntr;
+    @property(cc.Prefab)
+    cellPkgMaterialPrefab: cc.Prefab = null!;
+
+    @property(cc.Prefab)
+    cellPkgEquipPrefab: cc.Prefab = null!;
+
+    page!: PageActACntr;
 
     numberOfRows(listView: ListView): number {
         return this.page.itemList.length;
@@ -63,10 +73,14 @@ export class PageActACntrLVD extends ListViewDelegate {
             if (cnsumType === CnsumType.drink) return DRINK;
             else if (cnsumType === CnsumType.catcher) return CATCHER;
             else if (cnsumType === CnsumType.eqpAmplr) return EQPAMPLR;
+            else if (cnsumType === CnsumType.book) return BOOK;
+            else if (cnsumType === CnsumType.special) return SPECIAL;
             else if (cnsumType === CnsumType.material) return MATERIAL;
         } else {
             return EQUIP;
         }
+
+        return undefined!;
     }
 
     createCellForRow(listView: ListView, rowIdx: number, cellId: string): ListViewCell {
@@ -85,6 +99,12 @@ export class PageActACntrLVD extends ListViewDelegate {
             case EQPAMPLR:
                 subCell = cc.instantiate(this.cellPkgEqpAmplrPrefab).getComponent(CellPkgEqpAmplr);
                 break;
+            case BOOK:
+                subCell = cc.instantiate(this.cellPkgBookPrefab).getComponent(CellPkgBook);
+                break;
+            case SPECIAL:
+                subCell = cc.instantiate(this.cellPkgSpecialPrefab).getComponent(CellPkgSpecial);
+                break;
             case MATERIAL:
                 subCell = cc.instantiate(this.cellPkgMaterialPrefab).getComponent(CellPkgMaterial);
                 break;
@@ -92,11 +112,11 @@ export class PageActACntrLVD extends ListViewDelegate {
                 subCell = cc.instantiate(this.cellPkgEquipPrefab).getComponent(CellPkgEquip);
                 break;
         }
-        subCell.changeFuncBtnImgToDetail();
-        subCell.getComponent(cc.Button).interactable = false;
-        subCell.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
+        subCell!.changeFuncBtnImgToDetail();
+        subCell!.getComponent(cc.Button).interactable = false;
+        subCell!.funcBtnCallback = this.page.onCellClickDetailBtn.bind(this.page);
 
-        cell.init(subCell);
+        cell.init(subCell!);
 
         return cell;
     }
@@ -105,7 +125,7 @@ export class PageActACntrLVD extends ListViewDelegate {
         const eqpOrId = this.page.itemList[rowIdx];
         const award = this.page.awardDataList[rowIdx];
         if (typeof eqpOrId === 'string') {
-            (cell.subCell as CellPkgCnsum).setDataByModel(rowIdx, CnsumTool.getModelById(eqpOrId), ACntrCountMax);
+            (cell.subCell as CellPkgCnsum).setDataByModel(rowIdx, CnsumTool.getModelById(eqpOrId)!, ACntrCountMax);
         } else {
             (cell.subCell as CellPkgBase).setData(rowIdx, eqpOrId);
         }
