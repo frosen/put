@@ -61,12 +61,12 @@ export const EleTypeNames = ['', '火系', '水系', '空系', '地系', '光系
 export const SimpleEleTypeNames = ['', '火', '水', '空', '地', '光', '暗'];
 export const EleColors = [
     undefined!,
-    cc.color(200, 50, 50),
+    cc.color(200, 50, 50), // c83232
     cc.color(50, 50, 200),
     cc.color(50, 200, 50),
     cc.color(190, 100, 30),
-    cc.color(239, 170, 50),
-    cc.color(185, 78, 255)
+    cc.color(239, 170, 50), // efaa32
+    cc.color(185, 78, 255) // b94eff
 ];
 export const EleDarkColors = [
     undefined!,
