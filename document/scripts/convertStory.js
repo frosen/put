@@ -31,14 +31,6 @@ function getSelection(line) {
     return { main: result.attribs.main === '1', str: result.attribs.str, id: result.attribs.id };
 }
 
-// tip 一行不能超过22个字 空格算换行
-function checkTip(tip) {
-    const tips = tip.split(' ');
-    for (const tip of tips) {
-        if (tip.length > 22) throw 'tip有误，tip一行不能超过22个字 空格算换行：' + tip;
-    }
-}
-
 function getQuest(line, evtCNName) {
     if (!evtCNName) throw 'no evtCNName before: ' + line;
     const result = htmlparser.parseDOM(line)[0];
@@ -67,8 +59,6 @@ function getQuest(line, evtCNName) {
     }
     need.count = Number(attris.cnt);
 
-    checkTip(attris.tip);
-
     return {
         quest: {
             id: content,
@@ -89,8 +79,6 @@ function getEvt(line) {
     const attris = result.attribs;
     const content = result.children[0].data.trim();
 
-    checkTip(attris.tip);
-
     return {
         evtId: content,
         tip: attris.tip
@@ -101,8 +89,6 @@ function getOwn(line) {
     const result = htmlparser.parseDOM(line)[0];
     const attris = result.attribs;
     const content = result.children[0].data.trim();
-
-    checkTip(attris.tip);
 
     return {
         ttlId: content,

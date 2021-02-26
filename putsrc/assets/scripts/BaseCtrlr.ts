@@ -651,10 +651,10 @@ export class BaseCtrlr extends cc.Component {
     toastEndFlag: number = 0;
 
     popToast(str: string) {
-        this.toastNode.getComponentInChildren(cc.RichText).string = str;
+        this.toastLbl.string = str;
         if (this.labelCharCacheFull) {
             this.clearLabelCharCache();
-            this.toastNode.getComponentInChildren(cc.RichText).string = str;
+            this.toastLbl.string = str;
         }
 
         // @ts-ignore
@@ -663,14 +663,16 @@ export class BaseCtrlr extends cc.Component {
         let strWidth = 0;
         let strWidthMax = 0;
         for (let index = 0; index < str.length; index++) {
-            if (str !== '\n') {
+            const char = str[index];
+            if (char !== '\n') {
                 // @ts-ignore
-                strWidth += cc.textUtils.safeMeasureText(context, str[index], fontDesc);
+                strWidth += cc.textUtils.safeMeasureText(context, char, fontDesc);
             } else {
                 if (strWidth > strWidthMax) strWidthMax = strWidth;
                 strWidth = 0;
             }
         }
+        if (strWidth > strWidthMax) strWidthMax = strWidth;
 
         this.toastLblNode.width = Math.min(strWidthMax, this.toastLbl.maxWidth);
         this.toastLblNode.height = this.toastLbl.node.height;

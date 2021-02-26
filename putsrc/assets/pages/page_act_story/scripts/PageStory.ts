@@ -496,7 +496,7 @@ export class PageStory extends PageBase {
             const questModel = QuestModelDict[curQuest.id];
             let str = `获得任务“${questModel.cnName}”\n\n`;
             str += '任务需求：\n' + this.getQuestStr(questModel, curQuest);
-            str += '\n\n' + qPage.tip.replace(/ /g, '\n');
+            str += '\n\n' + qPage.tip;
             this.ctrlr.popToast(str);
         } else {
             const quest = this.evt.curQuest;
@@ -508,7 +508,7 @@ export class PageStory extends PageBase {
                 } else {
                     let str = `任务尚未完成\n当前完成度 ${quest.prog} / ${needCnt}}\n\n`;
                     str += '任务需求：\n' + this.getQuestStr(questModel, quest);
-                    str += '\n\n' + qPage.tip.replace(/ /g, '\n');
+                    str += '\n\n' + qPage.tip;
                     this.ctrlr.popToast(str);
                 }
             } else {
@@ -544,7 +544,7 @@ export class PageStory extends PageBase {
             }
 
             const qPage = cell.psge as QuestPsge;
-            const questStr = `\n\n任务需求：\n${this.getQuestStr(questModel, quest)}\n\n${qPage.tip.replace(/ /g, '\n')}`;
+            const questStr = `\n\n任务需求：\n${this.getQuestStr(questModel, quest)}\n\n${qPage.tip}`;
 
             if (!needItem) {
                 this.ctrlr.popToast('未在背包中找到对应的物品' + questStr);
