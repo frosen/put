@@ -373,11 +373,13 @@ export class BaseCtrlr extends cc.Component {
         if (nextTreeNode) {
             nextDisTreeNode = this.getTreeLeaf(nextTreeNode);
 
-            const page = nextDisTreeNode.page;
-            page.setData(data);
-            if (!page.navHidden) {
-                page.navBar.clearAllFuncBtn();
-                page.onLoadNavBar(page.navBar);
+            if (data) {
+                const page = nextDisTreeNode.page;
+                page.setData(data);
+                if (!page.navHidden) {
+                    page.navBar.clearAllFuncBtn();
+                    page.onLoadNavBar(page.navBar);
+                }
             }
         } else {
             nextTreeNode = new TreeNode();

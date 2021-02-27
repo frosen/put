@@ -44,36 +44,42 @@ const STATE_TIP = `分为：
    是否参战可在精灵列表中点击状态按钮修改`;
 
 const LV_TIP = `提高等级可以：
-   提高基础属性
-   从11级开始每3级随机获取一个特性
-   10级和30级时可分别学会一个招式
-   战斗时攻守双方等级差影响命中率`;
-const MERGE_TIP = '将其他精灵的能力融合给当前精灵的次数\n15级后每5级可获得一次融合的机会\n融合操作在“精灵融合堂”进行';
-const PRVTY_TIP = '数值 0-100 随时间自行提高\n数字越大上升越慢\n可提高暴击率，暴击伤害，命中，闪躲';
+ - 提高基础属性
+ - 从<color=#ffcb32>11级</c>开始每<color=#ffcb32>3级</c>随机获取一个特性
+ - <color=#ffcb32>10级</c>和<color=#ffcb32>30级</c>时可分别学会一个招式
+ - 战斗时攻守双方等级差影响命中率`;
+const MERGE_TIP = `将其他精灵的能力融合给当前精灵的次数
+从<color=#ffcb32>15级</c>开始每<color=#ffcb32>5级</c>可获得一次融合的机会
+融合操作在“精灵融合堂”进行`;
+const PRVTY_TIP = `数值<color=#ffcb32>0-100</c>随时间自行提高\n数字越大上升越慢\n可提高暴击率，暴击伤害，命中，闪躲`;
 const DRINK_TIP = `使用道具中的“饮品”获得
 可以在一定时间内提升获得某种效果
 效果大致分成两种：
-   提升某种资源的获取效率
-   提升某项战力`;
+ - 提升某种资源的获取效率
+ - 提升某项战力`;
 
-const BIO_TIP = '分为：\n   人形生物 魔法生物\n   机械生物 自然生物\n   未知生物';
+const BIO_TIP = '分为：\n - 人形生物\n - 魔法生物\n - 机械生物\n - 自然生物\n - 未知生物';
 const ELE_TIP = `分为：
-   <color=#c83232>火</c> 克空   <color=#3232c8>水</c> 克火
-   <color=#32c832>空</c> 克地   <color=#be641e>地</c> 克水
-   <color=#efaa32>光</c> 克暗   <color=#b94eff>暗</c> 克光
-对属性克制精灵造成15%的额外伤害
-使用同属性招式灵能消耗减少10%，伤害增加5%`;
+ - <color=#c83232>火</c> 克<color=#32c832>空</c>
+ - <color=#3232c8>水</c> 克<color=#c83232>火</c>
+ - <color=#32c832>空</c> 克<color=#be641e>地</c>
+ - <color=#be641e>地</c> 克<color=#3232c8>水</c>
+ - <color=#efaa32>光</c> 克<color=#b94eff>暗</c>
+ - <color=#b94eff>暗</c> 克光以外一切
+对属性克制精灵造成<color=#ffcb32>15%</c>的额外伤害
+使用同属性招式灵能消耗减少<color=#ffcb32>10%</c>，伤害增加<color=#ffcb32>5%</c>`;
 
 const BATTLE_TIP = `分为：
-   近战 攻击正前面的目标
-   射击 随机攻击任一目标
-   突袭 攻击排在第一位的目标
-   刺杀 攻击HP最低的目标
-   连段 攻击上个己方攻击的目标
-   停止 不做任何动作
-   混乱 随机攻击敌人，队友或自己
-使用同战斗类型招式时，灵能消耗减少10%`;
-const SPEED_TIP = '数值1-100，数字越大行动次序越靠前';
+ - 近战 攻击正前面的目标
+ - 射击 随机攻击任一目标
+ - 突袭 攻击排在第一位的目标
+ - 刺杀 攻击HP最低的目标
+ - 连段 攻击上个己方攻击的目标
+ - 停止 不做任何动作
+ - 混乱 随机攻击敌人，队友或自己
+使用同战斗类型招式时，灵能消耗减少<color=#ffcb32>10%</c>
+主动设置目标时，不同战斗类型可设置的范围不同`;
+const SPEED_TIP = '数值<color=#ffcb32>1-100</c>，数字越大行动次序越靠前';
 
 const STR_TIP = '每1点力量增加1点物理伤害';
 const CON_TIP = '每1点专注增加1点招式伤害\n每30点增加1点灵能上限';
@@ -82,19 +88,19 @@ const AGI_TIP = '影响暴击率和闪躲率\n影响偷袭效果\n数据最高�
 const SEN_TIP = '影响制作物品成功的几率\n数据最高者影响察觉宝藏的几率';
 const ELG_TIP = '队伍中数据最高者影响声望上升速度和捕捉精灵的几率';
 
-const HP_TIP = '用于战斗\n降低到0则无法继续作战\n全部精灵降低至0则战斗失败';
+const HP_TIP = '用于战斗\n降低到<color=#ffcb32>0</c>则无法继续作战\n全部精灵降低至<color=#ffcb32>0</c>则战斗失败';
 const MP_TIP = '用于战斗\n所有精灵共用一个灵能池，数值为所有精灵灵能之和\n释放招式消耗灵能\n普攻可少量恢复灵能';
 
 const ATK_TIP = '影响普攻伤害\n影响招式伤害（保持1倍，不受招式伤害系数影响）';
 const SKL_TIP = '影响招式伤害（乘以招式的伤害系数）';
 
 const FEATURE_TIP = `分为：
-天赋特性 每种精灵的固有特性
-专精特性 天赋特性中天生强化的特性
-习得特性 通过其他方式获取，数量不限
+ - 天赋特性 每种精灵的固有特性
+ - 专精特性 天赋特性中天生强化的特性
+ - 习得特性 通过其他方式获取，数量不限
  
 任何特性都可以通过提升等级增强效果
-精灵从11级开始每3级随机升级天赋特性`;
+精灵从<color=#ffcb32>11级</c>开始每<color=#ffcb32>3级</c>随机升级天赋特性`;
 
 type DetailCell = CellPetName &
     CellAttri &
@@ -113,7 +119,7 @@ export function petAttrNumStr(n: number): string {
 function attriTip(attri: number, attriOri: number, tip: string): string {
     const strO = petAttrNumStr(attriOri);
     const strD = petAttrNumStr(attri - attriOri);
-    return `基础值 ${strO}\n装备特性加成 ${strD}\n${tip}`;
+    return `基础值 <color=#ffcb32>${strO}</c>\n装备特性加成 <color=#ffcb32>${strD}</c>\n\n<color=#d0d0d0>${tip}</c>`;
 }
 
 @ccclass

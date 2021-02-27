@@ -14,6 +14,7 @@ import { FeatureModelDict } from '../../../../../configs/FeatureModelDict';
 import { PetTool } from '../../../../../scripts/Memory';
 import { RunningImgMgr } from '../../../../../scripts/RunningImgMgr';
 import { rerenderLbl } from '../../../../../scripts/Utils';
+import { FeatureGainNames, FeatureColors } from '../../../../page_pet_detail/cells/cell_feature/scripts/CellFeature';
 
 @ccclass
 export class CellPet extends ListViewCell {
@@ -96,13 +97,13 @@ export class CellPet extends ListViewCell {
 
         for (const feature of pet.inbFeatures) {
             const cnName = FeatureModelDict[feature.id].cnBrief;
-            const color = pet.exFeatureIds.includes(feature.id) ? cc.Color.RED : cc.Color.BLUE;
+            const color = pet.exFeatureIds.includes(feature.id) ? FeatureColors[1] : FeatureColors[2];
             this.setInfoNode(cnName + String(feature.lv), color);
         }
 
         let lndLv = 0;
         for (const feature of pet.lndFeatures) lndLv += feature.lv;
-        if (lndLv > 0) this.setInfoNode('习得 ' + String(lndLv), cc.color(75, 165, 130));
+        if (lndLv > 0) this.setInfoNode(FeatureGainNames[3] + ' ' + String(lndLv), FeatureColors[3]);
 
         this.infoLayer.getComponent(cc.Layout).updateLayout();
         this.infoLayer2.getComponent(cc.Layout).updateLayout();

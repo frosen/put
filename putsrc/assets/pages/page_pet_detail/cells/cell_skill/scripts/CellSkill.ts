@@ -19,29 +19,29 @@ const SkillAimTypeCellNames = ['', '', '・双目标', '・全体', '・敌我']
 @ccclass
 export class CellSkill extends ListViewCell {
     @property(cc.Label)
-    nameLbl: cc.Label = null;
+    nameLbl: cc.Label = null!;
 
     @property(cc.Label)
-    typeLbl: cc.Label = null;
+    typeLbl: cc.Label = null!;
 
     @property(cc.Label)
-    dmgLbl: cc.Label = null;
+    dmgLbl: cc.Label = null!;
 
     @property(cc.Label)
-    buffLbl: cc.Label = null;
+    buffLbl: cc.Label = null!;
 
     @property(cc.Label)
-    mprageLbl: cc.Label = null;
+    mprageLbl: cc.Label = null!;
 
     @property(cc.Label)
-    cdLbl: cc.Label = null;
+    cdLbl: cc.Label = null!;
 
     @property(cc.Sprite)
-    skillSp: cc.Sprite = null;
+    skillSp: cc.Sprite = null!;
 
     skillId: string = '';
 
-    clickCallback: (cell: CellSkill) => void = null;
+    clickCallback?: (cell: CellSkill) => void;
 
     setData(skillId: string) {
         this.skillId = skillId;

@@ -18,7 +18,8 @@ export enum FeatureGainType {
     learned
 }
 
-const FeatureGainNames = ['', '天赋', '专精', '习得'];
+export const FeatureGainNames = ['', '天赋', '专精', '习得'];
+export const FeatureColors = [undefined!, cc.Color.RED, cc.Color.BLUE, cc.color(75, 165, 130)];
 
 @ccclass
 export class CellFeature extends ListViewCell {
@@ -27,6 +28,9 @@ export class CellFeature extends ListViewCell {
 
     @property(cc.Label)
     lvLbl: cc.Label = null!;
+
+    @property(cc.Label)
+    typeLbl: cc.Label = null!;
 
     @property(cc.Label)
     infoLbl: cc.Label = null!;
@@ -44,8 +48,11 @@ export class CellFeature extends ListViewCell {
         this.gainType = type;
         const featureModel: FeatureModel = FeatureModelDict[feature.id];
 
-        this.nameLbl.string = FeatureGainNames[type] + '特性・' + featureModel.cnBrief;
+        this.nameLbl.string = '特性・' + featureModel.cnBrief;
         this.lvLbl.string = `[L${feature.lv}]`;
+
+        this.typeLbl.string = FeatureGainNames[type];
+        this.typeLbl.node.parent.color = FeatureColors[type];
 
         const datas = FeatureTool.getDatas(feature.id, feature.lv);
         const info = featureModel.getInfo(datas);
