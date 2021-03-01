@@ -39,7 +39,7 @@ let sklJson = convert(
             let subBuffId = rowData[11] || '';
             let subBuffTime = Number(rowData[12]) || 0;
 
-            let cd = Number(rowData[13]) || 0;
+            let cd = Number(rowData[13]);
             let mp = Number(rowData[14]) || 0;
             let rage = Number(rowData[15]) || 0;
 
@@ -50,7 +50,16 @@ let sklJson = convert(
             } else {
                 if (isNaN(Number(rowData[13]))) console.log('普通招式需要冷却', cnName);
                 if (mp === 0) console.log('普通招式需要灵能消耗', cnName);
+                if (typeof cd !== 'number') console.log('普通招式需要冷却', cnName);
             }
+
+            if (rangeType !== 1) {
+                if (subDmg || subBuffId) {
+                } else console.log('rangeType为', rangeType, '但是没有subDmg或者subBuffId', cnName);
+            }
+
+            if (mainBuffId && mainBuffTime === 0) console.log('mainBuffId需要mainBuffTime', cnName);
+            if (subBuffId && subBuffTime === 0) console.log('subBuffId需要subBuffTime', cnName);
 
             const skl = {
                 id,

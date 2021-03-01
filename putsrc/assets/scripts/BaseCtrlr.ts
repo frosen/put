@@ -652,6 +652,9 @@ export class BaseCtrlr extends cc.Component {
 
     toastEndFlag: number = 0;
 
+    // @ts-ignore
+    lblContext: any;
+
     popToast(str: string) {
         this.toastLbl.string = str;
         if (this.labelCharCacheFull) {
@@ -660,8 +663,9 @@ export class BaseCtrlr extends cc.Component {
         }
 
         // @ts-ignore
-        const context = cc.Label._canvasPool.get().context;
+        if (!this.lblContext) this.lblContext = cc.Label._canvasPool.get().context;
         const fontDesc = this.toastLbl.fontSize.toString() + 'px ' + this.toastLbl.fontFamily;
+
         let strWidth = 0;
         let strWidthMax = 0;
         let pass = false;
@@ -677,13 +681,12 @@ export class BaseCtrlr extends cc.Component {
             if (pass) continue;
             if (char !== '\n') {
                 // @ts-ignore
-                strWidth += cc.textUtils.safeMeasureText(context, char, fontDesc);
+                strWidth += cc.textUtils.safeMeasureText(this.lblContext, char, fontDesc);
             } else {
                 if (strWidth > strWidthMax) strWidthMax = strWidth;
                 strWidth = 0;
             }
         }
-
         if (strWidth > strWidthMax) strWidthMax = strWidth;
 
         this.toastLblNode.width = Math.min(strWidthMax, this.toastLbl.maxWidth);

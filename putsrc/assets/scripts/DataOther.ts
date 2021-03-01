@@ -78,7 +78,7 @@ export class Pet2 {
 
     sklDmgFrom!: number;
     sklDmgTo!: number;
-    /** 速度 */
+    /** 反应速度 */
     speed!: number;
 
     /** 额外生物类型 */

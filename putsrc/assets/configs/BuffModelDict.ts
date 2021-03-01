@@ -60,7 +60,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * 0.7 };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `每回合对目标造成施放者70%招式强度${getSklDmgStr(pet2, 0.7)}的火系伤害`;
+            return `每回合对目标造成施放者<color=#ffcb32>70%招式强度</c>${getSklDmgStr(pet2, 0.7)}的火系伤害`;
         }
     },
     [BufN.HanLeng]: {
@@ -79,7 +79,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * 0.5 };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `减速目标，且每回合对目标造成${getSklDmgStr(pet2, 0.5)}(50%释放者招式强度)点水系伤害`;
+            return `减速目标，且每回合对目标造成施放者<color=#ffcb32>50%招式强度</c>${getSklDmgStr(pet2, 0.5)}的水系伤害`;
         }
     },
     [BufN.ZhongDu]: {
@@ -93,7 +93,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * rate };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `每回合对目标造成最低40%最高80%释放者招式攻击的暗系伤害，血量越低伤害越高`;
+            return `每回合对目标造成施放者<color=#ffcb32>40%-80%招式强度</c>的暗系伤害，血量越低伤害越高`;
         }
     },
     [BufN.ZhuiLuo]: {
@@ -106,7 +106,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             if (buff.time === 0) return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `效果结束时对目标造成${getSklDmgStr(pet2, 1)}(100%释放者招式强度)点地系伤害`;
+            return `效果结束时对目标造成施放者<color=#ffcb32>100%招式强度</c>${getSklDmgStr(pet2, 1)}的地系伤害`;
         }
     },
     [BufN.JingJie]: {
@@ -146,7 +146,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.atkDmgTo -= to;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标普攻伤害提高，相当于自身攻击的15%伤害外加释放者招式攻击的15%`;
+            return `目标普攻伤害提高，相当于自身攻击强度的<color=#ffcb32>15%</c>外加施放者招式强度的<color=#ffcb32>15%</c>`;
         }
     },
     [BufN.KongJu]: {
@@ -172,7 +172,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.sklDmgTo += sklRdc;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标所有攻击降低80%伤害`;
+            return `目标所有强度降低<color=#ffcb32>80%</c>`;
         }
     },
     [BufN.ShanYao]: {
@@ -194,7 +194,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.dfsRate -= 0.1;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标命中率，闪躲率，暴击率和免伤各增加10%`;
+            return `目标命中率，闪躲率，暴击率和免伤各增加<color=#ffcb32>10%</c>`;
         }
     },
     [BufN.GeShang]: {
@@ -207,7 +207,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             return { hp: Math.floor(aim.hpMax * 0.05) };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `每回合对目标造成最大血量5%的空系伤害，且无视护甲`;
+            return `每回合对目标造成最大血量<color=#ffcb32>5%</c>的空系伤害，且无视护甲`;
         }
     },
     [BufN.ChaoFeng]: {
@@ -241,7 +241,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.dfsRate -= 0.2;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标增加20%免伤`;
+            return `目标增加<color=#ffcb32>20%</c>免伤`;
         }
     },
     [BufN.DunQiang]: {
@@ -257,7 +257,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.dfsRate -= 0.8;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标增加80%免伤`;
+            return `目标增加<color=#ffcb32>80%</c>免伤`;
         }
     },
     [BufN.FeiXing]: {
@@ -273,7 +273,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.speed -= 100;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标速度升至最大值`;
+            return `目标反应速度升至最大值`;
         }
     },
     [BufN.HuiChun]: {
@@ -286,7 +286,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             return { hp: BtlCtrlr.getSklDmg(buff.caster) * 0.8 * -1 };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标每回合恢复目标相当于释放者<color=#ffcb32>80%招式强度</c>${getSklDmgStr(pet2, 0.8)}的血量`;
+            return `目标每回合恢复目标相当于施放者<color=#ffcb32>80%招式强度</c>${getSklDmgStr(pet2, 0.8)}的血量`;
         }
     },
     [BufN.JingZhi]: {
@@ -303,7 +303,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.exBtlTypes.removeIndex(data);
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标停止一切行动`;
+            return '目标停止一切行动';
         }
     },
     [BufN.MangMu]: {
@@ -319,7 +319,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.hitRate += 0.3;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标命中率降低30%`;
+            return '目标命中率降低<color=#ffcb32>30%</c>';
         }
     },
     [BufN.XieE]: {
@@ -345,7 +345,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             return { hp: Math.floor(dmg * 0.3) };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标最大伤害提高150%，但每回合都会受到相当于自身全部攻击30%的暗系伤害`;
+            return '目标强度上限增加<color=#ffcb32>150%</c>，但每回合都会受到相当于自身所有强度<color=#ffcb32>30%</c>的暗系伤害';
         }
     },
     [BufN.JingJin]: {
@@ -364,7 +364,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         },
         getInfo(pet2?: Readonly<Pet2>): string {
             const dmg = getSklDmgStr(pet2, 1.2);
-            return `目标每回合燃烧掉目标灵能(20+lv/10)，如果灵能不足，则造成施放者120%招式强度${dmg}的火系伤害`;
+            return `目标每回合燃烧掉灵能(20+lv/10)，如果灵能不足，则造成施放者<color=#ffcb32>120%招式强度</c>${dmg}的火系伤害`;
         }
     },
     [BufN.NingJing]: {
@@ -377,7 +377,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             return { rage: 3 };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标每回合减少目标3点斗志`;
+            return '目标每回合减少目标<color=#ffcb32>3点</c>斗志';
         }
     },
     [BufN.QiangJi]: {
@@ -399,7 +399,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.atkDmgTo -= to;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标普攻伤害提高60%`;
+            return '目标攻击强度提高<color=#ffcb32>60%</c>';
         }
     },
     [BufN.ZhuanZhu]: {
@@ -421,7 +421,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.sklDmgTo -= to;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标招式强度提高40%`;
+            return '目标招式强度提高<color=#ffcb32>40%</c>';
         }
     },
     [BufN.ShengMen]: {
@@ -441,7 +441,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             return { newBuffs: [{ id, time: 3 }] };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标每回合随机获得增益效果`;
+            return '目标每回合随机获得增益效果';
         }
     },
     [BufN.SiMen]: {
@@ -461,7 +461,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             return { newBuffs: [{ id, time: 3 }] };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标每回合随机获得减益效果`;
+            return '目标每回合随机获得减益效果';
         }
     },
     [BufN.LiuSha]: {
@@ -474,7 +474,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             if (ctrlr.ranSd() < 0.1) return { newBuffs: [{ id: 'JingZhi', time: 1 }] };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `每回合结束时，目标10%几率获得静止效果`;
+            return '每回合结束时，目标<color=#ffcb32>10%</c>几率获得静止效果';
         }
     },
     [BufN.KongWu]: {
@@ -500,7 +500,10 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.evdRate -= 0.1;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标命中率，闪躲率提高10%，速度提高50点，每回合有15%的概率带领其他人一起舞蹈`;
+            return (
+                '目标命中率，闪躲率提高<color=#ffcb32>10%</c>，反应速度提高<color=#ffcb32>50点</c>，' +
+                '每回合有<color=#ffcb32>15%</c>的概率带领其他人一起舞蹈'
+            );
         }
     }
 };

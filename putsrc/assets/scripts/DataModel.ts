@@ -135,7 +135,7 @@ export class PetModel {
     eleType!: EleType;
     /** 战斗类型 */
     btlType!: BtlType;
-    /** 速度 */
+    /** 反应速度 */
     speed!: number;
 
     baseStrength!: number;

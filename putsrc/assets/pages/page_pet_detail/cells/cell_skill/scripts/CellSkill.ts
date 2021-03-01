@@ -89,7 +89,7 @@ export class SkillInfo {
         }
 
         if (skl.hpLimit) {
-            info += `\n(目标血量须低于${skl.hpLimit}%才可发动)`;
+            info += `\n(目标血量须低于<color=#ffcb32>${skl.hpLimit}%</c>才可发动)`;
         }
 
         this.infoDict[id] = info;
@@ -114,16 +114,16 @@ export class SkillInfo {
         let info = '';
         if (buffId) {
             if (dmg) info += '并';
-            info += `获得${BuffModelDict[buffId].cnName}效果持续${buffTime}回合`;
+            info += `获得“${BuffModelDict[buffId].cnName}”效果持续<color=#ffcb32>${buffTime}回合</c>`;
         }
 
         return info;
     }
 
     static getSklDmgStr(pet2: Pet2, rate: number): string {
-        const from = BtlCtrlr.getCastRealDmg(pet2.sklDmgFrom, rate, pet2.atkDmgFrom) * 0.1;
-        const to = BtlCtrlr.getCastRealDmg(pet2.sklDmgTo, rate, pet2.atkDmgTo) * 0.1;
-        return `<color=#d0d0d0>（${Math.ceil(from)} - ${Math.ceil(to)}点）</c>`;
+        const from = Math.ceil(Math.abs(BtlCtrlr.getCastRealDmg(pet2.sklDmgFrom, rate, pet2.atkDmgFrom) * 0.1));
+        const to = Math.ceil(Math.abs(BtlCtrlr.getCastRealDmg(pet2.sklDmgTo, rate, pet2.atkDmgTo) * 0.1));
+        return `<color=#d0d0d0>（${from} - ${to}点）</c>`;
     }
 
     static getRealSklStr(skillId: string, pet2?: Pet2): string {
@@ -152,6 +152,9 @@ export class CellSkill extends ListViewCell {
 
     @property(cc.Label)
     buffLbl: cc.Label = null!;
+
+    @property(cc.Label)
+    subBuffLbl: cc.Label = null!;
 
     @property(cc.Label)
     mprageLbl: cc.Label = null!;
@@ -198,17 +201,36 @@ export class CellSkill extends ListViewCell {
 
         if (skillModel.mainBuffId) {
             this.buffLbl.node.parent.scaleX = 1;
+            this.buffLbl.node.parent.opacity = 255;
             const buffModel = BuffModelDict[skillModel.mainBuffId];
             this.buffLbl.node.parent.color = EleColors[buffModel.eleType];
             this.buffLbl.string = buffModel.cnName;
         } else {
             this.buffLbl.node.parent.scaleX = 0;
+            this.buffLbl.node.parent.opacity = 0;
         }
 
-        if (skillModel.mp) this.mprageLbl.string = `MP${skillModel.mp}`;
-        else this.mprageLbl.string = `RAGE${skillModel.rage}`;
+        if (skillModel.subBuffId && skillModel.subBuffId !== skillModel.mainBuffId) {
+            this.subBuffLbl.node.parent.scaleX = 1;
+            this.subBuffLbl.node.parent.opacity = 255;
+            const buffModel = BuffModelDict[skillModel.subBuffId];
+            this.subBuffLbl.node.parent.color = EleColors[buffModel.eleType];
+            this.subBuffLbl.string = buffModel.cnName;
+        } else {
+            this.subBuffLbl.node.parent.scaleX = 0;
+            this.subBuffLbl.node.parent.opacity = 0;
+        }
 
-        this.cdLbl.string = `CD${skillModel.cd}`;
+        if (skillModel.mp) {
+            this.mprageLbl.string = `MP${skillModel.mp}`;
+            this.mprageLbl.node.parent.color = cc.color(130, 0, 130);
+            this.cdLbl.string = `CD${skillModel.cd}`;
+            this.cdLbl.node.parent.opacity = 255;
+        } else {
+            this.mprageLbl.string = `RAGE${skillModel.rage}`;
+            this.mprageLbl.node.parent.color = cc.color(255, 100, 0);
+            this.cdLbl.node.parent.opacity = 0;
+        }
     }
 
     static getSkillTip(skillId: string, pet2?: Pet2) {
@@ -241,7 +263,7 @@ export class CellSkill extends ListViewCell {
 
         const mp = model.mp ? `\n<color=e060e0>灵能消耗：${model.mp}点</c>` : '';
         const cd = model.cd ? `\n<color=e060e0>招式冷却：${model.cd}回合</c>` : '';
-        const rage = model.rage ? `\n<color=#ffff00>所需斗志：${model.rage}</c>` : '';
+        const rage = model.rage ? `\n<color=#ffff00>所需斗志：${model.rage}点</c>` : '';
         const final = mp || rage ? `\n${mp}${cd}${rage}` : '';
 
         return `

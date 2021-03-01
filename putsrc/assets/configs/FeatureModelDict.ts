@@ -1014,7 +1014,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             if (ctrlr.ranSd() < rate(datas[0], 0.05, 0.9)) ctrlr.addBuff(pet, pet, BufN.ReLi, 3, fName(this));
         },
         getInfo(datas: number[]): string {
-            return `战斗开始时，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得热力效果，持续3回合`;
+            return `战斗开始时，${rdP(rate(datas[0], 0.05, 0.9))}%概率获得“热力”效果，持续3回合`;
         }
     },
     [FtN.killAddHp]: {
@@ -1091,7 +1091,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `被击败时，使己方其他精灵获得防护效果持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
+            return `被击败时，使己方其他精灵获得“防护”效果持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
         }
     },
     [FtN.deadHuiChun]: {
@@ -1105,7 +1105,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `被击败时，使己方其他精灵释放获得回春效果持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
+            return `被击败时，使己方其他精灵获得“回春”效果持续2回合，${rdP(rate(datas[0], 0.2, 0.6))}%概率持续4回合`;
         }
     },
     [FtN.turnHeal]: {
@@ -1144,7 +1144,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `每回合${rdP(rate(datas[0], 0, 0.3))}%概率使己方随机一精灵获得警戒效果持续1回合`;
+            return `每回合${rdP(rate(datas[0], 0, 0.3))}%概率使己方随机一精灵获得“警戒”效果持续1回合`;
         }
     }
 };

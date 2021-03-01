@@ -306,7 +306,7 @@ export class BtlCtrlr {
         this.handleBuff(rb.selfTeam);
         this.handleBuff(rb.enemyTeam);
 
-        // 处理速度列表
+        // 处理反应速度列表
         rb.order.sort((a: BtlPet, b: BtlPet): number => {
             return b.pet2.speed - a.pet2.speed;
         });

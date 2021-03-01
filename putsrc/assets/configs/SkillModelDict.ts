@@ -592,6 +592,8 @@ export const SkillModelDict: { [key: string]: SkillModel } = {
         spBtlType: 0,
         mainBuffId: 'LiuSha',
         mainBuffTime: 3,
+        subBuffId: 'LiuSha',
+        subBuffTime: 3,
         cd: 6,
         mp: 25
     },

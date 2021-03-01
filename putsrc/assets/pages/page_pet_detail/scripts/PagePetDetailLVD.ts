@@ -37,7 +37,7 @@ const LV_TIP = `提高等级可以：
  - 从<color=#ffcb32>11级</c>开始每<color=#ffcb32>3级</c>随机获取一个特性
  - <color=#ffcb32>10级</c>和<color=#ffcb32>30级</c>时可分别学会一个招式
  - 战斗时攻守双方等级差影响命中率`;
-const MERGE_TIP = `将其他精灵的能力融合给当前精灵的次数
+const MERGE_LV_TIP = `将其他精灵的能力融合给当前精灵的次数
 从<color=#ffcb32>15级</c>开始每<color=#ffcb32>5级</c>可获得一次融合的机会
 融合操作在“精灵融合堂”进行`;
 const PRVTY_TIP = `数值<color=#ffcb32>0-100</c>随时间自行提高\n数字越大上升越慢\n可提高暴击率，暴击伤害，命中，闪躲`;
@@ -78,10 +78,14 @@ const SEN_TIP = '影响制作物品成功的几率\n数据最高者影响察觉�
 const ELG_TIP = '队伍中数据最高者影响声望上升速度和捕捉精灵的几率';
 
 const HP_TIP = '用于战斗\n降低到<color=#ffcb32>0</c>则无法继续作战\n全部精灵降低至<color=#ffcb32>0</c>则战斗失败';
-const MP_TIP = '用于战斗\n所有精灵共用一个灵能池，数值为所有精灵灵能之和\n释放招式消耗灵能\n普攻可少量恢复灵能';
+const MP_TIP = '用于战斗\n所有精灵共用一个灵能池，数值为所有精灵灵能之和\n施放招式消耗灵能\n普攻可少量恢复灵能';
 
 const ATK_TIP = '影响普攻伤害量\n影响招式伤害量（在招式强度乘以系数基础上，额外增加1倍攻击强度）';
 const SKL_TIP = '影响招式伤害量（招式强度乘以招式系数）';
+
+const EQUIP_TIP = '?';
+
+const SKILL_TIP = '?';
 
 const FEATURE_TIP = `分为：
  - 天赋特性 每种精灵的固有特性
@@ -90,6 +94,8 @@ const FEATURE_TIP = `分为：
  
 任何特性都可以通过提升等级增强效果
 精灵从<color=#ffcb32>11级</c>开始每<color=#ffcb32>3级</c>随机升级天赋特性`;
+
+const MERGE_TIP = '?';
 
 export function petAttrNumStr(n: number): string {
     return (n * 0.1).toFixed(1);
@@ -282,7 +288,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData(pet, STATE_TIP);
         } else if (rowIdx === 1) {
             cell.setData1('等级', String(pet.lv), LV_TIP);
-            cell.setData2('融合层数', String(pet.merges.length), MERGE_TIP);
+            cell.setData2('融合层数', String(pet.merges.length), MERGE_LV_TIP);
         } else if (rowIdx === 2) {
             cell.setData1('默契值', String(PetTool.getRealPrvty(pet)) + '%', PRVTY_TIP);
             let drinkStr: string;
@@ -312,7 +318,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData2('元素', EleTypeNames[pet2.exEleTypes.getLast() || petModel.eleType], ELE_TIP);
         } else if (rowIdx === 6) {
             cell.setData1('战斗', BtlTypeNames[pet2.exBtlTypes.getLast() || petModel.btlType], BATTLE_TIP);
-            cell.setData2('速度', String(pet2.speed), SPEED_TIP);
+            cell.setData2('反应速度', String(pet2.speed), SPEED_TIP);
         }
         // 第三组
         else if (rowIdx === 7) {
@@ -365,7 +371,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         }
         // 第六组
         else if (rowIdx === 17) {
-            cell.setData('持有装备');
+            cell.setData('持有装备', EQUIP_TIP);
         } else if (rowIdx <= 20) {
             const equips = this.curPet.equips;
             const equipIndex = rowIdx - 18;
@@ -396,7 +402,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         }
         // 第七组
         else if (rowIdx === 21) {
-            cell.setData(`战斗招式（${this.skillLen}）`);
+            cell.setData(`战斗招式（${this.skillLen}）`, SKILL_TIP);
         } else if (rowIdx <= 21 + this.skillLen) {
             const skillIdx = rowIdx - 22;
             const skillId = this.curPet2.skillIds[skillIdx];
@@ -411,7 +417,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         }
         // 第九组
         else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) {
-            cell.setData(`融合信息（${this.mergeLen}）`);
+            cell.setData(`融合信息（${this.mergeLen}）`, MERGE_TIP);
         } else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen + 1 + this.mergeLen) {
             const mergeIdx = rowIdx - 21 - this.skillLen - 1 - this.featureLen - 1 - 1;
             const mergeData = this.curPet.merges[mergeIdx];
