@@ -8,7 +8,7 @@ const { ccclass, property } = cc._decorator;
 
 import { ListViewCell } from '../../../../../scripts/ListViewCell';
 import { BtlType, BtlTypeNames, EleColors, EleType, EleTypeNames } from '../../../../../scripts/DataSaved';
-import { SkillRangeType, SkillDirType, SkillModel } from '../../../../../scripts/DataModel';
+import { SkillRangeType, SkillDirType, SkillModel, SkillType } from '../../../../../scripts/DataModel';
 import { SkillModelDict } from '../../../../../configs/SkillModelDict';
 import { BuffModelDict } from '../../../../../configs/BuffModelDict';
 import { BtlCtrlr } from '../../../../../scripts/BtlCtrlr';
@@ -123,7 +123,7 @@ export class SkillInfo {
     static getSklDmgStr(pet2: Pet2, rate: number): string {
         const from = BtlCtrlr.getCastRealDmg(pet2.sklDmgFrom, rate, pet2.atkDmgFrom) * 0.1;
         const to = BtlCtrlr.getCastRealDmg(pet2.sklDmgTo, rate, pet2.atkDmgTo) * 0.1;
-        return `<color=#d0d0d0>（${Math.ceil(from)}至${Math.ceil(to)}点）</c>`;
+        return `<color=#d0d0d0>（${Math.ceil(from)} - ${Math.ceil(to)}点）</c>`;
     }
 
     static getRealSklStr(skillId: string, pet2?: Pet2): string {
@@ -214,6 +214,20 @@ export class CellSkill extends ListViewCell {
     static getSkillTip(skillId: string, pet2?: Pet2) {
         const model = SkillModelDict[skillId];
 
+        const name = `<size=60>${model.cnName}</s>`;
+        let type: string;
+        switch (model.skillType) {
+            case SkillType.fast:
+                type = '\n\n<color=#ffcb32>瞬发招式（仍可普攻）</c>';
+                break;
+            case SkillType.ultimate:
+                type = '\n\n<color=#ffff00>绝杀技（需要斗志）</c>';
+                break;
+            default:
+                type = '';
+                break;
+        }
+
         let buff = '';
         if (model.mainBuffId) {
             const buffModel = BuffModelDict[model.mainBuffId];
@@ -225,12 +239,13 @@ export class CellSkill extends ListViewCell {
         }
         if (buff) buff = '\n' + buff;
 
-        const mp = model.mp ? `\n灵能消耗：${model.mp}点` : '';
-        const cd = model.cd ? `\n招式冷却：${model.cd}回合` : '';
-        const rage = model.rage ? `\n所需斗志：${model.rage}` : '';
-        const final = mp || rage ? `<color=2abefa>\n${mp}${cd}${rage}</c>` : '';
+        const mp = model.mp ? `\n<color=e060e0>灵能消耗：${model.mp}点</c>` : '';
+        const cd = model.cd ? `\n<color=e060e0>招式冷却：${model.cd}回合</c>` : '';
+        const rage = model.rage ? `\n<color=#ffff00>所需斗志：${model.rage}</c>` : '';
+        const final = mp || rage ? `\n${mp}${cd}${rage}` : '';
 
-        return `<size=60>${model.cnName}</s>
+        return `
+${name}${type}
 
 ${SkillInfo.getRealSklStr(skillId, pet2)}${buff}${final}`;
     }

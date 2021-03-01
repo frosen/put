@@ -285,7 +285,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             pet.atkDmgTo += pet.atkDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `攻击伤害增加${rdP(datas[0])}%`;
+            return `攻击强度增加${rdP(datas[0])}%`;
         }
     },
     [FtN.addSklDmg]: {
@@ -297,7 +297,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             pet.sklDmgTo += pet.sklDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `招式伤害增加${rdP(datas[0])}%`;
+            return `招式强度增加${rdP(datas[0])}%`;
         }
     },
     [FtN.addAtkMax]: {
@@ -308,7 +308,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             pet.atkDmgTo += pet.atkDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `攻击伤害最大值增加${rdP(datas[0])}%`;
+            return `攻击强度最大值增加${rdP(datas[0])}%`;
         }
     },
     [FtN.addSklMax]: {
@@ -319,7 +319,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             pet.sklDmgTo += pet.sklDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `招式伤害最大值增加${rdP(datas[0])}%`;
+            return `招式强度最大值增加${rdP(datas[0])}%`;
         }
     },
     [FtN.addCritRate]: {
@@ -435,7 +435,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             pet.atkDmgTo += pet.sklDmgToOri * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `普攻伤害增加，数值相当于招式伤害的${rdP(datas[0])}%`;
+            return `普攻伤害增加，数值相当于招式强度的${rdP(datas[0])}%`;
         }
     },
     [FtN.hitWithFire]: {
@@ -614,7 +614,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             if (bData.ctrlr.getTeam(pet).mp > bData.ctrlr.getTeam(pet).mpMax * datas[0]) aim.hp -= bData.finalDmg * datas[1];
         },
         getInfo(datas: number[]): string {
-            return `如果灵能大于总量的${rdP(datas[0])}%，则招式伤害提高${rdP(datas[1])}%`;
+            return `如果灵能大于总量的${rdP(datas[0])}%，则招式强度提高${rdP(datas[1])}%`;
         }
     },
     [FtN.castConDmg]: {
@@ -625,7 +625,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             if (pet.pet2.concentration > aim.pet2.concentration) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `如果专注高于敌人，则招式伤害提高${rdP(datas[0])}%`;
+            return `如果专注高于敌人，则招式强度提高${rdP(datas[0])}%`;
         }
     },
     [FtN.castFire]: {
@@ -714,7 +714,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             pet.hp = Math.max(pet.hp - Math.floor(bData.finalDmg * datas[0]), 1);
         },
         getInfo(datas: number[]): string {
-            return `招式伤害提高${rdP(datas[0])}%，但自己也会受到等量伤害（不会致死）`;
+            return `招式强度提高${rdP(datas[0])}%，但自己也会受到等量伤害（不会致死）`;
         }
     },
     [FtN.castUlti]: {
@@ -748,7 +748,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             if (bData.ctrlr.getTeam(pet).pets.length < bData.ctrlr.getTeam(aim).pets.length) aim.hp -= bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `如果战场己方人数小于敌方，则招式伤害提高${rdP(datas[0])}%`;
+            return `如果战场己方人数小于敌方，则招式强度提高${rdP(datas[0])}%`;
         }
     },
     [FtN.castFullRage]: {
@@ -762,7 +762,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             }
         },
         getInfo(datas: number[]): string {
-            return `当斗志大于100时，消耗10点斗志，招式伤害提高${rdP(datas[0])}%`;
+            return `当斗志大于100时，消耗10点斗志，招式强度提高${rdP(datas[0])}%`;
         }
     },
     [FtN.hurtAndHurt]: {
@@ -910,7 +910,7 @@ export const NormalFeatureModelDict: { [key: string]: FeatureModel } = {
             if (bData.skillModel) aim.hp += bData.finalDmg * datas[0];
         },
         getInfo(datas: number[]): string {
-            return `招式伤害减少${rdP(datas[0])}%`;
+            return `招式强度减少${rdP(datas[0])}%`;
         }
     },
     [FtN.hurtFullRage]: {

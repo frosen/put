@@ -664,8 +664,17 @@ export class BaseCtrlr extends cc.Component {
         const fontDesc = this.toastLbl.fontSize.toString() + 'px ' + this.toastLbl.fontFamily;
         let strWidth = 0;
         let strWidthMax = 0;
+        let pass = false;
         for (let index = 0; index < str.length; index++) {
             const char = str[index];
+            if (char === '<') {
+                pass = true;
+                continue;
+            } else if (char === '>') {
+                pass = false;
+                continue;
+            }
+            if (pass) continue;
             if (char !== '\n') {
                 // @ts-ignore
                 strWidth += cc.textUtils.safeMeasureText(context, char, fontDesc);
@@ -674,6 +683,7 @@ export class BaseCtrlr extends cc.Component {
                 strWidth = 0;
             }
         }
+
         if (strWidth > strWidthMax) strWidthMax = strWidth;
 
         this.toastLblNode.width = Math.min(strWidthMax, this.toastLbl.maxWidth);

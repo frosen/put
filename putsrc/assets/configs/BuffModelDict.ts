@@ -32,7 +32,7 @@ export class BufN {
     static KongWu = 'KongWu';
 }
 
-import { EleType, BtlType, Pet } from '../scripts/DataSaved';
+import { EleType, BtlType } from '../scripts/DataSaved';
 import { BuffModel, BuffOutput, BuffType } from '../scripts/DataModel';
 import { BtlPet, BtlBuff, Pet2 } from '../scripts/DataOther';
 import { BtlCtrlr } from '../scripts/BtlCtrlr';
@@ -45,7 +45,7 @@ function getSklDmgStr(pet2: Pet2 | undefined, rate: number): string {
     if (pet2) {
         const from = fl(pet2.sklDmgFrom * 0.1 * rate);
         const to = fl(pet2.sklDmgTo * 0.1 * rate);
-        return `<color=#d0d0d0>（${from}至${to}点）</c>`;
+        return `<color=#d0d0d0>（${from} - ${to}点）</c>`;
     } else return '';
 }
 
@@ -79,7 +79,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * 0.5 };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `减速目标，且每回合对目标造成${getSklDmgStr(pet2, 0.5)}(50%释放者招式伤害)点水系伤害`;
+            return `减速目标，且每回合对目标造成${getSklDmgStr(pet2, 0.5)}(50%释放者招式强度)点水系伤害`;
         }
     },
     [BufN.ZhongDu]: {
@@ -106,7 +106,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             if (buff.time === 0) return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) };
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `效果结束时对目标造成${getSklDmgStr(pet2, 1)}(100%释放者招式伤害)点地系伤害`;
+            return `效果结束时对目标造成${getSklDmgStr(pet2, 1)}(100%释放者招式强度)点地系伤害`;
         }
     },
     [BufN.JingJie]: {
@@ -421,7 +421,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.sklDmgTo -= to;
         },
         getInfo(pet2?: Readonly<Pet2>): string {
-            return `目标招式伤害提高40%`;
+            return `目标招式强度提高40%`;
         }
     },
     [BufN.ShengMen]: {

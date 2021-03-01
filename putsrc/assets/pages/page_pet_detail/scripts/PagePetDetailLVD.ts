@@ -71,7 +71,7 @@ const BATTLE_TIP = `分为：
 const SPEED_TIP = '数值<color=#ffcb32>1-100</c>，数字越大行动次序越靠前';
 
 const STR_TIP = '每1点力量增加1点物理伤害';
-const CON_TIP = '每1点专注增加1点招式伤害\n每30点增加1点灵能上限';
+const CON_TIP = '每1点专注增加1点招式强度\n每30点增加1点灵能上限';
 const DUN_TIP = '每1点耐久增加25点血量上限';
 const AGI_TIP = '影响暴击率和闪躲率\n影响偷袭效果\n数据最高者影响潜行效率和探索移动速度';
 const SEN_TIP = '影响制作物品成功的几率\n数据最高者影响察觉宝藏的几率';
@@ -80,8 +80,8 @@ const ELG_TIP = '队伍中数据最高者影响声望上升速度和捕捉精灵
 const HP_TIP = '用于战斗\n降低到<color=#ffcb32>0</c>则无法继续作战\n全部精灵降低至<color=#ffcb32>0</c>则战斗失败';
 const MP_TIP = '用于战斗\n所有精灵共用一个灵能池，数值为所有精灵灵能之和\n释放招式消耗灵能\n普攻可少量恢复灵能';
 
-const ATK_TIP = '影响普攻伤害\n影响招式伤害（保持1倍，不受招式伤害系数影响）';
-const SKL_TIP = '影响招式伤害（乘以招式的伤害系数）';
+const ATK_TIP = '影响普攻伤害量\n影响招式伤害量（在招式强度乘以系数基础上，额外增加1倍攻击强度）';
+const SKL_TIP = '影响招式伤害量（招式强度乘以招式系数）';
 
 const FEATURE_TIP = `分为：
  - 天赋特性 每种精灵的固有特性
@@ -338,8 +338,8 @@ export class PagePetDetailLVD extends ListViewDelegate {
             cell.setData1('血量上限', String(Math.floor(pet2.hpMax * 0.1)), HP_TIP);
             cell.setData2('灵能上限', String(pet2.mpMax), MP_TIP);
         } else if (rowIdx === 13) {
-            cell.setData1('攻击伤害', `${petAttrNumStr(pet2.atkDmgFrom)}~${petAttrNumStr(pet2.atkDmgTo)}`, ATK_TIP);
-            cell.setData2('招式伤害', `${petAttrNumStr(pet2.sklDmgFrom)}~${petAttrNumStr(pet2.sklDmgTo)}`, SKL_TIP);
+            cell.setData1('攻击强度', `${petAttrNumStr(pet2.atkDmgFrom)}~${petAttrNumStr(pet2.atkDmgTo)}`, ATK_TIP);
+            cell.setData2('招式强度', `${petAttrNumStr(pet2.sklDmgFrom)}~${petAttrNumStr(pet2.sklDmgTo)}`, SKL_TIP);
         }
         // 第五组
         else if (rowIdx === 14) {
