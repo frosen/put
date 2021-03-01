@@ -54,7 +54,7 @@ export class BuffModel {
     onStarted?: (thisPet: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr) => any;
     onEnd?: (thisPet: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) => void;
     onTurnEnd?: (thisPet: BtlPet, buff: BtlBuff, ctrlr: BtlCtrlr) => BuffOutput | void;
-    getInfo!: (pet: Readonly<Pet>, pet2: Readonly<Pet2>) => string;
+    getInfo!: (pet2?: Readonly<Pet2>) => string;
 }
 
 export enum SkillType {
@@ -70,7 +70,7 @@ export enum SkillDirType {
     self
 }
 
-export enum SkillAimtype {
+export enum SkillRangeType {
     none,
     one,
     oneAndNext,
@@ -83,23 +83,23 @@ export class SkillModel {
     cnName!: string;
     skillType!: SkillType;
     dirType!: SkillDirType;
-    aimType!: SkillAimtype;
+    rangeType!: SkillRangeType;
     eleType!: EleType;
     spBtlType!: BtlType;
 
-    mainDmg!: number;
-    mainBuffId!: string;
-    mainBuffTime!: number;
+    mainDmg?: number;
+    mainBuffId?: string;
+    mainBuffTime?: number;
 
-    subDmg!: number;
-    subBuffId!: string;
-    subBuffTime!: number;
+    subDmg?: number;
+    subBuffId?: string;
+    subBuffTime?: number;
 
-    cd!: number;
-    mp!: number;
-    rage!: number;
+    cd?: number;
+    mp?: number;
+    rage?: number;
 
-    hpLimit!: number;
+    hpLimit?: number;
 }
 
 export class FeatureBtlData {

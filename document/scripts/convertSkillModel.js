@@ -23,8 +23,8 @@ let sklJson = convert(
             let cnName = rowData[1];
             let skillType = getEnum(rowData[2]);
             let dirType = getEnum(rowData[4]);
-            let aimType = getEnum(rowData[5]);
-            if (!aimType) {
+            let rangeType = getEnum(rowData[5]);
+            if (!rangeType) {
                 console.log(`${cnName}没有设置目标，所以停止`);
                 break;
             }
@@ -52,25 +52,28 @@ let sklJson = convert(
                 if (mp === 0) console.log('普通招式需要灵能消耗', cnName);
             }
 
-            sklJson[id] = {
+            const skl = {
                 id,
                 cnName,
                 skillType,
                 dirType,
-                aimType,
+                rangeType,
                 eleType,
-                spBtlType,
-                mainDmg,
-                mainBuffId,
-                mainBuffTime,
-                subDmg,
-                subBuffId,
-                subBuffTime,
-                cd,
-                mp,
-                rage,
-                hpLimit
+                spBtlType
             };
+
+            if (mainDmg) skl.mainDmg = mainDmg;
+            if (mainBuffId) skl.mainBuffId = mainBuffId;
+            if (mainBuffTime) skl.mainBuffTime = mainBuffTime;
+            if (subDmg) skl.subDmg = subDmg;
+            if (subBuffId) skl.subBuffId = subBuffId;
+            if (subBuffTime) skl.subBuffTime = subBuffTime;
+            if (cd) skl.cd = cd;
+            if (mp) skl.mp = mp;
+            if (rage) skl.rage = rage;
+            if (hpLimit) skl.hpLimit = hpLimit;
+
+            sklJson[id] = skl;
         }
         return sklJson;
     }

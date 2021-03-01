@@ -12,7 +12,7 @@ import { BuffModelDict, BufN } from '../configs/BuffModelDict';
 import { PetModelDict } from '../configs/PetModelDict';
 
 import { deepCopy } from '../scripts/Utils';
-import { SkillModel, SkillType, SkillAimtype, SkillDirType } from '../scripts/DataModel';
+import { SkillModel, SkillType, SkillRangeType, SkillDirType } from '../scripts/DataModel';
 import { Pet, EleType, BtlType, GameData, BtlMmr, BioType } from '../scripts/DataSaved';
 import { RealBtl, BtlTeam, BtlPet, BtlBuff, RageMax, BtlPetLenMax } from '../scripts/DataOther';
 import { BtlSequence } from '../configs/BtlSequence';
@@ -459,7 +459,7 @@ export class BtlCtrlr {
             const skillModel: SkillModel = SkillModelDict[skillData.id];
             if (skillModel.skillType !== SkillType.ultimate) continue;
 
-            const rageNeed = skillModel.rage;
+            const rageNeed = skillModel.rage!;
             const team = this.getTeam(btlPet);
             if (team.rage < rageNeed) continue;
 
@@ -492,7 +492,7 @@ export class BtlCtrlr {
             const castSuc = this.cast(btlPet, skillModel);
             if (castSuc) {
                 team.mp -= mpNeed;
-                skillData.cd = skillModel.cd + 1;
+                skillData.cd = skillModel.cd! + 1;
                 if (skillModel.skillType === SkillType.normal) done = true; // fast时done为false
                 break;
             }
@@ -505,31 +505,31 @@ export class BtlCtrlr {
         const aim = this.getAim(btlPet, skillModel.dirType === SkillDirType.self, skillModel);
         if (!aim) return false;
 
-        if (skillModel.hpLimit > 0 && (aim.hp / aim.hpMax) * 100 > skillModel.hpLimit) return false;
+        if (skillModel.hpLimit && (aim.hp / aim.hpMax) * 100 > skillModel.hpLimit) return false;
 
-        if (skillModel.mainDmg > 0) {
+        if (skillModel.mainDmg) {
             this.castDmg(btlPet, aim, skillModel.mainDmg, skillModel);
         }
         if (skillModel.mainBuffId && aim.hp > 0) {
             this.castBuff(btlPet, aim, skillModel, true);
         }
 
-        if (skillModel.aimType === SkillAimtype.oneAndNext) {
+        if (skillModel.rangeType === SkillRangeType.oneAndNext) {
             const nextAim = aim.next;
             if (nextAim) {
                 // 分两次check hp是因为castDmg中也会把hp减为0
-                if (skillModel.subDmg > 0 && nextAim.hp > 0) {
+                if (skillModel.subDmg && nextAim.hp > 0) {
                     this.castDmg(btlPet, nextAim, skillModel.subDmg, skillModel);
                 }
                 if (skillModel.subBuffId && nextAim.hp > 0) {
                     this.castBuff(btlPet, nextAim, skillModel, false);
                 }
             }
-        } else if (skillModel.aimType === SkillAimtype.oneAndOthers) {
+        } else if (skillModel.rangeType === SkillRangeType.oneAndOthers) {
             const aimPets = this.getTeam(aim).pets;
             for (const aimInAll of aimPets) {
                 if (aimInAll === aim || aimInAll.hp === 0) continue;
-                if (skillModel.subDmg > 0) this.castDmg(btlPet, aimInAll, skillModel.subDmg, skillModel);
+                if (skillModel.subDmg) this.castDmg(btlPet, aimInAll, skillModel.subDmg, skillModel);
                 if (skillModel.subBuffId && aimInAll.hp > 0) {
                     this.castBuff(btlPet, aimInAll, skillModel, false);
                 }
@@ -620,7 +620,7 @@ export class BtlCtrlr {
     castBuff(btlPet: BtlPet, aim: BtlPet, skillModel: SkillModel, beMain: boolean) {
         const buffId = beMain ? skillModel.mainBuffId : skillModel.subBuffId;
         const buffTime = beMain ? skillModel.mainBuffTime : skillModel.subBuffTime;
-        this.addBuff(aim, btlPet, buffId, buffTime, skillModel.cnName);
+        this.addBuff(aim, btlPet, buffId!, buffTime!, skillModel.cnName);
     }
 
     addBuff(aim: BtlPet, caster: BtlPet, buffId: string, buffTime: number, src: string) {

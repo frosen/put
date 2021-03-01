@@ -10,8 +10,6 @@ import {
     PetModel,
     SkillModel,
     SkillType,
-    SkillDirType,
-    SkillAimtype,
     ExplModel,
     ActPosModel,
     AmplAttriType,
@@ -22,7 +20,6 @@ import {
     EleType,
     BtlType,
     Pet,
-    EleTypeNames,
     ExplMmr,
     EPetMmr,
     Equip,
@@ -36,7 +33,6 @@ import {
 import { PetModelDict } from '../configs/PetModelDict';
 import { SkillModelDict } from '../configs/SkillModelDict';
 import { deepCopy } from './Utils';
-import { BuffModelDict } from '../configs/BuffModelDict';
 import { BtlCtrlr } from './BtlCtrlr';
 import { randomRate, getRandomOneInList, normalRandom } from './Random';
 import { ActPosModelDict, PAKey } from '../configs/ActPosModelDict';
@@ -392,8 +388,8 @@ export class BtlPet {
         if (skillModel.skillType === SkillType.ultimate) return 0;
         const petModel = PetModelDict[pet.id];
 
-        if (petModel.eleType === skillModel.eleType) return Math.floor(skillModel.mp * 0.9);
-        else return skillModel.mp;
+        if (petModel.eleType === skillModel.eleType) return Math.floor(skillModel.mp! * 0.9);
+        else return skillModel.mp!;
     }
 
     initPosition(idx: number, fromationIdx: number, beEnemy: boolean) {
@@ -732,124 +728,5 @@ export class RealBtl {
         if (!aim) return undefined;
         const team = aim.beEnemy ? to.enemyTeam : to.selfTeam;
         return team.pets[aim.idx];
-    }
-}
-
-// -----------------------------------------------------------------
-
-export class SkillInfo {
-    static infoDict: { [key: string]: string } = {};
-    static get(id: string): string {
-        if (this.infoDict[id]) return this.infoDict[id];
-
-        const skl: SkillModel = SkillModelDict[id];
-        let info = '';
-        let aim: string;
-        if (skl.dirType === SkillDirType.enemy) {
-            switch (skl.spBtlType) {
-                case BtlType.none:
-                    aim = '敌方单体目标';
-                    break;
-                case BtlType.melee:
-                    aim = '敌方最近单体目标';
-                    break;
-                case BtlType.shoot:
-                    aim = '敌方随机单体目标';
-                    break;
-                case BtlType.charge:
-                    aim = '敌方排头目标';
-                    break;
-                case BtlType.assassinate:
-                    aim = '敌方血量最少目标';
-                    break;
-            }
-        } else {
-            switch (skl.spBtlType) {
-                case BtlType.none:
-                    aim = '己方单体目标';
-                    break;
-                case BtlType.melee:
-                    aim = '自己';
-                    break;
-                case BtlType.shoot:
-                    aim = '己方随机单体目标';
-                    break;
-                case BtlType.charge:
-                    aim = '己方排头目标';
-                    break;
-                case BtlType.assassinate:
-                    aim = '己方血量最少目标';
-                    break;
-            }
-        }
-
-        info += '使' + aim!;
-        info += this.getDmg(skl.mainDmg, skl.eleType);
-        info += this.getBuff(skl.mainDmg, skl.mainBuffId, skl.mainBuffTime);
-
-        if (skl.hpLimit) {
-            info += `(目标血量须低于${skl.hpLimit}%才可发动)`;
-        }
-
-        if (skl.aimType !== SkillAimtype.one) {
-            let subAim: string;
-            switch (skl.aimType) {
-                case SkillAimtype.oneAndNext:
-                    subAim = '下方相邻目标';
-                    break;
-                case SkillAimtype.oneAndOthers:
-                    subAim = (skl.dirType === SkillDirType.enemy ? '敌方' : '己方') + '其他目标';
-                    break;
-                case SkillAimtype.oneAndSelf:
-                    subAim = '自己';
-            }
-
-            if (skl.subDmg || skl.subBuffId) {
-                info += '；' + subAim!;
-                info += this.getDmg(skl.subDmg, skl.eleType, true);
-                info += this.getBuff(skl.subDmg, skl.subBuffId, skl.subBuffTime);
-            }
-        }
-
-        this.infoDict[id] = info;
-        return info;
-    }
-
-    static getDmg(dmg: number, eleType: EleType, sub: boolean = false): string {
-        let info = '';
-        if (dmg) {
-            if (dmg > 0) {
-                info += `受到##点(${dmg}%招式+100%攻击伤害)${EleTypeNames[eleType]}伤害`;
-            } else {
-                info += `恢复血量##点(${-dmg}%招式伤害)`;
-            }
-        }
-        if (sub) info = info.replace('##', '^^');
-
-        return info;
-    }
-
-    static getBuff(dmg: number, buffId: string, buffTime: number): string {
-        let info = '';
-        if (buffId) {
-            if (dmg) info += '并';
-            info += `获得${buffTime}回合${BuffModelDict[buffId].cnName}效果`;
-        }
-
-        return info;
-    }
-
-    static getSklDmgStr(pet2: Pet2, rate: number): string {
-        const from = BtlCtrlr.getCastRealDmg(pet2.sklDmgFrom, rate, pet2.atkDmgFrom) * 0.1;
-        const to = BtlCtrlr.getCastRealDmg(pet2.sklDmgTo, rate, pet2.atkDmgTo) * 0.1;
-        return `${from.toFixed(1)}到${to.toFixed(1)}`;
-    }
-
-    static getRealSklStr(skillId: string, pet2: Pet2): string {
-        const info = this.get(skillId);
-        const skl: SkillModel = SkillModelDict[skillId];
-        const mainDmgStr = this.getSklDmgStr(pet2, skl.mainDmg * 0.01);
-        const subDmgStr = this.getSklDmgStr(pet2, skl.subDmg * 0.01);
-        return info.replace('##', mainDmgStr).replace('^^', subDmgStr);
     }
 }

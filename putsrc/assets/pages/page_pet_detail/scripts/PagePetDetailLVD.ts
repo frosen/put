@@ -27,17 +27,6 @@ import { PetTool } from '../../../scripts/Memory';
 import { DrinkModelDict } from '../../../configs/DrinkModelDict';
 import { CellMerge } from '../cells/cell_merge/scripts/CellMerge';
 
-const PETNAME = 'p';
-const ATTRI2 = '2';
-const ATTRI1 = '1';
-const TITLE = 't';
-const EQUIP = 'e';
-const EQPBLANK = 'eb';
-const SKILL = 's';
-const FEATURE = 'f';
-const MERGE = 'm';
-const BLANK = 'b';
-
 const STATE_TIP = `分为：
    备战中 准备参与战斗
    休息中 不参与战斗
@@ -102,6 +91,27 @@ const FEATURE_TIP = `分为：
 任何特性都可以通过提升等级增强效果
 精灵从<color=#ffcb32>11级</c>开始每<color=#ffcb32>3级</c>随机升级天赋特性`;
 
+export function petAttrNumStr(n: number): string {
+    return (n * 0.1).toFixed(1);
+}
+
+function getAttriTip(attri: number, attriOri: number, tip: string): string {
+    const strO = petAttrNumStr(attriOri);
+    const strD = petAttrNumStr(attri - attriOri);
+    return `基础值 <color=#ffcb32>${strO}</c>\n装备特性加成 <color=#ffcb32>${strD}</c>\n\n<color=#d0d0d0>${tip}</c>`;
+}
+
+const PETNAME = 'p';
+const ATTRI2 = '2';
+const ATTRI1 = '1';
+const TITLE = 't';
+const EQUIP = 'e';
+const EQPBLANK = 'eb';
+const SKILL = 's';
+const FEATURE = 'f';
+const MERGE = 'm';
+const BLANK = 'b';
+
 type DetailCell = CellPetName &
     CellAttri &
     CellAttri2 &
@@ -111,16 +121,6 @@ type DetailCell = CellPetName &
     CellSkill &
     CellFeature &
     CellMerge;
-
-export function petAttrNumStr(n: number): string {
-    return (n * 0.1).toFixed(1);
-}
-
-function attriTip(attri: number, attriOri: number, tip: string): string {
-    const strO = petAttrNumStr(attriOri);
-    const strD = petAttrNumStr(attri - attriOri);
-    return `基础值 <color=#ffcb32>${strO}</c>\n装备特性加成 <color=#ffcb32>${strD}</c>\n\n<color=#d0d0d0>${tip}</c>`;
-}
 
 @ccclass
 export class PagePetDetailLVD extends ListViewDelegate {
@@ -318,18 +318,18 @@ export class PagePetDetailLVD extends ListViewDelegate {
         else if (rowIdx === 7) {
             cell.setData('一级属性');
         } else if (rowIdx === 8) {
-            cell.setData1('力量', petAttrNumStr(pet2.strength), attriTip(pet2.strength, pet2.strengthOri, STR_TIP));
+            cell.setData1('力量', petAttrNumStr(pet2.strength), getAttriTip(pet2.strength, pet2.strengthOri, STR_TIP));
             cell.setData2(
                 '专注',
                 petAttrNumStr(pet2.concentration),
-                attriTip(pet2.concentration, pet2.concentrationOri, CON_TIP)
+                getAttriTip(pet2.concentration, pet2.concentrationOri, CON_TIP)
             );
         } else if (rowIdx === 9) {
-            cell.setData1('耐久', petAttrNumStr(pet2.durability), attriTip(pet2.durability, pet2.durabilityOri, DUN_TIP));
-            cell.setData2('敏捷', petAttrNumStr(pet2.agility), attriTip(pet2.agility, pet2.agilityOri, AGI_TIP));
+            cell.setData1('耐久', petAttrNumStr(pet2.durability), getAttriTip(pet2.durability, pet2.durabilityOri, DUN_TIP));
+            cell.setData2('敏捷', petAttrNumStr(pet2.agility), getAttriTip(pet2.agility, pet2.agilityOri, AGI_TIP));
         } else if (rowIdx === 10) {
-            cell.setData1('感知', petAttrNumStr(pet2.sensitivity), attriTip(pet2.sensitivity, pet2.sensitivityOri, SEN_TIP));
-            cell.setData2('优雅', petAttrNumStr(pet2.elegant), attriTip(pet2.elegant, pet2.elegantOri, ELG_TIP));
+            cell.setData1('感知', petAttrNumStr(pet2.sensitivity), getAttriTip(pet2.sensitivity, pet2.sensitivityOri, SEN_TIP));
+            cell.setData2('优雅', petAttrNumStr(pet2.elegant), getAttriTip(pet2.elegant, pet2.elegantOri, ELG_TIP));
         }
         // 第四组
         else if (rowIdx === 11) {
@@ -400,10 +400,7 @@ export class PagePetDetailLVD extends ListViewDelegate {
         } else if (rowIdx <= 21 + this.skillLen) {
             const skillIdx = rowIdx - 22;
             const skillId = this.curPet2.skillIds[skillIdx];
-            cell.setData(skillId);
-            (cell as CellSkill).clickCallback = (cell: CellSkill) => {
-                this.page.onSkillCellClick(skillIdx, cell);
-            };
+            cell.setData(skillId, this.curPet2);
         }
         // 第八组
         else if (rowIdx === 21 + this.skillLen + 1) {
@@ -411,9 +408,6 @@ export class PagePetDetailLVD extends ListViewDelegate {
         } else if (rowIdx <= 21 + this.skillLen + 1 + this.featureLen) {
             const featureData = this.featureDatas[rowIdx - 21 - this.skillLen - 1 - 1];
             cell.setData(featureData.feature, featureData.type);
-            (cell as CellFeature).clickCallback = (cell: CellFeature) => {
-                this.page.onFeatureCellClick(cell);
-            };
         }
         // 第九组
         else if (rowIdx === 21 + this.skillLen + 1 + this.featureLen + 1) {

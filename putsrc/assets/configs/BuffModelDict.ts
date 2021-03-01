@@ -37,12 +37,16 @@ import { BuffModel, BuffOutput, BuffType } from '../scripts/DataModel';
 import { BtlPet, BtlBuff, Pet2 } from '../scripts/DataOther';
 import { BtlCtrlr } from '../scripts/BtlCtrlr';
 
-function fl1(n: number) {
-    return n.toFixed(1);
+function fl(n: number) {
+    return Math.ceil(n);
 }
 
-function getSklDmgStr(pet2: Pet2, rate: number) {
-    return `${fl1(pet2.sklDmgFrom * 0.1 * rate)}到${fl1(pet2.sklDmgTo * 0.1 * rate)}`;
+function getSklDmgStr(pet2: Pet2 | undefined, rate: number): string {
+    if (pet2) {
+        const from = fl(pet2.sklDmgFrom * 0.1 * rate);
+        const to = fl(pet2.sklDmgTo * 0.1 * rate);
+        return `<color=#d0d0d0>（${from}至${to}点）</c>`;
+    } else return '';
 }
 
 export const BuffModelDict: { [key: string]: BuffModel } = {
@@ -55,8 +59,8 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * 0.7 };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `每回合对目标造成${getSklDmgStr(pet2, 0.7)}(70%释放者招式伤害)点火系伤害`;
+        getInfo(pet2?: Readonly<Pet2>): string {
+            return `每回合对目标造成施放者70%招式强度${getSklDmgStr(pet2, 0.7)}的火系伤害`;
         }
     },
     [BufN.HanLeng]: {
@@ -74,7 +78,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * 0.5 };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `减速目标，且每回合对目标造成${getSklDmgStr(pet2, 0.5)}(50%释放者招式伤害)点水系伤害`;
         }
     },
@@ -88,7 +92,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             const rate = (1 - aim.hp / aim.hpMax) * 0.4 + 0.4;
             return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * rate };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `每回合对目标造成最低40%最高80%释放者招式攻击的暗系伤害，血量越低伤害越高`;
         }
     },
@@ -101,7 +105,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             if (buff.time === 0) return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `效果结束时对目标造成${getSklDmgStr(pet2, 1)}(100%释放者招式伤害)点地系伤害`;
         }
     },
@@ -119,7 +123,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.hitRate -= 10;
             aim.pet2.critRate -= 10;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return '目标下次攻击必命中，必暴击';
         }
     },
@@ -141,7 +145,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.atkDmgFrom -= from;
             aim.pet2.atkDmgTo -= to;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标普攻伤害提高，相当于自身攻击的15%伤害外加释放者招式攻击的15%`;
         }
     },
@@ -167,7 +171,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.sklDmgFrom += sklRdc;
             aim.pet2.sklDmgTo += sklRdc;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标所有攻击降低80%伤害`;
         }
     },
@@ -189,7 +193,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.evdRate -= 0.1;
             aim.pet2.dfsRate -= 0.1;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标命中率，闪躲率，暴击率和免伤各增加10%`;
         }
     },
@@ -202,7 +206,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             return { hp: Math.floor(aim.hpMax * 0.05) };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `每回合对目标造成最大血量5%的空系伤害，且无视护甲`;
         }
     },
@@ -220,7 +224,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             const idx: number = data;
             aim.pet2.exBtlTypes.removeIndex(idx);
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标战斗方式变成近战`;
         }
     },
@@ -236,7 +240,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.dfsRate -= 0.2;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标增加20%免伤`;
         }
     },
@@ -252,7 +256,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.dfsRate -= 0.8;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标增加80%免伤`;
         }
     },
@@ -268,7 +272,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.speed -= 100;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标速度升至最大值`;
         }
     },
@@ -281,8 +285,8 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             return { hp: BtlCtrlr.getSklDmg(buff.caster) * 0.8 * -1 };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            return `目标每回合恢复目标${getSklDmgStr(pet2, 0.8)}(80%释放者招式伤害)点血量`;
+        getInfo(pet2?: Readonly<Pet2>): string {
+            return `目标每回合恢复目标相当于释放者<color=#ffcb32>80%招式强度</c>${getSklDmgStr(pet2, 0.8)}的血量`;
         }
     },
     [BufN.JingZhi]: {
@@ -298,7 +302,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.exBtlTypes.removeIndex(data);
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标停止一切行动`;
         }
     },
@@ -314,7 +318,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onEnd(aim: Readonly<BtlPet>, caster: Readonly<BtlPet>, ctrlr: BtlCtrlr, data: any) {
             aim.pet2.hitRate += 0.3;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标命中率降低30%`;
         }
     },
@@ -340,7 +344,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             const dmg = BtlCtrlr.getAtkDmg(aim, aim) + BtlCtrlr.getSklDmg(aim, aim);
             return { hp: Math.floor(dmg * 0.3) };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标最大伤害提高150%，但每回合都会受到相当于自身全部攻击30%的暗系伤害`;
         }
     },
@@ -358,10 +362,9 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
                 return { hp: BtlCtrlr.getSklDmg(buff.caster, aim) * 1.2 };
             }
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
-            const mp = 20 + Math.floor(pet.lv / 10);
+        getInfo(pet2?: Readonly<Pet2>): string {
             const dmg = getSklDmgStr(pet2, 1.2);
-            return `目标每回合燃烧掉目标${mp}点灵能，如果灵能不足${mp}点，则造成${dmg}(120%释放者招式伤害)点火系伤害`;
+            return `目标每回合燃烧掉目标灵能(20+lv/10)，如果灵能不足，则造成施放者120%招式强度${dmg}的火系伤害`;
         }
     },
     [BufN.NingJing]: {
@@ -373,7 +376,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             return { rage: 3 };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标每回合减少目标3点斗志`;
         }
     },
@@ -395,7 +398,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.atkDmgFrom -= from;
             aim.pet2.atkDmgTo -= to;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标普攻伤害提高60%`;
         }
     },
@@ -417,7 +420,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.sklDmgFrom -= from;
             aim.pet2.sklDmgTo -= to;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标招式伤害提高40%`;
         }
     },
@@ -437,7 +440,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             else id = BufN.ShanYao;
             return { newBuffs: [{ id, time: 3 }] };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标每回合随机获得增益效果`;
         }
     },
@@ -457,7 +460,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             else id = BufN.ZhongDu;
             return { newBuffs: [{ id, time: 3 }] };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标每回合随机获得减益效果`;
         }
     },
@@ -470,7 +473,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
         onTurnEnd(aim: Readonly<BtlPet>, buff: Readonly<BtlBuff>, ctrlr: BtlCtrlr): BuffOutput | void {
             if (ctrlr.ranSd() < 0.1) return { newBuffs: [{ id: 'JingZhi', time: 1 }] };
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `每回合结束时，目标10%几率获得静止效果`;
         }
     },
@@ -496,7 +499,7 @@ export const BuffModelDict: { [key: string]: BuffModel } = {
             aim.pet2.hitRate -= 0.1;
             aim.pet2.evdRate -= 0.1;
         },
-        getInfo(pet: Readonly<Pet>, pet2: Readonly<Pet2>): string {
+        getInfo(pet2?: Readonly<Pet2>): string {
             return `目标命中率，闪躲率提高10%，速度提高50点，每回合有15%的概率带领其他人一起舞蹈`;
         }
     }

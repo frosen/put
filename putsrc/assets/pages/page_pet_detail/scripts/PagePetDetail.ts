@@ -19,7 +19,6 @@ import { FuncBar } from '../../page_pet/scripts/FuncBar';
 import { NavBar } from '../../../scripts/NavBar';
 import { CellSkill } from '../cells/cell_skill/scripts/CellSkill';
 import { PageSwitchAnim } from '../../../scripts/BaseCtrlr';
-import { PetModelDict } from '../../../configs/PetModelDict';
 
 @ccclass
 export class PagePetDetail extends PageBase {
